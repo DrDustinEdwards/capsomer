@@ -5,8 +5,8 @@ summary: The paths a site was asked for and does not have, most hits first, each
 parts: [css, behavior, react]
 tool: native + React (composes panel, row list, segmented, status, empty and time)
 states: [30 days with a 7-day window and an action per row, one window with probes not listed, nothing missing, cannot be read, reading]
-added: 0.96.0
-updated: 0.96.0
+added: 0.98.0
+updated: 0.98.0
 source: Carrel, app/routes/project.not-found.tsx (lines 74 to 125, the 404s panel with its 7 and 30 day choice); the Capsid Portal, dashboard/src/views/NotFound.tsx (Capsid's own missing pages, the probes counted and not listed, the no-data state); site-runtime not-found.mjs (notFoundReport, the row's shape).
 replaces:
   - "function NotFound\\("

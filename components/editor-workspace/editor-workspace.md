@@ -5,8 +5,8 @@ summary: The page around a writing surface, with a Write, Split and Preview layo
 parts: [css, behavior, react]
 tool: native + own JavaScript
 states: [write, split side by side, split stacked in a narrow space, preview, remembered layout, without script, preview refreshed after a pause, chrome stepped back while typing, chrome back on a mouse move or focus]
-added: 0.96.0
-updated: 0.96.0
+added: 0.98.0
+updated: 0.98.0
 source: Carrel, app/routes/editor.tsx (the layout switch, the panes, the preview's refresh and frame), app/components/editor/layout.ts (useEditorLayout), save-keys.ts (useSaveShortcut), typing.ts (useTypingRecede) and app.css (.app-editor-body, .app-editor-pane, .app-preview-pane, html[data-typing])
 replaces:
   - 'className="app-(editor-body|editor-pane|preview-pane)'

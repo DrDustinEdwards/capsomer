@@ -124,12 +124,19 @@ export function attachCatalog(form: HTMLFormElement): () => void {
     }
   };
 
-  const onInput = (e: Event) => {
-    const t = e.target as HTMLElement | null;
-    if (!t?.matches('input[type="search"], input[type="text"]')) return;
+  // An IME (Japanese, Chinese, Korean, and many phone keyboards) sends input events while a word is still being
+  // composed; searching then would fetch half-typed syllables. The search waits for compositionend, which commits
+  // the word (UI Events, "Composition Events"; InputEvent.isComposing).
+  const search = (t: EventTarget | null) => {
+    if (!(t as HTMLElement | null)?.matches('input[type="search"], input[type="text"]')) return;
     window.clearTimeout(timer);
     timer = window.setTimeout(() => void go(formHref(form)), SEARCH_DELAY_MS);
   };
+  const onInput = (e: Event) => {
+    if ((e as InputEvent).isComposing) return;
+    search(e.target);
+  };
+  const onCompositionEnd = (e: CompositionEvent) => search(e.target);
   const onChange = (e: Event) => {
     const t = e.target as HTMLElement | null;
     if (!t?.matches('input[type="checkbox"], input[type="radio"], select')) return;
@@ -179,6 +186,7 @@ export function attachCatalog(form: HTMLFormElement): () => void {
   };
 
   form.addEventListener("input", onInput);
+  form.addEventListener("compositionend", onCompositionEnd);
   form.addEventListener("change", onChange);
   form.addEventListener("submit", onSubmit);
   form.addEventListener("click", onClick);
@@ -193,6 +201,7 @@ export function attachCatalog(form: HTMLFormElement): () => void {
     window.clearTimeout(timer);
     pending?.abort();
     form.removeEventListener("input", onInput);
+    form.removeEventListener("compositionend", onCompositionEnd);
     form.removeEventListener("change", onChange);
     form.removeEventListener("submit", onSubmit);
     form.removeEventListener("click", onClick);

@@ -5,8 +5,8 @@ summary: Today's writing in one panel. Words typed today against today's target,
 parts: [css, behavior, react]
 tool: native + React (composes panel, meter, status, chart frame, disclosure and field)
 states: [daily target part way, target met with a deadline's pace, no target and read only, goal refused]
-added: 0.96.0
-updated: 0.96.0
+added: 0.98.0
+updated: 0.98.0
 source: Carrel, app/components/writing/progress-panel.tsx (the panel and its goal form), app/lib/writing/progress.ts (dayTotals, pace, targetFor, streak, recentDays, parseWritingDays), app/lib/writing.server.ts (saveGoal's target check, untypedField) and app/routes/book.file.tsx (the untyped words counter on paste and drop).
 replaces:
   - "ProgressPanel"

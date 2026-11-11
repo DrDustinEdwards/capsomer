@@ -1,6 +1,6 @@
 {
   "name": "capsomer",
-  "version": "0.96.0",
+  "version": "0.98.0",
   "description": "Capsomer: the shared design system for Dustin Edwards's apps. Tokens, components and patterns, in plain CSS with optional behavior modules and React wrappers.",
   "license": "MIT",
   "repository": {
@@ -91,6 +91,10 @@
     "./testing": {
       "types": "./dist/test/helpers.d.ts",
       "default": "./dist/test/helpers.js"
+    },
+    "./testing/page": {
+      "types": "./dist/test/page.d.ts",
+      "default": "./dist/test/page.js"
     },
     "./fonts": {
       "types": "./tokens/fallback-fonts.d.mts",

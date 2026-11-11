@@ -5,8 +5,8 @@ summary: A person's own short list of labels, each a word with one of the eight 
 parts: [css, behavior, react]
 tool: native
 states: [every color, a value matched ignoring case, a value not on the list, editor with empty rows]
-added: 0.96.0
-updated: 0.96.0
+added: 0.98.0
+updated: 0.98.0
 source: Carrel, app/lib/writing/status.ts (cleanLabels, labelFor, COLOR_NAMES), app/components/writing/status-label.tsx (StatusLabelPill), app/routes/book.settings.tsx (the list and its editor) and app/app.css (.app-label, .app-label-dot, .app-label-list, .app-label-edit, lines 918 to 980).
 replaces:
   - 'className="app-label(-dot|-list|-edit)?[ "]'

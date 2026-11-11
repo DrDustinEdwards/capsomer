@@ -5,8 +5,8 @@ summary: A byline of names with the site owner's marked, folded into "A, B, ...,
 parts: [css, react]
 tool: native
 states: [short list, names that link, folded with the owner in the lead, folded with the owner further down, folded and opened]
-added: 0.96.0
-updated: 0.96.0
+added: 0.98.0
+updated: 0.98.0
 source: dustinedwards.info app/routes/publications.tsx:100-170 (AuthorName, Names, AuthorList) and app/routes/publications.$slug.tsx:119-135 (Authors); styles/publications.css (.pub-authors, .pub-author-me, .pub-authors-more, .pub-authors-full)
 replaces:
   - 'className="pub-author(s|-me|s-more|s-full)\b'

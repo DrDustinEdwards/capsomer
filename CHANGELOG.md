@@ -2,9 +2,7 @@
 
 Each release names every removed or renamed token or class, and every changed HTML contract.
 
-## [Unreleased]
-
-## [0.96.0]
+## [0.98.0]
 
 - **Batch 8 of the shared-components audit: specialized components** (clusters C73 to C85). Each was extracted from a site that had its own copy; the sites move onto this release and delete theirs. Every new component has a doc page, a states page and its specs.
 - **Dictionary entry** (from dustinedwards.info's named software pages). New `.cap-dictionary-entry`: a headword with its syllables, IPA and respelling, part of speech and plural, numbered senses with subject labels, and the etymology between two rules. The speaker is a link to the clip with no script and a button with it (`aria-pressed` while playing), and a clip that cannot load or play brings the link back. `capsomer/behavior/dictionary-entry` (`enhance`, `wireListen`, `listenLabel`) and `DictionaryEntry` in React. No token or class was removed or renamed.
@@ -48,6 +46,21 @@ Each release names every removed or renamed token or class, and every changed HT
 - **Schedule dialog** (new): a `datetime-local` field in the Dialog named by the browser's time zone, the chosen time said back with the Time component, a past time refused beside the field, and an ISO time sent on confirm; pure `localValue(at, zone)` and `checkSchedule` (from Carrel's ScheduleDialog). No token or class was removed or renamed.
 - **Share preview: `SerpWidthMeter`**, a Meter of a search title's or description's pixel width against the cut, on Prelum's `serpWidth`, so the editor and `prelum-audit` agree and a server render shows the number; `measure` takes an app's own (from Carrel's WidthMeter). No token or class was removed or renamed.
 - **Draft compare: `unifiedPatch(name, before, after)` and `hasChanges(patch)`**, a unified patch in jsdiff's `createTwoFilesPatch` shape from the component's own line diff, so an app no longer needs the `diff` library for DraftPatch (from Carrel's lib/patch.ts). No token or class was removed or renamed.
+
+## [0.96.0]
+
+Options so a site keeps its own look on the shared parts (Foxhound, moving its stat cards, badges and blog lists onto Capsomer without a visible change).
+
+- **Static stat tile: look tokens, and `ok` colors the figure.** New custom properties, each defaulting to the family's look: `--tile-figure-face`, `--tile-figure-weight`, `--tile-label-face`, `--tile-label-size`, `--tile-label-weight`, `--tile-label-case`, `--tile-label-tracking`, `--tile-icon-flow`, `--tile-icon-align`, `--tile-icon-size`, `--tile-gap`, `--tile-detail-space`, `--tile-pad`, `--tile-radius`, `--tile-shadow` (with 0.92.0's `--tile-figure-size`), and for a grid row `--tiles-columns` and `--tiles-gap`. A static tile with `data-tone="ok"` now draws its figure in `--ok`, as `warn` and `crit` do; a static tile has no word beside the figure, so its label and note say what the color means. Link and button tiles are unchanged.
+- **Badge: `variant="tag"` and `glyph={false}`.** A tag is the tone's tint with an edge in the word's own color (or a hairline label with no tone, or a family's accent with `data-family`), set in the site's tag face: `--tag-face`, `--tag-size`, `--tag-weight`, `--tag-case`, `--tag-tracking`, `--tag-edge`. `glyph={false}` leaves the glyph out of a toned badge, for a site whose badges are words alone; the word must then say the state. Type change: `PillProps.glyph` is `GlyphName | false`, and `BadgeVariant` gains `"tag"`.
+- **Prose blocks: list tokens.** `--prose-bullets` and `--prose-numbers` set the list-style of a plain and a numbered list (disc, circle and decimal by default), and `--prose-item-space` the space after each item (0.3em).
+
+No token or class was removed or renamed.
+
+## [0.97.0]
+
+- **The page helpers need no test runner: `capsomer/testing/page`.** `countCssRules`, `settled`, `paintedContrast` (and its `Reading`), `focused`, `nextPost`, `ringContrast` and `rowOverflow` each run one function in the page, so they move to their own module, typed for any page with `evaluate` (`PageLike`: Playwright's or Puppeteer's). A site whose browser checks run on Puppeteer imports them without installing Playwright or axe; `capsomer/testing` still exports every one.
+- **Catalog: the search waits while an IME composes a word.** The search box fetched results on every `input` event, and an IME (Japanese, Chinese and Korean input, and many phone keyboards) sends those while a word is still being composed, so the catalog fetched half-typed syllables. It now skips an input event whose `isComposing` is true and searches on `compositionend` (UI Events, Composition Events). Found in the second shared-code audit, 2026-11-11. No token or class was removed or renamed.
 
 ## [0.95.1]
 

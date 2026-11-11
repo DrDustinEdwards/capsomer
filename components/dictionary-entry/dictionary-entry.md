@@ -5,8 +5,8 @@ summary: A word set as a dictionary sets it, between two rules, with its pronunc
 parts: [css, behavior, react]
 tool: native + own JavaScript
 states: [default with the speaker as a button, playing, hover, keyboard focus, without script the speaker is a link, a clip that cannot play brings the link back, no clip and no etymology]
-added: 0.96.0
-updated: 0.96.0
+added: 0.98.0
+updated: 0.98.0
 source: dustinedwards.info, app/styles/dictionary-entry.css, app/components/dictionary-entry.tsx and app/enhance/pronounce.ts
 replaces:
   - '\.term-(entry|head|word|pron|ipa|listen|senses|ety)\s*\{'

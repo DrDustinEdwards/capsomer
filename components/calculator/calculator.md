@@ -5,8 +5,8 @@ summary: A form drawn from a list of fields beside a result drawn from a plain v
 parts: [css, behavior, react]
 tool: native + own JavaScript
 states: [default with the worked result, live as it is typed in, a value it cannot use, keyboard focus, embedded in another page]
-added: 0.96.0
-updated: 0.96.0
+added: 0.98.0
+updated: 0.98.0
 source: dustinedwards.info, app/components/phage-tool.tsx, app/lib/phage-tools.mjs (toolValues, resultView, textParts), app/enhance/tools.ts and app/styles/phage-tools.css
 replaces:
   - '\.phage-tool(-form|-field|-status|-detail|-answer|-steps)?\s*\{'

@@ -5,8 +5,8 @@ summary: A few small buttons that each post one AI job to the app's route, and w
 parts: [css, behavior, react]
 tool: native + React (composes button and alert)
 states: [ready, done with a draft to open, refused with the other engine to try, in flight]
-added: 0.96.0
-updated: 0.96.0
+added: 0.98.0
+updated: 0.98.0
 source: Carrel, app/components/ai-write-buttons.tsx (used in app/routes/editor.tsx and book.file.tsx); the engines are site-runtime's ai-engine.mjs.
 replaces:
   - "AiWriteButtons"

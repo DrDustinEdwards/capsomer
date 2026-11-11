@@ -5,8 +5,8 @@ summary: One line at the foot of a list that starts a new thing by name. A field
 parts: [css, react]
 tool: native
 states: [one field, two fields with one optional, a short select beside the name, narrow column]
-added: 0.96.0
-updated: 0.96.0
+added: 0.98.0
+updated: 0.98.0
 source: Carrel, app/app.css (.app-inline-form) and its forms in app/routes/book.tsx (New chapter, First scene), book.chapter.tsx (New scene) and book.bible.tsx (New entry, Name).
 replaces:
   - 'className="app-inline-form[ "]'

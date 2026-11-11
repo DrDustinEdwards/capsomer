@@ -5,8 +5,8 @@ summary: A drawing with numbered callouts on leader lines, in a wide and a narro
 parts: [css, behavior, react]
 tool: own JavaScript
 states: [default with two layouts, the key outside the figure, a narrow container shows the narrow drawing, a callout and its entry lit, leaders drawing in, reduced motion]
-added: 0.96.0
-updated: 0.96.0
+added: 0.98.0
+updated: 0.98.0
 source: dustinedwards.info, app/components/plate-i.tsx, app/components/plate-i-geometry.ts, app/enhance/plate.ts and app/styles/home.css (the plate and its key)
 replaces:
   - '\.plate-(plaque|leader|label|key|key-entry|key-art)\s*\{'

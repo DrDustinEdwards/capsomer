@@ -6,7 +6,7 @@ parts: [css, behavior, react]
 tool: native
 states: [search result, search result with a note, social card, social card with a note in a narrow space, width meter that fits, width meter past the cut]
 added: 0.5.0
-updated: 0.96.0
+updated: 0.98.0
 source: The site admin's SerpPreview and OgPreview (dustinedwards-info app/components/admin/social-previews.tsx, .serp-* and .og-* in app/admin.css; PR #320, gap 5); Carrel's WidthMeter (app/components/editor/search-fields.tsx, app/lib/serp-width.ts)
 replaces:
   - 'class="(?:[^"]*\s)?(serp-preview|og-preview)[\s"]'
