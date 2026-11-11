@@ -6,7 +6,7 @@ parts: [css]
 tool: native
 states: [content, one destination, hover, stretched link with actions, focus, lead, side layout, aligned grid, choice, choice checked, choice disabled, book cover ratio]
 added: 0.99.0
-updated: 0.107.0
+updated: 0.108.0
 source: Chrome's Modern Web Guidance card guide; replaces Foxing's book and entity cards (book-card.tsx, ui.tsx EntityCard), txasm's awardee cards (awardees.tsx), bsw's service, team and quote cards (cards.tsx) and Carrel's corkboard cards
 replaces:
   - 'className="[^"]*\b(fx-book-card|entity-card|awardee-card|service-card|team-card|corkboard-card)\b'

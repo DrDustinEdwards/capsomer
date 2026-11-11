@@ -95,6 +95,11 @@ interface CoreProps<T> {
   // The site's own controls in the item's buttons, after the steps and the move-to select and
   // before Remove (a checkbox, say).
   renderControls?: (item: T, state: SortState) => ReactNode;
+  // A part after the buttons, the item's full width: an "Edit item" disclosure that belongs under the
+  // item's title and its buttons rather than beside them.
+  renderFoot?: (item: T, state: SortState) => ReactNode;
+  // How Remove is drawn: "quiet" (the default, bare words) or "bordered" (a boxed button).
+  removeStyle?: "quiet" | "bordered";
 }
 
 export interface SortableListProps<T> extends CoreProps<T> {
@@ -194,6 +199,8 @@ function Core<T>({
   getLabel,
   renderItem,
   renderHead,
+  renderFoot,
+  removeStyle = "quiet",
   layout = "rows",
   messages,
   altKeys = false,
@@ -624,7 +631,7 @@ function Core<T>({
                       name={name ? "remove" : undefined}
                       value={name ? id : undefined}
                       className="cap-btn"
-                      data-variant="quiet"
+                      data-variant={removeStyle === "quiet" ? "quiet" : undefined}
                       data-size="sm"
                       data-cap-part="remove"
                       disabled={busy || total <= min}
@@ -638,6 +645,9 @@ function Core<T>({
                   ) : null}
                 </span>
               )}
+              {renderFoot ? (
+                <div className="cap-sortable-foot">{renderFoot(item, state)}</div>
+              ) : null}
               {name ? (
                 <input type="hidden" name={board ? `${name}[${lane.id}]` : name} value={id} />
               ) : null}

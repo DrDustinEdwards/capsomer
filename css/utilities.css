@@ -45,10 +45,11 @@
     color: var(--muted);
   }
   /* The family page: one width and one body size on every site (--page-max, --fs-page), so a
-     page's content and footer line up with the letterhead above them, and with every other site's. */
+     page's content and footer line up with the letterhead above them, and with every other site's.
+     --page-leading sets its line height (1.55) for a site whose body reads looser. */
   .cap-page {
     font-size: var(--fs-page);
-    line-height: 1.55;
+    line-height: var(--page-leading, 1.55);
     box-sizing: border-box;
     inline-size: 100%;
     max-inline-size: var(--page-max);

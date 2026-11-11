@@ -102,6 +102,8 @@
     max-inline-size: var(--measure);
     color: var(--muted);
     line-height: 1.5;
+    /* Balanced like the title: base.css gives a p "pretty", which left a centered sentence ragged. */
+    text-wrap: balance;
     /* Its links are text links, drawn by css/base.css. */
   }
 
