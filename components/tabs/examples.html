@@ -172,6 +172,18 @@
   </div>
 </section>
 
+<section class="cap-specimen" aria-labelledby="s-pill-own">
+  <h2 id="s-pill-own">Pill variant in a site's own look: tabs of one width (--cap-tab-min-inline-size), the chosen label in the accent (--cap-tab-ink)</h2>
+  <div class="cap-tabs" data-cap="tabs" id="tabs-pill-own">
+    <div class="cap-tabs-list tabs-own-look" role="tablist" aria-label="Draft view" data-variant="pill">
+      <button type="button" class="cap-tab" role="tab" id="to-draft" aria-selected="true" aria-controls="top-draft" tabindex="0">Draft</button>
+      <button type="button" class="cap-tab" role="tab" id="to-notes" aria-selected="false" aria-controls="top-notes" tabindex="-1">Notes</button>
+    </div>
+    <div class="cap-tabs-panel" role="tabpanel" id="top-draft" aria-labelledby="to-draft" tabindex="0"><p>The draft Jordan Park is editing.</p></div>
+    <div class="cap-tabs-panel" role="tabpanel" id="top-notes" aria-labelledby="to-notes" tabindex="0" hidden><p>Two notes from Sam Lee.</p></div>
+  </div>
+</section>
+
 <section class="cap-specimen" aria-labelledby="s-progressive">
   <h2 id="s-progressive">Progressive and remembered: links to every panel until script runs; the reader's choice kept for every set</h2>
   <div class="cap-tabs" data-cap="tabs" data-progressive data-remember="specimen-platform" data-remember-guess="platform" id="tabs-progressive">
