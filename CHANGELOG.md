@@ -4,6 +4,10 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+## [0.95.2]
+
+- **Catalog: the search waits while an IME composes a word.** The search box fetched results on every `input` event, and an IME (Japanese, Chinese and Korean input, and many phone keyboards) sends those while a word is still being composed, so the catalog fetched half-typed syllables. It now skips an input event whose `isComposing` is true and searches on `compositionend` (UI Events, Composition Events). Found in the second shared-code audit, 2026-11-11. No token or class was removed or renamed.
+
 ## [0.95.1]
 
 - **Rich editor:** an image inserted from the editor uses the markdown editor's `defaultImageMarkdown`. The editor had its own copy, which kept a line break in the alt text and so broke the Markdown image (as Carrel fixed in its copy after 0.95.0 was cut). No token, class or HTML contract changed.

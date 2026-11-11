@@ -111,6 +111,26 @@ test("behavior: typing in the search updates the results, the count, the chips a
   await expect(form.locator(".cap-catalog-apply")).toBeHidden();
 });
 
+test("behavior: the search waits while an IME is still composing a word", async ({ page }) => {
+  await visitStates(page, "catalog", "light");
+  const form = wide(page);
+  const input = form.getByLabel("Search articles");
+  const before = await count(form).textContent();
+  await input.evaluate((el: HTMLInputElement) => {
+    el.dispatchEvent(new CompositionEvent("compositionstart", { bubbles: true }));
+    el.value = "bil";
+    el.dispatchEvent(new InputEvent("input", { bubbles: true, isComposing: true }));
+  });
+  await page.waitForTimeout(800);
+  expect(new URL(page.url()).searchParams.get("q")).toBeNull();
+  await expect(count(form)).toHaveText(before ?? "");
+  await input.evaluate((el: HTMLInputElement) => {
+    el.value = "billing";
+    el.dispatchEvent(new CompositionEvent("compositionend", { bubbles: true, data: "billing" }));
+  });
+  await expect.poll(() => new URL(page.url()).searchParams.get("q")).toBe("billing");
+});
+
 test("behavior: ticking a facet narrows the results and its chip removes just that filter", async ({
   page,
 }) => {
