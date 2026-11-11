@@ -41,7 +41,7 @@ eachTheme((theme) => {
     await expect(
       page.locator("#rs-read-again").getByRole("button", { name: "Reading again" }),
     ).toBeDisabled();
-    await expect(page.locator("#rs-table-panel").getByRole("region")).toHaveAccessibleName(
+    await expect(page.locator("#rs-table-panel .cap-table-wrap")).toHaveAccessibleName(
       "Operator actions",
     );
     await expect(page.locator("#rs-table-empty table")).toHaveCount(0);
