@@ -32,7 +32,7 @@ A long block that must sit in a fixed space beside other content: a sample excer
 
 ## The default and its reason
 
-- **Thumb `--muted` on track `--sunken`**: at least 3:1 in every family and theme (WCAG 1.4.11), never a pale grey. Under `prefers-contrast: more`, `--text` on `--surface`.
+- **Thumb `--muted` on track `--sunken`**: at least 3:1 in every family and theme (WCAG 1.4.11), never a pale gray. Under `prefers-contrast: more`, `--text` on `--surface`.
 - **`scrollbar-width: thin` and `scrollbar-gutter: stable`**: macOS ignores custom colors without a width, and draws the track only with a stable gutter. The thumb never relies on the track to be seen.
 - **The old `::-webkit-scrollbar` rules only under `@supports not (scrollbar-color: auto)`**, so a browser with both does not mix them.
 - **`scrollbar-color` never animates** (a WebKit bug flickers it).
