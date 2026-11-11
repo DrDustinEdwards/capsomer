@@ -1,0 +1,221 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* The carousel: a native scroll-snap track with Previous and Next over its edges, markers under it
+   and a hidden status line. Built to Chrome's Modern Web Guidance carousel guide. carousel.ts wires
+   the controls; without it the track still scrolls and snaps. */
+@layer cap.components {
+  .cap-carousel {
+    --carousel-per-view: 1;
+    --carousel-gap: var(--space-6);
+    position: relative;
+    display: grid;
+    /* minmax(0, 1fr): the slides' own width never widens the page past a phone's window. */
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-4);
+  }
+
+  .cap-carousel-viewport {
+    position: relative;
+  }
+
+  .cap-carousel-track {
+    display: flex;
+    gap: var(--carousel-gap);
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    /* mandatory, so the track always rests on a slide, which the settled status relies on. */
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    touch-action: manipulation;
+    border-radius: var(--radius-m);
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+    &:focus-visible {
+      outline: 2px solid var(--ring);
+      outline-offset: 4px;
+    }
+
+    & > * {
+      flex: 0 0
+        calc((100% - (var(--carousel-per-view) - 1) * var(--carousel-gap)) / var(--carousel-per-view));
+      min-inline-size: 0;
+      scroll-snap-align: center;
+    }
+  }
+  .cap-carousel[data-per-view="2"] > .cap-carousel-viewport,
+  .cap-carousel[data-per-view="3"] > .cap-carousel-viewport {
+    container-type: inline-size;
+  }
+  @container (inline-size >= 40rem) {
+    .cap-carousel[data-per-view="2"] .cap-carousel-track,
+    .cap-carousel[data-per-view="3"] .cap-carousel-track {
+      --carousel-per-view: 2;
+    }
+  }
+  @container (inline-size >= 60rem) {
+    .cap-carousel[data-per-view="3"] .cap-carousel-track {
+      --carousel-per-view: 3;
+    }
+  }
+  /* A peek: each slide a little narrower than the track, so the next one shows at the edge. */
+  .cap-carousel[data-peek] .cap-carousel-track > * {
+    flex-basis: 85%;
+  }
+
+  /* Vertical: a column scrolling on the block axis, as tall as the carousel sets. */
+  .cap-carousel[data-axis="block"] .cap-carousel-track {
+    flex-direction: column;
+    block-size: var(--carousel-block, 20rem);
+    overflow: hidden auto;
+    overscroll-behavior: contain;
+    scroll-snap-type: y mandatory;
+    & > * {
+      flex: 0 0 100%;
+    }
+  }
+
+  /* Looping: the last slide parks before the first while --current is 0 or 1; the first parks after
+     the last while --current is the last or second-to-last. --current has no default, so with no
+     script nothing is parked and the carousel starts on its first slide. */
+  @supports (order: calc(sibling-count() * 1)) {
+    .cap-carousel[data-cap-loops] .cap-carousel-track {
+      & > :first-child {
+        order: clamp(0, var(--current) - (sibling-count() - 3), 1);
+      }
+      & > :last-child {
+        order: calc(-1 * clamp(0, 2 - var(--current), 1));
+      }
+    }
+  }
+
+  /* Previous and Next over the track's two edges; the box between them lets the track scroll. */
+  .cap-carousel-controls {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    pointer-events: none;
+
+    & > button {
+      pointer-events: auto;
+      touch-action: manipulation;
+      inline-size: var(--target);
+      block-size: var(--target);
+      min-inline-size: 2.75rem;
+      min-block-size: 2.75rem;
+      padding: 0;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-full);
+      background: var(--surface);
+      color: var(--text);
+      box-shadow: var(--shadow-s);
+      cursor: pointer;
+
+      &:first-child {
+        margin-inline-start: calc(-1 * var(--carousel-overhang, var(--space-3)));
+      }
+      &:last-child {
+        margin-inline-end: calc(-1 * var(--carousel-overhang, var(--space-3)));
+      }
+      &:hover,
+      &[data-force="hover"] {
+        background: var(--raised);
+        color: var(--accent-text);
+      }
+      &:focus-visible {
+        outline: 2px solid var(--ring);
+        outline-offset: 2px;
+      }
+      &:disabled {
+        opacity: 0.4;
+        cursor: default;
+      }
+      & svg {
+        inline-size: 1.25rem;
+        block-size: 1.25rem;
+      }
+      /* A carousel with the controls flipped for right-to-left points its arrows the way it moves. */
+      &:dir(rtl) svg {
+        scale: -1 1;
+      }
+    }
+  }
+  .cap-carousel[data-axis="block"] .cap-carousel-controls {
+    flex-direction: column;
+    & > button {
+      rotate: 90deg;
+    }
+  }
+
+  /* The markers: one button per slide, a dot drawn inside a full-size hit area. */
+  .cap-carousel-markers {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-1);
+
+    & > button {
+      inline-size: max(var(--target), 1.5rem);
+      block-size: max(var(--target), 1.5rem);
+      min-inline-size: 1.5rem;
+      min-block-size: 1.5rem;
+      padding: 0;
+      display: grid;
+      place-items: center;
+      border: 0;
+      border-radius: var(--radius-full);
+      background: none;
+      cursor: pointer;
+      touch-action: manipulation;
+
+      &::before {
+        content: "";
+        inline-size: 0.625rem;
+        block-size: 0.625rem;
+        border-radius: var(--radius-full);
+        background: var(--line-strong);
+      }
+      &[aria-current="true"]::before {
+        inline-size: 1.75rem;
+        background: var(--primary);
+      }
+      &:hover::before {
+        background: var(--accent-hover);
+      }
+      &:focus-visible {
+        outline: 2px solid var(--ring);
+        outline-offset: 0;
+      }
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .cap-carousel-track {
+      scroll-behavior: smooth;
+    }
+    .cap-carousel-markers > button::before {
+      transition:
+        inline-size var(--dur-fast) var(--ease-out),
+        background-color var(--dur-fast) var(--ease-out);
+    }
+  }
+
+  @media (forced-colors: active) {
+    .cap-carousel-markers > button::before {
+      background: GrayText;
+    }
+    .cap-carousel-markers > button[aria-current="true"]::before {
+      background: Highlight;
+    }
+    .cap-carousel-controls > button {
+      border-color: ButtonText;
+    }
+  }
+}

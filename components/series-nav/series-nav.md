@@ -5,7 +5,7 @@ summary: Where a post sits in its series. A ruled box with "Part 2 of 3" and the
 parts: [css, behavior, react]
 tool: native
 states: [a middle part, the first part, the last part]
-added: 0.99.0
+added: 0.100.0
 source: dustinedwards.info, app/components/post-series-nav.tsx and components/signs.tsx, styles/post-enhancements.css and post-shell.css
 replaces:
   - 'className="post-series[ "]'

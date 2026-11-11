@@ -22,7 +22,8 @@ import {
 } from "./media-record.ts";
 import { bands, nextTile, type Direction } from "./media-grid.ts";
 import { createAutosave, type Autosave, type SaveState } from "./media-autosave.ts";
-import { applyBulkTag, COPIED_MS, COPY_FAILED_MS, copyText } from "./media-actions.ts";
+import { applyBulkTag } from "./media-actions.ts";
+import { COPIED_MS, COPY_FAILED_MS, copyText } from "../copy/copy.ts";
 import { buildTile, glyph, part, recordOf, syncTile, writeRecord } from "./media-tile.ts";
 import {
   fillInspector,

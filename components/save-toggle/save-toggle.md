@@ -6,6 +6,7 @@ parts: [css, behavior, react]
 tool: own JavaScript
 states: [not saved, saved, hover, storage blocked]
 added: 0.94.0
+updated: 0.99.0
 source: germomics' SaveButton (app/components/content/PostDetail.tsx)
 replaces:
   - 'germomics-saved'
@@ -29,7 +30,7 @@ A reading site with no sign-in where a reader wants to come back to an item: an 
 
 - **A toggle button** (`aria-pressed`), not a checkbox: it acts at once and says its state.
 - **The words change with the state** (Save, Saved) as well as the icon, so the state is never in the icon alone.
-- **Kept in this browser only** (localStorage, a JSON array of ids under one key per site). Every read and write is in try/catch: in a private window that blocks storage the button still renders and simply keeps nothing.
+- **Kept in this browser only** (localStorage, a JSON array of ids under one key per site). Reads and writes go through `capsomer/behavior/hooks`' storage: in a private window that blocks storage the button still toggles, and the list lasts the page.
 - **Every button for the same id stays in step**, in this tab and in others (the `storage` event).
 - **The server renders "Save"**, so hydration matches; the stored state follows when the page runs.
 
