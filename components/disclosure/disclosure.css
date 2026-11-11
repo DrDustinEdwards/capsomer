@@ -324,3 +324,149 @@
     }
   }
 }
+
+/* C35 (0.100.0). The inline look, the sign marker, the expand toggle and paper. */
+@layer cap.components {
+  /* Inline: a disclosure inside running text or under a step (a post's "Show the data", a
+     procedure step's calculator). No box, a rule above and below that stacked sections share,
+     the title in the link color at body weight. */
+  .cap-disclosure[data-variant="inline"] {
+    border-width: 1px 0;
+    border-radius: 0;
+    background: transparent;
+
+    & + .cap-disclosure[data-variant="inline"] {
+      margin-block-start: 0;
+      border-block-start-width: 0;
+    }
+    & > summary {
+      padding-inline: 0;
+      border-radius: 0;
+      color: var(--accent-text);
+      font-weight: 500;
+
+      &:hover,
+      &[data-force="hover"] {
+        background: transparent;
+        color: var(--accent-hover);
+      }
+      &:active,
+      &[data-force="pressed"] {
+        background: transparent;
+      }
+    }
+    &[open] > summary {
+      border-bottom: 0;
+    }
+    & > .cap-disclosure-body {
+      padding: 0 0 var(--gap);
+    }
+  }
+
+  /* The sign marker: a mono plus that becomes a minus. Both are one mono cell wide, so the
+     title does not shift when it opens, and the marker reads the same in every engine (the
+     native triangle differs in each). Works with any variant. */
+  .cap-disclosure[data-marker="sign"] > summary {
+    &::before {
+      content: "+";
+      width: 1ch;
+      height: auto;
+      margin-inline: 0;
+      border: 0;
+      font-family: var(--mono);
+      font-weight: 400;
+      line-height: 1;
+      transform: none;
+      order: 0;
+    }
+    &::after {
+      content: none;
+    }
+  }
+  .cap-disclosure[data-marker="sign"][open] > summary::before {
+    content: "\2212";
+    transform: none;
+  }
+
+  /* The expand toggle: a link-like button that shows or hides one region beside it (a step's
+     email, a table row's payload). The chevron points down closed and up open. */
+  .cap-expand-toggle {
+    gap: var(--space-1);
+
+    &::after {
+      content: "";
+      flex: none;
+      width: 6px;
+      height: 6px;
+      margin-block-end: 3px;
+      margin-inline-start: 4px;
+      border-right: 1.5px solid currentColor;
+      border-bottom: 1.5px solid currentColor;
+      transform: rotate(45deg);
+    }
+    &[aria-expanded="true"]::after {
+      margin-block: 3px 0;
+      transform: rotate(225deg);
+    }
+  }
+  .cap-expand-region {
+    margin-block-start: var(--space-3);
+  }
+  /* A table's detail row spans every column. A reflowed table draws rows as grids, which would
+     beat [hidden], so a closed detail row is put away outright. */
+  .cap-expand-detail[hidden] {
+    display: none !important;
+  }
+  .cap-expand-detail > td {
+    padding-block-start: 0;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .cap-expand-toggle::after {
+      transition: transform var(--dur-fast) var(--ease-out);
+    }
+  }
+  @media (forced-colors: active) {
+    .cap-expand-toggle::after {
+      border-color: ButtonText;
+    }
+  }
+
+  /* On paper every section and group is open, since a reader cannot press a summary there.
+     ::details-content serves current engines, the sibling rule older ones. A section that only
+     works on screen (a calculator) takes data-print="hide" and is left off the page. */
+  @media print {
+    .cap-disclosure::details-content {
+      content-visibility: visible;
+      block-size: auto;
+      opacity: 1;
+    }
+    .cap-disclosure:not([open]) > :not(summary) {
+      display: block;
+    }
+    .cap-disclosure > summary::before,
+    .cap-disclosure > summary::after,
+    .cap-group-toggle::before,
+    .cap-expand-toggle::after {
+      display: none;
+    }
+    .cap-disclosure[data-print="hide"] {
+      display: none;
+    }
+  }
+}
+
+/* The reset's [hidden] rule is !important in cap.reset, and an earlier layer's !important wins
+   over a later one's, so the print overrides for hidden groups sit in cap.reset too, more
+   specific than that rule. */
+@layer cap.reset {
+  @media print {
+    .cap-group > .cap-group-rows[hidden],
+    .cap-expand-region.cap-expand-region[hidden] {
+      display: block !important;
+    }
+    tr.cap-expand-detail.cap-expand-detail[hidden] {
+      display: table-row !important;
+    }
+  }
+}

@@ -6,6 +6,41 @@ import {
   visitStates,
 } from "../../test/helpers.ts";
 
+test("behavior: an expand toggle shows its region and says so; a table row opens its detail row", async ({
+  page,
+}) => {
+  await visitStates(page, "disclosure", "light");
+  const email = page.getByRole("button", { name: "View email" });
+  await email.click();
+  await expect(page.getByRole("button", { name: "Hide email" })).toHaveAttribute(
+    "aria-expanded",
+    "true",
+  );
+  await expect(page.locator("#email-preview")).toBeVisible();
+  const row = page.getByRole("button", { name: "invoice.payment_failed payload" });
+  await row.press("Enter");
+  await expect(row).toHaveAttribute("aria-expanded", "true");
+  await expect(page.locator("#evt-1-payload")).toBeVisible();
+  await row.press("Enter");
+  await expect(page.locator("#evt-1-payload")).toBeHidden();
+});
+
+test("behavior: the sign marker keeps the title still, and on paper every section is open but a screen-only one", async ({
+  page,
+}) => {
+  await visitStates(page, "disclosure", "light");
+  const title = page.locator("#inline-closed > summary");
+  const before = (await title.boundingBox())!.width;
+  await title.click();
+  await expect(page.locator("#inline-closed")).toHaveAttribute("open", "");
+  expect((await title.boundingBox())!.width).toBe(before);
+  await title.click();
+  await page.emulateMedia({ media: "print" });
+  await expect(page.locator("#inline-closed .cap-disclosure-body")).toBeVisible();
+  await expect(page.locator("#notices-rows")).toBeVisible();
+  await expect(page.locator("#step-calc")).toBeHidden();
+});
+
 eachTheme((theme) => {
   test("accessibility: no axe violations", async ({ page }) => {
     await visitStates(page, "disclosure", theme);
@@ -21,6 +56,8 @@ eachTheme((theme) => {
       { sel: ".cap-group-count", what: "a group's count" },
       { sel: ".cap-group-count", what: "the count's boundary", part: "border" },
       { sel: ".cap-group-rows:not([hidden]) > li", what: "a grouped row" },
+      { sel: "#inline-closed > summary", what: "an inline section's title" },
+      { sel: "#expand-specimen .cap-expand-toggle", what: "an expand toggle" },
     ]);
   });
 
