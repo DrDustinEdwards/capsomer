@@ -79,10 +79,7 @@ const SPECIMENS: Record<string, () => React.ReactNode> = {
 
 for (const el of Array.from(document.querySelectorAll<HTMLElement>("[data-mount]"))) {
   const render = SPECIMENS[el.dataset.mount ?? ""];
-  if (render)
-    createRoot(el).render(
-      <StrictMode>
-        <MessageProvider>{render()}</MessageProvider>
-      </StrictMode>,
-    );
+  // The queue says Later and Undo in the page's message region.
+  const queue = render ? <MessageProvider>{render()}</MessageProvider> : null;
+  if (queue) createRoot(el).render(<StrictMode>{queue}</StrictMode>);
 }

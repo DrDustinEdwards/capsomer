@@ -30,6 +30,16 @@ const rowOrder = (page: Page) =>
       })),
   );
 
+// The Foxing specimen with its Books panel opened from the keyboard: Enter on the focused button.
+async function openBooksByKey(page: Page, theme: "light" | "dark") {
+  await visitStates(page, "site-header", theme, "fx-public");
+  const books = page.getByRole("button", { name: "Books" });
+  const panel = page.locator("#" + (await books.getAttribute("aria-controls")));
+  await books.focus();
+  await page.keyboard.press("Enter");
+  return { books, panel };
+}
+
 eachTheme((theme) => {
   // The theme button says what it does: the other theme.
   const themeName = theme === "light" ? "Switch to dark theme" : "Switch to light theme";
@@ -278,11 +288,7 @@ eachTheme((theme) => {
   test("keyboard: Enter opens a panel and focuses its first item; Up, Down, Home and End move; Esc closes and returns focus", async ({
     page,
   }) => {
-    await visitStates(page, "site-header", theme, "fx-public");
-    const books = page.getByRole("button", { name: "Books" });
-    const panel = page.locator("#" + (await books.getAttribute("aria-controls")));
-    await books.focus();
-    await page.keyboard.press("Enter");
+    const { books, panel } = await openBooksByKey(page, theme);
     await expect(panel).toBeVisible();
     const items = panel.locator("a, button");
     const n = await items.count();
@@ -363,11 +369,7 @@ eachTheme((theme) => {
   test("keyboard: Tab past a panel's last item closes it and goes on to the next control", async ({
     page,
   }) => {
-    await visitStates(page, "site-header", theme, "fx-public");
-    const books = page.getByRole("button", { name: "Books" });
-    const panel = page.locator("#" + (await books.getAttribute("aria-controls")));
-    await books.focus();
-    await page.keyboard.press("Enter");
+    const { panel } = await openBooksByKey(page, theme);
     await page.keyboard.press("End");
     await page.keyboard.press("Tab");
     await expect(panel).toBeHidden();
