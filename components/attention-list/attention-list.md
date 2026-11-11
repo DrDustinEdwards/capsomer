@@ -6,7 +6,7 @@ parts: [css, behavior, react]
 tool: native + own JavaScript
 states: [mixed list, a group open in place, warnings past the cap, all clear, phone width, a work queue with Later, set aside for later, nothing needs you]
 added: 0.1.0
-updated: 0.91.0
+updated: 0.92.0
 source: Capsid Portal, dashboard/src/views/Overview.tsx ("Needs attention") and styles.css ("attention strip"), dashboard/src/lib/derive.ts (attentionGroups)
 replaces:
   - 'class="attention"'

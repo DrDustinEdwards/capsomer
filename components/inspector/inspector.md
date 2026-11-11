@@ -5,7 +5,7 @@ summary: Everything about a text that is not the text, in tabs beside the writin
 parts: [css, react]
 tool: Capsomer tabs and dialog
 states: [wide screen with a count, an empty tab left out, opened on the tab the address asks for, phone with the sheet closed, phone with the sheet open]
-added: 0.91.0
+added: 0.92.0
 source: Carrel, app/components/editor/inspector.tsx (the post editor, the book file editor and the AI draft page)
 replaces:
   - "app-inspector"
