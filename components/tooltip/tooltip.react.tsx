@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useId, useRef, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useId, useState, type ReactNode } from "react";
 import { attach } from "./tooltip.ts";
 
 export interface TriggerProps {
@@ -17,24 +17,35 @@ export interface TooltipProps {
   align?: "start" | "center" | "end";
   // The small arrow pointing at the trigger. On by default.
   arrow?: boolean;
+  // The tip's element. "span" keeps it valid inside phrasing content such as a <p>; the tip
+  // is then phrasing content too (no block children).
+  as?: "div" | "span";
 }
 
 // Whether the tip is open is the platform's popover state, not React state: React renders
 // the same markup either way, and the behavior module shows and hides it.
-export function Tooltip({ tip, children, side = "top", align, arrow = true }: TooltipProps) {
+export function Tooltip({
+  tip,
+  children,
+  side = "top",
+  align,
+  arrow = true,
+  as: Tip = "div",
+}: TooltipProps) {
   const id = useId();
-  const tipRef = useRef<HTMLDivElement>(null);
   const [trigger, setTrigger] = useState<HTMLElement | null>(null);
+  const [tipEl, setTipEl] = useState<HTMLElement | null>(null);
   const ref = useCallback((el: HTMLElement | null) => setTrigger(el), []);
+  const tipRef = useCallback((el: HTMLElement | null) => setTipEl(el), []);
 
   useEffect(() => {
-    if (trigger && tipRef.current) return attach(trigger, tipRef.current);
-  }, [trigger]);
+    if (trigger && tipEl) return attach(trigger, tipEl);
+  }, [trigger, tipEl]);
 
   return (
     <>
       {children({ ref, "aria-describedby": id })}
-      <div
+      <Tip
         className="cap-popover"
         data-cap="tooltip"
         data-variant="tooltip"
@@ -47,7 +58,7 @@ export function Tooltip({ tip, children, side = "top", align, arrow = true }: To
       >
         {tip}
         {arrow ? <span className="cap-popover-arrow" aria-hidden="true" /> : null}
-      </div>
+      </Tip>
     </>
   );
 }

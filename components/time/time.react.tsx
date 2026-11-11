@@ -1,5 +1,5 @@
-import { useEffect, useId, useRef, useState, useSyncExternalStore, type ReactNode } from "react";
-import { attach } from "../tooltip/tooltip.ts";
+import { useEffect, useState, useSyncExternalStore, type ReactNode } from "react";
+import { Tooltip } from "../tooltip/tooltip.react.tsx";
 import { REFRESH_MS, UNREADABLE, exact, exactParts, text, toMs, type TimeFormat } from "./time.ts";
 
 export interface TimeProps {
@@ -47,36 +47,25 @@ function useHydrated(): boolean {
 }
 
 // The exact time in a tooltip beside a time, on hover and keyboard focus. The behavior module
-// shows and hides it (Esc hides). Spans only, so it is valid inside a <p>: Tooltip's tip is a div.
+// shows and hides it (Esc hides). The tip is a span, so it is valid inside a <p>.
 function TimeTip({ t, hydrated, children }: { t: number; hydrated: boolean; children: ReactNode }) {
-  const id = useId();
-  const trigger = useRef<HTMLSpanElement>(null);
-  const tipEl = useRef<HTMLSpanElement>(null);
-  useEffect(() => {
-    if (trigger.current && tipEl.current) return attach(trigger.current, tipEl.current);
-  }, []);
   return (
-    <>
-      {/* oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- the time takes focus so a keyboard reaches its tooltip */}
-      <span ref={trigger} tabIndex={0} className="cap-time-tip" aria-describedby={id}>
-        {children}
-      </span>
-      <span
-        ref={tipEl}
-        id={id}
-        className="cap-popover"
-        data-cap="tooltip"
-        data-variant="tooltip"
-        data-side="inline-end"
-        role="tooltip"
-        popover="manual"
-      >
-        {/* Plain text in the tip's own colors: an exact Time paints itself in --text, the tip's
-            background. The viewer's zone differs from the server's, so the browser's words win. */}
+    <Tooltip
+      as="span"
+      side="inline-end"
+      tip={
+        // Plain text in the tip's own colors: an exact Time paints itself in --text, the tip's
+        // background. The viewer's zone differs from the server's, so the browser's words win.
         <span suppressHydrationWarning>{exact(t, hydrated ? undefined : "UTC")}</span>
-        <span className="cap-popover-arrow" aria-hidden="true" />
-      </span>
-    </>
+      }
+    >
+      {(trigger) => (
+        // oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- the time takes focus so a keyboard reaches its tooltip
+        <span {...trigger} tabIndex={0} className="cap-time-tip">
+          {children}
+        </span>
+      )}
+    </Tooltip>
   );
 }
 
