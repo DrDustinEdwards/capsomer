@@ -172,7 +172,7 @@ export function parseRichText(input: string, allowed: readonly RichTextTag[]): R
   return prune(root);
 }
 
-// Empty tags go; neighbouring text joins.
+// Empty tags go; neighboring text joins.
 function prune(nodes: RichTextNode[]): RichTextNode[] {
   const out: RichTextNode[] = [];
   for (const n of nodes) {
