@@ -6,7 +6,7 @@ parts: [css, react]
 tool: Base UI
 states: [a tag field, typing a new tag, options from a server search, free text with suggestions, closed, closed with a value, with a clear button, several values as chips, comfortable density, open, open with chips, open with group labels, filtered, no match, option highlighted, loading, disabled with its reason, invalid with its message]
 added: 0.1.0
-updated: 0.96.0
+updated: 0.98.0
 source: none (new in Capsomer; the Portal's command palette is the command menu, not this)
 replaces:
   - "<datalist"

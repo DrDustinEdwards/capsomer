@@ -5,8 +5,8 @@ summary: The small React hooks every app wrote its own copy of, each hydration-s
 parts: [behavior, react]
 tool: own JavaScript
 states: []
-added: 0.96.0
-updated: 0.96.0
+added: 0.98.0
+updated: 0.98.0
 source: Foxing (lib/hydrated.ts, lib/cn.ts, search-commands.ts recents, reader-view.tsx), Carrel (lib/hydrated.ts, lib/remembered.ts), germomics (util/ClientOnly.tsx, EpisodeExtras.tsx usePrefersReducedMotion), the Capsid Portal (App.tsx useTick)
 replaces:
   - 'export function (useHydrated|useRemembered|usePrefersReducedMotion|useBrowserZone|ClientOnly)\b'

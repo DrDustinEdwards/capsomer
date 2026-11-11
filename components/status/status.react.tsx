@@ -278,7 +278,10 @@ export type BadgeVariant =
   | "link"
   // The family's accent tint, with no glyph: a category that is not a state (a kind of
   // attribution, a plan).
-  | "accent";
+  | "accent"
+  // A label on its tint with an edge in its own color, set in the site's tag face (--tag-*
+  // tokens): a site whose badges are tags (Foxhound's upper-case mono badges).
+  | "tag";
 
 export interface PillProps {
   // A status tone: the word and glyph on the tone's tint. Without a variant it is a status
@@ -288,8 +291,9 @@ export interface PillProps {
   variant?: BadgeVariant;
   // Running is an info tone drawn with an arc.
   running?: boolean;
-  // The mark of a state or kind that has its own shape; the tone sets the color.
-  glyph?: GlyphName;
+  // The mark of a state or kind that has its own shape; the tone sets the color. false leaves
+  // the glyph out, for a site whose badges are words alone: the word must then say the state.
+  glyph?: GlyphName | false;
   // A dot in the series color 1 to 8, before the word: a label the person colored (a status
   // list's labels). The word carries the meaning; the dot only repeats it. Give it with a
   // variant (outline for the quiet edge).
@@ -320,7 +324,7 @@ export function Pill({
 }: PillProps) {
   const inner = (
     <>
-      {tone ? <Glyph name={glyphFor(tone, running, glyph)} /> : null}
+      {tone && glyph !== false ? <Glyph name={glyphFor(tone, running, glyph)} /> : null}
       {series ? <span className="cap-pill-dot" aria-hidden="true" /> : null}
       {children}
     </>
