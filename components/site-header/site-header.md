@@ -43,7 +43,7 @@ An email, a printed page or an embedded widget has no header. A page inside anot
 
 | Slot | The site gives |
 | --- | --- |
-| Logo | An SVG or image at most 24px tall and 160px wide, and its name (`logo`) |
+| Logo | An SVG or image at most 24px tall and 160px wide, and its name (`logo`). `data-logo-fill="on"` on a part of the SVG draws it in the band's family color (`--on`) |
 | Accent | Its color family (`data-family` on the page) |
 | Band | `--header-bg`, `--header-fg`, `--header-fg-muted`, `--header-line`; or `data-band="dark"` (dark in both themes), and `data-translucent` (the band at 85%, blurred) |
 | UI face | `--font-ui` |

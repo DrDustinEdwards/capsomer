@@ -2,7 +2,7 @@
 name: manual
 title: Manual theme
 summary: The public pages of the dustinedwards.info sites set after the 1975 NASA Graphics Standards Manual, in the page's own family color. Opt-in, for public pages only.
-parts: [css, behavior]
+parts: [css, behavior, react]
 tool: native + own JavaScript
 states: [running head, running head as a sign, a numbered part with its lead, form boxes as a title block, form boxes as readings on a tone scale, form boxes as an instrument panel, leader index, checklist card, plate, signs, mission patch, letterhead, layout grid, direction strip, cheatline and stripe, roll blocks, time line, cue card, holding position marking, annunciator panel]
 added: 0.23.0
@@ -32,12 +32,12 @@ On a public page of a dustinedwards.info site: a home page, an index of papers o
 
 - **Running head** (`.cap-running-head`): the section's number and name in bold on the left, a folio or date on the right, over a hairline. `data-variant="sign"` sets it as a building sign: a dark panel, the family color in a 10px strip along its top, the number on a light plate.
 - **Part** (`.cap-part`, `.cap-part-title`, `.cap-part-no`, `.cap-part-lead`): a numbered part of a page. From 52rem the title takes the left third and the lead sits beside it; everything after them runs full width. The number is plain text in the heading, so it is read with the title.
-- **Form boxes** (`dl.cap-form-boxes`, `.cap-form-boxes-box`): facts in ruled boxes that share their rules, a mono label over each value. Four columns, two on a phone. `data-span="2"` or `"all"` on a box widens it; `data-weight="bold"` sets its value bold (the page number in a title block). `data-variant="readings"` sets each value as a large figure; `data-variant="tones"` also steps the boxes through one ink from light to dark, the type turning light on the two dark steps. `data-variant="panel"` sets them as an instrument panel (the Apollo DSKY): the dark sign in both themes, legends in drafting capitals (`--drafting`) and each value lit in seven segments (`--readout`, DSEG7) in the family's light color (`--on-sign-here`, the current-page sign's); for numbers only, since DSEG7 has no letters.
+- **Form boxes** (`dl.cap-form-boxes`, `.cap-form-boxes-box`): facts in ruled boxes that share their rules, a mono label over each value. Four columns, two on a phone. `data-span="2"` or `"all"` on a box widens it; `data-weight="bold"` sets its value bold (the page number in a title block). `data-variant="readings"` sets each value as a large figure; `data-variant="tones"` also steps the boxes through one ink from light to dark, the type turning light on the two dark steps. `data-variant="grid"` fills each row with as many boxes as fit at `--box-min` (10rem) each, for facts of any count. `data-variant="panel"` sets them as an instrument panel (the Apollo DSKY): the dark sign in both themes, legends in drafting capitals (`--drafting`) and each value lit in seven segments (`--readout`, DSEG7) in the family's light color (`--on-sign-here`, the current-page sign's); for numbers only, since DSEG7 has no letters.
 - **Leader index** (`ol.cap-leader-index`): number, bold name, a dotted leader and a count or page at the right. `aria-current` on a link marks the one you are on.
 - **Checklist card** (`.cap-checklist`): a list of procedures as an Apollo checklist card. A dark strip names the card; each step has a drawn box, its number, its name as a link, a dotted leader to its kind, and a note. The box is drawn, not a control. The leaders drop on a phone.
 - **Plate** (`figure.cap-plate`): a drawing or photo in a ruled box on the raised surface, its plate number at the top left, the caption under it with the figure number at the right. The drawing carries its own scale bar.
 - **Signs** (`nav.cap-signs` of `a.cap-sign`): the ways on as dark panels with light type. `rel="prev"` adds a left arrow and `rel="next"` a right arrow and the family color along the top, as does `data-variant="forward"`. The arrow is the family arrow (`--cap-arrow`); under the pointer or focus it steps 3px the way it points, so a sign has no underline. With reduced motion the panel lightens instead. 48px tall. Signs are for the way on; an action is a button (`.cap-btn`).
-- **Mission patch** (`patchSvg()` from `capsomer/behavior/manual`, drawn by `.cap-patch`): a project's round patch, the name round the top, a line round the foot, the count on a disc of the family color with a dot round it for each. `data-size="s"` makes it 96px.
+- **Mission patch** (`patchSvg()` from `capsomer/behavior/manual`, drawn by `.cap-patch`): a project's round patch, the name round the top, a line round the foot, the count on a disc of the family color with a dot round it for each. `data-size="s"` makes it 96px. In React, `<Patch>` from `capsomer/react/manual` draws the same SVG without injecting markup; `PageHead`'s `patch` sets one beside a page's title.
 - **Letterhead** (`.cap-letterhead`): the foot of a page, the site's name as the logotype, the address beside it and the folio at the right. Put it in the page's `footer`.
 - **Layout grid** (`.cap-layout-grid`): the head of a page drawn on the manual's layout grid in fine red lines, as the manual prints its grids: twelve columns and a 24px baseline, four columns on a phone. It carries no label by default (the label is words beside a decoration); add `data-labeled` where the grid is the subject, as on a colophon, and the label sits at its foot on the right. The red is the family's `--crit`, faint. Put it on the block that holds the page's `h1`. Forced colors drop it.
 - **Direction strip** (`nav.cap-direction > ol > li`): the trail to a page as an airport's direction signs. A dark band of Overpass Bold (`--wayfinding`, the FAA sign face), a white FAA arrow (`--faa-arrow`) between the ways, and the page you are on (`aria-current="page"`) as a location sign: `--on-sign-here` type and a 2px outline of it on the `--sign-here` box, 3px corners, at AAA. Links hover as every link does, here a white 18% tint on the dark band.
@@ -49,6 +49,14 @@ On a public page of a dustinedwards.info site: a home page, an index of papers o
 - **Cue card** (`.cap-cue`, `.cap-cue-strip`, `.cap-cue-title`, `ul.cap-cue-lines` of `li` holding `.cap-cue-name` and `.cap-cue-value`): one step as an Apollo cue card. The strip names the procedure and the card; each line has a drawn box, a name, a dotted leader and its value. Roll blocks may sit under the strip. On a phone the value drops under the name.
 
 Running text stays in the page's reading face (`--prose` on dustinedwards.info), at its reading size: the rules and mono labels frame the reading, they do not replace it.
+
+## Building a page without React
+
+`capsomer/behavior/manual` writes each part's markup as a string, every value escaped, for a static build script or a Worker's own page, so no build hand-types the classes: `checklistHtml({ label, strip, items })`, `timelineHtml(steps)`, `formBoxesHtml(boxes, { variant })`, `leaderIndexHtml(rows)`, `cueCardHtml({ id, strip, title, lines, note })`, `signsHtml(label, signs)` and `patchSvg(options)`.
+
+## The running head and the route handle
+
+`sectionOf(pathname, sections, fallback)` picks the section a path sits in (the longest prefix; `{ prefix, no, trail }`). A route names its folio with `export const handle = { folio: (data) => ... }` (`RunningHeadHandle`); `folioOf(useMatches())` returns the deepest one. `<RunningHead no trail folio>` (`capsomer/react/manual`) draws the head across a tracks page's wide track, hidden from screen readers.
 
 ## Keyboard
 

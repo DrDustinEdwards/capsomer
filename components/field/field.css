@@ -200,7 +200,7 @@
     margin: 0;
     padding: 0 calc(var(--pad-x) - 1px);
     border: 1px solid var(--cap-input-edge);
-    border-radius: var(--radius-m);
+    border-radius: var(--radius-control);
     background: var(--surface);
     color: var(--text);
     font-family: var(--ui);
@@ -515,7 +515,7 @@
     min-width: 0;
     min-height: var(--control);
     border: 1px solid var(--cap-input-edge);
-    border-radius: var(--radius-m);
+    border-radius: var(--radius-control);
     background: var(--surface);
     color: var(--text);
 

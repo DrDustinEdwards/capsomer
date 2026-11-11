@@ -330,3 +330,130 @@ export function rowOverflow(page: Page): Promise<string[]> {
     return out;
   });
 }
+
+// Site-level checks, shared so every site's browser suite asks the same questions of Capsomer's parts. Each page
+// function runs inside the page through `evaluate` and is self-contained, so a Puppeteer suite passes the same
+// function to its own page.evaluate.
+
+// The widths every page is held at: the smallest phone (WCAG 1.4.10's 320), a common phone, Capsomer's breakpoints
+// (tokens.json `breakpoint`: 40rem, 48rem, 64rem, 72rem) and a desktop.
+export const CHECK_WIDTHS = [320, 375, 640, 768, 1024, 1152, 1280] as const;
+
+// The reachable CSS rules: proof a page's stylesheets arrived (a cross-origin sheet throws on cssRules, counts zero).
+export function countCssRules(): number {
+  return [...document.styleSheets].reduce((n, s) => {
+    try {
+      return n + s.cssRules.length;
+    } catch {
+      return n;
+    }
+  }, 0);
+}
+
+// The first elements reaching past the document's right edge, as tag.class@right. Anything left of -1000px is
+// off-screen by design (a skip link, a closed drawer translated out of view).
+export function overflowScan(): string[] {
+  const width = document.documentElement.clientWidth;
+  const over: string[] = [];
+  for (const el of document.querySelectorAll("body *")) {
+    const r = el.getBoundingClientRect();
+    if (r.left < -1000 || r.width === 0) continue;
+    if (r.right > width + 0.5) {
+      const cls = typeof el.className === "string" ? el.className.split(/\s+/)[0] : "";
+      over.push(`${el.tagName.toLowerCase()}${cls ? `.${cls}` : ""}@${Math.round(r.right)}`);
+      if (over.length === 4) break;
+    }
+  }
+  return over;
+}
+
+// No page scrolls sideways at any of the check widths (WCAG 1.4.10, reflow).
+export async function expectNoOverflow(
+  page: Page,
+  widths: readonly number[] = CHECK_WIDTHS,
+): Promise<void> {
+  const height = page.viewportSize()?.height ?? 900;
+  for (const width of widths) {
+    await page.setViewportSize({ width, height });
+    expect(await page.evaluate(overflowScan), `at ${width}px`).toEqual([]);
+  }
+}
+
+// Whether the admin shell is drawn: its menu and bar present and laid out by Capsomer's CSS (a rail the browser drew
+// unstyled is a full-width block), the session not bounced to a sign-in page, and a real body under it.
+export function shellState(): {
+  menu: boolean;
+  bar: boolean;
+  styled: boolean;
+  text: number;
+  path: string;
+} {
+  const menu = document.querySelector(".cap-admin-menu");
+  const style = menu ? getComputedStyle(menu) : null;
+  return {
+    menu: !!menu,
+    bar: !!document.querySelector(".cap-admin-bar"),
+    styled:
+      !!style &&
+      style.display !== "inline" &&
+      parseFloat(style.width) > 0 &&
+      parseFloat(style.width) < innerWidth,
+    text: (document.body.innerText || "").trim().length,
+    path: location.pathname,
+  };
+}
+
+// Every admin path draws the shell with its stylesheet. `signIn` is the path a bounced session lands on.
+export async function expectShellRenders(
+  page: Page,
+  paths: readonly string[],
+  { signIn = "/login" }: { signIn?: string } = {},
+): Promise<void> {
+  for (const path of paths) {
+    await page.goto(path);
+    const s = await page.evaluate(shellState);
+    expect(s.path, `${path} bounced to sign-in`).not.toBe(signIn);
+    expect(s.menu && s.bar && s.styled, `${path} draws the admin shell`).toBe(true);
+    expect(s.text, `${path} has a body`).toBeGreaterThan(100);
+  }
+}
+
+// The theme's head contract, on a page's HTML as served: a color-scheme meta, before the first stylesheet, so the
+// browser paints the right canvas before any CSS arrives. Returns the problems in words.
+export function headContractProblems(html: string, scheme?: string): string[] {
+  const meta = /<meta name="color-scheme" content="([^"]*)"/.exec(html);
+  const sheet = html.search(/<link[^>]+rel="stylesheet"/);
+  const problems: string[] = [];
+  if (!meta) return ["no color-scheme meta"];
+  if (scheme && meta[1] !== scheme)
+    problems.push(`color-scheme is "${meta[1]}", expected "${scheme}"`);
+  if (sheet !== -1 && meta.index > sheet)
+    problems.push("the color-scheme meta comes after the first stylesheet");
+  return problems;
+}
+
+// What a page loads with script off and motion reduced: no running animation or transition longer than a frame
+// (Capsomer's motion is written inside prefers-reduced-motion: no-preference, and base.css catches the rest).
+export function runningMotion(): string[] {
+  const out: string[] = [];
+  for (const a of document.getAnimations()) {
+    const timing = a.effect?.getComputedTiming();
+    const ms = Number(timing?.duration ?? 0) * (Number(timing?.iterations ?? 1) || 1);
+    if (ms > 16) {
+      const t = (a.effect as KeyframeEffect | null)?.target;
+      out.push(
+        `${t?.tagName.toLowerCase() ?? "?"}${t?.className ? `.${String(t.className).split(/\s+/)[0]}` : ""}: ${Math.round(ms)}ms`,
+      );
+    }
+  }
+  return out;
+}
+
+// No script module named `pattern` has loaded yet (a lazy part, such as the command menu, must wait for its key).
+export function loadedScripts(pattern: string): string[] {
+  const re = new RegExp(pattern);
+  return performance
+    .getEntriesByType("resource")
+    .map((e) => e.name)
+    .filter((name) => re.test(name));
+}

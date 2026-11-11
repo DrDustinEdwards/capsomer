@@ -60,7 +60,7 @@ export const SCALE = {
     ],
     [
       "prose",
-      '"Source Serif 4", "Iowan Old Style", Charter, Georgia, serif',
+      '"Source Serif 4", "Source Serif 4 Fallback", "Iowan Old Style", Charter, Georgia, serif',
       "long-form text and public headings (decision 5)",
     ],
     [
@@ -108,6 +108,11 @@ export const SCALE = {
     ["dur-base", "200ms", "an overlay or a page arriving"],
     ["dur-slow", "400ms", "a spring settling (with --ease-spring); a page-level change"],
     [
+      "dur-wait",
+      "900ms",
+      "one cycle of a loading line or pulse, drawn only while something is actually in flight",
+    ],
+    [
       "ease-out",
       "cubic-bezier(0.16, 1, 0.3, 1)",
       "things arriving and leaving: a fast start and a long soft stop (Radix Themes, Arc)",
@@ -121,11 +126,29 @@ export const SCALE = {
   ],
   layer: [
     ["z-base", "0", "the page"],
+    [
+      "z-raise",
+      "10",
+      "a part raised above its own card (a stretched link's actions); local stacking only",
+    ],
     ["z-sticky", "20", "a sticky top bar or anchor bar"],
     ["z-tabbar", "30", "the phone tab bar"],
     ["z-overlay", "40", "a scrim and a side panel"],
+    ["z-dropdown", "50", "a menu or listbox that is not in the top layer"],
+    ["z-drawer", "60", "a drawer over its scrim (--z-overlay)"],
     ["z-message", "70", "the status region"],
     ["z-tip", "80", "a tooltip"],
+    ["z-progress", "90", "the page's loading bar, over everything but the skip link"],
+    ["z-skip", "100", "the skip link, which must clear every bar it jumps past"],
+  ],
+  line: [
+    ["line-w", "1px", "a hairline: a rule, a box's edge, a table's row line"],
+    ["line-w-thick", "2px", "a heavy rule: a part title's line, a selected tab's bar"],
+    [
+      "radius-control",
+      "var(--radius-m)",
+      "a control's corners (button, field, select); a square site sets 0 in its SITES entry",
+    ],
   ],
   focus: [
     [
@@ -247,6 +270,16 @@ export const SCALE = {
     ],
   ],
 };
+
+// Breakpoints: [name, width, what changes there]. A media query cannot read a custom property, so these are not CSS
+// tokens: they are the widths every @media in Capsomer and the sites uses (tokens.json carries them for tools), and a
+// component that answers to its own width uses a container query instead. Write them in rem, min-width, mobile first.
+export const BREAKPOINTS = [
+  ["bp-sm", "40rem", "a phone ends: one column becomes two, a tray becomes a sidebar"],
+  ["bp-md", "48rem", "a tablet: the site header shows its links, a rail appears"],
+  ["bp-lg", "64rem", "a desktop: the reading column gets its side rail"],
+  ["bp-xl", "72rem", "a wide desktop: the page reaches its widest grid"],
+];
 
 // Density: [name, compact, comfortable, what it is for]. `control` and `control-h` are the
 // same height (control-h is kept from 0.1). Touch raises control and target to 44 px in both.
@@ -382,8 +415,10 @@ export function renderJson() {
       focus: undefined,
       layout: undefined,
       type: undefined,
+      line: undefined,
+      breakpoint: "dimension",
     })[group];
-  const groups = { ...SCALE };
+  const groups = { ...SCALE, breakpoint: BREAKPOINTS };
   const compact = DENSITY.map(([n, c, , why]) => [n, c, why]);
   const fs = compact.filter(([n]) => n.startsWith("fs-"));
   groups.type = [...fs, ...groups.type];

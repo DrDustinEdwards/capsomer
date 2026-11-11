@@ -33,6 +33,7 @@ The first thing in every view of an app inside the shell: a list, a detail, an e
 ## The default and its reason
 
 - **One `h1` per page, in the head.** The title names the page for the tab, the screen reader's heading list and the person. In specimens the title is an `h3` because the states page owns the one `h1`.
+- **A patch** (`patch`, the manual's round patch: `{ id, name, foot, count, unit }`) sits beside the title in a `.cap-patched` row, for a page that is one of its part's members. It is decorative; the trail says the same in words.
 - **The lead is one line, in `--muted`, at most 75 characters wide.** It says what the page is for, not what it contains.
 - **Actions sit at the right and wrap below on a narrow space.** The head is a wrapping flex row aligned to the bottom of the text, so a one-line title and two buttons share a baseline region and a long title pushes the actions under it.
 - **The title wraps anywhere.** A long file name or URL never widens the page.

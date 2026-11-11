@@ -1,0 +1,12 @@
+/* The catalog and every component it is built from, in one import, for a page that is a catalog (search, facets,
+   chips, sort, a table that becomes cards, pagination): `import "capsomer/catalog-all.css"`. Tokens come with it; a
+   page that already imports them pays nothing twice in a bundler. */
+@import "./layers.css";
+@import "./tokens.css";
+@import "../components/field/field.css";
+@import "../components/button/button.css";
+@import "../components/table/table.css";
+@import "../components/chips/chips.css";
+@import "../components/empty/empty.css";
+@import "../components/pagination/pagination.css";
+@import "../components/catalog/catalog.css";

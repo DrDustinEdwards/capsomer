@@ -18,6 +18,8 @@
     "tokens/palette.mjs",
     "tokens/palette-core.mjs",
     "tokens/palette-core.d.mts",
+    "tokens/token-check.mjs",
+    "tokens/token-check.d.mts",
     "tokens/chart.mjs",
     "tokens/scale.mjs",
     "tokens/enarratio-theme.mjs",
@@ -42,6 +44,19 @@
     "./tokens.css": "./css/tokens.css",
     "./base.css": "./css/base.css",
     "./utilities.css": "./css/utilities.css",
+    "./focus.css": "./css/focus.css",
+    "./print.css": "./css/print.css",
+    "./reset.css": "./css/reset.css",
+    "./catalog-all.css": "./css/catalog-all.css",
+    "./admin-all.css": "./css/admin-all.css",
+    "./token-check": {
+      "types": "./tokens/token-check.d.mts",
+      "default": "./tokens/token-check.mjs"
+    },
+    "./build": {
+      "types": "./bin/build.d.mts",
+      "default": "./bin/build.mjs"
+    },
     "./fonts.css": "./css/fonts.css",
     "./fallback-fonts.css": "./css/fallback-fonts.css",
     "./fonts/*": "./fonts/*",
@@ -81,6 +96,10 @@
     "./publish-transition": {
       "types": "./dist/components/publish-gate/publish-transition.d.ts",
       "default": "./dist/components/publish-gate/publish-transition.js"
+    },
+    "./confirm-server": {
+      "types": "./dist/components/confirm-dialog/confirm-server.d.ts",
+      "default": "./dist/components/confirm-dialog/confirm-server.js"
     },
     "./theme-server": {
       "types": "./dist/components/theme-switch/theme-server.d.ts",
@@ -164,6 +183,7 @@
     "hast-util-to-mdast": "10.1.2",
     "jscpd": "5.3.2",
     "knip": "6.38.0",
+    "lightningcss": "1.33.0",
     "mdast-util-gfm": "3.1.0",
     "mdast-util-to-markdown": "2.2.0",
     "oxfmt": "0.77.0",
@@ -172,6 +192,7 @@
     "react": "19.3.0",
     "react-dom": "19.3.0",
     "react-router": "8.5.1",
+    "rolldown": "1.2.15",
     "typescript": "6.0.3",
     "vite": "8.3.5",
     "wrangler": "^4.151.3"
@@ -190,9 +211,11 @@
     "@lezer/highlight": "^1.2.3",
     "@playwright/test": "^1.50.0",
     "enarratio": "^0.12.0",
+    "lightningcss": "^1.30.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
-    "react-router": "^8.0.0"
+    "react-router": "^8.0.0",
+    "rolldown": "^1.0.0"
   },
   "peerDependenciesMeta": {
     "@axe-core/playwright": {
@@ -234,6 +257,9 @@
     "enarratio": {
       "optional": true
     },
+    "lightningcss": {
+      "optional": true
+    },
     "react": {
       "optional": true
     },
@@ -241,6 +267,9 @@
       "optional": true
     },
     "react-router": {
+      "optional": true
+    },
+    "rolldown": {
       "optional": true
     }
   },

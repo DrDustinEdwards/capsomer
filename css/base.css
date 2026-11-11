@@ -3,6 +3,10 @@
 
 /* The utility classes (.cap-sr-only and friends), also exported alone as capsomer/utilities.css. */
 @import "./utilities.css";
+/* The focus ring, also exported alone as capsomer/focus.css for a page that keeps its own base. */
+@import "./focus.css";
+/* Print, reduced transparency and forced colors (css/print.css). */
+@import "./print.css";
 
 /* Element defaults every component assumes. Layered, so an app that keeps its own body
    or link styles wins without a fight. */
@@ -19,7 +23,11 @@
     font: inherit;
     color: inherit;
   }
-  [hidden] {
+  /* The browser's [hidden] loses to any class that sets display; this one does not, so no site writes
+     `.x[hidden] { display: none }` again. until-found stays the browser's (it must stay findable). An !important in the
+     lowest layer outranks every rule in every layer and in unlayered CSS, !important or not (important declarations
+     run the layers in reverse), so nothing can show a hidden element, print included: drop the attribute instead. */
+  [hidden]:where(:not([hidden="until-found"])) {
     display: none !important;
   }
 }
@@ -126,18 +134,6 @@
   }
   button {
     cursor: pointer;
-  }
-  :focus-visible,
-  a[data-force="focus"] {
-    /* The shared focus indicator: a 2 px solid --ring outline, 3:1 against every surface
-       (palette.mjs checks it). A field may add --shadow-ring, the soft 3 px glow, beside it. */
-    outline: var(--focus-width) solid var(--ring);
-    outline-offset: var(--focus-offset);
-  }
-  /* A scroll region (a code box or wide table: tabindex="0", role="region", a name) draws the ring
-     inside its edge, so a parent that clips its overflow cannot hide it (the table's and dialog's rule). */
-  [role="region"][tabindex="0"]:focus-visible {
-    outline-offset: calc(var(--focus-width) * -1);
   }
   h1,
   h2,

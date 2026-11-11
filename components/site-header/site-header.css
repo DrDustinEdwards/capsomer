@@ -87,6 +87,12 @@
     scroll-padding-top: calc(var(--header-h) + var(--space-3));
   }
 
+  /* A mark's parts drawn in the band's own family color: data-logo-fill="on" on a path or group of the site's SVG
+     takes the stripe's color (--on), as every network site draws its mark on the band; the rest keep their own. */
+  .cap-site-header [data-logo-fill="on"] {
+    fill: var(--on);
+  }
+
   /* The logo: the site's mark and name, at most 24px tall and 160px wide; it links home. */
   .cap-site-header-logo {
     display: inline-flex;
@@ -891,7 +897,8 @@
     & .cap-site-header-search-button {
       order: 1;
     }
-    & .cap-site-header-theme {
+    /* The no-script theme form wraps the theme button, so the form takes the button's place. */
+    & :is(.cap-site-header-theme, .cap-theme-form:has(.cap-site-header-theme)) {
       order: 2;
     }
     /* The current page keeps its 2px underline; hover is a faint tint, so it never looks like
