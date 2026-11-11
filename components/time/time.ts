@@ -128,7 +128,7 @@ export interface FormatDateOptions {
 }
 
 const DATE_FORMATS = new Map<string, Intl.DateTimeFormat>();
-function dateFormat(key: string, make: () => Intl.DateTimeFormat): Intl.DateTimeFormat {
+function cachedFormat(key: string, make: () => Intl.DateTimeFormat): Intl.DateTimeFormat {
   let f = DATE_FORMATS.get(key);
   if (!f) DATE_FORMATS.set(key, (f = make()));
   return f;
@@ -147,7 +147,7 @@ export function formatDate(
   const { style = "long", time = false, zoneName: named = false, zone: z = "UTC" } = options;
   const zone = z === "viewer" ? undefined : z;
   const key = `${style}|${time && style !== "monthDay"}|${zone ?? ""}`;
-  const f = dateFormat(key, () =>
+  const f = cachedFormat(key, () =>
     style === "monthDay"
       ? new Intl.DateTimeFormat("en-US", { timeZone: zone, month: "short", day: "numeric" })
       : new Intl.DateTimeFormat("en-US", {
