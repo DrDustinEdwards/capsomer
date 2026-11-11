@@ -74,11 +74,10 @@ export function FieldFromSpec({
         <Field {...words}>
           <textarea
             id={id}
-            className="cap-input"
+            className={spec.kind === "json" ? "cap-input cap-schema-json" : "cap-input"}
             rows={spec.kind === "json" ? 6 : 3}
             spellCheck={spec.kind === "json" ? false : undefined}
             placeholder={spec.placeholder}
-            data-variant={spec.kind === "json" ? "code" : undefined}
             {...(spec.kind === "json" && typeof value !== "string" && value !== undefined
               ? controlled
                 ? {

@@ -61,6 +61,7 @@ import { readSpecs } from "capsomer/behavior/schema-form";
   <div class="cap-schema-fields">
     <div class="cap-schema-cell"><div class="cap-field">...</div></div>
     <div class="cap-schema-cell" data-wide><div class="cap-field">...</div></div>
+    <div class="cap-schema-cell" data-wide><div class="cap-field">... <textarea class="cap-input cap-schema-json" rows="6" spellcheck="false"></textarea></div></div>
   </div>
   <div class="cap-schema-actions">
     <button type="submit" class="cap-btn" data-variant="primary">Save</button>

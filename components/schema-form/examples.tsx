@@ -21,6 +21,7 @@ const SPECS: FieldSpec[] = [
   { key: "fee", label: "Fee", kind: "money" },
   { key: "public", label: "List on the home page", kind: "checkbox" },
   { key: "topics", label: "Topics", kind: "lines", help: "One per line." },
+  { key: "hosts", label: "Hosts", kind: "json", help: "A JSON array of names." },
 ];
 
 const VALUES = {
@@ -31,6 +32,7 @@ const VALUES = {
   fee: 2500,
   public: true,
   topics: ["Getting started", "Spring update"],
+  hosts: ["Alex Rivera", "Sam Lee"],
 };
 
 function Held() {
