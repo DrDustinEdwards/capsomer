@@ -1,0 +1,4 @@
+{
+  "dirs": ["css", "tokens", "components", "site"],
+  "external": ["--available-*", "--anchor-*", "--shiki-*"]
+}
