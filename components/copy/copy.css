@@ -1,0 +1,120 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* Copy and share: a button that copies another element's text, and a status bubble beside it
+   that is both the visible message and the live region (Modern Web Guidance, copy-button).
+   The button is a .cap-btn; this file adds the icon swap, the bubble and the repeated-block
+   reveal. */
+@layer cap.components {
+  .cap-copy {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .cap-copy-button {
+    min-inline-size: var(--target);
+    min-block-size: var(--target);
+
+    & .cap-copy-done {
+      display: none;
+    }
+    &[data-state="done"] .cap-copy-icon {
+      display: none;
+    }
+    &[data-state="done"] .cap-copy-done {
+      display: inline;
+      color: var(--ok);
+    }
+    & svg {
+      inline-size: 1em;
+      block-size: 1em;
+      flex: none;
+    }
+  }
+
+  /* The bubble stays in the accessibility tree: shown and hidden with opacity only, so its
+     text is announced. Empty means hidden. */
+  .cap-copy-tip {
+    position: absolute;
+    inset-block-end: calc(100% + 6px);
+    inset-inline-start: 50%;
+    translate: -50% 0;
+    padding: 2px 8px;
+    border-radius: var(--radius-s);
+    background: var(--text);
+    color: var(--surface);
+    font: var(--fs-detail) / 1.4 var(--ui);
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    z-index: var(--z-tip);
+
+    &:not(:empty) {
+      opacity: 1;
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .cap-copy-tip {
+      transition: opacity var(--dur-fast) var(--ease-out);
+    }
+    .cap-copy-button[data-state="done"] .cap-copy-done {
+      animation: cap-copy-pop var(--dur-base) var(--ease-spring);
+    }
+  }
+
+  @keyframes cap-copy-pop {
+    from {
+      transform: scale(0.6);
+    }
+  }
+
+  @media (forced-colors: active) {
+    .cap-copy-tip {
+      border: 1px solid CanvasText;
+    }
+  }
+
+  /* Repeated copyable blocks (code blocks, key rows). On touch the button stays visible and in
+     flow; where hover exists it sits over the block's corner and shows on hover, on focus
+     within, and while its message shows. Never hidden from keyboard or screen reader. */
+  .cap-copyable {
+    display: flex;
+    align-items: start;
+    gap: var(--gap);
+
+    & > .cap-copy {
+      flex: none;
+      order: 1;
+    }
+  }
+
+  @media (hover: hover) {
+    .cap-copyable {
+      display: block;
+      position: relative;
+
+      & > .cap-copy {
+        position: absolute;
+        inset-block-start: 6px;
+        inset-inline-end: 6px;
+      }
+      & .cap-copy-button {
+        opacity: 0;
+        background: color-mix(in oklab, var(--surface) 92%, transparent);
+      }
+      &:hover .cap-copy-button,
+      &:focus-within .cap-copy-button,
+      & .cap-copy-button:focus-visible,
+      & .cap-copy-button[data-state] {
+        opacity: 1;
+      }
+    }
+    @media (prefers-reduced-motion: no-preference) {
+      .cap-copyable .cap-copy-button {
+        transition: opacity var(--dur-fast) var(--ease-out);
+      }
+    }
+  }
+}

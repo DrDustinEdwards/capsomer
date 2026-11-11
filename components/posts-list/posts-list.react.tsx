@@ -39,7 +39,7 @@ import {
 } from "../dialog/dialog.react.tsx";
 import { DraftCompare, DraftPatch } from "../draft-compare/draft-compare.react.tsx";
 import { PageHead } from "../page-head/page-head.react.tsx";
-import { copyText } from "../media/media-actions.ts";
+import { copyText } from "../copy/copy.ts";
 import {
   NO_FILTERS,
   SORTS,

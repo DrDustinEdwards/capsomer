@@ -25,11 +25,10 @@ import {
   type SaveState,
   byteSize,
   copySnippets,
-  copyText,
   createAutosave,
   parseTags,
 } from "./media.ts";
-import { COPIED_MS, COPY_FAILED_MS } from "./media-actions.ts";
+import { COPIED_MS, COPY_FAILED_MS, copyText } from "../copy/copy.ts";
 import { MediaFocus, focusWords } from "./media-focus.react.tsx";
 
 // The crop editor, loaded the first time Crop is pressed, so a library page does not carry it.
