@@ -269,7 +269,7 @@ function OwnLook() {
       itemClassName={(r) => (r.included ? undefined : "sortable-own-out")}
       renderItem={(r) => <span className="cap-sortable-label">{r.name}</span>}
       renderControls={(r) => (
-        <label className="sortable-own-in">
+        <label className="cap-check sortable-own-in">
           <input
             type="checkbox"
             checked={r.included}
