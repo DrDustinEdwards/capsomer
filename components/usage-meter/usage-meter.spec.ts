@@ -80,9 +80,7 @@ eachTheme((theme) => {
     },
   );
 
-  test("keyboard: the meters are not controls and take no tab stop; Show data is the only one", async ({
-    page,
-  }) => {
+  test("keyboard: the meters are not controls and take no tab stop", async ({ page }) => {
     await visitStates(page, "usage-meter", theme);
     for (let i = 0; i < 4; i++) {
       await page.keyboard.press("Tab");
@@ -135,13 +133,12 @@ eachTheme((theme) => {
     );
   });
 
-  test("behavior: the numbers are in the HTML behind Show data, one row per meter", async ({
+  test("behavior: the numbers are in the HTML as a table for screen readers, one row per meter", async ({
     page,
   }) => {
     await visitStates(page, "usage-meter", theme);
     const stale = page.locator(section("s-stale"));
-    await expect(stale.locator(".enarratio-data")).not.toHaveAttribute("open", "");
-    await stale.getByText("Show data").click();
+    await expect(stale.locator(".enarratio-data")).toHaveClass(/enarratio-visually-hidden/);
     await expect(stale.getByRole("row", { name: /R2 storage/ })).toContainText("no projection");
   });
 

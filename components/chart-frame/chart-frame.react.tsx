@@ -1,7 +1,6 @@
 import type { EnhanceOptions } from "enarratio/enhance";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import type { Gridlines } from "./chart-frame.ts";
-import { groupDownloads } from "./chart-downloads.ts";
 import { Glyph } from "../status/status.react.tsx";
 import { markup } from "../trusted-html/trusted-html.ts";
 
@@ -97,7 +96,6 @@ export function ChartFrame({
   children,
 }: ChartFrameProps) {
   const ref = useRef<HTMLDivElement>(null);
-  const dataOpen = useRef(false);
   const [drawn, setDrawn] = useState(width);
   // The drawing at `width` (the server's), which each redraw takes its height from (shownHeight),
   // and the draw it came from: drawn again when the page passes a new draw, not on a resize.
@@ -126,15 +124,9 @@ export function ChartFrame({
       frame = requestAnimationFrame(() => setDrawn(drawWidth(measured, minWidth)));
     });
     observer.observe(el);
-    // A redraw replaces "Show data"; keep it open if the reader opened it. toggle does not bubble.
-    const onToggle = (e: Event) => {
-      if (e.target instanceof HTMLDetailsElement) dataOpen.current = e.target.open;
-    };
-    el.addEventListener("toggle", onToggle, true);
     return () => {
       cancelAnimationFrame(frame);
       observer.disconnect();
-      el.removeEventListener("toggle", onToggle, true);
     };
   }, [redraws, minWidth]);
 
@@ -155,8 +147,6 @@ export function ChartFrame({
   useLayoutEffect(() => {
     const el = ref.current;
     if (!el || !html) return;
-    const details = el.querySelector<HTMLDetailsElement>(".enarratio-data");
-    if (details && dataOpen.current) details.open = true;
     return after.current?.(el) ?? undefined;
   }, [html]);
 
@@ -171,20 +161,16 @@ export function ChartFrame({
     if (!el || !html || enhance === false) return;
     let live = true;
     let charts: { destroy(): void }[] = [];
-    let ungroup: (() => void) | null = null;
     loadEnhance()
       .then((m) => {
         if (!live || !el.isConnected) return;
         charts = m.enhance(el, enhanceOptions.current);
-        // The CSV link and the layer's download buttons, in one Download menu.
-        ungroup = groupDownloads(el);
       })
       .catch(() => {
         // The chart is complete without the layer: its words and table are in the HTML.
       });
     return () => {
       live = false;
-      ungroup?.();
       for (const c of charts) c.destroy();
     };
     // oxlint-disable-next-line react/exhaustive-deps -- optionsKey stands for enhance, so a new options object with the same values does not re-enhance

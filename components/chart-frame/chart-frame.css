@@ -2,8 +2,9 @@
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
 /* The frame every chart sits in: a thin layout around Enarratio's own figure, which brings the
-   title, the sentence that says what the chart shows, the chart, its summary, the source and CSV
-   link, and the numbers behind "Show data". The frame only sets them in the family's type and
+   title, the sentence that says what the chart shows, the toolbar (Sound, Range, Download), the
+   chart, its summary, the source, and its numbers as a table only screen readers and AI agents
+   read. The frame only sets them in the family's type and
    spacing (Enarratio's colors, fonts and sizes come from css/enarratio.css), puts a legend or a
    note after the figure, and stands in for the chart when there is no data. Enarratio's base
    rules are unlayered, so this sets only what they leave to the page, and colors through the
@@ -60,47 +61,11 @@
     }
   }
 
-  /* "Show data" (then "Hide data", Enarratio's words) reads as the action it is, at a full
-     target's height. */
-  :is(.cap-chart, .cap-data) .enarratio-data > summary {
-    --enarratio-text-muted: var(--accent-text);
-    line-height: var(--target);
-    font-weight: 600;
-  }
-
-  /* The CSV link stands alone at the end of the source line, so it is a full target. Its color
-     and states are the link system's (css/base.css), handed back over Enarratio's own rule by
-     css/enarratio.css. */
-  .cap-chart .enarratio-csv {
-    display: inline-block;
-    line-height: var(--target);
-  }
-
-  /* An open range picker takes its own row, so its inputs fit beside their labels. */
-  .cap-chart .enarratio-range[open] {
-    flex-basis: 100%;
-  }
-
-  /* A table wider than its frame (or a tile's or meter's data) scrolls inside it (named by its
-     caption), not the page. */
-  :is(.cap-chart, .cap-data) .enarratio-data table {
-    display: block;
-    max-inline-size: 100%;
-    overflow-x: auto;
-  }
-
-  /* Numbers behind "Show data" that belong to something that is not a chart: a stat tile with
-     its inline sparkline (the disclosure under the tile, outside the link, never inside) and a
-     usage meter's table. Not a frame, so not read as a chart. */
+  /* Numbers that belong to something that is not a chart, for screen readers and AI agents: a
+     stat tile's inline sparkline (under the tile, outside the link, never inside) and a usage
+     meter's table. Not a frame, so not read as a chart. */
   .cap-data {
     display: grid;
     gap: var(--space-2);
     min-width: 0;
   }
-
-  @media (forced-colors: active) {
-    :is(.cap-chart, .cap-data) .enarratio-data > summary {
-      --enarratio-text-muted: LinkText;
-    }
-  }
-}

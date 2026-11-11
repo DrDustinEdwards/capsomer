@@ -87,6 +87,15 @@
     --enarratio-tooltip-padding: var(--space-2) var(--space-3);
     --enarratio-tooltip-shadow: var(--shadow-m);
     --enarratio-z-tooltip: var(--z-tip);
+    /* the chart's toolbar (Enarratio 0.11): Capsomer's small button, at a full target's height,
+       and its panels drawn as a popover */
+    --enarratio-control-height: max(var(--target), calc(var(--control) - 4px));
+    --enarratio-padding-control: 0 calc(var(--pad-x) - 1px);
+    --enarratio-radius-control: var(--radius-m);
+    --enarratio-gap-controls: var(--space-2);
+    --enarratio-gap-icon: var(--space-2);
+    --enarratio-padding-panel: var(--space-2);
+    --enarratio-panel-shadow: var(--shadow-m);
 
     /* focus: the shared ring's width and offset on a focused chart or legend button */
     --enarratio-focus-outline-width: var(--ring-width);

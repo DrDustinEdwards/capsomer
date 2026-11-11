@@ -60,7 +60,6 @@ eachTheme((theme) => {
     await expect(nodata.locator(".enarratio-subtitle")).toHaveText(
       "100% up over the 6 of 7 days with data",
     );
-    await nodata.getByText("Show data").click();
     await expect(nodata.getByRole("row", { name: /Sat, Sep 26/ })).toContainText("no data");
   });
 

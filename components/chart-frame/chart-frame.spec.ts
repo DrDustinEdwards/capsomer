@@ -6,8 +6,8 @@ import {
   visitStates,
 } from "../../test/helpers.ts";
 
-// Enarratio tests its own figure (the head, the table, the CSV link, the keys); these cover what
-// the frame adds: its type and colors, the no-data state, the layout at a phone's width, the
+// Enarratio tests its own figure (the head, the toolbar, the hidden table, the keys); these cover
+// what the frame adds: its type and colors, the no-data state, the layout at a phone's width, the
 // token mapping, and the React frame's redraw.
 eachTheme((theme) => {
   test("accessibility: no axe violations", async ({ page }) => {
@@ -15,25 +15,29 @@ eachTheme((theme) => {
     await expectNoAxeViolations(page);
   });
 
-  test("accessibility: the title, finding, Show data and the no-data reason reach their contrast", async ({
+  test("accessibility: the title, finding, toolbar and the no-data reason reach their contrast", async ({
     page,
   }) => {
     await visitStates(page, "chart-frame", theme);
     await expectContrast(page, [
       { sel: "#cf-bar .enarratio-title", what: "the title" },
       { sel: "#cf-bar .enarratio-finding", what: "the finding" },
-      { sel: "#cf-bar .enarratio-data > summary", what: "the Show data label" },
-      { sel: "#cf-open .enarratio-data td", what: "a table cell" },
+      { sel: "#cf-bar .enarratio-download .enarratio-label", what: "a toolbar word" },
       { sel: "[data-state='nodata'] .cap-chart-reason", what: "the no-data reason" },
     ]);
   });
 
-  test("accessibility: at 320 px wide nothing scrolls the page sideways, with the data open", async ({
+  test("accessibility: at 320 px wide the toolbar keeps one row and nothing scrolls the page sideways, with the Download menu open", async ({
     page,
   }) => {
     await page.setViewportSize({ width: 320, height: 640 });
     await visitStates(page, "chart-frame", theme);
-    await page.locator("#cf-narrow .enarratio-data > summary").click();
+    const bar = page.locator("#cf-narrow .enarratio-controls");
+    const tops = await bar.evaluate((el) =>
+      [...el.children].map((c) => Math.round(c.getBoundingClientRect().top)),
+    );
+    expect(new Set(tops).size, "one row").toBe(1);
+    await bar.locator(".enarratio-download > summary").click();
     await expectNoAxeViolations(page, "section[aria-labelledby='s-narrow']");
     const overflow = await page.evaluate(
       () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
@@ -41,7 +45,7 @@ eachTheme((theme) => {
     expect(overflow, "the page does not scroll sideways").toBeLessThanOrEqual(0);
   });
 
-  test("behavior: the numbers are in the delivered HTML while Show data is closed, and no data has no table", async ({
+  test("behavior: the numbers are in the delivered HTML for screen readers, and no data has no table", async ({
     page,
   }) => {
     const html = await (await page.request.get("components/chart-frame/states.html")).text();
@@ -49,7 +53,7 @@ eachTheme((theme) => {
       html.indexOf('id="cf-bar"'),
       html.indexOf("</figure>", html.indexOf('id="cf-bar"')),
     );
-    expect(bar).toMatch(/<details class="enarratio-data">/);
+    expect(bar).toContain('<div class="enarratio-data enarratio-visually-hidden">');
     expect(bar).toContain('<th scope="row">Wed</th>');
     await visitStates(page, "chart-frame", theme);
     const nodata = page.locator("[data-state='nodata']");
@@ -80,7 +84,7 @@ eachTheme((theme) => {
     ).toBe("rgb(255, 0, 0)");
   });
 
-  test("behavior: once enhanced, the CSV link and the drawing's downloads are one Download menu, on a server drawing and in React", async ({
+  test("behavior: once enhanced, the toolbar's Download menu holds the CSV link and the drawing's files, drawn as menu items, on a server drawing and in React", async ({
     page,
   }) => {
     await visitStates(page, "chart-frame", theme);
@@ -88,16 +92,16 @@ eachTheme((theme) => {
       page.locator(".cap-chart", { has: page.locator("#cf-bar") }),
       page.locator("[data-mount='redraw'] .cap-chart"),
     ]) {
-      const menu = frame.locator(".cap-chart-downloads");
+      const menu = frame.locator(".enarratio-download");
       const trigger = menu.locator("summary");
       await expect(trigger).toHaveText("Download");
-      // No row of links and buttons is left in the source line.
+      // The source line holds only the source.
       expect(
         (await frame.locator(".enarratio-source").innerText()).replace(/\s+/g, " ").trim(),
-      ).toBe("Source: The job log · Download");
+      ).toBe("Source: The job log");
       await trigger.focus();
       await page.keyboard.press("ArrowDown");
-      const items = menu.locator(".cap-menu-item");
+      const items = menu.locator(".enarratio-menu > *");
       await expect(items).toHaveText([
         "Download CSV",
         "Download SVG",
@@ -107,8 +111,12 @@ eachTheme((theme) => {
       ]);
       await expect(items.first()).toBeFocused();
       await expect(items.first()).toHaveAttribute("download", /\.csv$/);
+      // A menu item, not a text link: no file mark after it.
+      expect(await items.first().evaluate((a) => getComputedStyle(a, "::after").content)).toBe(
+        "none",
+      );
       await page.keyboard.press("Escape");
-      await expect(menu.locator("details")).not.toHaveAttribute("open");
+      await expect(menu).not.toHaveAttribute("open");
       await expect(trigger).toBeFocused();
     }
   });
