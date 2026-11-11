@@ -5,8 +5,8 @@ summary: Lines from a log or a source's top list, as a plain table that keeps ra
 parts: [css, react]
 tool: native
 states: [lines cut short by the source, no lines]
-added: 0.99.0
-updated: 0.99.0
+added: 0.100.0
+updated: 0.100.0
 source: the Capsid Portal's traffic page (dashboard/src/views/SiteTraffic.tsx, Server errors and AI crawlers)
 ---
 

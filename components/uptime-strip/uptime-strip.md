@@ -6,7 +6,7 @@ parts: [css, behavior, react]
 tool: native
 states: [all up, an outage, slots with no data, inline in a table cell, comfortable density]
 added: 0.1.0
-updated: 0.99.0
+updated: 0.100.0
 source: Capsid Portal, dashboard/src/ui/charts.tsx (UptimeTicks, UptimeFoot) and styles.css (ticks, upct)
 replaces:
   - 'class="(ticks|upct)"'

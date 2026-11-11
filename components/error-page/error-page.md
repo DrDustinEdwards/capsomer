@@ -6,7 +6,7 @@ parts: [css, react]
 tool: native
 states: [404, 410, 410 with its own way out, a second way out, a site's own title band, signed out, session ended, 500, database down, development, phone width]
 added: 0.47.0
-updated: 0.99.0
+updated: 0.100.0
 source: dustinedwards.info, app/components/error-page.tsx; Foxhound, app/components/error-view.tsx
 replaces:
   - 'error\.status === 404 \? "404" : "Error"'
@@ -96,4 +96,4 @@ It renders:
 
 ## Exceptions in production
 
-- None. Foxhound's 410 passes its heading and reason as `title` and `text` and the blog as `gone` (0.99.0).
+- None. Foxhound's 410 passes its heading and reason as `title` and `text` and the blog as `gone` (0.100.0).

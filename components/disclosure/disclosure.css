@@ -351,7 +351,7 @@
   }
 }
 
-/* C35 (0.99.0). The inline look, the sign marker, the expand toggle and paper. */
+/* C35 (0.100.0). The inline look, the sign marker, the expand toggle and paper. */
 @layer cap.components {
   /* Inline: a disclosure inside running text or under a step (a post's "Show the data", a
      procedure step's calculator). No box, a rule above and below that stacked sections share,

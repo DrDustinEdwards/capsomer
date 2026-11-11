@@ -60,3 +60,18 @@ export function Link(props: ComponentProps<typeof RouterLink>) {
 export function NavLink(props: ComponentProps<typeof RouterNavLink>) {
   return <RouterNavLink {...props} prefetch={usePrefetch(props)} />;
 }
+
+// The renderLink every Capsomer part takes (shell, site header, admin shell, row and attention
+// lists), as React Router's Link with Capsomer's prefetch on intent: pass it as is,
+// `<SiteHeader renderLink={routerRenderLink} />`, instead of writing an adapter per site.
+export function routerRenderLink({
+  href,
+  children,
+  ...rest
+}: { href: string; children?: ReactNode } & Omit<ComponentProps<typeof RouterLink>, "to">) {
+  return (
+    <Link to={href} {...rest}>
+      {children}
+    </Link>
+  );
+}

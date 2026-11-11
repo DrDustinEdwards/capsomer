@@ -5,8 +5,8 @@ summary: A figure's source under it, a link that names the source and when it wa
 parts: [css, react]
 tool: native
 states: [under a figure]
-added: 0.99.0
-updated: 0.99.0
+added: 0.100.0
+updated: 0.100.0
 source: Foxhound's home page statistics (routes/home.tsx, lib/marketing/statistics.ts citation, SourceArrow)
 replaces:
   - "Source: \\{citation\\("

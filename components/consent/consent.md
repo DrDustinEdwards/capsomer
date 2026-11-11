@@ -5,8 +5,8 @@ summary: The OAuth consent screen every site shows an app asking for access, and
 parts: [css, react]
 tool: native
 states: [a published client with the write grant, a self-registered client with a warning and a refusal, a request that cannot be shown, permission lists]
-added: 0.99.0
-updated: 0.99.0
+added: 0.100.0
+updated: 0.100.0
 source: Foxhound (routes/oauth/authorize.tsx ConsentCard; routes/auth/connect.tsx and audit/connect.tsx AccessList); site-runtime's MCP login page (mcp-login.mjs) says the same words as HTML
 replaces:
   - "function ConsentCard"

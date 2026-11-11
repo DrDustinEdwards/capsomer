@@ -56,6 +56,13 @@
   <div data-mount="extras"></div>
 </template>
 
+<template data-specimen="live-dom" data-title="Live results, without React: createCommandMenu with search" data-height="520">
+  <main class="specimen-page" tabindex="-1">
+    <h1>Home</h1>
+    <p role="status" data-specimen-part="said"></p>
+  </main>
+</template>
+
 <script type="module">
   import { createCommandMenu, enhance, openCommandMenu, stopCommand } from "./command-menu.ts";
   const only = new URLSearchParams(location.search).get("only");
@@ -66,7 +73,22 @@
       if (said) said.textContent = `Ran: ${label}`;
     };
     const c = (id, label, group, shortcut, keywords) => ({ id, label, group, shortcut, keywords, run: ran(label) });
-    const menu = createCommandMenu([
+    // A fake source that answers after 300 ms, as the React specimen's (examples.tsx).
+    const CATALOG = ["Getting started with the editor", "Release notes for version 4", "Annual report 2025", "Field notes"];
+    const search = (q, signal) =>
+      new Promise((resolve, reject) => {
+        const t = setTimeout(() => {
+          const hits = CATALOG.filter((b) => b.toLowerCase().includes(q.toLowerCase()));
+          resolve(hits.map((b) => ({ id: `article-${b}`, label: b, group: "Articles", run: ran(b) })));
+        }, 300);
+        signal.addEventListener("abort", () => (clearTimeout(t), reject(signal.reason)));
+      });
+    const menu = only === "live-dom"
+      ? createCommandMenu(
+          [c("go-workspace", "Your workspace", "Go to"), c("go-calendar", "Calendar", "Go to")],
+          { label: "Search articles", placeholder: "Search articles and pages", search },
+        )
+      : createCommandMenu([
       c("go-overview", "Overview", "Go to", "g o", ["home", "dashboard"]),
       c("go-sites", "Sites", "Go to", "g s", ["uptime", "checks"]),
       c("go-queue", "Queue", "Go to", "g q", ["jobs", "blocked"]),
@@ -79,7 +101,7 @@
       c("help", "Show keyboard shortcuts", "Help", "?", ["keys", "help"]),
     ]);
     enhance();
-    if (only === "open") openCommandMenu();
+    if (only === "open" || only === "live-dom") openCommandMenu();
     if (only === "filtered") openCommandMenu("ck");
     if (only === "stops") openCommandMenu("stop");
     if (only === "nomatch") openCommandMenu("deploy to vercel");

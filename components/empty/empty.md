@@ -6,7 +6,7 @@ parts: [css, react]
 tool: native
 states: [nothing yet, no match, all clear, could not load, with an icon, flush, long wait, comfortable, no value]
 added: 0.1.0
-updated: 0.99.0
+updated: 0.100.0
 source: Capsomer mockup (design/mockup.html, "Empty, loading and error")
 replaces:
   - 'class="(empty|empty-state)[ "]'

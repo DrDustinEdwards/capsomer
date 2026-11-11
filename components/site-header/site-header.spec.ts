@@ -785,3 +785,18 @@ eachTheme((theme) => {
     await expectNoAxeViolations(page);
   });
 });
+
+eachTheme((theme) => {
+  test("behavior: clear at rest, the band shows only once the header is stuck, with no scroll listener", async ({
+    page,
+  }) => {
+    await visitStates(page, "site-header", theme, "fx-rest-clear");
+    const band = () =>
+      page.locator(".cap-site-header-ground").evaluate((el) => getComputedStyle(el).opacity);
+    await expect.poll(band).toBe("0");
+    await page.evaluate(() => scrollTo({ top: 400, behavior: "instant" }));
+    await expect.poll(band).toBe("1");
+    await page.evaluate(() => scrollTo({ top: 0, behavior: "instant" }));
+    await expect.poll(band).toBe("0");
+  });
+});
