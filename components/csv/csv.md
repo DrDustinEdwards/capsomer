@@ -5,7 +5,7 @@ summary: A table as an RFC 4180 file that a spreadsheet opens as data, with the 
 parts: [behavior]
 tool: own JavaScript
 states: []
-added: 0.93.0
+added: 0.90.0
 source: the Capsid Portal's dashboard/src/lib/csv.ts, Foxhound's app/lib/recovery/payments-csv.ts, dustinedwards.info's libraryCsv, germomics's subscribers export, Carrel's chart-block CSV reader
 replaces:
   - 'function (csvCell|csvField|csvEscape|csvRow|toCsv|libraryCsv)\b'

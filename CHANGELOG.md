@@ -4,7 +4,7 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
-## [0.93.0]
+## [0.90.0]
 
 - **New: CSV** (`capsomer/behavior/csv`; the shared-code audit, 2026-11-11, item 31). One writer, reader and download for every site's exports and imports, replacing the copies in the Capsid Portal, Foxhound, dustinedwards.info, germomics and Carrel. RFC 4180 (CRLF after every record, quoting only when needed), and a formula guard that is always on: a text cell starting with `=`, `+`, `-`, `@`, a tab, CR, LF or their full-width forms opens as text (OWASP, CSV Injection). `verbatim(text, pattern)` keeps a site's own amounts and dates as numbers. `csvResponse` names the file in `filename` and `filename*` (RFC 6266). No token or class.
 - **New: the draft compare's merge mode** (`DraftMerge`, `mergePlan`, `merged`; from Carrel's merge view). Two texts that both moved on from one version, block by block, each difference kept from either side or both, starting on the side that changed it when the base is known. Its diff is the compare's own, so it needs no diff library. New classes: `.cap-merge` and its parts (`-intro`, `-list`, `-same`, `-choice`, `-sides`, `-side`, `-text`, `-empty`, `-mark`, `-actions`). No token or class was removed or renamed.

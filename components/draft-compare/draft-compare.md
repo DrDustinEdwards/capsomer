@@ -6,7 +6,7 @@ parts: [css, behavior, react]
 tool: native + own JavaScript
 states: [merge with a base, merge without a base, a pick that leaves a side out, keep both disabled with one side empty, patch of two revisions, patch by line, patch with nothing to show, side by side, inline, changes only, unchanged passages folded, one change, no differences, with authorship runs, narrow container stacked, remembered view, comfortable density, React with the view held by the app]
 added: 0.3.0
-updated: 0.93.0
+updated: 0.90.0
 source: the site admin's revision-list.tsx (DiffBlock, RevisionMeta), admin.posts.$slug.history.tsx and admin-history.css; the merge mode from Carrel's editor/merge-view.tsx, lib/merge.ts and lib/merge.server.ts
 replaces:
   - 'class="(?:[^"]*\s)?(history-diff|diff-block|diff-view)[\s"]'
