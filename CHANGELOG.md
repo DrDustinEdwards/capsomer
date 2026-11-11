@@ -2,7 +2,9 @@
 
 Each release names every removed or renamed token or class, and every changed HTML contract.
 
-## [0.94.0]
+## [Unreleased]
+
+## [0.95.0]
 
 Shared components from the network audit: parts each site wrote for itself, now in Capsomer so every site behaves the same.
 
@@ -26,7 +28,32 @@ Shared components from the network audit: parts each site wrote for itself, now 
 - **React picture** names the ratio from the file's width and height in the image's style, as the sites' own copies did (no LazyLoadImage issue in Chrome).
 - **Command menu: live results without React.** `createCommandMenu(commands, { search, searchDelay })` and `attach(dialog, run, { search })` take the React menu's `search(query, signal)`: asked 180 ms after the last key, the one before aborted (and on close), results after the matching commands, the list `aria-busy` and "Searching…" until they come. `run(option, found)` gets a live result's command. It replaces the live search Foxing wrote around `attach` (search-palette.ts) and is what dustinedwards.info's palette moves onto.
 - **Player transcript: Copy with link copies through the copy part,** so a refused clipboard now says Copy failed.
+- **Save toggle keeps its list through `capsomer/behavior/hooks`** (`readStored`, `writeStored`, `subscribeStored`): where storage is blocked the button still toggles and the list lasts the page. The key and the stored JSON are unchanged.
 - **Tabs remember through `capsomer/behavior/hooks`.** The remembered tab sets keep their choice with the hooks' `readStored`, `writeStored` and `subscribeStored` instead of their own copies; the storage key and behavior are unchanged.
+
+## [0.94.0]
+
+- **Seventeen page and app widgets move into Capsomer** (the shared-code audit's item 31; Dustin, 2026-11-11: a piece of UI that is a component belongs in Capsomer, even when only one site uses it so far). Each is a component with its CSS, notes, specimen and tests, extracted from the site that had it; the sites switch to them and delete their copies next.
+  - `range-slider` (two-handle range, from Foxhound's payments filter): `.cap-range-slider` and its parts, each handle a field's `input.cap-range`, `capsomer/behavior/range-slider` (`rangeFill`, `clampPair`, `formatValue`, the `cap:range-commit` event), React `RangeSlider`.
+  - `toc` (a post's contents, sidebar from 64rem and inline below, from Foxhound's blog): `.cap-toc`, React `Toc`.
+  - `share-row` (share links plus a copy button, from Foxhound's blog): `.cap-share`, `shareHref`, React `ShareRow`.
+  - `route-splash` (a slow navigation's loading screen, from Foxhound's app shell): `.cap-route-splash`, `shouldShowRouteSplash`, React `RouteSplash`, now `role="status"`.
+  - `count-up` (a number that counts up once in view, from Foxhound's audit): `capsomer/behavior/count-up`, `.cap-count-up`, React `useCountUp`.
+  - `timeline` (numbered steps whose line fills as they scroll in, from BioScience Writers): `ol.cap-timeline` and its parts, React `Timeline`; the fill is a transform, with no measuring.
+  - `pdf-viewer` (PDF.js pages with keyboard paging and zoom, from txasm): `.cap-pdf` and its parts, React `PdfViewer`.
+  - `checklist-run` (a page of steps worked through once, with timers, notes, one step at a time and a record, from dustinedwards.info's run mode): `.cap-run-*`, `capsomer/behavior/checklist-run` and the pure `capsomer/behavior/checklist-run-model`. The scale swap now copies every `[data-run-swap]` region by name and place, through `trusted-html`.
+  - `offline-keep` (keep a page for offline reading, from dustinedwards.info): `.cap-keep`, `capsomer/behavior/offline-keep`, and the worker `capsomer/offline-sw.js` (store `kept-v1` unless `?cache=` names another).
+  - `error-ad` (the error page's vintage ad slot, from dustinedwards.info's utility ads): `.cap-ad` and its parts, the model (`adProblems`, `burstPoints`, `scopeArt`, `chooseAd`), React `ErrorAd`, and the fonts Bangers and Alfa Slab One (OFL 1.1) in `fonts/`.
+  - `web-push` (a device list that turns phone alerts on and off, from the Capsid Portal): `.cap-push` and its parts, `subscribePush`, React `PushDevices`, and the worker `capsomer/push-sw.js`.
+  - `scope-chip` (a one-select filter form that submits on change, from Carrel): `form.cap-scope`, React `ScopeChip`.
+  - `danger-zone` (the risky controls set apart, from the Capsid Portal): `.cap-danger`, React `DangerZone`.
+  - `freshness` (when data was updated, with a ring for the next refresh, from the Capsid Portal): `.cap-fresh`, `shareLeft`, React `Freshness` and `FreshRing`.
+  - `save-toggle` (save a post in this browser, from germomics): `button.cap-chip.cap-save` (a toggle chip with a bookmark), React `SaveToggle`.
+  - `subscribe-links` (listen and subscribe links, from germomics): `.cap-subscribe`, each link a `cap-chip`, React `SubscribeLinks`.
+  - `split` (text beside a picture, flipping sides, from dustinedwards.info's media split): `.cap-split`, React `Split`.
+  - The package ships `components/*/*-sw.js`.
+- **The single slider's thumb takes a 44px touch target** on a coarse pointer (the dot stays 20px inside it), and its hover ring shows only where a pointer hovers.
+- No token or class was removed or renamed, and no existing HTML contract changed.
 
 ## [0.93.0]
 

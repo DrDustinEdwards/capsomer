@@ -1,0 +1,65 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* The split: a text column (a heading, then a list or prose) beside one picture, the picture on
+   the right, or on the left with data-flip. Source order is heading, text, picture, so reading
+   and focus order are the same at every width; only the layout moves them. The picture's top
+   lines up with the first line of text, under the heading. Narrow screens stack heading,
+   picture, text. Extracted from dustinedwards.info's media split (styles/media-split.css). */
+@layer cap.components {
+  .cap-split {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "head"
+      "media"
+      "text";
+    gap: var(--space-4) var(--space-7);
+    align-items: start;
+    margin-block: var(--space-7);
+  }
+  .cap-split-head {
+    grid-area: head;
+    margin: 0;
+  }
+  .cap-split-text {
+    grid-area: text;
+    margin: 0;
+  }
+  .cap-split-media {
+    grid-area: media;
+    margin: 0;
+    & img {
+      display: block;
+      inline-size: 100%;
+      block-size: auto;
+    }
+  }
+  /* A list of names beside the picture: no bullets, two columns from tablet width. */
+  .cap-split-text[data-list="names"] {
+    padding: 0;
+    list-style: none;
+    & li {
+      break-inside: avoid;
+      margin: 0 0 var(--space-1);
+    }
+  }
+  /* Page-level layout, so a media query: the split fills the reading column. */
+  @media (min-width: 48rem) {
+    .cap-split {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      grid-template-areas:
+        "head ."
+        "text media";
+    }
+    .cap-split[data-flip] {
+      grid-template-areas:
+        ". head"
+        "media text";
+    }
+    .cap-split-text[data-list="names"] {
+      column-count: 2;
+      column-gap: var(--space-5);
+    }
+  }
+}

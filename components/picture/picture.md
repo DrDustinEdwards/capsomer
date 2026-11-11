@@ -6,7 +6,7 @@ parts: [css, react]
 tool: native
 states: [placeholder while loading, loaded, main color only, animated and playing, animated and paused, reduced motion]
 added: 0.56.0
-updated: 0.94.0
+updated: 0.95.0
 source: dustinedwards.info's prose.css (img.has-lqip, the placeholder Prelum writes); WCAG 2.2.2 Pause, Stop, Hide
 replaces:
   - 'img\.has-lqip\s*\{'
