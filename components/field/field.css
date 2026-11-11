@@ -91,7 +91,7 @@
     border-radius: 50%;
     background: var(--crit);
     color: var(--surface);
-    font-size: 10px;
+    font-size: 0.625rem;
     font-weight: 800;
     line-height: 1;
   }
@@ -594,9 +594,13 @@
       box-shadow: none;
       outline: none;
     }
+    /* Grows with its text (field-sizing, from textarea.cap-input), so the drag handle goes only where the browser can
+       do that; elsewhere the person can still drag it taller (Modern Web Guidance, browser-ui-theming). */
     & > textarea.cap-input {
-      resize: none;
       padding-block: var(--pad-y);
+      @supports (field-sizing: content) {
+        resize: none;
+      }
     }
   }
   .cap-input-addon {

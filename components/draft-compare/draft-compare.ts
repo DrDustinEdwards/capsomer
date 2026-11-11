@@ -10,6 +10,7 @@
 // The HTML holds every view (side by side, inline, changes only) so a reader without script
 // still gets all of it; the radios in the bar choose which one shows, in CSS.
 
+import { isImeEnter } from "../shortcuts/shortcuts.ts";
 import { singleKeysOff } from "../row-list/row-list.ts";
 import { type CompareView, STORAGE_KEY, VIEWS } from "./draft-compare-render.ts";
 
@@ -99,7 +100,7 @@ export function setView(root: Element, view: CompareView): void {
 }
 
 const isTextEntry = (e: KeyboardEvent): boolean => {
-  if (e.ctrlKey || e.metaKey || e.altKey || e.isComposing) return true;
+  if (e.ctrlKey || e.metaKey || e.altKey || e.isComposing || isImeEnter(e)) return true;
   const t = e.target as HTMLElement | null;
   if (!t) return false;
   if (

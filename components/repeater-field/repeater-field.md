@@ -5,7 +5,7 @@ summary: Rows of fields a person adds to, removes from and reorders, each row a 
 parts: [css, behavior, react]
 tool: own JavaScript (React)
 states: [rows, reordered, at the minimum, full, with an error, before script]
-added: 0.98.0
+added: 0.91.0
 source: dustinedwards.info, app/components/admin/kb-form-fields.tsx (MaterialsEditor, EquipmentEditor); germomics, admin.people._index.tsx (link rows); txasm, admin.settings.tsx (footer links) and components/abstract-authors.tsx; the Capsid Portal, views/ProjectConfig.tsx (repo rows)
 replaces:
   - 'rows\.filter\(\(_, (j|idx)\) => (j|idx) !== i\)'

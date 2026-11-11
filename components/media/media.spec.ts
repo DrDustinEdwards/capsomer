@@ -309,7 +309,7 @@ eachTheme((theme) => {
       const bar = page
         .locator("#t-capsid-walkthrough")
         .getByRole("progressbar", { name: "Uploading" });
-      await expect(bar).toHaveAttribute("aria-valuenow", "62");
+      await expect(bar).toHaveJSProperty("value", 62);
       await expect(bar).toHaveAttribute(
         "aria-valuetext",
         "62 percent of capsid-walkthrough.png uploaded",
@@ -386,7 +386,7 @@ eachTheme((theme) => {
       expect(html).toContain('class="cap-dialog cap-media-inspector"');
       expect(html).toContain("The status dashboard with three sites reporting healthy");
       expect(html).toContain('data-alt="decorative"');
-      expect(html).toContain('role="progressbar"');
+      expect(html).toContain('<progress class="cap-meter-bar" max="100" value="62"');
     },
   );
 
@@ -1092,7 +1092,7 @@ eachTheme((theme) => {
       page
         .locator("#tile-media-capsid-walkthrough-png")
         .getByRole("progressbar", { name: "Uploading" }),
-    ).toHaveAttribute("aria-valuenow", "62");
+    ).toHaveJSProperty("value", 62);
     await expect(page.getByRole("button", { name: "Retry uploading scan-0042.png" })).toBeVisible();
     await link(page, FOX).focus();
     await page.keyboard.press("ArrowRight");

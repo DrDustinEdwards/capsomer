@@ -220,6 +220,15 @@
     flex: 1;
     border-radius: var(--radius-s);
 
+    /* An inactive panel hidden "until-found" keeps a box (the browser skips only its contents), so it is taken out
+       of the row: no share of the flex space, no gap beside it. Found, it loses the attribute and returns. */
+    &[hidden="until-found"] {
+      position: absolute;
+      inline-size: 0;
+      block-size: 0;
+      overflow: hidden;
+    }
+
     &:focus-visible {
       outline: var(--ring-width) solid var(--ring);
       outline-offset: 2px;

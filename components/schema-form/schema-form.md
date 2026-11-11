@@ -5,7 +5,7 @@ summary: A form described as data, one spec per field, drawn in Capsomer's field
 parts: [css, behavior, react]
 tool: native + own JavaScript (React)
 states: [a settings form, refused by the server, held in React state, an app's own kind]
-added: 0.98.0
+added: 0.91.0
 source: dustinedwards.info, app/kb/form-fields.mjs (FieldSpec kinds) and app/components/admin/kb-form-fields.tsx (FieldInput) and kb-form-steps.tsx (goTo); germomics, admin.settings._index.tsx (the JSON field guard, the key and value settings); txasm, admin.settings.tsx (the single-row settings form)
 replaces:
   - 'case "(text|textarea|select|checkbox|multi)":'

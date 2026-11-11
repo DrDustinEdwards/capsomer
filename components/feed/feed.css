@@ -190,4 +190,14 @@
       background: CanvasText;
     }
   }
+
+  /* A long feed renders only the days near the screen: the first two are always drawn (above the fold), later days
+     skip layout and paint until scrolled near, holding an estimated height that the browser replaces with the real
+     one once drawn (Modern Web Guidance, defer-rendering-heavy-content; content-visibility is Baseline 2025). */
+  .cap-feed-day:nth-child(n + 3) {
+    content-visibility: auto;
+    contain-intrinsic-size: auto none auto 20rem;
+    /* Paint containment clips at the box; this keeps a focus ring drawn just outside it. */
+    overflow-clip-margin: 0.375rem;
+  }
 }

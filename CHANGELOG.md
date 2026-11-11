@@ -4,7 +4,7 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
-## [0.98.0]
+## [0.91.0]
 
 Forms and inputs (shared-code audit pass 2, batch 2: C14 to C20). Nothing removed or renamed; no HTML contract changed.
 
@@ -18,6 +18,35 @@ Forms and inputs (shared-code audit pass 2, batch 2: C14 to C20). Nothing remove
 - **New: secret reveal** (`secret-reveal`). A secret shown once, focused, with its warning and the app's copy button.
 - **New: file attach** (`file-attach`). The drop zone's input as a button, its checks before sending, and the attached files listed.
 - Needs `@drdustinedwards/site-helpers` 0.45.0 (`SLUG_PATTERN`, `isSlug`) for `SlugField`.
+
+## [0.90.0]
+
+Fixes from a review against Chrome's Modern Web Guidance v1 (all 208 guides, 2026-11-11). Every site gets them by bumping Capsomer.
+
+- **Enter while typing Japanese, Chinese or Korean no longer submits.** The confirming Enter of an IME conversion acted at once in the confirm dialog's typed word, the markdown editor's link and alt fields, the media tag field, the site header's search, and the command menu. New `isImeEnter(event)` in `capsomer/behavior/shortcuts` (`isComposing`, plus `keyCode` 229 for Safari); those fields and the listbox, tree, row list, draft compare, media grid and shortcuts now use it. Sites with their own Enter handlers should use it too.
+- **Find-in-page reaches text in an inactive tab.** Where the browser has it (Chrome, Edge, Firefox 148), an inactive panel is `hidden="until-found"` once enhanced; a match chooses its tab, and the panel is no Tab stop while hidden. A disabled tab's panel stays plainly hidden. Safari is unchanged. HTML contract unchanged: markup still ships `hidden`. Base reset: `[hidden]` no longer forces `display: none` on `hidden="until-found"`.
+- **Dialog.**
+  - The page behind no longer locks with `overflow: hidden` on the root, which removed the scrollbar. The backdrop now contains the scroll (`overflow: hidden` and `overscroll-behavior: contain` on `::backdrop`; Chrome 144, Firefox 150).
+  - Light dismiss is the browser's where it has `closedby`: `any`, `closerequest` for locked and alert dialogs, `none` while busy. An author's own `closedby` is kept, and Safari keeps the scripted backdrop click.
+  - A button opener may carry `commandfor` and `command="show-modal"`, so it opens the dialog before script runs. A closer with `command="close"` is handled by the script while it runs.
+  - On a phone the footer buttons stack in source order (`column`, was `column-reverse`), so Tab order matches what you see. The main action is now last, nearest the thumb.
+  - A sheet's drag header takes only its drag axis (`touch-action: pan-x` on a bottom sheet, `pan-y` on a side sheet; was `none`).
+- **No heading inside a `summary`.** JAWS and TalkBack drop it. The "accordion titles in headings" pattern and its specimen are removed (the CSS rule that styled `summary > h2…h6` is gone). Use a group row in a heading for sections that need one. No site used the old pattern.
+- **Long lists render lazily.** Feed days after the second, media tiles after the 24th and rows after the 30th get `content-visibility: auto` with an estimated height (`contain-intrinsic-size: auto`) and `overflow-clip-margin` for focus rings.
+- **Rows that scroll sideways fade only where there is more.** These are tab lists, the anchor bar, the letterhead's phone links row (replacing its fixed end fade) and wide prose tables. It uses a mask driven by a scroll timeline, and needs no script. Where scroll timelines are missing there is no fade.
+- **Upload progress is a native `<progress class="cap-meter-bar" max="100" value="…">`** (media tile and React media grid), styled as the meter's track. HTML contract change: the media uploading block's `span.cap-meter-bar[role=progressbar]` with `span.cap-meter-fill` is now `progress.cap-meter-bar`.
+- **The toolbar uses native `focusgroup`** where the browser has it (Chrome 150). The roving script is skipped there and stays elsewhere. Bars with their own item set (markdown editor, tag group) keep the script. Tabs keep their script, because native `tablist` focusgroup does not skip disabled tabs.
+- **Moving rows keeps their state.** The tree, the media grid sort and the sortable list use `moveBefore` where the browser has it (new `moveNode` in `capsomer/behavior/sortable-list`). A pointer drag follows only the pointer that started it, and captures it.
+- **A cut-off sortable label or history name scrolls to its end** while its row is hovered or has keyboard focus (CSS only, not under reduced motion). The text is now in an inner `<span>`, an HTML contract change for `.cap-sortable-label` and `.cap-hist-name` (without the span nothing moves).
+- **Video and audio wait until near the screen.** `Video` and `Audio` set `loading="lazy"` by default, and pass `loading="eager"` for a player at the top of a page.
+- **Reduced motion is handled per animation.** The global `animation-duration: 0.01ms !important` and `transition-duration: 0s !important` are removed from `base.css`; only `scroll-behavior` stays. Every Capsomer animation already sat inside `prefers-reduced-motion: no-preference` except the system map's flow, which now does. A site with its own unguarded animation must guard it.
+- **The header link underline grows by `scale`**, not `inline-size`.
+- **Type.**
+  - The header, field, admin shell and manual font sizes are in rem, not px, so they follow the reader's text size.
+  - Inline code in prose matches the prose's x-height with `font-size-adjust: from-font`. Browsers without it keep 0.85em.
+  - Paragraphs, list items, `dd`, blockquotes and captions get `text-wrap: pretty` everywhere.
+- **A textarea in an input group keeps its drag handle** where the browser cannot grow it with its text (`resize: none` only under `@supports (field-sizing: content)`).
+- No token or class was removed or renamed. The removed specimen section was `#s-accordion-headings`.
 
 ## [0.89.0]
 

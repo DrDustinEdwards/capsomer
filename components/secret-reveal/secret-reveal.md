@@ -5,7 +5,7 @@ summary: A secret shown once (an API key, a recovery code) that takes focus, wit
 parts: [css, react]
 tool: native
 states: [shown]
-added: 0.98.0
+added: 0.91.0
 source: Foxhound, routes/app/settings/api-keys.tsx (RevealKey)
 replaces:
   - 'function RevealKey'

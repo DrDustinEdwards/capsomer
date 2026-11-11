@@ -258,17 +258,13 @@ export function syncTile(tile: HTMLElement): void {
     const value = document.createElement("span");
     value.className = "cap-meter-value";
     value.textContent = `${pct}%`;
-    const bar = document.createElement("span");
+    // A native progress bar (its role and value the browser's own), styled as the meter's track (meter.css).
+    const bar = document.createElement("progress");
     bar.className = "cap-meter-bar";
-    bar.setAttribute("role", "progressbar");
+    bar.max = 100;
+    bar.value = pct;
     bar.setAttribute("aria-labelledby", label.id);
-    bar.setAttribute("aria-valuemin", "0");
-    bar.setAttribute("aria-valuemax", "100");
-    bar.setAttribute("aria-valuenow", String(pct));
     bar.setAttribute("aria-valuetext", `${pct} percent of ${r.name} uploaded`);
-    const fill = document.createElement("span");
-    fill.className = "cap-meter-fill";
-    bar.append(fill);
     meter.append(label, value, bar);
     block.append(meter);
     tile.append(block);
