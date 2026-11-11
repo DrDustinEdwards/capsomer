@@ -7,6 +7,7 @@ Each release names every removed or renamed token or class, and every changed HT
 - **The site header takes a site's own hooks.** `attributes` (data-* only) on the `<header>`, `toolsEnd` after the theme control and the account, and `end` at the end of the header, for a site's palette hooks and island templates. No change to the header's own markup.
 - **Tooltip `as="span"`.** The tip can be a `<span>`, valid inside a `<p>`. `Time tip` now renders through `Tooltip` with it; its markup is unchanged.
 - **Prose tables: a row header keeps the rows' hairline.** The 2px `--prose-table-rule` is on `thead th` only; a `th` in the body (a row header) had it too.
+- **Scroll-driven animations survive a minifier.** The scroll fades (tab rows, anchor bar, header links row, prose tables), the truncated label and the letterhead's header fade are written as longhands with `animation-duration: auto`. Lightning CSS, which Vite minifies with, folded the `animation` shorthand and its timeline into one with a 0s duration, which Chromium runs as finished: a wide table showed both fades at rest, and its first letters were faded.
 - No token or class was removed or renamed.
 
 ## [0.93.0]
