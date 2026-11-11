@@ -39,6 +39,9 @@ export {
   pickTwo,
   orderPair,
   compareHref,
+  comparePicks,
+  messageSummary,
+  changeText,
   PICK_NONE,
   PICK_BLOCKED,
   pickedText,
@@ -55,6 +58,7 @@ export type {
   Line,
   Sign,
   Picks,
+  ChangeTextOptions,
 } from "./history-list-model.ts";
 export {
   SIGN_GLYPH,
@@ -327,6 +331,12 @@ export function enhance(root: ParentNode = document): () => void {
     el.setAttribute(READY, "");
     const list = rowsOf(el);
     if (list) undo.push(attachListKeys(list));
+    // Before the script, Compare is a submit button of the picks' GET form; now the link,
+    // which says what is missing and orders the pair, takes its place.
+    for (const b of el.querySelectorAll<HTMLElement>("[data-cap-part='compare-submit']"))
+      b.hidden = true;
+    for (const a of el.querySelectorAll<HTMLElement>("a[data-cap-part='compare'][hidden]"))
+      a.hidden = false;
     enhanceTime(el);
 
     const onClick = (e: MouseEvent) => {

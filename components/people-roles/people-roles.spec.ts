@@ -238,3 +238,36 @@ eachTheme((theme) => {
     await expect(own.getByRole("link", { name: "History for Maya Chen" })).toBeVisible();
   });
 });
+
+test.describe("role grid", () => {
+  test("behavior: a cell saves on change and says so; the Owner's row spans the projects", async ({
+    page,
+  }) => {
+    await visitStates(page, "people-roles", "light");
+    const grid = page.locator("[data-mount='grid']");
+    await expect(
+      grid.getByRole("table", { name: "People, and their role on each project" }),
+    ).toBeVisible();
+    await expect(grid.getByRole("row", { name: /Alex Rivera/ })).toContainText(
+      "Owner of every project.",
+    );
+    // With the script, no Save button: a change is the save.
+    await expect(grid.getByRole("button", { name: /^Save/ })).toHaveCount(0);
+    await grid.getByLabel("Rosa Park on Letters").selectOption("reader");
+    await expect(grid.locator("[data-saved]")).toHaveAttribute("data-saved", "p:2:reader");
+    await expect(page.getByText("Saved: Rosa Park on Letters, Reader.")).toBeVisible();
+    // A reviewer is offered only what a reviewer may have.
+    await expect(
+      grid.getByLabel("reviewer@example.com on Field notes").locator("option"),
+    ).toHaveText(["No access", "Reader"]);
+  });
+
+  test("behavior: Disable marks the row and offers Undo, which enables again", async ({ page }) => {
+    await visitStates(page, "people-roles", "light");
+    const grid = page.locator("[data-mount='grid']");
+    await grid.getByRole("button", { name: "Disable Rosa Park" }).click();
+    await expect(grid.getByRole("row", { name: /Rosa Park/ })).toContainText("Disabled 2026-10-02");
+    await page.getByRole("button", { name: "Undo" }).click();
+    await expect(grid.getByRole("button", { name: "Disable Rosa Park" })).toBeVisible();
+  });
+});

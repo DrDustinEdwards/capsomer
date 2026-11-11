@@ -1,6 +1,7 @@
 import { expect, test } from "@playwright/test";
 import {
   expectContrast,
+  countCssRules,
   expectNoAxeViolations,
   focused,
   nextPost,
@@ -143,5 +144,17 @@ test.describe("focused and nextPost", () => {
     // the submit was stopped, so this page, and what the script set on it, is still here
     await expect(page.locator("#root")).toBeVisible();
     expect(await page.evaluate(() => (window as unknown as { kept?: boolean }).kept)).toBe(true);
+  });
+});
+
+test.describe("countCssRules", () => {
+  test("behavior: counts nested rules, and a page with no stylesheet is zero", async ({ page }) => {
+    await page.setContent(`<body>x</body>`);
+    expect(await countCssRules(page)).toBe(0);
+    await page.setContent(
+      `<style>@layer a { .x { color: red; .y { color: blue } } } @media print { p { margin: 0 } }</style>`,
+    );
+    // @layer, .x, .y, @media, p
+    expect(await countCssRules(page)).toBe(5);
   });
 });

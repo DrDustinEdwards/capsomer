@@ -5,8 +5,8 @@ summary: The network's icons in one place, one path each on a 24-unit grid. UI i
 parts: [css, behavior, react]
 tool: own JavaScript
 states: [ui icons, social marks, labeled, inside a button, own drawing, right to left]
-added: 0.93.0
-updated: 0.93.0
+added: 0.94.0
+updated: 0.94.0
 source: the sites' own inline SVGs, gathered: txasm's admin menu (admin.layout.tsx), Foxing's account panel and header (account-panel.tsx, page-shell.tsx), julieedwards.info's header (Chrome.tsx), the germomics and bsw footers' social marks
 replaces:
   - 'function (SocialIcon|NavIcon)\b'
