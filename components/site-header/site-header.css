@@ -854,9 +854,14 @@
         display: none;
       }
     }
-    /* The links on the right are hidden here, so the tools keep to the window's edge. */
+    /* The links on the right are hidden here, so the tools keep to the window's edge and lose
+       the divider that stood between them and the links. */
     .cap-site-header[data-links="right"] .cap-site-header-sections + .cap-site-header-tools {
       margin-inline-start: auto;
+
+      &::before {
+        display: none;
+      }
     }
     /* The menu button can stand bare (--header-menu-line: transparent; --header-menu-bg: none) and
        take its own size and glyph (--header-menu-size, --header-menu-glyph). */

@@ -4,6 +4,11 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+## [0.109.0]
+
+- **Site header: no divider before the tools on a phone with `data-links="right"`.** The divider rule from 0.99.1 out-ranked the phone rule that hides it, so a thin line stood left of the theme button wherever the links were folded away.
+- **Sortable list: `--sortable-add-gap`**, the space above an Add button placed right after the list (`--space-3`, as before). Nothing is removed or renamed.
+
 ## [0.108.0]
 
 - **Card: a lead.** `.cap-card-lead` as a card's first child puts one icon or one action (a podcast episode's play button) in a column of its own at the card's start, beside the header; the other regions keep to the second column. HTML contract addition only; no token or class is removed or renamed.
