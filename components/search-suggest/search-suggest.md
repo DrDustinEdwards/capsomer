@@ -5,8 +5,8 @@ summary: A site's search box that suggests pages as a person types. The search f
 parts: [css, behavior, react]
 tool: own JavaScript
 states: [closed, and with no script, label read but not shown, open with an option active, a long title that wraps]
-added: 0.103.0
-updated: 0.103.0
+added: 0.104.0
+updated: 0.104.0
 source: Foxing's search box (apps/web/app/components/search-box.tsx and its island islands/search-box.ts, which drew the same combobox twice)
 replaces:
   - 'data-island="search-box"'

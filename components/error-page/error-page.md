@@ -6,7 +6,7 @@ parts: [css, react]
 tool: native
 states: [404, 410, 410 with its own way out, a second way out, a site's own title band, signed out, session ended, 500, database down, development, phone width]
 added: 0.47.0
-updated: 0.103.0
+updated: 0.104.0
 source: dustinedwards.info, app/components/error-page.tsx; Foxhound, app/components/error-view.tsx
 replaces:
   - 'error\.status === 404 \? "404" : "Error"'

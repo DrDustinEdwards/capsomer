@@ -6,7 +6,7 @@ parts: [css, react]
 tool: native
 states: [areas on every site with its key, a cell not checked, a cell a check could not measure]
 added: 0.100.0
-updated: 0.103.0
+updated: 0.104.0
 source: the Capsid Portal's Completeness tab (dashboard/src/views/Completeness.tsx Mark and the grid, Completeness.css)
 ---
 
