@@ -108,7 +108,9 @@ function Who({ id, name, ai }: { id: string; name: string; ai?: boolean }) {
           {ai ? "AI" : initials(name.split(" and ")[0] ?? name)}
         </span>
       </span>
-      <span className="cap-hist-name">{name}</span>
+      <span className="cap-hist-name">
+        <span>{name}</span>
+      </span>
     </span>
   );
 }

@@ -31,9 +31,24 @@
       font-size: 0.85em;
       color: var(--muted);
     }
+    /* Code matches the prose's x-height rather than a hand-tuned size: the prose's own ratio (from-font, computed on
+       the code's parent and inherited as a number) is applied to the mono font. Without font-size-adjust, the old
+       0.85em (Modern Web Guidance, visually-stable-mixed-fonts). */
     & :where(code, kbd, samp) {
       font-family: var(--mono);
       font-size: 0.85em;
+    }
+    @supports (font-size-adjust: from-font) {
+      & :where(p, li, td, th, dd, blockquote, figcaption, h2, h3, h4) {
+        font-size-adjust: from-font;
+      }
+      & :where(code, kbd, samp) {
+        font-size: 1em;
+      }
+      & :where(pre) :where(code) {
+        font-size-adjust: none;
+        font-size: 0.85em;
+      }
     }
   }
 

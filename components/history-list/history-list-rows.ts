@@ -77,7 +77,7 @@ function whoEl(id: string, names: string[], ai?: boolean): HTMLElement {
     "span",
     { class: "cap-hist-who", id },
     avatarEl(first, ai),
-    h("span", { class: "cap-hist-name" }, label),
+    h("span", { class: "cap-hist-name" }, h("span", {}, label)),
   );
 }
 

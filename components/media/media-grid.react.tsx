@@ -1,13 +1,6 @@
 // The media library's React grid: MediaTile and MediaGrid (media.react.tsx).
 
-import {
-  type KeyboardEvent,
-  type ReactNode,
-  useCallback,
-  useId,
-  useLayoutEffect,
-  useRef,
-} from "react";
+import { type KeyboardEvent, type ReactNode, useCallback, useId, useRef } from "react";
 import { singleKeysOff } from "../shortcuts/shortcuts.ts";
 import { Glyph } from "../status/status.react.tsx";
 import {
@@ -239,25 +232,16 @@ export function MediaTile({
   );
 }
 
-// The shared meter's bar, drawn as a progress bar: the fill's position is set through the CSSOM.
+// A native progress bar (its role and value the browser's own), styled as the shared meter's track (meter.css).
 function ProgressBar({ labelId, pct, name }: { labelId: string; pct: number; name: string }) {
-  const bar = useRef<HTMLSpanElement>(null);
-  useLayoutEffect(() => {
-    bar.current?.style.setProperty("--cap-meter-ratio", String(pct / 100));
-  }, [pct]);
   return (
-    <span
-      ref={bar}
+    <progress
       className="cap-meter-bar"
-      role="progressbar"
+      max={100}
+      value={pct}
       aria-labelledby={labelId}
-      aria-valuemin={0}
-      aria-valuemax={100}
-      aria-valuenow={pct}
       aria-valuetext={`${pct} percent of ${name} uploaded`}
-    >
-      <span className="cap-meter-fill" />
-    </span>
+    />
   );
 }
 

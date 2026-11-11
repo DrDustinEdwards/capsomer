@@ -9,6 +9,7 @@
 // exported so the React wrapper and a node test can use them without the browser.
 
 import { type Listbox, createListbox } from "../listbox/listbox.ts";
+import { isImeEnter } from "../shortcuts/shortcuts.ts";
 import { place } from "../popover/popover.ts";
 import { attachToolbar, rovingIndex } from "../toolbar/toolbar.ts";
 import {
@@ -523,7 +524,7 @@ export async function mountMarkdownEditor(
     input.addEventListener("keydown", (e) => {
       const l = link;
       if (!l) return;
-      if (e.key === "Enter" && looksLikeUrl(l.input.value)) {
+      if (e.key === "Enter" && !isImeEnter(e) && looksLikeUrl(l.input.value)) {
         e.preventDefault();
         insertLink(l.input.value.trim(), l.input.value.trim());
       } else if (e.key === "Escape") {
@@ -785,7 +786,7 @@ export async function mountMarkdownEditor(
       insert.disabled = alt.value.trim() === "" || panel.hasAttribute("aria-busy");
     });
     alt.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") {
+      if (e.key === "Enter" && !isImeEnter(e)) {
         e.preventDefault();
         void go(false);
       }

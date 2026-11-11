@@ -188,12 +188,14 @@
          its neighbors so lines leaving one cell do not pulse together. A tie both ways stays
          solid. Still under reduced motion: the detail line says which way each tie runs. */
       stroke-dasharray: 30 5;
-      animation: cap-system-map-flow 2s linear infinite;
-      &:nth-child(3n + 1) {
-        animation-delay: -0.7s;
-      }
-      &:nth-child(3n + 2) {
-        animation-delay: -1.4s;
+      @media (prefers-reduced-motion: no-preference) {
+        animation: cap-system-map-flow 2s linear infinite;
+        &:nth-child(3n + 1) {
+          animation-delay: -0.7s;
+        }
+        &:nth-child(3n + 2) {
+          animation-delay: -1.4s;
+        }
       }
     }
     & .cap-system-map-wire[data-on][data-both] {

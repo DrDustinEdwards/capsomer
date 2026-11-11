@@ -4,6 +4,7 @@ import {
   expectContrast,
   expectNoAxeViolations,
   visitStates,
+  settled,
 } from "../../test/helpers.ts";
 
 // Whether the element is fully inside the window (a pixel of slack for rounding).
@@ -202,11 +203,7 @@ eachTheme((theme) => {
       await page.locator(`#${id}`).click();
       const popup = page.locator(`#${id === "flip-css" ? "pop-flip-css" : "pop-flip-js"}`);
       await expect(popup).toBeVisible();
-      await page.evaluate(() =>
-        Promise.all(document.getAnimations().map((a) => a.finished.catch(() => undefined))).then(
-          () => undefined,
-        ),
-      );
+      await settled(page);
       expect(
         await inside(page, `#${await popup.getAttribute("id")}`),
         `${id} popup is inside the window`,

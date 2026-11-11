@@ -15,6 +15,7 @@ import {
   useState,
 } from "react";
 import { openDialog, wireDialog } from "../dialog/dialog.ts";
+import { isImeEnter } from "../shortcuts/shortcuts.ts";
 import { Disclosure } from "../disclosure/disclosure.react.tsx";
 import { Glyph } from "../status/status.react.tsx";
 import {
@@ -593,7 +594,7 @@ function InspectorBody({
               value={tagText}
               onChange={(e) => setTagText(e.target.value)}
               onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === ",") {
+                if ((e.key === "Enter" && !isImeEnter(e.nativeEvent)) || e.key === ",") {
                   e.preventDefault();
                   addTag(tagText);
                 }

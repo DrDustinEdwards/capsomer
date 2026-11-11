@@ -27,7 +27,25 @@ const TOOLBAR_ITEMS = ":is(button, a[href]):not(:disabled, [hidden])";
 
 // Gives one bar its single tab stop and arrow keys. `items` picks its controls. Returns a function
 // that detaches. Controls added later join it: the bar is read on every key.
+//
+// Where the browser has focusgroup (Chrome 150, Edge 150), a plain toolbar takes `focusgroup="toolbar wrap"` and the
+// browser gives the single stop, the arrows (reversed right to left), Home, End and the wrap; this script then adds
+// nothing, since two roving systems would fight (Modern Web Guidance, toolbar). A bar with its own item set (the
+// markdown editor's tools, a tag group's remove buttons) keeps the script, which picks only those items.
+export const NATIVE_FOCUSGROUP =
+  typeof HTMLElement !== "undefined" && "focusGroup" in HTMLElement.prototype;
+
 export function attachToolbar(bar: HTMLElement, items = TOOLBAR_ITEMS): () => void {
+  if (NATIVE_FOCUSGROUP && items === TOOLBAR_ITEMS) {
+    const had = bar.getAttribute("focusgroup");
+    if (had === null) {
+      const vertical = bar.getAttribute("aria-orientation") === "vertical";
+      bar.setAttribute("focusgroup", vertical ? "toolbar wrap block" : "toolbar wrap");
+    }
+    return () => {
+      if (had === null) bar.removeAttribute("focusgroup");
+    };
+  }
   const all = () => [...bar.querySelectorAll<HTMLElement>(items)];
   const stopOn = (el: HTMLElement | undefined) => {
     for (const item of all()) item.tabIndex = item === el ? 0 : -1;
