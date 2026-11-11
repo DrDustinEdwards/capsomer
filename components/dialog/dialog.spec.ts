@@ -397,9 +397,12 @@ eachTheme((theme) => {
       await visitStates(page, "dialog", theme, id);
       await expect(page.locator("dialog.cap-dialog")).toBeVisible();
       await page.evaluate(() =>
-        Promise.all(document.getAnimations().map((a) => a.finished.catch(() => undefined))).then(
-          () => undefined,
-        ),
+        Promise.all(
+          document
+            .getAnimations()
+            .filter((a) => a.timeline === document.timeline)
+            .map((a) => a.finished.catch(() => undefined)),
+        ).then(() => undefined),
       );
       return page.evaluate(() => {
         const r = document.querySelector("dialog.cap-dialog")?.getBoundingClientRect();
@@ -482,15 +485,23 @@ eachTheme((theme) => {
 
   test("behavior: the page behind does not scroll while a dialog is open", async ({ page }) => {
     await live(page, theme);
+    // A page taller than the window, so a wheel over the backdrop has something to scroll.
+    await page.evaluate(() => {
+      document.body.style.minHeight = "300vh";
+      window.scrollTo(0, 0);
+    });
     await openFrom(page, "open-center");
     await expect(dlg(page, "Rename the site")).toBeVisible();
-    const overflow = await page.evaluate(() => getComputedStyle(document.documentElement).overflow);
-    expect(overflow).toBe("hidden");
-    await page.keyboard.press("Escape");
-    await expect(dlg(page, "Rename the site")).toBeHidden();
+    // The backdrop contains the scroll (overscroll-behavior); the root keeps its scrollbar.
+    await page.mouse.move(4, 4);
+    await page.mouse.wheel(0, 600);
+    await page.waitForTimeout(300);
+    expect(await page.evaluate(() => window.scrollY)).toBe(0);
     expect(await page.evaluate(() => getComputedStyle(document.documentElement).overflow)).not.toBe(
       "hidden",
     );
+    await page.keyboard.press("Escape");
+    await expect(dlg(page, "Rename the site")).toBeHidden();
   });
 
   test("behavior: opening the same dialog twice in a row works", async ({ page }) => {

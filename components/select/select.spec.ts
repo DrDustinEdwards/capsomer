@@ -249,9 +249,12 @@ eachTheme((theme) => {
     ).toBeHidden();
     // The popup zooms in from 95%: measure once the animation has ended.
     await page.evaluate(() =>
-      Promise.all(document.getAnimations().map((a) => a.finished.catch(() => undefined))).then(
-        () => undefined,
-      ),
+      Promise.all(
+        document
+          .getAnimations()
+          .filter((a) => a.timeline === document.timeline)
+          .map((a) => a.finished.catch(() => undefined)),
+      ).then(() => undefined),
     );
     const [t, p] = await page.evaluate(() => [
       document.querySelector("#sel-platform")?.getBoundingClientRect().width ?? 0,

@@ -93,6 +93,20 @@ export function setDialogBusy(dialog: HTMLDialogElement, on: boolean): void {
   }
   if (on) dialog.setAttribute("aria-busy", "true");
   else dialog.removeAttribute("aria-busy");
+  syncClosedBy(dialog);
+}
+
+// Where the browser has `closedby` (Chrome 134, Firefox 141; not Safari), it does the light dismiss itself: "any"
+// closes on a backdrop click or Esc, "closerequest" on Esc only (locked and alert dialogs), "none" on neither (busy,
+// so its answer is not lost). Elsewhere the click handler in wireDialog does it. An author's own closedby is kept.
+// (Modern Web Guidance, light-dismiss-a-dialog.)
+export const NATIVE_LIGHT_DISMISS =
+  typeof HTMLDialogElement !== "undefined" && "closedBy" in HTMLDialogElement.prototype;
+const OWN_CLOSEDBY = "data-cap-closedby";
+export function syncClosedBy(dialog: HTMLDialogElement): void {
+  if (!NATIVE_LIGHT_DISMISS || dialog.hasAttribute(OWN_CLOSEDBY)) return;
+  const value = isBusy(dialog) ? "none" : isLocked(dialog) ? "closerequest" : "any";
+  dialog.setAttribute("closedby", value);
 }
 
 // True when a click outside the dialog must not close it: it is locked, it is an alert
@@ -325,6 +339,9 @@ export function wireDialog(dialog: HTMLDialogElement, opts: DialogOptions = {}):
   dialog.dataset.capWired = "";
   if (dialog.hasAttribute("data-cap-alert") && !dialog.hasAttribute("role"))
     dialog.setAttribute("role", "alertdialog");
+  if (NATIVE_LIGHT_DISMISS && dialog.hasAttribute("closedby"))
+    dialog.setAttribute(OWN_CLOSEDBY, "");
+  syncClosedBy(dialog);
 
   // A press that starts inside the dialog and ends on the backdrop (selecting text) is not a
   // click on the backdrop.
@@ -340,13 +357,16 @@ export function wireDialog(dialog: HTMLDialogElement, opts: DialogOptions = {}):
         ? t.closest<HTMLElement>("[data-cap-part='close'], [data-cap-part='cancel']")
         : null;
     if (closer && dialog.contains(closer)) {
+      // This handler closes it; a closer written with command="close" must not also close it natively while busy.
+      e.preventDefault();
       if (isBusy(dialog)) return;
-      // A Cancel that is a link (so it works with no script) closes the modal instead of leaving.
-      if (closer instanceof HTMLAnchorElement) e.preventDefault();
+      // (A Cancel that is a link, so it works with no script, closes the modal instead of leaving: prevented above.)
       return dialog.close(closer.dataset.capPart);
     }
     const wasDown = s.down;
     s.down = false;
+    // The browser closes it itself where it has closedby (syncClosedBy).
+    if (NATIVE_LIGHT_DISMISS) return;
     if (wasDown && isBackdropClick(dialog, e) && !isLocked(dialog)) dialog.close("backdrop");
   };
   // Esc while a request is in flight would hide its answer. The keydown is held as well as the
@@ -412,6 +432,8 @@ export function wireDialog(dialog: HTMLDialogElement, opts: DialogOptions = {}):
     s.observer = null;
     delete dialog.dataset.capReady;
     delete dialog.dataset.capWired;
+    if (!dialog.hasAttribute(OWN_CLOSEDBY)) dialog.removeAttribute("closedby");
+    dialog.removeAttribute(OWN_CLOSEDBY);
   };
 }
 

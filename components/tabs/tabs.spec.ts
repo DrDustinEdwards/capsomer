@@ -252,6 +252,22 @@ eachTheme((theme) => {
     expect(errors).toEqual([]);
   });
 
+  test("behavior: find-in-page reaches an inactive panel and chooses its tab", async ({ page }) => {
+    await visitStates(page, "tabs", theme);
+    // The panel is hidden until found, which find-in-page can search. A match fires beforematch on it (dispatched
+    // here: a test cannot drive the browser's find bar), and that chooses its tab.
+    await expect(page.locator("#tlp-preview")).toHaveAttribute("hidden", "until-found");
+    await page
+      .locator("#tlp-preview")
+      .evaluate((el) => el.dispatchEvent(new Event("beforematch", { bubbles: true })));
+    await expect(page.locator("#tl-preview")).toHaveAttribute("aria-selected", "true");
+    await expect(page.locator("#tlp-preview")).toBeVisible();
+    await expect(page.locator("#tlp-draft")).toBeHidden();
+    // An inactive panel is not a Tab stop while hidden until found.
+    await expect(page.locator("#tlp-draft")).toHaveAttribute("tabindex", "-1");
+    await expect(page.locator("#tlp-preview")).toHaveAttribute("tabindex", "0");
+  });
+
   test("behavior: the delivered HTML holds every panel, the inactive ones hidden", async ({
     page,
   }) => {

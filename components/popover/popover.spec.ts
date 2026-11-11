@@ -203,9 +203,12 @@ eachTheme((theme) => {
       const popup = page.locator(`#${id === "flip-css" ? "pop-flip-css" : "pop-flip-js"}`);
       await expect(popup).toBeVisible();
       await page.evaluate(() =>
-        Promise.all(document.getAnimations().map((a) => a.finished.catch(() => undefined))).then(
-          () => undefined,
-        ),
+        Promise.all(
+          document
+            .getAnimations()
+            .filter((a) => a.timeline === document.timeline)
+            .map((a) => a.finished.catch(() => undefined)),
+        ).then(() => undefined),
       );
       expect(
         await inside(page, `#${await popup.getAttribute("id")}`),

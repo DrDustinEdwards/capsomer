@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useId, useMemo, useRef, useState, useLayoutEffect } from "react";
 import { Dialog } from "../dialog/dialog.react.tsx";
 import { Listbox, ListboxEmpty, Option, OptionGroup } from "../listbox/listbox.react.tsx";
-import { register } from "../shortcuts/shortcuts.ts";
+import { isImeEnter, register } from "../shortcuts/shortcuts.ts";
 import { Keys } from "../shortcuts/shortcuts.react.tsx";
 import {
   emptyText,
@@ -189,7 +189,7 @@ export function CommandMenu({
             } else if (e.key === "Home" || e.key === "End") {
               e.preventDefault();
               setActive(e.key === "Home" ? 0 : Math.max(0, shown.length - 1));
-            } else if (e.key === "Enter") {
+            } else if (e.key === "Enter" && !isImeEnter(e.nativeEvent)) {
               e.preventDefault();
               choose(activeCommand);
             } else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {

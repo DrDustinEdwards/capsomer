@@ -2,7 +2,7 @@
 // Focus itself moves (there is no second selection), so Enter follows the link, the
 // browser scrolls the row into view, and a screen reader reads the row it lands on.
 // No framework; the React wrapper uses the same functions.
-import { singleKeysOff } from "../shortcuts/shortcuts.ts";
+import { isImeEnter, singleKeysOff } from "../shortcuts/shortcuts.ts";
 
 // Every row's one link or button, in order, skipping rows hidden or disabled.
 export function rowTargets(list: ParentNode): HTMLElement[] {
@@ -34,7 +34,7 @@ export function moveRowFocus(list: ParentNode, step: 1 | -1): HTMLElement | null
 
 // A key typed into a field, or with a modifier, is never a list shortcut.
 export function isTyping(e: KeyboardEvent): boolean {
-  if (e.ctrlKey || e.metaKey || e.altKey || e.isComposing) return true;
+  if (e.ctrlKey || e.metaKey || e.altKey || e.isComposing || isImeEnter(e)) return true;
   const t = e.target as HTMLElement | null;
   if (!t) return false;
   return (
@@ -50,7 +50,7 @@ export function isTyping(e: KeyboardEvent): boolean {
 const TEXT_INPUT =
   /^(text|search|email|url|tel|password|number|date|datetime-local|month|week|time)$/;
 export function isTypingKey(e: KeyboardEvent): boolean {
-  if (e.ctrlKey || e.metaKey || e.altKey || e.isComposing) return true;
+  if (e.ctrlKey || e.metaKey || e.altKey || e.isComposing || isImeEnter(e)) return true;
   const t = e.target as HTMLElement | null;
   if (!t) return false;
   if (t instanceof HTMLInputElement) return TEXT_INPUT.test(t.type || "text");

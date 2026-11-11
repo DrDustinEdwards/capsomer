@@ -90,9 +90,12 @@ eachTheme((theme) => {
     await page.getByRole("link", { name: "4 notices" }).focus();
     // The row's tint eases in over 100 ms: read it once the transition has finished.
     await page.evaluate(() =>
-      Promise.all(document.getAnimations().map((a) => a.finished.catch(() => undefined))).then(
-        () => undefined,
-      ),
+      Promise.all(
+        document
+          .getAnimations()
+          .filter((a) => a.timeline === document.timeline)
+          .map((a) => a.finished.catch(() => undefined)),
+      ).then(() => undefined),
     );
     const real = await ringContrast(page, "#list-mixed .cap-row:has(a:focus-visible)");
     const forced = await ringContrast(page, "#list-focus .cap-row[data-force='focus']");

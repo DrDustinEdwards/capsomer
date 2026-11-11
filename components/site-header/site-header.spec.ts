@@ -29,9 +29,12 @@ const rowOrder = (page: Page) =>
 // Lets any color transition finish before a color is read.
 const settle = (page: Page) =>
   page.evaluate(() =>
-    Promise.all(document.getAnimations().map((a) => a.finished.catch(() => undefined))).then(
-      () => undefined,
-    ),
+    Promise.all(
+      document
+        .getAnimations()
+        .filter((a) => a.timeline === document.timeline)
+        .map((a) => a.finished.catch(() => undefined)),
+    ).then(() => undefined),
   );
 
 eachTheme((theme) => {
@@ -552,9 +555,12 @@ eachTheme((theme) => {
       .getByRole("button", { name: "Sign out (Sam Rivera)" });
     await expect(signOut).toBeVisible();
     await page.evaluate(() =>
-      Promise.all(document.getAnimations().map((a) => a.finished.catch(() => undefined))).then(
-        () => undefined,
-      ),
+      Promise.all(
+        document
+          .getAnimations()
+          .filter((a) => a.timeline === document.timeline)
+          .map((a) => a.finished.catch(() => undefined)),
+      ).then(() => undefined),
     );
     const box = await signOut.boundingBox();
     expect(box!.y + box!.height).toBeLessThanOrEqual(PHONE.height);

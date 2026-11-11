@@ -494,9 +494,12 @@ eachTheme((theme) => {
     await expect(signOut).toBeVisible();
     // Measure the sheet where it rests, not mid-slide: it opens from 2.5rem below.
     await page.evaluate(() =>
-      Promise.all(document.getAnimations().map((a) => a.finished.catch(() => undefined))).then(
-        () => undefined,
-      ),
+      Promise.all(
+        document
+          .getAnimations()
+          .filter((a) => a.timeline === document.timeline)
+          .map((a) => a.finished.catch(() => undefined)),
+      ).then(() => undefined),
     );
     const box = await signOut.boundingBox();
     expect(box!.y + box!.height).toBeLessThanOrEqual(560);
@@ -1215,7 +1218,11 @@ eachTheme((theme) => {
     await page.getByRole("button", { name: "Next page" }).focus();
     await page.keyboard.press("Enter");
     await expect(page.getByTestId("page-title")).toHaveText("sites");
-    expect(await page.evaluate(() => document.getAnimations().length)).toBe(0);
+    expect(
+      await page.evaluate(
+        () => document.getAnimations().filter((a) => a.timeline === document.timeline).length,
+      ),
+    ).toBe(0);
   });
 
   test('behavior: the tab title is "<page> · <app>" by default, and documentTitle={false} leaves the app\'s own', async ({
