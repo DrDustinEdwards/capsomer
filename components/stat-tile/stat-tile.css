@@ -176,11 +176,12 @@
        --tile-icon-flow, --tile-icon-align, --tile-icon-size   column and start put the icon above
                              the label; its size
        --tile-gap            the space between the parts; --tile-detail-space the space above the note
-       --tile-pad, --tile-radius */
+       --tile-pad, --tile-radius, --tile-shadow */
   .cap-tile[data-variant="static"] {
     gap: var(--tile-gap, var(--space-2));
     padding: var(--tile-pad, var(--pad-card));
     border-radius: var(--tile-radius, var(--radius-l));
+    box-shadow: var(--tile-shadow, none);
     cursor: default;
 
     & > * {
