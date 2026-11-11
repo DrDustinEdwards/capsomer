@@ -20,9 +20,28 @@ eachTheme((theme) => {
   });
 });
 
-test("behavior: a short line drops the second clause and keeps the age", async ({ page }) => {
+test("behavior: a short line cuts the second clause, keeps the age whole and stays in its box", async ({
+  page,
+}) => {
   await visitStates(page, "freshness", "light");
-  await expect(page.locator("#fr-short .cap-fresh-more")).toBeHidden();
-  await expect(page.locator("#fr-short .cap-fresh-text")).toBeVisible();
-  await expect(page.locator("#fr-fresh .cap-fresh-more")).toBeVisible();
+  const short = page.locator("#fr-short");
+  const cut = await short.evaluate((el) => {
+    const more = el.querySelector<HTMLElement>(".cap-fresh-more")!;
+    const text = el.querySelector<HTMLElement>(".cap-fresh-text")!;
+    return {
+      moreCut: more.scrollWidth > more.clientWidth,
+      textWhole: text.scrollWidth <= text.clientWidth,
+      inBox: el.scrollWidth <= el.clientWidth,
+    };
+  });
+  expect(cut).toEqual({ moreCut: true, textWhole: true, inBox: true });
+  // In a flex row with nothing else setting its width (a header), the line still sizes to its words.
+  const width = await page.locator("#fr-fresh").evaluate((el) => {
+    const row = document.createElement("div");
+    row.style.display = "flex";
+    el.parentElement!.append(row);
+    row.append(el);
+    return el.getBoundingClientRect().width;
+  });
+  expect(width).toBeGreaterThan(100);
 });

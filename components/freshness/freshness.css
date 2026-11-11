@@ -6,7 +6,6 @@
    (dashboard/src/app/App.tsx, .fresh in styles.css). */
 @layer cap.components {
   .cap-fresh {
-    container-type: inline-size;
     display: flex;
     align-items: center;
     gap: var(--space-2);
@@ -39,15 +38,16 @@
   .cap-fresh[data-stale] .cap-fresh-ring-left {
     stroke: var(--warn);
   }
+  /* The line sizes to its words (a header's flex row gives it no width of its own). When it is
+     short, the second clause (which pass the data came from) gives way first, cut with an
+     ellipsis; the title keeps the full times. */
   .cap-fresh-text {
+    flex: none;
+  }
+  .cap-fresh-more {
+    min-inline-size: 0;
     overflow: hidden;
     text-overflow: ellipsis;
-  }
-  /* The second clause (which pass the data came from) goes first when the line is short. */
-  @container (max-width: 22rem) {
-    .cap-fresh-more {
-      display: none;
-    }
   }
   @media (forced-colors: active) {
     .cap-fresh-ring .cap-fresh-ring-left {

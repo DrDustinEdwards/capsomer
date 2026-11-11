@@ -30,7 +30,7 @@ A view that polls or streams data a person acts on: a dashboard, an operations f
 - **The age is in words and bold**, read from the data's own time, never the browser's clock alone (the app passes the words; the time component's relative words fit).
 - **The ring is decoration** (`aria-hidden`): the words carry the fact. It is drawn with an SVG dash, `--accent` on `--line-strong`, `--warn` when stale.
 - **Stale is the app's call** (twice the poll interval, say) and turns the line to `--warn`: color plus the word the app puts in `more` or `updated`.
-- **The second clause drops first** when the line has under 22rem (a container query), so a phone keeps the age.
+- **The line sizes to its words**, so it sits in a header's flex row with no width set. When the line is short, the second clause gives way first, cut with an ellipsis, so a phone keeps the age whole; the title has the full times.
 - **The full times go in `title`**, for a pointer that wants the exact read time.
 - **Before the first read** the line is a polite status ("Reading the feed..."), so a screen reader hears when data arrives.
 
