@@ -1,0 +1,5 @@
+/* Sample layout only: a narrow rail whose text is aligned to the end, as beside a page's text. */
+.record-facts-rail {
+  max-inline-size: 12rem;
+  text-align: end;
+}

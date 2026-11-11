@@ -75,6 +75,31 @@ export async function visitStates(
   );
 }
 
+// Serves a component's states page with Trusted Types enforced for the `capsomer` policy alone (the policy a site
+// stages), and returns the list every violation is pushed to, for a spec that expects it to stay empty.
+export async function enforceTrustedTypes(page: Page, name: string): Promise<string[]> {
+  await page.route(`**/components/${name}/states.html*`, async (route) => {
+    const response = await route.fetch();
+    await route.fulfill({
+      response,
+      headers: {
+        ...response.headers(),
+        "content-security-policy": "require-trusted-types-for 'script'; trusted-types capsomer",
+      },
+    });
+  });
+  const violations: string[] = [];
+  page.on("console", (m) => {
+    if (m.type() === "error" && /Trusted ?Type/i.test(m.text())) violations.push(m.text());
+  });
+  await page.addInitScript(() =>
+    document.addEventListener("securitypolicyviolation", (e) =>
+      console.error(`Trusted Types violation: ${e.violatedDirective} ${e.sample}`),
+    ),
+  );
+  return violations;
+}
+
 // The automated scan, against WCAG 2.2 A and AA. Any violation fails, with its rule, its
 // impact and the first offending node in the message, so a failure says where to look.
 // Base UI's focus guards are visually hidden sentinels it places around an open popup on

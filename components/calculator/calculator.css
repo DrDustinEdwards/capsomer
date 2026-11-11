@@ -1,0 +1,112 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* The calculator: the form beside its result where there is room, above it where there is not.
+   Complete with script off: the server renders the form and its result, and nothing here waits on
+   a class a script adds. From dustinedwards.info (app/styles/phage-tools.css). The fields are
+   Field's (.cap-field, .cap-input) and Calculate is a Button. */
+@layer cap.components {
+  /* The sidebar pattern: the form keeps about 17rem and the result takes the rest, until the
+     result would be narrower than 20rem, when it wraps under the form. No breakpoint to tune. */
+  .cap-calculator {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-6) var(--space-7);
+  }
+
+  .cap-calculator > .cap-calculator-form {
+    flex: 1 1 17rem;
+    max-inline-size: 24rem;
+  }
+
+  .cap-calculator > .cap-calculator-output {
+    flex: 999 1 20rem;
+  }
+
+  /* The form is controls: the UI face, inside a page's prose (whose --face is the serif) as
+     outside. The result keeps the page's face. */
+  .cap-calculator-form {
+    font-family: var(--ui);
+    display: grid;
+    gap: var(--space-5);
+    align-content: start;
+
+    & .cap-input {
+      font-family: var(--mono);
+      font-variant-numeric: tabular-nums;
+    }
+    & > .cap-btn {
+      justify-self: start;
+    }
+  }
+
+  .cap-calculator-unit {
+    font-weight: 400;
+    color: var(--muted);
+  }
+
+  .cap-calculator-output {
+    min-inline-size: 0;
+  }
+
+  .cap-calculator-status {
+    padding-block-end: var(--space-4);
+    border-block-end: 1px solid var(--line);
+  }
+
+  .cap-calculator-answer {
+    margin: 0 0 var(--space-2);
+    font-size: var(--fs-lead);
+
+    & strong {
+      font-family: var(--mono);
+      font-variant-numeric: tabular-nums;
+    }
+  }
+
+  /* An error is a word, weight and an edge, never color alone. */
+  .cap-calculator-error {
+    margin: 0;
+    padding-inline-start: var(--space-4);
+    border-inline-start: 3px solid var(--crit);
+    color: var(--crit);
+    font-weight: 600;
+  }
+
+  .cap-calculator-section h3 {
+    margin: var(--space-5) 0 var(--space-3);
+    font-size: var(--fs-lead);
+  }
+
+  .cap-calculator-steps {
+    margin: 0;
+    padding-inline-start: 1.75rem;
+    list-style: decimal;
+    font-family: var(--mono);
+    font-size: var(--fs-body);
+    line-height: 1.6;
+    font-variant-numeric: tabular-nums;
+    overflow-wrap: anywhere;
+
+    & li {
+      margin: 0 0 var(--space-2);
+    }
+  }
+
+  .cap-calculator-note {
+    margin: var(--space-4) 0 0;
+    color: var(--muted);
+    font-size: var(--fs-body);
+  }
+
+  .cap-calculator sup {
+    font-size: 0.75em;
+    line-height: 0;
+  }
+
+  @media print {
+    .cap-calculator-form > .cap-btn {
+      display: none;
+    }
+  }
+}

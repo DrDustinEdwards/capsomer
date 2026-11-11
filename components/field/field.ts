@@ -221,7 +221,8 @@ export function limitOf(control: HTMLElement): { limit: number; words: boolean }
 }
 
 // The value a stepper or a key gives: `by` steps from the value, kept within min and max, to
-// the step's own decimals so 0.1 + 0.2 is 0.3.
+// the step's own decimals so 0.1 + 0.2 is 0.3, or the value's where it has more (a field with
+// step="any" steps 1.5 by 1 to 2.5).
 export function stepValue(
   value: number,
   step: number,
@@ -229,8 +230,10 @@ export function stepValue(
   min?: number,
   max?: number,
 ): number {
-  const places = (String(step).split(".")[1] ?? "").length;
-  let v = Number(((Number.isFinite(value) ? value : (min ?? 0)) + by * step).toFixed(places));
+  const from = Number.isFinite(value) ? value : (min ?? 0);
+  const decimals = (n: number) => (String(n).split(".")[1] ?? "").length;
+  const places = Math.min(Math.max(decimals(step), decimals(from)), 100);
+  let v = Number((from + by * step).toFixed(places));
   if (min !== undefined && v < min) v = min;
   if (max !== undefined && v > max) v = max;
   return v;
@@ -333,6 +336,7 @@ function wireSteps(
     if (down) down.disabled = input.min !== "" && v <= Number(input.min);
     if (up) up.disabled = input.max !== "" && v >= Number(input.max);
   };
+  // step="any" (or none) steps by 1.
   const step = () => Number(input.step) || 1;
   const onKey = (e: KeyboardEvent) => {
     const to = input.readOnly
@@ -417,7 +421,9 @@ function attach(el: HTMLElement, undo: Array<() => void>, wire: () => () => void
 // input group, password, character count and search field. The form gets novalidate, so the
 // browser's own bubbles give way to the messages beside the fields. Returns a function that
 // detaches them all.
-export function enhance(root: ParentNode = document): () => void {
+// The root is Element | Document | DocumentFragment, not ParentNode: under @cloudflare/workers-types
+// an HTMLFormElement does not type as a ParentNode, so a site could not pass its form.
+export function enhance(root: Element | Document | DocumentFragment = document): () => void {
   const undo: Array<() => void> = [];
   for (const group of root.querySelectorAll<HTMLElement>(
     ".cap-input-group:not([data-cap-ready])",
