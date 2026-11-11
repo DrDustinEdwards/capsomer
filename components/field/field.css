@@ -451,11 +451,14 @@
       background: var(--primary);
       box-shadow: 0 0 0 2px var(--ground);
     }
-    &:is(:hover, [data-force="hover"])::-webkit-slider-thumb {
-      box-shadow: 0 0 0 2px var(--ground), 0 0 0 6px color-mix(in srgb, var(--primary) 25%, transparent);
-    }
-    &:is(:hover, [data-force="hover"])::-moz-range-thumb {
-      box-shadow: 0 0 0 2px var(--ground), 0 0 0 6px color-mix(in srgb, var(--primary) 25%, transparent);
+    /* Only where a pointer hovers: on touch the thumb's box is the 44px target, not the dot. */
+    @media (hover: hover) {
+      &:is(:hover, [data-force="hover"])::-webkit-slider-thumb {
+        box-shadow: 0 0 0 2px var(--ground), 0 0 0 6px color-mix(in srgb, var(--primary) 25%, transparent);
+      }
+      &:is(:hover, [data-force="hover"])::-moz-range-thumb {
+        box-shadow: 0 0 0 2px var(--ground), 0 0 0 6px color-mix(in srgb, var(--primary) 25%, transparent);
+      }
     }
     &:focus-visible {
       outline: none;
@@ -483,6 +486,27 @@
     }
     .cap-range::-moz-range-thumb {
       transition: box-shadow var(--dur-fast) var(--ease-out), scale var(--dur-fast) var(--ease-out);
+    }
+  }
+  /* On touch the thumb takes a --target (44px) square; the drawn dot stays 20px inside a
+     transparent border, so a finger can take it without the look changing (WCAG 2.5.8). */
+  @media (pointer: coarse) {
+    .cap-range::-webkit-slider-thumb {
+      box-sizing: border-box;
+      inline-size: var(--target);
+      block-size: var(--target);
+      margin-block-start: calc(2px - var(--target) / 2);
+      border: calc((var(--target) - 20px) / 2) solid transparent;
+      background-clip: padding-box;
+      box-shadow: none;
+    }
+    .cap-range::-moz-range-thumb {
+      box-sizing: border-box;
+      inline-size: var(--target);
+      block-size: var(--target);
+      border: calc((var(--target) - 20px) / 2) solid transparent;
+      background-clip: padding-box;
+      box-shadow: none;
     }
   }
   /* Forced colors drop the drawn track: the browser's own slider comes back. */

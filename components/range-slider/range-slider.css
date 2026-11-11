@@ -55,7 +55,7 @@
       );
     }
   }
-  /* Each handle is a field.css .cap-range (its thumb, hover, focus and press), laid over the rail
+  /* Each handle is a field.css .cap-range (its thumb, hover, focus, press and 44px touch target), laid over the rail
      with its own track hidden; only the thumbs take the pointer, so each drags on its own. */
   .cap-range.cap-range-slider-input {
     --cap-range-track: transparent;
@@ -70,27 +70,6 @@
     &::-moz-range-thumb {
       pointer-events: auto;
       cursor: pointer;
-    }
-  }
-  /* On touch each thumb takes a --target (44px) square; the drawn dot stays 20px inside a
-     transparent border, so a finger can take a handle without the look changing (WCAG 2.5.8). */
-  @media (pointer: coarse) {
-    .cap-range.cap-range-slider-input::-webkit-slider-thumb {
-      box-sizing: border-box;
-      inline-size: var(--target);
-      block-size: var(--target);
-      margin-block-start: calc(2px - var(--target) / 2);
-      border: calc((var(--target) - 20px) / 2) solid transparent;
-      background-clip: padding-box;
-      box-shadow: none;
-    }
-    .cap-range.cap-range-slider-input::-moz-range-thumb {
-      box-sizing: border-box;
-      inline-size: var(--target);
-      block-size: var(--target);
-      border: calc((var(--target) - 20px) / 2) solid transparent;
-      background-clip: padding-box;
-      box-shadow: none;
     }
   }
   /* Forced colors drop the drawn rail and the ring: the thumbs are drawn in the system's colors,

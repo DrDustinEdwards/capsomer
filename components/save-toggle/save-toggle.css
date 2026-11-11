@@ -15,6 +15,10 @@
   .cap-save[aria-pressed="true"] .cap-save-icon {
     fill: currentColor;
   }
+  /* The filled bookmark is the pressed mark, so the chip's tick would say it twice. */
+  .cap-chip.cap-save[aria-pressed="true"]::before {
+    content: none;
+  }
   @media (forced-colors: active) {
     .cap-save[aria-pressed="true"] .cap-save-icon {
       fill: ButtonText;
