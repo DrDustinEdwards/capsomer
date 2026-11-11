@@ -115,7 +115,7 @@ export async function bundleScript(entry, { format = "esm", name } = {}) {
     format,
     name,
     minify: true,
-    inlineDynamicImports: true,
+    codeSplitting: false,
   });
   await built.close();
   const [chunk] = output;
