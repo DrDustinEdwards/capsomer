@@ -7,7 +7,9 @@
 //   1. a constant in our own source (an icon's SVG children),
 //   2. HTML our own server rendered for this same origin (the catalog's swap), and
 //   3. markup our own renderer built with every value escaped (a chart's SVG, a draft comparison).
-// Never pass it anything built from a visitor's input; escape and build DOM instead.
+// Never pass it anything built from a visitor's input; escape and build DOM instead. The one exception is
+// `inertDocument`, which parses into a document that runs no script and loads nothing, for a caller that
+// then reads only what it trusts out of it (the rich editor's schema reading a paste).
 
 const NAME = "capsomer";
 
@@ -57,4 +59,13 @@ export function markup(html: string): { __html: string } {
     inners.set(html, inner);
   }
   return inner;
+}
+
+/**
+ * Parses `html` into an inert document: DOMParser's documents run no script and load no image or
+ * stylesheet. For HTML a person pasted into their own editor, which a schema then reads node by node;
+ * never move its nodes into the page as they are.
+ */
+export function inertDocument(html: string): Document {
+  return new DOMParser().parseFromString(trustedHtml(html), "text/html");
 }

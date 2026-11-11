@@ -23,13 +23,17 @@ eachTheme((theme) => {
       // The tile whose tip is open: axe-core 4.14 reads the open tip's words and key caps as the
       // tile's visible label, but a tip describes its trigger (role tooltip), it does not label
       // it. The tile is scanned closed in every other state.
-      if (only === "tip")
+      // The tip opens after the specimen mounts, so wait for it: marking it before it opens
+      // left it unexcluded about one run in twenty.
+      if (only === "tip") {
+        await page.locator(".cap-admin-tip:popover-open").waitFor();
         await page.evaluate(() =>
           document
             .querySelector(".cap-admin-tip:popover-open")
             ?.closest(".cap-admin-tile")
             ?.setAttribute("data-tip-open", ""),
         );
+      }
       await expectNoAxeViolations(
         page,
         undefined,

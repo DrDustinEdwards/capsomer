@@ -100,7 +100,7 @@ function icon(paths: string[]): SVGSVGElement {
   return svg;
 }
 
-const GLYPH = {
+export const GLYPH = {
   bold: ["M6 4h7a4 4 0 0 1 0 8H6zM6 12h8a4 4 0 0 1 0 8H6z"],
   italic: ["M15 4h-5M14 20H9M14 4 10 20"],
   link: [
