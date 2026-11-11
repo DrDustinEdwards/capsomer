@@ -17,7 +17,7 @@ Forms and inputs (shared-code audit pass 2, batch 2: C14 to C20). Nothing remove
 - **New: read-only form** (`read-only-form`). A demo or viewer's submit stays in the page, with the reason in a banner.
 - **New: secret reveal** (`secret-reveal`). A secret shown once, focused, with its warning and the app's copy button.
 - **New: file attach** (`file-attach`). The drop zone's input as a button, its checks before sending, and the attached files listed.
-- Needs `@drdustinedwards/site-helpers` 0.45.0 (`SLUG_PATTERN`, `isSlug`) for `SlugField`.
+- Needs `@drdustinedwards/site-helpers` 0.45.0 (`SLUG_PATTERN`, `isSlug`) for `SlugField`; the peer floor is now `>=0.45.0`.
 
 ## [0.90.0]
 
