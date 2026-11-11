@@ -26,14 +26,14 @@ eachTheme((theme) => {
     page,
   }) => {
     await visitStates(page, "copy", theme);
-    const button = page.getByRole("button", { name: "Copy API key" });
+    const button = page.getByRole("button", { name: "Copy install command" });
     await button.focus();
     await page.keyboard.press("Enter");
-    const tip = page.locator("#copy-key + .cap-copy-tip");
+    const tip = page.locator("#copy-snippet + .cap-copy-tip");
     await expect(tip).toHaveText("Copied");
     await expect(button).toHaveAttribute("data-state", "done");
     await expect(button).toBeFocused();
-    expect(await page.evaluate(() => navigator.clipboard.readText())).toBe("sk_test_4f9a2c");
+    expect(await page.evaluate(() => navigator.clipboard.readText())).toBe("npm install capsomer");
     await expect(tip).toHaveText("", { timeout: 4000 });
   });
 
@@ -62,9 +62,9 @@ eachTheme((theme) => {
         configurable: true,
       });
     });
-    const button = page.getByRole("button", { name: "Copy API key" });
+    const button = page.getByRole("button", { name: "Copy install command" });
     await button.click();
-    await expect(page.locator("#copy-key + .cap-copy-tip")).toHaveText("Copy failed");
+    await expect(page.locator("#copy-snippet + .cap-copy-tip")).toHaveText("Copy failed");
     await expect(button).toHaveAttribute("data-state", "failed");
     await expect(button).toBeEnabled();
   });

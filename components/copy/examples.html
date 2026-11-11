@@ -1,16 +1,7 @@
-<section class="cap-specimen" aria-labelledby="s-icon">
-  <h2 id="s-icon">Icon only</h2>
-  <div class="cap-specimen-row">
-    <code id="key-1">sk_test_4f9a2c</code>
-    <span class="cap-copy">
-      <button type="button" class="cap-btn cap-copy-button" data-variant="quiet" id="copy-key" command="--copy" commandfor="key-1" aria-label="Copy API key">
-        <span class="cap-copy-icon"><svg viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5" /><path d="M10.5 5.5V3.5a1 1 0 0 0-1-1h-6a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2" /></svg></span>
-        <span class="cap-copy-done"><svg viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M3 8.5l3 3 7-7" /></svg></span>
-      </button>
-      <span class="cap-copy-tip" role="status"></span>
-    </span>
-  </div>
-</section>
+<svg hidden aria-hidden="true">
+  <symbol id="glyph-copy" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5" /><path d="M10.5 5.5V3.5a1 1 0 0 0-1-1h-6a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2" /></symbol>
+  <symbol id="glyph-done" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M3 8.5l3 3 7-7" /></symbol>
+</svg>
 
 <section class="cap-specimen" aria-labelledby="s-label">
   <h2 id="s-label">With a label</h2>
@@ -18,8 +9,8 @@
     <a id="post-link" href="https://example.com/field-notes">example.com/field-notes</a>
     <span class="cap-copy">
       <button type="button" class="cap-btn cap-copy-button" data-variant="secondary" id="copy-link" command="--copy" commandfor="post-link" data-cap-copied="Link copied">
-        <span class="cap-copy-icon"><svg viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5" /><path d="M10.5 5.5V3.5a1 1 0 0 0-1-1h-6a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2" /></svg></span>
-        <span class="cap-copy-done"><svg viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M3 8.5l3 3 7-7" /></svg></span>
+        <span class="cap-copy-icon"><svg aria-hidden="true"><use href="#glyph-copy" /></svg></span>
+        <span class="cap-copy-done"><svg aria-hidden="true"><use href="#glyph-done" /></svg></span>
         Copy link
       </button>
       <span class="cap-copy-tip" role="status"></span>
@@ -32,15 +23,15 @@
   <div class="cap-specimen-row">
     <span class="cap-copy">
       <button type="button" class="cap-btn cap-copy-button" data-variant="quiet" data-state="done" id="copy-done" aria-label="Copy release notes">
-        <span class="cap-copy-icon"><svg viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5" /><path d="M10.5 5.5V3.5a1 1 0 0 0-1-1h-6a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2" /></svg></span>
-        <span class="cap-copy-done"><svg viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M3 8.5l3 3 7-7" /></svg></span>
+        <span class="cap-copy-icon"><svg aria-hidden="true"><use href="#glyph-copy" /></svg></span>
+        <span class="cap-copy-done"><svg aria-hidden="true"><use href="#glyph-done" /></svg></span>
       </button>
       <span class="cap-copy-tip" id="tip-done">Copied</span>
     </span>
     <span class="cap-copy">
       <button type="button" class="cap-btn cap-copy-button" data-variant="quiet" data-state="failed" id="copy-failed" aria-label="Copy annual report link">
-        <span class="cap-copy-icon"><svg viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5" /><path d="M10.5 5.5V3.5a1 1 0 0 0-1-1h-6a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2" /></svg></span>
-        <span class="cap-copy-done"><svg viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M3 8.5l3 3 7-7" /></svg></span>
+        <span class="cap-copy-icon"><svg aria-hidden="true"><use href="#glyph-copy" /></svg></span>
+        <span class="cap-copy-done"><svg aria-hidden="true"><use href="#glyph-done" /></svg></span>
       </button>
       <span class="cap-copy-tip" id="tip-failed">Copy failed</span>
     </span>
@@ -48,13 +39,13 @@
 </section>
 
 <section class="cap-specimen" aria-labelledby="s-block">
-  <h2 id="s-block">Repeated block</h2>
+  <h2 id="s-block">Icon only, over a repeated block</h2>
   <div class="cap-copyable">
     <pre tabindex="0"><code id="snippet">npm install capsomer</code></pre>
     <span class="cap-copy">
       <button type="button" class="cap-btn cap-copy-button" data-variant="quiet" id="copy-snippet" command="--copy" commandfor="snippet" aria-label="Copy install command">
-        <span class="cap-copy-icon"><svg viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5" /><path d="M10.5 5.5V3.5a1 1 0 0 0-1-1h-6a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2" /></svg></span>
-        <span class="cap-copy-done"><svg viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M3 8.5l3 3 7-7" /></svg></span>
+        <span class="cap-copy-icon"><svg aria-hidden="true"><use href="#glyph-copy" /></svg></span>
+        <span class="cap-copy-done"><svg aria-hidden="true"><use href="#glyph-done" /></svg></span>
       </button>
       <span class="cap-copy-tip" role="status"></span>
     </span>
