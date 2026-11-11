@@ -92,6 +92,10 @@
       "types": "./dist/test/helpers.d.ts",
       "default": "./dist/test/helpers.js"
     },
+    "./testing/page": {
+      "types": "./dist/test/page.d.ts",
+      "default": "./dist/test/page.js"
+    },
     "./fonts": {
       "types": "./tokens/fallback-fonts.d.mts",
       "default": "./tokens/fallback-fonts.mjs"
