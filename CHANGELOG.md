@@ -11,6 +11,7 @@ Options so a site keeps its own look on the shared parts (Foxhound, moving its s
 - **Prose blocks: list tokens.** `--prose-bullets` and `--prose-numbers` set the list-style of a plain and a numbered list (disc, circle and decimal by default), and `--prose-item-space` the space after each item (0.3em).
 
 No token or class was removed or renamed.
+
 ## [0.94.0]
 
 - **Seventeen page and app widgets move into Capsomer** (the shared-code audit's item 31; Dustin, 2026-11-11: a piece of UI that is a component belongs in Capsomer, even when only one site uses it so far). Each is a component with its CSS, notes, specimen and tests, extracted from the site that had it; the sites switch to them and delete their copies next.
