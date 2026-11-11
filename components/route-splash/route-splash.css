@@ -1,0 +1,28 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* The route splash: the app's mark over "Loading...", centered on the ground, in place of a
+   page while a navigation to one of the app's slow pages loads. Extracted from Foxhound's
+   RouteSplash (app/components/route-splash.tsx, from Recova's loading.tsx). */
+@layer cap.components {
+  .cap-route-splash {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-block-size: 100dvh;
+    background: var(--ground);
+  }
+  .cap-route-splash-mark {
+    inline-size: 96px;
+    block-size: 96px;
+    margin-block-end: var(--space-6);
+  }
+  .cap-route-splash-label {
+    margin: 0;
+    font-family: var(--readout);
+    font-size: var(--fs-label);
+    letter-spacing: 0.05em;
+    color: var(--muted);
+  }
+}

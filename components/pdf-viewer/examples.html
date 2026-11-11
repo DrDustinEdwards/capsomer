@@ -1,0 +1,44 @@
+<section class="cap-specimen" aria-labelledby="s-live">
+  <h2 id="s-live">A three-page document</h2>
+  <div class="cap-pdf" id="pdf-live" role="group" aria-label="PDF viewer, Spring newsletter" data-cap="pdf-viewer" data-src="./specimen/spring-update.pdf" data-pdfjs="./specimen/runtime/">
+    <div class="cap-pdf-bar">
+      <div class="cap-btn-group" role="group" aria-label="Pages">
+        <button type="button" disabled class="cap-btn" data-size="sm" aria-label="Previous page" data-pdf="prev">Previous</button>
+        <button type="button" disabled class="cap-btn" data-size="sm" aria-label="Next page" data-pdf="next">Next</button>
+      </div>
+      <p class="cap-pdf-status" aria-live="polite" data-pdf="status">Loading</p>
+      <div class="cap-pdf-zoom" role="group" aria-label="Zoom">
+        <button type="button" disabled class="cap-btn" data-size="sm" aria-label="Zoom out" data-pdf="zoom-out">Zoom out</button>
+        <span class="cap-pdf-zoom-value" data-pdf="zoom">120%</span>
+        <button type="button" disabled class="cap-btn" data-size="sm" aria-label="Zoom in" data-pdf="zoom-in">Zoom in</button>
+      </div>
+    </div>
+    <div tabindex="0" class="cap-pdf-page" role="group" aria-label="PDF viewer, Spring newsletter. Use the arrow keys to change page and the plus and minus keys to zoom."><canvas></canvas></div>
+    <p class="cap-pdf-fallback"><a href="./specimen/spring-update.pdf">Open the PDF</a></p>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-failed">
+  <h2 id="s-failed">Failed to load: the link stays</h2>
+  <div class="cap-pdf" id="pdf-failed" role="group" aria-label="PDF viewer, Annual report" data-cap="pdf-viewer" data-src="./specimen/missing.pdf" data-pdfjs="./specimen/runtime/">
+    <div class="cap-pdf-bar">
+      <div class="cap-btn-group" role="group" aria-label="Pages">
+        <button type="button" disabled class="cap-btn" data-size="sm" aria-label="Previous page" data-pdf="prev">Previous</button>
+        <button type="button" disabled class="cap-btn" data-size="sm" aria-label="Next page" data-pdf="next">Next</button>
+      </div>
+      <p class="cap-pdf-status" aria-live="polite" data-pdf="status">Loading</p>
+      <div class="cap-pdf-zoom" role="group" aria-label="Zoom">
+        <button type="button" disabled class="cap-btn" data-size="sm" aria-label="Zoom out" data-pdf="zoom-out">Zoom out</button>
+        <span class="cap-pdf-zoom-value" data-pdf="zoom">120%</span>
+        <button type="button" disabled class="cap-btn" data-size="sm" aria-label="Zoom in" data-pdf="zoom-in">Zoom in</button>
+      </div>
+    </div>
+    <div tabindex="0" class="cap-pdf-page" role="group" aria-label="PDF viewer, Annual report. Use the arrow keys to change page and the plus and minus keys to zoom."><canvas></canvas></div>
+    <p class="cap-pdf-fallback"><a href="./specimen/missing.pdf">Open the PDF</a></p>
+  </div>
+</section>
+
+<script type="module">
+  import { enhance } from "./pdf-viewer.ts";
+  enhance();
+</script>

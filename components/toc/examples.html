@@ -1,0 +1,33 @@
+<link rel="stylesheet" href="./specimen/toc.css" />
+<section class="cap-specimen" aria-labelledby="s-sidebar">
+  <h2 id="s-sidebar">Sidebar, the current section marked as the post scrolls</h2>
+  <div class="toc-demo" id="toc-demo">
+    <nav class="cap-toc" data-variant="sidebar" data-cap="toc" aria-labelledby="toc-side-t" id="toc-side">
+      <p class="cap-toc-title" id="toc-side-t">Contents</p>
+      <ol class="cap-toc-list"><li class="cap-toc-item"><a class="cap-toc-link" href="#t-why">Why payments fail</a></li><li class="cap-toc-item" data-level="3"><a class="cap-toc-link" href="#t-cards">Expired cards</a></li><li class="cap-toc-item"><a class="cap-toc-link" href="#t-retry">When to retry</a></li><li class="cap-toc-item"><a class="cap-toc-link" href="#t-notes">Field notes</a></li></ol>
+    </nav>
+    <article class="toc-demo-post">
+      <h3 id="t-why">Why payments fail</h3><p>Most failed payments are soft declines that a later try clears.</p>
+      <h4 id="t-cards">Expired cards</h4><p>A card past its date fails every try until it is updated.</p>
+      <h3 id="t-retry">When to retry</h3><p>Retry on the days a bank settles, not every hour.</p>
+      <h3 id="t-notes">Field notes</h3><p>What the spring update changed.</p>
+    </article>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-inline">
+  <h2 id="s-inline">Inline, on a narrow screen: closed, and open</h2>
+  <details class="cap-toc" data-variant="inline" id="toc-inline-closed">
+    <summary class="cap-toc-title">Contents</summary>
+    <nav data-cap="toc" aria-label="Contents"><ol class="cap-toc-list"><li class="cap-toc-item"><a class="cap-toc-link" href="#t-why">Why payments fail</a></li><li class="cap-toc-item" data-level="3"><a class="cap-toc-link" href="#t-cards">Expired cards</a></li><li class="cap-toc-item"><a class="cap-toc-link" href="#t-retry">When to retry</a></li><li class="cap-toc-item"><a class="cap-toc-link" href="#t-notes">Field notes</a></li></ol></nav>
+  </details>
+  <details class="cap-toc" data-variant="inline" open>
+    <summary class="cap-toc-title">Contents</summary>
+    <nav aria-label="Contents"><ol class="cap-toc-list"><li class="cap-toc-item"><a class="cap-toc-link" href="#t-why">Why payments fail</a></li><li class="cap-toc-item" data-level="3"><a class="cap-toc-link" href="#t-cards">Expired cards</a></li><li class="cap-toc-item"><a class="cap-toc-link" href="#t-retry">When to retry</a></li><li class="cap-toc-item"><a class="cap-toc-link" href="#t-notes">Field notes</a></li></ol></nav>
+  </details>
+</section>
+
+<script type="module">
+  import { enhance } from "./toc.ts";
+  enhance();
+</script>
