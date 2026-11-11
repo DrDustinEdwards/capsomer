@@ -1,0 +1,46 @@
+<section class="cap-specimen" aria-labelledby="s-split">
+  <h2 id="s-split">Split: the text and the site's preview side by side, without a framework</h2>
+  <p class="cap-muted">Choose a layout with the arrow keys; it is remembered in this browser. Type in the text and the chrome steps back; move the mouse and it returns. Ctrl or Cmd + S saves in place.</p>
+  <div class="cap-workspace" data-cap="editor-workspace" data-key="cap-specimen-layout" id="ws-html">
+    <div data-cap-layout="">
+      <fieldset class="cap-seg">
+        <legend class="cap-sr-only">Layout</legend>
+        <div class="cap-seg-options" data-size="sm">
+          <label><input type="radio" name="ws-layout" value="write" /> Write</label>
+          <label><input type="radio" name="ws-layout" value="split" checked /> Split</label>
+          <label><input type="radio" name="ws-layout" value="preview" /> Preview</label>
+        </div>
+      </fieldset>
+    </div>
+    <div class="cap-workspace-body" data-layout="split">
+      <section class="cap-workspace-pane" data-pane="write" id="ws-write" aria-label="Write">
+        <div class="cap-field">
+          <label class="cap-field-label" for="ws-text">Post</label>
+          <textarea class="cap-input" id="ws-text" rows="10" data-cap-typing-surface>## Spring update
+
+What changed this spring, and what to do next.</textarea>
+        </div>
+        <p class="cap-muted" id="ws-saved" role="status">Not saved yet.</p>
+      </section>
+      <section class="cap-preview-pane" data-pane="preview" aria-label="Preview">
+        <iframe title="Preview of Spring update as example.com renders it" sandbox="" src="data:text/html;charset=utf-8,%3C%21doctype%20html%3E%3Chtml%20lang%3D%22en%22%3E%3Ctitle%3ESpring%20update%3C%2Ftitle%3E%3Cmain%3E%3Ch1%3ESpring%20update%3C%2Fh1%3E%3Cp%3EWhat%20changed%20this%20spring%2C%20and%20what%20to%20do%20next.%3C%2Fp%3E%3C%2Fmain%3E%3C%2Fhtml%3E"></iframe>
+      </section>
+    </div>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-react">
+  <h2 id="s-react">In React: the switch, the panes and the preview's refresh once typing pauses</h2>
+  <div data-mount="react"></div>
+</section>
+
+<script type="module">
+  import { enhance, onSaveKey, typingRecede } from "./editor-workspace.ts";
+  enhance();
+  typingRecede();
+  let saves = 0;
+  onSaveKey(() => {
+    saves += 1;
+    document.getElementById("ws-saved").textContent = `Saved ${saves} ${saves === 1 ? "time" : "times"}.`;
+  });
+</script>

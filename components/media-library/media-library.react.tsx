@@ -18,12 +18,8 @@ import type {
   PickedMedia,
   SubmitIntent,
 } from "../content/content.ts";
-import {
-  ContentBulkBar,
-  PlainForm,
-  useIntents,
-  type FormComponent,
-} from "../content/content.react.tsx";
+import { ContentBulkBar, useIntents } from "../content/content.react.tsx";
+import { PlainForm, type FormComponent } from "../plain-form/plain-form.react.tsx";
 import { Disclosure } from "../disclosure/disclosure.react.tsx";
 import { DropZone } from "../drop-zone/drop-zone.react.tsx";
 import { Empty } from "../empty/empty.react.tsx";

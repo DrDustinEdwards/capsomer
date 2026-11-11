@@ -6,7 +6,7 @@ parts: [css, behavior, react]
 tool: native + own JavaScript
 states: [public signed out, signed in, user's dashboard, your admin, links on the right with a divider, links centered, dark band, translucent band, switcher open, section panel open, account menu open, the site's own panel, phone row, phone sheet, phone bottom bar, written by hand, written by the server with no hydration, a wide panel, a switcher whose rows post, sign out as a form post, a button kept in the phone's row, a site's own look by tokens, the phone's row under 1024px]
 added: 0.9.0
-updated: 0.98.0
+updated: 0.99.0
 source: docs/design/design-site-header.md and its mockup; Dustin's ten answers of 2026-10-13; Foxhound's header.tsx and Foxing's page-shell.tsx
 replaces:
   - 'class="(site-header|header|topbar|navbar)"'

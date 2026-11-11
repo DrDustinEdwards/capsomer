@@ -1,0 +1,20 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* The AI job buttons: a row of small buttons that each post a job, the retry on the other engine
+   under them, and the answer as an alert. Extracted from Carrel (app/components/ai-write-buttons.tsx
+   and its app-stack and app-actions rules). */
+@layer cap.components {
+  .cap-ai-jobs {
+    display: grid;
+    gap: var(--space-3);
+    min-width: 0;
+  }
+  .cap-ai-jobs-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2);
+    margin: 0;
+  }
+}

@@ -4,14 +4,8 @@
 // the form works with no script, posting `intent=focus` with `x` and `y` in percent (the content kit
 // reads them) or `clear=yes`; the picture and the previews follow them. The point is placed through
 // custom properties set from a ref, never a style attribute in the markup.
-import {
-  type ComponentType,
-  type FormHTMLAttributes,
-  type ReactNode,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import { type ReactNode, useEffect, useRef, useState } from "react";
+import type { FormComponent } from "../plain-form/plain-form.react.tsx";
 import { focusPercents } from "./media-crop.ts";
 
 // The crops shown beside the picture, as a site's pages commonly ask for them.
@@ -43,7 +37,7 @@ export function MediaFocus({
   src: string;
   focus: string | null | undefined;
   action: string;
-  Form: ComponentType<FormHTMLAttributes<HTMLFormElement> & { method?: "get" | "post" }>;
+  Form: FormComponent;
   // The form's hidden fields: the intent, the file and the version seen.
   ident: ReactNode;
   base: string;

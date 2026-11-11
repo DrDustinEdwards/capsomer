@@ -1,0 +1,62 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* Chart builder: the insert-a-chart dialog's body. The dialog, fields, segmented control and chart
+   frame are their own components; this only stacks them and styles the parts they do not have. */
+@layer cap.components {
+  .cap-chart-builder {
+    display: grid;
+    gap: var(--gap);
+    min-inline-size: 0;
+  }
+
+  .cap-chart-builder-csv {
+    font-family: var(--mono);
+    font-size: var(--fs-detail);
+  }
+
+  .cap-chart-builder-y {
+    display: grid;
+    gap: var(--space-2);
+    margin: 0;
+    padding: 0;
+    border: 0;
+
+    & legend {
+      margin-block-end: var(--space-2);
+      padding: 0;
+      font-weight: 600;
+      color: var(--text);
+    }
+  }
+
+  .cap-chart-builder-note {
+    margin: 0;
+    color: var(--muted);
+  }
+
+  .cap-chart-builder-suggestion {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .cap-chart-builder-check:empty {
+    display: none;
+  }
+
+  .cap-chart-builder-findings {
+    margin: var(--space-1) 0 0;
+    padding-inline-start: var(--space-5);
+  }
+
+  /* The site's own page in a sandboxed frame: the site's colors, whatever the app's theme. */
+  .cap-chart-builder-preview {
+    inline-size: 100%;
+    block-size: 28rem;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-m);
+    background: var(--surface);
+  }
+}

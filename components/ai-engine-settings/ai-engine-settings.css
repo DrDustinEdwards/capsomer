@@ -1,0 +1,56 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* The AI engine settings: what each engine can do now on one line, the table of jobs (the table
+   component, a select per cell) and the month's spend (panel, field, row list). This file adds the
+   status line, the job's note under its name, the selects' least width and the stacking. Extracted
+   from Carrel (app/routes/ai.tsx and its app-engine-status and app-engine-table rules). */
+@layer cap.components {
+  /* One column that never grows past the page: an auto column would take the jobs table's
+     least width (a select per cell), and every part would run past a phone's edge with it. The
+     table scrolls in its own region there instead (table.md, the default on a phone). */
+  .cap-ai-engine {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-5);
+    min-width: 0;
+  }
+  .cap-ai-engine-status {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-6);
+    margin: 0;
+
+    & > div {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+    & dt {
+      color: var(--muted);
+    }
+    & dd {
+      margin: 0;
+    }
+  }
+  .cap-ai-engine-note {
+    margin: 0;
+    color: var(--muted);
+    font-size: var(--fs-detail);
+    max-width: 60ch;
+  }
+  .cap-ai-engine-job-note {
+    display: block;
+    max-width: 40ch;
+    color: var(--muted);
+    font-size: var(--fs-detail);
+    font-weight: 400;
+  }
+  .cap-ai-engine-table td > * {
+    min-inline-size: 12rem;
+  }
+  .cap-ai-engine-spend {
+    display: grid;
+    gap: var(--space-4);
+  }
+}

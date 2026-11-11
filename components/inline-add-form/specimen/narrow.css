@@ -1,0 +1,4 @@
+/* Layout for the states page only. */
+.inline-add-narrow {
+  max-inline-size: 18rem;
+}

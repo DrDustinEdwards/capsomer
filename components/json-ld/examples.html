@@ -1,0 +1,15 @@
+<link rel="stylesheet" href="./specimen/readout.css" />
+
+<section class="cap-specimen" aria-labelledby="s-node">
+  <h2 id="s-node">One node, sent by a server and hydrated</h2>
+  <p>The page below carries an Article node for "Spring update" by Alex Rivera. A data block is never drawn; its text, as the browser parsed it:</p>
+  <div data-mount="node"></div>
+  <pre class="cap-mono" id="read-node"></pre>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-hostile">
+  <h2 id="s-hostile">A list whose strings hold markup and line separators</h2>
+  <p>A title that holds <code>&lt;/script&gt;</code>, <code>&amp;</code> and U+2028 stays inside the block and parses back unchanged.</p>
+  <div data-mount="hostile"></div>
+  <pre class="cap-mono" id="read-hostile"></pre>
+</section>
