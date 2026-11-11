@@ -1215,7 +1215,12 @@
         block-size: 56px;
         pointer-events: none;
         border-image: linear-gradient(var(--ground) 20%, color-mix(in srgb, var(--ground) 60%, transparent) 55%, transparent) fill 0 / 0 / 0 100vmax;
-        animation: cap-header-fade linear both;
+        /* Longhands, with duration auto, so a minifier cannot fold them into a 0s shorthand
+           (css/utilities.css, the scroll fades). */
+        animation-name: cap-header-fade;
+        animation-duration: auto;
+        animation-timing-function: linear;
+        animation-fill-mode: both;
         animation-timeline: scroll(root);
         animation-range: 0 48px;
       }

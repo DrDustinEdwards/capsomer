@@ -19,8 +19,12 @@
     @supports (animation-timeline: view()) {
       .cap-reveal,
       .cap-reveal-stack > * {
-        animation: cap-reveal-in linear both;
-        /* After the shorthand, which would reset it. */
+        /* Longhands with duration auto: a minifier (Lightning CSS) folds the shorthand and the timeline
+           into one with a 0s duration, which Chromium runs as finished. */
+        animation-name: cap-reveal-in;
+        animation-duration: auto;
+        animation-timing-function: linear;
+        animation-fill-mode: both;
         animation-timeline: view(block);
         animation-range: entry 10% entry 90%;
       }
