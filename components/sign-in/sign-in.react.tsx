@@ -7,7 +7,10 @@ import {
   useRef,
   useState,
 } from "react";
-import { passkeySignIn, signalCurrentUserDetails } from "@dustinedwards/site-runtime/sign-in-passkey";
+import {
+  passkeySignIn,
+  signalCurrentUserDetails,
+} from "@dustinedwards/site-runtime/sign-in-passkey";
 import {
   SIGN_IN_EXPIRES_IN_WORDS,
   SIGN_IN_LINK_WORDS,
