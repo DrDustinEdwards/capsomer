@@ -96,4 +96,15 @@ shadcn/ui's login blocks (login-01 to login-05: a card with the title and descri
 </div>
 ```
 
+The confirmation card ends in a link that looks like the button:
+
+```html
+<div class="cap-auth">
+  <div class="cap-auth-card">
+    <h1 class="cap-auth-title" tabindex="-1">You're signed in</h1>
+    <div class="cap-auth-body"><a class="cap-btn" data-variant="primary" data-size="lg" href="/">Continue</a></div>
+  </div>
+</div>
+```
+
 A site sets the card's width with `--cap-auth-w` (25rem by default) and its look with its own tokens.

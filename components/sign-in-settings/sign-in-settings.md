@@ -90,6 +90,34 @@ shadcn/ui's settings blocks (cards with a title, a description and a footer acti
 </div>
 ```
 
+Signed-in devices post a plain form, and the security history is a list of lines:
+
+```html
+<div class="cap-account">
+  <section class="cap-panel">
+    <header class="cap-panel-head"><h2>Signed-in devices</h2></header>
+    <div class="cap-panel-body">
+      <div class="cap-account-stack">
+        <ul class="cap-account-list" aria-label="Your signed-in devices">
+          <li class="cap-account-row">
+            <span class="cap-account-what">Firefox on Windows<span class="cap-account-meta">Signed in <time>2 days ago</time>, last active <time>1 hour ago</time></span></span>
+            <form method="post" class="cap-account-actions"><button class="cap-btn" data-size="sm" type="submit">Sign out<span class="cap-sr-only"> Firefox on Windows</span></button></form>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+  <section class="cap-panel">
+    <header class="cap-panel-head"><h2>Security history</h2></header>
+    <div class="cap-panel-body">
+      <ul class="cap-account-list" aria-label="Your recent security activity">
+        <li class="cap-account-what">Signed in with a passkey<span class="cap-account-meta"><time>Today</time>, Chrome on macOS</span></li>
+      </ul>
+    </div>
+  </section>
+</div>
+```
+
 ## Exceptions in production
 
 None yet.

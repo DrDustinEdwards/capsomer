@@ -439,7 +439,7 @@ export function ProviderSettings({
       description={`Sign in with ${names.join(" or ")} once you connect it here.`}
     >
       <div className="cap-account-stack">
-        <ul className="cap-account-list">
+        <ul className="cap-account-list" aria-label={`Your ${names.join(" and ")} sign-in`}>
           {providers.map((provider) => {
             const label = PROVIDER_NAME[provider.id];
             return (
