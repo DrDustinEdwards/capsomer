@@ -5,7 +5,7 @@ summary: What sits under a post and points elsewhere, one look for all three kin
 parts: [css, react]
 tool: native
 states: [linked from, further reading, mentions, a mention whose address fails]
-added: 0.100.0
+added: 0.101.0
 source: dustinedwards.info, app/components/post-backlinks.tsx, post-mentions.tsx and routes/blog.$slug.tsx (further reading), styles/post-shell.css and post-enhancements.css; Foxhound, app/routes/blog/post.tsx (Further reading)
 replaces:
   - 'className="(further-reading|post-backlinks|post-mentions)[ "]'
