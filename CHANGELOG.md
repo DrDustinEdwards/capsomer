@@ -4,6 +4,8 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+## [0.92.0]
+
 ### Tokens, CSS and build (shared-code audit, batch 7)
 
 - **`capsomer/build`** (Node only, `bin/build.mjs`): `inlineCss(file)` (every import read in place, a layered one inside its layer, a bare specifier resolved from the file), `capsomerStylesheet({ family, site, parts, fonts, fontsUrl, prose, before, after })` (fonts, tokens, the family inside cap.tokens, base, the link system, the parts, the site layer, the site's CSS), `copyFonts(to)`, `minifyCss(css)` (Lightning CSS) and `bundleScript(entry, { format })` (Rolldown, every lazy import inlined). Carrel's www, Prelum's specimen and Capsid's explorer each had their own copy. New optional peers: `lightningcss`, `rolldown` (both come with Vite).
@@ -23,6 +25,15 @@ Each release names every removed or renamed token or class, and every changed HT
 - **`capsomer/token-check`**: a site's token gate as pure functions over CSS text: `readThemeBlocks`, `readDeclarations`, `mediaBlock` (the prefers-contrast tier), `resolveToken`, `unresolved`, `flattenMix`, `verifyFallbacks` (a hex beside its color-mix must be what the mix paints), `checkPairs`, `unmeasured` (no color token outside a measured pair), `opacityDeclarations` (the opacity ledger), and palette-core's `contrast` and `apca`.
 - **`capsomer/testing`**: `CHECK_WIDTHS`, `countCssRules`, `overflowScan`, `expectNoOverflow`, `shellState`, `expectShellRenders`, `headContractProblems` (the color-scheme meta before the first stylesheet), `runningMotion` and `loadedScripts`, each page function self-contained so a Puppeteer suite can pass it to its own `evaluate`.
 - No token or class was removed or renamed.
+
+### Fix
+
+- **A chart no longer redraws 16 px tall.** With Enarratio 0.12 the figure holds the toolbar's 16 by 16 icons before the chart, and `ChartFrame` took its redraw height from the first `viewBox` it found, so every redrawn chart collapsed (seen in the Capsid Portal on 0.90.0). It now skips `enarratio-icon` drawings (`chartViewBox` in `components/chart-frame/chart-frame.ts`). From #339.
+
+## [0.91.0]
+
+- **New: the draft compare's merge mode** (`DraftMerge`, `mergePlan`, `merged`; from Carrel's merge view). Two texts that both moved on from one version, block by block, each difference kept from either side or both, starting on the side that changed it when the base is known. Its diff is the compare's own, so it needs no diff library. New classes: `.cap-merge` and its parts (`-intro`, `-list`, `-same`, `-choice`, `-sides`, `-side`, `-text`, `-empty`, `-mark`, `-actions`). No token or class was removed or renamed.
+- **New: rich text field** (`capsomer/react/rich-text-field`, `capsomer/behavior/rich-text-field`, `capsomer/rich-text-field.css`; from txasm's abstract editor). A short text with a few inline tags and nothing else, a formatting toolbar (one tab stop) whose buttons toggle and show where the caret is, and `sanitizeRichText`, which the server runs on every save. The box is built from DOM nodes, never from a markup string, so it needs no Trusted Types policy. New classes: `.cap-rich-text`, `.cap-rich-text-bar`, `.cap-rich-text-box`, `.cap-rich-text-count`. No token or class was removed or renamed.
 
 ## [0.90.0]
 

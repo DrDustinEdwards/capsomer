@@ -5,7 +5,7 @@ summary: Dated entries under a heavy rule, the date in its own column beside a t
 parts: [css]
 tool: native
 states: [default, with a mark and a second fact, phone]
-added: 0.103.0
+added: 0.92.0
 source: dustinedwards.info styles/entry-list.css (blog, taxonomy pages), home.css, cv.css, publications.css
 replaces:
   - 'class="entry-list'
