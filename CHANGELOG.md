@@ -2,15 +2,28 @@
 
 Each release names every removed or renamed token or class, and every changed HTML contract.
 
-## [Unreleased]
-
-## [0.96.0]
+## [0.98.0]
 
 - **The site header takes a site's own hooks.** `attributes` (data-* only) on the `<header>`, `toolsEnd` after the theme control and the account, and `end` at the end of the header, for a site's palette hooks and island templates. No change to the header's own markup.
 - **Tooltip `as="span"`.** The tip can be a `<span>`, valid inside a `<p>`. `Time tip` now renders through `Tooltip` with it; its markup is unchanged.
 - **Prose tables: a row header keeps the rows' hairline.** The 2px `--prose-table-rule` is on `thead th` only; a `th` in the body (a row header) had it too.
 - **Scroll-driven animations survive a minifier.** The scroll fades (tab rows, anchor bar, header links row, prose tables), the truncated label and the letterhead's header fade are written as longhands with `animation-duration: auto`. Lightning CSS, which Vite minifies with, folded the `animation` shorthand and its timeline into one with a 0s duration, which Chromium runs as finished: a wide table showed both fades at rest, and its first letters were faded.
 - No token or class was removed or renamed.
+
+## [0.96.0]
+
+Options so a site keeps its own look on the shared parts (Foxhound, moving its stat cards, badges and blog lists onto Capsomer without a visible change).
+
+- **Static stat tile: look tokens, and `ok` colors the figure.** New custom properties, each defaulting to the family's look: `--tile-figure-face`, `--tile-figure-weight`, `--tile-label-face`, `--tile-label-size`, `--tile-label-weight`, `--tile-label-case`, `--tile-label-tracking`, `--tile-icon-flow`, `--tile-icon-align`, `--tile-icon-size`, `--tile-gap`, `--tile-detail-space`, `--tile-pad`, `--tile-radius`, `--tile-shadow` (with 0.92.0's `--tile-figure-size`), and for a grid row `--tiles-columns` and `--tiles-gap`. A static tile with `data-tone="ok"` now draws its figure in `--ok`, as `warn` and `crit` do; a static tile has no word beside the figure, so its label and note say what the color means. Link and button tiles are unchanged.
+- **Badge: `variant="tag"` and `glyph={false}`.** A tag is the tone's tint with an edge in the word's own color (or a hairline label with no tone, or a family's accent with `data-family`), set in the site's tag face: `--tag-face`, `--tag-size`, `--tag-weight`, `--tag-case`, `--tag-tracking`, `--tag-edge`. `glyph={false}` leaves the glyph out of a toned badge, for a site whose badges are words alone; the word must then say the state. Type change: `PillProps.glyph` is `GlyphName | false`, and `BadgeVariant` gains `"tag"`.
+- **Prose blocks: list tokens.** `--prose-bullets` and `--prose-numbers` set the list-style of a plain and a numbered list (disc, circle and decimal by default), and `--prose-item-space` the space after each item (0.3em).
+
+No token or class was removed or renamed.
+
+## [0.97.0]
+
+- **The page helpers need no test runner: `capsomer/testing/page`.** `countCssRules`, `settled`, `paintedContrast` (and its `Reading`), `focused`, `nextPost`, `ringContrast` and `rowOverflow` each run one function in the page, so they move to their own module, typed for any page with `evaluate` (`PageLike`: Playwright's or Puppeteer's). A site whose browser checks run on Puppeteer imports them without installing Playwright or axe; `capsomer/testing` still exports every one.
+- **Catalog: the search waits while an IME composes a word.** The search box fetched results on every `input` event, and an IME (Japanese, Chinese and Korean input, and many phone keyboards) sends those while a word is still being composed, so the catalog fetched half-typed syllables. It now skips an input event whose `isComposing` is true and searches on `compositionend` (UI Events, Composition Events). Found in the second shared-code audit, 2026-11-11. No token or class was removed or renamed.
 
 ## [0.95.1]
 

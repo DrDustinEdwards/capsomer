@@ -177,6 +177,29 @@
       --_bg: var(--accent-soft);
       --_fg: var(--accent-text);
     }
+    /* A tag: the tone's tint (or none) with an edge in the word's own color, set in the site's tag
+       face. Each token defaults to the badge's look:
+         --tag-face, --tag-size, --tag-weight, --tag-case, --tag-tracking   the word
+         --tag-edge   how much of the word's color the edge takes (a percentage, 45% by default)
+       With no tone it is a quiet label (muted word, hairline edge); with a data-family and no
+       tone it takes that family's accent. */
+    &[data-variant="tag"] {
+      --_line: color-mix(in oklab, var(--_fg) var(--tag-edge, 45%), transparent);
+      font-family: var(--tag-face, inherit);
+      font-size: var(--tag-size, var(--fs-detail));
+      font-weight: var(--tag-weight, 600);
+      text-transform: var(--tag-case, none);
+      letter-spacing: var(--tag-tracking, normal);
+      &:not([data-tone]) {
+        --_bg: transparent;
+        --_line: var(--line);
+      }
+      &[data-family]:not([data-tone]) {
+        --_bg: var(--accent-soft);
+        --_fg: var(--accent-text);
+        --_line: color-mix(in oklab, var(--_fg) var(--tag-edge, 45%), transparent);
+      }
+    }
 
     /* Interactive: a link or a button. The hit area grows past the pill to --target, so the
        pill does not clip it. */
