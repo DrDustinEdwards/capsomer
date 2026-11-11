@@ -1,15 +1,18 @@
 ---
 name: share-preview
 title: Share preview
-summary: How a page appears where it is shared: as a search result and as a social card, before it goes out.
-parts: [css, react]
+summary: How a page appears where it is shared, as a search result and as a social card, before it goes out, with a meter for how wide its title and description are against the width a result cuts at.
+parts: [css, behavior, react]
 tool: native
-states: [search result, search result with a note, social card, social card with a note in a narrow space]
+states: [search result, search result with a note, social card, social card with a note in a narrow space, width meter that fits, width meter past the cut]
 added: 0.5.0
-source: The site admin's SerpPreview and OgPreview (dustinedwards-info app/components/admin/social-previews.tsx, .serp-* and .og-* in app/admin.css; PR #320, gap 5)
+updated: 0.98.0
+source: The site admin's SerpPreview and OgPreview (dustinedwards-info app/components/admin/social-previews.tsx, .serp-* and .og-* in app/admin.css; PR #320, gap 5); Carrel's WidthMeter (app/components/editor/search-fields.tsx, app/lib/serp-width.ts)
 replaces:
   - 'class="(?:[^"]*\s)?(serp-preview|og-preview)[\s"]'
   - 'className="(?:[^"]*\s)?(serp-preview|og-preview)[\s"]'
+  - "function WidthMeter\\b"
+  - "measureText\\(text\\)\\.width"
 ---
 
 # Share preview
@@ -56,6 +59,21 @@ Beside the editor of a post or page, so the person sees the title, description a
 ```
 
 React: `SerpPreview` (`url`, `title`, `description`, `note`, `label`) and `OgCardPreview` (`image`, `host`, `title`, `description`, `note`, `label`) from `capsomer/react/share-preview`.
+
+## The width meter
+
+`SerpWidthMeter` sits under a search title or description box and says how wide the text is as a desktop result sets it (Arial, 20 px for a title, 14 px for a description) against the width past which the result cuts it (600 and 920 px). It is the Meter, small, in the ok tone until the text is too wide, then the warn tone with "Google cuts it off" in words; too wide only warns, since the limit is an approximation. Its value is said as "412 of 600 pixels, 52 characters." and, past the cut, "Google cuts it off past about 600 pixels."
+
+The widths and limits are Prelum's (`serpWidth`, `SERP_TITLE`, `SERP_DESCRIPTION` in `site-helpers/head`), the ones `prelum-audit` reports a too-wide title with, so the editor and the audit agree; they need no canvas, so a server render already shows the number. An app that measures in the browser's real font passes `measure(text)`, returning null while it cannot (the meter then says "Measuring").
+
+```tsx
+import { SerpWidthMeter } from "capsomer/react/share-preview";
+
+<SerpWidthMeter label="Search title width" text={searchTitle} />
+<SerpWidthMeter label="Description width" part="description" text={description} />
+```
+
+Props: `label`, `text`, `part` (`"title"` or `"description"`), `limit`, `measure`, `size` (default `"sm"`). `capsomer/behavior/share-preview` holds the pure part: `serpTextWidth(text, part)`, `serpReading(text, px, limit)` and `SERP_LIMITS`.
 
 ## Keyboard
 

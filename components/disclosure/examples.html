@@ -177,6 +177,31 @@
   </div>
 </section>
 
+<section class="cap-specimen" aria-labelledby="s-card-sm">
+  <h2 id="s-card-sm">Compact card, a form behind its title</h2>
+  <p class="cap-muted">Small cards beside each other on an admin page: each opens in place to a form or a list ("Edit sponsor", "Add an item", "Chair (3)").</p>
+  <ul id="card-sm-specimen" style="display: grid; gap: 12px; margin: 0; padding: 0; list-style: none">
+    <li><details class="cap-disclosure" data-variant="card" data-size="sm" open>
+      <summary>Edit sponsor</summary>
+      <div class="cap-disclosure-body">
+        <form>
+          <label class="cap-field-label" for="sponsor-name">Name</label>
+          <input class="cap-input" id="sponsor-name" type="text" value="Example Co" />
+          <button type="submit" class="cap-btn" data-size="sm">Save sponsor</button>
+        </form>
+      </div>
+    </details></li>
+    <li><details class="cap-disclosure" data-variant="card" data-size="sm">
+      <summary>Chair (3)</summary>
+      <div class="cap-disclosure-body"><ul><li>Alex Rivera</li><li>Sam Lee</li><li>Jordan Park</li></ul></div>
+    </details></li>
+    <li><details class="cap-disclosure" data-variant="card" data-size="sm">
+      <summary data-force="hover">Add an item</summary>
+      <div class="cap-disclosure-body"><p>Choose what the session holds.</p></div>
+    </details></li>
+  </ul>
+</section>
+
 <section class="cap-specimen" aria-labelledby="s-disabled">
   <h2 id="s-disabled">Group row, pressed and disabled</h2>
   <div class="cap-group" data-cap="disclosure">

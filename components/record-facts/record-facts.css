@@ -1,0 +1,47 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* Record facts: a record's labeled facts (year, venue, identifier, kind) as a narrow rail beside
+   its page. A description list, read label then value; drawn value first in the text color with its
+   label under it in the muted ink, so the eye runs down the values. Text alignment is the page's: a
+   rail on the start side of the text can set `text-align: end` on its column. */
+@layer cap.components {
+  .cap-record-facts {
+    display: grid;
+    gap: var(--space-4);
+    margin: 0;
+    font-size: var(--fs-detail);
+    line-height: var(--leading);
+  }
+
+  .cap-record-facts-item {
+    display: flex;
+    flex-direction: column-reverse;
+    min-width: 0;
+  }
+
+  .cap-record-facts-item > dt {
+    color: var(--muted);
+  }
+
+  .cap-record-facts-item > dd {
+    margin: 0;
+    color: var(--text);
+    font-weight: 500;
+    overflow-wrap: anywhere;
+
+    /* An identifier (a DOI, an accession, a version) is in the family's mono face. */
+    &[data-mono] {
+      font-family: var(--mono);
+    }
+
+    /* A value that is a link alone (a DOI) is a target of its own, not a word in a sentence: its
+       hit area is the target's height (44px on a touch screen), reaching into the gap between
+       facts so the rail keeps its rhythm (WCAG 2.5.8). */
+    & > a:only-child {
+      display: inline-block;
+      padding-block: max(0px, (var(--target) - 1lh) / 2);
+      margin-block: min(0px, (1lh - var(--target)) / 2);
+    }
+  }
+}

@@ -9,12 +9,8 @@ import {
   useSyncExternalStore,
 } from "react";
 import type { IntentResult, MentionsData, SubmitIntent } from "../content/content.ts";
-import {
-  ContentBulkBar,
-  PlainForm,
-  useIntents,
-  type FormComponent,
-} from "../content/content.react.tsx";
+import { ContentBulkBar, useIntents } from "../content/content.react.tsx";
+import { PlainForm, type FormComponent } from "../plain-form/plain-form.react.tsx";
 import { Empty } from "../empty/empty.react.tsx";
 import {
   ACTION_KEY,

@@ -1,0 +1,93 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* The two-handle range: a label with the chosen span over a track filled between the handles,
+   the track's ends under it. Two native range inputs share the track; the inputs' own tracks
+   are transparent and let pointer events through, so only the thumbs take them and each handle
+   drags on its own. Extracted from Foxhound's DualRangeSlider (app/components/dual-range-slider.tsx,
+   Recova's AmountRangeSlider). The thumb is the single slider's (field.css .cap-range). */
+@layer cap.components {
+  .cap-range-slider {
+    --cap-range-lo: 0%;
+    --cap-range-hi: 100%;
+    min-inline-size: 0;
+    font-size: var(--fs-detail);
+  }
+  .cap-range-slider-head,
+  .cap-range-slider-ends {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2);
+  }
+  .cap-range-slider-head {
+    margin-block-end: var(--space-1);
+  }
+  .cap-range-slider-label,
+  .cap-range-slider-ends {
+    color: var(--muted);
+  }
+  .cap-range-slider-value {
+    font-family: var(--readout);
+    font-variant-numeric: tabular-nums;
+    color: var(--accent-text);
+  }
+  .cap-range-slider-ends {
+    margin-block-start: var(--space-1);
+  }
+  .cap-range-slider-track {
+    position: relative;
+    block-size: max(var(--target), 24px);
+    /* The rail, and the fill between the two handles. */
+    &::before {
+      content: "";
+      position: absolute;
+      inset-inline: 0;
+      inset-block-start: 50%;
+      block-size: 4px;
+      translate: 0 -50%;
+      border-radius: var(--radius-full);
+      background: linear-gradient(
+        to right,
+        var(--line-strong) var(--cap-range-lo),
+        var(--primary) var(--cap-range-lo) var(--cap-range-hi),
+        var(--line-strong) var(--cap-range-hi)
+      );
+    }
+  }
+  /* Each handle is a field.css .cap-range (its thumb, hover, focus, press and 44px touch target), laid over the rail
+     with its own track hidden; only the thumbs take the pointer, so each drags on its own. */
+  .cap-range.cap-range-slider-input {
+    --cap-range-track: transparent;
+    position: absolute;
+    inset: 0;
+    block-size: 100%;
+    pointer-events: none;
+    &::-webkit-slider-thumb {
+      pointer-events: auto;
+      cursor: pointer;
+    }
+    &::-moz-range-thumb {
+      pointer-events: auto;
+      cursor: pointer;
+    }
+  }
+  /* Forced colors drop the drawn rail and the ring: the thumbs are drawn in the system's colors,
+     and focus is an outline. */
+  @media (forced-colors: active) {
+    .cap-range-slider-track::before {
+      background: CanvasText;
+    }
+    /* field.css gives a single slider back its native look here; two native sliders overlaid
+       would hide each other, so the handles keep their drawn thumbs, in system colors. */
+    .cap-range.cap-range-slider-input {
+      appearance: none;
+    }
+    .cap-range-slider-input::-webkit-slider-thumb {
+      background: ButtonText;
+    }
+    .cap-range-slider-input:focus-visible {
+      outline: var(--focus-width) solid Highlight;
+    }
+  }
+}

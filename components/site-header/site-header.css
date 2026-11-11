@@ -377,6 +377,10 @@
     display: flex;
     align-items: center;
   }
+  /* A page with no sign-in at all (a personal site): the empty slot takes no room. */
+  .cap-site-header-account:empty {
+    display: none;
+  }
   .cap-site-header .cap-site-header-avatar {
     border-radius: var(--radius-full);
 
@@ -463,6 +467,26 @@
     font-family: var(--font-ui, var(--ui));
     font-size: var(--header-fs, 14px);
     line-height: 1.35;
+  }
+  /* A mega-menu's room (data-size="wide"): the site's own layout inside (a band, tiles, grouped rows),
+     40rem unless the site sets --header-panel-w, and never wider than the window. */
+  .cap-site-header-panel[data-size="wide"] {
+    inline-size: min(var(--header-panel-w, 40rem), 100vw - 2 * var(--space-3));
+  }
+  /* Opened with no script (popovertarget), nothing has placed it: under the header, at the band's
+     inset on the side it lines up with. */
+  .cap-site-header-panel:not([data-placed-by]) {
+    top: var(--header-h);
+    left: var(--header-side, var(--space-6));
+
+    &[data-align="end"] {
+      right: var(--header-side, var(--space-6));
+      left: auto;
+    }
+  }
+  /* A row that posts (Sign out, an account switch): the form adds no box, its button is the row. */
+  .cap-site-header-form {
+    display: contents;
   }
   /* The default contents: who you are, labeled groups of links, Sign out last. */
   .cap-site-header-panel-list {
@@ -671,6 +695,11 @@
     }
     .cap-site-header :is(.cap-site-header-switcher, .cap-site-header-sections, .cap-site-header-cta) {
       display: none;
+    }
+    /* A button extra the site keeps in the top row (data-phone="bar"): compact, not in the sheet. */
+    .cap-site-header .cap-site-header-extras[data-phone="bar"] .cap-site-header-cta {
+      display: inline-flex;
+      padding-inline: var(--space-4);
     }
     .cap-site-header .cap-site-header-tools {
       gap: var(--space-2);

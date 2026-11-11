@@ -7,9 +7,11 @@ export interface DisclosureProps {
   name?: string;
   defaultOpen?: boolean;
   // "accordion": shadcn's flat look, a rule between items and the chevron at the end. "card": each
-  // section its own card with a plus at the end. "inline": no box, a rule above and below, the
-  // title in the link color (a post's "Show the data", a procedure step's calculator).
+  // section its own rounded card, with a plus that turns to a cross. "inline": no box, a rule above
+  // and below, the title in the link color (a post's "Show the data", a procedure step's calculator).
   variant?: "accordion" | "card" | "inline";
+  // "sm" on the card: the compact card for a form or a list behind its title.
+  size?: "sm";
   // "sign": a mono plus that becomes a minus, in place of the chevron.
   marker?: "sign";
   // Sections are open on paper. "hide" leaves this one off the printed page (a calculator).
@@ -24,6 +26,7 @@ export function Disclosure({
   name,
   defaultOpen = false,
   variant,
+  size,
   marker,
   print,
   className,
@@ -32,6 +35,7 @@ export function Disclosure({
     <details
       className={className ? `cap-disclosure ${className}` : "cap-disclosure"}
       data-variant={variant}
+      data-size={size}
       data-marker={marker}
       data-print={print}
       name={name}

@@ -41,6 +41,8 @@ export interface MenuRadioGroup {
   value?: string;
   defaultValue?: string;
   onValueChange?: (value: string) => void;
+  // Close the menu once a choice is made (a list of places to jump to); a setting stays open.
+  closeOnClick?: boolean;
   items: Array<{ value: string; label: string; disabled?: boolean }>;
 }
 
@@ -236,6 +238,7 @@ function Entries({
                   value={r.value}
                   label={r.label}
                   disabled={r.disabled}
+                  closeOnClick={e.closeOnClick}
                   className="cap-option cap-menu-item"
                 >
                   <span className="cap-option-label">{r.label}</span>

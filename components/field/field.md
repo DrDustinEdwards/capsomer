@@ -6,7 +6,7 @@ parts: [css, behavior, react]
 tool: native + own JavaScript
 states: [default, keyboard focus, hover, filled, help text, required, invalid with its message, disabled, read-only, file input, input group, checkbox checked, unchecked, mixed and invalid, radio checked and unchecked, choice card, slider, password shown and hidden, one-time code, character count under and over, number with steppers, search with Clear, date input with a part in error, two or more errors in the error summary]
 added: 0.1.0
-updated: 0.56.0
+updated: 0.98.0
 source: Capsid Portal, dashboard/src/styles.css (.field, .siteform .f, .siteform .check, .err)
 replaces:
   - 'class="(?:[^"]*\s)?field[\s"]'
@@ -36,7 +36,7 @@ Any form: a site's settings, a new job, a post's metadata, the one-line reason o
 ## The default and its reason
 
 - **The label is visible and above the control.** A placeholder is an example only ("For example: capsid-driver"), never the label: it disappears as soon as someone types.
-- **A slider** (`input.cap-range`, React `Range`) is a native range input on a 4 px track that fills with the primary color up to the thumb, from `--cap-range-fill` (React sets it from the value). The 20 px thumb grows a soft ring under the pointer, takes the focus ring on a keyboard and shrinks a little while held; forced colors bring the browser's own slider back.
+- **A slider** (`input.cap-range`, React `Range`) is a native range input on a 4 px track that fills with the primary color up to the thumb, from `--cap-range-fill` (React sets it from the value). The 20 px thumb grows a soft ring under the pointer, takes the focus ring on a keyboard and shrinks a little while held. On a touch screen the thumb takes a 44 px target with the 20 px dot drawn inside it. Forced colors bring the browser's own slider back.
 - **Help sits outside the control**, between the label and the control, and is the control's description.
 - **Required is marked with the word "Required"** beside the label (hidden from screen readers, which already hear the `required` attribute). Optional fields are not marked.
 - **A field is checked when it is left, once it has been changed, and every field on submit.** Tabbing through an empty form does not fill it with errors. A field showing an error is checked again as it is typed in, so the message goes as soon as it is fixed.
@@ -199,7 +199,7 @@ The parts in React render the markup above, with their state in React (the butto
 <DateInput legend="Date of birth" name="dob" autoComplete="bday" value={dob} onChange={setDob} error={errors.dob} invalid={["month"]} />
 ```
 
-`Field` also takes a function as its child, given the control's props, for a control inside a group, and `after` for what goes between the control and its error.
+`Field` also takes a function as its child, given the control's props, for a control inside a group, and `after` for what goes between the control and its error. `NumberField` takes `step` as a number or `"any"`: any value passes the browser's step check, and the steppers and Page Up and Page Down step by 1. `size="short"` writes `data-size="short"` on the `.cap-field`, for a field that needs only its control's room beside a long one; a layout that sets field widths reads it (the inline add form).
 
 Fields in an input group, a choice card and horizontal fields:
 

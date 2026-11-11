@@ -3,7 +3,10 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import {
   indexAtPoint,
+  keyMove,
   keyTarget,
+  locate,
+  moveBetween,
   moveId,
   sortText,
 } from "../../components/sortable-list/sortable-list.ts";
@@ -63,29 +66,30 @@ test("sortText: what the live region says, positions counted from one", () => {
   assert.equal(sortText.cancel("Low water", 1, 4), "Put Low water back at position 1 of 4.");
 });
 
-import {
-  keyTargetAcross,
-  locate,
-  moveAcross,
-} from "../../components/sortable-list/sortable-list.ts";
+test("moveBetween and locate: an item leaves its list for another at a clamped place, nothing is mutated", () => {
+  const lists = { a: ["a1", "a2"], b: ["b1"], c: [] };
+  assert.deepEqual(locate(lists, "b1"), { list: "b", index: 0 });
+  assert.equal(locate(lists, "zebra"), null);
+  assert.deepEqual(moveBetween(lists, "a1", "b", 0), { a: ["a2"], b: ["a1", "b1"], c: [] });
+  assert.deepEqual(moveBetween(lists, "a2", "c", 9), { a: ["a1"], b: ["b1"], c: ["a2"] });
+  assert.deepEqual(moveBetween(lists, "a1", "a", 1), { a: ["a2", "a1"], b: ["b1"], c: [] });
+  // An unknown id or list changes nothing.
+  assert.equal(moveBetween(lists, "zebra", "a", 0), lists);
+  assert.equal(moveBetween(lists, "a1", "zebra", 0), lists);
+  assert.deepEqual(lists, { a: ["a1", "a2"], b: ["b1"], c: [] });
+});
 
-test("groups: an item steps past a list's end into the next, an empty list included", () => {
-  const groups = [
-    { id: "s1", items: ["a", "b"] },
-    { id: "s2", items: [] },
-    { id: "s3", items: ["c"] },
-  ];
-  assert.deepEqual(keyTargetAcross("ArrowDown", groups, "b"), { group: 1, index: 0 });
-  assert.deepEqual(keyTargetAcross("ArrowUp", groups, "c"), { group: 1, index: 0 });
-  assert.equal(keyTargetAcross("ArrowUp", groups, "a"), null);
-  assert.equal(keyTargetAcross("ArrowDown", groups, "c"), null);
-  assert.deepEqual(keyTargetAcross("End", groups, "a"), { group: 0, index: 1 });
-  const moved = moveAcross(groups, "b", "s2", 0);
-  assert.deepEqual(
-    moved.map((g) => g.items),
-    [["a"], ["b"], ["c"]],
-  );
-  assert.deepEqual(locate(moved, "b"), { group: 1, index: 0 });
-  assert.deepEqual(moveAcross(groups, "a", "s3", 9)[2].items, ["c", "a"]);
-  assert.deepEqual(groups[0].items, ["a", "b"]);
+test("keyMove: an arrow at the end of a list goes on into the next list, and Home and End stay", () => {
+  const sizes = [2, 3, 0];
+  // Inside a list it is keyTarget's answer.
+  assert.deepEqual(keyMove("ArrowDown", { list: 1, index: 0 }, sizes), { list: 1, index: 1 });
+  assert.deepEqual(keyMove("End", { list: 1, index: 0 }, sizes), { list: 1, index: 2 });
+  // Up from the first place goes to the end of the list before; down from the last to the start of the next.
+  assert.deepEqual(keyMove("ArrowUp", { list: 1, index: 0 }, sizes), { list: 0, index: 2 });
+  assert.deepEqual(keyMove("ArrowLeft", { list: 1, index: 0 }, sizes), { list: 0, index: 2 });
+  assert.deepEqual(keyMove("ArrowDown", { list: 1, index: 2 }, sizes), { list: 2, index: 0 });
+  // No list before the first or after the last: it stays.
+  assert.deepEqual(keyMove("ArrowUp", { list: 0, index: 0 }, sizes), { list: 0, index: 0 });
+  assert.deepEqual(keyMove("Home", { list: 1, index: 2 }, sizes), { list: 1, index: 0 });
+  assert.equal(keyMove("a", { list: 0, index: 0 }, sizes), null);
 });

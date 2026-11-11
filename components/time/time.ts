@@ -24,6 +24,18 @@ function plural(n: number, unit: string): string {
   return `${n} ${unit}${n === 1 ? "" : "s"}`;
 }
 
+// "in 3 hours", "5 minutes ago", and with numeric: "auto", "yesterday" and "tomorrow", "today", "last
+// month": the words come from the platform's Intl.RelativeTimeFormat, not from strings kept here
+// (MDN: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/RelativeTimeFormat).
+const RTF = new Intl.RelativeTimeFormat("en-US", { numeric: "auto" });
+
+// A time as a number of milliseconds: a number, a Date, or a server timestamp (a zoneless one is
+// UTC). NaN for nothing, an empty string or a value that is not a time.
+export function toMs(at: number | Date | string | null | undefined): number {
+  if (at === null || at === undefined || at === "") return Number.NaN;
+  return typeof at === "number" ? at : at instanceof Date ? at.getTime() : parse(at);
+}
+
 const dayKey = (zone?: string) =>
   new Intl.DateTimeFormat("en-CA", {
     timeZone: zone,
@@ -55,31 +67,250 @@ export function day(t: number, now: number = Date.now(), zone?: string): string 
   }).format(t);
 }
 
+export interface RelativeOptions {
+  // "auto": minutes and hours, then calendar days. "day": calendar days only, then months
+  // ("today", "yesterday", "3 days ago", "2 months ago"), for a row that says which day, not how
+  // long ago to the minute.
+  granularity?: "auto" | "day";
+}
+
 // Relative, spelled out: "just now", "less than a minute ago", "5 minutes ago",
 // "3 hours ago", "yesterday", "4 days ago", "September 12"; and ahead, "in 3 hours",
 // "tomorrow". Minutes and hours are whole and round down, so "1 hour ago" means at least
-// an hour.
-export function relative(t: number, now: number = Date.now(), zone?: string): string {
+// an hour. The unit words are Intl.RelativeTimeFormat's.
+export function relative(
+  t: number,
+  now: number = Date.now(),
+  zone?: string,
+  options: RelativeOptions = {},
+): string {
   const d = now - t;
   const a = Math.abs(d);
   const ahead = d < 0;
-  const say = (s: string) => (ahead ? `in ${s}` : `${s} ago`);
   if (!Number.isFinite(d)) return "";
-  if (a < 10 * SEC) return "just now";
-  if (a < MIN) return say("less than a minute");
-  if (a < HOUR) return say(plural(Math.floor(a / MIN), "minute"));
-  if (a < DAY) return say(plural(Math.floor(a / HOUR), "hour"));
   const days = calendarDays(t, now, zone);
-  if (days === 0) return say(plural(Math.floor(a / HOUR), "hour"));
-  if (days === 1) return "yesterday";
-  if (days === -1) return "tomorrow";
-  if (Math.abs(days) < 7) return say(plural(Math.abs(days), "day"));
+  if (options.granularity === "day") {
+    if (Math.abs(days) < 30) return RTF.format(-days, "day");
+    return RTF.format(-Math.trunc(days / 30), "month");
+  }
+  const say = (n: number, unit: "minute" | "hour" | "day") => RTF.format(ahead ? n : -n, unit);
+  if (a < 10 * SEC) return "just now";
+  if (a < MIN) return ahead ? "in less than a minute" : "less than a minute ago";
+  if (a < HOUR) return say(Math.floor(a / MIN), "minute");
+  if (a < DAY) return say(Math.floor(a / HOUR), "hour");
+  if (days === 0) return say(Math.floor(a / HOUR), "hour");
+  if (Math.abs(days) < 7) return RTF.format(-days, "day");
   return day(t, now, zone);
 }
 
 // The Portal's compact UTC form, for logs and ids: "2026-09-30 13:02Z".
 export function utc(t: number): string {
   return `${new Date(t).toISOString().replace("T", " ").slice(0, 16)}Z`;
+}
+
+// ---------------------------------------------------------------------------------------
+// Dates with no "ago": a long date, a medium one, a month and day, with or without the time.
+
+export type DateStyle = "long" | "medium" | "monthDay";
+
+export interface FormatDateOptions {
+  // "long": "September 12, 2026". "medium": "Sep 12, 2026". "monthDay": "Sep 12", for a chart's
+  // axis or a window short enough that the year is noise. Default "long".
+  style?: DateStyle;
+  // Add the time of day: "Sep 12, 2026, 3:04 PM". Ignored for "monthDay".
+  time?: boolean;
+  // Name the zone after a time: "Sep 12, 2026, 3:04 PM UTC". Only with `time`.
+  zoneName?: boolean;
+  // An IANA zone, or "viewer" for the reader's own. Default "UTC": a page that is rendered on a
+  // server and hydrated in the browser needs the same text on both sides, and a server cannot
+  // know the viewer's zone (a local zone makes a hydration mismatch).
+  zone?: string;
+}
+
+const DATE_FORMATS = new Map<string, Intl.DateTimeFormat>();
+function cachedFormat(key: string, make: () => Intl.DateTimeFormat): Intl.DateTimeFormat {
+  let f = DATE_FORMATS.get(key);
+  if (!f) DATE_FORMATS.set(key, (f = make()));
+  return f;
+}
+
+// A date, American English (the family's), from a number, a Date or a timestamp string. Null for a
+// value that is not a time ("Invalid Date" is never shown; the caller says what goes in its place).
+// Intl.DateTimeFormat does the words: dateStyle and timeStyle (MDN:
+// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat).
+export function formatDate(
+  at: number | Date | string | null | undefined,
+  options: FormatDateOptions = {},
+): string | null {
+  const t = toMs(at);
+  if (!Number.isFinite(t)) return null;
+  const { style = "long", time = false, zoneName: named = false, zone: z = "UTC" } = options;
+  const zone = z === "viewer" ? undefined : z;
+  const key = `${style}|${time && style !== "monthDay"}|${zone ?? ""}`;
+  const f = cachedFormat(key, () =>
+    style === "monthDay"
+      ? new Intl.DateTimeFormat("en-US", { timeZone: zone, month: "short", day: "numeric" })
+      : new Intl.DateTimeFormat("en-US", {
+          timeZone: zone,
+          dateStyle: style,
+          timeStyle: time ? "short" : undefined,
+        }),
+  );
+  const text = f.format(t);
+  return time && named && style !== "monthDay" ? `${text} ${zoneName(t, zone)}` : text;
+}
+
+// A meeting's dates: "May 1, 2026", "May 1, 2026 to May 2, 2026", or null with no dates. One date
+// when both are the same moment.
+export function dateRange(
+  start: number | Date | string | null | undefined,
+  end: number | Date | string | null | undefined,
+  options: Pick<FormatDateOptions, "style" | "zone"> = {},
+): string | null {
+  const a = toMs(start);
+  const b = toMs(end);
+  const from = formatDate(a, options);
+  const to = formatDate(b, options);
+  if (from && to) return a === b || from === to ? from : `${from} to ${to}`;
+  return from ?? to;
+}
+
+// The value a <input type="datetime-local"> takes, in UTC ("2026-09-30T13:02"), and back. A page
+// that edits times in UTC (an admin entering a meeting's hours) round-trips with these.
+export function utcInputValue(at: number | Date | string | null | undefined): string {
+  const t = toMs(at);
+  return Number.isFinite(t) ? new Date(t).toISOString().slice(0, 16) : "";
+}
+export function fromUtcInputValue(value: string): number {
+  return /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(:\d{2})?$/.test(value.trim())
+    ? Date.parse(`${value.trim()}Z`)
+    : Number.NaN;
+}
+
+// ---------------------------------------------------------------------------------------
+// Durations: how long, not when. Milliseconds in, like every function here (`seconds * SEC`).
+
+const whole = (n: number | null | undefined) =>
+  Number.isFinite(n) ? Math.max(0, Math.floor(n as number)) : 0;
+
+// A duration as a player's timecode writes it: "4:05", "1:02:03". With hours: "always", the form
+// a feed wants for <itunes:duration>: "00:04:05", "01:02:03". Negative, missing or NaN is zero.
+export function timecode(
+  ms: number | null | undefined,
+  options: { hours?: "auto" | "always" } = {},
+): string {
+  const total = Math.floor(whole(ms) / SEC);
+  const h = Math.floor(total / 3600);
+  const m = Math.floor((total % 3600) / 60);
+  const sec = String(total % 60).padStart(2, "0");
+  const two = (n: number) => String(n).padStart(2, "0");
+  if (options.hours === "always") return `${two(h)}:${two(m)}:${sec}`;
+  return h ? `${h}:${two(m)}:${sec}` : `${m}:${sec}`;
+}
+
+export type DurationStyle = "long" | "short" | "narrow";
+
+export interface DurationOptions {
+  // "long": "3 minutes, 12 seconds" (the default: it reads well aloud). "short": "3 min, 12 sec".
+  // "narrow": "3m 12s".
+  style?: DurationStyle;
+  // The largest unit used: "hours" (the default: 90 minutes is "1 hour, 30 minutes") or "days".
+  largest?: "hours" | "days";
+}
+
+interface DurationFormatLike {
+  format(duration: Record<string, number>): string;
+}
+type DurationFormatCtor = new (
+  locale: string,
+  options: Record<string, unknown>,
+) => DurationFormatLike;
+
+const UNIT_WORDS = {
+  days: ["day", "day", "d"],
+  hours: ["hour", "hr", "h"],
+  minutes: ["minute", "min", "m"],
+  seconds: ["second", "sec", "s"],
+} as const;
+type Unit = keyof typeof UNIT_WORDS;
+
+// Where Intl.DurationFormat exists (Chrome 129, Firefox 136, Safari 16.4; MDN:
+// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DurationFormat)
+// it writes the words; elsewhere the same English is written here, so a server and a browser that
+// differ in support still print the same text.
+function durationWords(parts: Partial<Record<Unit, number>>, style: DurationStyle): string {
+  const units = (Object.keys(UNIT_WORDS) as Unit[]).filter((u) => (parts[u] ?? 0) > 0);
+  // Nothing at all reads as "0 seconds". DurationFormat leaves out zero units unless told to show one.
+  const zero = units.length === 0;
+  if (zero) units.push("seconds");
+  const ctor = (Intl as unknown as { DurationFormat?: DurationFormatCtor }).DurationFormat;
+  if (ctor) {
+    try {
+      const out: Record<string, number> = {};
+      for (const u of units) out[u] = parts[u] ?? 0;
+      return new ctor("en-US", zero ? { style, secondsDisplay: "always" } : { style }).format(out);
+    } catch {
+      /* an engine with a partial implementation: use the fallback */
+    }
+  }
+  const words = units.map((u) => {
+    const n = parts[u] ?? 0;
+    const [long, short, narrow] = UNIT_WORDS[u];
+    if (style === "narrow") return `${n}${narrow}`;
+    if (style === "short") return `${n} ${short}${u === "days" && n !== 1 ? "s" : ""}`;
+    return plural(n, long);
+  });
+  return words.join(style === "narrow" ? " " : ", ");
+}
+
+function split(ms: number, largest: "hours" | "days"): Partial<Record<Unit, number>> {
+  let total = Math.floor(whole(ms) / SEC);
+  const out: Partial<Record<Unit, number>> = {};
+  if (largest === "days") {
+    out.days = Math.floor(total / 86400);
+    total %= 86400;
+  }
+  out.hours = Math.floor(total / 3600);
+  out.minutes = Math.floor((total % 3600) / 60);
+  out.seconds = total % 60;
+  return out;
+}
+
+// A duration in words, for a screen reader or a sentence: "3 minutes, 12 seconds", "1 hour, 2
+// minutes, 3 seconds", "0 seconds". Units that are zero are left out.
+export function duration(ms: number | null | undefined, options: DurationOptions = {}): string {
+  return durationWords(split(whole(ms), options.largest ?? "hours"), options.style ?? "long");
+}
+
+// A rough duration to the largest unit, rounded down, for "waiting 3 hours" and "oldest 2 days":
+// "less than a minute", "5 minutes", "3 hours", "2 days". The spelled-out form of a compact "3.2h".
+export function span(ms: number | null | undefined): string {
+  const a = whole(ms);
+  if (a < MIN) return "less than a minute";
+  if (a < HOUR) return duration(Math.floor(a / MIN) * MIN);
+  if (a < DAY) return duration(Math.floor(a / HOUR) * HOUR);
+  return duration(Math.floor(a / DAY) * DAY, { largest: "days" });
+}
+
+// How soon something scheduled fires, spelled out: "due now" once the moment has passed, then "in 5
+// minutes", "in 3 hours, 20 minutes" (the hour form carries the minutes, since "in 3 hours" hides up
+// to 59 of them), and "in 2 days" (a day or more drops the hours, which would be noise).
+export function until(t: number, now: number = Date.now()): string {
+  const d = t - now;
+  if (!Number.isFinite(d)) return "";
+  if (d <= 0) return "due now";
+  if (d < HOUR) return `in ${duration(Math.max(1, Math.round(d / MIN)) * MIN)}`;
+  if (d < DAY) {
+    let hours = Math.floor(d / HOUR);
+    let minutes = Math.round((d - hours * HOUR) / MIN);
+    // Rounding the minutes can reach 60: carry it rather than say "3 hours, 60 minutes".
+    if (minutes === 60) {
+      hours += 1;
+      minutes = 0;
+    }
+    return `in ${duration(hours * HOUR + minutes * MIN)}`;
+  }
+  return `in ${duration(Math.floor(d / DAY) * DAY, { largest: "days" })}`;
 }
 
 function parts(t: number, zone: string | undefined): Record<string, string> {
@@ -145,7 +376,9 @@ export function exact(t: number, zone?: string): string {
   return p.utc ? `${p.local} ${p.utc}` : p.local;
 }
 
-export type TimeFormat = "relative" | "exact";
+// "relative": 5 minutes ago. "exact": the viewer's zone, then UTC. "date": a long date with no time
+// of day, in UTC ("September 12, 2026"), for a publication date or a deadline.
+export type TimeFormat = "relative" | "exact" | "date";
 
 // The text a <time class="cap-time"> shows.
 export function text(
@@ -155,6 +388,7 @@ export function text(
   zone?: string,
 ): string {
   if (!Number.isFinite(t)) return UNREADABLE;
+  if (format === "date") return formatDate(t, { zone: zone ?? "UTC" }) ?? UNREADABLE;
   return format === "exact" ? exact(t, zone) : relative(t, now, zone);
 }
 
@@ -205,7 +439,7 @@ export function draw(el: HTMLElement): void {
   const { now } = nowFor(el);
   const t = parse(iso);
   if (el.dataset.format === "exact") return drawExact(el, t);
-  const next = text(t, "relative", now);
+  const next = text(t, el.dataset.format === "date" ? "date" : "relative", now);
   if (el.textContent !== next) el.textContent = next;
 }
 
@@ -231,7 +465,7 @@ export function enhance(root: ParentNode = document): () => void {
   for (const el of root.querySelectorAll<HTMLElement>("[data-cap='time']:not([data-cap-ready])")) {
     el.dataset.capReady = "";
     draw(el);
-    if (el.dataset.format !== "exact" && !nowFor(el).frozen) {
+    if (el.dataset.format !== "exact" && el.dataset.format !== "date" && !nowFor(el).frozen) {
       live.add(el);
       mine.push(el);
     }
@@ -247,4 +481,51 @@ export function enhance(root: ParentNode = document): () => void {
       timer = undefined;
     }
   };
+}
+
+// A zone name the browser's Intl knows, else "UTC": a zone from a form or from Cloudflare's
+// request.cf.timezone can be missing or unknown, and Intl throws on an unknown one. From Carrel
+// (lib/writing/progress.ts).
+export function knownZone(zone: string | null | undefined): string {
+  if (!zone) return "UTC";
+  try {
+    new Intl.DateTimeFormat("en-US", { timeZone: zone });
+    return zone;
+  } catch {
+    return "UTC";
+  }
+}
+
+// The hour of the morning a thing set aside with Later comes back.
+export const LATER_HOUR = 8;
+
+// When Later brings something back: `hour` (8 am) on the next calendar day in the person's
+// zone (UTC when the zone is unknown), as an ISO instant. The wall-clock time is found by
+// correcting a first guess by the zone's offset, twice, so a change to or from summer time
+// overnight still lands on 8 am. From Carrel's Home (lib/desk.server.ts, laterUntil).
+export function laterUntil(
+  now: Date | number,
+  zone: string | null | undefined,
+  hour: number = LATER_HOUR,
+): string {
+  const format = new Intl.DateTimeFormat("en-US", {
+    timeZone: knownZone(zone),
+    hourCycle: "h23",
+    year: "numeric",
+    month: "numeric",
+    day: "numeric",
+    hour: "numeric",
+    minute: "numeric",
+  });
+  const wall = (at: number) => {
+    const p = new Map(format.formatToParts(at).map((x) => [x.type, Number(x.value)]));
+    const part = (type: Intl.DateTimeFormatPartTypes) => p.get(type) ?? 0;
+    const [y, m, d] = [part("year"), part("month"), part("day")];
+    return { y, m, d, ms: Date.UTC(y, m - 1, d, part("hour"), part("minute")) };
+  };
+  const today = wall(typeof now === "number" ? now : now.getTime());
+  const want = Date.UTC(today.y, today.m - 1, today.d + 1, hour);
+  let at = want;
+  for (let i = 0; i < 2; i++) at += want - wall(at).ms;
+  return new Date(at).toISOString();
 }

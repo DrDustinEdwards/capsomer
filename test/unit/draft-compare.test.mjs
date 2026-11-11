@@ -14,6 +14,8 @@ import {
   renderCompare,
   renderPatch,
   splitSentences,
+  unifiedPatch,
+  hasChanges,
 } from "../../components/draft-compare/draft-compare.ts";
 
 const side = (s) =>
@@ -352,4 +354,51 @@ test("renderPatch: a patch with no lines is a status, not an empty box", () => {
   const html = renderPatch("", { id: "p2" });
   assert.match(html, /<strong>No changes\.<\/strong>/);
   assert.ok(!html.includes("cap-patch-table"));
+});
+
+test("unifiedPatch: the shape jsdiff writes, hunks merged within two contexts, and a missing final newline marked", () => {
+  const before = "Getting started\none\ntwo\nthree\nfour\nfive\nsix\nseven\neight\nnine\nend";
+  const after = "Getting started\nONE\ntwo\nthree\nfour\nfive\nsix\nseven\neight\nnine\nend\n";
+  assert.equal(
+    unifiedPatch(
+      "post.md",
+      { text: before, label: "The site's text" },
+      { text: after, label: "Your draft" },
+    ),
+    [
+      "Index: post.md",
+      "===================================================================",
+      "--- post.md\tThe site's text",
+      "+++ post.md\tYour draft",
+      "@@ -1,5 +1,5 @@",
+      " Getting started",
+      "-one",
+      "+ONE",
+      " two",
+      " three",
+      " four",
+      "@@ -8,4 +8,4 @@",
+      " seven",
+      " eight",
+      " nine",
+      "-end",
+      "\\ No newline at end of file",
+      "+end",
+      "",
+    ].join("\n"),
+  );
+  const merged = unifiedPatch(
+    "a",
+    { text: "1\n2\n3\n4\n5\n6\n7\n8\n" },
+    { text: "x\n2\n3\n4\n5\n6\n7\ny\n" },
+  );
+  assert.equal(merged.match(/^@@ /gm)?.length, 1);
+  assert.equal(
+    unifiedPatch("a", { text: "" }, { text: "new\n" }).split("\n")[4],
+    "@@ -0,0 +1,1 @@",
+  );
+  const [file] = parsePatch(merged);
+  assert.deepEqual([file.added, file.removed], [2, 2]);
+  assert.equal(hasChanges(unifiedPatch("a", { text: "same\n" }, { text: "same\n" })), false);
+  assert.equal(hasChanges(merged), true);
 });

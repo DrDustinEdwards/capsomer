@@ -184,6 +184,32 @@
     }
   }
 
+  /* The compact card (data-size="sm"): a card beside other cards on an admin page, holding a form
+     or a list behind its title ("Edit sponsor", "Add an item", "Chair (3)"). Smaller than the
+     questions list: the radius of a control group, a body-size title, the body in the text color
+     (a form's labels and fields are not an answer to read muted). */
+  .cap-disclosure[data-variant="card"][data-size="sm"] {
+    border-radius: var(--radius-m);
+
+    &:has(+ .cap-disclosure) {
+      border-end-start-radius: var(--radius-m);
+      border-end-end-radius: var(--radius-m);
+    }
+    & + .cap-disclosure {
+      border-start-start-radius: var(--radius-m);
+      border-start-end-radius: var(--radius-m);
+    }
+    & > summary {
+      padding: var(--space-2) var(--space-4);
+      font-size: var(--fs-body);
+      font-weight: 600;
+    }
+    & > .cap-disclosure-body {
+      padding: 0 var(--space-4) var(--space-4);
+      color: var(--text);
+    }
+  }
+
   /* A group row: the button names what it holds and how many ("Notices, 4"). */
   .cap-group {
     display: grid;
