@@ -35,7 +35,7 @@ A value someone will paste elsewhere: an API key, a post's address, a code sampl
 - **The button is never disabled while a message shows**: copying is idempotent, a disabled button drops focus, and a failed copy can be retried at once. A repeat press restarts the message.
 - **A repeated message gets a no-break space**, because VoiceOver skips a message equal to the one before it.
 - **Not color alone**: the icon turns to a check on success, and both outcomes are words.
-- **A cancelled share says nothing**: an `AbortError` from the share sheet is the person's choice, not a failure.
+- **A canceled share says nothing**: an `AbortError` from the share sheet is the person's choice, not a failure.
 - Copied stays 2.5 s; Copy failed stays 8 s, time to copy by hand.
 
 ## Keyboard

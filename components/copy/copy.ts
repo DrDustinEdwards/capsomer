@@ -9,7 +9,7 @@ export const COPIED_MS = 2500;
 export const COPY_FAILED_MS = 8000;
 
 export type CopyOutcome = "copied" | "failed";
-export type ShareOutcome = "shared" | "copied" | "cancelled" | "failed";
+export type ShareOutcome = "shared" | "copied" | "canceled" | "failed";
 
 // Writes text to the clipboard. Never throws, synchronously or not: a missing clipboard (an
 // insecure page) or a refused write is false. Sites are served over HTTPS, so there is no
@@ -40,7 +40,7 @@ export async function shareLink(data: {
       return "shared";
     }
   } catch (error) {
-    if (error instanceof DOMException && error.name === "AbortError") return "cancelled";
+    if (error instanceof DOMException && error.name === "AbortError") return "canceled";
     // Any other refusal falls through to the clipboard.
   }
   return (await copyText(data.url)) ? "copied" : "failed";
