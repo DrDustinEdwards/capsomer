@@ -6,7 +6,7 @@ parts: [css, react]
 tool: native
 states: [ok, warning, critical, no data, hover, pressed, keyboard focus, a row of every tone, phone width wrapping onto more rows, static, static with a delta, static large in the accent, static no data, static in a grid]
 added: 0.1.0
-updated: 0.95.0
+updated: 0.96.0
 source: Capsid Portal, dashboard/src/views/Overview.tsx (tiles) and styles.css ("stat tiles")
 replaces:
   - 'class="tiles?( |")'

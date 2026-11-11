@@ -6,7 +6,7 @@ parts: [css, react]
 tool: native
 states: [critical, warning, notice, ok, running, no data, as a word, as a badge, default, secondary, outline, destructive, ghost, link, link or button badge, hover, disabled, count, comfortable, on a selected row, no data with its reason, no data in a table cell, state marks, a phrase that wraps, a glyph on its own, accent badge, series badge, tag badge]
 added: 0.1.0
-updated: 0.95.0
+updated: 0.96.0
 source: Capsomer mockup (design/mockup.html, the status symbols); the Capsid Portal's state chips
 replaces:
   - 'class="(st|pill|badge|chip-state|state)[ "]'
