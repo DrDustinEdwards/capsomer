@@ -1,0 +1,178 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* Document archive: past documents by category, each a row-list row (.cap-rows) linking to its
+   page, and a document's page with its download, the app's viewer and Previous and Next in its
+   category. From txasm's archive routes (archive.$category.tsx, archive.$category.$slug.tsx)
+   and components/document-list.tsx and document-detail.tsx. The rows are row-list's; this file
+   lays out the groups, the page and the pager. */
+@layer cap.components {
+  .cap-archive {
+    display: grid;
+    gap: var(--space-7);
+  }
+
+  .cap-archive-group {
+    display: grid;
+    gap: var(--space-3);
+    min-width: 0;
+  }
+
+  .cap-archive-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-2) var(--gap);
+  }
+
+  .cap-archive-title {
+    margin: 0;
+    font-size: var(--fs-h2);
+    font-weight: var(--weight-heading);
+  }
+
+  .cap-archive-more {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--target);
+  }
+
+  .cap-archive-empty {
+    margin: 0;
+    color: var(--muted);
+  }
+
+  /* A document's page. */
+  .cap-docview {
+    display: grid;
+    gap: var(--space-6);
+    min-width: 0;
+  }
+
+  .cap-docview-head {
+    display: grid;
+    gap: var(--space-3);
+  }
+
+  .cap-docview-title {
+    margin: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .cap-docview-sub {
+    margin: 0;
+    color: var(--muted);
+  }
+
+  .cap-docview-download {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3);
+    margin: 0;
+  }
+
+  .cap-docview-body {
+    min-width: 0;
+  }
+
+  /* Previous and Next: two links, each a direction and a title. Next keeps the right-hand place
+     when there is no Previous. */
+  .cap-docpager {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--line);
+  }
+
+  .cap-docpager-link {
+    display: grid;
+    gap: var(--space-1);
+    box-sizing: border-box;
+    min-height: var(--target);
+    max-width: min(100%, 24rem);
+    padding: var(--pad-y) var(--pad-x);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-m);
+    color: var(--accent-text);
+    text-decoration: none;
+
+    &:visited {
+      color: var(--accent-text);
+    }
+    &:hover,
+    &[data-force="hover"] {
+      border-color: var(--line-strong);
+      background: var(--raised);
+      color: var(--accent-hover);
+    }
+    &:focus-visible {
+      outline: var(--ring-width) solid var(--ring);
+      outline-offset: 1px;
+    }
+
+    &[rel~="next"] {
+      margin-inline-start: auto;
+      text-align: end;
+      justify-items: end;
+    }
+  }
+
+  .cap-docpager-dir {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    color: var(--muted);
+    font-family: var(--ui);
+    font-size: var(--fs-label);
+    font-weight: 500;
+
+    /* The chevron is drawn, so a reader hears the word only. */
+    &::before,
+    &::after {
+      flex: none;
+      inline-size: 6px;
+      block-size: 6px;
+      border-block-start: 1.5px solid currentColor;
+      border-inline-end: 1.5px solid currentColor;
+    }
+  }
+
+  [rel~="prev"] > .cap-docpager-dir::before {
+    content: "";
+    transform: rotate(-135deg);
+    margin-inline-start: 2px;
+  }
+  [rel~="next"] > .cap-docpager-dir::after {
+    content: "";
+    transform: rotate(45deg);
+    margin-inline-end: 2px;
+  }
+  :where([dir="rtl"]) [rel~="prev"] > .cap-docpager-dir::before {
+    transform: rotate(45deg);
+  }
+  :where([dir="rtl"]) [rel~="next"] > .cap-docpager-dir::after {
+    transform: rotate(-135deg);
+  }
+
+  .cap-docpager-title {
+    font-weight: 600;
+    overflow-wrap: anywhere;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .cap-docpager-link {
+      transition:
+        background-color var(--dur-fast) var(--ease-out),
+        border-color var(--dur-fast) var(--ease-out);
+    }
+  }
+
+  @media (forced-colors: active) {
+    .cap-docpager-link {
+      border-color: LinkText;
+    }
+  }
+}

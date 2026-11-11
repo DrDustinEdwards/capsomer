@@ -1,0 +1,39 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* Cited by: the count of works citing a record, and their list, each with where it came from and when
+   it was read, so a number never looks more measured than it is. Links are the family's text links. */
+@layer cap.components {
+  .cap-cited-by-count {
+    margin: 0;
+    font-size: var(--fs-body);
+  }
+
+  /* The provenance, the venue and the year: quiet beside the words they qualify. */
+  .cap-cited-by-source {
+    color: var(--muted);
+    font-size: var(--fs-detail);
+  }
+
+  .cap-cited-by {
+    max-inline-size: var(--measure);
+
+    & > .cap-cited-by-source {
+      margin: 0 0 var(--space-3);
+    }
+  }
+
+  .cap-cited-by-title {
+    margin: 0 0 var(--space-2);
+  }
+
+  .cap-cited-by-list {
+    margin: 0;
+    padding-inline-start: 1.25em;
+    line-height: var(--leading);
+
+    & > li + li {
+      margin-block-start: var(--space-2);
+    }
+  }
+}

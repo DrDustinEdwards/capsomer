@@ -1,0 +1,156 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* The annotated figure: a drawing with numbered callouts on leader lines, in one or two layouts, and
+   its key as ruled boxes. The drawing's own fills are the site's; the ink of the leaders and labels
+   is --cap-figure-ink (the text color unless a site sets it). From dustinedwards.info
+   (app/styles/home.css, the plate and its key). */
+@layer cap.components {
+  .cap-annotated-figure {
+    --cap-figure-ink: var(--text);
+    container-type: inline-size;
+    margin: 0;
+  }
+
+  /* Each view box is sized so its unit is about one CSS pixel at its drawn width. */
+  .cap-annotated-figure-drawing {
+    display: block;
+    inline-size: 100%;
+    block-size: auto;
+    overflow: visible;
+
+    /* Two layouts: the container's width shows one, and display: none takes the other out of the
+       accessibility tree, so a reader meets one drawing either way. */
+    &[data-layout="narrow"] {
+      display: none;
+    }
+  }
+
+  @container (inline-size < 32rem) {
+    .cap-annotated-figure-drawing[data-layout="wide"] {
+      display: none;
+    }
+    .cap-annotated-figure-drawing[data-layout="narrow"] {
+      display: block;
+    }
+  }
+
+  .cap-annotated-figure-label {
+    fill: var(--cap-figure-ink);
+    font-family: var(--face);
+    font-size: 12px;
+  }
+
+  .cap-annotated-figure-leader line {
+    stroke: var(--cap-figure-ink);
+    stroke-width: 1;
+  }
+
+  .cap-annotated-figure-caption {
+    margin-block-start: var(--space-3);
+    color: var(--muted);
+    font-size: var(--fs-detail);
+  }
+
+  /* The key as ruled boxes that share their rules: the number small above the drawing, then the
+     name and the note. Two across, three, then six as the key's own width allows. */
+  .cap-annotated-key {
+    container-type: inline-size;
+  }
+
+  .cap-annotated-key-entries {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    border-block-start: 1px solid var(--text);
+    border-inline-start: 1px solid var(--text);
+  }
+
+  @container (inline-size >= 40rem) {
+    .cap-annotated-key-entries {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  @container (inline-size >= 64rem) {
+    .cap-annotated-key-entries {
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+    }
+  }
+
+  .cap-annotated-key-entry {
+    --cap-figure-ink: var(--text);
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    padding: var(--space-3) var(--space-4) var(--space-5);
+    border-inline-end: 1px solid var(--text);
+    border-block-end: 1px solid var(--text);
+
+    & > figcaption {
+      display: contents;
+    }
+  }
+
+  .cap-annotated-key-num {
+    order: -1;
+    display: block;
+    color: var(--muted);
+    font: 500 var(--fs-label) / 1.5 var(--mono);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .cap-annotated-key-art {
+    display: block;
+    inline-size: 40px;
+    block-size: 40px;
+    margin-block: var(--space-3);
+  }
+
+  .cap-annotated-key-name {
+    display: block;
+    margin-block: var(--space-1) var(--space-2);
+    color: var(--text);
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1.3;
+  }
+
+  .cap-annotated-key-note {
+    display: block;
+    color: var(--muted);
+    font-size: var(--fs-body);
+    line-height: 1.55;
+  }
+
+  /* Lit: a callout and its key entry together, by a heavier line and bold words, never color alone.
+     data-live is set by the behavior module, so the pointer cue shows only where it works. */
+  :is(.cap-annotated-figure-target, .cap-annotated-key-entry)[data-live] {
+    cursor: pointer;
+  }
+  .cap-annotated-figure-target[data-lit] :is(circle, ellipse, rect, path, polygon),
+  .cap-annotated-key-entry[data-lit] .cap-annotated-key-art :is(circle, ellipse, rect, path, polygon) {
+    stroke: var(--cap-figure-ink);
+    stroke-width: 2.4px;
+  }
+  .cap-annotated-figure-leader[data-lit] line {
+    stroke-width: 2px;
+  }
+  .cap-annotated-figure-leader[data-lit] .cap-annotated-figure-label,
+  .cap-annotated-key-entry[data-lit] .cap-annotated-key-num {
+    font-weight: 700;
+  }
+
+  @media (forced-colors: active) {
+    .cap-annotated-figure-leader line {
+      stroke: CanvasText;
+    }
+    .cap-annotated-figure-label {
+      fill: CanvasText;
+    }
+    .cap-annotated-key-entries,
+    .cap-annotated-key-entry {
+      border-color: CanvasText;
+    }
+  }
+}

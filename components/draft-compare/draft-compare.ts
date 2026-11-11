@@ -50,6 +50,8 @@ export {
   patchCountsText,
   revisionPair,
   renderPatch,
+  unifiedPatch,
+  hasChanges,
 } from "./draft-compare-patch.ts";
 export type {
   PatchOp,
@@ -58,6 +60,8 @@ export type {
   PatchFile,
   PatchOptions,
   PatchCounts,
+  UnifiedSide,
+  UnifiedOptions,
 } from "./draft-compare-patch.ts";
 
 // ---------------------------------------------------------------------------------------

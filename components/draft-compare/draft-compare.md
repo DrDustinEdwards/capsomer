@@ -6,9 +6,11 @@ parts: [css, behavior, react]
 tool: native + own JavaScript
 states: [patch of two revisions, patch by line, patch with nothing to show, side by side, inline, changes only, unchanged passages folded, one change, no differences, with authorship runs, narrow container stacked, remembered view, comfortable density, React with the view held by the app]
 added: 0.3.0
-source: the site admin's revision-list.tsx (DiffBlock, RevisionMeta), admin.posts.$slug.history.tsx and admin-history.css
+updated: 0.91.0
+source: the site admin's revision-list.tsx (DiffBlock, RevisionMeta), admin.posts.$slug.history.tsx and admin-history.css; Carrel's app/lib/patch.ts (unifiedPatch, hasChanges)
 replaces:
   - 'class="(?:[^"]*\s)?(history-diff|diff-block|diff-view)[\s"]'
+  - 'import \{ createTwoFilesPatch \} from "diff"'
   - 'data-diff="(add|del)"'
   - 'className="(?:[^"]*\s)?(history-diff|diff-block)[\s"]'
 ---
@@ -50,6 +52,14 @@ const html = renderPatch(patchText, { id: "commit-4f2a9c1", title: "Show the new
 import { DraftPatch } from "capsomer/react/draft-compare";
 
 <DraftPatch patch={patchText} title="Show the newest mention first" />
+```
+
+**Two texts the app holds make their own patch.** `unifiedPatch(name, before, after, { context })` writes the unified patch from `before` to `after` (each `{ text, label? }`), in the shape jsdiff's `createTwoFilesPatch` writes and site-api's revision diffs come in: the `Index` and `===` lines, `--- name<TAB>label`, `+++ name<TAB>label`, hunks with three lines of context merged when two changes are within six lines, and `\ No newline at end of file`. Both sides carry one name, so DraftPatch shows one file changed, not a rename. The line diff is this component's own (`commonSubsequence`, Myers), the one the word compare uses, so no diff library is needed; where two alignments are equally short it may pick another than jsdiff, and both apply to the same text. `hasChanges(patch)` is true when a patch has a hunk. Both are pure, so a server builds the patch.
+
+```ts
+import { hasChanges, unifiedPatch } from "capsomer/behavior/draft-compare";
+
+const patch = unifiedPatch("post.md", { text: siteText, label: "The site's text" }, { text: draft, label: "Your draft" });
 ```
 
 ```html
@@ -144,7 +154,7 @@ enhance(); // the jump keys, the remembered view, Expand all
 </section>
 ```
 
-`parsePatch(patch)`, `patchCounts(files)` and `patchCountsText(counts)` belong to the patch mode. `diffWords(a, b)`, `diffSentences(a, b)`, `analyze(a, b)`, `splitSentences(text)`, `countWords(text)`, `countsText(counts)` and `commonSubsequence(a, b)` are pure and exported, with their types (`WordPart`, `Entry`, `Analysis`, `Counts`, `CompareSide`, `CompareOptions`). `setView(root, view)` and `toggleAll(root)` drive a compare from code.
+`parsePatch(patch)`, `patchCounts(files)`, `patchCountsText(counts)`, `unifiedPatch(name, before, after, options)` and `hasChanges(patch)` belong to the patch mode. `diffWords(a, b)`, `diffSentences(a, b)`, `analyze(a, b)`, `splitSentences(text)`, `countWords(text)`, `countsText(counts)` and `commonSubsequence(a, b)` are pure and exported, with their types (`WordPart`, `Entry`, `Analysis`, `Counts`, `CompareSide`, `CompareOptions`). `setView(root, view)` and `toggleAll(root)` drive a compare from code.
 
 In React, `import { DraftCompare } from "capsomer/react/draft-compare"`:
 

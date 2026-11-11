@@ -1,0 +1,33 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* Generated file: a panel for a file the server makes (an abstract book PDF, a printed
+   program), from txasm's program-builder/document-panel.tsx and the book page's PDF panel. It
+   is a .cap-panel with a status (.cap-status), a file link (data-link="file") and a .cap-btn;
+   this file only lays them out. */
+@layer cap.components {
+  .cap-generated-body {
+    display: grid;
+    gap: var(--space-3);
+  }
+
+  .cap-generated-status,
+  .cap-generated-file {
+    margin: 0;
+  }
+
+  .cap-generated-says {
+    color: var(--muted);
+  }
+
+  .cap-generated-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3);
+  }
+
+  .cap-generated-form {
+    display: contents;
+  }
+}
