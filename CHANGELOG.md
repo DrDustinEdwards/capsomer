@@ -24,6 +24,10 @@ Options for sites with their own design (bsw, julieedwards-info, txasm) on the s
 
 No token or class was removed or renamed. HTML contract additions only: `data-scrolled` and `data-collapse` on the header, `commandfor` and `command` on a no-hydration menu button, `data-marker` and `data-variant="inline"` on a disclosure; the account slot is left out when it would be empty, and a sortable item has no grip with `grip={false}`.
 
+## [0.95.1]
+
+- **Rich editor:** an image inserted from the editor uses the markdown editor's `defaultImageMarkdown`. The editor had its own copy, which kept a line break in the alt text and so broke the Markdown image (as Carrel fixed in its copy after 0.95.0 was cut). No token, class or HTML contract changed.
+
 ## [0.95.0]
 
 - **Rich editor (new, `components/rich-editor`)**, from Carrel's formatted editor: Tiptap 3 (MIT) over Markdown that stays byte for byte. Unchanged blocks are written as the bytes they were read from; only a changed or new block is spelled again, and checked by parsing it. Front matter, code, tables, directives, math, footnotes and images sit in labeled source blocks. It keeps the markdown editor's toolbar, keys, link palette, block menu and image step. `capsomer/react/rich-editor` (`RichEditor`), `capsomer/behavior/rich-editor` (the round trip and schema, for a server), `capsomer/rich-editor.css`. A pasted or dropped HTML fragment is parsed in an inert document under the `capsomer` Trusted Types policy and read by the schema; ProseMirror's own paste handed it to the page's default policy, which escapes markup, so formatted pastes arrived as tags. New command `capsomer-roundtrip <folder> [--plain]` checks a site's content round trips.
