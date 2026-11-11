@@ -4,6 +4,8 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+- **The showcase site enforces Trusted Types.** site-runtime 0.132.0 (dev dependency) sets the capsomer registry entry's `trustedTypes` to `true`, so `_headers` and the Worker send `require-trusted-types-for 'script'` in the enforced Content-Security-Policy. No token, class or HTML contract changes.
+
 ## [0.101.1]
 
 - **Enarratio 0.13 is supported.** The `enarratio` peer range is `^0.12.0 || ^0.13.0`, and the showcase site and the browser suite run on 0.13.1 (live on npm), whose charts fit a phone's drawing. No token, class or HTML contract changes.
