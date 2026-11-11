@@ -17,6 +17,8 @@ From the sites, batch 9: an inspector, React Router bindings, a work queue with 
 
 No token or class was removed or renamed.
 
+- **The showcase deploy's live gate runs again.** Every devkit workflow call moves from v0.27.0 to v0.33.0, whose worker-deploy sets `DEVKIT_DIR` for the verify command; v0.27.0 never set it, so `verify:live` failed with "DEVKIT_DIR: unbound variable". No change to the package.
+
 ## [0.92.0]
 
 From the network shared-code audit, items 22 to 30 (Dustin's rule of 2026-11-11: any UI that is a component lives in Capsomer). Every site moves onto these parts and deletes its own copy.
