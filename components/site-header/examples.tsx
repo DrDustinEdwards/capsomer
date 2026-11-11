@@ -820,12 +820,44 @@ const staticHeader: SiteHeaderProps = {
   },
   skipTo: "#main",
 };
+// A site with its own look on the same header (bsw's shape), set by tokens and slots only: a 64px
+// band whose bar keeps to a 72rem column, semibold links, its own class on Get a quote, no theme and
+// no account, a hairline once the page scrolls, and the phone's row under 1024px (specimen CSS).
+const ownHeader: SiteHeaderProps = {
+  hydrate: false,
+  theme: false,
+  translucent: true,
+  links: "center",
+  collapse: "lg",
+  logo: { href: "#home", label: "Example Writers", name: "Example Writers home" },
+  sections: [
+    {
+      id: "services",
+      label: "Services",
+      groups: [
+        {
+          links: [
+            { label: "Editing", href: "#editing" },
+            { label: "Writing", href: "#writing" },
+          ],
+        },
+      ],
+    },
+    { id: "pricing", label: "Pricing", href: "#pricing", current: true },
+    { id: "about", label: "About", href: "#about" },
+  ],
+  extras: [
+    { id: "quote", label: "Get a quote", kind: "button", href: "#quote", className: "sh-own-cta" },
+  ],
+  skipTo: "#main",
+};
 for (const el of Array.from(document.querySelectorAll<HTMLElement>("[data-static]"))) {
+  const own = el.hasAttribute("data-own");
   setStaticHtml(
     el,
     renderToStaticMarkup(
-      <div className="sh-site" data-family="teal">
-        <SiteHeader {...staticHeader} />
+      <div className={own ? "sh-site sh-own" : "sh-site"} data-family="teal">
+        <SiteHeader {...(own ? ownHeader : staticHeader)} />
         <Hero
           eyebrow="Written by the server"
           title="No React in the browser, the same header."

@@ -2,6 +2,22 @@
 
 Each release names every removed or renamed token or class, and every changed HTML contract.
 
+## [0.95.0]
+
+Options for sites with their own design (bsw, julieedwards-info, txasm) on the shared site header, prose and tabs, with no change to how they look. Shared code is behavior; each site's look is its tokens and slots. Every new token defaults to today's value.
+
+- **Site header: tokens for a site's own bar.** `--header-max-inline-size` (default `100%`; bsw's 72rem column keeps the bar's contents inside it while the band runs full width; `--header-inset` is the computed side), `--header-link-weight` (400) and `--header-link-current-weight` (500), `--header-edge` (the bottom edge, default `--header-line`), `--header-translucent-mix` (85%) and `--header-blur` (12px) for `data-translucent`, and for the scrolled look `--header-scrolled-edge` (default `--header-edge`), `--header-scrolled-shadow` (`none`) and `--header-scrolled-mix` (default `--header-translucent-mix`). The height stays `--header-h`, set on `:root`.
+- **Site header: `data-scrolled`.** The behavior (`enhance()`, and the React header when it hydrates) sets it once the page scrolls past 8px and removes it at the top. New exports `wireScrolled(header)` and `SCROLLED_AFTER_PX`.
+- **Site header: `data-collapse="lg"`** (React `collapse="lg"`) moves the phone's row and sheet to under 1024px. The row's rules now sit in one container query (`@container cap-site-header-row`), the header named that container under 768px, or under 1024px with the attribute; the bottom bar stays under 768px.
+- **Site header: slots.** `className` on an extra (an icon control, or the button extra in the bar and in the sheet), for the site's own look; `logo.name`, the logo link's accessible name where it says more than `label`.
+- **Site header: no-script sheet.** With `hydrate={false}` the menu button carries `commandfor` and `command="show-modal"`, so the sheet opens before or without script where invoker commands exist; `enhance()` takes the click over (and cancels the command) and is the fallback elsewhere.
+- **Site header: no empty parts.** A sheet in which no row has an icon has no 24px icon column (rows with icons, anywhere in the sheet, keep the shared column). The React header renders no `.cap-site-header-account` slot when there is neither an account nor `signIn` (it was hidden by `:empty` before).
+- **Prose: tokens.** `--prose-heading-measure` (30ch), `--prose-heading-gap` (0.5em), `--prose-item-gap` (0.3em), `--prose-link-ink`, `--prose-link-hover-ink` and `--prose-link-hover-decoration` (the link system's by default). `css/prose.css` now also sets the prose context's face, size and leading and a text link's look, from the same tokens as `base.css`, so a site that cannot load `base.css` (Tailwind) reaches them; with `base.css` the values are the same.
+- **Tabs: tokens.** `--cap-tab-ink` (the chosen tab's label, default `--text`), `--cap-tab-tone` (on a pill list, the chosen tab's tone, for `--cap-tab-ink`), `--cap-tab-min-inline-size` (default `--target`). tabs.md says the tab list must be a direct child of `.cap-tabs`.
+- **`enhance(root)` of tabs and the site header takes `Document | Element`** (was `ParentNode`), so an element passes under the Workers types.
+
+No token or class was removed or renamed. HTML contract additions only: `data-scrolled` and `data-collapse` on the header, `commandfor` and `command` on a no-hydration menu button; the account slot is left out when it would be empty.
+
 ## [0.93.0]
 
 From the sites, batch 9: an inspector, React Router bindings, a work queue with Later, a role grid and a Compare that works before the script runs.

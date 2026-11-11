@@ -528,8 +528,9 @@ function attach(root: HTMLElement): () => void {
 }
 
 // Attaches every [data-cap="tabs"] under root not yet attached. Returns a function that
-// detaches them.
-export function enhance(root: ParentNode = document): () => void {
+// detaches them. Document | Element, not ParentNode: under the Workers types an HTMLElement is
+// not a ParentNode (their Element's append differs), so enhance(root) failed to typecheck in bsw.
+export function enhance(root: Document | Element = document): () => void {
   const undo: Array<() => void> = [];
   for (const el of root.querySelectorAll<HTMLElement>("[data-cap='tabs']")) {
     if (el.hasAttribute(READY)) continue;

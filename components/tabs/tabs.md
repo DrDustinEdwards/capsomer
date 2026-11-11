@@ -6,7 +6,7 @@ parts: [css, behavior, react]
 tool: native + own JavaScript
 states: [default tray, line variant, pill variant dragged, vertical, count, disabled tab, manual activation, address follows the tab, progressive and remembered, links with the current page, page tabs, narrow list scrolls, comfortable density]
 added: 0.3.0
-updated: 0.92.0
+updated: 0.95.0
 source: The site admin's status tabs (app/components/admin/posts-filters.tsx, .posts-tab) and mention filters (app/routes/admin.mentions.tsx, .admin-chip); shadcn/ui Tabs for the panel form; dustinedwards.info's remembered platform tabs (app/enhance/platforms.ts); bsw's draggable pill switcher (app/islands/editing-demo.ts); the Capsid Portal's ?tab= page tabs (dashboard/src/ui/pagetabs.tsx)
 replaces:
   - 'role="tablist"'
@@ -109,7 +109,7 @@ Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the a
 </nav>
 ```
 
-A panel is usually a child of `.cap-tabs`; a layout may wrap the panels (a column of notes beside them), so long as no tab set nested inside holds them.
+The tab list must be a direct child of `.cap-tabs` (no wrapper between them), and each tab a direct child of the list: `enhance()` finds them with `:scope >`, so a list inside a wrapper is never wired. A panel is usually a child of `.cap-tabs`; a layout may wrap the panels (a column of notes beside them), so long as no tab set nested inside holds them.
 
 Progressive and remembered (the server's HTML; `enhance()` adds the roles, `tabindex`, `aria-selected` and `hidden`):
 
@@ -124,9 +124,9 @@ Progressive and remembered (the server's HTML; `enhance()` adds the roles, `tabi
 </div>
 ```
 
-The pill: `data-variant="pill"` on the list, `data-tone` on a tab. A site's look: `--cap-tabs-tray` (the tray's background, a gradient is fine), `--cap-tab-mark` (the pill's fill, a color: a tone is mixed into it), `--cap-tab-mark-edge`, `--cap-tab-mark-shadow`, set on the list or above it.
+The pill: `data-variant="pill"` on the list, `data-tone` on a tab. A site's look: `--cap-tabs-tray` (the tray's background, a gradient is fine), `--cap-tab-mark` (the pill's fill, a color: a tone is mixed into it), `--cap-tab-mark-edge`, `--cap-tab-mark-shadow`, set on the list or above it. The chosen tab's label is `--cap-tab-ink` (default `--text`, in every variant); on a pill list `--cap-tab-tone` is the chosen tab's tone, so `--cap-tab-ink: var(--cap-tab-tone)` set on the list itself paints the label in its tone (check its contrast on the mark). `--cap-tab-min-inline-size` is a tab's least width (default `--target`; bsw's fixed pills: `160px`). `--cap-tab-h` and `--cap-tab-fs` set its height and type size on the list.
 
-Attributes: on `.cap-tabs` `data-orientation="vertical"`, `data-activation="manual"`, `data-sync="hash"`, `data-progressive`, `data-remember="<key>"`, `data-remember-guess="platform"`; on `.cap-tabs-list` `data-variant="line|pill"`, `data-size="sm|lg"`, `data-fill`, `data-label`; on `.cap-tab` `data-value`, `data-tone`. `import { enhance, select, nextTab, upgrade, attachPillDrag, readRemembered, writeRemembered, onRemembered, guessPlatform, tabParam, pageTabHref } from "capsomer/behavior/tabs"`: `enhance()` attaches every `[data-cap="tabs"]`; `select(root, tab)` chooses one from script. A choice fires `cap:tabs-change` (bubbles; `detail.tab`, `detail.panel`). The storage is `localStorage["capsomer.tabs.<key>"]`, in try/catch, with a page-long memory where storage is refused; its three helpers have the shape of 0.91.0's `readStored`, `writeStored` and `subscribeStored` (capsomer/behavior/hooks) and move to them with one import.
+Attributes: on `.cap-tabs` `data-orientation="vertical"`, `data-activation="manual"`, `data-sync="hash"`, `data-progressive`, `data-remember="<key>"`, `data-remember-guess="platform"`; on `.cap-tabs-list` `data-variant="line|pill"`, `data-size="sm|lg"`, `data-fill`, `data-label`; on `.cap-tab` `data-value`, `data-tone`. `import { enhance, select, nextTab, upgrade, attachPillDrag, readRemembered, writeRemembered, onRemembered, guessPlatform, tabParam, pageTabHref } from "capsomer/behavior/tabs"`: `enhance(root?: Document | Element)` attaches every `[data-cap="tabs"]` under it; `select(root, tab)` chooses one from script. A choice fires `cap:tabs-change` (bubbles; `detail.tab`, `detail.panel`). The storage is `localStorage["capsomer.tabs.<key>"]`, in try/catch, with a page-long memory where storage is refused; its three helpers have the shape of 0.91.0's `readStored`, `writeStored` and `subscribeStored` (capsomer/behavior/hooks) and move to them with one import.
 
 In React, `import { Tabs, TabsList, TabsTrigger, TabsContent, TabsNav, TabLink, PageTabs } from "capsomer/react/tabs"`:
 

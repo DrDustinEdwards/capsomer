@@ -6,6 +6,25 @@
    (design 2.4). The public-page components of release 0.3 build on this. */
 @layer cap.base {
   [data-context="prose"] {
+    /* The context's face, size and leading, here as well as in base.css, so a site that cannot load
+       base.css (a Tailwind site, whose body and global link rules base.css would restyle) still gets
+       them; with base.css they are the same values. */
+    font-family: var(--face);
+    font-size: var(--text-size);
+    line-height: var(--leading);
+
+    /* A text link in the prose, for the same site: the link system's color, weight and line by
+       default (DEFAULTS.md, links). With base.css its visited and hover tints still apply.
+       --prose-link-ink, --prose-link-hover-ink and --prose-link-hover-decoration are the site's. */
+    & :where(a:is(:not([class*="cap-"]), [data-link], .cap-footnote-ref)) {
+      color: var(--prose-link-ink, var(--accent-text));
+      font-weight: var(--link-weight);
+      text-decoration: var(--link-decoration);
+    }
+    & :where(a[href]:is(:not([class*="cap-"]), [data-link], .cap-footnote-ref)):hover {
+      color: var(--prose-link-hover-ink, var(--accent-hover));
+      text-decoration: var(--prose-link-hover-decoration, var(--link-decoration));
+    }
     & :where(p, ul, ol, blockquote, figure, pre, table) {
       max-inline-size: var(--measure);
       margin-block: 0 1em;
@@ -18,8 +37,8 @@
       font-family: var(--prose);
       line-height: 1.15;
       letter-spacing: -0.015em;
-      margin-block: 1.4em 0.5em;
-      max-inline-size: 30ch;
+      margin-block: 1.4em var(--prose-heading-gap, 0.5em);
+      max-inline-size: var(--prose-heading-measure, 30ch);
     }
     & :where(h2) {
       font-size: var(--fs-prose-h2);

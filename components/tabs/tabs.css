@@ -82,7 +82,8 @@
     gap: var(--space-3);
     box-sizing: border-box;
     min-height: var(--cap-tab-h, var(--control));
-    min-width: var(--target);
+    /* A site's fixed tab width (bsw's 160px pill) is --cap-tab-min-inline-size. */
+    min-width: var(--cap-tab-min-inline-size, var(--target));
     margin: 0;
     padding: 0 var(--pad-x);
     border: 1px solid transparent;
@@ -120,7 +121,8 @@
     &[aria-current="page"] {
       border-color: var(--accent);
       background: var(--surface);
-      color: var(--text);
+      /* The chosen tab's label: --cap-tab-ink (a pill's tone: var(--cap-tab-tone)). */
+      color: var(--cap-tab-ink, var(--text));
       font-weight: 600;
       box-shadow: var(--shadow-xs);
     }
@@ -222,6 +224,8 @@
      it is chosen or under the drag. */
   .cap-tabs-list[data-variant="pill"] {
     --_tone: var(--accent);
+    /* The chosen (or dragged-to) tab's tone, for a site's --cap-tab-ink. */
+    --cap-tab-tone: var(--_tone);
     --_soft: var(--cap-tab-mark, var(--surface));
     padding: 6px;
     border-radius: var(--radius-full);
@@ -251,7 +255,7 @@
       & > .cap-tab[data-near] {
         border-color: var(--cap-tab-mark-edge, var(--_tone));
         background: var(--_soft);
-        color: var(--text);
+        color: var(--cap-tab-ink, var(--text));
         font-weight: 600;
       }
     }

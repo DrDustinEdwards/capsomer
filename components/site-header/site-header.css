@@ -26,6 +26,23 @@
     --header-avatar-fg: var(--ground);
     --header-fs: 14px;
     --header-side: var(--space-6);
+    /* A site that keeps the bar's contents in its content column (bsw's 72rem) sets
+       --header-max-inline-size; the band still runs the full width. 100% is no column. */
+    --header-max-inline-size: 100%;
+    --header-inset: max(var(--header-side), (100% - var(--header-max-inline-size)) / 2 + var(--header-side));
+    /* The section links' weight, and the current one's. */
+    --header-link-weight: 400;
+    --header-link-current-weight: 500;
+    /* The bottom edge, and once the page has scrolled (data-scrolled, set by the behavior) its
+       edge and shadow. A site whose edge shows only after a scroll sets --header-edge: transparent. */
+    --header-edge: var(--header-line);
+    --header-scrolled-edge: var(--header-edge);
+    --header-scrolled-shadow: none;
+    /* data-translucent: how much of the band shows (the rest is the page under it), before and
+       after a scroll, and the blur. */
+    --header-translucent-mix: 85%;
+    --header-scrolled-mix: var(--header-translucent-mix);
+    --header-blur: 12px;
     position: sticky;
     top: 0;
     z-index: calc(var(--z-sticky) + 3);
@@ -33,11 +50,13 @@
     align-items: center;
     box-sizing: border-box;
     inline-size: 100%;
+    /* --header-h is the page's token (tokens/scale.css), so scroll-padding-top reads the same height:
+       a taller header sets it on :root (bsw: 4rem). */
     block-size: var(--header-h);
-    padding-inline: var(--header-side);
+    padding-inline: var(--header-inset);
     background: var(--header-bg);
     color: var(--header-fg);
-    border-block-end: 1px solid var(--header-line);
+    border-block-end: 1px solid var(--header-edge);
     font-family: var(--font-ui, var(--ui));
     font-size: var(--header-fs);
     line-height: 1.3;
@@ -47,8 +66,15 @@
     }
     /* The page's ground at 85%, blurred: the content shows through as it scrolls under. */
     &[data-translucent] {
-      background: color-mix(in srgb, var(--header-bg) 85%, transparent);
-      backdrop-filter: blur(12px);
+      background: color-mix(in srgb, var(--header-bg) var(--header-translucent-mix), transparent);
+      backdrop-filter: blur(var(--header-blur));
+    }
+    &[data-scrolled] {
+      border-block-end-color: var(--header-scrolled-edge);
+      box-shadow: var(--header-scrolled-shadow);
+    }
+    &[data-translucent][data-scrolled] {
+      background: color-mix(in srgb, var(--header-bg) var(--header-scrolled-mix), transparent);
     }
     & :focus-visible {
       outline: var(--focus-width) solid var(--ring);
@@ -222,7 +248,7 @@
     background: none;
     color: var(--header-fg-muted);
     font: inherit;
-    font-weight: 400;
+    font-weight: var(--header-link-weight);
     text-decoration: none;
     white-space: nowrap;
     cursor: pointer;
@@ -253,7 +279,7 @@
     &[aria-current="page"],
     &[data-current] {
       color: var(--header-fg);
-      font-weight: 500;
+      font-weight: var(--header-link-current-weight);
 
       &::after {
         content: "";
@@ -477,10 +503,10 @@
      inset on the side it lines up with. */
   .cap-site-header-panel:not([data-placed-by]) {
     top: var(--header-h);
-    left: var(--header-side, var(--space-6));
+    left: var(--header-inset, var(--space-6));
 
     &[data-align="end"] {
-      right: var(--header-side, var(--space-6));
+      right: var(--header-inset, var(--space-6));
       left: auto;
     }
   }
@@ -657,6 +683,10 @@
   [aria-current] > .cap-site-header-sheet-icon {
     color: inherit;
   }
+  /* A sheet in which no row has an icon has no icon column: its labels start at the row's edge. */
+  .cap-site-header-sheet:not(:has(.cap-site-header-sheet-icon:not(:empty))) .cap-site-header-sheet-icon {
+    display: none;
+  }
   /* Two classes, so the dialog's own link color (.cap-dialog-body nav a) does not win. */
   .cap-dialog-body .cap-site-header-sheet-cta {
     display: flex;
@@ -693,6 +723,23 @@
     .cap-site-header {
       --header-side: var(--space-5);
     }
+  }
+
+  /* The phone's one row: the links, the switcher and the button extra go to the sheet behind the
+     menu button. Under 768px; a site whose bar holds more (bsw) collapses it under 1024px with
+     data-collapse="lg". A media query cannot read a custom property, so each width names the header
+     the row's container, and the row's rules are written once, for that container. */
+  @media (max-width: 767.98px) {
+    .cap-site-header {
+      container: cap-site-header-row / inline-size;
+    }
+  }
+  @media (max-width: 1023.98px) {
+    .cap-site-header[data-collapse="lg"] {
+      container: cap-site-header-row / inline-size;
+    }
+  }
+  @container cap-site-header-row (width >= 0) {
     .cap-site-header :is(.cap-site-header-switcher, .cap-site-header-sections, .cap-site-header-cta) {
       display: none;
     }
@@ -732,6 +779,9 @@
         white-space: nowrap;
       }
     }
+  }
+
+  @media (max-width: 767.98px) {
     /* A focused control never lands under the tab bar (WCAG 2.4.11): the bar is 61 to 79px. */
     :root:has(.cap-site-tabs) {
       scroll-padding-bottom: calc(5.5rem + env(safe-area-inset-bottom, 0px));

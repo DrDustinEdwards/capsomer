@@ -55,6 +55,9 @@ export interface HeaderLogo {
   label: string;
   // A class of the site's own on the logo link, for its wordmark's look.
   className?: string;
+  // The link's accessible name, where it says more than `label` ("BioScience Writers home"); it
+  // must start with the visible words (WCAG 2.5.3). Default: `label` (the letterhead: its names).
+  name?: string;
   mark?: ReactNode;
   wordmark?: ReactNode;
   // The letterhead's names: `agency` small over `label` in bold, and an admin's `app` after it in
@@ -111,6 +114,9 @@ export interface HeaderExtra {
   // The button extra only: "bar" keeps it in the phone's top row instead of the sheet (a site
   // whose one action must never need the menu, germomics' Subscribe).
   phone?: "bar";
+  // A class of the site's own on the control (the button extra: in the bar and in the sheet), for
+  // its look (bsw's glass Get a Quote), as `logo.className` and `panelClassName` are.
+  className?: string;
 }
 
 export interface HeaderAccountLink extends HeaderDoes {
@@ -178,6 +184,9 @@ export interface SiteHeaderProps {
   search?: { action: string; label: string; name?: string; suggest?: Suggest };
   // An admin's second row in the letterhead: where you are, and View site.
   trail?: { crumbs: Array<{ label: string; href?: string; current?: boolean }>; viewSite?: string };
+  // The width under which the bar becomes the phone's one row with the menu sheet: 768px by
+  // default; "lg" is 1024px, for a bar whose links need more room (data-collapse="lg").
+  collapse?: "lg";
   // The band: dark in both themes, and translucent over the page.
   band?: "dark";
   translucent?: boolean;

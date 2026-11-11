@@ -27,7 +27,10 @@
        and --prose. Links are the link system's (--accent-text, --link-weight, --link-decoration).
          --prose-ink           body text (a muted body: var(--muted))
          --prose-strong-ink    bold text, for a muted body
-         --prose-heading-face, --prose-heading-ink, --prose-heading-weight, --prose-heading-space (above)
+         --prose-heading-face, --prose-heading-ink, --prose-heading-weight, --prose-heading-space (above),
+         --prose-heading-gap (below), --prose-heading-measure (css/prose.css: h1 to h3's line, 30ch)
+         --prose-item-gap      the space after each list item
+         --prose-link-ink, --prose-link-hover-ink, --prose-link-hover-decoration (css/prose.css)
          --prose-h2-size, --prose-h3-size
          --prose-flow          the space after each block
          --prose-marker        list bullets and numbers
@@ -82,10 +85,10 @@
       color: var(--prose-marker);
     }
     & :where(li) {
-      margin-block-end: 0.3em;
+      margin-block-end: var(--prose-item-gap, 0.3em);
     }
     & :where(li > ul, li > ol) {
-      margin-block: 0.3em 0;
+      margin-block: var(--prose-item-gap, 0.3em) 0;
     }
     & :where(blockquote) {
       margin-inline: 0;
