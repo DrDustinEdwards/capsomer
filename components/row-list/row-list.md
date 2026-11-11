@@ -4,9 +4,9 @@ title: Row list
 summary: Rows that each open a detail, the title stretched over the row as its one link, with j and k to move between rows.
 parts: [css, behavior, react]
 tool: native + own JavaScript
-states: [mixed worst first, outline and muted variants, sizes, media, comfortable density, critical row, hover, keyboard focus, row with actions, long title cut with an ellipsis, a row that opens in place, phone width with a wrapping title]
+states: [mixed worst first, outline and muted variants, sizes, media, comfortable density, critical row, hover, keyboard focus, row with actions, long title cut with an ellipsis, a row that opens in place, phone width with a wrapping title, a row that is read, not opened]
 added: 0.1.0
-updated: 0.2.0
+updated: 0.100.0
 source: Capsid Portal, dashboard/src/styles.css (.att-row, .qrow, .frow) and dashboard/src/views/shared.tsx (QueueRows, IncidentFeed)
 replaces:
   - 'class="(att-row|qrow|frow)'
@@ -42,6 +42,8 @@ Data compared across columns (versions, counts, several numbers per item) is a t
 - **On a narrow column the status moves above the title** (a container query on the list, below 30rem), and actions go underneath.
 - **Long titles and details take two lines, then are cut with an ellipsis**, and the full text stays in the link's name. Two lines, not one, so text that fits still fits with a reader's own text spacing (WCAG 1.4.12). **In a narrow column the title wraps instead**: on a phone there is no hover and no wider view to read the rest in (Portal: "titles wrap instead of being cut"). The detail stays cut at two lines (the moderation queue's excerpt wraps instead: it is what a decision is made on).
 - **A row that opens in place** (a group of like rows) uses a `button` title with `aria-expanded` and `aria-controls`, and a `.cap-row-chevron` after the time, which turns when it is open. The attention list's group rows are these.
+
+- **A row that is read, not opened** (0.100.0): a `Row` with no `href` and no `onOpen` has a plain-text title and no hover, and only its actions are controls (a checklist step, a fact). Markup: `<li class="cap-row" data-static>` with `<span class="cap-row-text">` in the title.
 
 ## The shadcn component it matches
 

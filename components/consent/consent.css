@@ -1,0 +1,124 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* The OAuth consent screen: one 460px card centered in the window; who is asking, the account,
+   what it can do, the write grant as its own box, then Allow and Deny side by side. And the
+   permission list: what an app may, or may not, do, a check or a cross beside each line.
+   Load panel.css, field.css, button.css and banner.css with it. */
+@layer cap.components {
+  .cap-consent {
+    box-sizing: border-box;
+    display: grid;
+    align-content: center;
+    min-block-size: 100vh;
+    inline-size: 100%;
+    max-inline-size: calc(460px + 2 * var(--space-6));
+    margin-inline: auto;
+    padding: var(--space-6);
+
+    &:focus {
+      outline: none;
+    }
+  }
+  .cap-consent-body {
+    display: grid;
+    gap: var(--space-4);
+    padding: var(--space-8) var(--space-6);
+  }
+  .cap-consent-brand {
+    margin-block-end: var(--space-4);
+  }
+  .cap-consent-title {
+    margin: 0;
+    font-size: var(--fs-h3);
+    font-weight: 500;
+    line-height: 1.3;
+  }
+  .cap-consent-text,
+  .cap-consent-foot {
+    margin: 0;
+    color: var(--muted);
+    font-size: var(--fs-detail);
+    line-height: var(--leading);
+
+    & strong {
+      color: var(--text);
+      font-weight: 500;
+    }
+  }
+  .cap-consent-foot {
+    text-align: center;
+    font-size: var(--fs-label);
+  }
+  .cap-consent-box {
+    padding: var(--space-3) var(--space-4);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-l);
+    background: var(--ground);
+
+    & > p {
+      margin: 0;
+    }
+  }
+  .cap-consent-account {
+    font-size: var(--fs-detail);
+    font-weight: 500;
+  }
+  .cap-consent-mono {
+    font-family: var(--mono);
+    font-size: var(--fs-label);
+    color: var(--muted);
+  }
+  .cap-consent-line {
+    display: block;
+    margin-block-start: 2px;
+    color: var(--muted);
+    font-size: var(--fs-detail);
+  }
+  .cap-consent-form {
+    display: grid;
+    gap: var(--space-5);
+  }
+  .cap-consent-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-3);
+  }
+
+  .cap-permissions-heading {
+    margin: 0 0 var(--space-2);
+    font-family: var(--mono);
+    font-size: var(--fs-label);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .cap-permissions-list {
+    display: grid;
+    gap: var(--space-2);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: var(--fs-detail);
+
+    & li {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-2);
+    }
+    & svg {
+      flex: none;
+      inline-size: 1rem;
+      block-size: 1rem;
+      margin-block-start: 0.2em;
+      fill: none;
+      stroke: var(--crit);
+      stroke-width: 1.6;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+  }
+  .cap-permissions[data-allowed] svg {
+    stroke: var(--ok);
+  }
+}

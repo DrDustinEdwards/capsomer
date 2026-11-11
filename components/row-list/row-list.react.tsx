@@ -41,7 +41,8 @@ export interface RowLinkProps {
 export interface RowProps {
   title: ReactNode;
   // The row opens its detail by following href (a link), or by calling onOpen (a button)
-  // when the detail opens in place, such as a side panel.
+  // when the detail opens in place, such as a side panel. With neither, the row is read, not
+  // opened (a checklist step, a fact): its title is plain text, and only its actions are controls.
   href?: string;
   onOpen?: () => void;
   // A status (.cap-status: glyph, word and color), shown first.
@@ -101,6 +102,7 @@ export function Row({
       data-tone={tone}
       data-variant={variant}
       data-size={size}
+      data-static={href == null && onOpen == null && expanded === undefined ? "" : undefined}
     >
       {media != null && (
         <span className="cap-row-media" data-variant={mediaVariant}>
@@ -115,6 +117,8 @@ export function Row({
       <div className="cap-row-title">
         {href != null ? (
           renderLink({ href, "aria-describedby": described, children: title })
+        ) : onOpen == null && expanded === undefined ? (
+          <span className="cap-row-text">{title}</span>
         ) : (
           <button
             type="button"
