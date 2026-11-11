@@ -98,7 +98,7 @@ export function ConfigForm({
     <Panel title={title} src={src} headingId={f("h")} ref={box} className="cap-config">
       <form
         ref={form}
-        className="cap-config-form"
+        className="cap-fields cap-config-form"
         noValidate
         onSubmit={(e) => {
           e.preventDefault();

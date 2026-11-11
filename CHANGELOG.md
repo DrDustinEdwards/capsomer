@@ -4,9 +4,13 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
-## [0.106.0]
+## [0.107.0]
 
 - **Card: a lead.** `.cap-card-lead` as a card's first child puts one icon or one action (a podcast episode's play button) in a column of its own at the card's start, beside the header; the other regions keep to the second column. HTML contract addition only; no token or class is removed or renamed.
+
+## [0.106.0]
+
+- **Components that lay out their own rows of fields use `.cap-fields`.** The config form (`.cap-config-form`), the people add form (`.cap-people-add-fields`) and the front matter grid (`.cap-fm-grid`) no longer carry their own `grid-template-columns`; their markup now also has `cap-fields` (React and `examples.html` updated; a hand-written copy of these three needs the class added) and sets `--fields-min` and the new `--fields-gap` (default `--space-5`) to the sizes it had. Their fields now line up on their controls (`align-items: end`), as every `.cap-fields` row does. Nothing is removed or renamed.
 
 ## [0.105.0]
 

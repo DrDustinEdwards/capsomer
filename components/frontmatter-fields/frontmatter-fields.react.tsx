@@ -116,7 +116,7 @@ export function FrontmatterFields({
   return (
     <fieldset className="cap-fm">
       <legend className="cap-fm-legend">{legend}</legend>
-      <div className="cap-fm-grid">
+      <div className="cap-fields cap-fm-grid">
         {shown.map((f) => (
           <div key={f.key} className="cap-fm-field" data-wide={f.wide ? "" : undefined}>
             <Box field={f} locked={locked} write={write(f)} />
