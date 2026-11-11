@@ -80,19 +80,6 @@
       --cap-btn-fs: var(--fs-lead);
     }
 
-    &:hover,
-    &[data-force="hover"] {
-      --cap-btn-bg: var(--cap-btn-hover);
-    }
-    &:active,
-    &[data-force="pressed"] {
-      --cap-btn-bg: var(--cap-btn-press);
-    }
-    /* A button that owns a popup shows it is open, as shadcn's aria-expanded does. */
-    &[aria-expanded="true"] {
-      --cap-btn-bg: var(--cap-btn-press);
-    }
-
     /* The main action of a view: one per view. shadcn "default". */
     &[data-variant="primary"] {
       --cap-btn-fg: var(--primary-fg);
@@ -154,6 +141,22 @@
       &:where(:hover, [data-force="hover"]) {
         --cap-btn-fg: var(--accent-hover);
       }
+    }
+
+    /* The states, after the variants: a variant sets --cap-btn-bg with the same specificity as
+       these, so a state written above the variants lost to every variant's resting fill and a
+       primary, secondary or danger button never changed under the pointer. */
+    &:hover,
+    &[data-force="hover"] {
+      --cap-btn-bg: var(--cap-btn-hover);
+    }
+    &:active,
+    &[data-force="pressed"] {
+      --cap-btn-bg: var(--cap-btn-press);
+    }
+    /* A button that owns a popup shows it is open, as shadcn's aria-expanded does. */
+    &[aria-expanded="true"] {
+      --cap-btn-bg: var(--cap-btn-press);
     }
 
     /* An icon button: square, and it needs an accessible name (aria-label). */
