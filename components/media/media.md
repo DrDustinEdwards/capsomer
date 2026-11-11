@@ -43,7 +43,7 @@ Anywhere a person browses files they own and edits what describes them: a site's
 - **Sort orders each group, and keeps uploads first.** An upload in progress or a failed one stays at the head of its group while it is news. Sorting moves nodes and puts focus back where it was.
 - **The list layout is the same markup** (`data-view="list"`): a small picture, the name and the type and size on a line, the flags at the end, the checkbox first. The arrow keys follow the rendered rows.
 - **A file dropped anywhere becomes an uploading tile.** The drop zone in its page mode sits above the toolbar; `cap-drop-accepted` is the app's cue to start the uploads and to call `media.add`.
-- **Uploading is the shared meter, drawn as a progress bar** (`role="progressbar"`, the meter's look: the fill's position is the same custom property). A failed upload says why on the tile and offers Retry.
+- **Uploading is a native `<progress class="cap-meter-bar" max="100">`** in the shared meter's look (its role and value are the browser's own; Modern Web Guidance, progress). A failed upload says why on the tile and offers Retry.
 - **Copy says what it did.** The button writes "Copied the address." into a live region; if the clipboard refuses, it says so and leaves the address selected.
 
 ## The shadcn component it matches
@@ -78,7 +78,7 @@ Card for the tile (a bordered, rounded surface with a media area and a text area
 
 ## Accessibility
 
-- A tile is a list item holding one named link (name, type and size, described by its flags), a named checkbox ("Select launch-hero.jpg"), and its state in words. An uploading tile's bar is `role="progressbar"` named "Uploading" with `aria-valuetext` "62 percent of capsid-walkthrough.png uploaded". A failed tile names its reason, and Retry names the file.
+- A tile is a list item holding one named link (name, type and size, described by its flags), a named checkbox ("Select launch-hero.jpg"), and its state in words. An uploading tile's bar is a `<progress>` (role progressbar) named "Uploading" with `aria-valuetext` "62 percent of capsid-walkthrough.png uploaded". A failed tile names its reason, and Retry names the file.
 - The inspector is a dialog named by the file's name. Every field has a visible label and, where it helps, a description (what alt text is for, what decorative means). Alt text is disabled while Decorative is checked.
 - The save status is `role="status"`; a failure is `role="alert"`; the copy confirmation is `role="status"`. All are in the page before they are used.
 - Color is never alone: every flag and status has a glyph and a word. Text is at 4.5:1 in both themes (the flags, the meta line, the help, the facts, the used-in links); the checkbox edge and the fields' edges are at 3:1.
@@ -113,7 +113,7 @@ A tile, as the server renders it. Every fact the filters and the inspector read 
 </li>
 ```
 
-`data-state` is `ready`, `uploading` (add `data-progress="62"` and a `.cap-media-state` block holding `.cap-meter` with a `role="progressbar"` bar), `failed` (add `data-error`, a `.cap-media-state[data-tone="crit"]` block with the reason and a `data-cap-part="retry"` button) or `binned` (a `data-cap-part="restore"` button inside `.cap-media-flags`). `data-alt` is `set`, `missing` or `decorative`. An uploading or failed tile's open control is a `<button type="button" aria-disabled="true">` and it has no checkbox. A document has no `<img>`: `<span class="cap-media-doc" aria-hidden="true">PDF</span>` inside the thumbnail frame.
+`data-state` is `ready`, `uploading` (add `data-progress="62"` and a `.cap-media-state` block holding `.cap-meter` with a `<progress class="cap-meter-bar" max="100" value="62">` bar), `failed` (add `data-error`, a `.cap-media-state[data-tone="crit"]` block with the reason and a `data-cap-part="retry"` button) or `binned` (a `data-cap-part="restore"` button inside `.cap-media-flags`). `data-alt` is `set`, `missing` or `decorative`. An uploading or failed tile's open control is a `<button type="button" aria-disabled="true">` and it has no checkbox. A document has no `<img>`: `<span class="cap-media-doc" aria-hidden="true">PDF</span>` inside the thumbnail frame.
 
 The library: a container, a layout, the main column and the inspector.
 

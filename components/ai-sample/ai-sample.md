@@ -5,7 +5,7 @@ summary: A live AI call the reader runs on a marketing page, the output shown as
 parts: [css, behavior, react]
 tool: own JavaScript
 states: [a sample, generating, failed]
-added: 0.101.0
+added: 0.92.0
 source: Foxhound's home page email generator (app/components/email-samples.tsx, app/islands/email-generator.ts)
 replaces:
   - 'data-island="email-generator"'

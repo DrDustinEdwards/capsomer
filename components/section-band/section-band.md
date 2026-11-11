@@ -5,7 +5,7 @@ summary: A full-width band of its own colour that sets one section apart, straig
 parts: [css, react]
 tool: native
 states: [straight, slanted, slanted over its neighbours, phone]
-added: 0.101.0
+added: 0.92.0
 source: BioScience Writers' impact band (.band-cut, .band-slab, .band-ghost in app/app.css; app/routes/home.tsx)
 replaces:
   - 'band-cut'

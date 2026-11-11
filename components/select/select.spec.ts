@@ -4,6 +4,7 @@ import {
   expectContrast,
   expectNoAxeViolations,
   visitStates,
+  settled,
 } from "../../test/helpers.ts";
 
 eachTheme((theme) => {
@@ -248,11 +249,7 @@ eachTheme((theme) => {
       list.getByRole("option", { name: "Vercel" }).locator(".cap-option-indicator"),
     ).toBeHidden();
     // The popup zooms in from 95%: measure once the animation has ended.
-    await page.evaluate(() =>
-      Promise.all(document.getAnimations().map((a) => a.finished.catch(() => undefined))).then(
-        () => undefined,
-      ),
-    );
+    await settled(page);
     const [t, p] = await page.evaluate(() => [
       document.querySelector("#sel-platform")?.getBoundingClientRect().width ?? 0,
       document.querySelector(".cap-select-popup:popover-open")?.getBoundingClientRect().width ?? 0,

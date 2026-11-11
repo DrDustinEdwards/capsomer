@@ -5,7 +5,7 @@ summary: Numbered steps that say how something works, in order, side by side whe
 parts: [css, react]
 tool: native
 states: [three columns, rows with a tag, flush rows, narrow space]
-added: 0.101.0
+added: 0.92.0
 source: Foxhound's how it works (app/components/product-sections-cap.tsx) and its guide's ordered rows (app/components/docs/doc-widgets.tsx)
 replaces:
   - 'How it works'

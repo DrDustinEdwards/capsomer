@@ -100,6 +100,27 @@
 
   /* No data: no fill, a hatched track, and the status word with its reason. Never a bar
      at zero. */
+  /* Progress through a task (an upload) is a native <progress class="cap-meter-bar" max="100" value="…">: the same
+     track and accent fill, its role and value the browser's own (Modern Web Guidance, progress). The track is the
+     element; the fill is the engine's pseudo-element, one rule each (a grouped rule would be dropped). */
+  progress.cap-meter-bar {
+    appearance: none;
+    inline-size: 100%;
+    border: 0 solid;
+    overflow: clip;
+  }
+  progress.cap-meter-bar::-webkit-progress-bar {
+    background: transparent;
+  }
+  progress.cap-meter-bar::-webkit-progress-value {
+    background: var(--cap-meter-color);
+    border-radius: var(--radius-full);
+  }
+  progress.cap-meter-bar::-moz-progress-bar {
+    background: var(--cap-meter-color);
+    border-radius: var(--radius-full);
+  }
+
   .cap-meter[data-tone="nodata"] .cap-meter-bar {
     background:
       repeating-linear-gradient(135deg, var(--line-strong) 0 1px, transparent 1px 5px),

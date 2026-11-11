@@ -5,7 +5,7 @@ summary: An email field and its button, a consent line, and the answer in its pl
 parts: [css, react]
 tool: native
 states: [card, plain, with an error, sent, phone]
-added: 0.101.0
+added: 0.92.0
 source: germomics' subscribe page newsletter (app/routes/subscribe.tsx)
 replaces:
   - 'name="consent"'

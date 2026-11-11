@@ -38,6 +38,30 @@ eachTheme((theme) => {
     await expectNoAxeViolations(page);
   });
 
+  test("behavior: the merge starts each difference on the side that changed it, and applies the picks", async ({
+    page,
+  }) => {
+    await visitStates(page, "draft-compare", theme);
+    const merge = page.locator(".cap-merge");
+    await expect(merge.locator(".cap-merge-choice")).toHaveCount(4);
+    const picks = await merge
+      .locator(".cap-merge-choice")
+      .evaluateAll((els) => els.map((e) => e.getAttribute("data-pick")));
+    expect(picks).toEqual(["theirs", "mine", "theirs", "mine"]);
+    // Both changed the last passage: take the saved copy's with the keyboard.
+    const group = page.getByRole("group", { name: "Difference 4: which to keep" });
+    await group.getByRole("radio", { name: "Keep yours" }).focus();
+    await page.keyboard.press("ArrowRight");
+    await expect(group.getByRole("radio", { name: "Take the saved copy" })).toBeChecked();
+    await expect(page.getByRole("heading", { name: "Your text, left out" })).toHaveCount(3);
+    await merge.getByRole("button", { name: "Use the merged text" }).click();
+    const out = (await page.locator("[data-merged]").textContent()) ?? "";
+    expect(out).toContain("tags: [release-notes, search]");
+    expect(out).toContain("ships on Tuesday.");
+    expect(out).toContain("twice as fast.");
+    expect(out).toContain("Thanks to all who tested it.");
+  });
+
   test("accessibility: the narrow specimen has no axe violations", async ({ page }) => {
     await visitStates(page, "draft-compare", theme, "narrow");
     await expectNoAxeViolations(page);

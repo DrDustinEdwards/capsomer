@@ -4,6 +4,8 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+## [0.92.0]
+
 **Content and marketing blocks** (the shared-code audit's batch 5, clusters C39-C53). Nineteen new components, a stream reader and three additions, each built once from the sites that had it, so every site gets the same block and the same behaviour. New classes, exports and HTML contracts only; no token, class or contract is removed or renamed.
 
 - **New components:** `process` (numbered steps, side by side when there is room; from Foxhound, bsw and germomics), `feature` (a text and media block, alternating, and a grid of cards; Foxhound), `eyebrow` (the small label over a title, and `.cap-label[data-variant="mono"]`; Foxhound, dei, Foxing), `price-card` (plan cards and a plan choice of native radios; Foxhound, bsw, Foxing), `contact-card` (ways to reach a person or office, `telHref`; bsw, julieedwards-info), `section-band` (a full-width band, straight or slanted; bsw), `prose-page` (a page title band over a prose column; bsw), `faq` (an accordion of questions on native `details name=`, in Prelum's `{ question, answer }` shape; bsw, germomics), `app-frame` (a browser or app window around a screenshot or a live demo; Foxhound), `ambient` (a hex field, drifting blobs and an equalizer behind a hero, drawn through the CSSOM with no style attributes, still under reduced motion and paused off screen; bsw, germomics), `newsletter-signup` (germomics), `leaderboard` (germomics), `like-button` (Foxing), `poll` (Foxing), `sources-list` (germomics), `ask-panel` (an AI answer streamed into the page with its sources and a cut-off note, textContent only; dei), `ai-sample` (a live AI call on a marketing page, shown as labelled fields; Foxhound), `annotated-document` (an edit shown as the original, the edit or every change, beside notes that light their passages; bsw) and `document` (`Document`, `SiteScope`, `documentAttrs`, `routeHydrates` and `startSite` for a site's root and its no-React script; bsw, julieedwards-info, germomics, txasm, Foxhound).
@@ -12,6 +14,40 @@ Each release names every removed or renamed token or class, and every changed HT
 - **Anchor bar: `data-orientation="vertical"`** lists the links down the side of the sections and takes no room above them (`orientation` on the React `AnchorBar`).
 - **Breadcrumb: `minItems`** (default 2) leaves the trail out when it has fewer items (germomics' SectionTrail).
 - **Not included:** germomics' hydrate-on-intent writes script text into the page (`innerHTML`, `script.textContent`), which Trusted Types refuses, so it waits for its own design.
+
+## [0.91.0]
+
+- **New: the draft compare's merge mode** (`DraftMerge`, `mergePlan`, `merged`; from Carrel's merge view). Two texts that both moved on from one version, block by block, each difference kept from either side or both, starting on the side that changed it when the base is known. Its diff is the compare's own, so it needs no diff library. New classes: `.cap-merge` and its parts (`-intro`, `-list`, `-same`, `-choice`, `-sides`, `-side`, `-text`, `-empty`, `-mark`, `-actions`). No token or class was removed or renamed.
+- **New: rich text field** (`capsomer/react/rich-text-field`, `capsomer/behavior/rich-text-field`, `capsomer/rich-text-field.css`; from txasm's abstract editor). A short text with a few inline tags and nothing else, a formatting toolbar (one tab stop) whose buttons toggle and show where the caret is, and `sanitizeRichText`, which the server runs on every save. The box is built from DOM nodes, never from a markup string, so it needs no Trusted Types policy. New classes: `.cap-rich-text`, `.cap-rich-text-bar`, `.cap-rich-text-box`, `.cap-rich-text-count`. No token or class was removed or renamed.
+
+## [0.90.0]
+
+Fixes from a review against Chrome's Modern Web Guidance v1 (all 208 guides, 2026-11-11). Every site gets them by bumping Capsomer.
+
+- **Enter while typing Japanese, Chinese or Korean no longer submits.** The confirming Enter of an IME conversion acted at once in the confirm dialog's typed word, the markdown editor's link and alt fields, the media tag field, the site header's search, and the command menu. New `isImeEnter(event)` in `capsomer/behavior/shortcuts` (`isComposing`, plus `keyCode` 229 for Safari); those fields and the listbox, tree, row list, draft compare, media grid and shortcuts now use it. Sites with their own Enter handlers should use it too.
+- **Find-in-page reaches text in an inactive tab.** Where the browser has it (Chrome, Edge, Firefox 148), an inactive panel is `hidden="until-found"` once enhanced; a match chooses its tab, and the panel is no Tab stop while hidden. A disabled tab's panel stays plainly hidden. Safari is unchanged. HTML contract unchanged: markup still ships `hidden`. Base reset: `[hidden]` no longer forces `display: none` on `hidden="until-found"`.
+- **Dialog.**
+  - The page behind no longer locks with `overflow: hidden` on the root, which removed the scrollbar. The backdrop now contains the scroll (`overflow: hidden` and `overscroll-behavior: contain` on `::backdrop`; Chrome 144, Firefox 150).
+  - Light dismiss is the browser's where it has `closedby`: `any`, `closerequest` for locked and alert dialogs, `none` while busy. An author's own `closedby` is kept, and Safari keeps the scripted backdrop click.
+  - A button opener may carry `commandfor` and `command="show-modal"`, so it opens the dialog before script runs. A closer with `command="close"` is handled by the script while it runs.
+  - On a phone the footer buttons stack in source order (`column`, was `column-reverse`), so Tab order matches what you see. The main action is now last, nearest the thumb.
+  - A sheet's drag header takes only its drag axis (`touch-action: pan-x` on a bottom sheet, `pan-y` on a side sheet; was `none`).
+- **No heading inside a `summary`.** JAWS and TalkBack drop it. The "accordion titles in headings" pattern and its specimen are removed (the CSS rule that styled `summary > h2…h6` is gone). Use a group row in a heading for sections that need one. No site used the old pattern.
+- **Long lists render lazily.** Feed days after the second, media tiles after the 24th and rows after the 30th get `content-visibility: auto` with an estimated height (`contain-intrinsic-size: auto`) and `overflow-clip-margin` for focus rings.
+- **Rows that scroll sideways fade only where there is more.** These are tab lists, the anchor bar, the letterhead's phone links row (replacing its fixed end fade) and wide prose tables. It uses a mask driven by a scroll timeline, and needs no script. Where scroll timelines are missing there is no fade.
+- **Upload progress is a native `<progress class="cap-meter-bar" max="100" value="…">`** (media tile and React media grid), styled as the meter's track. HTML contract change: the media uploading block's `span.cap-meter-bar[role=progressbar]` with `span.cap-meter-fill` is now `progress.cap-meter-bar`.
+- **The toolbar uses native `focusgroup`** where the browser has it (Chrome 150). The roving script is skipped there and stays elsewhere. Bars with their own item set (markdown editor, tag group) keep the script. Tabs keep their script, because native `tablist` focusgroup does not skip disabled tabs.
+- **Moving rows keeps their state.** The tree, the media grid sort and the sortable list use `moveBefore` where the browser has it (new `moveNode` in `capsomer/behavior/sortable-list`). A pointer drag follows only the pointer that started it, and captures it.
+- **A cut-off sortable label or history name scrolls to its end** while its row is hovered or has keyboard focus (CSS only, not under reduced motion). The text is now in an inner `<span>`, an HTML contract change for `.cap-sortable-label` and `.cap-hist-name` (without the span nothing moves).
+- **Video and audio wait until near the screen.** `Video` and `Audio` set `loading="lazy"` by default, and pass `loading="eager"` for a player at the top of a page.
+- **Reduced motion is handled per animation.** The global `animation-duration: 0.01ms !important` and `transition-duration: 0s !important` are removed from `base.css`; only `scroll-behavior` stays. Every Capsomer animation already sat inside `prefers-reduced-motion: no-preference` except the system map's flow, which now does. A site with its own unguarded animation must guard it.
+- **The header link underline grows by `scale`**, not `inline-size`.
+- **Type.**
+  - The header, field, admin shell and manual font sizes are in rem, not px, so they follow the reader's text size.
+  - Inline code in prose matches the prose's x-height with `font-size-adjust: from-font`. Browsers without it keep 0.85em.
+  - Paragraphs, list items, `dd`, blockquotes and captions get `text-wrap: pretty` everywhere.
+- **A textarea in an input group keeps its drag handle** where the browser cannot grow it with its text (`resize: none` only under `@supports (field-sizing: content)`).
+- No token or class was removed or renamed. The removed specimen section was `#s-accordion-headings`.
 
 ## [0.89.0]
 
