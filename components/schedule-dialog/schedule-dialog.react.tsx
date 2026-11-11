@@ -2,7 +2,7 @@
 // line that says the chosen time in the family's words, and a confirm that sends it as an ISO
 // time. A past time is refused beside the field; Cancel and Esc send nothing.
 
-import { useId, useState, useSyncExternalStore, type ReactNode } from "react";
+import { useId, useState, type ReactNode } from "react";
 import { Button } from "../button/button.react.tsx";
 import {
   Dialog,
@@ -16,17 +16,7 @@ import {
 import { Field } from "../field/field.react.tsx";
 import { Time } from "../time/time.react.tsx";
 import { PAST_TIME, checkSchedule, localValue } from "./schedule-dialog.ts";
-
-const noSubscribe = () => () => {};
-
-// The browser's time zone once hydrated; null on the server and in the render that hydrates.
-export function useBrowserZone(): string | null {
-  return useSyncExternalStore(
-    noSubscribe,
-    () => Intl.DateTimeFormat().resolvedOptions().timeZone || null,
-    () => null,
-  );
-}
+import { useBrowserZone } from "../hooks/hooks.react.tsx";
 
 export interface ScheduleDialogProps {
   open: boolean;
@@ -65,7 +55,7 @@ export function ScheduleDialog({
   const [chosenAt, setChosenAt] = useState(() => Date.now());
   const [busy, setBusy] = useState(false);
   // The input reads and writes the browser's own zone, so the field names it.
-  const zone = useBrowserZone();
+  const zone = useBrowserZone(null);
   const { at, problem } = checkSchedule(value, chosenAt);
   const past = problem === PAST_TIME;
   const send = async () => {

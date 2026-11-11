@@ -6,7 +6,6 @@ import {
   useState,
   type MouseEvent,
   useLayoutEffect,
-  useSyncExternalStore,
 } from "react";
 import type { IntentResult, MentionsData, SubmitIntent } from "../content/content.ts";
 import { ContentBulkBar, useIntents } from "../content/content.react.tsx";
@@ -40,9 +39,7 @@ import {
   withMentions,
 } from "./mentions-list.ts";
 import { markup } from "../trusted-html/trusted-html.ts";
-
-// For useSyncExternalStore's hydration flag: nothing to subscribe to.
-const noSubscribe = () => () => {};
+import { useHydrated } from "../hooks/hooks.react.tsx";
 
 export type { FormComponent, IntentResult, Mention, MentionsData, SubmitIntent };
 
@@ -104,11 +101,7 @@ export function MentionsList({
   const uid = useId().replace(/[^a-zA-Z0-9]/g, "");
   const formId = `${uid}-bulk`;
   // False on the server and while hydrating, true once hydrated.
-  const mounted = useSyncExternalStore(
-    noSubscribe,
-    () => true,
-    () => false,
-  );
+  const mounted = useHydrated();
 
   const { rows, query, page, offers, can, counts } = data;
   const view = currentView(data);

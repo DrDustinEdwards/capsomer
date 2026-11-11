@@ -4,6 +4,8 @@
 // loads, and the inline audio button (enhance). The React parts (player.react.tsx and the
 // player-*.react.tsx files it re-exports) use these; a site's own pre-React script imports them too.
 
+import { readStored, writeStored } from "../hooks/hooks.ts";
+
 // ---------------------------------------------------------------------------------------
 // The track.
 
@@ -61,7 +63,8 @@ export const clampVolume = (v: number): number => Math.min(1, Math.max(0, v));
 
 // ---------------------------------------------------------------------------------------
 // What the player remembers, in localStorage under a prefix the site chooses ("germomics-" keeps
-// the keys a site already wrote). Every read and write is in try/catch: storage can be blocked.
+// the keys a site already wrote). Reads and writes go
+// through hooks.ts' storage: where it is blocked or full the player still plays, and remembers for the page.
 
 export interface PlayerStorage {
   prefix: string;
@@ -76,22 +79,6 @@ export interface PlayerStorage {
   saveResume(id: string | number, seconds: number): void;
 }
 
-function read(key: string): string | null {
-  try {
-    return localStorage.getItem(key);
-  } catch {
-    return null;
-  }
-}
-
-function write(key: string, value: string): void {
-  try {
-    localStorage.setItem(key, value);
-  } catch {
-    // Storage blocked or full: the player still plays, it only forgets.
-  }
-}
-
 // A saved position is used only when it is past the start and short of the last five seconds.
 export function resumePoint(saved: number, duration: number): number | null {
   return saved > 0 && saved < duration - RESUME_TAIL_SECONDS ? saved : null;
@@ -102,26 +89,26 @@ export function playerStorage(prefix = "cap-player-"): PlayerStorage {
   return {
     prefix,
     rate() {
-      const raw = read(key("rate"));
+      const raw = readStored(key("rate"));
       const r = Number(raw);
       return raw !== null && r >= RATE_MIN && r <= RATE_MAX ? r : null;
     },
     volume() {
-      const raw = read(key("volume"));
+      const raw = readStored(key("volume"));
       const v = Number(raw);
       return raw !== null && raw !== "" && v >= 0 && v <= 1 ? v : null;
     },
     muted() {
-      const raw = read(key("muted"));
+      const raw = readStored(key("muted"));
       return raw === "1" ? true : raw === "0" ? false : null;
     },
     resumeAt(id, duration) {
-      return resumePoint(Number(read(key(`resume-${id}`))), duration);
+      return resumePoint(Number(readStored(key(`resume-${id}`))), duration);
     },
-    saveRate: (rate) => write(key("rate"), String(clampRate(rate))),
-    saveVolume: (volume) => write(key("volume"), String(clampVolume(volume))),
-    saveMuted: (muted) => write(key("muted"), muted ? "1" : "0"),
-    saveResume: (id, seconds) => write(key(`resume-${id}`), String(Math.floor(seconds))),
+    saveRate: (rate) => writeStored(key("rate"), String(clampRate(rate))),
+    saveVolume: (volume) => writeStored(key("volume"), String(clampVolume(volume))),
+    saveMuted: (muted) => writeStored(key("muted"), muted ? "1" : "0"),
+    saveResume: (id, seconds) => writeStored(key(`resume-${id}`), String(Math.floor(seconds))),
   };
 }
 

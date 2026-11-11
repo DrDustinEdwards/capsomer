@@ -76,7 +76,7 @@ import { ScheduleDialog } from "capsomer/react/schedule-dialog";
 />;
 ```
 
-Props: `open`, `onClose`, `returnTo`, `onSchedule(iso)`, `title`, `description`, `current` (an ISO time the field starts at), `label` (default "Publish at"), `confirm` (default "Schedule") and `lead` (default "Goes live"). `useBrowserZone()` is exported too. `capsomer/behavior/schedule-dialog` holds the pure part: `localValue(at, zone?)`, `checkSchedule(value, now)`, `NO_TIME` and `PAST_TIME`.
+Props: `open`, `onClose`, `returnTo`, `onSchedule(iso)`, `title`, `description`, `current` (an ISO time the field starts at), `label` (default "Publish at"), `confirm` (default "Schedule") and `lead` (default "Goes live"). The zone comes from `useBrowserZone` in `capsomer/react/hooks`. `capsomer/behavior/schedule-dialog` holds the pure part: `localValue(at, zone?)`, `checkSchedule(value, now)`, `NO_TIME` and `PAST_TIME`.
 
 ## Exceptions in production
 

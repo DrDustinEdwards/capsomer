@@ -1,8 +1,6 @@
-import { useEffect, useRef, useState, useSyncExternalStore, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { listenLabel } from "./dictionary-entry.ts";
-
-// For useSyncExternalStore's hydration flag: nothing to subscribe to.
-const noSubscribe = () => () => {};
+import { useHydrated } from "../hooks/hooks.react.tsx";
 
 /** A plain string, or a word in another language as [lang, word], set in italics with its lang. */
 export type EtymologyPart = string | [lang: string, word: string];
@@ -58,11 +56,7 @@ export function SpeakerIcon() {
 // The speaker pair as React state: the link on the server and with script off, the button once
 // mounted, the link again if the clip cannot load or play.
 function Listen({ src, label }: { src: string; label: string }) {
-  const mounted = useSyncExternalStore(
-    noSubscribe,
-    () => true,
-    () => false,
-  );
+  const mounted = useHydrated();
   const [failed, setFailed] = useState(false);
   const [playing, setPlaying] = useState(false);
   const audio = useRef<HTMLAudioElement | null>(null);

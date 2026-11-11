@@ -25,45 +25,9 @@ export {
   stopCommand,
 } from "./command-menu.ts";
 
-// The command menu's host, mounted once the page is idle (requestIdleCallback, two seconds at
-// most), so it costs the first load nothing; a shortcut or a button pressed before then mounts it
-// at once and opens it. `open(query)` and `runWhenReady(id)` work at any time: a command asked for
-// before the menu is mounted runs as soon as it is.
-export function useCommandHost(commands: readonly Command[]) {
-  const [ready, setReady] = useState(false);
-  const [open, setOpen] = useState(false);
-  const pending = useRef<string | null>(null);
-  useEffect(() => {
-    if (typeof requestIdleCallback !== "function") {
-      const t = setTimeout(() => setReady(true), 200);
-      return () => clearTimeout(t);
-    }
-    const id = requestIdleCallback(() => setReady(true), { timeout: 2000 });
-    return () => cancelIdleCallback(id);
-  }, []);
-  useEffect(() => {
-    if (!ready || !pending.current) return;
-    const id = pending.current;
-    pending.current = null;
-    commands.find((c) => c.id === id)?.run();
-  }, [ready, commands]);
-  return {
-    // Render the CommandMenu only while this is true.
-    ready,
-    open,
-    setOpen: (next: boolean) => {
-      if (next) setReady(true);
-      setOpen(next);
-    },
-    runWhenReady: (id: string) => {
-      if (ready) commands.find((c) => c.id === id)?.run();
-      else {
-        pending.current = id;
-        setReady(true);
-      }
-    },
-  };
-}
+// The idle host lives in its own light module (capsomer/react/command-host), so an app that
+// loads the menu lazily does not pull it into every route; exported here as well.
+export { useCommandHost } from "./command-host.react.tsx";
 
 export interface CommandMenuProps {
   open: boolean;

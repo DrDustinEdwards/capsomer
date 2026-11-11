@@ -1,12 +1,4 @@
-import {
-  useEffect,
-  useId,
-  useMemo,
-  useRef,
-  useState,
-  useSyncExternalStore,
-  type ReactNode,
-} from "react";
+import { useEffect, useId, useMemo, useRef, useState, type ReactNode } from "react";
 import { GLYPHS } from "../message/message.ts";
 import { useMessage } from "../message/message.react.tsx";
 import { Time } from "../time/time.react.tsx";
@@ -36,6 +28,7 @@ import {
   type Run,
 } from "./history-list.ts";
 import { markup } from "../trusted-html/trusted-html.ts";
+import { useHydrated } from "../hooks/hooks.react.tsx";
 
 export type { HistoryEntry, Destination, HistoryKind } from "./history-list.ts";
 
@@ -359,17 +352,6 @@ function RunLines({
         </ul>
       </li>
     </>
-  );
-}
-
-const noSubscribe = () => () => {};
-
-// False on the server and while React hydrates what the server sent; true from then on.
-function useHydrated(): boolean {
-  return useSyncExternalStore(
-    noSubscribe,
-    () => true,
-    () => false,
   );
 }
 
