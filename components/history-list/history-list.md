@@ -6,7 +6,7 @@ parts: [css, behavior, react]
 tool: native + own JavaScript
 states: [read-only with no word counts, load into editor, current version, edit, autosave, run of autosaves collapsed, run of autosaves open, named version, publish with destinations and statuses, restore line, one version picked, two versions picked, a third pick refused, compare before the script runs, size change up, down and none, hover, restored with Undo, empty, load older, comfortable density, phone width]
 added: 0.3.0
-updated: 0.105.0
+updated: 0.91.0
 source: Alex Rivera's site admin, app/components/admin/revision-list.tsx (RevisionList, RevisionMeta, DiffBlock), app/routes/admin.posts.$slug.history.tsx and app/styles/admin-history.css; app/components/post-history.tsx for the dated facts. shadcn/ui Item and Checkbox for the craft.
 replaces:
   - 'class="(history-list|history-entry|history-meta|history-actions)"'

@@ -2,7 +2,9 @@
 
 Each release names every removed or renamed token or class, and every changed HTML contract.
 
-## [Unreleased]
+## [0.91.0]
+
+From the sites, batch 9: an inspector, React Router bindings, a work queue with Later, a role grid and a Compare that works before the script runs.
 
 - **Inspector: a new component** (`capsomer/react/inspector`, `capsomer/inspector.css`), from Carrel's editor. Everything about a text that is not the text, in tabs beside the writing on a wide screen and in a sheet from the bottom on a phone; the head (saving, publishing) stays in the page; a tab with nothing to show is left out; `initialTab` opens a tab (and the sheet) from the address; `wideQuery` matches the page's own grid. New classes: `.cap-inspector`, `.cap-inspector-tabs`, `.cap-inspector-panel`, `.cap-inspector-open`, `.cap-inspector-sheet`.
 - **React Router bindings in one place** (`capsomer/react/router`, `capsomer/behavior/router`): `routerRenderForm` for any part's `renderForm`, `RouterConfirmModal` (the router's Form, and Cancel that keeps the scroll position), `useRouterRowForm` (each row its own fetcher), `revalidateUnlessOnly` and `onlyParamsChanged` (skip a loader when only a display parameter changed; from dustinedwards.info's media library). `routerRenderLink` stays in `capsomer/react/link`.
