@@ -1,0 +1,8 @@
+import { jsx as _jsx, jsxs as _jsxs, Fragment as _Fragment } from "react/jsx-runtime";
+import { Status } from "../status/status.react.js";
+// Lines from a log or a source's top list (paths and their failures, crawlers and their hits): a
+// plain table that scrolls sideways inside its own box, mono for raw values and tabular figures
+// for counts, a note when the source cut the list short, and a stated None when there are none.
+export function LogView({ caption, showCaption = false, columns, rows, rowKey, truncated = false, truncatedNote = "The top lines only; more may exist.", note, emptyLabel = "None", empty, }) {
+    return (_jsxs("div", { className: "cap-log", children: [note != null && _jsx("p", { className: "cap-log-note", children: note }), rows.length === 0 ? (_jsxs("p", { className: "cap-log-empty", children: [_jsx(Status, { tone: "ok", children: emptyLabel }), " ", empty] })) : (_jsxs(_Fragment, { children: [_jsx("div", { className: "cap-table-wrap", role: "region", "aria-label": caption, tabIndex: 0, children: _jsxs("table", { className: "cap-table", "data-density": "compact", children: [_jsx("caption", { className: showCaption ? undefined : "cap-sr-only", children: caption }), _jsx("thead", { children: _jsx("tr", { children: columns.map((c) => (_jsx("th", { scope: "col", "data-num": c.num ? "" : undefined, children: c.label }, c.key))) }) }), _jsx("tbody", { children: rows.map((r) => (_jsx("tr", { children: columns.map((c) => (_jsx("td", { "data-num": c.num ? "" : undefined, className: c.mono ? "cap-log-mono" : undefined, children: c.cell(r) }, c.key))) }, rowKey(r)))) })] }) }), truncated && _jsx("p", { className: "cap-log-note", children: truncatedNote })] }))] }));
+}
