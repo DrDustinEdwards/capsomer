@@ -1,0 +1,67 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* Reading progress: a thin bar pinned to the top of the window that fills as the reader moves
+   through one article, from the article's top at the window's top to its end at the window's
+   bottom. All CSS: the article is a named view timeline (--cap-reading) and the bar scales along
+   its contain range, on the compositor, with no scroll listener (Chrome's Modern Web Guidance,
+   scroll-progress-indicator). It is decoration (the scrollbar says the same), so where scroll-driven
+   animations are missing, or less motion is asked for, there is no bar and no fallback script. */
+
+@layer cap.components {
+  @keyframes cap-reading-grow {
+    from {
+      transform: scaleX(0);
+    }
+    to {
+      transform: scaleX(1);
+    }
+  }
+
+  .cap-reading-progress {
+    display: none;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    @supports (animation-timeline: view()) {
+      /* The bar and the article are not ancestor and descendant, so the name is lifted to the root. */
+      :root:has(.cap-reading-progress) {
+        timeline-scope: --cap-reading;
+      }
+      [data-cap-reading] {
+        view-timeline: --cap-reading block;
+      }
+
+      .cap-reading-progress {
+        display: block;
+        position: fixed;
+        inset: var(--reading-progress-top, 0) 0 auto;
+        z-index: var(--z-sticky);
+        block-size: var(--reading-progress-size, 3px);
+        background: var(--reading-progress-color, var(--accent));
+        transform-origin: 0 50%;
+        pointer-events: none;
+        animation: cap-reading-grow auto linear both;
+        /* After the shorthand, which would reset it. */
+        animation-timeline: --cap-reading;
+        animation-range: contain 0% contain 100%;
+
+        &:dir(rtl) {
+          transform-origin: 100% 50%;
+        }
+      }
+    }
+  }
+
+  @media print {
+    .cap-reading-progress {
+      display: none;
+    }
+  }
+
+  @media (forced-colors: active) {
+    .cap-reading-progress {
+      background: Highlight;
+    }
+  }
+}

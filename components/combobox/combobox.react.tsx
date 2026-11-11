@@ -1,6 +1,8 @@
+import { Autocomplete as Free } from "@base-ui/react/autocomplete";
 import { Combobox as Base } from "@base-ui/react/combobox";
 import {
   Fragment,
+  useCallback,
   useEffect,
   useId,
   useMemo,
@@ -17,6 +19,8 @@ export interface ComboboxOption {
   disabled?: boolean;
   // A heading to list this option under. Options without one come first, ungrouped.
   group?: string;
+  // A short note beside the label, in muted text: the city beside an institution.
+  hint?: string;
 }
 
 interface Group {
@@ -50,6 +54,17 @@ export interface ComboboxBaseProps {
   // For specimens and tests: open on mount, with this text typed.
   defaultOpen?: boolean;
   defaultInputValue?: string;
+  // Options from a server as the person types, in place of filtering `items` here: `search`
+  // gets the typed text and an AbortSignal (a newer keystroke aborts the older request) and
+  // returns the matches. `items` then holds only options known before any search (the chosen
+  // one, so its label shows). Waits `searchDelay` ms (200) after the last key, and asks
+  // nothing for fewer than `minSearchLength` characters (1).
+  search?: (query: string, signal: AbortSignal) => Promise<ComboboxOption[]>;
+  searchDelay?: number;
+  minSearchLength?: number;
+  // What the list says before a search can run, and when one fails.
+  searchHint?: string;
+  searchFailedText?: string;
 }
 
 export interface ComboboxProps extends ComboboxBaseProps {
@@ -60,6 +75,18 @@ export interface ComboboxProps extends ComboboxBaseProps {
   onValueChange?: (value: string | null) => void;
   // A button in the box that clears the chosen value. It shows only while there is one.
   clearable?: boolean;
+}
+
+export interface ComboboxFreeTextProps extends Omit<ComboboxBaseProps, "items" | "emptyText"> {
+  // Suggestions to filter here. With `search` they are not needed.
+  items?: ComboboxOption[];
+  // The typed text is the value: any text can be kept, and a suggestion only fills it in.
+  value?: string;
+  defaultValue?: string;
+  onValueChange?: (text: string) => void;
+  // A suggestion was picked, for filling the fields that come with it (an institution’s city).
+  // It runs after onValueChange, so what it sets stands.
+  onPick?: (item: ComboboxOption) => void;
 }
 
 export interface ComboboxMultipleProps extends ComboboxBaseProps {
@@ -148,10 +175,19 @@ function grouped(items: ComboboxOption[]): ComboboxOption[] | Group[] {
   return out;
 }
 
+function Hint({ item }: { item: ComboboxOption }) {
+  return item.hint ? (
+    <span className="cap-option-keys">
+      <span className="cap-option-hint">{item.hint}</span>
+    </span>
+  ) : null;
+}
+
 function Option({ item }: { item: ComboboxOption }) {
   return (
     <Base.Item key={item.value} value={item} disabled={item.disabled} className="cap-option">
       <span className="cap-option-label">{item.label}</span>
+      <Hint item={item} />
       <Base.ItemIndicator className="cap-option-indicator">
         <Check />
       </Base.ItemIndicator>
@@ -226,6 +262,75 @@ function Popup({
   );
 }
 
+// The options a search found for the typed text. The request runs from the input's change,
+// not an effect: a newer keystroke clears the wait and aborts the older request, so results
+// never arrive out of order. A failure says so instead of looking like "no match".
+interface Found {
+  items: ComboboxOption[];
+  loading: boolean;
+  failed: boolean;
+  short: boolean;
+}
+const NOTHING: Found = { items: [], loading: false, failed: false, short: true };
+
+function useOptionSearch(
+  search: ComboboxBaseProps["search"],
+  delay: number,
+  min: number,
+): [Found, (query: string) => void] {
+  const [found, setFound] = useState<Found>(NOTHING);
+  const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  const request = useRef<AbortController | null>(null);
+  useEffect(
+    () => () => {
+      clearTimeout(timer.current);
+      request.current?.abort();
+    },
+    [],
+  );
+  const run = useCallback(
+    (query: string) => {
+      if (!search) return;
+      clearTimeout(timer.current);
+      request.current?.abort();
+      const q = tidy(query);
+      if (q.length < min) {
+        setFound(NOTHING);
+        return;
+      }
+      const controller = new AbortController();
+      request.current = controller;
+      setFound((f) => ({ ...f, loading: true, failed: false, short: false }));
+      timer.current = setTimeout(() => {
+        search(q, controller.signal).then(
+          (items) => {
+            if (!controller.signal.aborted)
+              setFound({ items, loading: false, failed: false, short: false });
+          },
+          () => {
+            if (!controller.signal.aborted)
+              setFound({ items: [], loading: false, failed: true, short: false });
+          },
+        );
+      }, delay);
+    },
+    [search, delay, min],
+  );
+  return [found, run];
+}
+
+// Known options and found ones, each value once, the known first.
+function pool(known: ComboboxOption[], found: ComboboxOption[]): ComboboxOption[] {
+  const seen = new Set(found.map((i) => i.value));
+  return [...found, ...known.filter((i) => !seen.has(i.value))];
+}
+
+function searchEmpty(found: Found, query: string, hint: string, failed: string): ReactNode {
+  if (found.failed) return failed;
+  if (found.short) return hint;
+  return defaultEmpty(query);
+}
+
 function Field({
   label,
   labelId,
@@ -289,7 +394,19 @@ export function Combobox(props: ComboboxProps) {
     defaultOpen,
     defaultInputValue,
     clearable = false,
+    search,
+    searchDelay = 200,
+    minSearchLength = 1,
+    searchHint = "Type to search.",
+    searchFailedText = "The search failed. Check the connection and type again.",
   } = props;
+  const [found, runSearch] = useOptionSearch(search, searchDelay, minSearchLength);
+  // With a search, the chosen option is kept here, so its label stays when the results move on.
+  const [picked, setPicked] = useState<ComboboxOption | null>(null);
+  const all = useMemo(
+    () => (search ? pool(picked ? [...items, picked] : items, found.items) : items),
+    [search, items, picked, found.items],
+  );
   const autoId = useId();
   const inputId = props.id ?? `${autoId}-input`;
   const helpId = `${autoId}-help`;
@@ -298,7 +415,7 @@ export function Combobox(props: ComboboxProps) {
 
   const [own, setOwn] = useState<string | null>(props.defaultValue ?? null);
   const current = props.value !== undefined ? props.value : own;
-  const selected = items.find((i) => i.value === current) ?? null;
+  const selected = all.find((i) => i.value === current) ?? null;
 
   // The input's text is held here so that unlisted text never outlives the open list.
   const [query, setQuery] = useState<string>(defaultInputValue ?? selected?.label ?? "");
@@ -319,13 +436,18 @@ export function Combobox(props: ComboboxProps) {
     if (!open.current) setQuery(selected?.label ?? "");
   }, [selected?.label]);
 
-  const list = useMemo(() => grouped(items), [items]);
-  const isGrouped = items.some((i) => i.group);
+  // The list shows what the search found; the chosen option is only looked up in `all`.
+  const shown = search ? found.items : items;
+  const list = useMemo(() => grouped(shown), [shown]);
+  const isGrouped = shown.some((i) => i.group);
   const describedBy =
     [help != null ? helpId : "", error != null ? errorId : ""].filter(Boolean).join(" ") ||
     undefined;
-  const empty =
-    typeof emptyText === "function" ? emptyText(query) : (emptyText ?? defaultEmpty(query));
+  const empty = search
+    ? searchEmpty(found, query, searchHint, searchFailedText)
+    : typeof emptyText === "function"
+      ? emptyText(query)
+      : (emptyText ?? defaultEmpty(query));
 
   return (
     <Field
@@ -343,12 +465,17 @@ export function Combobox(props: ComboboxProps) {
         value={selected}
         onValueChange={(item: ComboboxOption | null) => {
           chosen.current = item;
+          if (search) setPicked(item);
           setQuery(item?.label ?? "");
           if (props.value === undefined) setOwn(item?.value ?? null);
           props.onValueChange?.(item?.value ?? null);
         }}
         inputValue={query}
-        onInputValueChange={(next: string) => setQuery(next)}
+        onInputValueChange={(next: string, details: { reason: string }) => {
+          setQuery(next);
+          if (search && details.reason !== "item-press") runSearch(next);
+        }}
+        filter={search ? null : undefined}
         onOpenChange={(next: boolean) => {
           open.current = next;
           if (!next) setQuery(chosen.current?.label ?? "");
@@ -382,14 +509,148 @@ export function Combobox(props: ComboboxProps) {
         </Base.InputGroup>
         <Popup
           isGrouped={isGrouped}
-          loading={loading}
-          loadingText={loadingText}
+          loading={loading || found.loading}
+          loadingText={search && loadingText === "Loading" ? "Searching" : loadingText}
           empty={empty}
           container={container}
           multiple={false}
         />
       </Base.Root>
     </Field>
+  );
+}
+
+// A text box with suggestions: the typed text is the value, so a name that is not listed yet
+// is kept as typed. A picked suggestion fills the box with its label and calls onPick. The
+// list opens only when there is something to show, and says nothing while the text is short.
+export function ComboboxFreeText(props: ComboboxFreeTextProps) {
+  const {
+    label,
+    items = [],
+    placeholder,
+    loading = false,
+    loadingText = "Searching",
+    help,
+    error,
+    disabled = false,
+    required = false,
+    name,
+    container,
+    defaultOpen,
+    search,
+    searchDelay = 200,
+    minSearchLength = 1,
+    searchFailedText = "The search failed. Check the connection and type again.",
+    onPick,
+  } = props;
+  const [found, runSearch] = useOptionSearch(search, searchDelay, minSearchLength);
+  const autoId = useId();
+  const inputId = props.id ?? `${autoId}-input`;
+  const helpId = `${autoId}-help`;
+  const labelId = `${autoId}-label`;
+  const errorId = `${autoId}-error`;
+  const [own, setOwn] = useState<string>(props.defaultValue ?? props.defaultInputValue ?? "");
+  const text = props.value !== undefined ? props.value : own;
+  const all = search ? found.items : items;
+  const lit = useRef<ComboboxOption | null>(null);
+  const list = useMemo(() => grouped(all), [all]);
+  const isGrouped = all.some((i) => i.group);
+  const describedBy =
+    [help != null ? helpId : "", error != null ? errorId : ""].filter(Boolean).join(" ") ||
+    undefined;
+
+  return (
+    <Field
+      label={label}
+      labelId={labelId}
+      inputId={inputId}
+      required={required}
+      help={help}
+      helpId={helpId}
+      error={error}
+      errorId={errorId}
+    >
+      <Free.Root<ComboboxOption>
+        // Grouped lists work here as in Combobox; the root's types name only the flat form.
+        items={list as ComboboxOption[]}
+        value={text}
+        onValueChange={(next: string, details: { reason: string }) => {
+          if (props.value === undefined) setOwn(next);
+          props.onValueChange?.(next);
+          if (details.reason === "item-press") {
+            // The highlighted option is the one pressed, by pointer or by Enter.
+            const item = lit.current ?? all.find((i) => i.label === next);
+            if (item) onPick?.(item);
+          } else if (search) runSearch(next);
+        }}
+        onItemHighlighted={(item: ComboboxOption | undefined) => {
+          lit.current = item ?? null;
+        }}
+        filter={search ? null : undefined}
+        itemToStringValue={(item: ComboboxOption) => item.label}
+        disabled={disabled}
+        required={required}
+        name={name}
+        defaultOpen={defaultOpen}
+      >
+        <Free.InputGroup className="cap-combobox-group">
+          <Free.Input
+            id={inputId}
+            className="cap-combobox-input"
+            aria-labelledby={labelId}
+            placeholder={placeholder}
+            aria-invalid={error != null ? true : undefined}
+            aria-describedby={describedBy}
+            autoComplete="off"
+          />
+        </Free.InputGroup>
+        <Free.Portal container={container ?? undefined}>
+          <Free.Positioner className="cap-combobox-positioner" sideOffset={4} align="start">
+            <Free.Popup className="cap-popover cap-combobox-popup" data-flush="">
+              <Free.Status className="cap-combobox-status">
+                {loading || found.loading ? (
+                  <>
+                    <span className="cap-combobox-spinner" aria-hidden="true" />
+                    {loadingText}
+                  </>
+                ) : found.failed ? (
+                  searchFailedText
+                ) : null}
+              </Free.Status>
+              <Free.List className="cap-listbox cap-combobox-list" data-controlled="">
+                {isGrouped
+                  ? (group: Group) => (
+                      <Free.Group
+                        key={group.value || "none"}
+                        items={group.items}
+                        className="cap-listbox-group"
+                      >
+                        {group.value ? (
+                          <Free.GroupLabel className="cap-listbox-label">
+                            {group.value}
+                          </Free.GroupLabel>
+                        ) : null}
+                        <Free.Collection>
+                          {(item: ComboboxOption) => <FreeOption key={item.value} item={item} />}
+                        </Free.Collection>
+                      </Free.Group>
+                    )
+                  : (item: ComboboxOption) => <FreeOption key={item.value} item={item} />}
+              </Free.List>
+            </Free.Popup>
+          </Free.Positioner>
+        </Free.Portal>
+      </Free.Root>
+    </Field>
+  );
+}
+
+function FreeOption({ item }: { item: ComboboxOption }) {
+  return (
+    <Free.Item value={item} disabled={item.disabled} className="cap-option">
+      <span className="cap-option-label">{item.label}</span>
+      <Hint item={item} />
+    </Free.Item>
   );
 }
 
