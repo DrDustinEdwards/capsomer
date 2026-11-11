@@ -58,7 +58,7 @@ An email, a printed page or an embedded widget has no header. A page inside anot
 | Edge and scrolled look | `--header-edge`; after a scroll (`data-scrolled`) `--header-scrolled-edge`, `--header-scrolled-shadow`, `--header-scrolled-mix` |
 | Section links' weight | `--header-link-weight` (400) and the current link's `--header-link-current-weight` (500) |
 | Section links' spacing | `--header-link-pad` (0), `--header-links-gap` between them (20px), `--header-link-gap` before the chevron (`--space-2`), `--header-chev-size` (12px) |
-| Icon controls | `--header-icon-size` (36px), `--header-glyph-size` (18px), `--header-glyph-stroke` (1.6); `--header-tools-gap` between the right side's tools (`--space-3`) and `--header-row-tools-gap` in the phone's row (`--space-2`); `menuIcon` for the site's own menu glyph |
+| Menu glyph | `menuIcon` for the site's own menu glyph (the icon controls' tokens are `--header-icon-*` and `--header-tools-gap`) |
 | The phone sheet | Group labels `--header-sheet-label-ink` (`--muted`), `--header-sheet-label-fs` (`--fs-detail`), `--header-sheet-label-weight` (500), `--header-sheet-label-case` (`none`), `--header-sheet-label-tracking` (`normal`); rows `--header-sheet-row-fs` (`--fs-body`) and `--header-sheet-row-h` (the control height or the target, whichever is larger) |
 | The logo's name | `logo.name`, where the link should say more than `label` ("BioScience Writers home"); it starts with the visible words |
 | A control's look | `className` on an extra: the site's own class on an icon control, or on the button extra in the bar and in the sheet |
