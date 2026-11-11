@@ -1,0 +1,98 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+/* The sign-in screen (sign-in.md): one card holding the page's heading, the ways in stacked full
+   width, the "or" rule, then the email form. A site sets its width with --cap-auth-w and its look
+   through its own tokens; nothing here names a site. */
+@layer cap.components {
+  .cap-auth {
+    --cap-auth-w: 25rem;
+    display: grid;
+    gap: var(--space-5);
+    inline-size: 100%;
+    max-inline-size: var(--cap-auth-w);
+    margin-inline: auto;
+    /* A page with no site navigation: the card centered in the window. */
+    &[data-layout="screen"] {
+      min-block-size: 100dvh;
+      align-content: center;
+      padding-block: var(--space-7);
+    }
+  }
+  .cap-auth-brand {
+    display: flex;
+    justify-content: center;
+  }
+  .cap-auth-card {
+    display: grid;
+    gap: var(--space-3);
+    padding: var(--pad-card);
+    background: var(--surface);
+    color: var(--text);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-l);
+    box-shadow: var(--card-shadow);
+  }
+  .cap-auth-title {
+    margin: 0;
+    font-size: var(--fs-h2);
+    font-weight: var(--weight-heading);
+    line-height: 1.2;
+    text-wrap: balance;
+    /* It takes focus when the screen changes (the mail is sent), never shown as a ring. */
+    &:focus {
+      outline: none;
+    }
+  }
+  .cap-auth-lede {
+    margin: 0;
+    color: var(--muted);
+    text-wrap: pretty;
+  }
+  .cap-auth-body {
+    display: grid;
+    gap: var(--space-4);
+    margin-block-start: var(--space-4);
+  }
+  /* Every way in is a full-width button, so the eye reads one column. */
+  .cap-auth-passkey,
+  .cap-auth-form {
+    display: grid;
+    gap: var(--space-4);
+    margin: 0;
+    & > .cap-btn {
+      inline-size: 100%;
+    }
+  }
+  .cap-auth-body > .cap-btn {
+    inline-size: 100%;
+  }
+  .cap-auth-mark {
+    inline-size: 1em;
+    block-size: 1em;
+    flex: none;
+  }
+  /* The widget leaves a hidden cf-turnstile-response input in the form; it is as wide as the form
+     (site-runtime renders it at size "flexible"). */
+  .cap-auth-check:empty {
+    display: none;
+  }
+  .cap-auth-or {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    margin: 0;
+    color: var(--muted);
+    font-size: var(--fs-detail);
+    &::before,
+    &::after {
+      content: "";
+      flex: 1;
+      border-block-start: 1px solid var(--line);
+    }
+  }
+  .cap-auth-foot {
+    color: var(--muted);
+    text-align: center;
+    font-size: var(--fs-detail);
+  }
+}

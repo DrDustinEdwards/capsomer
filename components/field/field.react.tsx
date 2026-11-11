@@ -607,3 +607,53 @@ export function DateInput(
     </fieldset>
   );
 }
+
+// An email address (field.md, "Autocomplete for personal data"): type="email", no spellcheck or
+// autocapitalize, Enter goes on. `signIn` makes it the sign-in id: autocomplete "username webauthn",
+// so the browser also offers saved passkeys in its suggestions.
+export function EmailInput(
+  props: FieldText &
+    Omit<InputHTMLAttributes<HTMLInputElement>, "type" | "style" | "autoComplete"> & {
+      signIn?: boolean;
+    },
+) {
+  const { label, help, error, announce, required, signIn = false, className: _c, ...rest } = props;
+  return (
+    <Field label={label} help={help} error={error} announce={announce} required={required}>
+      <input
+        enterKeyHint="go"
+        {...rest}
+        className="cap-input"
+        type="email"
+        autoComplete={signIn ? "username webauthn" : "email"}
+        spellCheck={false}
+        autoCapitalize="none"
+      />
+    </Field>
+  );
+}
+
+// The one-time code (field.md, "One-time code"): one input, never a box per digit, with no
+// maxlength or pattern, so a pasted "123 456" is not cut; the server takes the spaces out.
+export function CodeInput(
+  props: FieldText &
+    Omit<InputHTMLAttributes<HTMLInputElement>, "type" | "style" | "autoComplete" | "inputMode">,
+) {
+  const { label, help, error, announce, required, className: _c, ...rest } = props;
+  return (
+    <Field label={label} help={help} error={error} announce={announce} required={required}>
+      <input
+        enterKeyHint="done"
+        {...rest}
+        className="cap-input"
+        data-variant="code"
+        type="text"
+        autoComplete="one-time-code"
+        inputMode="numeric"
+        spellCheck={false}
+        autoCapitalize="none"
+        autoCorrect="off"
+      />
+    </Field>
+  );
+}
