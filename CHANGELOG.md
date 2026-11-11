@@ -16,6 +16,10 @@ From the network shared-code audit, items 22 to 30 (Dustin's rule of 2026-11-11:
 - **Stat tile, status, sortable list, time, message and disclosure.** A static stat tile (`data-variant="static"`, `StaticStatTile`, `.cap-tile-delta`, `.cap-tiles[data-layout="grid"]`); the interactive tile rules now apply only to `.cap-tile:is(a, button)`. Status gains the `muted` tone, more glyphs (queued, unknown, blocked, question, pr, report, proposal, site-down), `variant="accent"` and `.cap-pill-dot`. Sortable lists move rows between lists (`data-group`, `SortableBoard`), add and remove rows (`useRows`, `onAdd`, `onRemove`, `min`, `max`, `cap:sortable-remove`), and take `layout="stack"`, `altKeys`, `readOnly`, `busy`, `renderHead` and `empty`; the single-list React render has no wrapper. Time gains `formatDate`, `dateRange`, `utcInputValue`, `fromUtcInputValue`, `timecode`, `duration`, `span`, `until` and `relative(..., { granularity })`, `format="date"`, and `Time` props `tip` and `empty`. Message gains `useActionResult`, `<ActionResult>` and `actionResultView` for a form action's result. Disclosure gains `variant="card" size="sm"`. The menu's radio group takes `closeOnClick`.
 - No token or class was removed or renamed.
 
+## [0.91.1]
+
+- **A chart no longer redraws 16 px tall.** With Enarratio 0.12 the figure holds the toolbar's 16 by 16 icons before the chart, and `ChartFrame` took its redraw height from the first `viewBox` it found, so every redrawn chart collapsed (seen in the Capsid Portal on 0.90.0). It now skips `enarratio-icon` drawings (`chartViewBox` in `components/chart-frame/chart-frame.ts`).
+
 ## [0.91.0]
 
 - **New: the draft compare's merge mode** (`DraftMerge`, `mergePlan`, `merged`; from Carrel's merge view). Two texts that both moved on from one version, block by block, each difference kept from either side or both, starting on the side that changed it when the base is known. Its diff is the compare's own, so it needs no diff library. New classes: `.cap-merge` and its parts (`-intro`, `-list`, `-same`, `-choice`, `-sides`, `-side`, `-text`, `-empty`, `-mark`, `-actions`). No token or class was removed or renamed.
