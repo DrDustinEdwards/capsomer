@@ -84,7 +84,7 @@
 
     /* Pressed: a tick as well as the accent edge, the tint and the darker word. A link chip (a
        filter kept in the address) that is the current one wears the same. */
-    &:is([aria-pressed="true"], a[aria-current]:not([aria-current="false"])) {
+    &:is([aria-pressed="true"], a[aria-current]:not([aria-current="false"]), :has(> input:checked)) {
       border-color: var(--accent);
       background: var(--accent-soft);
       color: var(--text);
@@ -92,6 +92,10 @@
       &:where(:hover, [data-force="hover"]) {
         border-color: var(--accent);
         background: var(--accent-5);
+      }
+      /* The count reads in the pressed word's color, not the resting --dim (dei colophon). */
+      & > .cap-chip-count {
+        color: inherit;
       }
       &::before {
         content: "";
@@ -126,6 +130,44 @@
     }
   }
 
+  /* A chip that is a checkbox in a GET form (a faceted filter that works with no script): the
+     box is visually hidden but stays the control, so Space toggles it and the form sends it; the
+     label is the chip, and its focus ring follows the box's focus. */
+  label.cap-chip {
+    position: relative;
+
+    & > input[type="checkbox"],
+    & > input[type="radio"] {
+      position: absolute;
+      inset: 0;
+      margin: 0;
+      opacity: 0;
+      cursor: pointer;
+    }
+    &:has(> input:focus-visible) {
+      outline: var(--focus-width) solid var(--ring);
+      outline-offset: var(--focus-offset);
+    }
+    &:has(> input:disabled) {
+      color: var(--muted);
+      cursor: not-allowed;
+    }
+  }
+
+  /* A fieldset of check chips: no frame or padding of its own; the legend is the group's label. */
+  fieldset.cap-chips-set {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    min-inline-size: 0;
+
+    & > legend {
+      float: inline-start;
+      margin-inline-end: var(--space-3);
+      padding: 0;
+    }
+  }
+
   /* Link chips in a list (a filter kept in the address): the list's own marks and indent go. */
   ul.cap-chips {
     margin: 0;
@@ -150,7 +192,7 @@
   }
 
   @media (forced-colors: active) {
-    .cap-chip:is([aria-pressed="true"], a[aria-current]:not([aria-current="false"])) {
+    .cap-chip:is([aria-pressed="true"], a[aria-current]:not([aria-current="false"]), :has(> input:checked)) {
       forced-color-adjust: none;
       border-color: Highlight;
       background: Highlight;

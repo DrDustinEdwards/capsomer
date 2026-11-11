@@ -4,6 +4,21 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+## [0.92.0]
+
+Second-pass shared-code audit, batch 1 (Dustin, 2026-11-11: any UI that is a component lives in Capsomer, even if one site uses it).
+
+- **New components:** `form-status` (a post's result, focused when it arrives, `FormStatus` and `useActionStatus`; from txasm's five copies), `save-bar` (the result beside Save, and an autosave mode; Foxhound's seven SaveBars), `filter-bar` (a GET filter form as a named search landmark with Apply, Clear and a live count, `withParams`, `clearedHref`, `hasFilters`, `countWords`, and `live`, which waits out an IME composition; Foxhound, txasm, the Capsid Portal), `legal-doc` (numbered sections, contents and "Last updated" from one list; Foxhound and Foxing), `rating` (a star rating in halves, shown and asked for; Foxing), `hero` and `cta-band` (a landing page's first and last sections, the look from each site's tokens; Carrel, julieedwards.info, the Capsid explorer, Foxing, BioScience Writers, Foxhound).
+- **Table: a React part.** `capsomer/react/table` exports `Table` (the labeled region, table and caption for hand-written rows) and `DataTable` (rows from columns, sorted in React with `aria-sort`, an empty sentence, a totals row). It replaces 57 hand-written `div.cap-table-wrap` blocks (Foxhound 42, Carrel 11, txasm 4).
+- **Button:** `data-wrap` (`wrap`) lets a long label wrap, balanced; `data-block` (`block`) fills the row; `pendingLabel` says the pending state once from a polite live region beside the button.
+- **Link:** `ButtonLink` (a link drawn as a button, with `to` or `href`, and `away` and `newTab` for another site) and `AwayLink` (the `away` kind with its words, `newTab` and `sponsored`), with `awayRel()` and `awayWords()`. New class `.cap-btn-away` (the ↗ in a button link).
+- **Chips:** `LinkChips` (filters as link chips in a named nav, each with a count) and `CheckChips` (checkbox chips in a GET form, `fieldset.cap-chips-set`, `label.cap-chip` around a visually hidden box). A pressed or current chip's `.cap-chip-count` now reads in the pressed word's color (it stayed `--dim`; dei's colophon patched it).
+- **Family footer:** `copyright(name, since)` writes "© 2024–2026 Example Co" from the server's UTC year, for sites with their own footer.
+
+- **Options the site moves asked for:** `SaveBar` `sticky` and `disabledReason`; `Hero` `children` (between the lead and the actions) and `id`; `CtaBand` `eyebrow` and `note`; `FilterBar` `onSubmit` (another router), its `Form` typed from the props it passes so React Router's `Form` fits; `LinkChips` `showLabel`; `ButtonLink` `newTab` on a same-site link says "(opens in a new tab)".
+
+No token or class was removed or renamed.
+
 ## [0.91.1]
 
 - **A chart no longer redraws 16 px tall.** With Enarratio 0.12 the figure holds the toolbar's 16 by 16 icons before the chart, and `ChartFrame` took its redraw height from the first `viewBox` it found, so every redrawn chart collapsed (seen in the Capsid Portal on 0.90.0). It now skips `enarratio-icon` drawings (`chartViewBox` in `components/chart-frame/chart-frame.ts`).

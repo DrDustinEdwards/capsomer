@@ -6,7 +6,7 @@ parts: [css, behavior, react]
 tool: native + own JavaScript
 states: [link chips with the current one, none pressed, some pressed with the count, hover, pressed and hovered, keyboard focus, disabled, small and large, with a count or an icon, an empty result, solid]
 added: 0.1.0
-updated: 0.2.0
+updated: 0.92.0
 source: Capsid Portal, dashboard/src/styles.css (.chip)
 replaces:
   - 'class="(?:[^"]*\s)?chip[\s"]'
@@ -90,6 +90,20 @@ In React, `import { FilterChips } from "capsomer/react/chips"` (controlled):
 ```tsx
 <FilterChips label="Status" options={statuses} value={status} onChange={setStatus} count={`${shown.length} of ${jobs.length} jobs`} />
 ```
+
+`LinkChips` writes the link chips (`showLabel` shows the label before them): `<LinkChips label="Topics" chips={[{ href: "?topic=release", label: "Release notes", count: 12, current: true }]} />`, a named `nav` with a list, a count after each label (`.cap-chip-count`, which reads in the pressed word's color on the current chip), and `renderLink` for a router link.
+
+A faceted filter that works with no script is checkbox chips inside the site's GET form: `CheckChips` (a `fieldset` whose `legend` names the group), or by hand:
+
+```html
+<fieldset class="cap-chips cap-chips-set">
+  <legend class="cap-chips-label">Kind</legend>
+  <label class="cap-chip"><input type="checkbox" name="kind" value="paper" checked>Papers<span class="cap-chip-count">31</span></label>
+  <label class="cap-chip"><input type="checkbox" name="kind" value="talk">Talks<span class="cap-chip-count">8</span></label>
+</fieldset>
+```
+
+The box is the control (Space toggles it, the form sends it) and is drawn as the chip: checked wears the pressed look, and the chip shows the box's focus ring.
 
 ## Matches
 
