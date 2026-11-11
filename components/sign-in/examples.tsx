@@ -8,7 +8,7 @@ import { EmailConfirm, SignIn, SignInConfirm, type PasskeyClient } from "./sign-
 const client: PasskeyClient = {
   signIn: {
     passkey: async (options?: Record<string, unknown>) => ({
-      error: { code: options?.autoFill ? "AUTH_CANCELLED" : "PASSKEY_NOT_FOUND" },
+      error: { code: options?.autoFill ? "AUTH_CANCELLED" : "PASSKEY_NOT_FOUND" }, // Better Auth's error code, codespell:ignore
     }),
   },
   passkey: { listUserPasskeys: async () => ({ data: [] }) },
