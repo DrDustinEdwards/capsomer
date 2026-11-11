@@ -25,6 +25,14 @@
       text-align: center;
     }
   }
+  /* A row header that links to its record is a full target on touch (WCAG 2.5.8). */
+  @media (pointer: coarse) {
+    .cap-matrix th[scope="row"] > a {
+      display: inline-flex;
+      align-items: center;
+      min-block-size: var(--target);
+    }
+  }
   .cap-matrix-mark {
     gap: 0;
     justify-content: center;

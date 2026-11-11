@@ -24,4 +24,12 @@
   .cap-verdict-list {
     overflow-wrap: anywhere;
   }
+  /* Each problem named is a link of its own, so on touch it is a full target (WCAG 2.5.8). */
+  @media (pointer: coarse) {
+    .cap-verdict-list a {
+      display: inline-flex;
+      align-items: center;
+      min-block-size: var(--target);
+    }
+  }
 }
