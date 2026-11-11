@@ -4,6 +4,7 @@ import {
   expectContrast,
   expectNoAxeViolations,
   visitStates,
+  settled,
 } from "../../test/helpers.ts";
 
 eachTheme((theme) => {
@@ -493,14 +494,7 @@ eachTheme((theme) => {
     const signOut = sheet.getByRole("button", { name: /^Sign out/ });
     await expect(signOut).toBeVisible();
     // Measure the sheet where it rests, not mid-slide: it opens from 2.5rem below.
-    await page.evaluate(() =>
-      Promise.all(
-        document
-          .getAnimations()
-          .filter((a) => a.timeline === document.timeline)
-          .map((a) => a.finished.catch(() => undefined)),
-      ).then(() => undefined),
-    );
+    await settled(page);
     const box = await signOut.boundingBox();
     expect(box!.y + box!.height).toBeLessThanOrEqual(560);
     const body = await sheet.locator(".cap-dialog-body").evaluate((el) => ({

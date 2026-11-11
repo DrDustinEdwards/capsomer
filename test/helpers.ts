@@ -108,13 +108,18 @@ export async function expectNoAxeViolations(
 }
 
 // Resolves once every finite animation and transition on the page has ended: what is measured
-// then is what stays on screen.
+// then is what stays on screen. Scroll-driven animations (the scroll fades) never finish, so only
+// the document timeline counts.
 export function settled(page: Page): Promise<void> {
   return page.evaluate(() =>
     Promise.all(
       document
         .getAnimations()
-        .filter((a) => Number.isFinite(a.effect?.getComputedTiming().endTime ?? Infinity))
+        .filter(
+          (a) =>
+            a.timeline === document.timeline &&
+            Number.isFinite(a.effect?.getComputedTiming().endTime ?? Infinity),
+        )
         .map((a) => a.finished.catch(() => undefined)),
     ).then(() => undefined),
   );

@@ -4,6 +4,7 @@ import {
   expectContrast,
   expectNoAxeViolations,
   visitStates,
+  settled,
 } from "../../test/helpers.ts";
 import { errorText, uid } from "./dialog.ts";
 
@@ -396,14 +397,7 @@ eachTheme((theme) => {
     const rect = async (id: string) => {
       await visitStates(page, "dialog", theme, id);
       await expect(page.locator("dialog.cap-dialog")).toBeVisible();
-      await page.evaluate(() =>
-        Promise.all(
-          document
-            .getAnimations()
-            .filter((a) => a.timeline === document.timeline)
-            .map((a) => a.finished.catch(() => undefined)),
-        ).then(() => undefined),
-      );
+      await settled(page);
       return page.evaluate(() => {
         const r = document.querySelector("dialog.cap-dialog")?.getBoundingClientRect();
         if (!r) throw new Error("no dialog");
