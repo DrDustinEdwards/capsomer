@@ -171,7 +171,12 @@ eachTheme((theme) => {
       getSelection()!.getRangeAt(0).getBoundingClientRect().toJSON(),
     );
     const box = (await pop.boundingBox())!;
-    expect(Math.abs(box.y - (words.bottom as number))).toBeLessThan(24);
+    // Below the words, or above them when the window has no room below (the collision flip).
+    const gap =
+      (await pop.getAttribute("data-placed")) === "top"
+        ? (words.top as number) - (box.y + box.height)
+        : box.y - (words.bottom as number);
+    expect(Math.abs(gap)).toBeLessThan(24);
     await page.keyboard.press("Escape");
     await expect(pop).toBeHidden();
     await expect(page.locator("#virtual-text")).toBeFocused();
