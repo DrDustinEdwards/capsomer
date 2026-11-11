@@ -168,10 +168,20 @@
      no pointer, no focus and no hover. The label sits above the figure, then the figure with its
      delta on one line, then the note: label, value, note, optional delta, optional icon. It is
      the family's one stat card for everything that is not a link (Foxhound's four copies). A site
-     keeps its own look through tokens: --tile-figure-size sets the figure's size. */
+     keeps its own look through tokens, set on the tile or any ancestor; each defaults to the
+     family's look:
+       --tile-figure-size, --tile-figure-face, --tile-figure-weight   the figure
+       --tile-label-face, --tile-label-size, --tile-label-weight, --tile-label-case,
+       --tile-label-tracking   the label
+       --tile-icon-flow, --tile-icon-align, --tile-icon-size   column and start put the icon above
+                             the label; its size
+       --tile-gap            the space between the parts; --tile-detail-space the space above the note
+       --tile-pad, --tile-radius, --tile-shadow */
   .cap-tile[data-variant="static"] {
-    gap: var(--space-2);
-    padding: var(--pad-card);
+    gap: var(--tile-gap, var(--space-2));
+    padding: var(--tile-pad, var(--pad-card));
+    border-radius: var(--tile-radius, var(--radius-l));
+    box-shadow: var(--tile-shadow, none);
     cursor: default;
 
     & > * {
@@ -179,17 +189,39 @@
     }
     & .cap-tile-label {
       display: flex;
-      align-items: center;
-      gap: var(--space-2);
+      flex-direction: var(--tile-icon-flow, row);
+      align-items: var(--tile-icon-align, center);
+      gap: var(--tile-gap, var(--space-2));
+      font-family: var(--tile-label-face, inherit);
+      font-size: var(--tile-label-size, var(--fs-detail));
+      font-weight: var(--tile-label-weight, inherit);
+      text-transform: var(--tile-label-case, none);
+      letter-spacing: var(--tile-label-tracking, normal);
+    }
+    & .cap-tile-icon svg {
+      inline-size: var(--tile-icon-size, 1.15em);
+      block-size: var(--tile-icon-size, 1.15em);
     }
     & .cap-tile-figure {
+      font-family: var(--tile-figure-face, inherit);
       font-size: var(--tile-figure-size, var(--fs-h3));
+      font-weight: var(--tile-figure-weight, 600);
     }
     &[data-size="lg"] .cap-tile-figure {
       font-size: var(--tile-figure-size, var(--fs-h2));
     }
     & .cap-tile-line {
       gap: var(--space-1) var(--space-3);
+    }
+    & .cap-tile-detail {
+      margin-block-start: calc(
+        var(--tile-detail-space, var(--tile-gap, var(--space-2))) - var(--tile-gap, var(--space-2))
+      );
+    }
+    /* A static tile has no word beside its figure, so ok colors the figure as warn and crit do:
+       the label and the note say what the color means. */
+    &[data-tone="ok"] .cap-tile-figure {
+      color: var(--ok);
     }
   }
   /* The drawing before a label: decoration, so it is hidden from a screen reader. */
@@ -234,10 +266,13 @@
   .cap-tile[data-tone="accent"] .cap-tile-figure {
     color: var(--accent-text);
   }
-  /* A row of static tiles in equal columns: two across on a phone, more as the room allows. */
+  /* A row of static tiles in equal columns: two across on a phone, more as the room allows.
+     --tiles-columns sets the columns (a site's fixed grid, "repeat(5, minmax(0, 1fr))" from a
+     breakpoint) and --tiles-gap the space between tiles. */
   .cap-tiles[data-layout="grid"] > .cap-tiles-list {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr));
+    grid-template-columns: var(--tiles-columns, repeat(auto-fit, minmax(min(100%, 11rem), 1fr)));
+    gap: var(--tiles-gap, var(--space-3));
 
     & > li {
       flex: none;
