@@ -4,12 +4,16 @@ title: Site header
 summary: One header across the top of every public, app and admin page in the family, 56px and sticky, with the logo, the switcher and the section links on the left and the extras, the theme and the account on the right.
 parts: [css, behavior, react]
 tool: native + own JavaScript
-states: [public signed out, signed in, user's dashboard, your admin, links on the right with a divider, links centered, dark band, translucent band, switcher open, section panel open, account menu open, the site's own panel, phone row, phone sheet, phone bottom bar, written by hand]
+states: [public signed out, signed in, user's dashboard, your admin, links on the right with a divider, links centered, dark band, translucent band, switcher open, section panel open, account menu open, the site's own panel, phone row, phone sheet, phone bottom bar, written by hand, written by the server with no hydration, a wide panel, a switcher whose rows post, sign out as a form post, a button kept in the phone's row]
 added: 0.9.0
+updated: 0.93.0
 source: docs/design/design-site-header.md and its mockup; Dustin's ten answers of 2026-10-13; Foxhound's header.tsx and Foxing's page-shell.tsx
 replaces:
   - 'class="(site-header|header|topbar|navbar)"'
   - "className=\"(site-header|header|topbar|navbar)"
+  - "data-nav-group|data-menu-toggle|data-menu-button|id=\"mobile-(nav|menu)\""
+  - "delete header\\.dataset\\.capReady"
+  - "wireSignOut|switchTargetFromHref|personInitials"
 ---
 
 # Site header
@@ -37,6 +41,8 @@ An email, a printed page or an embedded widget has no header. A page inside anot
 - **Type.** Links and the switcher at 14px in the site's UI face (`--font-ui`); the current page is weight 500 with a 2px underline in the accent, so it is not told by color alone. In the letterhead a link under the pointer takes a faint tint of the band (`--header-hover`), as Carbon's shell does, and View site ends in the family arrow.
 - **Controls.** Every icon control is a 36px target with an 18px glyph (24 box, 1.6 stroke), a name of its own and a tip naming it and its key. The avatar is a 32px circle in the same target: the person's picture when the site gives one (`account.avatar`), drawn over their initials, which show when there is none or it fails to load.
 - **Panels.** The switcher, a section with children and the account each open a panel: a list of links under a disclosure button (`aria-expanded`, `aria-controls`), not an ARIA menu, because every item goes somewhere. On a mouse a panel opens at once on hover, with no delay, and on click; on touch, on tap. It lines up with its button's edge and starts under the header, so it never covers it. What a panel holds and how it is laid out is the site's (`panel`).
+- **Rows that do something.** A row in a panel or the sheet goes somewhere (`href`), posts a form (`action`, with `fields` as hidden inputs), or runs the site's `onClick`. A form works with no script and its server answers it: Sign out (`account.signOutAction`, with `signOutFields` for a CSRF token), an account switch (a switcher's rows), any row that changes state on the server. The row you are on (`current`) posts nothing. A form sends once: a second press before the next page arrives is dropped (`guardForms`), so two posts never race; a page restored by Back can send again.
+- **A wide panel** (`panelSize: "wide"`, `data-size="wide"`) is a mega-menu's room: 40rem (`--header-panel-w`), held inside the window, with the site's own layout and class inside (`panelClassName`).
 - **One bottom edge**, 1px in the band's own line color.
 
 ## What each site owns
@@ -49,7 +55,9 @@ An email, a printed page or an embedded widget has no header. A page inside anot
 | UI face | `--font-ui` |
 | Extras | Up to two icon controls and one button (`extras`) |
 | Section links' place | `data-links="left"`, `"center"` or `"right"` (before the extras, after a thin divider) |
-| Panels | What each menu holds and its layout (`panel`, else the default list from `groups`) |
+| Panels | What each menu holds and its layout (`panel`, else the default list from `groups`); a wide panel (`panelSize`) and its own class (`panelClassName`) |
+| The button extra on a phone | In the sheet, full width; or kept in the top row (`phone: "bar"`, `data-phone="bar"` on `.cap-site-header-extras`) |
+| Theme memory | The browser key (`themePrefKey`), the site's cookie (`themeCookie`) and its save for the signed-in account (`onThemeSave`); `themeAction` makes the control the no-script form posting to the site's theme route: theme-switch.md, "One theme behavior" |
 
 ## What each slot holds, by surface
 
@@ -74,8 +82,10 @@ The account menu is the same shape everywhere: who you are; the site's own rows 
 | --- | --- |
 | Tab | The skip link, the logo, the switcher, the section links, the extras, the theme, the account; then (in your admin) the strip, the menu, the page |
 | Enter or Space on the switcher, a section with children or the account | Opens its panel; focus moves to its first item |
+| Down or Up on one of those buttons | Opens its panel on its first or last item (as a menu button's keys do, WAI-ARIA APG) |
 | Up and Down in a panel | Move between items (they wrap); Home and End go to the ends |
-| Esc | Closes the panel; focus returns to its button. Closes the sheet; focus returns to the menu button |
+| Esc | Closes the panel; focus returns to its button. Closes the sheet; focus returns to the menu button. A panel opened by hover that closes as the pointer leaves leaves focus where it was |
+| Back or Forward | Closes any open panel and the sheet, as following a link does |
 | Tab past a panel's last item | Closes the panel and goes on |
 | T | Switches the theme, where the site binds single keys (`themeKey`); off with the shortcuts switch |
 
@@ -99,7 +109,6 @@ The family sites (dustinedwards.info, Capsid, Capsomer, Prelum, Carrel, Enarrati
 - **Search** (Dustin, 2026-10-28): a magnifier icon, only on a site that has search (`search={{ action, label, suggest }}`). A box on half the sites made the header differ from tab to tab, and a box that opened a second box, or did nothing until Enter, read as broken. The icon is a link to the search page, so it works with no script. With script the icon, or "/", opens a field under it, focused; `suggest(query, signal)` (the site's own search) answers as the person types and up to six matches drop down under the field, then "All results for …". Up and Down mark a match and Enter opens it; Enter with none marked opens the full results page; Esc closes the list, then the field. The field is a WAI-ARIA combobox: focus stays in it, the marked match is its `aria-activedescendant`, and the count is announced. `letterheadHtml` writes the same markup; `enhance(root, { suggest })` wires it.
 - **The section links:** on the public pages, Home first, visible at every width: in the top row from 1080px, below it in a second row narrower (they swipe on a phone; no menu sheet). In an admin, where you are (`trail`: "Watch / Overview") and View site on the right.
 - **Search engines:** every link is a real `a href` in the server HTML.
-- **A React header that never hydrates** (an islands site): `wiredBy="enhance"` leaves off `data-cap-ready`, so the page's `enhance()` wires the server-rendered header.
 - **Static pages:** `letterheadHtml({ name, mark, links, current, search })` writes the same markup as an HTML string, for a static build or a server; `enhance` and the theme switch wire it.
 - **The margins:** on a public page from 768px the band sits inside the page's margins, at the content's width (`--page-max`, the family's one width), as a letterhead is printed inside the sheet's; the page's ground covers the margins beside it while it is pinned. On a phone it runs edge to edge. In an admin it runs the full width, and the logo and where you are line up with the menu's buttons; the app strip stands outside them, like a binder's tabs.
 - The whole band stays at the top of the window while the page scrolls, on public pages and in the admin (Dustin, 2026-10-27), with `scroll-padding-top` set to its height so a focused link never lands under it (WCAG 2.2, 2.4.11). Where the band would cover more than a quarter of the window (under 480px tall: a phone held sideways, a page zoomed to 400%), it scrolls away with the page instead, so a zoomed reader is not left a few lines.
@@ -151,7 +160,7 @@ The family sites (dustinedwards.info, Capsid, Capsomer, Prelum, Carrel, Enarrati
 <nav class="cap-site-tabs" aria-label="Your reading">[up to five links: icon, label, .cap-site-header-badge]</nav>
 ```
 
-`import { enhance, wirePanel, openSheet, closeSheet, stepIndex, badgeText } from "capsomer/behavior/site-header"` wires markup written by hand: each `[data-cap-part="panel-trigger"]` to the panel its `aria-controls` names, each tip, the menu button and its sheet. The theme button is theme-switch's (`enhance` from `capsomer/behavior/theme-switch`). In React, `import { SiteHeader, SiteTabs } from "capsomer/react/site-header"`:
+`import { enhance, wirePanel, openSheet, closeSheet, stepIndex, badgeText, guardForms, wireThemeKey, initialsOf } from "capsomer/behavior/site-header"` wires markup written by hand: each `[data-cap-part="panel-trigger"]` to the panel its `aria-controls` names, each tip, the menu button and its sheet. The theme button is theme-switch's (`enhance` from `capsomer/behavior/theme-switch`). In React, `import { SiteHeader, SiteTabs } from "capsomer/react/site-header"`:
 
 ```tsx
 <SiteHeader
@@ -165,6 +174,35 @@ The family sites (dustinedwards.info, Capsid, Capsomer, Prelum, Carrel, Enarrati
 />
 ```
 
+A row that posts, in a panel or the sheet:
+
+```html
+<li><form class="cap-site-header-form" method="post" action="/sign-out"><input type="hidden" name="token" value="…"><button type="submit" data-panel-close>Sign out</button></form></li>
+<li><form class="cap-site-header-form" method="post" action="/switch"><input type="hidden" name="workspace" value="w2"><button type="submit" data-panel-close>Field Office</button></form></li>
+<li><form class="cap-site-header-form" method="post" action="/switch"><button type="button" data-panel-close aria-current="true">Example Press</button></form></li>
+```
+
+```tsx
+<SiteHeader
+  logo={{ href: "/", label: "Example Press" }}
+  switchers={[{ id: "workspace", label: "Example Press", name: "Switch workspace: Example Press", tile: "E",
+    groups: [{ label: "Workspaces", links: [
+      { id: "w1", label: "Example Press", action: "/switch", fields: { workspace: "w1" }, current: true },
+      { id: "w2", label: "Field Office", action: "/switch", fields: { workspace: "w2" } },
+    ] }] }]}
+  sections={[{ id: "topics", label: "Topics", panelSize: "wide", panelClassName: "site-topics", panel: <TopicsPanel /> }]}
+  account={{ name: "Alex Rivera", initials: initialsOf("Alex Rivera"), signOutAction: "/sign-out", signOutFields: { token } }}
+  themeCookie="site_theme"
+  onThemeSave={signedIn ? (theme) => fetch("/api/theme", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ theme }) }) : undefined}
+/>
+```
+
+`initialsOf(name, email)` gives the avatar's letters: the first and last word's first letters, two letters of a one-word name, else the email's first letter.
+
+### A page that does not hydrate
+
+A public plane that sends no React (a static page, a server-rendered page with no client bundle) renders the same `SiteHeader` with `hydrate={false}` and runs `enhance(document, { suggest })` from `capsomer/behavior/site-header` and `enhance(document, { onSave })` from `capsomer/behavior/theme-switch` in its page script. The header then carries no `data-cap-ready`, so `enhance()` wires it; its theme button carries its key and cookie (`data-cap-pref`, `data-cap-cookie`), and the theme key is `data-cap-theme-key`, bound by `enhance()`. Every panel's button carries `popovertarget`, so a panel opens with no script at all (placed under the header at the band's inset), and Sign out and every posting row are forms. Use it only where React never runs in the browser; a page that hydrates leaves `hydrate` on, or both would wire the header. A site no longer deletes `data-cap-ready` by hand.
+
 Load `site-header.css` with `dialog.css`, `popover.css` and `theme-switch.css`.
 
 ## Deliberately different
@@ -176,3 +214,9 @@ Load `site-header.css` with `dialog.css`, `popover.css` and `theme-switch.css`.
 ## Exceptions in production
 
 None yet.
+
+## Differences from the sites' own copies (0.92.0)
+
+- germomics' Episodes menu closed on Up from its first item; here Up wraps to the last, as every panel's Up has (the table above). Down on the button opens on the first item in both.
+- bsw locked the page's scroll behind its drawer by hand; the sheet is the shared modal dialog, which does it.
+- dustinedwards.info's header.ts undid the focus a hover-closed panel put on its button; the behavior no longer puts it there.

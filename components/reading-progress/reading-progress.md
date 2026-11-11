@@ -5,8 +5,8 @@ summary: A thin bar across the top of the window that fills as the reader moves 
 parts: [css]
 tool: native
 states: [at the start, part way, at the end, short article, reduced motion, no scroll-driven animations]
-added: 0.92.0
-updated: 0.92.0
+added: 0.93.0
+updated: 0.93.0
 source: Chrome's Modern Web Guidance scroll-progress-indicator guide; replaces Foxhound's reading progress (blog/reading-progress-bar.tsx, islands/reading-progress.ts, lib/blog/reading-progress.ts, app.css .blog-progress-bar), germomics' (EpisodeExtras.tsx) and the progress bar in Prelum's render/enhance
 replaces:
   - '\.(blog-progress-bar|reading-progress-bar)\s*\{'

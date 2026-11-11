@@ -1,8 +1,9 @@
 // The site header's props and the small parts its panels and sheet are built from (site-header.react.tsx).
 
-import { Fragment, type ReactNode, useEffect, useRef } from "react";
+import { createContext, Fragment, type ReactNode, useContext, useEffect, useRef } from "react";
 import type { LinkProps } from "../shell/shell.react.tsx";
 import { attach as attachTip, hideTip } from "../tooltip/tooltip.ts";
+import type { ThemeChoice, ThemeSave } from "../theme-switch/theme-switch.ts";
 import { type Suggest, badgeText, wirePanel } from "./site-header.ts";
 
 // One link in a panel, the sheet or the bottom bar. `count` is a bubble beside it (99+ past 99);
@@ -17,10 +18,34 @@ export interface HeaderLink {
   countNote?: string;
 }
 
-// A group of links under a quiet label, in a panel or the sheet.
+// What a row that does something, rather than going somewhere, does. `action` posts a form (with
+// `fields` as hidden inputs), so it works with no script and a server answers it: Sign out, an
+// account switch, any row that changes state on the server. `onClick` runs instead where there is
+// no `action`. The row you are on (`current`) posts nothing.
+export interface HeaderDoes {
+  action?: string;
+  method?: "post" | "get";
+  fields?: Record<string, string>;
+  onClick?: () => void;
+}
+
+// A row in a panel or the sheet that posts or runs rather than links (HeaderDoes).
+export interface HeaderActionItem extends HeaderDoes {
+  id?: string;
+  label: string;
+  href?: undefined;
+  current?: boolean;
+  icon?: ReactNode;
+  count?: number;
+  countNote?: string;
+}
+
+export type HeaderItem = HeaderLink | HeaderActionItem;
+
+// A group of rows under a quiet label, in a panel or the sheet.
 export interface HeaderGroup {
   label?: string;
-  links: HeaderLink[];
+  links: HeaderItem[];
 }
 
 // The site's logo: its mark (an svg at most 24px tall) and its name, which is also the link's name.
@@ -28,6 +53,8 @@ export interface HeaderGroup {
 export interface HeaderLogo {
   href: string;
   label: string;
+  // A class of the site's own on the logo link, for its wordmark's look.
+  className?: string;
   mark?: ReactNode;
   wordmark?: ReactNode;
   // The letterhead's names: `agency` small over `label` in bold, and an admin's `app` after it in
@@ -49,10 +76,14 @@ export interface HeaderSwitcher {
   groups: HeaderGroup[];
   panel?: ReactNode;
   sheetLabel?: string;
+  panelSize?: "wide";
+  panelClassName?: string;
 }
 
 // A section link. With `groups` or a `panel` it is a disclosure button opening a panel; else a
-// link. Its panel's contents and layout are the site's.
+// link. Its panel's contents and layout are the site's. `panelSize: "wide"` is a mega-menu's room
+// (--header-panel-w, 40rem, held inside the window); `panelClassName` is the site's own class on
+// the panel, for its look (dustinedwards.info's structured panels).
 export interface HeaderSection {
   id: string;
   label: string;
@@ -60,6 +91,8 @@ export interface HeaderSection {
   current?: boolean;
   groups?: HeaderGroup[];
   panel?: ReactNode;
+  panelSize?: "wide";
+  panelClassName?: string;
 }
 
 // An extra: up to two icon controls (Search, Inbox, the bell) and one button (Free audit, Join
@@ -75,12 +108,14 @@ export interface HeaderExtra {
   count?: number;
   countNote?: string;
   keys?: string;
+  // The button extra only: "bar" keeps it in the phone's top row instead of the sheet (a site
+  // whose one action must never need the menu, germomics' Subscribe).
+  phone?: "bar";
 }
 
-export interface HeaderAccountLink {
+export interface HeaderAccountLink extends HeaderDoes {
   label: string;
   href?: string;
-  onClick?: () => void;
   current?: boolean;
 }
 
@@ -96,6 +131,10 @@ export interface HeaderAccount {
   avatar?: string;
   detail?: string;
   groups?: Array<{ label?: string; links: HeaderAccountLink[] }>;
+  // Sign out, last: a form post to `signOutAction` (with `signOutFields`, a CSRF token say),
+  // which works with no script; else a link (`signOutHref`); else a button (`onSignOut`).
+  signOutAction?: string;
+  signOutFields?: Record<string, string>;
   onSignOut?: () => void;
   signOutHref?: string;
   signOutDisabled?: boolean;
@@ -114,10 +153,19 @@ export interface SiteHeaderProps {
   links?: "left" | "center" | "right";
   extras?: HeaderExtra[];
   // The theme button; on by default. `themeKey` is the single key the header binds to switch it
-  // ("T"), shown in its tip; leave it out where the site does not bind single keys.
+  // ("T"), shown in its tip; leave it out where the site does not bind single keys. A person's
+  // choice is kept in this browser (`themePrefKey`), in the site's cookie (`themeCookie`, so its
+  // server renders the next page in it) and by the site's own save (`onThemeSave`, the signed-in
+  // account); `themeInitial` is what the server rendered (theme-switch.md).
   theme?: boolean;
   themePrefKey?: string;
   themeKey?: string;
+  themeCookie?: string;
+  onThemeSave?: ThemeSave;
+  themeInitial?: ThemeChoice;
+  // The site's theme route: the theme is then the no-script form (ThemeForm), two submit buttons
+  // posting there, for a site that must switch with no script (dustinedwards.info's /theme).
+  themeAction?: string;
   // Signed in: the avatar menu. Signed out: Sign in holds its place, last.
   account?: HeaderAccount;
   signIn?: { href: string; label?: string };
@@ -135,9 +183,6 @@ export interface SiteHeaderProps {
   translucent?: boolean;
   // Clear at rest: no ground or line until the header is stuck (a scroll-state query).
   rest?: "clear";
-  // Who wires the menus: React when the header hydrates (the default), or the page's enhance() from
-  // capsomer/behavior/site-header when it is rendered on the server and never hydrated.
-  wiredBy?: "react" | "enhance";
   // Off only for a header drawn inside a frame that scrolls itself (a specimen).
   sticky?: boolean;
   // The skip link's target, first in the tab order ("#main").
@@ -149,10 +194,80 @@ export interface SiteHeaderProps {
   sheetEnd?: SheetPart;
   // The sheet's heading; default "<name> menu".
   sheetTitle?: string;
+  // The label over the plain section links in the sheet: "Pages", or "More" after grouped
+  // sections. null shows none (a one-list sheet).
+  sheetLinksLabel?: string | null;
+  // The section links' nav name: "Main" by default.
+  navLabel?: string;
+  // False on a page React never runs on in the browser (a public plane that does not hydrate):
+  // the header is written for capsomer/behavior/site-header's enhance() to wire, every panel opens
+  // with no script at all (popovertarget), and nothing here wires itself.
+  hydrate?: boolean;
   renderLink?: (props: LinkProps) => ReactNode;
 }
 
 export const plainLink = ({ children, ...props }: LinkProps) => <a {...props}>{children}</a>;
+
+// Whether React wires the header in the browser (SiteHeader's `hydrate`). Where it does not, the
+// parts leave every listener to the behavior module, so nothing is wired twice.
+export const HeaderHydrates = createContext(true);
+
+// One row of a panel or the sheet, as what it does: a link (`href`), a form that posts
+// (`action`), or a button (`onClick`). `onClose` closes the sheet first; a panel closes itself on
+// any row (data-panel-close).
+export function headerItem(
+  item: { href?: string; current?: boolean; label: string } & HeaderDoes,
+  children: ReactNode,
+  renderLink: (p: LinkProps) => ReactNode,
+  {
+    onClose,
+    ariaLabel,
+    disabled,
+  }: { onClose?: () => void; ariaLabel?: string; disabled?: boolean } = {},
+): ReactNode {
+  if (item.href)
+    return renderLink({
+      href: item.href,
+      "aria-current": item.current ? "page" : undefined,
+      "aria-label": ariaLabel,
+      onClick: onClose,
+      children,
+    });
+  const run = () => {
+    onClose?.();
+    item.onClick?.();
+  };
+  if (item.action)
+    return (
+      <form className="cap-site-header-form" method={item.method ?? "post"} action={item.action}>
+        {Object.entries(item.fields ?? {}).map(([name, value]) => (
+          <input key={name} type="hidden" name={name} value={value} />
+        ))}
+        <button
+          type={item.current ? "button" : "submit"}
+          data-panel-close=""
+          aria-current={item.current ? "true" : undefined}
+          aria-label={ariaLabel}
+          disabled={disabled}
+          onClick={run}
+        >
+          {children}
+        </button>
+      </form>
+    );
+  return (
+    <button
+      type="button"
+      data-panel-close=""
+      aria-current={item.current ? "true" : undefined}
+      aria-label={ariaLabel}
+      disabled={disabled}
+      onClick={run}
+    >
+      {children}
+    </button>
+  );
+}
 
 const svg = (body: ReactNode) => (
   <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
@@ -196,7 +311,9 @@ export function TipKeys({ keys }: { keys?: string }) {
 // description; a press hides it.
 export function HeaderTip({ text, keys }: { text: string; keys?: string }) {
   const tip = useRef<HTMLSpanElement>(null);
+  const hydrates = useContext(HeaderHydrates);
   useEffect(() => {
+    if (!hydrates) return;
     const el = tip.current;
     const trigger = el?.parentElement;
     if (!el || !trigger) return;
@@ -208,7 +325,7 @@ export function HeaderTip({ text, keys }: { text: string; keys?: string }) {
       trigger.removeEventListener("click", used);
       detach();
     };
-  }, []);
+  }, [hydrates]);
   return (
     <span
       ref={tip}
@@ -227,7 +344,8 @@ export function HeaderTip({ text, keys }: { text: string; keys?: string }) {
 }
 
 // A disclosure button and its panel, wired by the behavior module (the open state is the
-// platform's popover state, not React's).
+// platform's popover state, not React's). `popovertarget` opens the panel before any script runs,
+// or where none does; with script the behavior takes the click (it cancels the native toggle).
 export function Disclosure({
   id,
   className,
@@ -235,6 +353,8 @@ export function Disclosure({
   name,
   current,
   align,
+  size,
+  panelClassName,
   children,
   button,
 }: {
@@ -244,14 +364,18 @@ export function Disclosure({
   name?: string;
   current?: boolean;
   align?: "end";
+  size?: "wide";
+  panelClassName?: string;
   children: ReactNode;
   button: ReactNode;
 }) {
   const trigger = useRef<HTMLButtonElement>(null);
   const panel = useRef<HTMLDivElement>(null);
+  const hydrates = useContext(HeaderHydrates);
   useEffect(() => {
-    if (trigger.current && panel.current) return wirePanel(trigger.current, panel.current);
-  }, []);
+    if (hydrates && trigger.current && panel.current)
+      return wirePanel(trigger.current, panel.current);
+  }, [hydrates]);
   return (
     <>
       <button
@@ -260,6 +384,7 @@ export function Disclosure({
         className={className}
         data-cap-part="panel-trigger"
         data-current={current ? "" : undefined}
+        popoverTarget={id}
         aria-expanded="false"
         aria-controls={id}
         aria-label={name}
@@ -269,9 +394,12 @@ export function Disclosure({
       <div
         ref={panel}
         id={id}
-        className="cap-site-header-panel"
+        className={
+          panelClassName ? `cap-site-header-panel ${panelClassName}` : "cap-site-header-panel"
+        }
         popover="manual"
         data-align={align}
+        data-size={size}
         role="group"
         aria-label={label}
       >
@@ -296,28 +424,26 @@ export function GroupList({
           {g.label ? <div className="cap-site-header-panel-label">{g.label}</div> : null}
           <ul className="cap-site-header-panel-list">
             {g.links.map((l) => (
-              <li key={l.id ?? l.href}>
-                {renderLink({
-                  href: l.href,
-                  "aria-current": l.current ? "page" : undefined,
-                  "aria-label": l.count ? countName(l.label, l.count, l.countNote) : undefined,
-                  children: (
-                    <>
-                      {l.icon ? (
-                        <span className="cap-site-header-mark" aria-hidden="true">
-                          {l.icon}
-                        </span>
-                      ) : null}
-                      {l.label}
-                      {l.count ? " " : null}
-                      {l.count ? (
-                        <span className="cap-site-header-count" aria-hidden="true">
-                          {badgeText(l.count)}
-                        </span>
-                      ) : null}
-                    </>
-                  ),
-                })}
+              <li key={l.id ?? l.href ?? l.label}>
+                {headerItem(
+                  l,
+                  <>
+                    {l.icon ? (
+                      <span className="cap-site-header-mark" aria-hidden="true">
+                        {l.icon}
+                      </span>
+                    ) : null}
+                    {l.label}
+                    {l.count ? " " : null}
+                    {l.count ? (
+                      <span className="cap-site-header-count" aria-hidden="true">
+                        {badgeText(l.count)}
+                      </span>
+                    ) : null}
+                  </>,
+                  renderLink,
+                  { ariaLabel: l.count ? countName(l.label, l.count, l.countNote) : undefined },
+                )}
               </li>
             ))}
           </ul>
@@ -332,34 +458,34 @@ function SheetList({
   renderLink,
   onClose,
 }: {
-  links: HeaderLink[];
+  links: HeaderItem[];
   renderLink: (p: LinkProps) => ReactNode;
   onClose: () => void;
 }) {
   return (
     <ul className="cap-site-header-sheet-list">
       {links.map((l) => (
-        <li key={l.id ?? l.href}>
-          {renderLink({
-            href: l.href,
-            "aria-current": l.current ? "page" : undefined,
-            "aria-label": l.count ? countName(l.label, l.count, l.countNote) : undefined,
-            onClick: onClose,
-            children: (
-              <>
-                <span className="cap-site-header-sheet-icon" aria-hidden="true">
-                  {l.icon}
+        <li key={l.id ?? l.href ?? l.label}>
+          {headerItem(
+            l,
+            <>
+              <span className="cap-site-header-sheet-icon" aria-hidden="true">
+                {l.icon}
+              </span>
+              <span className="cap-site-header-sheet-name">{l.label}</span>
+              {l.count ? " " : null}
+              {l.count ? (
+                <span className="cap-site-header-count" aria-hidden="true">
+                  {badgeText(l.count)}
                 </span>
-                <span className="cap-site-header-sheet-name">{l.label}</span>
-                {l.count ? " " : null}
-                {l.count ? (
-                  <span className="cap-site-header-count" aria-hidden="true">
-                    {badgeText(l.count)}
-                  </span>
-                ) : null}
-              </>
-            ),
-          })}
+              ) : null}
+            </>,
+            renderLink,
+            {
+              onClose,
+              ariaLabel: l.count ? countName(l.label, l.count, l.countNote) : undefined,
+            },
+          )}
         </li>
       ))}
     </ul>
@@ -374,7 +500,7 @@ export function SheetGroup({
   onClose,
 }: {
   label?: string;
-  links: HeaderLink[];
+  links: HeaderItem[];
   renderLink?: (p: LinkProps) => ReactNode;
   onClose: () => void;
 }) {

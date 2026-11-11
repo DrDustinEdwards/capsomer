@@ -3,13 +3,18 @@ import { attach as attachTip } from "../tooltip/tooltip.ts";
 import { themeColorTags } from "./theme-server.ts";
 import {
   applyTheme,
+  chooseTheme,
   effectiveTheme,
   readTheme,
+  syncServedTheme,
   themeButtonLabel,
   THEME_PREF,
   toggleTheme,
   type ThemeChoice,
+  type ThemeSave,
 } from "./theme-switch.ts";
+
+export type { ThemeChoice, ThemeSave };
 
 export interface ThemeSwitchProps {
   // The localStorage key; "cap-theme" by default.
@@ -19,6 +24,11 @@ export interface ThemeSwitchProps {
   // What the server rendered (from a cookie), before the stored choice is read. Leave it out
   // and the control shows the operating system's theme once it mounts.
   initial?: ThemeChoice;
+  // Where a person's choice is kept besides this browser (chooseTheme in theme-switch.ts): the
+  // site's cookie, so its server renders the next page in that theme, and the site's own save for
+  // the signed-in account. With `cookie` the switch starts from the server's answer.
+  cookie?: string;
+  onSave?: ThemeSave;
 }
 
 const Sun = () => (
@@ -38,11 +48,20 @@ const CHOICES: Array<{ value: ThemeChoice; label: string; icon: ReactNode }> = [
   { value: "dark", label: "Dark", icon: <Moon /> },
 ];
 
-export function ThemeSwitch({ prefKey = THEME_PREF, legend = "Theme", initial }: ThemeSwitchProps) {
+export function ThemeSwitch({
+  prefKey = THEME_PREF,
+  legend = "Theme",
+  initial,
+  cookie,
+  onSave,
+}: ThemeSwitchProps) {
   const name = useId();
   const [choice, setChoice] = useState<ThemeChoice | null>(initial ?? null);
+  // A site that saves the choice keeps it on its server, whose answer comes first.
+  const hasSave = Boolean(onSave);
 
   useEffect(() => {
+    if (cookie || hasSave) syncServedTheme(prefKey);
     // Remembered, else what the page shows: the system's theme on a first visit.
     // oxlint-disable-next-line react/set-state-in-effect -- the stored and shown theme are read after mount, so the server and the first client render agree
     setChoice(readTheme(prefKey) ?? effectiveTheme());
@@ -52,10 +71,15 @@ export function ThemeSwitch({ prefKey = THEME_PREF, legend = "Theme", initial }:
     };
     document.addEventListener("cap-theme", onTheme);
     return () => document.removeEventListener("cap-theme", onTheme);
-  }, [prefKey]);
+  }, [prefKey, cookie, hasSave]);
 
   return (
-    <fieldset className="cap-theme" data-cap="theme-switch">
+    <fieldset
+      className="cap-theme"
+      data-cap="theme-switch"
+      data-cap-pref={prefKey}
+      data-cap-cookie={cookie}
+    >
       <legend className="cap-sr-only">{legend}</legend>
       <div className="cap-theme-options">
         {CHOICES.map((c) => (
@@ -67,7 +91,7 @@ export function ThemeSwitch({ prefKey = THEME_PREF, legend = "Theme", initial }:
               checked={choice === c.value}
               onChange={() => {
                 setChoice(c.value);
-                applyTheme(c.value, { key: prefKey });
+                chooseTheme(c.value, { key: prefKey, cookie, onSave });
               }}
             />
             {c.icon}
@@ -89,6 +113,11 @@ export interface ThemeButtonProps {
   // What the server rendered (from a cookie); leave it out and the label follows the page once
   // it mounts. The icon follows the page by CSS either way.
   initial?: ThemeChoice;
+  cookie?: string;
+  onSave?: ThemeSave;
+  // False on a page React never runs on in the browser: the button is written for the behavior
+  // module's enhance() to wire (its key and cookie as data-cap-pref and data-cap-cookie).
+  hydrate?: boolean;
 }
 
 // The 24-box icons the header's controls use (1.6 stroke): a moon while the page is light (press
@@ -157,11 +186,17 @@ export function ThemeButton({
   shortcut,
   className,
   initial,
+  cookie,
+  onSave,
+  hydrate = true,
 }: ThemeButtonProps) {
   const [showing, setShowing] = useState<ThemeChoice>(initial ?? "light");
+  const hasSave = Boolean(onSave);
   const button = useRef<HTMLButtonElement>(null);
   const tip = useRef<HTMLSpanElement>(null);
   useEffect(() => {
+    if (!hydrate) return;
+    if (cookie || hasSave) syncServedTheme(prefKey);
     const t = readTheme(prefKey);
     if (t) applyTheme(t, { key: prefKey, remember: false });
     // oxlint-disable-next-line react/set-state-in-effect -- the shown theme is read from the page after mount, so the server and the first client render agree
@@ -176,14 +211,14 @@ export function ThemeButton({
       document.removeEventListener("cap-theme", onTheme);
       media.removeEventListener("change", onSystem);
     };
-  }, [prefKey]);
+  }, [prefKey, cookie, hasSave, hydrate]);
   useEffect(() => {
     const b = button.current;
-    if (!b || !tip.current) return;
+    if (!hydrate || !b || !tip.current) return;
     const detach = attachTip(b, tip.current);
     b.removeAttribute("aria-describedby");
     return detach;
-  }, []);
+  }, [hydrate]);
   const label = themeButtonLabel(showing);
   return (
     <button
@@ -192,9 +227,11 @@ export function ThemeButton({
       className={className ? `cap-theme-button ${className}` : "cap-theme-button"}
       data-cap="theme-switch"
       data-variant="button"
-      data-cap-ready=""
+      data-cap-ready={hydrate ? "" : undefined}
+      data-cap-pref={prefKey}
+      data-cap-cookie={cookie}
       aria-label={label}
-      onClick={() => setShowing(toggleTheme(prefKey))}
+      onClick={hydrate ? () => setShowing(toggleTheme(prefKey, { cookie, onSave })) : undefined}
     >
       {BUTTON_MOON}
       {BUTTON_SUN}
