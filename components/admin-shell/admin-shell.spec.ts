@@ -235,6 +235,12 @@ eachTheme((theme) => {
     const control2 = await toggle.boundingBox();
     expect(control2?.x).toBe(control?.x);
     expect(control2?.y).toBe(control?.y);
+    // The shell binds `[` itself: it expands and collapses the menu from anywhere but a field.
+    await page.locator("#cap-main").focus();
+    await page.keyboard.press("[");
+    await expect(page.locator(".cap-admin")).not.toHaveAttribute("data-menu", "collapsed");
+    await page.keyboard.press("[");
+    await expect(page.locator(".cap-admin")).toHaveAttribute("data-menu", "collapsed");
     await page.reload();
     await expect(page.locator(".cap-admin")).toHaveAttribute("data-menu", "collapsed");
     await toggle.focus();

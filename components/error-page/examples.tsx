@@ -3,7 +3,7 @@
 import { StrictMode, type ReactNode } from "react";
 import { createRoot } from "react-dom/client";
 import { SiteHeader } from "../site-header/site-header.react.tsx";
-import { ErrorPage } from "./error-page.react.tsx";
+import { ErrorPage, SignedOutPage } from "./error-page.react.tsx";
 
 const routeError = (status: number, statusText: string) => ({
   status,
@@ -36,6 +36,41 @@ const SPECIMENS: Record<string, () => ReactNode> = {
     <ErrorPage error={routeError(404, "Not Found")} home="#home" siteHeader={header} />
   ),
   gone: () => <ErrorPage error={routeError(410, "Gone")} home="#home" siteHeader={header} />,
+  "gone-to": () => (
+    <ErrorPage
+      error={routeError(410, "Gone")}
+      home="#home"
+      gone={{ href: "#notes", label: "Read the notes" }}
+      text="This note was withdrawn by its author."
+      siteHeader={header}
+    />
+  ),
+  actions: () => (
+    <ErrorPage
+      error={routeError(404, "Not Found")}
+      home="#home"
+      siteHeader={header}
+      actions={
+        <a className="cap-btn" href="#projects">
+          See the projects
+        </a>
+      }
+    />
+  ),
+  hero: () => (
+    <ErrorPage
+      error={routeError(404, "Not Found")}
+      home="#home"
+      siteHeader={header}
+      hero={(w) => (
+        <div className="specimen-hero">
+          <h1>{w.title}</h1>
+        </div>
+      )}
+    />
+  ),
+  "signed-out": () => <SignedOutPage app="Example Co admin" signIn="#home" byChoice access />,
+  "session-ended": () => <SignedOutPage app="Example Co admin" signIn="#home" byChoice={false} />,
   server: () => <ErrorPage error={new Error("D1 timed out")} home="#home" siteHeader={header} />,
   database: () => (
     <ErrorPage error={routeError(503, "Database unavailable")} home="#home" siteHeader={header} />
