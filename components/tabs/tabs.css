@@ -92,7 +92,8 @@
     color: var(--muted);
     font-family: var(--ui);
     font-size: var(--cap-tab-fs, var(--fs-body));
-    font-weight: 500;
+    /* A site whose tabs are all one weight (bsw's 600) sets --cap-tab-weight. */
+    font-weight: var(--cap-tab-weight, 500);
     line-height: 1.2;
     text-decoration: none;
     white-space: nowrap;
@@ -228,13 +229,14 @@
     --cap-tab-tone: var(--_tone);
     --_soft: var(--cap-tab-mark, var(--surface));
     padding: 6px;
-    border-radius: var(--radius-full);
+    /* --cap-tabs-tray-radius and --cap-tab-mark-radius: a squarer tray and pill (bsw's 12px and 8px). */
+    border-radius: var(--cap-tabs-tray-radius, var(--radius-full));
     background: var(--cap-tabs-tray, var(--sunken));
     /* A sideways drag is the pill's; an up or down swipe still scrolls the page. */
     touch-action: pan-y;
 
     & > .cap-tab {
-      border-radius: var(--radius-full);
+      border-radius: var(--cap-tab-mark-radius, var(--radius-full));
       padding-inline: calc(var(--pad-x) * 1.5);
       &[aria-selected="true"],
       &[aria-current="page"] {
@@ -250,7 +252,7 @@
         border-color: transparent;
         background: none;
         box-shadow: none;
-        font-weight: 500;
+        font-weight: var(--cap-tab-weight, 500);
       }
       & > .cap-tab[data-near] {
         border-color: var(--cap-tab-mark-edge, var(--_tone));
@@ -363,7 +365,7 @@
            follows the pointer (tabs.ts sets --cap-pill-start and --cap-pill-end) and does not ease. */
         &[data-variant="pill"]::before {
           border-color: var(--cap-tab-mark-edge, var(--_tone));
-          border-radius: var(--radius-full);
+          border-radius: var(--cap-tab-mark-radius, var(--radius-full));
           background: var(--_soft);
           box-shadow: var(--cap-tab-mark-shadow, var(--shadow-xs));
           transition:
