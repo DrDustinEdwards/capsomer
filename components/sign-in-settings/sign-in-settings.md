@@ -5,7 +5,7 @@ summary: How a signed-in person manages their account, the same on every site, i
 parts: [css, react]
 tool: native + site-runtime's sign-in
 states: [every part, new account, one passkey, email change sent, email change refused, old sign-in, deletion blocked, hand-over field, read only, passkey offer]
-added: 0.94.0
+added: 0.93.0
 source: Foxhound app/components/sign-in-settings.tsx and app/routes/app/settings/account.tsx, Foxing app/components/settings/account-sections.tsx and app/routes/passkey-offer.tsx, txasm app/routes/account.tsx (shared-code audit, 2026-11-11, item 20)
 replaces:
   - "SignInMethodsPanel\\("
@@ -32,7 +32,7 @@ A site's own profile fields (a username, a business profile) and its own account
 
 ## The default and its reason
 
-- **One panel per part, in this order:** email, passkeys, Google and Apple (only where the site offers them), devices, history, delete. Most-used first; the one that cannot be undone last.
+- **One panel per part, in this order:** email, passkeys, Google and Apple (only where the site offers them, titled by the ones it offers), devices, history, delete. Most-used first; the one that cannot be undone last.
 - **The email change takes two links**, the current address first, so a stolen session alone cannot move the account. The page says only that the first link went, never whether the new address is taken.
 - **Passkeys rename in place and remove at once.** The email link always works, so removing one cannot lock anyone out; one passkey alone gets the "Add a second passkey" note. Each time the list loads, the browser's passkey provider is told which ones the site still accepts (the WebAuthn Signal API), and a removed one is signaled at once.
 - **Google and Apple join only here**, while signed in, never by a matching email at sign-in.

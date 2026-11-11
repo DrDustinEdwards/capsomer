@@ -431,10 +431,12 @@ export function ProviderSettings({
 }) {
   const { busy, error, run } = useClientChange({ signInAgainHref, revalidate, readOnly });
   if (providers.length === 0) return null;
+  // Only the providers this site offers: "Google", "Apple", or "Google and Apple".
+  const names = providers.map((provider) => PROVIDER_NAME[provider.id]);
   return (
     <Panel
-      title="Google and Apple"
-      description="Sign in with Google or Apple once you connect it here."
+      title={names.join(" and ")}
+      description={`Sign in with ${names.join(" or ")} once you connect it here.`}
     >
       <div className="cap-account-stack">
         <ul className="cap-account-list">
