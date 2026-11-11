@@ -171,4 +171,44 @@
       outline: 2px solid Highlight;
     }
   }
+
+  /* Groups: several lists an item moves within and between, each under its heading with its
+     count; an empty list keeps a drop target the height of a row. */
+  .cap-sortable-groups {
+    display: grid;
+    gap: var(--space-5);
+
+    &[data-sorting] {
+      cursor: grabbing;
+      user-select: none;
+    }
+  }
+  .cap-sortable-group {
+    display: grid;
+    gap: var(--space-2);
+  }
+  .cap-sortable-group-label {
+    margin: 0;
+    font-size: var(--fs-body);
+    font-weight: var(--weight-heading);
+  }
+  .cap-sortable-group-count {
+    color: var(--muted);
+    font-size: var(--fs-detail);
+    font-weight: 400;
+    font-variant-numeric: var(--figures);
+  }
+  .cap-sortable-empty {
+    display: grid;
+    align-items: center;
+    min-block-size: var(--row-h, 2.75rem);
+    padding-inline: var(--space-3);
+    border: 1px dashed var(--line-strong);
+    border-radius: var(--radius-m);
+    color: var(--muted);
+    font-size: var(--fs-detail);
+  }
+  .cap-sortable-steps .cap-select {
+    inline-size: auto;
+  }
 }

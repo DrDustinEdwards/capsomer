@@ -81,6 +81,92 @@ export function keyTarget(key: string, index: number, count: number): number | n
 }
 
 // ---------------------------------------------------------------------------------------
+// Groups: items that move within and between several lists (the sections of a book, the
+// sessions of a program). The order is a list of groups, each with its items' ids.
+
+export interface Group {
+  id: string;
+  items: readonly string[];
+}
+
+export interface GroupMove {
+  id: string;
+  fromGroup: string;
+  from: number;
+  toGroup: string;
+  to: number;
+}
+
+// Where an item is: its group's index and its own.
+export function locate(
+  groups: readonly Group[],
+  id: string,
+): { group: number; index: number } | null {
+  for (let g = 0; g < groups.length; g += 1) {
+    const index = groups[g]!.items.indexOf(id);
+    if (index >= 0) return { group: g, index };
+  }
+  return null;
+}
+
+// The groups with `id` taken out of its group and put at `to` in `toGroup` (clamped).
+export function moveAcross(
+  groups: readonly Group[],
+  id: string,
+  toGroup: string,
+  to: number,
+): Group[] {
+  if (!locate(groups, id) || !groups.some((g) => g.id === toGroup))
+    return groups.map((g) => ({ ...g, items: [...g.items] }));
+  return groups.map((g) => {
+    const items = g.items.filter((x) => x !== id);
+    if (g.id === toGroup) items.splice(Math.max(0, Math.min(items.length, to)), 0, id);
+    return { ...g, items };
+  });
+}
+
+// Where a key moves a lifted item across groups: Up and Down step one place, from the first
+// place of a group to the end of the one before and from the last to the start of the next (an
+// empty group is a place too); Home and End go to the ends of its own group. Null for any other
+// key, and at the very first or last place.
+export function keyTargetAcross(
+  key: string,
+  groups: readonly Group[],
+  id: string,
+): { group: number; index: number } | null {
+  const at = locate(groups, id);
+  if (!at) return null;
+  const size = groups[at.group]!.items.length;
+  if (key === "Home") return { group: at.group, index: 0 };
+  if (key === "End") return { group: at.group, index: size - 1 };
+  if (key === "ArrowUp" || key === "ArrowLeft") {
+    if (at.index > 0) return { group: at.group, index: at.index - 1 };
+    if (at.group === 0) return null;
+    return { group: at.group - 1, index: groups[at.group - 1]!.items.length };
+  }
+  if (key === "ArrowDown" || key === "ArrowRight") {
+    if (at.index < size - 1) return { group: at.group, index: at.index + 1 };
+    if (at.group === groups.length - 1) return null;
+    return { group: at.group + 1, index: 0 };
+  }
+  return null;
+}
+
+export const groupText = {
+  help: "To move an item with the keyboard, press Space or Enter on its handle, move it with the arrow keys, into the next or previous section at either end, and press Space or Enter to drop it. Escape puts it back.",
+  where: (label: string, group: string, pos: number, count: number) =>
+    `${label}: ${group}, position ${pos} of ${count}.`,
+  lift: (label: string, group: string, pos: number, count: number) =>
+    `Picked up ${label}. ${group}, position ${pos} of ${count}. Arrow keys move it, Space drops it, Escape puts it back.`,
+  drop: (label: string, group: string, pos: number, count: number) =>
+    `Dropped ${label} in ${group} at position ${pos} of ${count}.`,
+  cancel: (label: string, group: string, pos: number, count: number) =>
+    `Put ${label} back in ${group} at position ${pos} of ${count}.`,
+  moved: (label: string, group: string, pos: number, count: number) =>
+    `Moved ${label} to ${group}, position ${pos} of ${count}.`,
+};
+
+// ---------------------------------------------------------------------------------------
 // A pointer drag, shared with the tree. It starts once the pointer has moved a few pixels
 // (so a click stays a click), follows the pointer, and ends on release (drop), or on
 // Escape or a canceled pointer (cancel). After a drag, the click the release makes is

@@ -4,8 +4,9 @@ title: Sortable list
 summary: Rows or cards a person puts in order, by dragging a grip, by the keyboard or by Move up and Move down, announcing each move and handing the new order to the host.
 parts: [css, behavior, react]
 tool: own JavaScript
-states: [rows, cards, an item up by keyboard, an item under the pointer, a grip under the pointer, the ends' buttons disabled, as delivered with no script inside a form, in React inside a form]
+states: [rows, cards, an item up by keyboard, an item under the pointer, a grip under the pointer, the ends' buttons disabled, as delivered with no script inside a form, in React inside a form, groups: moving within and between sections]
 added: 0.7.0
+updated: 0.100.0
 source: carrel/research/design-writing-tools.md (4.2, the corkboard) and carrel/rulings/writing-tools-2026-10-10.md (point 7)
 replaces:
   - "@dnd-kit/sortable"
@@ -23,9 +24,15 @@ One list whose order is the point: the scenes of a chapter, a corkboard of cards
 - A flat list a person puts in order: rows, or cards in a wrapping grid.
 - Carrel's corkboard and a series' posts; any "drag to reorder".
 
+## Groups
+
+`SortableGroups` (React) holds several lists, each under its heading with its count, and an item moves within and between them (0.100.0): picked up, the arrows carry it past a list's end into the next (an empty list is a place too, with its own sentence); Move up and Move down step the same way; "Move to" sends it to the end of another list in one step; a pointer drags it into any list, an empty one included. Each move is said with the list's name ("Moved Field notes to Posters, position 1 of 1."). `onChange(groups, move)` gives the new order and the move (`fromGroup`, `from`, `toGroup`, `to`); the server applies the whole arrangement. The pure functions (`locate`, `moveAcross`, `keyTargetAcross`) are exported for a server's own check.
+
+`announce` (on both) sends each sentence to the page's own live region instead of the component's, for a page with one region for its lists and forms. Focus stays on the control that moved the item, on a working control at the ends.
+
 ## When not to
 
-- Items at more than one level, or moving between levels: the tree.
+- Items at more than one level, or moving between levels: the tree. Items in several flat lists that move between them (the sections of a book, the sessions of a program) are this component's groups.
 - Sorting by a column: a table's sort, which changes the view, not the order.
 - A list read in a fixed order (by date, by status): a row list.
 
