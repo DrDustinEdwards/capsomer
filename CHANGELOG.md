@@ -2,7 +2,20 @@
 
 Each release names every removed or renamed token or class, and every changed HTML contract.
 
-## [Unreleased]
+## [0.93.0]
+
+From the sites, batch 9: an inspector, React Router bindings, a work queue with Later, a role grid and a Compare that works before the script runs.
+
+- **Inspector: a new component** (`capsomer/react/inspector`, `capsomer/inspector.css`), from Carrel's editor. Everything about a text that is not the text, in tabs beside the writing on a wide screen and in a sheet from the bottom on a phone; the head (saving, publishing) stays in the page; a tab with nothing to show is left out; `initialTab` opens a tab (and the sheet) from the address; `wideQuery` matches the page's own grid. New classes: `.cap-inspector`, `.cap-inspector-tabs`, `.cap-inspector-panel`, `.cap-inspector-open`, `.cap-inspector-sheet`.
+- **React Router bindings in one place** (`capsomer/react/router`, `capsomer/behavior/router`): `routerRenderForm` for any part's `renderForm`, `RouterConfirmModal` (the router's Form, and Cancel that keeps the scroll position), `useRouterRowForm` (each row its own fetcher), `revalidateUnlessOnly` and `onlyParamsChanged` (skip a loader when only a display parameter changed; from dustinedwards.info's media library). `routerRenderLink` stays in `capsomer/react/link`.
+- **Attention list: a person's work queue with Later** (`NeedsList`, from Carrel's Home). Blocking, then Waiting for you, in one row list; each row's main action and Later, which sets it aside until 8 am tomorrow in the person's zone, moves focus to the next row and offers Undo; the Later view with Bring back; `l` on a row, obeying `data-cap-single-keys`; the keys line. New types and helpers in `capsomer/behavior/attention-list`: `Need`, `NeedUrgency`, `needsShown`, `needCount`, `focusNeighbor`, and the inbox feed's `Inbox`, `InboxApp`, `InboxItem`, `InboxSeverity`, `severityOf`, `worstSeverity`, `severityTone` (from Capsid's inbox). New classes: `.cap-need-row`, `.cap-need-group`, `.cap-need-head`, `.cap-need-count`, `.cap-need-keys`, `.cap-need-key`. A need's title is a full target on a touch screen.
+- **Row list: `RowForm` and `usePlainRowForm`**, the shape a row action's form takes (React Router's is `useRouterRowForm`).
+- **Time: `knownZone(zone)` and `laterUntil(now, zone, hour)`** (8 am the next day in the person's zone, right across a summer-time change; from Carrel).
+- **History list: Compare works before the script runs.** The pick boxes belong to a GET form in the bar (`form` attribute), and a submit button stands in for the Compare link until the script is live, posting `?compare=<id>&compare=<id>`. HTML contract change: the bar gains `form` and `button[data-cap-part="compare-submit"]`, the boxes gain `form`, and the link may be delivered `hidden` (the module shows it). New: `comparePicks(params, at)` reads either address older first, `defaultPicked` keeps a compare view's pair ticked, `messageSummary(message, path)` turns a commit message into a line's summary (Carrel's `revisionLabel`), and `changeText(before, after)` says an audit row's change in words (dustinedwards.info's lab, which called a removal "Changed" and missed a dropped field).
+- **People and roles: the role grid** (`RoleGrid`, from Carrel's People page): people by scopes, a role select in each cell that saves on change, Disable with Undo, a per-row Save before the script runs, the Owner's row spanning the scopes. New helpers: `personFromParam`, `manageLead`, `listText`, `pluralTitle`, `roleSavedText`, `personName` (from dustinedwards.info's lab). New classes: `.cap-role-grid`, `.cap-role-grid-wrap`, `.cap-role-person`, `.cap-role-email`, `.cap-role-pills`, `.cap-role-actions`.
+- **The lightbox and site header specs take over dustinedwards.info's browser cases** for Capsomer's own behavior (a modal viewer, focus on open, the original image; a panel's toggle and `aria-current`), and the test helpers gain `countCssRules(page)`, which counts nested rules, so a states page missing its stylesheet fails.
+
+No token or class was removed or renamed.
 
 ## [0.92.0]
 
