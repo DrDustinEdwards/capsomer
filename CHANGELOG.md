@@ -4,6 +4,8 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+- **The showcase site enforces Trusted Types.** site-runtime 0.132.0 (dev dependency) sets the capsomer registry entry's `trustedTypes` to `true`, so `_headers` and the Worker send `require-trusted-types-for 'script'` in the enforced Content-Security-Policy. No token, class or HTML contract changes.
+
 ## [0.99.0]
 
 Shared components from the network audit: parts each site wrote for itself, now in Capsomer so every site behaves the same.
