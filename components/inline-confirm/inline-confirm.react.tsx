@@ -1,13 +1,5 @@
-import {
-  useEffect,
-  useId,
-  useRef,
-  useState,
-  useSyncExternalStore,
-  type ComponentType,
-  type FormHTMLAttributes,
-  type ReactNode,
-} from "react";
+import { useEffect, useId, useRef, useState, useSyncExternalStore, type ReactNode } from "react";
+import type { FormComponent } from "../read-only-form/read-only-form.react.tsx";
 
 const noSubscribe = () => () => {};
 const useMounted = () =>
@@ -17,7 +9,7 @@ const useMounted = () =>
     () => false,
   );
 
-export type FormComponent = ComponentType<FormHTMLAttributes<HTMLFormElement>>;
+export type { FormComponent };
 
 export interface InlineConfirmProps {
   // The first button's words ("Remove member"). Name the thing when the row does not.
