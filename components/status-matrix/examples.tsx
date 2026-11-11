@@ -6,6 +6,12 @@ import { MatrixKey, StatusMatrix, type MatrixCell } from "./status-matrix.react.
 const done: MatrixCell = { tone: "ok", label: "Done" };
 const partial = (reason: string): MatrixCell => ({ tone: "warn", label: "Partial", reason });
 const failing = (reason: string): MatrixCell => ({ tone: "crit", label: "Failing", reason });
+const unmeasured = (reason: string): MatrixCell => ({
+  tone: "muted",
+  glyph: "unknown",
+  label: "Could not measure",
+  reason,
+});
 
 const columns = [
   "example.com",
@@ -48,7 +54,7 @@ const rows = [
       "docs.example.com": done,
       "shop.example.com": done,
       "blog.example.com": partial("Last dump 30 hours old"),
-      "api.example.com": done,
+      "api.example.com": unmeasured("The backup check timed out"),
     },
   },
 ];
@@ -63,6 +69,7 @@ if (el)
           { tone: "ok", label: "Done" },
           { tone: "warn", label: "Partial" },
           { tone: "crit", label: "Failing" },
+          { tone: "muted", glyph: "unknown", label: "Could not measure" },
         ]}
       />
     </StrictMode>,

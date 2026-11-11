@@ -4,7 +4,7 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
-## [0.104.0]
+## [0.105.0]
 
 - **Error page: a site's title band (`hero`) runs the page's width.** The band shrank to its content (about 480px on a 1280px page) because the page centers its children; with `hero` the page now stretches them and the body keeps its 48rem column, centered. New token `--error-page-body-pad-block` (default 0): the space above and below the sentence and the ways out under a `hero` band. No other token, class or HTML contract changes.
 - **Sortable list: tokens for a narrow column and a plain empty place.** `--sortable-item-wrap` (default `nowrap`) and `--sortable-body-basis` (`auto`) let a row's buttons drop under its content (`wrap` and `100%`), `--sortable-steps-gap` (`--space-1`), `--sortable-body-pad-inline` (a stack item's content inset) and `--sortable-empty-pad` and `--sortable-empty-border` (the empty place; `0` and `0` leave only its words). Every default is today's value; nothing is removed or renamed.
@@ -13,6 +13,18 @@ Each release names every removed or renamed token or class, and every changed HT
 - **Tooltip `as="span"`.** The tip can be a `<span>`, valid inside a `<p>`. `Time tip` now renders through `Tooltip` with it; its markup is unchanged.
 - **Prose tables: a row header keeps the rows' hairline.** The 2px `--prose-table-rule` is on `thead th` only; a `th` in the body (a row header) had it too.
 - **Scroll-driven animations survive a minifier.** The scroll fades (tab rows, anchor bar, header links row, prose tables), the truncated label, the letterhead's header fade and 0.99.0's Reveal are written as longhands with `animation-duration: auto`. Lightning CSS, which Vite minifies with, folded the `animation` shorthand and its timeline into one with a 0s duration, which Chromium runs as finished: a wide table showed both fades at rest, and its first letters were faded.
+
+## [0.104.0]
+
+The follow-ups from moving the sites onto shared components: the parts Carrel, Foxing, Foxhound, bsw and the Portal still drew for themselves.
+
+- **New: search suggestions** (`capsomer/search-suggest.css`, `capsomer/behavior/search-suggest`, `capsomer/react/search-suggest`). A site's search box that suggests pages as a person types: the search field's GET form still searches, with no script too, and a suggestion is a page to go to. One behavior module (`attachSuggest`, `enhance`) on the shared listbox in input mode serves React and a page that does not hydrate, in place of Foxing's two copies (search-box.tsx and its island). New classes `.cap-search-suggest`, `.cap-search-suggest-list`.
+- **Search field: `labelHidden`** (React `SearchField` and `Field`): the label is read and not shown, for a search box whose icon and place make it plain. Every other field shows its label.
+- **Fields side by side: `.cap-fields`.** As many columns of at least `--fields-min` (16rem) as fit, lined up on their controls whatever help one carries, a checkbox among them level with the inputs. Carrel's `.app-fields` moves here.
+- **Card inside a sortable list's card item.** A `.cap-card` as a `.cap-sortable-body`'s content drops its own edge, padding, surface and lift, since the item is already the card's box; its regions and stretched link stay. Carrel's corkboard cards move onto the card.
+- **Attention list: `reading`** (React). While the data is read again the last rows stay, the section is `aria-busy` and the "Reading again" spinner takes the place of `read`, as a panel's `reading` does. Foxhound's admin overview drops its own wrapper and spinner.
+- **Status matrix: `glyph`** on a cell and a key item, in place of the tone's. A check that could not measure is `tone: "muted"` with `glyph: "unknown"`, a question mark, neither a pass nor a failure; the Portal's Completeness grid used the info glyph.
+- **Error page: `homeIcon`** (React), an icon after the home link's words (an `svg` with `data-icon="end"`), for a site whose buttons that go somewhere carry an arrow (bsw).
 
 ## [0.103.1]
 
