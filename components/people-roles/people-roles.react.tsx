@@ -1,12 +1,4 @@
-import {
-  useEffect,
-  useId,
-  useRef,
-  useState,
-  useSyncExternalStore,
-  type FormEvent,
-  type ReactNode,
-} from "react";
+import { useEffect, useId, useRef, useState, type FormEvent, type ReactNode } from "react";
 import { Button } from "../button/button.react.tsx";
 import { useOptionalMessage } from "../message/message.react.tsx";
 import { Select } from "../select/select.react.tsx";
@@ -39,6 +31,7 @@ import {
   type RoleScope,
   type TitleOption,
 } from "./people-roles.ts";
+import { useHydrated } from "../hooks/hooks.react.tsx";
 
 export type { HistoryEntry, PersonRow, RoleGridPerson, RoleOption, RoleScope, TitleOption };
 
@@ -661,15 +654,6 @@ function Field({
 }
 
 // ---- RoleGrid: people by scopes, a role in each cell --------------------------------------
-
-const noSubscribe = () => () => {};
-function useHydrated(): boolean {
-  return useSyncExternalStore(
-    noSubscribe,
-    () => true,
-    () => false,
-  );
-}
 
 export interface RoleGridProps {
   people: RoleGridPerson[];

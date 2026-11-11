@@ -6,7 +6,6 @@ import {
   type FormEvent,
   type ReactNode,
   useLayoutEffect,
-  useSyncExternalStore,
 } from "react";
 import { BulkBar } from "../bulk-bar/bulk-bar.react.tsx";
 import type { BulkItem, BulkOutcome } from "../bulk-bar/bulk-bar.ts";
@@ -22,9 +21,7 @@ import {
 } from "./content.ts";
 import type { FormComponent } from "../plain-form/plain-form.react.tsx";
 import { markup } from "../trusted-html/trusted-html.ts";
-
-// For useSyncExternalStore's hydration flag: nothing to subscribe to.
-const noSubscribe = () => () => {};
+import { useHydrated } from "../hooks/hooks.react.tsx";
 
 // The loop every shared content component runs (posts, media, mentions): a post from inside the
 // list goes through the host's `submit` when there is one, or the browser's own form post when
@@ -158,11 +155,7 @@ export function useIntents({
 }: IntentsOptions): Intents {
   const message = useOptionalMessage();
   // False on the server and while hydrating, true once hydrated.
-  const mounted = useSyncExternalStore(
-    noSubscribe,
-    () => true,
-    () => false,
-  );
+  const mounted = useHydrated();
   const namesRef = useRef(names);
   useLayoutEffect(() => {
     namesRef.current = names;

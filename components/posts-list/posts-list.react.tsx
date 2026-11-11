@@ -7,7 +7,6 @@ import {
   type FocusEvent,
   type FormEvent,
   type KeyboardEvent,
-  useSyncExternalStore,
 } from "react";
 import type {
   ContentLabels,
@@ -58,9 +57,7 @@ import {
   type RowAction,
 } from "./posts-list.ts";
 import type { ConfirmRequest } from "../content/content.ts";
-
-// For useSyncExternalStore's hydration flag: nothing to subscribe to.
-const noSubscribe = () => () => {};
+import { useHydrated } from "../hooks/hooks.react.tsx";
 
 export { contentStatus };
 export type { ContentLabels, IntentResult, PostRow, PostsData, ScheduledUpdateView, SubmitIntent };
@@ -409,11 +406,7 @@ export function PostsList({
   const { noun, plural } = nounsOf(labels);
   const title = plural.charAt(0).toUpperCase() + plural.slice(1);
   // False on the server and while hydrating, true once hydrated.
-  const mounted = useSyncExternalStore(
-    noSubscribe,
-    () => true,
-    () => false,
-  );
+  const mounted = useHydrated();
   // The time the list was drawn, when the page does not pass one.
   const [drawnAt] = useState(() => Date.now());
   const clock = now ?? drawnAt;
@@ -1006,11 +999,7 @@ export function PostScheduledUpdate({
   const names = useMemo(() => new Map([[data.id, name]]), [data.id, name]);
   const intents = useIntents({ action, Form, submit, result, names, cancelHref: action });
   // False on the server and while hydrating, true once hydrated.
-  const mounted = useSyncExternalStore(
-    noSubscribe,
-    () => true,
-    () => false,
-  );
+  const mounted = useHydrated();
   const [moving, setMoving] = useState<Moving | null>(null);
   // The time the list was drawn, when the page does not pass one.
   const [drawnAt] = useState(() => Date.now());

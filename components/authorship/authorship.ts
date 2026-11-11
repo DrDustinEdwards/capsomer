@@ -7,6 +7,7 @@
 import { escapeHtml as esc } from "@dustinedwards/site-runtime/html";
 import { countWords } from "../draft-compare/draft-compare.ts";
 import { syncWord } from "../switch/switch.ts";
+import { readStored, writeStored } from "../hooks/hooks.ts";
 
 export type Kind = "you" | "ai" | "quoted";
 export const KINDS: readonly Kind[] = ["you", "ai", "quoted"];
@@ -103,20 +104,12 @@ export const STORAGE_KEY = "cap-authorship";
 const READY = "data-cap-ready";
 
 function stored(): boolean | null {
-  try {
-    const v = localStorage.getItem(STORAGE_KEY);
-    return v === "on" ? true : v === "off" ? false : null;
-  } catch {
-    return null;
-  }
+  const v = readStored(STORAGE_KEY);
+  return v === "on" ? true : v === "off" ? false : null;
 }
 
 function remember(shown: boolean): void {
-  try {
-    localStorage.setItem(STORAGE_KEY, shown ? "on" : "off");
-  } catch {
-    // Private windows and blocked storage: the choice is just not remembered.
-  }
+  writeStored(STORAGE_KEY, shown ? "on" : "off");
 }
 
 // Every run's words, counted once: text inside a run belongs to the nearest run around it, a

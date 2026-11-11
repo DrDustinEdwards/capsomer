@@ -9,13 +9,10 @@ import {
   type ReactElement,
   type ReactNode,
   type TextareaHTMLAttributes,
-  useSyncExternalStore,
 } from "react";
 import { useOptionalMessage } from "../message/message.react.tsx";
 import { countText, keyValue, revealedText, stepValue } from "./field.ts";
-
-// For useSyncExternalStore's hydration flag: nothing to subscribe to.
-const noSubscribe = () => () => {};
+import { useHydrated } from "../hooks/hooks.react.tsx";
 
 // The props Field passes to its control. Any input, textarea or select (or a component
 // that forwards these to one) will do.
@@ -195,16 +192,6 @@ export function InputGroupAddon(props: {
 // The words and checks every field part takes from Field.
 type FieldText = Pick<FieldProps, "label" | "help" | "error" | "announce" | "required">;
 
-// False on the server and in the first render, so a button that needs script is `hidden` in
-// the HTML a page with no script shows, as in the markup on the doc page.
-function useMounted(): boolean {
-  return useSyncExternalStore(
-    noSubscribe,
-    () => true,
-    () => false,
-  );
-}
-
 // A password with Show and Hide (GOV.UK Password input). The change is said in the status
 // region when the app has a MessageProvider, and a form that is sent hides it again.
 export function PasswordInput(
@@ -224,7 +211,7 @@ export function PasswordInput(
     ...rest
   } = props;
   const [shown, setShown] = useState(false);
-  const ready = useMounted();
+  const ready = useHydrated();
   const message = useOptionalMessage();
   const input = useRef<HTMLInputElement>(null);
   useEffect(() => {
@@ -370,7 +357,7 @@ export function NumberField(
     className: _c,
     ...rest
   } = props;
-  const ready = useMounted();
+  const ready = useHydrated();
   const named = typeof label === "string" ? ` ${label.toLowerCase()}` : "";
   const v = value ?? Number.NaN;
   const unit = step === "any" ? 1 : step;
@@ -462,7 +449,7 @@ export function SearchField(
     },
 ) {
   const { label, help, value, onChange, action, landmark, className: _c, ...rest } = props;
-  const ready = useMounted();
+  const ready = useHydrated();
   const input = useRef<HTMLInputElement>(null);
   const Wrap = action ? "form" : "div";
   // The landmark is named, as in the HTML contract: `landmark`, or else the field's own label.

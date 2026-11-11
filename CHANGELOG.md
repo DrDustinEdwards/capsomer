@@ -4,6 +4,7 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+- **One hydration flag and one storage path inside Capsomer.** Thirteen components had their own `useSyncExternalStore` hydration flag (field, people-roles, bulk-bar, mentions-list, dictionary-entry, media-library, history-list, content, posts-list, time, scope-chip) or browser-zone hook (schedule-dialog, writing-progress); each now uses `useHydrated` or `useBrowserZone` from `capsomer/react/hooks`. Six kept their own try/catch around `localStorage` (shell's `readPref`/`writePref`, editor-workspace, draft-compare, command-menu's recents, authorship, the player's memory); each now goes through hooks.ts' `readStored`/`writeStored`, so where storage is refused a choice lasts the page and every reader of a key stays in step. checklist-run keeps its own, since it tells "blocked" from "full". Removed: `useBrowserZone` from `capsomer/react/schedule-dialog` (use `capsomer/react/hooks`, `useBrowserZone(null)`). No token, class or HTML contract changes.
 - **The showcase site enforces Trusted Types.** site-runtime 0.132.0 (dev dependency) sets the capsomer registry entry's `trustedTypes` to `true`, so `_headers` and the Worker send `require-trusted-types-for 'script'` in the enforced Content-Security-Policy. No token, class or HTML contract changes.
 
 ## [0.101.0]

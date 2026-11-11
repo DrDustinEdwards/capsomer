@@ -1,7 +1,5 @@
-import { useSyncExternalStore, type ReactElement, type ReactNode } from "react";
-
-// For useSyncExternalStore's hydration flag: nothing to subscribe to.
-const noSubscribe = () => () => {};
+import { type ReactElement, type ReactNode } from "react";
+import { useHydrated } from "../hooks/hooks.react.tsx";
 
 export type ScopeOption = { value: string; label: string };
 // Exactly the props the form gets, so a router's form (React Router's <Form>, whose method and
@@ -47,11 +45,7 @@ export function ScopeChip({
   renderForm,
 }: ScopeChipProps) {
   // The Show button is for a page with no script; it goes once React runs here.
-  const ready = useSyncExternalStore(
-    noSubscribe,
-    () => true,
-    () => false,
-  );
+  const ready = useHydrated();
   const children = (
     <>
       {Object.entries(keep).map(([k, v]) =>
