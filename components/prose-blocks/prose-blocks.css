@@ -1128,7 +1128,7 @@
 
   /* render/enhance's furniture: reading progress, the code block's language and Copy, the footnote
      preview, the image viewer and the selection link. The reading progress bar and Copy move to
-     0.91.0's reading-progress and copy parts; they stay here until then. */
+     the reading-progress and copy parts once Prelum's enhance renders them; they stay here until then. */
   .reading-progress {
     position: fixed;
     inset: 0 0 auto;

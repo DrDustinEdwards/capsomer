@@ -643,6 +643,17 @@ const SURFACES: Record<string, () => ReactNode> = {
       />
     </Site>
   ),
+  "fx-rest-clear": () => (
+    <Site family="fox">
+      <SiteHeader {...fxPublic} rest="clear" />
+      <Hero
+        eyebrow="Book of the month"
+        title="Find the next book you cannot put down."
+        lead="Picks from readers you trust, clubs that actually meet, and a diary that remembers every page."
+      />
+      <div className="sh-filler" aria-hidden="true" />
+    </Site>
+  ),
   "fx-books": () => (
     <Site family="fox">
       <Hold press=".cap-site-header-sections .cap-site-header-link">

@@ -371,4 +371,45 @@ eachTheme((theme) => {
     await expect(area.locator("input[name='tags']").first()).toHaveValue("news");
     await expect(area.locator("input[name='tags']").last()).toHaveValue("annual report");
   });
+
+  test("behavior: a server search shows its results, keeps the chosen label and says when it fails", async ({
+    page,
+  }) => {
+    await visitStates(page, "combobox", theme);
+    const area = page.locator("[data-mount='search']");
+    const input = area.getByRole("combobox", { name: "Deploy target" });
+    await input.focus();
+    await page.keyboard.type("bill");
+    await expect(page.getByRole("option")).toHaveCount(2);
+    await page.keyboard.press("ArrowDown");
+    await page.keyboard.press("Enter");
+    await expect(input).toHaveValue("Billing app");
+    await expect(area.locator("[data-chosen]")).toHaveAttribute("data-chosen", "billing");
+    await input.fill("fail");
+    await expect(page.locator(".cap-combobox-empty")).toContainText("The search failed");
+    await page.keyboard.press("Escape");
+    await page.keyboard.press("Tab");
+    await expect(input).toHaveValue("Billing app");
+  });
+
+  test("behavior: free text keeps what is typed, and a picked suggestion fills its city", async ({
+    page,
+  }) => {
+    await visitStates(page, "combobox", theme);
+    const area = page.locator("[data-mount='free']");
+    const input = area.getByRole("combobox", { name: "Institution" });
+    const out = area.locator("[data-text]");
+    await input.focus();
+    await page.keyboard.type("Example Co");
+    await expect(page.getByRole("option", { name: /Example College/ })).toBeVisible();
+    await page.keyboard.press("ArrowDown");
+    await page.keyboard.press("Enter");
+    await expect(input).toHaveValue("Example College");
+    await expect(out).toHaveAttribute("data-city", "Waco, TX");
+    await input.fill("A new lab not listed");
+    await page.keyboard.press("Tab");
+    await expect(input).toHaveValue("A new lab not listed");
+    await expect(out).toHaveAttribute("data-text", "A new lab not listed");
+    await expect(out).toHaveAttribute("data-city", "");
+  });
 });

@@ -1,0 +1,31 @@
+<link rel="stylesheet" href="./specimen/icons-sample.css" />
+<section class="cap-specimen" aria-labelledby="s-ui">
+  <h2 id="s-ui">UI icons</h2>
+  <ul class="ic-grid" id="ic-ui"></ul>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-social">
+  <h2 id="s-social">Social marks</h2>
+  <ul class="ic-grid" id="ic-social"></ul>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-use">
+  <h2 id="s-use">In a button, labeled, and in a link</h2>
+  <div class="cap-specimen-row">
+    <button type="button" class="cap-btn" aria-label="Search" id="ic-button"><svg class="cap-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M11 4a7 7 0 1 0 0 14a7 7 0 1 0 0-14zM20 20l-3.2-3.2" /></svg></button>
+    <button type="button" class="cap-btn" data-variant="secondary"><svg class="cap-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 4v11M7 10l5 5 5-5M5 20h14" /></svg> Download</button>
+    <svg class="cap-icon" id="ic-labeled" viewBox="0 0 24 24" role="img" aria-label="Opens another site" focusable="false"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5" /></svg>
+  </div>
+</section>
+
+<script type="module">
+  import { ICONS, SOCIAL, iconSvg } from "./icons.ts";
+  for (const [id, set] of [["ic-ui", ICONS], ["ic-social", SOCIAL]]) {
+    const list = document.getElementById(id);
+    for (const name of Object.keys(set)) {
+      const li = document.createElement("li");
+      li.append(iconSvg(name), ` ${name}`);
+      list.append(li);
+    }
+  }
+</script>
