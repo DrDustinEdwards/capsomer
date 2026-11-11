@@ -117,6 +117,12 @@ export interface ErrorPageProps {
   // brand lays its error page out as an interior page): it gets the words and draws the h1; the
   // sentence and the ways out follow it in the page's column.
   hero?: (words: ErrorWords) => ReactNode;
+  // A class for the body under a `hero` band, beside cap-error-page-body: the site's own prose frame
+  // (its type and leading for the sentence).
+  bodyClassName?: string;
+  // An icon after the words of the main way out (the home link, or a 410's), as the site's own buttons
+  // end with one. Hidden from assistive tech: pass the icon alone, with no words of its own.
+  linkIcon?: ReactNode;
 }
 
 export function ErrorPage({
@@ -135,16 +141,24 @@ export function ErrorPage({
   actions,
   gone,
   hero,
+  bodyClassName,
+  linkIcon,
 }: ErrorPageProps) {
   const found = errorWords(error);
   const words = { status: found.status, title: title ?? found.title, text: text ?? found.text };
   const thrown = dev && error instanceof Error ? error : null;
   const server = words.status >= 500;
   const withdrawn = words.status === 410;
+  const icon = linkIcon ? (
+    <span className="cap-error-page-link-icon" aria-hidden="true">
+      {linkIcon}
+    </span>
+  ) : null;
   const action = withdrawn ? (
     <>
       <a className="cap-btn" data-variant="primary" href={gone?.href ?? home}>
         {gone?.label ?? homeLabel}
+        {icon}
       </a>
       {actions}
     </>
@@ -159,6 +173,7 @@ export function ErrorPage({
       ) : null}
       <a className="cap-btn" data-variant={server ? undefined : "primary"} href={home}>
         {homeLabel}
+        {icon}
       </a>
       {actions}
     </>
@@ -166,7 +181,9 @@ export function ErrorPage({
   const message = hero ? (
     <>
       {hero(words)}
-      <div className="cap-error-page-body">
+      <div
+        className={bodyClassName ? `cap-error-page-body ${bodyClassName}` : "cap-error-page-body"}
+      >
         <p className="cap-empty-text">{thrown ? thrown.message : words.text}</p>
         <div className="cap-empty-content">{action}</div>
       </div>

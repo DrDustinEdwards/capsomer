@@ -15,6 +15,7 @@
      --sortable-item-pad, --sortable-item-gap, --sortable-item-radius, --sortable-item-align   a row
      --sortable-card-pad, --sortable-card-radius          a card or stack item
      --sortable-item-border, --sortable-item-bg           the item's box (none: 0 and transparent)
+     (removeStyle="bordered" draws Remove as a boxed button; renderFoot adds a full-width part after the buttons)
      --sortable-step-ink, --sortable-remove-ink, --sortable-remove-hover-ink, --sortable-remove-fs,
      --sortable-remove-weight                             the buttons' words
      --sortable-lane-pad, --sortable-lane-border, --sortable-lane-radius, --sortable-lane-bg   a board's list */
@@ -156,6 +157,12 @@
 
   .cap-sortable-body {
     flex: 1 1 var(--sortable-body-basis, auto);
+    min-width: 0;
+  }
+  /* The host's part after the buttons (renderFoot): the item's full width, on a line of its own. */
+  .cap-sortable-foot {
+    flex: 1 1 100%;
+    grid-column: 1 / -1;
     min-width: 0;
   }
 

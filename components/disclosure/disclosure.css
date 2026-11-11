@@ -28,7 +28,8 @@
     & > summary {
       display: flex;
       align-items: center;
-      gap: var(--space-3);
+      /* --disclosure-marker-gap: the space between the marker and the title. */
+      gap: var(--disclosure-marker-gap, var(--space-3));
       min-height: max(var(--target), var(--control));
       padding: var(--space-2) var(--pad-x);
       border-radius: inherit;
@@ -141,7 +142,7 @@
     }
     & > summary {
       justify-content: space-between;
-      gap: var(--space-4);
+      gap: var(--disclosure-marker-gap, var(--space-4));
       padding: calc(var(--pad-card) - 4px) var(--pad-card);
       border-radius: 0;
       font-size: var(--fs-lead);
