@@ -4,6 +4,12 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+## [0.95.0]
+
+- **The page helpers need no test runner: `capsomer/testing/page`.** `countCssRules`, `settled`, `paintedContrast` (and its `Reading`), `focused`, `nextPost`, `ringContrast` and `rowOverflow` each run one function in the page, so they move to their own module, typed for any page with `evaluate` (`PageLike`: Playwright's or Puppeteer's). A site whose browser checks run on Puppeteer imports them without installing Playwright or axe; `capsomer/testing` still exports every one.
+
+No token or class was removed or renamed.
+
 ## [0.94.0]
 
 - **Seventeen page and app widgets move into Capsomer** (the shared-code audit's item 31; Dustin, 2026-11-11: a piece of UI that is a component belongs in Capsomer, even when only one site uses it so far). Each is a component with its CSS, notes, specimen and tests, extracted from the site that had it; the sites switch to them and delete their copies next.
