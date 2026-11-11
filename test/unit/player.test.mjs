@@ -8,7 +8,6 @@ import {
   normalizePeaks,
   playerStorage,
   resumePoint,
-  toParagraphs,
 } from "../../components/player/player.ts";
 
 function fakeStorage() {
@@ -91,18 +90,4 @@ test("normalizePeaks: takes 0 to 100 integers or 0 to 1 floats, keeps a floor, d
   assert.deepEqual(normalizePeaks([0.5, 1], 2), [0.5, 1]);
   assert.equal(normalizePeaks([], 4), null);
   assert.equal(normalizePeaks(null, 4), null);
-});
-
-test("toParagraphs: a paragraph ends after 45 words at a sentence's end, or at a long pause", () => {
-  const words = (n) => Array.from({ length: n }, () => "word").join(" ");
-  const cues = [
-    { start: 0, end: 5, text: `${words(30)}.` },
-    { start: 5, end: 10, text: `${words(20)}.` },
-    { start: 10, end: 12, text: "Short." },
-    { start: 16, end: 18, text: "After a pause" },
-  ];
-  assert.deepEqual(
-    toParagraphs(cues).map((p) => p.map((c) => c.start)),
-    [[0, 5], [10], [16]],
-  );
 });

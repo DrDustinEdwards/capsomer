@@ -1,6 +1,7 @@
-import { useEffect, useState, useSyncExternalStore, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { Tooltip } from "../tooltip/tooltip.react.tsx";
 import { REFRESH_MS, UNREADABLE, exact, exactParts, text, toMs, type TimeFormat } from "./time.ts";
+import { useHydrated } from "../hooks/hooks.react.tsx";
 
 export interface TimeProps {
   // Milliseconds, a Date, or a server timestamp (a zoneless one is read as UTC). Null, undefined
@@ -32,18 +33,6 @@ function useClock(enabled: boolean): number {
     return () => window.clearInterval(t);
   }, [enabled]);
   return now;
-}
-
-const noSubscribe = () => () => {};
-
-// False on the server and while React hydrates what the server sent; true from then on (and at
-// once for a time first drawn in the browser).
-function useHydrated(): boolean {
-  return useSyncExternalStore(
-    noSubscribe,
-    () => true,
-    () => false,
-  );
 }
 
 // The exact time in a tooltip beside a time, on hover and keyboard focus. The behavior module

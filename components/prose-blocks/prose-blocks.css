@@ -27,7 +27,9 @@
        and --prose. Links are the link system's (--accent-text, --link-weight, --link-decoration).
          --prose-ink           body text (a muted body: var(--muted))
          --prose-strong-ink    bold text, for a muted body
-         --prose-heading-face, --prose-heading-ink, --prose-heading-weight, --prose-heading-space (above)
+         --prose-heading-face, --prose-heading-ink, --prose-heading-weight, --prose-heading-space (above),
+         --prose-heading-gap (below), --prose-heading-measure (css/prose.css: h1 to h3's line, 30ch)
+         --prose-link-ink, --prose-link-hover-ink, --prose-link-hover-decoration (css/prose.css)
          --prose-h2-size, --prose-h3-size
          --prose-flow          the space after each block
          --prose-marker        list bullets and numbers (their color)
@@ -35,6 +37,8 @@
                                for a site whose lists have always been bare; a numbered step then
                                needs its number in the words)
          --prose-item-space    the space after each list item
+         --prose-list-indent, --prose-item-indent   a list's indent (1.5em) and an item's own, after
+                               its marker (none)
          --prose-quote-line, --prose-quote-ink, --prose-quote-style
          --prose-code-bg, --prose-code-ink, --prose-code-radius   inline code
          --prose-pre-bg, --prose-pre-pad (one length), --prose-block-radius    code blocks, callouts, details
@@ -69,7 +73,7 @@
       line-height: 1.3;
     }
     & :where(ul, ol) {
-      padding-inline-start: 1.5em;
+      padding-inline-start: var(--prose-list-indent, 1.5em);
     }
     /* Markers held here, since a site's reset may strip them and a step read as "repeat steps 1 to 4"
        needs its number. A classed list is a block's own (a task list, a gallery) and keeps its look. */
@@ -87,9 +91,10 @@
     }
     & :where(li) {
       margin-block-end: var(--prose-item-space, 0.3em);
+      padding-inline-start: var(--prose-item-indent);
     }
     & :where(li > ul, li > ol) {
-      margin-block: 0.3em 0;
+      margin-block: var(--prose-item-space, 0.3em) 0;
     }
     & :where(blockquote) {
       margin-inline: 0;

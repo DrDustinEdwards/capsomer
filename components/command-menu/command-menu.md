@@ -4,9 +4,9 @@ title: Command menu
 summary: Every view, action and shortcut in one searchable list, opened with Ctrl K.
 parts: [css, behavior, react]
 tool: native + own JavaScript (the shared dialog and listbox)
-states: [closed with its button, open with every group, filtered, stops found by typing stop, no match, an option active, comfortable density, live results, live results without React]
+states: [closed with its button, open with every group, filtered, stops found by typing stop, no match, an option active, comfortable density, live results, live results without React, mounted when idle with recents, a snippet and Ask, the same extras without React]
 added: 0.1.0
-updated: 0.99.0
+updated: 0.103.0
 source: Capsid Portal, dashboard/src/app/CommandMenu.tsx, lib/stops.ts and styles.css (.palette), as of capsid master 2026-10-01
 replaces:
   - 'className="palette"'
@@ -40,6 +40,17 @@ It is never the only way to reach something: every command is also a control on 
 - **Live results come from the app** (`search(query, signal)`, a store's catalog, in React and in `createCommandMenu` or `attach` alike). It is called 180 ms after the last key (`searchDelay`), never for an empty field, and the call before is aborted; its commands follow the matching ones, in their own groups, unfiltered. While it has not answered the list is `aria-busy` and an empty list says "Searching…"; the last results stay until new ones arrive, so the list does not flash.
 - **Choosing a command closes the menu first, then runs it**, so a command that opens another dialog keeps its focus.
 - Esc, or a click on the backdrop, closes it; focus returns to what opened it.
+
+## The app's menu, the same everywhere (React 0.100.0, without React 0.103.0)
+
+- **Mounted when the page is idle.** `useCommandHost(commands)` gives `ready` (render the menu only then), `open`/`setOpen`, and `runWhenReady(id)`: the menu costs the first load nothing (`requestIdleCallback`, two seconds at most), and a shortcut, a button or a command asked for before then mounts it at once and runs.
+- **The menu's pages are commands.** `navCommands(nav, navigate)` makes "Go to Media" for each entry of the admin shell's `nav`, found by its group too, so the two never list different pages.
+- **Recent.** `recentKey` keeps the last five commands run (ids, per site, in localStorage) and lists them first, as "Recent", while nothing is typed.
+- **A search result's snippet.** A command's `snippet` is a line under its label with the typed words marked (`markQuery`), never through HTML.
+- **Ask.** `ask` adds, while words are typed, a last option "Ask about “…”" that hands them on (an assistant, a site search).
+- **A phone gets the whole screen**, under 40rem, and the keys line is hidden there.
+- **The host is its own light entry**, so the menu stays out of every route's first load: `capsomer/react/command-host` has `useCommandHost` and `LazyCommandMenu` (`<LazyCommandMenu host={host} commands={…} />`, the menu loaded with `lazy()` once the host is ready), and imports nothing of the menu until then; Ctrl K or Cmd K before then opens it. `capsomer/react/command-menu` still exports `useCommandHost`.
+- **Without React** the same extras: `createCommandHost(commands, opts)` from `capsomer/behavior/command-host` loads and builds the menu when the page is idle and gives `open(query)`, `load()`, `runWhenReady(id)` and `menu`; Ctrl K, Cmd K or a `[data-cap-command-open]` button before then loads it at once. `navCommands` is the same function; `createCommandMenu` and `attach` take `recentKey` and `ask`, and a command's `snippet` is built as below. A menu written in markup takes `data-recent-key` and `data-ask` (its words; "Ask about" when empty) on the dialog: Ask follows `data-ask-href` with the words in `q`, or dispatches `cap-command` with `{ id: "ask", query }`.
 
 ## Keyboard
 
@@ -87,6 +98,22 @@ The behavior module builds this from a list of commands; write it by hand only f
   <div class="cap-cmd-foot" aria-hidden="true"><span><kbd>↑</kbd> <kbd>↓</kbd> move</span><span><kbd>Enter</kbd> run</span><span><kbd>Esc</kbd> close</span></div>
 </dialog>
 <button type="button" class="cap-btn" data-cap-command-open>Commands <kbd>Ctrl K</kbd></button>
+```
+
+The extras, as the behavior module writes them: a snippet sits in the label (the filter reads `data-label`, so the snippet's words do not find it), and the module marks the typed words in it with `<mark>` elements, never through HTML. Recent is a copy of each option, first; Ask is one option, last.
+
+```html
+<div class="cap-listbox-group" role="group" aria-labelledby="cmd-list-data-recent" data-recent>
+  <div class="cap-listbox-label" id="cmd-list-data-recent" role="presentation">Recent</div>
+  <div class="cap-option" id="cmd-o-go-media-recent" role="option" data-cap-command="go-media" data-group="Recent">…</div>
+</div>
+<div class="cap-option" id="cmd-o-note-field" role="option" data-cap-command="note-field" data-label="Field notes">
+  <span class="cap-option-label">Field notes<span class="cap-cmd-snippet">Notes from the <mark>spring</mark> survey of the north field.</span></span>
+</div>
+<div class="cap-listbox-group" role="group" aria-labelledby="cmd-list-data-ask-group" data-ask-group>
+  <div class="cap-listbox-label" id="cmd-list-data-ask-group" role="presentation">Ask</div>
+  <div class="cap-option" id="cmd-list-ask" role="option" data-cap-ask data-group="Ask"><span class="cap-option-label">Ask about “when is the survey”</span></div>
+</div>
 ```
 
 Everything but `.cap-cmd-search`, `.cap-cmd-input`, `.cap-cmd-list` and `.cap-cmd-foot` is the shared dialog's or the shared listbox's.

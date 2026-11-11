@@ -1,4 +1,4 @@
-import { useId, useState, useSyncExternalStore, type ReactNode } from "react";
+import { useId, useState, type ReactNode } from "react";
 import { barChart } from "enarratio/lite/bar";
 import { Alert } from "../banner/banner.react.tsx";
 import { Button } from "../button/button.react.tsx";
@@ -23,21 +23,11 @@ import {
   type Goal,
   type SaveEntry,
 } from "./writing-progress.ts";
+import { useBrowserZone } from "../hooks/hooks.react.tsx";
 
 export type { FormComponent, Goal, SaveEntry };
 
 const n = (value: number) => value.toLocaleString("en-US");
-const noSubscribe = () => () => {};
-
-// The device's own zone once hydrated; the server's (`fallback`) before, so hydration matches.
-function useDeviceZone(fallback: string): string {
-  return useSyncExternalStore(
-    noSubscribe,
-    () => Intl.DateTimeFormat().resolvedOptions().timeZone || fallback,
-    () => fallback,
-  );
-}
-
 type Day = { day: string; words: number; writingDay: boolean };
 
 // The last days as Enarratio's bar chart, oldest first, with the band at or above today's target;
@@ -133,7 +123,7 @@ export function WritingProgress({
   days: dayCount = 7,
   now: fixedNow,
 }: WritingProgressProps) {
-  const zone = useDeviceZone(serverZone);
+  const zone = useBrowserZone(serverZone);
   const chartId = `progress-${useId().replace(/[^a-zA-Z0-9]/g, "")}`;
   const [mode, setMode] = useState(goal.mode);
   // A new goal from the server replaces the mode being chosen, adjusted while rendering.

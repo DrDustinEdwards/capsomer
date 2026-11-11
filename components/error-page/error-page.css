@@ -40,6 +40,32 @@
     }
   }
 
+  /* A site's own title band (`hero`): the band runs the page's width, the sentence and the ways out
+     follow it, centered in the reading column. */
+  .cap-error-page:has(> .cap-error-page-body) {
+    align-items: stretch;
+    max-inline-size: none;
+    padding: 0 0 var(--space-8);
+  }
+  .cap-error-page-body {
+    box-sizing: border-box;
+    inline-size: 100%;
+    margin-inline: auto;
+    display: grid;
+    justify-items: center;
+    gap: var(--gap);
+    max-inline-size: 48rem;
+    padding: var(--error-page-body-pad-block, 0) var(--pad-x);
+    text-align: center;
+
+    & > .cap-empty-content {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: var(--space-3);
+    }
+  }
+
   /* Development only: the thrown error's stack, scrolled inside its box on a phone. */
   .cap-error-page-stack {
     box-sizing: border-box;

@@ -21,7 +21,7 @@ import {
   part,
   plainLink,
 } from "./site-header-parts.react.tsx";
-import { badgeText, guardForms, wireSearch, wireThemeKey } from "./site-header.ts";
+import { badgeText, guardForms, wireScrolled, wireSearch, wireThemeKey } from "./site-header.ts";
 
 export { countName, HeaderTip, SheetGroup } from "./site-header-parts.react.tsx";
 export { initialsOf } from "./site-header.ts";
@@ -74,6 +74,9 @@ export function SiteHeader(props: SiteHeaderProps) {
     attributes,
     toolsEnd,
     end,
+    collapse,
+    sheetIcons,
+    menuIcon = MENU_ICON,
   } = props;
   const letterhead = variant === "letterhead";
   const id = useId();
@@ -91,9 +94,11 @@ export function SiteHeader(props: SiteHeaderProps) {
     const back = () => setSheetOpen(false);
     window.addEventListener("popstate", back);
     const unguard = guardForms(headerRef.current);
+    const unscroll = wireScrolled(headerRef.current);
     return () => {
       window.removeEventListener("popstate", back);
       unguard();
+      unscroll();
     };
   }, [hydrate]);
 
@@ -132,6 +137,8 @@ export function SiteHeader(props: SiteHeaderProps) {
       : undefined;
   const icons = extras.filter((e) => e.kind !== "button" && e !== ownSearch).slice(0, 2);
   const cta = extras.find((e) => e.kind === "button");
+  // The site's own class on its button extra (bsw's glass Get a Quote), in the bar and the sheet.
+  const ctaClass = cta?.className ? `cap-site-header-cta ${cta.className}` : "cap-site-header-cta";
   const signOutLabel = account ? `Sign out (${account.name})` : "Sign out";
   // Sign out as a row: a link, a form post (no script needed), or a button.
   const signOut = account
@@ -161,7 +168,7 @@ export function SiteHeader(props: SiteHeaderProps) {
       <Fragment key={e.id}>
         {renderLink({
           href: e.href,
-          className: "cap-site-header-icon",
+          className: e.className ? `cap-site-header-icon ${e.className}` : "cap-site-header-icon",
           "aria-label": name,
           children: inner,
         })}
@@ -170,7 +177,7 @@ export function SiteHeader(props: SiteHeaderProps) {
       <button
         key={e.id}
         type="button"
-        className="cap-site-header-icon"
+        className={e.className ? `cap-site-header-icon ${e.className}` : "cap-site-header-icon"}
         aria-label={name}
         onClick={e.onClick}
       >
@@ -249,6 +256,8 @@ export function SiteHeader(props: SiteHeaderProps) {
         data-cap-theme-key={!hydrate && theme && themeKey ? themeKey : undefined}
         data-variant={variant}
         data-links={links}
+        data-collapse={collapse}
+        data-sheet-icons={sheetIcons}
         data-band={band}
         data-translucent={translucent ? "" : undefined}
         data-rest={rest}
@@ -265,9 +274,11 @@ export function SiteHeader(props: SiteHeaderProps) {
           className: logo.className
             ? `cap-site-header-logo ${logo.className}`
             : "cap-site-header-logo",
-          "aria-label": letterhead
-            ? [logo.agency, logo.label, logo.app].filter(Boolean).join(" ")
-            : logo.label,
+          "aria-label":
+            logo.name ??
+            (letterhead
+              ? [logo.agency, logo.label, logo.app].filter(Boolean).join(" ")
+              : logo.label),
           children: (
             <>
               {logo.mark}
@@ -372,11 +383,11 @@ export function SiteHeader(props: SiteHeaderProps) {
                 cta.href ? (
                   renderLink({
                     href: cta.href,
-                    className: "cap-site-header-cta",
+                    className: ctaClass,
                     children: cta.label,
                   })
                 ) : (
-                  <button type="button" className="cap-site-header-cta" onClick={cta.onClick}>
+                  <button type="button" className={ctaClass} onClick={cta.onClick}>
                     {cta.label}
                   </button>
                 )
@@ -430,7 +441,7 @@ export function SiteHeader(props: SiteHeaderProps) {
               />
             )
           ) : null}
-          <div className="cap-site-header-account">
+          <AccountSlot show={Boolean(account || signIn)}>
             {account ? (
               <Disclosure
                 id={`${id}-account`}
@@ -472,7 +483,7 @@ export function SiteHeader(props: SiteHeaderProps) {
                 ),
               })
             ) : null}
-          </div>
+          </AccountSlot>
           {toolsEnd}
           <button
             ref={menuButton}
@@ -482,9 +493,12 @@ export function SiteHeader(props: SiteHeaderProps) {
             aria-haspopup="dialog"
             aria-expanded={sheetOpen}
             aria-controls={`${id}-sheet`}
+            // Without hydration the button opens the sheet with no script (invoker commands, Baseline
+            // newly available); enhance() takes the click over, and where neither runs nothing breaks.
+            {...(hydrate ? {} : { commandfor: `${id}-sheet`, command: "show-modal" })}
             onClick={() => setSheetOpen(true)}
           >
-            {MENU_ICON}
+            {menuIcon}
           </button>
         </div>
         {letterhead && trail ? (
@@ -567,7 +581,9 @@ export function SiteHeader(props: SiteHeaderProps) {
               {cta?.href && cta.phone !== "bar"
                 ? renderLink({
                     href: cta.href,
-                    className: "cap-site-header-sheet-cta",
+                    className: cta.className
+                      ? `cap-site-header-sheet-cta ${cta.className}`
+                      : "cap-site-header-sheet-cta",
                     onClick: closeSheet,
                     children: cta.label,
                   })
@@ -629,6 +645,11 @@ export function SiteHeader(props: SiteHeaderProps) {
       </header>
     </HeaderHydrates.Provider>
   );
+}
+
+// The account slot, last in the tools. A page with no sign-in at all (a personal site) renders none.
+function AccountSlot({ show, children }: { show: boolean; children: ReactNode }) {
+  return show ? <div className="cap-site-header-account">{children}</div> : null;
 }
 
 // The bottom bar of a signed-in area on a phone: up to five of its top pages, no More (the menu

@@ -93,6 +93,8 @@
     margin: 0;
     font-weight: 600;
     letter-spacing: -0.01em;
+    /* Balanced, as the whole state is: set here, since base.css gives a p "pretty". */
+    text-wrap: balance;
   }
 
   .cap-empty-text {
@@ -136,5 +138,11 @@
     .cap-empty-media[data-variant="icon"] {
       border: 1px solid CanvasText;
     }
+  }
+
+  /* No value in a cell or a fact line: a muted word. */
+  .cap-missing {
+    color: var(--muted);
+    font-style: normal;
   }
 }

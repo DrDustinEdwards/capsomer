@@ -356,8 +356,14 @@ export interface FormMenuProps {
   // The summary's visible text: what the menu acts on ("Actions for example.org").
   label: ReactNode;
   "aria-label"?: string;
-  // Where the form posts, and its method (post unless a GET filter is meant).
-  action: string;
+  // Where the form posts, and its method (post unless a GET filter is meant). Not needed with `form`.
+  action?: string;
+  // The id of a form elsewhere on the page that the items submit (a card inside a list whose one
+  // form carries the row's fields): the menu renders no form of its own, and each item's button
+  // names that form. `hidden` is then not sent; the outer form carries its fields.
+  form?: string;
+  // The trigger's size: "sm" in a dense row or a card.
+  size?: "sm";
   method?: "post" | "get";
   items: FormMenuItem[];
   // The field the button's value goes in. `intent` unless the server expects another name.
@@ -375,6 +381,8 @@ export function FormMenu({
   items,
   name = "intent",
   hidden,
+  form,
+  size,
   ...rest
 }: FormMenuProps) {
   const ref = useRef<HTMLDetailsElement>(null);
@@ -405,29 +413,47 @@ export function FormMenu({
         className="cap-option cap-menu-item"
         name={name}
         value={i.value}
+        form={form}
         disabled={i.disabled}
+        onClick={() => {
+          // A press posts; the menu closes so it is not left open over the page while it posts.
+          if (ref.current) ref.current.open = false;
+        }}
         data-tone={i.danger ? "crit" : undefined}
       >
         <span className="cap-option-label">{i.label}</span>
         {i.reason ? <span className="cap-menu-reason">{i.reason}</span> : null}
       </button>
     );
+  const entries = (
+    <>
+      {ordinary.map(button)}
+      {danger.length && ordinary.length ? (
+        <hr className="cap-listbox-separator cap-menu-separator" />
+      ) : null}
+      {danger.map(button)}
+    </>
+  );
   return (
     <details className="cap-menu-form" data-cap="menu-form" ref={ref}>
-      <summary className="cap-btn cap-menu-trigger" aria-label={rest["aria-label"]}>
+      <summary
+        className="cap-btn cap-menu-trigger"
+        data-size={size}
+        aria-label={rest["aria-label"]}
+      >
         {label}
         <Chevron />
       </summary>
-      <form className="cap-popover cap-menu" action={action} method={method}>
-        {Object.entries(hidden ?? {}).map(([k, v]) => (
-          <input key={k} type="hidden" name={k} value={v} />
-        ))}
-        {ordinary.map(button)}
-        {danger.length && ordinary.length ? (
-          <hr className="cap-listbox-separator cap-menu-separator" />
-        ) : null}
-        {danger.map(button)}
-      </form>
+      {form ? (
+        <div className="cap-popover cap-menu">{entries}</div>
+      ) : (
+        <form className="cap-popover cap-menu" action={action} method={method}>
+          {Object.entries(hidden ?? {}).map(([k, v]) => (
+            <input key={k} type="hidden" name={k} value={v} />
+          ))}
+          {entries}
+        </form>
+      )}
     </details>
   );
 }

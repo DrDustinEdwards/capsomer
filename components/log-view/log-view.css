@@ -1,0 +1,26 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* A log view: a plain table of lines (needs table.css), raw values in mono broken anywhere, a
+   note above or under it, and a stated None when there are no lines. */
+@layer cap.components {
+  .cap-log {
+    display: grid;
+    gap: var(--space-3);
+    min-inline-size: 0;
+  }
+  .cap-log-mono {
+    font-family: var(--mono);
+    font-size: var(--fs-detail);
+    overflow-wrap: anywhere;
+    white-space: normal;
+  }
+  .cap-log-note {
+    margin: 0;
+    color: var(--muted);
+    font-size: var(--fs-detail);
+  }
+  .cap-log-empty {
+    margin: 0;
+  }
+}

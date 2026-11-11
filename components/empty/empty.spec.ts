@@ -27,6 +27,7 @@ eachTheme((theme) => {
       { sel: "#sample-direct .cap-empty-title", what: "0.1 markup title" },
       { sel: "#sample-comfortable .cap-empty-text", what: "comfortable text" },
       { sel: "#sample-wait .cap-empty-text", what: "how long it takes" },
+      { sel: "#e-missing .cap-missing", what: "no value" },
     ]);
   });
 

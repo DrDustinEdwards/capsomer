@@ -127,6 +127,8 @@ test("behavior: dates are long and in UTC, whatever the viewer's zone, and an un
     "Sep 12, 2026, 3:04 PM UTC",
   );
   expect(formatDate(NOW, { style: "monthDay" })).toBe("Sep 30");
+  expect(formatDate("2026-09-12T15:04:00Z", { style: "weekday" })).toBe("Saturday, September 12");
+  expect(formatDate("2026-09-12T15:04:00Z", { style: "time", zoneName: true })).toBe("3:04 PM UTC");
   expect(formatDate(null)).toBeNull();
   expect(formatDate("not a date")).toBeNull();
   expect(text(NOW, "date")).toBe("September 30, 2026");

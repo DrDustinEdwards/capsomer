@@ -4,9 +4,9 @@ title: Popover
 summary: The one floating surface, on the Popover API: click popovers, tooltips, and the look every popup shares.
 parts: [css, behavior, react]
 tool: native + own JavaScript
-states: [closed, open, open with arrow, tooltip, tooltip with a key, flipped]
+states: [closed, open, open with arrow, tooltip, tooltip with a key, flipped, at a virtual anchor]
 added: 0.2.0
-updated: 0.2.0
+updated: 0.100.0
 source: shadcn/ui Popover, Tooltip and Hover Card (Base UI flavor), rebuilt in plain CSS on the native Popover API
 replaces:
   - 'class="(popover|popup|dropdown-panel|flyout)[ "]'
@@ -39,6 +39,8 @@ Reference: shadcn/ui `Popover`, `Tooltip` and `Hover Card`.
 - **Motion:** opening, a 100 ms fade while it grows from 96% and slides 4 px out of the trigger's side over 200 ms; closing, 100 ms to 98% and half the slide (Radix Themes, Arc: what leaves goes faster than it came). A tooltip takes 100 ms both ways. Transitions, so a close mid-open reverses from where it is. Only when the person has not asked for reduced motion.
 - **Tooltip delay:** 300 ms on hover, at once on keyboard focus, and at once when another tooltip is open or closed less than 400 ms ago (shadcn's provider default is 0; Capsomer keeps the 300 ms the 0.1 tooltip had so a pointer crossing a toolbar does not flash tips).
 - **Focus:** a click popover moves focus to its first control (or to itself when it has none) and returns it to the trigger on close. Tabbing past its last control closes it and leaves focus where the person went.
+
+- **A virtual anchor.** `openAt(popup, anchor, { returnFocus })` opens a popup beside anything with a box (a text selection's range, a point in a canvas) rather than a trigger: placed by script, kept beside it on scroll and resize, closed by Esc or a press outside, and focus goes back to `returnFocus` (the editor the selection is in). A reader's note on selected words uses it.
 
 ## Keyboard
 

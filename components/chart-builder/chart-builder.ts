@@ -4,6 +4,7 @@
 // every family site renders through `editorialPack`; a site with another syntax passes its own
 // writer. No DOM.
 
+import { csvColumns } from "@drdustinedwards/site-helpers/source";
 import { escapeHtml } from "@dustinedwards/site-runtime/html";
 
 export interface ChartType {
@@ -38,47 +39,7 @@ export interface CsvColumn {
   numeric: boolean;
 }
 
-// One CSV line split into its cells, with RFC 4180 quoting ("a, b" and doubled quotes).
-function cells(line: string): string[] {
-  const out: string[] = [];
-  let cell = "";
-  let quoted = false;
-  for (let i = 0; i < line.length; i++) {
-    const c = line[i];
-    if (quoted) {
-      if (c === '"' && line[i + 1] === '"') {
-        cell += '"';
-        i++;
-      } else if (c === '"') quoted = false;
-      else cell += c;
-    } else if (c === '"') quoted = true;
-    else if (c === ",") {
-      out.push(cell.trim());
-      cell = "";
-    } else cell += c;
-  }
-  out.push(cell.trim());
-  return out;
-}
-
 const BOM = /^﻿/;
-
-// The CSV's column names from its first line, and which hold only numbers.
-export function csvColumns(csv: string): CsvColumn[] {
-  const lines = csv
-    .replace(BOM, "")
-    .split(/\r?\n/)
-    .filter((l) => l.trim() !== "");
-  const [head, ...rows] = lines;
-  if (!head) return [];
-  const table = rows.map(cells);
-  return cells(head).map((name, i) => ({
-    name,
-    numeric:
-      table.length > 0 &&
-      table.every((r) => r[i] !== undefined && r[i] !== "" && Number.isFinite(Number(r[i]))),
-  }));
-}
 
 // The columns chosen after the data changed: a choice that is still a column is kept; otherwise x
 // is the first column and y every numeric column after it.

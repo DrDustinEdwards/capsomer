@@ -25,11 +25,18 @@ import {
 import { countName as headerCountName, TipKeys } from "../site-header/site-header-parts.react.tsx";
 import { applyStoredTheme, syncServedTheme, THEME_PREF } from "../theme-switch/theme-switch.ts";
 import type { Suggest } from "../site-header/site-header.ts";
-import { badgeText, jumpTarget } from "./admin-shell.ts";
+import {
+  ACCESS_LOGOUT,
+  badgeText,
+  currentEntryId,
+  isCollapseKey,
+  jumpTarget,
+} from "./admin-shell.ts";
 import { FAMILY_APPS, FIRST_PAGE, FOXHOUND_MARKS, OWNER, type FamilyAppId } from "./apps.tsx";
 
 export type { LinkProps, FamilyAppId, HeaderExtra, HeaderLogo, HeaderSwitcher };
-export { startPageTransition } from "./admin-shell.ts";
+export { ACCESS_LOGOUT, currentEntryId, startPageTransition } from "./admin-shell.ts";
+export { AdminErrorView, type AdminErrorViewProps } from "./admin-error.react.tsx";
 export { FAMILY_APPS, FIRST_PAGE, FOXHOUND_MARKS, OWNER };
 
 // One of the current app's pages. `group` puts consecutive entries under one label.
@@ -38,7 +45,12 @@ export interface AdminEntry {
   label: string;
   href: string;
   icon?: ReactNode;
+  // Whether this is the page you are on. Leave it out and give the shell `pathname`: the shell
+  // marks the entry the address is in (currentEntryId), the longest match winning.
   current?: boolean;
+  // What else counts as this entry when the shell derives `current`: path prefixes ("/books")
+  // or patterns (/^\/drafts\/\d+/). Default: the entry's own `href`.
+  match?: ReadonlyArray<string | RegExp>;
   // A count beside the entry, and what it counts: "Queue, 2 blocked". Every count is one bubble;
   // a plain one is neutral, tone "need" is violet (it needs you), crit and warn are status colors.
   count?: number;
@@ -98,6 +110,9 @@ export interface AdminAccount {
   // Supply Co."), so its settings sit under its name.
   appLabel?: string;
   onSignOut?: () => void;
+  // Behind Cloudflare Access: Sign out sends the browser to Access's own sign-out address
+  // (ACCESS_LOGOUT), which ends the Access session; `onSignOut` is then not needed.
+  accessLogout?: boolean;
   // Sign out as a form post (the header's `account.signOutAction` and `signOutFields`), so it works
   // before script and sends the site's CSRF fields.
   signOutAction?: string;
@@ -121,6 +136,9 @@ export interface AdminShellProps {
   // The strip for a site outside the family. Admin areas pass `app`.
   apps?: AdminApp[];
   nav: AdminEntry[];
+  // The address you are on (React Router's useLocation().pathname). Given, every entry without its
+  // own `current` is marked from it, and `page` defaults to the current entry's label.
+  pathname?: string;
   // The page being shown: the tab title "<page> · <app>", and the last step of the trail.
   page?: string;
   // Whether the shell writes the tab title from `page` and `title`. Default true. False leaves
@@ -183,8 +201,9 @@ export interface AdminShellProps {
   // digit belong to the browser's tabs); on by default, and off with the shortcuts switch. false
   // turns it off for this app alone.
   jumpKeys?: boolean;
-  // Shown on the collapse control and in its name tip; the app binds the key.
-  collapseKey?: string;
+  // The menu's collapse key, shown on the collapse control and in its tip. The shell binds it
+  // (never while a person types, or with single-key shortcuts off); false shows no key and binds none.
+  collapseKey?: string | false;
   renderLink?: (props: LinkProps) => ReactNode;
   // The main region's own ref and handlers (an app that scrolls to a row, say). Its id, class and
   // tab stop are the shell's.
@@ -302,8 +321,7 @@ export function AdminShell(props: AdminShellProps) {
   const {
     variant = "owner",
     app,
-    nav,
-    page,
+    pathname,
     documentTitle = true,
     navLabel = "Sections",
     onSearch,
@@ -332,6 +350,14 @@ export function AdminShell(props: AdminShellProps) {
     children,
   } = props;
   const owner = variant === "owner";
+  // The page you are on, from the address, for entries that do not say.
+  const derived = pathname === undefined ? undefined : currentEntryId(pathname, props.nav);
+  const nav =
+    derived === undefined
+      ? props.nav
+      : props.nav.map((e) => (e.current === undefined ? { ...e, current: e.id === derived } : e));
+  const page =
+    props.page ?? (pathname === undefined ? undefined : nav.find((e) => e.current)?.label);
   const apps = stripApps(app, props.badges, props.apps);
   const family = FAMILY_APPS.find((a) => a.id === app);
   const title = props.title ?? family?.label ?? apps.find((a) => a.current)?.label ?? "";
@@ -376,7 +402,29 @@ export function AdminShell(props: AdminShellProps) {
     return () => document.removeEventListener("keydown", onKey);
   }, [jumpKeys, owner]);
 
-  const tabs = (props.tabs ?? nav.slice(0, 5)).slice(0, 5);
+  // The collapse key, bound here so every app behaves the same; it presses nothing the person
+  // cannot see (the menu is hidden on a phone).
+  const collapsedRef = useRef(collapsed);
+  useLayoutEffect(() => {
+    collapsedRef.current = collapsed;
+  });
+  useEffect(() => {
+    if (!collapseKey) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (!isCollapseKey(e, collapseKey)) return;
+      const toggle = root.current?.querySelector<HTMLElement>("[data-cap-part='menu-toggle']");
+      if (!toggle || toggle.getClientRects().length === 0) return;
+      e.preventDefault();
+      setCollapsed(!collapsedRef.current);
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [collapseKey, setCollapsed]);
+
+  const derivedTabs = props.tabs?.map((t) =>
+    t.current === undefined ? { ...t, current: nav.find((e) => e.id === t.id)?.current } : t,
+  );
+  const tabs = (derivedTabs ?? nav.slice(0, 5)).slice(0, 5);
 
   const item = (e: AdminEntry) => (
     <Fragment key={e.id}>
@@ -471,8 +519,10 @@ export function AdminShell(props: AdminShellProps) {
               ]
             : []),
         ],
-        onSignOut: accountProps.onSignOut,
-        signOutAction: accountProps.signOutAction,
+        onSignOut: accountProps.accessLogout
+          ? () => location.assign(ACCESS_LOGOUT)
+          : accountProps.onSignOut,
+        signOutAction: accountProps.accessLogout ? undefined : accountProps.signOutAction,
         signOutFields: accountProps.signOutFields,
         signOutDisabled: accountProps.signOutDisabled,
       }
@@ -614,12 +664,14 @@ export function AdminShell(props: AdminShellProps) {
         >
           <Icon d={collapsed ? EXPAND_D : COLLAPSE_D} />
           <span className="cap-admin-label">{collapsed ? "Expand menu" : "Collapse menu"}</span>
-          <span className="cap-keys" aria-hidden="true">
-            <kbd>{collapseKey}</kbd>
-          </span>
+          {collapseKey ? (
+            <span className="cap-keys" aria-hidden="true">
+              <kbd>{collapseKey}</kbd>
+            </span>
+          ) : null}
           <Tip
             text={collapsed ? "Expand menu" : "Collapse menu"}
-            keys={collapseKey}
+            keys={collapseKey || undefined}
             offset={12}
             describe={false}
           />

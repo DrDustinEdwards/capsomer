@@ -4,9 +4,9 @@ title: Error page
 summary: The page a site's root ErrorBoundary shows for 404, 410 and 500, in plain words, under the site's own header.
 parts: [css, react]
 tool: native
-states: [404, 410, 500, database down, development, phone width]
+states: [404, 410, 410 with its own way out, a second way out, a site's own title band, signed out, session ended, 500, database down, development, phone width]
 added: 0.47.0
-updated: 0.56.0
+updated: 0.100.0
 source: dustinedwards.info, app/components/error-page.tsx; Foxhound, app/components/error-view.tsx
 replaces:
   - 'error\.status === 404 \? "404" : "Error"'
@@ -37,6 +37,10 @@ What a React Router site shows when a page is missing, gone or broke: the failed
 - **The site's frame stays.** `siteHeader` and `siteFooter` are slots: the skip link, the banner and the footer landmark stay on the error page. They must read no loader data, since the error path has none.
 - **main is `#main` with `tabIndex={-1}`**, the skip link's target. The title is the page's `h1` (`Empty`'s `titleAs="h1"`). A 404's title is set in Jost Demibold (`--poster`), a missing page being a standalone poster; every other status keeps the UI face.
 - **A site's own words.** `title`, `text` and `homeLabel` replace the default words for this error, for a site whose copy is edited content (julieedwards.info's 404 is Carrel copy in D1). `as="div"` renders the region as a div when the site's Layout already has the page's one `main`.
+- **A page gone on purpose (410) is not an error.** Nothing failed and nothing will come back, so it is no alert and has no Try again: its one way out is `gone` ("Read the blog", `/blog`), else the home link.
+- **More ways out.** `actions` adds links after the home link (a dashboard, a demo), in the same row.
+- **A site's own title band.** `hero` (a function of the page's words) draws the site's interior-page band with the `h1`; the sentence and the ways out follow it, centered. A site that keeps a client's brand uses it instead of laying out its own error page. The band runs the page's width and the body stays in a 48rem column; `--error-page-body-pad-block` (default 0) sets the space above and below the body.
+- **Signed out is its own page.** `SignedOutPage` (`app`, `signIn`, `byChoice`, `access`) is what an app shows once its session is gone: a polite status, the heading "Signed out", and "Sign in again" (or "Reload to sign in" when the session ended on its own). Behind Access it says an open Access session may sign the person straight back in.
 - No router import: a route error is read by its shape (a numeric `status` and a string `statusText`), so the package needs no `react-router`.
 
 ## Keyboard
@@ -88,8 +92,34 @@ It renders:
 [the site footer]
 ```
 
+A 410 (`gone`) is not a failure, so its message is no alert: `<div class="cap-empty" data-kind="nothing-yet">`, with the one way out as its primary button. `SignedOutPage` is a polite status:
+
+```html
+<main id="main" tabindex="-1" class="cap-error-page" data-status="signed-out">
+  <div class="cap-empty" data-kind="nothing-yet" role="status">
+    <div class="cap-empty-header">
+      <h1 class="cap-empty-title">Signed out</h1>
+      <p class="cap-empty-text">You signed out of Example in this browser.</p>
+    </div>
+    <div class="cap-empty-content"><a class="cap-btn" data-variant="primary" href="/sign-in">Sign in again</a></div>
+  </div>
+</main>
+```
+
+```html
+<main id="main" tabindex="-1" class="cap-error-page" data-status="410">
+  <div class="cap-empty" data-kind="nothing-yet">
+    <div class="cap-empty-header">
+      <h1 class="cap-empty-title">This page is gone</h1>
+      <p class="cap-empty-text">It was taken down on purpose.</p>
+    </div>
+    <div class="cap-empty-content"><a class="cap-btn" data-variant="primary" href="/blog">Read the blog</a></div>
+  </div>
+</main>
+```
+
 `children` goes inside main under the message (dustinedwards.info's not-found help). `className` adds the site's page frame class to main.
 
 ## Exceptions in production
 
-- Foxhound's 410 is a blog withdrawal with its own heading, reason and a link to the blog; it keeps its own view until it passes those as `children` or the words become a prop.
+- None. Foxhound's 410 passes its heading and reason as `title` and `text` and the blog as `gone` (0.100.0).

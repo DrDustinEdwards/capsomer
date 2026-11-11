@@ -36,8 +36,7 @@ eachTheme((theme) => {
     await page.keyboard.press("ArrowLeft");
     await expect(r.getByRole("radio", { name: "7 days" })).toBeChecked();
     await expect(r.locator(".cap-row")).toHaveCount(2);
-    // The row's own stop (the row list's title), then its action.
-    await page.keyboard.press("Tab");
+    // The row is read, not opened (a static row), so its action is the next stop.
     await page.keyboard.press("Tab");
     await expect(
       r.getByRole("link", { name: "Add a redirect for /blog/spring-update/" }),

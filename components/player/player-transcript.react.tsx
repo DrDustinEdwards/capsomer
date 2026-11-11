@@ -5,6 +5,7 @@
 // active cue scrolls into view inside the transcript's own box only while that box is on screen
 // (never moving the page), and a reader who scrolls away gets "Jump to current". Search filters it;
 // "Copy with link" copies the selection with a link to its time.
+import { toParagraphs, type Cue } from "@drdustinedwards/site-helpers/vtt";
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { useCopy } from "../copy/copy.react.tsx";
 import { SearchField } from "../field/field.react.tsx";
@@ -13,7 +14,6 @@ import {
   activeChapterIndex,
   formatTime,
   playheadCue,
-  toParagraphs,
   type PlayerTrack,
   type TranscriptCue,
 } from "./player.ts";
@@ -68,7 +68,11 @@ export function PlayerTranscript({
 }: PlayerTranscriptProps) {
   const p = usePlayer();
   const { audioRef } = p;
-  const paragraphs = useMemo(() => toParagraphs(cues), [cues]);
+  // Prelum's paragraphs hold the very cue objects they were given, so they keep the transcript's own type.
+  const paragraphs = useMemo(
+    () => toParagraphs(cues as readonly Cue[]) as TranscriptCue[][],
+    [cues],
+  );
   const chapters = track.chapters ?? [];
   const isThis = p.current?.id === track.id;
   const [nativeStart, setNativeStart] = useState<number | null>(null);
