@@ -1,7 +1,7 @@
 ---
 name: form-hooks
 title: Form and async hooks
-summary: The React hooks behind forms that save, results that clear themselves, previews and URL-driven dialogs and filters - useSaveQueue, useTransient, useAutoDismiss, useDraftDirty, useDebounced, useDebouncedPreview, useFetcherPromise, useUrlDialog, useUrlFilters, usePagePending.
+summary: The React hooks behind forms that save, results that clear themselves and previews - useSaveQueue, useTransient, useAutoDismiss, useDraftDirty, useDebounced, useDebouncedPreview. No router and no DOM.
 parts: [behavior, react]
 tool: own JavaScript
 states: []
@@ -17,7 +17,7 @@ replaces:
 
 # Form and async hooks
 
-`capsomer/react/form-hooks` (React Router 8 for the ones that read the address or a fetcher), and `createSaveQueue`, `draftAfter`, `draftDirty`, `filterParams`, `withParam` and `pagePending` without React from `capsomer/behavior/form-hooks`.
+`capsomer/react/form-hooks`, and `createSaveQueue`, `draftAfter`, `draftDirty`, `filterParams`, `withParam` and `pagePending` without React from `capsomer/behavior/form-hooks`. Nothing here needs a router or the DOM, so a React Native app's shared client uses it too. The hooks that read the address or a fetcher (`useFetcherPromise`, `useUrlDialog`, `useUrlFilters`, `usePagePending`) are `capsomer/react/route-hooks`.
 
 | Export | Gives |
 | --- | --- |
@@ -27,23 +27,18 @@ replaces:
 | `useDraftDirty(saved)` | `{ dirty, edit, submit }`: edits since the last successful save; one typed while that save was in flight stays dirty |
 | `useDebounced(value, ms)` | the value once it held still for `ms` |
 | `useDebouncedPreview(request, read, delay?)` | `{ result, error, busy }`: `read` a beat (900 ms) after `request` stops changing; an overtaken request is aborted |
-| `useFetcherPromise({ key?, busyMessage? })` | `submit(target, options)` answering a promise of the action's data, one at a time (a toast's Undo) |
-| `useUrlDialog(name)` | `{ value, href(v), close, onOpenChange }`: a dialog `?name=value` opens; a link opens it with no script |
-| `useUrlFilters(names, { keep?, fixed? })` | `{ applied, input, setInput, apply, active, key }`: filters kept in the address, applied on submit |
-| `usePagePending(pathname?)` | whether this page's own data is being read again, not whether the reader is leaving |
 
 ## The default and its reason
 
 - **A failure does not vanish on a timer.** `useTransient`'s `clears` keeps a failed result until the person dismisses it or acts again (WCAG 2.2.1 Timing Adjustable). A success line goes after its few seconds.
 - **Controls stay enabled during a save.** Disabling the control that has focus throws focus to the page body; the queue holds a mid-save change instead.
 - **The newest request wins.** A preview or a search that was overtaken is aborted, and `busy` is derived from which request settled, never set by hand.
-- **The address is the state.** A dialog, a filter or a choice that the address holds can be reloaded, shared and opened before the page's script runs; closing replaces the history entry and keeps the scroll.
 
 ## When not to
 
 - **A server-side confirmation**: ConfirmPage, which works with no script.
-- **A value the server must know**: a cookie or the account, not the address or this browser.
+- **A value the server must know**: a cookie or the account, not this browser.
 
 ## Accessibility
 
-Each hook keeps the part it serves accessible: results stay until dismissed when they report a failure, focus is never dropped by disabling a focused control, and URL dialogs restore focus through the dialog's own return. Screen reader: no manual run, by decision; automated checks and a front-end review stand in.
+Each hook keeps the part it serves accessible: results stay until dismissed when they report a failure, and focus is never dropped by disabling a focused control. Screen reader: no manual run, by decision; automated checks and a front-end review stand in.

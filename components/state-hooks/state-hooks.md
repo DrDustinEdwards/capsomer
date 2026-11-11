@@ -1,7 +1,7 @@
 ---
 name: state-hooks
 title: State hooks
-summary: Small browser and state hooks - useSelection for bulk bars, useSinceLastVisit, useScrollToHash, useParamChoice, createSnippetHook - with newId and versionedStore without React.
+summary: Small state hooks - useSelection for bulk bars and useSinceLastVisit - with newId and versionedStore without React. No router and no DOM.
 parts: [behavior, react]
 tool: own JavaScript
 states: []
@@ -15,22 +15,19 @@ replaces:
 
 # State hooks
 
-`capsomer/react/state-hooks` (React Router 8 for the ones that read the address or loader data), and `newId`, `versionedStore`, `parseVersioned`, `selectionOf` and `sinceOf` without React from `capsomer/behavior/state-hooks`. A media query and the browser's time zone are `useMedia` and `useBrowserZone` in `capsomer/react/hooks`.
+`capsomer/react/state-hooks`, and `newId`, `versionedStore`, `readStoredText`, `writeStoredText`, `parseVersioned`, `selectionOf` and `sinceOf` without React from `capsomer/behavior/state-hooks`. No router and no DOM: a React Native app's shared client uses `newId`. `useScrollToHash`, `useParamChoice` and `createSnippetHook` read the address or loader data and are `capsomer/react/route-hooks`. A media query and the browser's time zone are `useMedia` and `useBrowserZone` in `capsomer/react/hooks`.
 
 | Export | Gives |
 | --- | --- |
 | `useSelection(keys)` | `{ ticked, has, toggle, setAll, all, some }`: ticked rows, kept to the rows still shown |
 | `indeterminate(some)` | a ref for the select-all checkbox |
 | `useSinceLastVisit(key, now, fallbackMs?)` | the ISO time of this browser's last visit, or 24 hours back on the server and on a first visit |
-| `useScrollToHash(frames?)` | scrolls to `#id` once a section that loads after the page is drawn |
-| `useParamChoice(name, loaded, choices)` | `[shown, choose]`: a search-parameter choice that switches at once while its page loads |
-| `createSnippetHook(defaults, { route?, field? })` | `useSnippet(key, fallback?)`: the root loader's snippet text, else the in-code default |
 | `newId()` | a UUID, for a write the page shows before the server answers |
 | `versionedStore({ key, v, parse })` | `{ read, write, clear }`: a JSON record in localStorage with `v` beside its fields; another version reads as null |
 
 ## The default and its reason
 
-- **The server's HTML and the hydrating render agree.** Anything only the browser knows (the last visit, the hash) is read after hydration; the first render uses the server's value, so React keeps the HTML.
+- **The server's HTML and the hydrating render agree.** Anything only the browser knows (the last visit) is read after hydration; the first render uses the server's value, so React keeps the HTML.
 - **Storage can be refused.** Every read and write is in try/catch, and the hooks work without it: the last visit falls back to the day's window, a record reads as none.
 - **A selection follows the list.** A row that leaves the list leaves the selection, so a bulk action never acts on a row the person cannot see.
 

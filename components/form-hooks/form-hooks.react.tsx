@@ -1,26 +1,16 @@
 import { useCallback, useEffect, useReducer, useRef, useState } from "react";
 import {
-  useFetcher,
-  useLocation,
-  useNavigate,
-  useNavigation,
-  useRevalidator,
-  useSearchParams,
-  type FetcherSubmitOptions,
-  type SubmitTarget,
-} from "react-router";
-import {
   CLEAN_DRAFT,
   createSaveQueue,
   draftAfter,
   draftDirty,
-  filterParams,
-  pagePending,
-  withParam,
   type SaveQueue,
 } from "./form-hooks.ts";
 
-export { createSaveQueue, draftAfter, draftDirty, pagePending } from "./form-hooks.ts";
+export { createSaveQueue, draftAfter, draftDirty } from "./form-hooks.ts";
+
+// No router and no DOM here, so a React Native app's shared client uses these too. The hooks that
+// read the address, a fetcher or loader data are capsomer/react/route-hooks.
 export type { DraftEvent, DraftState, SaveQueue } from "./form-hooks.ts";
 
 /**
@@ -168,143 +158,4 @@ export function useDebouncedPreview<R>(
     };
   }, [request, delay]);
   return { result, error, busy: request !== null && request !== settled };
-}
-
-/** What a fetcher for the action `D` holds once it is idle (undefined before its first answer). */
-export type FetcherData<D> = ReturnType<typeof useFetcher<D>>["data"];
-
-/**
- * A fetcher submit that answers a promise: for a toast's Undo or a dialog's perform, which wait for
- * the result. Resolves with the action's data once the fetcher is idle again. One at a time: a
- * second call while one is running is refused with `busyMessage`.
- */
-export function useFetcherPromise<D>({
-  key,
-  busyMessage = "Another request is still running. Try again in a moment.",
-}: { key?: string; busyMessage?: string } = {}): (
-  target: SubmitTarget,
-  options?: FetcherSubmitOptions,
-) => Promise<FetcherData<D>> {
-  const fetcher = useFetcher<D>(key ? { key } : undefined);
-  const waiting = useRef<((data: FetcherData<D>) => void) | null>(null);
-  const started = useRef(false);
-  const { submit, state, data } = fetcher;
-  useEffect(() => {
-    if (state !== "idle") {
-      started.current = true;
-      return;
-    }
-    if (!waiting.current || !started.current) return;
-    const settle = waiting.current;
-    waiting.current = null;
-    started.current = false;
-    settle(data);
-  }, [state, data]);
-  return useCallback(
-    (target, options) =>
-      new Promise<FetcherData<D>>((resolve, reject) => {
-        if (waiting.current) {
-          reject(new Error(busyMessage));
-          return;
-        }
-        waiting.current = resolve;
-        started.current = false;
-        void submit(target, { method: "post", ...options });
-      }),
-    [submit, busyMessage],
-  );
-}
-
-/**
- * A dialog or panel the address opens: `?add=person`. A link to `href(value)` opens it (and works
- * before the page's script runs, where the page shows the same form as a panel); `close()` takes
- * the parameter off, replacing the history entry and keeping the scroll.
- */
-export function useUrlDialog(name: string): {
-  value: string | null;
-  href: (value: string | null) => string;
-  close: () => void;
-  onOpenChange: (open: boolean) => void;
-} {
-  const { pathname, search } = useLocation();
-  const navigate = useNavigate();
-  const value = new URLSearchParams(search).get(name);
-  const href = useCallback(
-    (next: string | null) => withParam(pathname, search, name, next),
-    [pathname, search, name],
-  );
-  const close = useCallback(() => {
-    void navigate(withParam(pathname, search, name, null), {
-      replace: true,
-      preventScrollReset: true,
-    });
-  }, [navigate, pathname, search, name]);
-  const onOpenChange = useCallback(
-    (open: boolean) => {
-      if (!open) close();
-    },
-    [close],
-  );
-  return { value, href, close, onOpenChange };
-}
-
-export interface UrlFilters<K extends string> {
-  /** The filter the address holds, every name present ("" when unset). */
-  applied: Record<K, string>;
-  /** What the fields hold; it follows the address when the address changes (back, a link). */
-  input: Record<K, string>;
-  setInput: (patch: Partial<Record<K, string>>) => void;
-  /** Puts `next` (the fields by default) in the address, replacing the history entry. */
-  apply: (next?: Partial<Record<K, string>>) => void;
-  /** Whether any filter is applied. */
-  active: boolean;
-  /** One string for the applied filter, for a query key. */
-  key: string;
-}
-
-/**
- * A filter kept in the address, so a view can be reloaded or shared: the fields are local state
- * that apply on submit. `keep` names other parameters the filter leaves in place (a tab); `fixed`
- * sets parameters every filtered address carries.
- */
-export function useUrlFilters<K extends string>(
-  names: readonly K[],
-  {
-    keep = [],
-    fixed = {},
-  }: { keep?: readonly string[]; fixed?: Readonly<Record<string, string>> } = {},
-): UrlFilters<K> {
-  const [params, setParams] = useSearchParams();
-  const applied = Object.fromEntries(names.map((n) => [n, params.get(n) ?? ""])) as Record<
-    K,
-    string
-  >;
-  const key = names.map((n) => applied[n]).join("\u0000");
-  const [input, setInputState] = useState(applied);
-  // The address changed: the fields follow it. Adjusted while rendering, not in an effect.
-  const [seen, setSeen] = useState(key);
-  if (seen !== key) {
-    setSeen(key);
-    setInputState(applied);
-  }
-  const setInput = useCallback(
-    (patch: Partial<Record<K, string>>) => setInputState((s) => ({ ...s, ...patch })),
-    [],
-  );
-  const apply = (next?: Partial<Record<K, string>>) => {
-    const values = { ...input, ...next } as Record<string, string>;
-    setParams((from) => filterParams(from, values, keep, fixed), {
-      replace: true,
-      preventScrollReset: true,
-    });
-  };
-  return { applied, input, setInput, apply, active: names.some((n) => applied[n] !== ""), key };
-}
-
-/** Whether this page's own data is being read again, not whether the reader is leaving it. */
-export function usePagePending(pathname?: string): boolean {
-  const navigation = useNavigation();
-  const { state } = useRevalidator();
-  const here = useLocation().pathname;
-  return pagePending(navigation, state, pathname ?? here);
 }

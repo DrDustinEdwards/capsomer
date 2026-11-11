@@ -1,12 +1,30 @@
 // The plain parts of the state hooks (state-hooks.react.tsx): ids, a versioned record kept in this
 // browser, and the selection's sums. No framework.
-import { readPref } from "../shell/shell.ts";
 
 /** An id a server accepts as the client's own (a UUID where the platform has one). */
 export function newId(): string {
   const c = globalThis.crypto as Crypto | undefined;
   if (c?.randomUUID) return c.randomUUID();
   return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 12)}`;
+}
+
+/** A string from localStorage, or null when none is kept or storage is refused. */
+export function readStoredText(key: string): string | null {
+  try {
+    return globalThis.localStorage?.getItem(key) ?? null;
+  } catch {
+    return null;
+  }
+}
+
+/** Keeps a string in localStorage; false when storage refused it. */
+export function writeStoredText(key: string, value: string): boolean {
+  try {
+    globalThis.localStorage?.setItem(key, value);
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 /** A record kept in localStorage under one key, with its format version inside it. */
@@ -34,19 +52,14 @@ export function versionedStore<T extends object>({
 }): VersionedStore<T> {
   return {
     read() {
-      return parseVersioned(readPref(key), v, parse);
+      return parseVersioned(readStoredText(key), v, parse);
     },
     write(value) {
-      try {
-        localStorage.setItem(key, JSON.stringify({ ...value, v }));
-        return true;
-      } catch {
-        return false;
-      }
+      return writeStoredText(key, JSON.stringify({ ...value, v }));
     },
     clear() {
       try {
-        localStorage.removeItem(key);
+        globalThis.localStorage?.removeItem(key);
       } catch {
         // Nothing kept to clear.
       }
