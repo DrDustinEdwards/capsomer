@@ -93,6 +93,8 @@
     margin: 0;
     font-weight: 600;
     letter-spacing: -0.01em;
+    /* Balanced, as the whole state is: set here, since base.css gives a p "pretty". */
+    text-wrap: balance;
   }
 
   .cap-empty-text {

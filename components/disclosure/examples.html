@@ -202,6 +202,25 @@
   </ul>
 </section>
 
+<section class="cap-specimen" aria-labelledby="s-own">
+  <h2 id="s-own">A site's own card: the triangle marker, its spacing by token; and an inline section with it</h2>
+  <p class="cap-muted">A compact card with data-marker="triangle" and the disclosure tokens set as txasm's cards were; then an inline section with the triangle.</p>
+  <ul style="display: grid; gap: 12px; margin: 0; padding: 0; list-style: none; --disclosure-pad: 12px; --disclosure-summary-pad: 0; --disclosure-summary-min-h: var(--target); --disclosure-body-pad: 0; --disclosure-body-gap: 12px">
+    <li><details class="cap-disclosure" data-variant="card" data-size="sm" data-marker="triangle" open>
+      <summary>Session chairs (2)</summary>
+      <div class="cap-disclosure-body"><ul><li>Alex Rivera</li><li>Sam Lee</li></ul></div>
+    </details></li>
+    <li><details class="cap-disclosure" data-variant="card" data-size="sm" data-marker="triangle">
+      <summary>Add a chair</summary>
+      <div class="cap-disclosure-body"><p>Choose a member.</p></div>
+    </details></li>
+  </ul>
+  <details class="cap-disclosure" data-variant="inline" data-marker="triangle" open>
+    <summary>Why this abstract was returned</summary>
+    <div class="cap-disclosure-body"><p>It ran past the 300-word limit.</p></div>
+  </details>
+</section>
+
 <section class="cap-specimen" aria-labelledby="s-disabled">
   <h2 id="s-disabled">Group row, pressed and disabled</h2>
   <div class="cap-group" data-cap="disclosure">

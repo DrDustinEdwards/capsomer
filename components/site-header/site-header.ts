@@ -292,6 +292,31 @@ export function wireThemeKey(header: HTMLElement, key: string): () => void {
   return () => document.removeEventListener("keydown", onKey);
 }
 
+// How far the page scrolls before the header is "scrolled" (data-scrolled): past a trackpad's
+// nudge, so a site's scrolled look (--header-scrolled-*) does not flicker at the top.
+export const SCROLLED_AFTER_PX = 8;
+
+// Keeps data-scrolled on the header while the page is scrolled down, for the site's scrolled look
+// (--header-scrolled-edge, --header-scrolled-mix, --header-scrolled-shadow). Behavior only: the
+// defaults draw nothing new.
+export function wireScrolled(header: HTMLElement): () => void {
+  let frame = 0;
+  const update = () => {
+    frame = 0;
+    header.toggleAttribute("data-scrolled", window.scrollY > SCROLLED_AFTER_PX);
+  };
+  const onScroll = () => {
+    if (!frame) frame = requestAnimationFrame(update);
+  };
+  update();
+  window.addEventListener("scroll", onScroll, { passive: true });
+  return () => {
+    window.removeEventListener("scroll", onScroll);
+    if (frame) cancelAnimationFrame(frame);
+    header.removeAttribute("data-scrolled");
+  };
+}
+
 // Opens the phone's sheet (the shared dialog, from the bottom) from the menu button.
 export function openSheet(header: HTMLElement): void {
   const button = header.querySelector<HTMLButtonElement>(".cap-site-header-menu");
@@ -311,8 +336,9 @@ export function closeSheet(header: HTMLElement): void {
 // Attaches to every [data-cap="site-header"] under root not yet attached: each panel, each
 // icon control's tip, search (answered by `suggest`, the site's own), the menu button and its
 // sheet. Returns a function that detaches them all.
+// Document | Element rather than ParentNode, so a site with the Workers types can pass an element.
 export function enhance(
-  root: ParentNode = document,
+  root: Document | Element = document,
   { suggest }: { suggest?: Suggest } = {},
 ): () => void {
   const undo: Array<() => void> = [];
@@ -343,10 +369,16 @@ export function enhance(
     window.addEventListener("popstate", onBack);
     parts.push(() => window.removeEventListener("popstate", onBack));
     parts.push(guardForms(header));
+    parts.push(wireScrolled(header));
     if (header.dataset.capThemeKey) parts.push(wireThemeKey(header, header.dataset.capThemeKey));
     const onClick = (e: MouseEvent) => {
       const t = e.target as Element;
-      if (menu && t.closest(".cap-site-header-menu") === menu) openSheet(header);
+      // The script opens the sheet itself (focus on its heading, aria-expanded), so the button's
+      // no-script command (commandfor, command="show-modal") does not also run.
+      if (menu && t.closest(".cap-site-header-menu") === menu) {
+        e.preventDefault();
+        openSheet(header);
+      }
       if (sheet?.open && sheet.contains(t) && t.closest("a[href]")) closeDialog(sheet);
     };
     header.addEventListener("click", onClick);
