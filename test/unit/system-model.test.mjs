@@ -13,6 +13,7 @@ const model = () => ({
       short: "Alpha",
       family: "site",
       ring: "used",
+      private: false,
       repos: ["https://example.com/alpha"],
     },
     { id: "beta", name: "Beta", short: "Beta", family: "system", ring: "core", private: true },

@@ -44,6 +44,7 @@ const OpenSystem = z.strictObject({
   short: Text(12),
   family: z.enum(SYSTEM_FAMILIES),
   ring: z.enum(SYSTEM_RINGS),
+  private: z.literal(false),
   description: Text(280).optional(),
   domain: Text(253).optional(),
   repos: z.array(z.url().max(512)).optional(),
