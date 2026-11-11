@@ -5,8 +5,8 @@ summary: How many works cite a record and which, each with the index it came fro
 parts: [css, react]
 tool: native
 states: [count linked to the index, count without a link, no count below 1, the whole list, fewer than the count with missing fields]
-added: 0.92.0
-updated: 0.92.0
+added: 0.93.0
+updated: 0.93.0
 source: dustinedwards.info app/routes/publications.$slug.tsx:212-221 (the "Cited by N" line) and :258-283 (section.paper-citedby); styles/paper.css (.paper-cited, .paper-provenance, .paper-citedby, .paper-citedby-list)
 replaces:
   - 'className="paper-cited(by|by-list|by-source)?\b'

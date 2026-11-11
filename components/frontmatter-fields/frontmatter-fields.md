@@ -5,8 +5,8 @@ summary: A file's frontmatter as one labeled box per key (a line, a longer text,
 parts: [css, behavior, react]
 tool: native + own JavaScript
 states: [typed from the values, with the app's labels and help, a flag with its own word, a list and its hint, one item per line, read-only with empty boxes hidden, keys left to the raw text, raw text open when no box shows, no frontmatter]
-added: 0.92.0
-updated: 0.92.0
+added: 0.93.0
+updated: 0.93.0
 source: Carrel, app/components/editor/frontmatter-fields.tsx, header-fields.tsx (rawOf, labelOf, ListInput, the "Edit as text" disclosure), typed-box.ts (useTyped), app/lib/frontmatter.ts (FIELDS, readFields, writeBlock, setField) and app.css (.app-fm, .app-fm-field, .app-fm-raw, .app-header-raw)
 replaces:
   - 'className="app-fm[" -]'

@@ -5,8 +5,8 @@ summary: A quantity with steppers, an optional unit select and the button that s
 parts: [css, react]
 tool: native + own JavaScript (Field's steppers, Select's popup)
 states: [a quantity and a unit system, a count alone at its least, keyboard focus, stepped up and down]
-added: 0.92.0
-updated: 0.92.0
+added: 0.93.0
+updated: 0.93.0
 source: dustinedwards.info, app/styles/procedure.css (.procedure-scale) and app/components/procedure-materials.tsx (ScaleForm)
 replaces:
   - '\.procedure-scale\s*\{'

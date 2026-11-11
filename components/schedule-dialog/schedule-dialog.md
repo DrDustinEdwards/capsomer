@@ -5,8 +5,8 @@ summary: A dialog that asks when to publish, with a date and time field named by
 parts: [css, behavior, react]
 tool: native + own JavaScript
 states: [closed, open with no time, a past time refused, a future time said back, replacing a time already set, sending]
-added: 0.92.0
-updated: 0.92.0
+added: 0.93.0
+updated: 0.93.0
 source: Carrel, app/components/editor/schedule-dialog.tsx (ScheduleDialog, localValue) and app/lib/hydrated.ts (useBrowserZone)
 replaces:
   - "function ScheduleDialog\\b"

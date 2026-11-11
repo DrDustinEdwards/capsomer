@@ -20,9 +20,10 @@ import {
   type HeaderLink,
   type HeaderLogo,
   type HeaderSwitcher,
+  type SiteHeaderProps,
 } from "../site-header/site-header.react.tsx";
 import { countName as headerCountName, TipKeys } from "../site-header/site-header-parts.react.tsx";
-import { applyStoredTheme, THEME_PREF } from "../theme-switch/theme-switch.ts";
+import { applyStoredTheme, syncServedTheme, THEME_PREF } from "../theme-switch/theme-switch.ts";
 import type { Suggest } from "../site-header/site-header.ts";
 import { badgeText, jumpTarget } from "./admin-shell.ts";
 import { FAMILY_APPS, FIRST_PAGE, FOXHOUND_MARKS, OWNER, type FamilyAppId } from "./apps.tsx";
@@ -97,6 +98,10 @@ export interface AdminAccount {
   // Supply Co."), so its settings sit under its name.
   appLabel?: string;
   onSignOut?: () => void;
+  // Sign out as a form post (the header's `account.signOutAction` and `signOutFields`), so it works
+  // before script and sends the site's CSRF fields.
+  signOutAction?: string;
+  signOutFields?: Record<string, string>;
   signOutDisabled?: boolean;
 }
 
@@ -166,6 +171,13 @@ export interface AdminShellProps {
   // the header bind to it ("T"); leave it out where the app binds its own.
   themePrefKey?: string;
   themeKey?: string;
+  // Passed to the site header: where the theme choice is kept besides this browser (a cookie, the
+  // account), the server's answer, the no-script theme form, and whether the header hydrates.
+  themeCookie?: SiteHeaderProps["themeCookie"];
+  onThemeSave?: SiteHeaderProps["onThemeSave"];
+  themeInitial?: SiteHeaderProps["themeInitial"];
+  themeAction?: SiteHeaderProps["themeAction"];
+  hydrate?: SiteHeaderProps["hydrate"];
   prefKey?: string;
   // G then 1 to 9 opens the app in that place (the key sequence of GitHub and Linear; Ctrl and a
   // digit belong to the browser's tabs); on by default, and off with the shortcuts switch. false
@@ -307,6 +319,11 @@ export function AdminShell(props: AdminShellProps) {
     refreshShortcut,
     themePrefKey = THEME_PREF,
     themeKey,
+    themeCookie,
+    onThemeSave,
+    themeInitial,
+    themeAction,
+    hydrate,
     prefKey = DEFAULT_PREF,
     jumpKeys = true,
     collapseKey = "[",
@@ -333,7 +350,12 @@ export function AdminShell(props: AdminShellProps) {
   }, [documentTitle, page, title]);
 
   // The remembered theme, in case the app's head script did not apply it before paint.
-  useEffect(() => void applyStoredTheme(themePrefKey), [themePrefKey]);
+  // Where the server keeps the choice, its answer is copied into this browser first.
+  const serverKept = Boolean(themeCookie || onThemeSave);
+  useEffect(() => {
+    if (serverKept) syncServedTheme(themePrefKey);
+    applyStoredTheme(themePrefKey);
+  }, [serverKept, themePrefKey]);
 
   // G then a number jumps between apps (Esc hiding a shown name is the tooltip's own).
   const appsRef = useRef(apps);
@@ -450,6 +472,8 @@ export function AdminShell(props: AdminShellProps) {
             : []),
         ],
         onSignOut: accountProps.onSignOut,
+        signOutAction: accountProps.signOutAction,
+        signOutFields: accountProps.signOutFields,
         signOutDisabled: accountProps.signOutDisabled,
       }
     : undefined;
@@ -493,6 +517,11 @@ export function AdminShell(props: AdminShellProps) {
         extras={extras}
         themePrefKey={themePrefKey}
         themeKey={themeKey}
+        themeCookie={themeCookie}
+        onThemeSave={onThemeSave}
+        themeInitial={themeInitial}
+        themeAction={themeAction}
+        hydrate={hydrate}
         account={account}
         skipTo="#cap-main"
         renderLink={renderLink}

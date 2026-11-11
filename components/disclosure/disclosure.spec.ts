@@ -123,6 +123,27 @@ eachTheme((theme) => {
     await expect(items.nth(0)).not.toHaveAttribute("open", "");
   });
 
+  test("behavior: a compact card opens in place to its form, with the body in the text color", async ({
+    page,
+  }) => {
+    await visitStates(page, "disclosure", theme);
+    const cards = page.locator("#card-sm-specimen > li > details");
+    await expect(cards).toHaveCount(3);
+    await expect(cards.first().getByRole("textbox", { name: "Name" })).toBeVisible();
+    const closed = cards.nth(1);
+    await closed.locator("summary").focus();
+    await page.keyboard.press("Enter");
+    await expect(closed).toHaveAttribute("open", "");
+    await expect(closed.getByText("Alex Rivera")).toBeVisible();
+    await expectContrast(page, [
+      { sel: "#card-sm-specimen summary", what: "a compact card's title" },
+      {
+        sel: "#card-sm-specimen li:nth-child(2) .cap-disclosure-body",
+        what: "a compact card's body",
+      },
+    ]);
+  });
+
   test("accessibility: a summary in the accordion variant and a pressed one keep their contrast", async ({
     page,
   }) => {

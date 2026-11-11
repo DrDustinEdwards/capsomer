@@ -5,8 +5,8 @@ summary: A QR code for one absolute address, drawn as an SVG from the matrix the
 parts: [css, react]
 tool: native
 states: [default with what it is for and its address, large with the address alone, dark theme keeps black on white, forced colors]
-added: 0.92.0
-updated: 0.92.0
+added: 0.93.0
+updated: 0.93.0
 source: dustinedwards.info, app/kb/procedures/qr.mjs (sheetQr, on uqr's renderSVG) and the procedure sheet's figure (app/components/procedure.tsx, app/styles/procedure.css .procedure-sheet-qr)
 replaces:
   - '\.procedure-sheet-qr\s*\{'

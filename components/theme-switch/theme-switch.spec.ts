@@ -161,6 +161,24 @@ eachTheme((theme) => {
       `Switch to ${other} theme`,
     );
   });
+
+  test("behavior: kept by the site: the switch starts from the server's answer, then writes the site's cookie and hands the choice to its save", async ({
+    page,
+  }) => {
+    await visitStates(page, "theme-switch", theme, "cookie");
+    // The states page writes data-theme as a server would; the browser's memory is set to it.
+    expect(await page.evaluate(() => localStorage.getItem("cap-theme-specimen-cookie"))).toBe(
+      theme,
+    );
+    const other = theme === "dark" ? "light" : "dark";
+    await page.locator(".cap-theme-button").click();
+    await expect(html(page)).toHaveAttribute("data-theme", other);
+    expect(await page.evaluate(() => document.cookie)).toContain(`sample_theme=${other}`);
+    await expect(page.locator("#saved")).toHaveText(other);
+    expect(await page.evaluate(() => localStorage.getItem("cap-theme-specimen-cookie"))).toBe(
+      other,
+    );
+  });
 });
 
 // The device's "increase contrast" setting turns on the generated stronger set, in the theme the

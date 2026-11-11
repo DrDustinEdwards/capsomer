@@ -5,8 +5,8 @@ summary: A program by day and time slot, with overlapping sessions as named para
 parts: [css, behavior, react]
 tool: native
 states: [a whole program with parallel tracks and undated sessions, one day at a time from the day nav, in the meeting's own zone, a day with nothing on it, phone width with the tracks stacked]
-added: 0.92.0
-updated: 0.92.0
+added: 0.93.0
+updated: 0.93.0
 source: txasm app/routes/meetings.$slug.program.tsx (TrackGroup, SessionBlock), app/routes/admin.editions.$editionId.program.tsx (day nav, ?day=), app/components/program-builder/shared.tsx (DAY_FMT, TIME_FMT, buildDayKeys, slotTimeLine), app/components/program-builder/sessions.tsx (Slot), app/lib/program-book.ts (dayHeading, slotTimeLine), app/lib/data-access/program-model.ts (groupSessionsIntoDays)
 replaces:
   - 'className="(?:[^"]*\s)?(tracks|track-grid|track-scroll)[\s"]'
