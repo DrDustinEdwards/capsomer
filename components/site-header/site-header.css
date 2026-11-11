@@ -45,6 +45,14 @@
     --header-glyph-stroke: 1.6;
     --header-tools-gap: var(--space-3);
     --header-row-tools-gap: var(--space-2);
+    /* The phone sheet's group labels and rows. */
+    --header-sheet-label-ink: var(--muted);
+    --header-sheet-label-fs: var(--fs-detail);
+    --header-sheet-label-weight: 500;
+    --header-sheet-label-case: none;
+    --header-sheet-label-tracking: normal;
+    --header-sheet-row-fs: var(--fs-body);
+    --header-sheet-row-h: max(var(--control), var(--target));
     /* The bottom edge, and once the page has scrolled (data-scrolled, set by the behavior) its
        edge and shadow. A site whose edge shows only after a scroll sets --header-edge: transparent. */
     --header-edge: var(--header-line);
@@ -685,9 +693,11 @@
   }
   .cap-site-header-sheet-label {
     padding: var(--space-4) var(--space-4) var(--space-2);
-    color: var(--muted);
-    font-size: var(--fs-detail);
-    font-weight: 500;
+    color: var(--header-sheet-label-ink);
+    font-size: var(--header-sheet-label-fs);
+    font-weight: var(--header-sheet-label-weight);
+    letter-spacing: var(--header-sheet-label-tracking);
+    text-transform: var(--header-sheet-label-case);
   }
   .cap-site-header-sheet .cap-site-header-sheet-list {
     display: grid;
@@ -701,14 +711,14 @@
       align-items: center;
       gap: var(--space-4);
       inline-size: 100%;
-      min-block-size: max(var(--control), var(--target));
+      min-block-size: var(--header-sheet-row-h);
       padding: 0 var(--space-4);
       border: 0;
       border-radius: var(--radius-m);
       background: none;
       color: var(--text);
       font: inherit;
-      font-size: var(--fs-body);
+      font-size: var(--header-sheet-row-fs);
       text-align: start;
       text-decoration: none;
 
