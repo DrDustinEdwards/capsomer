@@ -249,7 +249,45 @@ function Sections() {
   );
 }
 
+// A site's own look, by props and tokens (txasm's affiliations): no grip, Up and Down in words, no
+// box per row, a red Remove, an excluded row drawn by the site's class, and its own checkbox.
+function OwnLook() {
+  const [rows, setRows] = useState([
+    { id: "a1", name: "Example University", included: true },
+    { id: "a2", name: "Sample Health Center", included: false },
+    { id: "a3", name: "Field Station", included: true },
+  ]);
+  return (
+    <SortableList
+      aria-label="Affiliations"
+      className="sortable-own"
+      items={rows}
+      getId={(r) => r.id}
+      getLabel={(r) => r.name}
+      grip={false}
+      steps="labeled"
+      itemClassName={(r) => (r.included ? undefined : "sortable-own-out")}
+      renderItem={(r) => <span className="cap-sortable-label">{r.name}</span>}
+      renderControls={(r) => (
+        <label className="cap-check sortable-own-in">
+          <input
+            type="checkbox"
+            checked={r.included}
+            onChange={(e) =>
+              setRows(rows.map((x) => (x.id === r.id ? { ...x, included: e.target.checked } : x)))
+            }
+          />
+          In<span className="cap-sr-only"> {r.name}</span>
+        </label>
+      )}
+      onReorder={(order) => setRows(order.map((id) => rows.find((r) => r.id === id)!))}
+      onRemove={(id) => setRows(rows.filter((r) => r.id !== id))}
+    />
+  );
+}
+
 const mounts: Record<string, () => JSX.Element> = {
+  own: OwnLook,
   cards: Corkboard,
   rows: Rows,
   hosts: Hosts,

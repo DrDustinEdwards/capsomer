@@ -84,6 +84,17 @@ interface CoreProps<T> {
   // The form field name for the order; turns the buttons into submit buttons.
   name?: string;
   className?: string;
+  // How Move up and Move down are drawn: "quiet" icon buttons (the default), "bordered" icon
+  // buttons, or "labeled" bordered buttons with the words Up and Down.
+  steps?: "quiet" | "bordered" | "labeled";
+  // The grip; on by default. Off, the item has no drag handle and moves by its buttons (and Alt
+  // and an arrow, with altKeys).
+  grip?: boolean;
+  // A class of the site's own on an item, for a state it draws (an excluded entry).
+  itemClassName?: (item: T, state: SortState) => string | undefined;
+  // The site's own controls in the item's buttons, after the steps and the move-to select and
+  // before Remove (a checkbox, say).
+  renderControls?: (item: T, state: SortState) => ReactNode;
 }
 
 export interface SortableListProps<T> extends CoreProps<T> {
@@ -122,6 +133,8 @@ export interface SortableBoardProps<T> extends CoreProps<T> {
   // A select in each item to move it to another list: the one-pointer way across lists
   // (WCAG 2.5.7). On by default.
   moveTo?: boolean;
+  // A class of the site's own on a list's section (.cap-sortable-lane), for its look.
+  laneClassName?: string | ((lane: SortLane<T>) => string | undefined);
   "aria-label"?: string;
 }
 
@@ -170,6 +183,7 @@ interface CoreInput<T> extends CoreProps<T> {
   max?: number;
   moveTo?: boolean;
   renderLaneHead?: (lane: SortLane<T>) => ReactNode;
+  laneClassName?: string | ((lane: SortLane<T>) => string | undefined);
   label: { "aria-label"?: string; "aria-labelledby"?: string };
 }
 
@@ -197,6 +211,11 @@ function Core<T>({
   max,
   moveTo = true,
   renderLaneHead,
+  laneClassName,
+  steps = "quiet",
+  grip = true,
+  itemClassName,
+  renderControls,
   label,
 }: CoreInput<T>) {
   const text: SortMessages = { ...sortText, ...messages };
@@ -244,7 +263,9 @@ function Core<T>({
     if (at && part === "up" && at.index === 0) part = "down";
     if (at && part === "down" && at.index === (live.current[at.list]?.length ?? 0) - 1) part = "up";
     const el =
-      part === "handle" ? handles.current.get(w.id) : controls.current.get(`${w.id}:${part}`);
+      part === "handle"
+        ? (handles.current.get(w.id) ?? controls.current.get(`${w.id}:up`))
+        : controls.current.get(`${w.id}:${part}`);
     if (el && document.activeElement !== el) el.focus({ preventScroll: true });
   });
 
@@ -258,7 +279,14 @@ function Core<T>({
       afterRemove.current = null;
       const left = live.current[r.list] ?? [];
       const id = left[Math.min(r.index, left.length - 1)];
-      const el = id === undefined ? addRef.current : handles.current.get(id);
+      // With no grip, the item's first button takes focus.
+      const el =
+        id === undefined
+          ? addRef.current
+          : (handles.current.get(id) ??
+            itemEls.current
+              .get(id)
+              ?.querySelector<HTMLElement>(".cap-sortable-steps button:enabled"));
       el?.focus({ preventScroll: true });
     }
     const a = added.current;
@@ -272,7 +300,7 @@ function Core<T>({
           ?.querySelector<HTMLElement>(
             ".cap-sortable-body :is(input, select, textarea, [contenteditable='true'], [tabindex='0'])",
           );
-        (body ?? handles.current.get(id))?.focus();
+        (body ?? handles.current.get(id) ?? controls.current.get(`${id}:up`))?.focus();
         const it = byId.get(id);
         if (it !== undefined) say(text.added(getLabel(it), total));
       }
@@ -488,12 +516,13 @@ function Core<T>({
           const words = labelOf(id);
           const state: SortState = { index, lifted: up, list: lane.id };
           const head = renderHead?.(item, state);
+          const own = itemClassName?.(item, state);
           return (
             // oxlint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- Alt and an arrow anywhere in an item is the keyboard twin of dragging it; the buttons are the one-pointer way
             <li
               key={id}
               ref={(el) => setRef(itemEls, id)(el)}
-              className="cap-sortable-item"
+              className={own ? `cap-sortable-item ${own}` : "cap-sortable-item"}
               data-value={id}
               data-lifted={up ? "" : undefined}
               data-dragging={dragging === id ? "" : undefined}
@@ -521,7 +550,7 @@ function Core<T>({
                 );
               }}
             >
-              {readOnly ? null : (
+              {readOnly || !grip ? null : (
                 <button
                   ref={(el) => setRef(handles, id)(el)}
                   type="button"
@@ -548,9 +577,9 @@ function Core<T>({
                       name={name ? part : undefined}
                       value={name ? id : undefined}
                       className="cap-btn"
-                      data-variant="quiet"
+                      data-variant={steps === "quiet" ? "quiet" : undefined}
                       data-size="sm"
-                      data-icon-only=""
+                      data-icon-only={steps === "labeled" ? undefined : ""}
                       data-cap-part={part}
                       aria-keyshortcuts={
                         altKeys ? `Alt+Arrow${part === "up" ? "Up" : "Down"}` : undefined
@@ -561,10 +590,19 @@ function Core<T>({
                         step(id, part === "up" ? -1 : 1, part);
                       }}
                     >
-                      <Arrow up={part === "up"} />
-                      <span className="cap-sr-only">
-                        Move {words} {part}
-                      </span>
+                      {steps === "labeled" ? (
+                        <>
+                          <span className="cap-sr-only">Move {words} </span>
+                          {part === "up" ? "Up" : "Down"}
+                        </>
+                      ) : (
+                        <>
+                          <Arrow up={part === "up"} />
+                          <span className="cap-sr-only">
+                            Move {words} {part}
+                          </span>
+                        </>
+                      )}
                     </button>
                   ))}
                   {board && moveTo && lanes.length > 1 ? (
@@ -578,6 +616,7 @@ function Core<T>({
                       onMove={(list, el) => toLane(id, list, el)}
                     />
                   ) : null}
+                  {renderControls?.(item, state)}
                   {onRemove ? (
                     <button
                       ref={(el) => setRef(controls, `${id}:remove`)(el)}
@@ -611,10 +650,11 @@ function Core<T>({
       </ol>
     );
     if (!board) return list;
+    const laneClass = typeof laneClassName === "function" ? laneClassName(lane) : laneClassName;
     return (
       <section
         key={lane.id}
-        className="cap-sortable-lane"
+        className={laneClass ? `cap-sortable-lane ${laneClass}` : "cap-sortable-lane"}
         data-sortable-lane=""
         ref={(el) => setRef(laneEls, lane.id)(el)}
       >

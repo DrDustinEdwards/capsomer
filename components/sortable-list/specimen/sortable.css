@@ -26,3 +26,21 @@
   margin: 0;
   font-size: var(--fs-body);
 }
+
+/* A site's own rows (examples.tsx, OwnLook), by token and its own classes. */
+.sortable-own {
+  --sortable-item-border: 0;
+  --sortable-item-bg: transparent;
+  --sortable-item-pad: 0;
+  --sortable-item-align: start;
+  --sortable-remove-ink: var(--crit);
+  --sortable-remove-hover-ink: var(--crit);
+  --sortable-remove-weight: 600;
+}
+.sortable-own-out {
+  border: 1px dashed var(--line-strong);
+  background: var(--sunken);
+}
+.sortable-own-in {
+  margin-inline: var(--space-3);
+}

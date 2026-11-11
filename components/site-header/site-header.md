@@ -4,9 +4,9 @@ title: Site header
 summary: One header across the top of every public, app and admin page in the family, 56px and sticky, with the logo, the switcher and the section links on the left and the extras, the theme and the account on the right.
 parts: [css, behavior, react]
 tool: native + own JavaScript
-states: [public signed out, signed in, user's dashboard, your admin, links on the right with a divider, links centered, dark band, translucent band, switcher open, section panel open, account menu open, the site's own panel, phone row, phone sheet, phone bottom bar, written by hand, written by the server with no hydration, a wide panel, a switcher whose rows post, sign out as a form post, a button kept in the phone's row]
+states: [public signed out, signed in, user's dashboard, your admin, links on the right with a divider, links centered, dark band, translucent band, switcher open, section panel open, account menu open, the site's own panel, phone row, phone sheet, phone bottom bar, written by hand, written by the server with no hydration, a wide panel, a switcher whose rows post, sign out as a form post, a button kept in the phone's row, a site's own look by tokens, the phone's row under 1024px]
 added: 0.9.0
-updated: 0.99.0
+updated: 0.102.0
 source: docs/design/design-site-header.md and its mockup; Dustin's ten answers of 2026-10-13; Foxhound's header.tsx and Foxing's page-shell.tsx
 replaces:
   - 'class="(site-header|header|topbar|navbar)"'
@@ -35,15 +35,16 @@ An email, a printed page or an embedded widget has no header. A page inside anot
 ## What Capsomer fixes
 
 - **Order.** Left: the logo (it links home), then the switcher. The section links sit where the site chooses. Right: the site's extras, then the theme button, then the account, always last. A slot with nothing in it takes no room; nothing moves into its place.
-- **56px at every width** (`--header-h`, 3.5rem), **sticky** at the top with `scroll-padding-top` set to its height, so a focused control or an anchor never lands under it (WCAG 2.4.11).
-- **Full width**, 24px sides on a desktop and 16px on a phone, so the logo is at the same x on every site and lines up with the admin's menu below it.
+- **56px at every width** (`--header-h`, 3.5rem; a site sets its own on `:root`, so the scroll padding follows), **sticky** at the top with `scroll-padding-top` set to its height, so a focused control or an anchor never lands under it (WCAG 2.4.11).
+- **Full width**, 24px sides on a desktop and 16px on a phone (`--header-side`), so the logo is at the same x on every site and lines up with the admin's menu below it. A site whose page keeps to a column sets `--header-max-inline-size` (default `100%`, no column): the band still runs the full width and the bar's contents keep to the column, its sides inside it (`--header-inset`).
 - **Spacing.** 12px from the logo to the switcher, 24px from the switcher to the section links, 20px between links, 8px between the controls on the right.
-- **Type.** Links and the switcher at 14px in the site's UI face (`--font-ui`); the current page is weight 500 with a 2px underline in the accent, so it is not told by color alone. In the letterhead a link under the pointer takes a faint tint of the band (`--header-hover`), as Carbon's shell does, and View site ends in the family arrow.
+- **Type.** Links and the switcher at 14px in the site's UI face (`--font-ui`), the links at weight 400 (`--header-link-weight`); the current page is weight 500 (`--header-link-current-weight`) with a 2px underline in the accent, so it is not told by color alone. In the letterhead a link under the pointer takes a faint tint of the band (`--header-hover`), as Carbon's shell does, and View site ends in the family arrow.
 - **Controls.** Every icon control is a 36px target with an 18px glyph (24 box, 1.6 stroke), a name of its own and a tip naming it and its key. The avatar is a 32px circle in the same target: the person's picture when the site gives one (`account.avatar`), drawn over their initials, which show when there is none or it fails to load.
 - **Panels.** The switcher, a section with children and the account each open a panel: a list of links under a disclosure button (`aria-expanded`, `aria-controls`), not an ARIA menu, because every item goes somewhere. On a mouse a panel opens at once on hover, with no delay, and on click; on touch, on tap. It lines up with its button's edge and starts under the header, so it never covers it. What a panel holds and how it is laid out is the site's (`panel`).
 - **Rows that do something.** A row in a panel or the sheet goes somewhere (`href`), posts a form (`action`, with `fields` as hidden inputs), or runs the site's `onClick`. A form works with no script and its server answers it: Sign out (`account.signOutAction`, with `signOutFields` for a CSRF token), an account switch (a switcher's rows), any row that changes state on the server. The row you are on (`current`) posts nothing. A form sends once: a second press before the next page arrives is dropped (`guardForms`), so two posts never race; a page restored by Back can send again.
 - **A wide panel** (`panelSize: "wide"`, `data-size="wide"`) is a mega-menu's room: 40rem (`--header-panel-w`), held inside the window, with the site's own layout and class inside (`panelClassName`).
-- **One bottom edge**, 1px in the band's own line color.
+- **One bottom edge**, 1px in the band's own line color (`--header-edge`, default `--header-line`).
+- **Scrolled.** The behavior puts `data-scrolled` on the header once the page has scrolled past 8px (`SCROLLED_AFTER_PX`, `wireScrolled`), and takes it off at the top. By default it draws nothing new; a site's scrolled look is `--header-scrolled-edge` (default `--header-edge`), `--header-scrolled-shadow` (default `none`) and, on a translucent band, `--header-scrolled-mix`.
 
 ## What each site owns
 
@@ -51,7 +52,18 @@ An email, a printed page or an embedded widget has no header. A page inside anot
 | --- | --- |
 | Logo | An SVG or image at most 24px tall and 160px wide, and its name (`logo`) |
 | Accent | Its color family (`data-family` on the page) |
-| Band | `--header-bg`, `--header-fg`, `--header-fg-muted`, `--header-line`; or `data-band="dark"` (dark in both themes), and `data-translucent` (the band at 85%, blurred); `data-rest="clear"` (React `rest="clear"`) with `<span class="cap-site-header-ground" aria-hidden="true"></span>` as the header's first child: no ground or line while the page is at its top, the band once the header is stuck (a scroll-state query; where that is missing the band always shows) |
+| Band | `--header-bg`, `--header-fg`, `--header-fg-muted`, `--header-line`; or `data-band="dark"` (dark in both themes), and `data-translucent` (the band at `--header-translucent-mix`, 85%, blurred by `--header-blur`, 12px); `data-rest="clear"` (React `rest="clear"`) with `<span class="cap-site-header-ground" aria-hidden="true"></span>` as the header's first child: no ground or line while the page is at its top, the band once the header is stuck (a scroll-state query; where that is missing the band always shows) |
+| Height | `--header-h` on `:root` (default 3.5rem) |
+| Column | `--header-max-inline-size` (default `100%`): the bar's contents keep to a centered column of that width |
+| Edge and scrolled look | `--header-edge`; after a scroll (`data-scrolled`) `--header-scrolled-edge`, `--header-scrolled-shadow`, `--header-scrolled-mix` |
+| Section links' weight | `--header-link-weight` (400) and the current link's `--header-link-current-weight` (500) |
+| Section links' spacing | `--header-link-pad` (0), `--header-links-gap` between them (20px), `--header-link-gap` before the chevron (`--space-2`), `--header-chev-size` (12px) |
+| Menu glyph | `menuIcon` for the site's own menu glyph (the icon controls' tokens are `--header-icon-*` and `--header-tools-gap`) |
+| The phone sheet | Group labels `--header-sheet-label-ink` (`--muted`), `--header-sheet-label-fs` (`--fs-detail`), `--header-sheet-label-weight` (500), `--header-sheet-label-case` (`none`), `--header-sheet-label-tracking` (`normal`); rows `--header-sheet-row-fs` (`--fs-body`) and `--header-sheet-row-h` (the control height or the target, whichever is larger) |
+| The logo's name | `logo.name`, where the link should say more than `label` ("BioScience Writers home"); it starts with the visible words |
+| A control's look | `className` on an extra: the site's own class on an icon control, or on the button extra in the bar and in the sheet |
+| Where the phone's row starts | Under 768px; `collapse="lg"` (`data-collapse="lg"`) under 1024px |
+| The sheet's icon column | Kept by default; `sheetIcons="auto"` (`data-sheet-icons="auto"`) drops it where no row has an icon |
 | UI face | `--font-ui` |
 | Extras | Up to two icon controls and one button (`extras`) |
 | Section links' place | `data-links="left"`, `"center"` or `"right"` (before the extras, after a thin divider) |
@@ -69,11 +81,15 @@ An email, a printed page or an embedded widget has no header. A page inside anot
 
 The account menu is the same shape everywhere: who you are; the site's own rows (a business's settings under the business's name); Admin for an admin; in an admin, View site and Help; Sign out last.
 
-## Phone (under 768px)
+## Phone (under 768px; under 1024px with `data-collapse="lg"`)
+
+Media queries cannot read a custom property, so the width is an attribute: under each width the header is named the row's container (`cap-site-header-row`), and the row's rules are written once in a container query for it. The bottom bar (`SiteTabs`) stays a phone's, under 768px.
+
 
 - **One row, 56px:** the logo; up to two of the site's icons; the theme; the avatar or Sign in (an icon); the menu button, last, on every page.
 - **The menu button opens one sheet** (the shared dialog from the bottom): the site's own rows first (in your admin the family's apps), the switchers, the section links grouped as the desktop panels group them, the button extra full width; the account rows are pinned under the list, so Sign out is always in view. Opening it puts focus on its heading.
 - **No second row of links.**
+- **The icon column.** Every row's label starts after the same 24px column, with an icon or without. With `sheetIcons="auto"` (`data-sheet-icons="auto"` on the header) a sheet in which no row has an icon has no column, and its labels start at the row's edge.
 - **A bottom bar (`SiteTabs`, `nav.cap-site-tabs`) only where a person is signed in** and there is a set of top pages: up to five tabs, and no More, because the menu button opens the full list.
 
 ## Keyboard
@@ -116,7 +132,7 @@ The family sites (dustinedwards.info, Capsid, Capsomer, Prelum, Carrel, Enarrati
 ## Markup
 
 ```html
-<header class="cap-site-header" data-cap="site-header" data-links="right" data-band="dark">
+<header class="cap-site-header" data-cap="site-header" data-links="right" data-band="dark" [data-collapse="lg"] [data-sheet-icons="auto"] [data-scrolled, set by the behavior]>
   <a class="cap-site-header-skip" href="#main">Skip to content</a>
   <a class="cap-site-header-logo" href="/" aria-label="Foxhound">[mark, wordmark]</a>
   <div class="cap-site-header-switcher">
@@ -160,7 +176,7 @@ The family sites (dustinedwards.info, Capsid, Capsomer, Prelum, Carrel, Enarrati
 <nav class="cap-site-tabs" aria-label="Your reading">[up to five links: icon, label, .cap-site-header-badge]</nav>
 ```
 
-`import { enhance, wirePanel, openSheet, closeSheet, stepIndex, badgeText, guardForms, wireThemeKey, initialsOf } from "capsomer/behavior/site-header"` wires markup written by hand: each `[data-cap-part="panel-trigger"]` to the panel its `aria-controls` names, each tip, the menu button and its sheet. The theme button is theme-switch's (`enhance` from `capsomer/behavior/theme-switch`). In React, `import { SiteHeader, SiteTabs } from "capsomer/react/site-header"`:
+`import { enhance, wirePanel, openSheet, closeSheet, stepIndex, badgeText, guardForms, wireThemeKey, wireScrolled, initialsOf } from "capsomer/behavior/site-header"` (`enhance(root?: Document | Element)`) wires markup written by hand: each `[data-cap-part="panel-trigger"]` to the panel its `aria-controls` names, each tip, the menu button and its sheet. The theme button is theme-switch's (`enhance` from `capsomer/behavior/theme-switch`). In React, `import { SiteHeader, SiteTabs } from "capsomer/react/site-header"`:
 
 ```tsx
 <SiteHeader
@@ -201,7 +217,7 @@ A row that posts, in a panel or the sheet:
 
 ### A page that does not hydrate
 
-A public plane that sends no React (a static page, a server-rendered page with no client bundle) renders the same `SiteHeader` with `hydrate={false}` and runs `enhance(document, { suggest })` from `capsomer/behavior/site-header` and `enhance(document, { onSave })` from `capsomer/behavior/theme-switch` in its page script. The header then carries no `data-cap-ready`, so `enhance()` wires it; its theme button carries its key and cookie (`data-cap-pref`, `data-cap-cookie`), and the theme key is `data-cap-theme-key`, bound by `enhance()`. Every panel's button carries `popovertarget`, so a panel opens with no script at all (placed under the header at the band's inset), and Sign out and every posting row are forms. Use it only where React never runs in the browser; a page that hydrates leaves `hydrate` on, or both would wire the header. A site no longer deletes `data-cap-ready` by hand.
+A public plane that sends no React (a static page, a server-rendered page with no client bundle) renders the same `SiteHeader` with `hydrate={false}` and runs `enhance(document, { suggest })` from `capsomer/behavior/site-header` and `enhance(document, { onSave })` from `capsomer/behavior/theme-switch` in its page script. The header then carries no `data-cap-ready`, so `enhance()` wires it; its theme button carries its key and cookie (`data-cap-pref`, `data-cap-cookie`), and the theme key is `data-cap-theme-key`, bound by `enhance()`. Every panel's button carries `popovertarget`, so a panel opens with no script at all (placed under the header at the band's inset), and Sign out and every posting row are forms. The menu button carries `commandfor` (the sheet's id) and `command="show-modal"`, so the sheet opens with no script where the browser has invoker commands (Baseline newly available, December 2025); `enhance()` takes the click over (focus on the sheet's heading, `aria-expanded`), and is the fallback where a browser lacks them. With no account and no `signIn` the header has no `.cap-site-header-account` slot. Use it only where React never runs in the browser; a page that hydrates leaves `hydrate` on, or both would wire the header. A site no longer deletes `data-cap-ready` by hand.
 
 Load `site-header.css` with `dialog.css`, `popover.css` and `theme-switch.css`.
 

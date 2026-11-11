@@ -55,6 +55,7 @@ eachTheme((theme) => {
       "fx-admin",
       "markup",
       "static",
+      "own-look",
     ]) {
       await visitStates(page, "site-header", theme, only);
       await expectNoAxeViolations(page);
@@ -783,6 +784,35 @@ eachTheme((theme) => {
       page.locator(".cap-site-header-sheet-account form[action='#sign-out'] button"),
     ).toBeVisible();
     await expectNoAxeViolations(page);
+  });
+  test("behavior: a site's own look by tokens: a 64px band whose bar keeps to its column, data-scrolled once the page scrolls, and the phone's row under 1024px with data-collapse=lg, its sheet without an icon column", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 1400, height: 800 });
+    await visitStates(page, "site-header", theme, "own-look");
+    const header = page.locator(".cap-site-header");
+    const h = (await header.boundingBox())!;
+    expect(Math.round(h.height)).toBe(64);
+    // 72rem centered in the window, then the side: the logo starts at (1400 - 1152) / 2 + 24.
+    const logo = (await page.getByRole("link", { name: "Example Writers home" }).boundingBox())!;
+    expect(Math.round(logo.x)).toBe(Math.round((h.width - 1152) / 2 + 24));
+    await expect(header).not.toHaveAttribute("data-scrolled");
+    await page.mouse.wheel(0, 400);
+    await expect(header).toHaveAttribute("data-scrolled", "");
+    await page.mouse.wheel(0, -2000);
+    await expect(header).not.toHaveAttribute("data-scrolled");
+    await expect(page.locator(".cap-site-header-account")).toHaveCount(0);
+
+    await page.setViewportSize({ width: 900, height: 800 });
+    await expect(page.getByRole("button", { name: "Menu" })).toBeVisible();
+    await expect(page.locator(".cap-site-header-sections")).toBeHidden();
+    await page.getByRole("button", { name: "Menu" }).click();
+    const sheet = page.getByRole("dialog", { name: "Example Writers menu" });
+    await expect(sheet).toBeVisible();
+    await expect(sheet.locator(".cap-site-header-sheet-icon").first()).toBeHidden();
+    const row = (await sheet.getByRole("link", { name: "Editing" }).boundingBox())!;
+    const name = (await sheet.getByText("Editing", { exact: true }).boundingBox())!;
+    expect(Math.round(name.x - row.x)).toBeLessThanOrEqual(16);
   });
 });
 
