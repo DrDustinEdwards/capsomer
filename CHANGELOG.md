@@ -27,6 +27,7 @@ Shared components from the network audit: parts each site wrote for itself, now 
 - **Carousel:** the slides' width no longer widens a phone's page (one `minmax(0, 1fr)` column).
 - **React picture** names the ratio from the file's width and height in the image's style, as the sites' own copies did (no LazyLoadImage issue in Chrome).
 - **Command menu: live results without React.** `createCommandMenu(commands, { search, searchDelay })` and `attach(dialog, run, { search })` take the React menu's `search(query, signal)`: asked 180 ms after the last key, the one before aborted (and on close), results after the matching commands, the list `aria-busy` and "Searching…" until they come. `run(option, found)` gets a live result's command. It replaces the live search Foxing wrote around `attach` (search-palette.ts) and is what dustinedwards.info's palette moves onto.
+- **Player transcript: Copy with link copies through the copy part,** so a refused clipboard now says Copy failed.
 - **Tabs remember through `capsomer/behavior/hooks`.** The remembered tab sets keep their choice with the hooks' `readStored`, `writeStored` and `subscribeStored` instead of their own copies; the storage key and behavior are unchanged.
 
 ## [0.92.0]
