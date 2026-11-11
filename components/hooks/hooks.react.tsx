@@ -76,20 +76,22 @@ export function useRemembered(key: string): [string | null, (value: string | nul
  * server's own read time as `serverNow` to draw against it until the clock starts.
  */
 export function useNow(ms = 30_000, serverNow = 0): number {
-  const clock = useMemo(() => {
-    let now = serverNow;
-    return {
-      subscribe(onChange: () => void) {
+  const clock = useMemo(() => createClock(ms, serverNow), [ms, serverNow]);
+  return useSyncExternalStore(clock.subscribe, clock.read, () => serverNow);
+}
+
+function createClock(ms: number, start: number) {
+  let now = start;
+  return {
+    subscribe(onChange: () => void) {
+      now = Date.now();
+      onChange();
+      const t = setInterval(() => {
         now = Date.now();
         onChange();
-        const t = setInterval(() => {
-          now = Date.now();
-          onChange();
-        }, ms);
-        return () => clearInterval(t);
-      },
-      read: () => now,
-    };
-  }, [ms, serverNow]);
-  return useSyncExternalStore(clock.subscribe, clock.read, () => serverNow);
+      }, ms);
+      return () => clearInterval(t);
+    },
+    read: () => now,
+  };
 }
