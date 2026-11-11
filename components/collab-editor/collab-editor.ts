@@ -8,6 +8,7 @@ export {
   loadMarkdown,
   markdownOf,
   markSaved,
+  META,
   patchMarkdown,
   readMeta,
   roomJson,
