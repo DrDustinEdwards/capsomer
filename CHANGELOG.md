@@ -2,6 +2,16 @@
 
 Each release names every removed or renamed token or class, and every changed HTML contract.
 
+## [0.94.0]
+
+Options so a site keeps its own look on the shared parts (Foxhound, moving its stat cards, badges and blog lists onto Capsomer without a visible change).
+
+- **Static stat tile: look tokens, and `ok` colors the figure.** New custom properties, each defaulting to the family's look: `--tile-figure-face`, `--tile-figure-weight`, `--tile-label-face`, `--tile-label-size`, `--tile-label-case`, `--tile-label-tracking`, `--tile-icon-flow`, `--tile-icon-align`, `--tile-icon-size`, `--tile-gap`, `--tile-detail-space`, `--tile-pad`, `--tile-radius` (with 0.92.0's `--tile-figure-size`). A static tile with `data-tone="ok"` now draws its figure in `--ok`, as `warn` and `crit` do; a static tile has no word beside the figure, so its label and note say what the color means. Link and button tiles are unchanged.
+- **Badge: `variant="tag"` and `glyph={false}`.** A tag is the tone's tint with an edge in the word's own color (or a hairline label with no tone, or a family's accent with `data-family`), set in the site's tag face: `--tag-face`, `--tag-size`, `--tag-weight`, `--tag-case`, `--tag-tracking`, `--tag-edge`. `glyph={false}` leaves the glyph out of a toned badge, for a site whose badges are words alone; the word must then say the state. Type change: `PillProps.glyph` is `GlyphName | false`, and `BadgeVariant` gains `"tag"`.
+- **Prose blocks: list tokens.** `--prose-bullets` and `--prose-numbers` set the list-style of a plain and a numbered list (disc, circle and decimal by default), and `--prose-item-space` the space after each item (0.3em).
+
+No token or class was removed or renamed.
+
 ## [0.93.0]
 
 From the sites, batch 9: an inspector, React Router bindings, a work queue with Later, a role grid and a Compare that works before the script runs.
