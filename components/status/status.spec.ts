@@ -91,6 +91,8 @@ eachTheme((theme) => {
         what: "an accent badge in another family",
       },
       { sel: "#sample-series .cap-pill", what: "a series badge" },
+      { sel: "#sample-tag [data-tone='ok']", what: "a tag badge" },
+      { sel: "#sample-tag [data-family='purple']", what: "a tag badge in another family" },
       { sel: "#sample-glyph li:nth-child(1)", what: "a name beside a glyph" },
     ]);
     const wrap = page.locator("#sample-wrap");

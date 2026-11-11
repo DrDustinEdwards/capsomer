@@ -2,9 +2,7 @@
 
 Each release names every removed or renamed token or class, and every changed HTML contract.
 
-## [Unreleased]
-
-## [0.96.0]
+## [0.98.0]
 
 Options for sites with their own design (bsw, julieedwards-info, txasm) on the shared site header, prose, tabs, sortable list, disclosure and time, with no change to how they look. Shared code is behavior; each site's look is its tokens and slots. Every new token defaults to today's value.
 
@@ -14,7 +12,7 @@ Options for sites with their own design (bsw, julieedwards-info, txasm) on the s
 - **Site header: slots.** `className` on an extra (an icon control, or the button extra in the bar and in the sheet), for the site's own look; `logo.name`, the logo link's accessible name where it says more than `label`.
 - **Site header: no-script sheet.** With `hydrate={false}` the menu button carries `commandfor` and `command="show-modal"`, so the sheet opens before or without script where invoker commands exist; `enhance()` takes the click over (and cancels the command) and is the fallback elsewhere.
 - **Site header: no empty parts.** `sheetIcons="auto"` (`data-sheet-icons="auto"` on the header) drops the sheet's 24px icon column where no row has an icon; by default every sheet keeps it, as before. The React header renders no `.cap-site-header-account` slot when there is neither an account nor `signIn` (it was hidden by `:empty` before, so nothing looks different).
-- **Prose: tokens.** `--prose-heading-measure` (30ch), `--prose-heading-gap` (0.5em), `--prose-item-gap` (0.3em), `--prose-link-ink`, `--prose-link-hover-ink` and `--prose-link-hover-decoration` (the link system's by default). `css/prose.css` now also sets the prose context's face, size and leading and a text link's look, from the same tokens as `base.css`, so a site that cannot load `base.css` (Tailwind) reaches them; with `base.css` the values are the same.
+- **Prose: tokens.** `--prose-heading-measure` (30ch), `--prose-heading-gap` (0.5em), `--prose-link-ink`, `--prose-link-hover-ink` and `--prose-link-hover-decoration` (the link system's by default). `css/prose.css` now also sets the prose context's face, size and leading and a text link's look, from the same tokens as `base.css`, so a site that cannot load `base.css` (Tailwind) reaches them; with `base.css` the values are the same.
 - **Tabs: tokens.** `--cap-tab-ink` (the chosen tab's label, default `--text`), `--cap-tab-tone` (on a pill list, the chosen tab's tone, for `--cap-tab-ink`), `--cap-tab-min-inline-size` (default `--target`). tabs.md says the tab list must be a direct child of `.cap-tabs`.
 - **Sortable list: a site's own rows.** Props `steps` (`"quiet"` by default, `"bordered"`, or `"labeled"` with the words Up and Down), `grip` (on by default; off, no drag handle), `itemClassName(item, state)`, `renderControls(item, state)` (after the steps and the move-to select, before Remove) and, on a board, `laneClassName`. Tokens: `--sortable-gap`, `--sortable-item-pad`, `--sortable-item-gap`, `--sortable-item-radius`, `--sortable-item-align`, `--sortable-card-pad`, `--sortable-card-radius`, `--sortable-item-border`, `--sortable-item-bg`, `--sortable-step-ink`, `--sortable-remove-ink`, `--sortable-remove-hover-ink`, `--sortable-remove-fs`, `--sortable-remove-weight`, `--sortable-lane-pad`, `--sortable-lane-border`, `--sortable-lane-radius`, `--sortable-lane-bg`.
 - **Disclosure: the compact card's spacing and two options.** Tokens `--disclosure-pad`, `--disclosure-summary-pad`, `--disclosure-summary-min-h`, `--disclosure-body-pad`, `--disclosure-body-gap`; `data-marker="triangle"` (React `marker="triangle"`), a triangle at the start in place of the chevron or plus; `data-variant="inline"` (React `variant="inline"`), no box.
@@ -23,6 +21,16 @@ Options for sites with their own design (bsw, julieedwards-info, txasm) on the s
 - **`enhance(root)` of tabs and the site header takes `Document | Element`** (was `ParentNode`), so an element passes under the Workers types.
 
 No token or class was removed or renamed. HTML contract additions only: `data-scrolled` and `data-collapse` on the header, `data-sheet-icons` on the header, `commandfor` and `command` on a no-hydration menu button, `data-marker` and `data-variant="inline"` on a disclosure; the account slot is left out when it would be empty, and a sortable item has no grip with `grip={false}`.
+
+## [0.96.0]
+
+Options so a site keeps its own look on the shared parts (Foxhound, moving its stat cards, badges and blog lists onto Capsomer without a visible change).
+
+- **Static stat tile: look tokens, and `ok` colors the figure.** New custom properties, each defaulting to the family's look: `--tile-figure-face`, `--tile-figure-weight`, `--tile-label-face`, `--tile-label-size`, `--tile-label-weight`, `--tile-label-case`, `--tile-label-tracking`, `--tile-icon-flow`, `--tile-icon-align`, `--tile-icon-size`, `--tile-gap`, `--tile-detail-space`, `--tile-pad`, `--tile-radius`, `--tile-shadow` (with 0.92.0's `--tile-figure-size`), and for a grid row `--tiles-columns` and `--tiles-gap`. A static tile with `data-tone="ok"` now draws its figure in `--ok`, as `warn` and `crit` do; a static tile has no word beside the figure, so its label and note say what the color means. Link and button tiles are unchanged.
+- **Badge: `variant="tag"` and `glyph={false}`.** A tag is the tone's tint with an edge in the word's own color (or a hairline label with no tone, or a family's accent with `data-family`), set in the site's tag face: `--tag-face`, `--tag-size`, `--tag-weight`, `--tag-case`, `--tag-tracking`, `--tag-edge`. `glyph={false}` leaves the glyph out of a toned badge, for a site whose badges are words alone; the word must then say the state. Type change: `PillProps.glyph` is `GlyphName | false`, and `BadgeVariant` gains `"tag"`.
+- **Prose blocks: list tokens.** `--prose-bullets` and `--prose-numbers` set the list-style of a plain and a numbered list (disc, circle and decimal by default), and `--prose-item-space` the space after each item (0.3em).
+
+No token or class was removed or renamed.
 
 ## [0.95.1]
 
