@@ -37,6 +37,19 @@
     &[data-tone="nodata"] {
       color: var(--nodata);
     }
+    /* The quiet gray, for a state that is neither good nor bad (queued, unknown). */
+    &[data-tone="muted"] {
+      color: var(--muted);
+    }
+    /* A phrase that wraps in its own column (a hold reason): the glyph stays by the first line. */
+    &[data-wrap] {
+      align-items: flex-start;
+      white-space: normal;
+
+      & > .cap-status-glyph {
+        margin-block-start: 0.1em;
+      }
+    }
   }
 
   /* The glyph: drawn in currentColor, with any mark inside it cut out (evenodd), so it
@@ -45,6 +58,28 @@
     flex: none;
     inline-size: 1.15em;
     block-size: 1.15em;
+  }
+
+  /* A glyph on its own, with no word (a status icon beside a name): its tone's color. */
+  .cap-status-glyph {
+    &[data-tone="crit"] {
+      color: var(--crit);
+    }
+    &[data-tone="warn"] {
+      color: var(--warn);
+    }
+    &[data-tone="ok"] {
+      color: var(--ok);
+    }
+    &[data-tone="info"] {
+      color: var(--info);
+    }
+    &[data-tone="nodata"] {
+      color: var(--nodata);
+    }
+    &[data-tone="muted"] {
+      color: var(--muted);
+    }
   }
 
   /* No data says why, after the word, in plain muted text. */
@@ -94,7 +129,7 @@
       block-size: 1em;
     }
     /* A badge with no glyph (a count, a label) is even on both sides. */
-    &:not(:has(> svg)) {
+    &:not(:has(> svg, > .cap-pill-dot)) {
       padding-inline: var(--space-3);
     }
 
@@ -116,7 +151,8 @@
       --_fg: var(--info);
     }
     /* The no-data gray is lighter than muted on its own tint; muted keeps 4.5:1. */
-    &[data-tone="nodata"] {
+    &[data-tone="nodata"],
+    &[data-tone="muted"] {
       --_bg: var(--nodata-soft);
       --_fg: var(--muted);
     }
@@ -151,6 +187,12 @@
     }
     &[data-variant="link"] {
       --_bg: transparent;
+      --_fg: var(--accent-text);
+    }
+    /* The family's accent tint, with no glyph: a category that is not a state. A data-family on
+       the badge gives it another family's accent (a site's second hue, kept in tokens). */
+    &[data-variant="accent"] {
+      --_bg: var(--accent-soft);
       --_fg: var(--accent-text);
     }
 
@@ -198,6 +240,39 @@
     }
   }
 
+  /* A label's own color, as a dot before the word: --series-1 to --series-8 from data-series. The
+     word carries the meaning; in forced colors the dot takes the text color. */
+  .cap-pill-dot {
+    flex: none;
+    inline-size: 0.7em;
+    block-size: 0.7em;
+    border-radius: var(--radius-full);
+    background: var(--series-1);
+  }
+  .cap-pill {
+    &[data-series="2"] > .cap-pill-dot {
+      background: var(--series-2);
+    }
+    &[data-series="3"] > .cap-pill-dot {
+      background: var(--series-3);
+    }
+    &[data-series="4"] > .cap-pill-dot {
+      background: var(--series-4);
+    }
+    &[data-series="5"] > .cap-pill-dot {
+      background: var(--series-5);
+    }
+    &[data-series="6"] > .cap-pill-dot {
+      background: var(--series-6);
+    }
+    &[data-series="7"] > .cap-pill-dot {
+      background: var(--series-7);
+    }
+    &[data-series="8"] > .cap-pill-dot {
+      background: var(--series-8);
+    }
+  }
+
   /* Hover and focus change color only where the platform says so; no motion is needed
      beyond a short color change. */
   @media (prefers-reduced-motion: no-preference) {
@@ -212,6 +287,10 @@
 
   /* Forced colors remove the tint: a badge keeps its outline so it still reads as one. */
   @media (forced-colors: active) {
+    .cap-pill-dot,
+    .cap-pill[data-series] > .cap-pill-dot {
+      background: CanvasText;
+    }
     .cap-pill,
     .cap-badge {
       border: 1px solid CanvasText;

@@ -121,3 +121,755 @@
     }
   }
 }
+
+/* The persistent audio player: the dock, a track's surface, their controls, the waveform, the
+   transcript, chapters, key moments, hosts and the inline audio button. Colors are the family's
+   tokens; a site with its own look maps them (and the four below) on these classes. */
+@layer cap.components {
+  /* The player's own four properties, each with its default where it is read (so density still
+     moves the size): --cap-player-face (titles and names, the UI face), --cap-player-meta-face
+     (times, rates and the status line, the mono face), --cap-player-btn (a control's size) and
+     --cap-player-btn-lg (the play button on a surface, one step larger). */
+
+  /* The dock is fixed, so the page keeps room for it: the body is padded by its measured height
+     (set on <html> by PlayerDock) and an anchor scrolled to stops above it. */
+  :where(html:has(.cap-player-dock)) {
+    scroll-padding-block-end: calc(var(--cap-player-dock-h, 0px) + var(--space-3) + var(--space-5));
+  }
+  :where(body:has(.cap-player-dock)) {
+    padding-block-end: calc(var(--cap-player-dock-h, 0px) + var(--space-3));
+  }
+
+  /* One control: round, a whole target. The play button is filled; next and close are quiet; a
+     setting that is not at its default (a speed, a timer, muted) wears the accent edge. */
+  :where(.cap-player-btn), .cap-player-menu .cap-btn.cap-menu-trigger {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    box-sizing: border-box;
+    min-inline-size: var(--cap-player-btn, max(var(--control), var(--target)));
+    block-size: var(--cap-player-btn, max(var(--control), var(--target)));
+    padding: 0 var(--space-3);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-full);
+    background: var(--raised);
+    color: var(--text);
+    font: inherit;
+    font-family: var(--cap-player-face, var(--ui));
+    font-size: var(--fs-body);
+    text-decoration: none;
+    cursor: pointer;
+    &:hover {
+      border-color: var(--accent);
+    }
+    &:disabled {
+      border-color: transparent;
+      color: var(--dim);
+      cursor: default;
+    }
+  }
+  :where(.cap-player-btn[data-part="play"]) {
+    inline-size: var(--cap-player-btn, max(var(--control), var(--target)));
+    padding: 0;
+    border-color: var(--primary-line);
+    background: var(--primary);
+    color: var(--primary-fg);
+    &:hover {
+      background: var(--primary-hover);
+    }
+    &[data-size="lg"] {
+      inline-size: var(--cap-player-btn-lg, calc(var(--cap-player-btn, max(var(--control), var(--target))) + var(--space-3)));
+      min-inline-size: var(--cap-player-btn-lg, calc(var(--cap-player-btn, max(var(--control), var(--target))) + var(--space-3)));
+      block-size: var(--cap-player-btn-lg, calc(var(--cap-player-btn, max(var(--control), var(--target))) + var(--space-3)));
+    }
+    &[data-size="sm"] {
+      inline-size: max(var(--target), var(--control) - var(--space-3));
+      min-inline-size: 0;
+      block-size: max(var(--target), var(--control) - var(--space-3));
+    }
+    & > svg {
+      /* The triangle's weight sits left of its box; one pixel brings it to the eye's middle. */
+      translate: 1px 0;
+    }
+    &[aria-label^="Pause"] > svg {
+      translate: none;
+    }
+  }
+  :where(.cap-player-btn:is([data-part="skip"], [data-part="setting"], [data-part="next"], [data-part="close"])) {
+    inline-size: var(--cap-player-btn, max(var(--control), var(--target)));
+    padding: 0;
+  }
+  :where(.cap-player-btn:is([data-part="next"], [data-part="close"])) {
+    border-color: transparent;
+    background: transparent;
+    &:hover:not(:disabled) {
+      color: var(--accent-text);
+    }
+  }
+  :where(.cap-player-btn[data-part="close"]) {
+    color: var(--muted);
+  }
+  :where(.cap-player-btn[data-part="setting"]:has(.cap-player-rate)) {
+    inline-size: auto;
+    padding: 0 var(--space-3);
+  }
+  :where(.cap-player-btn[data-active]), .cap-player-menu[data-active] .cap-btn.cap-menu-trigger {
+    border-color: var(--accent);
+    color: var(--accent-text);
+  }
+  .cap-player-menu .cap-btn.cap-menu-trigger {
+    inline-size: var(--cap-player-btn, max(var(--control), var(--target)));
+    padding: 0;
+    /* The player's buttons say what they open by their icon; the menu's own chevron is left out. */
+    & > svg:last-child:not(:first-child) {
+      display: none;
+    }
+    & > svg {
+      color: inherit;
+    }
+  }
+  :where(.cap-player-transcript-link) {
+    inline-size: auto;
+    padding: 0 var(--space-4);
+    font-weight: 400;
+  }
+  :where(.cap-player-icon) {
+    flex: none;
+  }
+  :where(.cap-player-rate, .cap-player-time, .cap-player-meta, .cap-player-at, .cap-player-legend, .cap-player-speaker, .cap-player-wave-tip, .cap-player-wave-note) {
+    font-family: var(--cap-player-meta-face, var(--mono));
+    font-variant-numeric: tabular-nums;
+  }
+  :where(.cap-player-rate) {
+    font-size: var(--fs-detail);
+  }
+
+  /* The scrubber: the time, the range with its chapter ticks, the length. */
+  :where(.cap-player-scrubber) {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: var(--space-3);
+  }
+  :where(.cap-player-time) {
+    min-inline-size: 3.5em;
+    color: var(--muted);
+    font-size: var(--fs-label);
+    &:first-child {
+      text-align: end;
+    }
+  }
+  :where(.cap-player-track) {
+    position: relative;
+    display: block;
+    min-inline-size: 0;
+  }
+  :where(.cap-player-seek) {
+    cursor: pointer;
+    &:disabled {
+      cursor: default;
+    }
+  }
+  :where(.cap-player-ticks) {
+    position: absolute;
+    inset-inline: 0;
+    inset-block-start: 50%;
+    inline-size: 100%;
+    block-size: var(--space-3);
+    translate: 0 -50%;
+    pointer-events: none;
+    stroke: var(--line-strong);
+    & line {
+      stroke-width: 1px;
+      vector-effect: non-scaling-stroke;
+    }
+  }
+
+  /* The dock: fixed to the bottom, the page's width, on a slightly see-through surface. */
+  :where(.cap-player-dock) {
+    position: fixed;
+    inset-inline: 0;
+    inset-block-end: 0;
+    z-index: var(--z-tabbar);
+    padding-block-end: env(safe-area-inset-bottom);
+    border-block-start: 1px solid var(--line);
+    background: color-mix(in oklab, var(--surface) 95%, transparent);
+    backdrop-filter: blur(8px);
+    color: var(--text);
+    container: cap-player-dock / inline-size;
+    /* Auto-hidden while the track's own surface is on screen: faded and inert, still playing. */
+    &[data-hidden] {
+      opacity: 0;
+      translate: 0 var(--space-3);
+      pointer-events: none;
+    }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    :where(.cap-player-dock) {
+      transition: opacity var(--dur-base) var(--ease-out), translate var(--dur-base) var(--ease-out);
+    }
+    :where(.cap-player-btn), .cap-player-menu .cap-btn.cap-menu-trigger {
+      transition: background-color var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
+    }
+    :where(.cap-player-icon:has(.cap-player-spin)) {
+      animation: cap-player-spin 1s linear infinite;
+    }
+  }
+  @keyframes cap-player-spin {
+    to {
+      rotate: 1turn;
+    }
+  }
+  :where(.cap-player-dock-inner) {
+    max-inline-size: 64rem;
+    margin-inline: auto;
+    padding: var(--space-3) var(--space-5) 0;
+  }
+  :where(.cap-player-dock-row) {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding-block: var(--space-2);
+  }
+  :where(.cap-player-now) {
+    display: grid;
+    flex: 1;
+    min-inline-size: 0;
+  }
+  :where(.cap-player-title) {
+    overflow: hidden;
+    color: var(--text);
+    font-family: var(--cap-player-face, var(--ui));
+    font-size: var(--fs-body);
+    font-weight: 500;
+    text-decoration: none;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  :where(a.cap-player-title:hover) {
+    color: var(--accent-text);
+  }
+  :where(.cap-player-meta) {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-inline-size: 0;
+    color: var(--accent-text);
+    font-size: var(--fs-label);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    &[data-tone="crit"] {
+      color: var(--crit);
+    }
+  }
+  :where(.cap-player-meta-text) {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  :where(.cap-player-transport, .cap-player-settings, .cap-player-surface-settings) {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+  :where(.cap-player-more) {
+    display: none;
+  }
+  /* A narrow dock keeps its settings in the sheet behind More. */
+  @container cap-player-dock (width < 48rem) {
+    :where(.cap-player-settings) {
+      display: none;
+    }
+    :where(.cap-player-more) {
+      display: inline-flex;
+    }
+  }
+  /* Phones set volume with their own buttons, and iOS ignores a page's volume (MDN, HTMLMediaElement.volume). */
+  @media (pointer: coarse) {
+    :where(.cap-player-volume) {
+      display: none;
+    }
+  }
+
+  /* The sheet: the dialog's bottom placement, holding the settings. */
+  :where(.cap-player-sheet .cap-dialog-body) {
+    display: grid;
+    gap: var(--space-6);
+  }
+  :where(.cap-player-sheet .cap-player-chapters) {
+    max-block-size: 12rem;
+    overflow-y: auto;
+  }
+  :where(.cap-player-sheet .cap-player-transcript-link) {
+    justify-self: start;
+  }
+
+  /* A track's surface: the waveform over the scrubber, then one row of controls. */
+  :where(.cap-player-surface) {
+    display: grid;
+    gap: var(--space-3);
+    padding: var(--space-5);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-xl);
+    background: var(--surface);
+    color: var(--text);
+  }
+  :where(.cap-player-chapter-now) {
+    margin: 0;
+    overflow: hidden;
+    font-family: var(--cap-player-face, var(--ui));
+    font-size: var(--fs-body);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  :where(.cap-player-surface-row) {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-block-start: var(--space-2);
+  }
+  :where(.cap-player-surface-settings) {
+    margin-inline-start: auto;
+  }
+
+  /* Settings in a popover or the sheet. */
+  :where(.cap-player-options) {
+    display: grid;
+    gap: var(--space-3);
+  }
+  :where(.cap-player-choices) {
+    display: grid;
+    gap: var(--space-2);
+    min-inline-size: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    &[data-layout="grid"] {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      & > .cap-player-legend {
+        grid-column: 1 / -1;
+      }
+    }
+  }
+  :where(.cap-player-legend) {
+    margin: 0 0 var(--space-2);
+    padding: 0;
+    color: var(--muted);
+    font-size: var(--fs-label);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  :where(.cap-player-fine) {
+    display: block;
+  }
+  :where(.cap-player-volume-row) {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    & .cap-player-fine {
+      inline-size: 8rem;
+    }
+  }
+
+  /* Chapters: in the sheet and as a list on a track's page. The one playing has an accent edge,
+     the accent color and weight, never color alone. */
+  :where(.cap-player-chapters) {
+    display: grid;
+    gap: var(--space-1);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  :where(.cap-player-chapter) {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    box-sizing: border-box;
+    inline-size: 100%;
+    min-block-size: max(var(--target), var(--control));
+    padding: var(--space-2) var(--space-3);
+    border: 0;
+    border-inline-start: 3px solid transparent;
+    border-radius: var(--radius-m);
+    background: transparent;
+    color: var(--text);
+    font: inherit;
+    font-size: var(--fs-body);
+    text-align: start;
+    cursor: pointer;
+    &:hover {
+      background: var(--sunken);
+    }
+    &[aria-current="true"] {
+      border-inline-start-color: var(--accent);
+      color: var(--accent-text);
+      font-weight: 600;
+    }
+  }
+  :where(.cap-player-chapter-title) {
+    min-inline-size: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  :where(.cap-player-at) {
+    flex: none;
+    color: var(--accent-text);
+    font-size: var(--fs-detail);
+  }
+  :where(.cap-player-list-heading) {
+    margin: 0 0 var(--space-4);
+    font-family: var(--cap-player-face, var(--ui));
+    font-size: var(--fs-h3);
+    font-weight: 600;
+  }
+
+  /* Key moments: a grid of time and label. */
+  :where(.cap-player-moments, .cap-player-hosts) {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 16rem), 1fr));
+    gap: var(--space-3);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  :where(.cap-player-moment) {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    box-sizing: border-box;
+    inline-size: 100%;
+    min-block-size: max(var(--target), var(--control));
+    padding: var(--space-4);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-l);
+    background: var(--raised);
+    color: var(--text);
+    font: inherit;
+    font-size: var(--fs-body);
+    text-align: start;
+    cursor: pointer;
+    &:hover {
+      border-color: var(--accent);
+    }
+    &[aria-current="true"] {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+      font-weight: 600;
+    }
+  }
+  :where(.cap-player-said) {
+    min-block-size: 1lh;
+    margin: var(--space-3) 0 0;
+    color: var(--muted);
+    font-size: var(--fs-detail);
+  }
+
+  /* Hosts: a picture, the name and the role. */
+  :where(.cap-player-hosts) {
+    gap: var(--space-5);
+  }
+  :where(.cap-player-host) {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    padding: var(--space-5);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-l);
+    background: var(--raised);
+  }
+  :where(.cap-player-host-text) {
+    display: grid;
+    min-inline-size: 0;
+  }
+  :where(.cap-player-host-name) {
+    color: var(--text);
+    font-family: var(--cap-player-face, var(--ui));
+    font-weight: 500;
+  }
+  :where(a.cap-player-host-name:hover) {
+    color: var(--accent-text);
+  }
+  :where(.cap-player-host .cap-player-meta) {
+    color: var(--muted);
+    letter-spacing: normal;
+    text-transform: none;
+  }
+
+  /* The waveform on a surface: the played part fills in the primary, its leading edge brightest,
+     the chapter playing tinted in the accent; the time under the pointer floats above. */
+  :where(.cap-player-wave) {
+    display: grid;
+    gap: var(--space-2);
+  }
+  :where(.cap-player-wave-box) {
+    position: relative;
+    block-size: 4rem;
+    border-radius: var(--radius-l);
+    cursor: pointer;
+  }
+  :where(.cap-player-wave-bars) {
+    display: block;
+    inline-size: 100%;
+    block-size: 100%;
+    border-radius: var(--radius-l);
+  }
+  :where(.cap-player-wave-bar) {
+    fill: color-mix(in oklab, var(--muted) 30%, transparent);
+    &[data-state="played"] {
+      fill: color-mix(in oklab, var(--primary) 70%, transparent);
+    }
+    &[data-state="region"] {
+      fill: color-mix(in oklab, var(--accent) 80%, transparent);
+    }
+    &[data-state="leading"] {
+      fill: var(--primary);
+    }
+  }
+  :where(.cap-player-wave-region) {
+    fill: color-mix(in oklab, var(--accent) 12%, transparent);
+  }
+  :where(.cap-player-wave-tip) {
+    position: absolute;
+    inset-block-end: calc(100% + var(--space-2));
+    inset-inline-start: var(--cap-player-at, 0%);
+    z-index: 1;
+    padding: var(--space-1) var(--space-3);
+    border-radius: var(--radius-s);
+    background: var(--text);
+    color: var(--ground);
+    font-size: var(--fs-label);
+    white-space: nowrap;
+    translate: -50% 0;
+    pointer-events: none;
+  }
+  :where(.cap-player-wave-note) {
+    margin: 0;
+    color: var(--muted);
+    font-size: var(--fs-label);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  /* The editor's still waveform, bars from the bottom, chapters marked. */
+  :where(.cap-player-wave-preview) {
+    display: block;
+    box-sizing: border-box;
+    inline-size: 100%;
+    block-size: 3.5rem;
+    padding-inline: var(--space-2);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-l);
+    background: var(--surface);
+    & .cap-player-wave-bar {
+      fill: color-mix(in oklab, var(--primary) 55%, transparent);
+    }
+  }
+  :where(.cap-player-wave-marker) {
+    stroke: var(--accent);
+    stroke-width: 1px;
+    vector-effect: non-scaling-stroke;
+  }
+  :where(.cap-player-wave-empty) {
+    display: grid;
+    place-items: center;
+    block-size: 3.5rem;
+    border: 1px dashed var(--line-strong);
+    border-radius: var(--radius-l);
+    background: var(--surface);
+    color: var(--muted);
+    font-size: var(--fs-detail);
+  }
+
+  /* The transcript: search and copy, then the cues in a box of their own that scrolls. */
+  :where(.cap-player-transcript) {
+    display: grid;
+    gap: var(--space-4);
+  }
+  :where(.cap-player-transcript-bar) {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    gap: var(--space-3);
+    & > .cap-btn:last-child {
+      margin-inline-start: auto;
+    }
+  }
+  :where(.cap-player-transcript-box) {
+    display: grid;
+    gap: var(--space-5);
+    max-block-size: 70dvh;
+    padding: var(--space-5);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-xl);
+  }
+  :where(.cap-player-para) {
+    display: grid;
+    gap: var(--space-2);
+  }
+  :where(.cap-player-para-chapter) {
+    margin: var(--space-3) 0 0;
+    color: var(--accent-text);
+    font-family: var(--cap-player-face, var(--ui));
+    font-size: var(--fs-body);
+    font-weight: 600;
+  }
+  :where(.cap-player-speaker) {
+    margin: 0;
+    color: var(--accent-text);
+    font-size: var(--fs-label);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  :where(.cap-player-para-text) {
+    margin: 0;
+    line-height: 1.7;
+  }
+  :where(button.cap-player-at) {
+    padding: 0 var(--space-1);
+    border: 0;
+    border-radius: var(--radius-s);
+    background: transparent;
+    vertical-align: baseline;
+    cursor: pointer;
+    &:hover {
+      background: var(--link-hover-bg);
+    }
+  }
+  /* A cue is a button in the running text: it reads as text, and the one playing is tinted. */
+  :where(.cap-player-cue) {
+    display: inline;
+    margin: 0;
+    padding: 0 var(--space-1);
+    border: 0;
+    border-radius: var(--radius-s);
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    text-align: start;
+    box-decoration-break: clone;
+    cursor: pointer;
+    &:hover {
+      background: color-mix(in oklab, var(--sunken) 60%, transparent);
+    }
+    &[aria-current="true"] {
+      background: var(--accent-soft);
+      color: var(--text);
+    }
+    &[data-kind="sound"] {
+      color: var(--muted);
+      font-style: italic;
+    }
+  }
+  :where(.cap-player-mark) {
+    border-radius: var(--radius-s);
+    background: color-mix(in oklab, var(--accent) 30%, transparent);
+    color: var(--text);
+  }
+  :where(.cap-player-jump) {
+    position: sticky;
+    inset-block-end: var(--space-5);
+    justify-self: end;
+  }
+  :where(.cap-player-transcript-raw) {
+    color: var(--muted);
+    white-space: pre-wrap;
+  }
+
+  /* The inline audio button: a small round speaker inside running text. A link to the clip with
+     no script, the button with it, the same box either way so the swap moves nothing. Playing, it
+     fills and its waves pulse (the pulse only without reduced motion). */
+  :where(.cap-player-clip) {
+    display: inline-flex;
+    vertical-align: middle;
+  }
+  :where(.cap-player-clip-link, .cap-player-clip-button) {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    inline-size: max(var(--target), var(--control));
+    block-size: max(var(--target), var(--control));
+    padding: 0;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-full);
+    background: transparent;
+    color: var(--accent-text);
+    text-decoration: none;
+    cursor: pointer;
+    &[hidden] {
+      display: none;
+    }
+    &:hover {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+    }
+  }
+  :where(.cap-player-clip-button[aria-pressed="true"]) {
+    border-color: var(--primary-line);
+    background: var(--primary);
+    color: var(--primary-fg);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    :where(.cap-player-clip-link, .cap-player-clip-button) {
+      transition: background-color var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out);
+    }
+    :where(.cap-player-clip-button[aria-pressed="true"] .cap-player-clip-wave) {
+      animation: cap-player-wave 900ms var(--ease-in-out) infinite;
+    }
+    :where(.cap-player-clip-button[aria-pressed="true"] .cap-player-clip-wave[data-wave="2"]) {
+      animation-delay: 180ms;
+    }
+  }
+  @keyframes cap-player-wave {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0;
+    }
+  }
+
+  /* Forced colors: states keep a shape or a system color, never a background alone. */
+  @media (forced-colors: active) {
+    :where(.cap-player-dock) {
+      background: Canvas;
+      backdrop-filter: none;
+    }
+    :where(.cap-player-btn[data-part="play"], .cap-player-clip-button[aria-pressed="true"]) {
+      forced-color-adjust: none;
+      border-color: Highlight;
+      background: Highlight;
+      color: HighlightText;
+    }
+    :where(.cap-player-cue[aria-current="true"], .cap-player-mark) {
+      forced-color-adjust: none;
+      background: Highlight;
+      color: HighlightText;
+    }
+    :where(.cap-player-wave-bar) {
+      fill: GrayText;
+      &[data-state] {
+        fill: Highlight;
+      }
+    }
+    :where(.cap-player-wave-region) {
+      fill: transparent;
+    }
+    :where(.cap-player-ticks, .cap-player-wave-marker) {
+      stroke: CanvasText;
+    }
+    :where(.cap-player-moment[aria-current="true"]) {
+      outline: 2px solid Highlight;
+    }
+    /* A setting away from its default keeps a heavier edge in the system's highlight. */
+    :where(.cap-player-btn[data-active]),
+    .cap-player-menu[data-active] .cap-btn.cap-menu-trigger {
+      border: 2px solid Highlight;
+    }
+  }
+}
