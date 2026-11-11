@@ -1,0 +1,12 @@
+/* A sample site's own title band, for the hero specimen: a tinted band with the page's h1. */
+.specimen-hero {
+  padding: var(--space-8) var(--pad-x);
+  background: var(--raised);
+  border-bottom: 1px solid var(--line);
+  text-align: center;
+
+  & h1 {
+    margin: 0;
+    font-size: var(--fs-h2);
+  }
+}

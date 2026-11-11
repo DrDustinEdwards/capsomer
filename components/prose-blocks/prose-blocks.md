@@ -6,7 +6,7 @@ parts: [css]
 tool: native
 states: [text lists quotes and footnotes, table, callouts, images figures and a gallery, video audio and embeds, button bookmark details and FAQ, details plus and ruled, manual parts and tables, diagram in the page, site look by tokens, code, editorial pack]
 added: 0.56.0
-updated: 0.100.0
+updated: 0.101.0
 source: Prelum's specimen stylesheet (specimen/site.css) and dustinedwards.info's prose, post-enhancements, post-disclosures and print styles, which first styled this output; foxhound's .blog-prose and its diagram parts (app/app.css), germomics' diagram figures and drawings (app/app.css), foxing's .article-prose (styles/journal.css), bsw's .page-prose (app/app.css); GitHub's alerts for the callouts; Ghost's cards for the bookmark and the embed
 replaces:
   - '\.callout-(note|tip|important|warning|caution)\s*\{'

@@ -90,6 +90,59 @@ export function jumpTarget(
   return app && !app.current ? app.href : null;
 }
 
+// The menu's collapse key (`[` by default): the shell binds it, so every app behaves the same. Never
+// with a modifier, while a person types (a field, a contenteditable, a code editor), during IME
+// composition, after another handler took the key, or while single-key shortcuts are off.
+export function isCollapseKey(
+  e: Pick<
+    KeyboardEvent,
+    "key" | "ctrlKey" | "metaKey" | "altKey" | "target" | "defaultPrevented" | "isComposing"
+  >,
+  key = "[",
+): boolean {
+  if (!key || e.key !== key || e.ctrlKey || e.metaKey || e.altKey) return false;
+  if (e.defaultPrevented || e.isComposing || singleKeysOff()) return false;
+  const t = e.target as HTMLElement | null;
+  if (t?.isContentEditable) return false;
+  return !t?.closest?.("input, textarea, select, [contenteditable], .cm-editor");
+}
+
+// Which entry is the page you are on, from the address: the entry whose `href` (or one of its
+// `match` prefixes or patterns) is the path itself or a folder above it, the longest winning, so
+// "/admin/media/new" marks Media and "/admin" marks only the Overview. "/" matches only itself.
+export interface MatchEntry {
+  id: string;
+  href: string;
+  match?: ReadonlyArray<string | RegExp>;
+}
+export function currentEntryId(
+  pathname: string,
+  entries: ReadonlyArray<MatchEntry>,
+): string | undefined {
+  const path = pathname.length > 1 ? pathname.replace(/\/+$/, "") : pathname;
+  let best: { id: string; len: number } | undefined;
+  for (const e of entries) {
+    const rules = e.match ?? [new URL(e.href, "https://x.invalid").pathname];
+    for (const rule of rules) {
+      let len = -1;
+      if (typeof rule === "string") {
+        const base = rule.length > 1 ? rule.replace(/\/+$/, "") : rule;
+        if (path === base) len = base.length + 1;
+        else if (base !== "/" && path.startsWith(`${base}/`)) len = base.length;
+      } else {
+        const m = rule.exec(path);
+        if (m) len = m[0].length;
+      }
+      if (len >= 0 && (!best || len > best.len)) best = { id: e.id, len };
+    }
+  }
+  return best?.id;
+}
+
+// Cloudflare Access's own sign-out address: a site behind Access signs out by sending the browser
+// there (a fetch cannot follow it into a navigation).
+export const ACCESS_LOGOUT = "/cdn-cgi/access/logout";
+
 // Attaches to every [data-cap="admin-shell"] under root that is not attached yet. Returns a
 // function that detaches them all.
 export function enhance(root: ParentNode = document): () => void {
@@ -122,6 +175,14 @@ export function enhance(root: ParentNode = document): () => void {
     };
     const armed = { at: 0 };
     const onKey = (e: KeyboardEvent) => {
+      if (isCollapseKey(e, shell.dataset.capCollapseKey ?? "[")) {
+        const toggle = shell.querySelector<HTMLElement>("[data-cap-part='menu-toggle']");
+        if (toggle && toggle.getClientRects().length > 0) {
+          e.preventDefault();
+          toggleMenu(shell);
+        }
+        return;
+      }
       const apps = [...shell.querySelectorAll<HTMLAnchorElement>(".cap-admin-tile")].map((a) => ({
         href: a.href,
         current: a.getAttribute("aria-current") === "true",

@@ -1,0 +1,88 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* The round status mark (48px, the tone's tint with a 1px edge in the tone), and the one-purpose
+   page that carries it: a 480px column, centered in the window, holding one card. Load panel.css
+   with it. */
+@layer cap.components {
+  .cap-status-mark {
+    display: inline-grid;
+    place-items: center;
+    inline-size: 48px;
+    block-size: 48px;
+    border: 1px solid var(--tone, var(--line-strong));
+    border-radius: 50%;
+    background: var(--tone-soft, var(--raised));
+    color: var(--tone, var(--muted));
+
+    &[data-tone="ok"] {
+      --tone: var(--ok);
+      --tone-soft: var(--ok-soft);
+    }
+    &[data-tone="crit"] {
+      --tone: var(--crit);
+      --tone-soft: var(--crit-soft);
+    }
+    &[data-tone="warn"] {
+      --tone: var(--warn);
+      --tone-soft: var(--warn-soft);
+    }
+    &[data-tone="info"] {
+      --tone: var(--info);
+      --tone-soft: var(--info-soft);
+    }
+
+    & svg {
+      inline-size: 20px;
+      block-size: 20px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+  }
+
+  .cap-result {
+    box-sizing: border-box;
+    display: grid;
+    align-content: center;
+    gap: var(--space-6);
+    inline-size: 100%;
+    max-inline-size: 480px;
+    min-block-size: 70vh;
+    margin-inline: auto;
+    padding: var(--space-8) var(--space-5);
+    text-align: center;
+
+    &:focus {
+      outline: none;
+    }
+  }
+  .cap-result-title {
+    margin: 0;
+    font-size: var(--fs-h2);
+  }
+  .cap-result-body {
+    display: grid;
+    justify-items: center;
+    gap: var(--space-5);
+    padding: var(--space-8) var(--space-6);
+  }
+  .cap-result-text {
+    margin: 0;
+    color: var(--text);
+    line-height: var(--leading);
+  }
+  .cap-result-actions {
+    display: grid;
+    justify-items: center;
+    gap: var(--space-3);
+  }
+
+  @media (forced-colors: active) {
+    .cap-status-mark {
+      border-color: CanvasText;
+    }
+  }
+}

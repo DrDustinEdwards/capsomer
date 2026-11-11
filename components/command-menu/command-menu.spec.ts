@@ -234,4 +234,26 @@ eachTheme((theme) => {
       );
     });
   }
+
+  test("behavior: the idle host mounts the menu; pages are commands; a run command comes back as Recent; a snippet marks the words; Ask takes the rest", async ({
+    page,
+  }) => {
+    await visitStates(page, "command-menu", theme, "extras");
+    await page.evaluate(() => localStorage.removeItem("cap-cmd-specimen-recent"));
+    await expect(page.getByText("Menu ready")).toBeVisible();
+    await page.getByRole("button", { name: "Search" }).click();
+    const input = page.getByRole("combobox");
+    await input.fill("media");
+    await page.keyboard.press("Enter");
+    await expect(page.getByRole("status")).toHaveText("Went to #media");
+    await page.getByRole("button", { name: "Search" }).click();
+    await expect(page.getByRole("group", { name: "Recent" }).getByRole("option")).toHaveText(
+      "Go to Media",
+    );
+    await input.fill("spring");
+    await expect(page.locator(".cap-cmd-snippet mark")).toHaveText("spring");
+    await input.fill("when is the survey");
+    await page.getByRole("option", { name: /Ask about/ }).click();
+    await expect(page.getByRole("status")).toHaveText("Asked: when is the survey");
+  });
 });

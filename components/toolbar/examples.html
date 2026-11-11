@@ -36,9 +36,22 @@
   </div>
 </section>
 
+<section class="cap-specimen" aria-labelledby="s-editor">
+  <h2 id="s-editor">An editor's formatting bar, keeping the editor's focus</h2>
+  <div>
+    <div class="cap-toolbar" role="toolbar" aria-label="Formatting" id="tb-editor">
+      <button type="button" class="cap-btn" id="tb-bold">Bold</button>
+      <button type="button" class="cap-btn">Italic</button>
+    </div>
+    <textarea class="cap-input" id="tb-editor-text" aria-label="Draft">Field notes from the spring survey.</textarea>
+  </div>
+</section>
+
 <script type="module">
-  import { enhance } from "./toolbar.ts";
+  import { attachToolbar, enhance } from "./toolbar.ts";
   enhance();
+  const editor = document.getElementById("tb-editor-text");
+  attachToolbar(document.getElementById("tb-editor"), undefined, { keepFocus: () => editor });
   // A toggle button says its state: aria-pressed follows a click, as an app's handler would set it.
   document.addEventListener("click", (e) => {
     const b = e.target instanceof Element ? e.target.closest(".cap-toolbar [aria-pressed]") : null;

@@ -160,6 +160,28 @@ eachTheme((theme) => {
     );
   });
 
+  test("keyboard: a popover opened at a text selection sits by the words, and Esc returns focus to the text", async ({
+    page,
+  }) => {
+    await visitStates(page, "popover", theme);
+    await page.getByRole("button", { name: 'Note on "spring survey"' }).click();
+    const pop = page.locator("#pop-virtual");
+    await expect(pop).toBeVisible();
+    const words = await page.evaluate(() =>
+      getSelection()!.getRangeAt(0).getBoundingClientRect().toJSON(),
+    );
+    const box = (await pop.boundingBox())!;
+    // Below the words, or above them when the window has no room below (the collision flip).
+    const gap =
+      (await pop.getAttribute("data-placed")) === "top"
+        ? (words.top as number) - (box.y + box.height)
+        : box.y - (words.bottom as number);
+    expect(Math.abs(gap)).toBeLessThan(24);
+    await page.keyboard.press("Escape");
+    await expect(pop).toBeHidden();
+    await expect(page.locator("#virtual-text")).toBeFocused();
+  });
+
   test("behavior: clicking outside closes the popover (light dismiss)", async ({ page }) => {
     await visitStates(page, "popover", theme);
     await page.getByRole("button", { name: "Dimensions" }).click();

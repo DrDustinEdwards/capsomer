@@ -447,19 +447,6 @@ function App() {
     [view, failed],
   );
   const tabs = nav.filter((e) => ["overview", "components", "color", "tests"].includes(e.id));
-  // The collapse key, as every family app binds it.
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key !== "[" || e.ctrlKey || e.metaKey || e.altKey) return;
-      if (
-        (e.target as Element | null)?.closest?.("input, textarea, select, [contenteditable='true']")
-      )
-        return;
-      document.querySelector<HTMLButtonElement>("[data-cap-part='menu-toggle']")?.click();
-    };
-    document.addEventListener("keydown", onKey);
-    return () => document.removeEventListener("keydown", onKey);
-  }, []);
   const pageName =
     view === "components" && detail
       ? (COMPONENTS.find((c) => c.name === detail)?.title ?? detail)

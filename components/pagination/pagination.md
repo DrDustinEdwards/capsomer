@@ -4,8 +4,9 @@ title: Pagination
 summary: Move between pages of a long list, with a "Showing 21 to 40 of 312" line, as links or as buttons.
 parts: [css, behavior, react]
 tool: native + own JavaScript
-states: [links in the middle, a gap on both sides, first page, last page, few pages, other words for the ends, buttons client-side, narrow space compact form, comfortable density]
+states: [links in the middle, a gap on both sides, first page, last page, few pages, other words for the ends, buttons client-side, narrow space compact form, comfortable density, steps form, steps form with a total that moves]
 added: 0.3.0
+updated: 0.100.0
 source: The site's Pager (app/components/post-row.tsx, .pager in app/styles/listing.css) and the admin's "Showing N of M posts" line (app/components/admin/posts-table.tsx); shadcn/ui Pagination
 replaces:
   - '<nav[^>]*aria-label="Pagination'
@@ -38,6 +39,10 @@ A list too long for one page where a person may want a particular page: posts, m
 - **A disabled end is dashed, muted and still there** (and still readable), as a disabled button is. In the links form it is an `a` with no `href`, `role="link"` and `aria-disabled="true"`, so it is not a stop. In the buttons form it keeps its place in the tab order and does nothing, so a person who reaches it by keyboard hears that it is unavailable.
 - **The count line is first.** "Showing 41 to 60 of 312 posts" is plain text, and in the buttons form a polite live region updated in place so the change is announced.
 - **A narrow container changes the form, not the page.** Under about 34 rem the numbers are replaced by "Page 3 of 16" between Previous and Next. It is a container query on the pager itself, so it works in a narrow panel on a wide screen. The site's `.pager` was this form only.
+- **The steps form** (`data-form="steps"`, React `form="steps"`): Previous and Next with "Page 3 of 16" between at every width and no numbers, for a list read in order (a journal, Newer and Older). With a total that moves (search results) it says "Page 3" alone: React `pageCount={0}` and `hasNext`.
+- **The address is strict and has one form.** `parsePage("2")` is 2, and anything that is not whole digits from 1 (`"2.5"`, `"-1"`, `"1e3"`, `"2abc"`, empty) is page 1. `pageEnvelope(page, perPage, total)` keeps the page inside the list (a page past the end shows the last), gives the `offset` to query, the range shown and `hasPrev`/`hasNext`; an empty list still has its one page, an empty state rather than a 404. `pageHref(path, params, page)` leaves out empty and false parameters and `page` on page 1, so page 1 is the bare address and each page has one URL (Google: each page of a series has its own URL, and the first is not `?page=1`).
+- **Prev and next in the head too.** `pageRelLinks(page, pageCount, hrefFor)` gives the `<link rel="prev">` and `<link rel="next">` for a route's `links` export. Google no longer reads them, but Bing and other readers do; the links in the pager carry `rel` as well.
+- **A count without a range.** `countText(shown, total, noun, one)`: "Showing 20 of 312 mentions" when a list shows only its first rows, or "12 mentions" when it shows them all.
 - **One page renders nothing.** Nowhere to go; the count line is the page's own business then.
 
 ## The shadcn component it matches
@@ -100,7 +105,19 @@ In React, `import { Pagination } from "capsomer/react/pagination"`:
 <Pagination page={page} pageCount={16} onPageChange={setPage} total={312} perPage={20} noun="posts" />
 ```
 
-With `hrefFor` it renders links; without, buttons and `onPageChange`.
+With `hrefFor` it renders links; without, buttons and `onPageChange`. `renderLink` draws each link with the app's router link, so a page change is a client navigation: `renderLink={({ href, ...p }) => <Link to={href} {...p} />}` (the props are `PageLinkProps`).
+
+```tsx
+// A loader: read the address, keep it in range, query one page.
+const { page, offset, perPage, pageCount, total } = pageEnvelope(parsePage(url.searchParams.get("page")), 25, count);
+const hrefFor = (n: number) => pageHref("/admin/webhooks", { type, errors: errorsOnly }, n);
+export const links = () => pageRelLinks(page, pageCount, hrefFor);
+
+<Pagination form="steps" page={page} pageCount={pageCount} hrefFor={hrefFor} prevLabel="Newer" nextLabel="Older" label="Journal pages" />
+<Pagination form="steps" page={page} pageCount={0} hasNext={rows.length > perPage} hrefFor={hrefFor} label="Result pages" />
+```
+
+The same pure functions come from `capsomer/behavior/pagination` and are re-exported by `capsomer/react/pagination`.
 
 ## Deliberately different
 

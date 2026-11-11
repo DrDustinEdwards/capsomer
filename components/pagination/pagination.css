@@ -184,6 +184,18 @@
     }
   }
 
+  /* The steps form (data-form="steps"): Previous and Next with "Page 3 of 16" between, at
+     every width, for a list read in order (a journal, newest first) or one whose total moves
+     ("Page 3" alone, no count). */
+  .cap-pagination[data-form="steps"] {
+    .cap-pagination-num {
+      display: none;
+    }
+    .cap-pagination-where {
+      display: block;
+    }
+  }
+
   @media (prefers-reduced-motion: no-preference) {
     :where(.cap-pagination) .cap-page {
       transition:

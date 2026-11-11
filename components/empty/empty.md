@@ -4,9 +4,9 @@ title: Empty
 summary: Which kind of empty an area is, and what a long wait says. The skeleton and the spinner live in their own component.
 parts: [css, react]
 tool: native
-states: [nothing yet, no match, all clear, could not load, with an icon, flush, long wait, comfortable]
+states: [nothing yet, no match, all clear, could not load, with an icon, flush, long wait, comfortable, no value]
 added: 0.1.0
-updated: 0.2.0
+updated: 0.100.0
 source: Capsomer mockup (design/mockup.html, "Empty, loading and error")
 replaces:
   - 'class="(empty|empty-state)[ "]'
@@ -33,6 +33,9 @@ What an area shows when it has nothing to show. Loading is the [Skeleton and spi
 - A button's own pending state is the button's `aria-busy="true"` (`.cap-btn-spinner`).
 
 ## The default and its reason
+
+- **No value in a cell is a word, not a blank** (`Missing`, `.cap-missing`): "none" in the muted ink, with an optional `reason` read out beside it, so a reader hears the value is missing on purpose and the eye sees it. A dash or an empty cell says nothing.
+- **The title can be a heading** where the empty area is a section's subject: `titleAs="h2"` or `"h3"`, to fit the page's outline.
 
 - **Say which kind of empty it is** (patterns.md "Empty"). "No results" alone leaves the person guessing whether to add, clear or wait.
 - **Centered, with a dashed edge**, as shadcn's Empty: an empty area is a place to put something, and the dashed edge says "drop it here" without a fill. `data-flush` removes the edge for an empty area inside a panel or a table that already has one.
