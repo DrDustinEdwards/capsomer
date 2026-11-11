@@ -1,0 +1,37 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* The danger zone: the risky controls of a form or a detail (Remove, Delete, Mark failed) set
+   apart from the safe ones, in a red-edged area under its own "Danger" label, last on the page.
+   Extracted from the Capsid Portal's Danger (dashboard/src/views/shared.tsx, the UX audit's M9). */
+@layer cap.components {
+  .cap-danger {
+    display: grid;
+    gap: var(--space-2);
+    padding: var(--pad-y) var(--pad-x);
+    border: 1px solid var(--crit);
+    border-radius: var(--radius-m);
+    background: var(--crit-soft);
+    color: var(--text);
+  }
+  .cap-danger-title {
+    margin: 0;
+    font-size: var(--fs-label);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text);
+  }
+  .cap-danger-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2);
+  }
+  .cap-danger-note {
+    margin: 0;
+    font-size: var(--fs-detail);
+    color: var(--muted);
+  }
+  /* The edge is the frame; forced colors keep the border, so nothing is lost there. */
+}

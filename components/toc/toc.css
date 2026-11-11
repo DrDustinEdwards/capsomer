@@ -1,0 +1,117 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* A post's table of contents: its h2 and h3 headings as links, a sticky column beside the post
+   on a wide screen (sidebar) or a closed disclosure above it on a narrow one (inline), the
+   section being read marked. Extracted from Foxhound's TableOfContents
+   (app/components/blog/table-of-contents.tsx, from Recova's). */
+@layer cap.components {
+  .cap-toc {
+    font-size: var(--fs-label);
+  }
+  .cap-toc-title {
+    margin: 0 0 var(--space-3);
+    font-family: var(--readout);
+    font-size: var(--fs-detail);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .cap-toc-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .cap-toc-item[data-level="3"] {
+    padding-inline-start: var(--space-4);
+  }
+  .cap-toc-link {
+    display: flex;
+    align-items: center;
+    min-block-size: var(--target);
+    padding-block: var(--space-1);
+    color: var(--muted);
+    font-size: var(--fs-body);
+    font-weight: var(--link-weight);
+    text-decoration: none;
+    .cap-toc-item[data-level="3"] & {
+      font-size: var(--fs-label);
+    }
+    &:is(:hover, [data-force="hover"]) {
+      color: var(--accent-text);
+    }
+    &[aria-current="location"] {
+      color: var(--text);
+      box-shadow: inset 2px 0 0 var(--accent);
+      padding-inline-start: var(--space-2);
+    }
+  }
+  /* Sidebar: sticky beside the post, from 64rem (a page-level layout, so a media query). */
+  .cap-toc[data-variant="sidebar"] {
+    position: sticky;
+    top: calc(var(--space-8) + env(safe-area-inset-top, 0px));
+    max-block-size: calc(100dvh - 2 * var(--space-8));
+    overflow-y: auto;
+  }
+  /* Inline: a closed disclosure in a frame, above the post on a narrow screen. */
+  .cap-toc[data-variant="inline"] {
+    margin-block-end: var(--space-7);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-l);
+    background: var(--surface);
+    & .cap-toc-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-block-size: var(--target);
+      margin: 0;
+      padding: var(--space-2) var(--space-4);
+      font-family: inherit;
+      font-size: var(--fs-label);
+      font-weight: 500;
+      letter-spacing: 0;
+      text-transform: none;
+      color: var(--text);
+      cursor: pointer;
+      list-style: none;
+      &::-webkit-details-marker {
+        display: none;
+      }
+      &::after {
+        content: "+" / "";
+        color: var(--muted);
+      }
+    }
+    &[open] .cap-toc-title::after {
+      content: "\2212" / "";
+    }
+    & nav {
+      padding: var(--space-1) var(--space-4) var(--space-3);
+      border-block-start: 1px solid var(--line);
+    }
+  }
+  @media (min-width: 64rem) {
+    .cap-toc[data-variant="inline"] {
+      display: none;
+    }
+  }
+  @media (max-width: 63.999rem) {
+    .cap-toc[data-variant="sidebar"] {
+      display: none;
+    }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .cap-toc-link {
+      transition: color var(--dur-fast) var(--ease-out);
+    }
+  }
+  @media (forced-colors: active) {
+    .cap-toc-link[aria-current="location"] {
+      box-shadow: none;
+      border-inline-start: 2px solid LinkText;
+    }
+  }
+}

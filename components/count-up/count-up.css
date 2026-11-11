@@ -1,0 +1,10 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* The count-up: tabular figures, so the width holds while the digits change. */
+@layer cap.components {
+  [data-cap="count-up"],
+  .cap-count-up {
+    font-variant-numeric: tabular-nums;
+  }
+}

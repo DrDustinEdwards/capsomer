@@ -121,6 +121,36 @@ export default defineConfig({
         this.emitFile({ type: "asset", fileName: "search.json", source: searchIndexJson(data) });
       },
     },
+    // Files a specimen loads by address rather than by import, copied to the same path: a
+    // component's service worker (components/<name>/*-sw.js), which must sit beside the states
+    // page it controls, and a specimen's runtime modules (components/<name>/specimen/runtime/,
+    // the PDF viewer's stand-in for PDF.js).
+    {
+      name: "capsomer-specimen-files",
+      apply: "build",
+      generateBundle() {
+        for (const d of readdirSync(resolve(root, "components"), { withFileTypes: true })) {
+          if (!d.isDirectory()) continue;
+          const dir = resolve(root, "components", d.name);
+          const files = [
+            ...readdirSync(dir)
+              .filter((f) => f.endsWith("-sw.js"))
+              .map((f) => `components/${d.name}/${f}`),
+            ...(existsSync(resolve(dir, "specimen/runtime"))
+              ? readdirSync(resolve(dir, "specimen/runtime")).map(
+                  (f) => `components/${d.name}/specimen/runtime/${f}`,
+                )
+              : []),
+          ];
+          for (const fileName of files)
+            this.emitFile({
+              type: "asset",
+              fileName,
+              source: readFileSync(resolve(root, fileName)),
+            });
+        }
+      },
+    },
     // The home page's preload header, from the hashed names just written, into worker/preload.generated.json,
     // which the Worker bundles (scripts/preload.ts). The security headers are site-runtime-headers', from the
     // site's registry entry, which `npm run site` writes into site-dist/_headers after the build.
