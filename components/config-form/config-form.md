@@ -34,7 +34,7 @@ A one-off setting is a field with its own save. A long multi-step setup is the s
 
 ## Accessibility
 
-The panel is a named region (its heading). Fields are Capsomer `Field`s, labelled and described. The hint is announced when it appears.
+The panel is a named region (its heading). Fields are Capsomer `Field`s, labeled and described. The hint is announced when it appears.
 
 Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the automated browser checks and a front-end review stand in.
 

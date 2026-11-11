@@ -61,7 +61,7 @@ Different on purpose: the default is flush with a `--raised` hover and no border
 | Enter | Follows the focused row's link, or presses its button |
 | Enter or Space on a group row's button | Shows or hides the rows it holds |
 
-- **A reply opens in its row** (`reply`, with `RowReply`): answering a question or saying what unblocked a job happens where the row is, not on another page. The box is labelled for what the words are for ("Your answer, sent to its driver"), takes focus when it opens, says why an empty or refused reply was not sent (announced), sends on Ctrl or Cmd+Enter (not during an IME composition) and cancels on Esc. It sits under the row's text, across the row and above the stretched link.
+- **A reply opens in its row** (`reply`, with `RowReply`): answering a question or saying what unblocked a job happens where the row is, not on another page. The box is labeled for what the words are for ("Your answer, sent to its driver"), takes focus when it opens, says why an empty or refused reply was not sent (announced), sends on Ctrl or Cmd+Enter (not during an IME composition) and cancels on Esc. It sits under the row's text, across the row and above the stretched link.
 
 ## Accessibility
 

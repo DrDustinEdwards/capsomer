@@ -175,7 +175,7 @@ export interface RowReplyProps {
   rows?: number;
 }
 
-// A reply inside a row: a labelled box that takes focus when it opens, Send and Cancel, a hint
+// A reply inside a row: a labeled box that takes focus when it opens, Send and Cancel, a hint
 // that is announced when the words cannot be sent, Ctrl or Cmd+Enter to send and Esc to cancel.
 export function RowReply({
   label,
