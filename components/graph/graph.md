@@ -5,7 +5,7 @@ summary: A directed graph of boxes and wires drawn once at build time or on a se
 parts: [css, behavior]
 tool: dagre (@dagrejs/dagre, an optional peer)
 states: []
-added: 0.102.0
+added: 0.91.0
 source: the Capsid explorer's code graph (explorer/src/graph.mjs and its CSS), generalized
 replaces:
   - 'function graphSvg\('

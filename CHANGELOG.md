@@ -4,6 +4,8 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+## [0.91.0]
+
 Batch 6 of the shared-code audit, pass 2 (C54 to C63, data display): what the sites wrote by hand for numbers, money, statuses, steps, charts, search results, graphs, the system map's model, catalogs and media picking, moved into components. New peers: `@dagrejs/dagre ^3.1.3` and `zod ^4.6.7`, both optional (only `capsomer/behavior/graph` and `capsomer/behavior/system-model` import them).
 
 - **Format** (new, `capsomer/behavior/format`): `figures`, `plural` (the counted form, "1,204 people"), `pluralWord`, `formatBytes` (binary, as before, now up to TB), `formatCount`, `median`, `percent`, `formatPercent`, `formatBps` and `listText`. Changed: `byteSize` (media) and `formatBytes` (drop-zone) are this `formatBytes`, so a size of exactly 2 MB reads "2 MB", not "2.0 MB". `plural` in time, usage meter, publish gate and draft compare is this one. Removed: the bare `plural` export of `capsomer/behavior/bulk-bar` (import it from format).

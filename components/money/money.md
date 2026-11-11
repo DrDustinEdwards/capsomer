@@ -5,7 +5,7 @@ summary: An amount in minor units and its currency code, shown in that currency'
 parts: [behavior]
 tool: own JavaScript
 states: []
-added: 0.102.0
+added: 0.91.0
 source: Foxhound's app/lib/money-format.ts (the canonical copy), its settings dollars helpers and wrappers, and txasm's app/lib/format.ts (which divided every currency by 100)
 replaces:
   - 'function (formatMoney|formatMoneyShort|formatAmounts|toMajorUnits|fromMajorUnits|currencyExponent|signedMoney|parseDollarsToCents|centsToDollarsInput|formatCentsAsDollars)\('
