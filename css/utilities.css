@@ -218,3 +218,105 @@
     }
   }
 }
+
+/* A row that scrolls sideways fades out at an end that has more to show, and is sharp at an end that has none, with
+   no script: a mask whose two bands grow with a scroll-driven animation over the first and last --cap-fade of
+   scrolling (Modern Web Guidance, scrollability-affordance-hints). Tab rows, the anchor bar, the
+   letterhead's links row on a phone and wide prose tables.
+   Only where scroll timelines exist: without one the animations would end at the wrong state. */
+@property --cap-fade-start {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+@property --cap-fade-end {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+@keyframes cap-fade-start-in {
+  to {
+    --cap-fade-start: var(--cap-fade);
+  }
+}
+@keyframes cap-fade-end-out {
+  from {
+    --cap-fade-end: var(--cap-fade);
+  }
+}
+@layer cap.utilities {
+  @supports (animation-timeline: scroll()) {
+    :where(.cap-tabs-list, .cap-anchors-list, .cap-site-header-sections, [data-context="prose"] .table-scroll) {
+      --cap-fade: 2rem;
+      --cap-fade-dir: right;
+      --cap-fade-start-at: 0;
+      --cap-fade-end-at: 100%;
+      scroll-padding-inline: var(--cap-fade);
+      mask:
+        linear-gradient(#000, #000) no-clip subtract,
+        linear-gradient(to var(--cap-fade-dir), #000, transparent) var(--cap-fade-start-at) 0 /
+          var(--cap-fade-start) 100% no-repeat no-clip,
+        linear-gradient(to var(--cap-fade-dir), transparent, #000) var(--cap-fade-end-at) 0 /
+          var(--cap-fade-end) 100% no-repeat no-clip;
+      animation:
+        cap-fade-start-in linear both,
+        cap-fade-end-out linear both;
+      animation-timeline: scroll(self inline);
+      animation-range:
+        0 var(--cap-fade),
+        calc(100% - var(--cap-fade)) 100%;
+      &:dir(rtl) {
+        --cap-fade-dir: left;
+        --cap-fade-start-at: 100%;
+        --cap-fade-end-at: 0;
+      }
+    }
+    /* A vertical tab list scrolls down, not across: no fade. */
+    :where([data-orientation="vertical"]) > :where(.cap-tabs-list) {
+      mask: none;
+      animation: none;
+    }
+  }
+}
+
+/* A one-line label cut with an ellipsis shows the rest when its row is hovered or has keyboard focus: the text inside
+   scrolls to its end, then snaps back (Modern Web Guidance, single-line-overflow). The label's own scroll timeline is
+   active only while the text overflows, which sets --cap-truncated, so text that fits never moves. The text must be
+   in an inner <span>. Not under reduced motion, where the full text is the row's accessible name and its detail. */
+@property --cap-truncated {
+  syntax: "<integer>";
+  inherits: false;
+  initial-value: 0;
+}
+@keyframes cap-truncated {
+  from,
+  to {
+    --cap-truncated: 1;
+  }
+}
+@layer cap.utilities {
+  @supports (animation-timeline: scroll()) {
+    :where(.cap-sortable-label, .cap-hist-name) {
+      animation: cap-truncated linear both;
+      animation-timeline: scroll(self inline);
+    }
+    @media (prefers-reduced-motion: no-preference) {
+      :where(.cap-sortable-item, .cap-hist-row):is(:hover, :has(:focus-visible)) :where(.cap-sortable-label, .cap-hist-name) {
+        text-overflow: clip;
+      }
+      @container style(--cap-truncated: 1) {
+        :where(.cap-sortable-item, .cap-hist-row):is(:hover, :has(:focus-visible)) :where(.cap-sortable-label, .cap-hist-name) > span {
+          display: inline-block;
+          margin-inline-start: 100%;
+          translate: calc(1px - 100%);
+          transition:
+            margin-inline-start 2s ease-in,
+            translate 2s ease-in;
+        }
+        :where(.cap-sortable-item, .cap-hist-row):is(:hover, :has(:focus-visible)) :where(.cap-sortable-label, .cap-hist-name):dir(rtl) > span {
+          translate: calc(100% - 1px);
+        }
+      }
+    }
+  }
+}

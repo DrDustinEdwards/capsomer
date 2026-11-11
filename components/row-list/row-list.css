@@ -308,4 +308,13 @@
       border-inline-start: 3px solid CanvasText;
     }
   }
+
+  /* A long list renders only the rows near the screen: the first 30 are always drawn, later ones wait until scrolled
+     near, holding a row's height (Modern Web Guidance, defer-rendering-heavy-content). */
+  .cap-row:nth-child(n + 31) {
+    content-visibility: auto;
+    contain-intrinsic-size: auto none auto 4rem;
+    /* Paint containment clips at the box; this keeps a focus ring drawn just outside it. */
+    overflow-clip-margin: 0.375rem;
+  }
 }

@@ -9,7 +9,8 @@
 import { enhance as enhanceMeters } from "../meter/meter.ts";
 import { openDialog, wireDialog } from "../dialog/dialog.ts";
 import { fail } from "../message/message.ts";
-import { singleKeysOff } from "../shortcuts/shortcuts.ts";
+import { isImeEnter, singleKeysOff } from "../shortcuts/shortcuts.ts";
+import { moveNode } from "../sortable-list/sortable-list.ts";
 import { performBulk, type BulkHandler, type BulkItem } from "../bulk-bar/bulk-bar.ts";
 import {
   altStateOf,
@@ -481,7 +482,8 @@ export function attachMedia(root: HTMLElement, options: MediaOptions = {}): Medi
       );
       const sorted = list.slice().sort(cmp);
       if (sorted.every((t, i) => t === list[i])) continue;
-      grid.append(...sorted);
+      // Each tile moves whole where the browser can (moveNode), keeping focus and state.
+      for (const t of sorted) moveNode(grid, t, null);
     }
     // Moving a node can drop focus; put it back.
     if (focused instanceof HTMLElement && focused.isConnected && document.activeElement !== focused)
@@ -734,7 +736,7 @@ export function attachMedia(root: HTMLElement, options: MediaOptions = {}): Medi
   // closes by itself); Alt and an arrow move to the next file without leaving the field.
   listen(root, "keydown", (e: KeyboardEvent) => {
     const t = e.target instanceof HTMLElement ? e.target : null;
-    if (!t || e.defaultPrevented || e.isComposing) return;
+    if (!t || e.defaultPrevented || e.isComposing || isImeEnter(e)) return;
     if (inspector?.contains(t)) {
       if (t.dataset.capPart === "tag-input" && (e.key === "Enter" || e.key === ",")) {
         e.preventDefault();
@@ -897,10 +899,10 @@ export function attachMedia(root: HTMLElement, options: MediaOptions = {}): Medi
       }
       if (wasKey !== t.dataset.key) t.dataset.key = patch.key ?? wasKey ?? "";
       if (patch.progress !== undefined && t.dataset.state === "uploading") {
-        const bar = t.querySelector<HTMLElement>(".cap-meter-bar");
+        const bar = t.querySelector<HTMLProgressElement>("progress.cap-meter-bar");
         const pct = Math.max(0, Math.min(100, Math.round(patch.progress)));
         if (bar) {
-          bar.setAttribute("aria-valuenow", String(pct));
+          bar.value = pct;
           bar.setAttribute(
             "aria-valuetext",
             `${pct} percent of ${t.dataset.label ?? "the file"} uploaded`,

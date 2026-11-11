@@ -140,6 +140,15 @@
   h3 {
     text-wrap: balance;
   }
+  /* Running text avoids a lone last word and ragged ends on every site, not only in prose (Modern Web Guidance,
+     improve-text-layout-and-legibility). A browser without it wraps as before. */
+  p,
+  li,
+  dd,
+  blockquote,
+  figcaption {
+    text-wrap: pretty;
+  }
   /* The type plan's weights (tokens/scale.mjs): a page title in Inter Light, a heading in Medium, in
      place of the browser's bold. A site or component that sets its own still wins over this layer. */
   h1 {
@@ -158,16 +167,14 @@
       font-size: max(var(--fs-input-coarse), 1em);
     }
   }
-  /* Still by default (design 4.1): a component's motion is written inside
-     prefers-reduced-motion: no-preference, and this catches anything that is not. */
+  /* Still by default (design 4.1): each component writes its motion inside
+     prefers-reduced-motion: no-preference, case by case, so a fade of color can stay while a slide goes. There is no
+     global 0.01ms override: it makes some animations end in a jump, more jarring than the motion it replaced, and it
+     breaks scroll-driven effects (Modern Web Guidance, motion). Only smooth scrolling is turned off here. */
   @media (prefers-reduced-motion: reduce) {
     *,
     *::before,
     *::after {
-      transition-duration: 0s !important;
-      transition-delay: 0s !important;
-      animation-duration: 0.01ms !important;
-      animation-iteration-count: 1 !important;
       scroll-behavior: auto !important;
     }
   }
