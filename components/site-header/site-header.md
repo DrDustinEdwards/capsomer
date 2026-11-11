@@ -219,6 +219,10 @@ A row that posts, in a panel or the sheet:
 
 A public plane that sends no React (a static page, a server-rendered page with no client bundle) renders the same `SiteHeader` with `hydrate={false}` and runs `enhance(document, { suggest })` from `capsomer/behavior/site-header` and `enhance(document, { onSave })` from `capsomer/behavior/theme-switch` in its page script. The header then carries no `data-cap-ready`, so `enhance()` wires it; its theme button carries its key and cookie (`data-cap-pref`, `data-cap-cookie`), and the theme key is `data-cap-theme-key`, bound by `enhance()`. Every panel's button carries `popovertarget`, so a panel opens with no script at all (placed under the header at the band's inset), and Sign out and every posting row are forms. The menu button carries `commandfor` (the sheet's id) and `command="show-modal"`, so the sheet opens with no script where the browser has invoker commands (Baseline newly available, December 2025); `enhance()` takes the click over (focus on the sheet's heading, `aria-expanded`), and is the fallback where a browser lacks them. With no account and no `signIn` the header has no `.cap-site-header-account` slot. Use it only where React never runs in the browser; a page that hydrates leaves `hydrate` on, or both would wire the header. A site no longer deletes `data-cap-ready` by hand.
 
+### The site's own hooks
+
+`attributes` puts the site's `data-*` attributes on the `<header>` (a command palette's hooks, for instance); the header's own attributes are set after them and win. `toolsEnd` places the site's markup in the tools after the theme control and the account, and `end` at the very end of the `<header>`: an island's `<template>`, say.
+
 Load `site-header.css` with `dialog.css`, `popover.css` and `theme-switch.css`.
 
 ## Deliberately different

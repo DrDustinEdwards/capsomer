@@ -4,9 +4,9 @@ title: Status matrix
 summary: Every row against every column at a glance, each cell a status glyph named with where it is and why.
 parts: [css, react]
 tool: native
-states: [areas on every site with its key, a cell not checked]
+states: [areas on every site with its key, a cell not checked, a cell a check could not measure]
 added: 0.100.0
-updated: 0.100.0
+updated: 0.104.0
 source: the Capsid Portal's Completeness tab (dashboard/src/views/Completeness.tsx Mark and the grid, Completeness.css)
 ---
 
@@ -26,6 +26,7 @@ One dimension is a list with a status per row (the row list, a table with a stat
 
 - **Each cell is one glyph, shape before color** (the status glyphs), so the grid reads in forced colors and without color.
 - **Each cell is named in full.** It is an image whose name is the row, the column, the status and why: "Search and AI readers, docs.example.com: Failing. No llms.txt". The same words show on hover.
+- **Could not measure is a question mark on the muted tone**: a cell or key item takes `glyph: "unknown"` with `tone: "muted"`, since a check that could not measure is neither a pass nor a failure, and the info glyph would read as a note.
 - **Not checked is a dot**, named "Not checked" (`emptyLabel`), never an empty cell.
 - **The row headers stick** at the inline start while the table scrolls sideways in its own focusable region; column headers wrap, and on a narrow screen the columns narrow and the labels shrink.
 - **A key** (`MatrixKey`) under it shows each glyph with its word.

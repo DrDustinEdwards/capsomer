@@ -209,11 +209,10 @@
     color: var(--muted);
   }
 
+  /* Its fields side by side: .cap-fields (field.css) at these sizes. */
   .cap-people-add-fields {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
-    align-items: end;
-    gap: var(--space-4);
+    --fields-min: 14rem;
+    --fields-gap: var(--space-4);
   }
 
   /* One person's history: a dated list of what changed and what Cloudflare said. */

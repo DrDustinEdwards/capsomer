@@ -67,16 +67,6 @@
     }
   }
 
-  /* The icon after the main way out's words (linkIcon), in the link's color. */
-  .cap-error-page-link-icon {
-    display: inline-flex;
-    flex: none;
-
-    & > svg {
-      display: block;
-    }
-  }
-
   /* Development only: the thrown error's stack, scrolled inside its box on a phone. */
   .cap-error-page-stack {
     box-sizing: border-box;

@@ -4,17 +4,40 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
-## [0.104.0]
+## [0.107.0]
 
 - **Sortable list: `renderFoot` and `removeStyle`.** `renderFoot(item, state)` adds a part of the host's own after the buttons, on its own full-width line (`.cap-sortable-foot`, the space above it `--sortable-foot-gap`, the item's gap by default): an "Edit item" disclosure that sits under an item's title and its buttons rather than beside them. `removeStyle="bordered"` draws Remove as a boxed button; `"quiet"` (bare words) stays the default. `--sortable-remove-pad-inline` sets Remove's inset (a small button's by default; `0` leaves the bare word). A card or stack item with no grip (`grip={false}`) no longer keeps an empty handle column, which set its head and fields one gap in from the content's edge. HTML contract addition only: `.cap-sortable-foot`. Nothing is removed or renamed.
 - **Empty: the sentence is balanced again**, as the title is. base.css's `text-wrap: pretty` on every `p` (0.90.0) had overridden the state's balance, so a centered sentence (an error page's, an empty list's) wrapped ragged.
 - **Arrow: an Icon drawn as `.cap-arrow` keeps the arrow's 1.1em** (the Icon's 1.25em had won, from its later layer).
 - **Page: `--page-leading`**, the line height of `.cap-page` (default 1.55, as before), for a site whose body reads looser.
 - **Disclosure: `--disclosure-marker-gap`**, the space between the marker and the title on every variant (default 8px, the card's 12px, as before).
-- **Error page: the site's own button and spacing under a `hero` band.** `linkIcon` (an icon after the main way out's words, in `.cap-error-page-link-icon`, hidden from assistive tech) and the tokens `--error-page-hero-gap` (under the band) and `--error-page-body-gap` (between the sentence and the ways out), each defaulting to `--gap`. Nothing is removed or renamed.
+- **Error page: the space under a `hero` band and above the ways out.** The tokens `--error-page-hero-gap` (under the band) and `--error-page-body-gap` (between the sentence and the ways out), each defaulting to `--gap`. Nothing is removed or renamed.
+
+## [0.106.0]
+
+- **Components that lay out their own rows of fields use `.cap-fields`.** The config form (`.cap-config-form`), the people add form (`.cap-people-add-fields`) and the front matter grid (`.cap-fm-grid`) no longer carry their own `grid-template-columns`; their markup now also has `cap-fields` (React and `examples.html` updated; a hand-written copy of these three needs the class added) and sets `--fields-min` and the new `--fields-gap` (default `--space-5`) to the sizes it had. Their fields now line up on their controls (`align-items: end`), as every `.cap-fields` row does. Nothing is removed or renamed.
+
+## [0.105.0]
+
 - **Error page: a site's title band (`hero`) runs the page's width.** The band shrank to its content (about 480px on a 1280px page) because the page centers its children; with `hero` the page now stretches them and the body keeps its 48rem column, centered. New token `--error-page-body-pad-block` (default 0): the space above and below the sentence and the ways out under a `hero` band. No other token, class or HTML contract changes.
 - **Sortable list: tokens for a narrow column and a plain empty place.** `--sortable-item-wrap` (default `nowrap`) and `--sortable-body-basis` (`auto`) let a row's buttons drop under its content (`wrap` and `100%`), `--sortable-steps-gap` (`--space-1`), `--sortable-body-pad-inline` (a stack item's content inset) and `--sortable-empty-pad` and `--sortable-empty-border` (the empty place; `0` and `0` leave only its words). Every default is today's value; nothing is removed or renamed.
 - **One hydration flag and one storage path inside Capsomer.** Thirteen components had their own `useSyncExternalStore` hydration flag (field, people-roles, bulk-bar, mentions-list, dictionary-entry, media-library, history-list, content, posts-list, time, scope-chip) or browser-zone hook (schedule-dialog, writing-progress); each now uses `useHydrated` or `useBrowserZone` from `capsomer/react/hooks`. Six kept their own try/catch around `localStorage` (shell's `readPref`/`writePref`, editor-workspace, draft-compare, command-menu's recents, authorship, the player's memory); each now goes through hooks.ts' `readStored`/`writeStored`, so where storage is refused a choice lasts the page and every reader of a key stays in step. checklist-run keeps its own, since it tells "blocked" from "full". Removed: `useBrowserZone` from `capsomer/react/schedule-dialog` (use `capsomer/react/hooks`, `useBrowserZone(null)`). No token, class or HTML contract changes.
+- **The site header takes a site's own hooks.** `attributes` (data-* only) on the `<header>`, `toolsEnd` after the theme control and the account, and `end` at the end of the header, for a site's palette hooks and island templates. No change to the header's own markup.
+- **Tooltip `as="span"`.** The tip can be a `<span>`, valid inside a `<p>`. `Time tip` now renders through `Tooltip` with it; its markup is unchanged.
+- **Prose tables: a row header keeps the rows' hairline.** The 2px `--prose-table-rule` is on `thead th` only; a `th` in the body (a row header) had it too.
+- **Scroll-driven animations survive a minifier.** The scroll fades (tab rows, anchor bar, header links row, prose tables), the truncated label, the letterhead's header fade and 0.99.0's Reveal are written as longhands with `animation-duration: auto`. Lightning CSS, which Vite minifies with, folded the `animation` shorthand and its timeline into one with a 0s duration, which Chromium runs as finished: a wide table showed both fades at rest, and its first letters were faded.
+
+## [0.104.0]
+
+The follow-ups from moving the sites onto shared components: the parts Carrel, Foxing, Foxhound, bsw and the Portal still drew for themselves.
+
+- **New: search suggestions** (`capsomer/search-suggest.css`, `capsomer/behavior/search-suggest`, `capsomer/react/search-suggest`). A site's search box that suggests pages as a person types: the search field's GET form still searches, with no script too, and a suggestion is a page to go to. One behavior module (`attachSuggest`, `enhance`) on the shared listbox in input mode serves React and a page that does not hydrate, in place of Foxing's two copies (search-box.tsx and its island). New classes `.cap-search-suggest`, `.cap-search-suggest-list`.
+- **Search field: `labelHidden`** (React `SearchField` and `Field`): the label is read and not shown, for a search box whose icon and place make it plain. Every other field shows its label.
+- **Fields side by side: `.cap-fields`.** As many columns of at least `--fields-min` (16rem) as fit, lined up on their controls whatever help one carries, a checkbox among them level with the inputs. Carrel's `.app-fields` moves here.
+- **Card inside a sortable list's card item.** A `.cap-card` as a `.cap-sortable-body`'s content drops its own edge, padding, surface and lift, since the item is already the card's box; its regions and stretched link stay. Carrel's corkboard cards move onto the card.
+- **Attention list: `reading`** (React). While the data is read again the last rows stay, the section is `aria-busy` and the "Reading again" spinner takes the place of `read`, as a panel's `reading` does. Foxhound's admin overview drops its own wrapper and spinner.
+- **Status matrix: `glyph`** on a cell and a key item, in place of the tone's. A check that could not measure is `tone: "muted"` with `glyph: "unknown"`, a question mark, neither a pass nor a failure; the Portal's Completeness grid used the info glyph.
+- **Error page: `homeIcon`** (React), an icon after the home link's words (an `svg` with `data-icon="end"`), for a site whose buttons that go somewhere carry an arrow (bsw).
 
 ## [0.103.1]
 

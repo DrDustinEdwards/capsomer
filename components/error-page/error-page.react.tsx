@@ -105,6 +105,10 @@ export interface ErrorPageProps {
   text?: string;
   // The home link's words. Default "Go to the home page".
   homeLabel?: string;
+  // An icon after the home link's words, for a site whose buttons that go somewhere carry one (bsw's
+  // arrow): an svg with data-icon="end" and aria-hidden="true", so the button pulls its padding in
+  // and the link's name stays its words.
+  homeIcon?: ReactNode;
   // Render the region as a div when the site's Layout already wraps every page in its main, so the
   // page keeps one main. Default "main".
   as?: "main" | "div";
@@ -117,9 +121,6 @@ export interface ErrorPageProps {
   // brand lays its error page out as an interior page): it gets the words and draws the h1; the
   // sentence and the ways out follow it in the page's column.
   hero?: (words: ErrorWords) => ReactNode;
-  // An icon after the words of the main way out (the home link, or a 410's), as the site's own buttons
-  // end with one. Hidden from assistive tech: pass the icon alone, with no words of its own.
-  linkIcon?: ReactNode;
 }
 
 export function ErrorPage({
@@ -134,27 +135,22 @@ export function ErrorPage({
   title,
   text,
   homeLabel = "Go to the home page",
+  homeIcon,
   as: Region = "main",
   actions,
   gone,
   hero,
-  linkIcon,
 }: ErrorPageProps) {
   const found = errorWords(error);
   const words = { status: found.status, title: title ?? found.title, text: text ?? found.text };
   const thrown = dev && error instanceof Error ? error : null;
   const server = words.status >= 500;
   const withdrawn = words.status === 410;
-  const icon = linkIcon ? (
-    <span className="cap-error-page-link-icon" aria-hidden="true">
-      {linkIcon}
-    </span>
-  ) : null;
   const action = withdrawn ? (
     <>
       <a className="cap-btn" data-variant="primary" href={gone?.href ?? home}>
         {gone?.label ?? homeLabel}
-        {icon}
+        {homeIcon}
       </a>
       {actions}
     </>
@@ -169,7 +165,7 @@ export function ErrorPage({
       ) : null}
       <a className="cap-btn" data-variant={server ? undefined : "primary"} href={home}>
         {homeLabel}
-        {icon}
+        {homeIcon}
       </a>
       {actions}
     </>

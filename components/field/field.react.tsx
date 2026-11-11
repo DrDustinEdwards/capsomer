@@ -25,6 +25,9 @@ export interface FieldControlProps {
 
 export interface FieldProps {
   label: ReactNode;
+  // The label is read but not shown, for a field whose purpose the page already makes plain (a
+  // site's search box with its icon). Every other field shows its label.
+  labelHidden?: boolean;
   // Help, shown between the label and the control and read as its description.
   help?: ReactNode;
   // The message for a wrong value: what is wrong and what to do. Shown beside the control.
@@ -50,6 +53,7 @@ export interface FieldProps {
 
 export function Field({
   label,
+  labelHidden = false,
   help,
   error,
   announce = false,
@@ -85,7 +89,10 @@ export function Field({
       data-invalid={hasError ? "true" : undefined}
       data-size={size}
     >
-      <label className="cap-field-label" htmlFor={controlId}>
+      <label
+        className={labelHidden ? "cap-field-label cap-sr-only" : "cap-field-label"}
+        htmlFor={controlId}
+      >
         {label}
         {isRequired ? (
           <span className="cap-field-required" aria-hidden="true">
@@ -440,7 +447,7 @@ const SEARCH_ICON = (
 // there is text, and Esc to clear. A form when `action` is given, so it works with no script;
 // otherwise a div for a filter that answers as it is typed in.
 export function SearchField(
-  props: Pick<FieldProps, "label" | "help"> &
+  props: Pick<FieldProps, "label" | "labelHidden" | "help"> &
     Omit<InputHTMLAttributes<HTMLInputElement>, "type" | "style" | "value" | "onChange"> & {
       value: string;
       onChange: (value: string) => void;
@@ -448,7 +455,17 @@ export function SearchField(
       landmark?: string;
     },
 ) {
-  const { label, help, value, onChange, action, landmark, className: _c, ...rest } = props;
+  const {
+    label,
+    labelHidden,
+    help,
+    value,
+    onChange,
+    action,
+    landmark,
+    className: _c,
+    ...rest
+  } = props;
   const ready = useHydrated();
   const input = useRef<HTMLInputElement>(null);
   const Wrap = action ? "form" : "div";
@@ -461,7 +478,7 @@ export function SearchField(
       action={action}
       data-cap-ready={ready ? "" : undefined}
     >
-      <Field label={label} help={help}>
+      <Field label={label} labelHidden={labelHidden} help={help}>
         {(p) => (
           <div className="cap-input-group">
             <InputGroupAddon align="inline-start">{SEARCH_ICON}</InputGroupAddon>

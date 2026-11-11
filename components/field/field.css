@@ -161,6 +161,21 @@
     gap: var(--space-3);
     font-weight: 500;
   }
+  /* Fields side by side (.cap-fields): as many columns of at least --fields-min (16rem) as fit, --fields-gap apart (--space-5),
+     one column on a phone. They line up on their controls, whatever help one carries above its
+     own, and a checkbox among them sits level with the inputs. */
+  .cap-fields {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--fields-min, 16rem)), 1fr));
+    gap: var(--fields-gap, var(--space-5));
+    align-items: end;
+
+    & > .cap-check {
+      align-self: end;
+      min-height: var(--control);
+    }
+  }
+
   /* A line between groups of fields, with an optional word in it. */
   .cap-field-separator {
     position: relative;
