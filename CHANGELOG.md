@@ -4,6 +4,10 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+## [0.88.1]
+
+- **Buttons change under the pointer in every variant.** The hover, pressed and open states sat above the variants in `button.css`, and each variant sets `--cap-btn-bg` with the same specificity, so a primary, secondary or danger button kept its resting fill on hover and press (Foxhound's amber calls to action never moved; found in the Recova parity audit, 2026-11-10). The states now come after the variants, so each variant's own `--cap-btn-hover` and `--cap-btn-press` apply. The default button and the disabled look are unchanged. No token or class was removed or renamed.
+
 ## [0.88.0]
 
 - **Chart frame: the downloads are one Download menu** (Carrel Desk redesign, approved 2026-11-10). Once Enarratio's enhancement layer has added Download SVG, Download PNG, Download tactile SVG and Copy embed beside a figure's Download CSV link, the frame moves all five into a Download menu (Capsomer's form menu, `details.cap-menu-form` in the new `span.cap-chart-downloads`) where the link was, in React's `ChartFrame` and in `capsomer/behavior/chart-enhance`. With no script the CSV link is unchanged. A page with charts now also loads `capsomer/menu.css` for the menu's look (without it the menu is a plain disclosure). No token or class was removed or renamed.
