@@ -105,6 +105,10 @@ export interface ErrorPageProps {
   text?: string;
   // The home link's words. Default "Go to the home page".
   homeLabel?: string;
+  // An icon after the home link's words, for a site whose buttons that go somewhere carry one (bsw's
+  // arrow): an svg with data-icon="end" and aria-hidden="true", so the button pulls its padding in
+  // and the link's name stays its words.
+  homeIcon?: ReactNode;
   // Render the region as a div when the site's Layout already wraps every page in its main, so the
   // page keeps one main. Default "main".
   as?: "main" | "div";
@@ -131,6 +135,7 @@ export function ErrorPage({
   title,
   text,
   homeLabel = "Go to the home page",
+  homeIcon,
   as: Region = "main",
   actions,
   gone,
@@ -145,6 +150,7 @@ export function ErrorPage({
     <>
       <a className="cap-btn" data-variant="primary" href={gone?.href ?? home}>
         {gone?.label ?? homeLabel}
+        {homeIcon}
       </a>
       {actions}
     </>
@@ -159,6 +165,7 @@ export function ErrorPage({
       ) : null}
       <a className="cap-btn" data-variant={server ? undefined : "primary"} href={home}>
         {homeLabel}
+        {homeIcon}
       </a>
       {actions}
     </>

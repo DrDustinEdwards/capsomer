@@ -1,8 +1,11 @@
 import type { ReactNode } from "react";
-import { Glyph, type Tone } from "../status/status.react.tsx";
+import { Glyph, type GlyphName, type Tone } from "../status/status.react.tsx";
 
 export interface MatrixCell {
   tone: Tone;
+  // A mark of its own in place of the tone's: "unknown" (a question mark) on the muted tone for
+  // a cell a check could not measure, which is neither a pass nor a failure.
+  glyph?: GlyphName;
   // The status in words: "Done", "Partial", "Failing".
   label: string;
   // Why, read with it and shown on hover: "3 of 17 sites have no llms.txt".
@@ -87,7 +90,7 @@ export function StatusMatrix({
                       aria-label={words}
                       title={words}
                     >
-                      <Glyph name={cell.tone} />
+                      <Glyph name={cell.glyph ?? cell.tone} />
                     </span>
                   </td>
                 );
@@ -101,13 +104,17 @@ export function StatusMatrix({
 }
 
 // The key under a matrix: each status's glyph and word, so the marks read without hovering.
-export function MatrixKey({ items }: { items: Array<{ tone: Tone; label: string }> }) {
+export function MatrixKey({
+  items,
+}: {
+  items: Array<{ tone: Tone; glyph?: GlyphName; label: string }>;
+}) {
   return (
     <ul className="cap-matrix-key">
       {items.map((i) => (
         <li key={i.label}>
           <span className="cap-status" data-tone={i.tone}>
-            <Glyph name={i.tone} />
+            <Glyph name={i.glyph ?? i.tone} />
             {i.label}
           </span>
         </li>

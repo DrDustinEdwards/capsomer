@@ -6,7 +6,7 @@ parts: [css, react]
 tool: native
 states: [404, 410, 410 with its own way out, a second way out, a site's own title band, signed out, session ended, 500, database down, development, phone width]
 added: 0.47.0
-updated: 0.100.0
+updated: 0.104.0
 source: dustinedwards.info, app/components/error-page.tsx; Foxhound, app/components/error-view.tsx
 replaces:
   - 'error\.status === 404 \? "404" : "Error"'
@@ -38,6 +38,7 @@ What a React Router site shows when a page is missing, gone or broke: the failed
 - **main is `#main` with `tabIndex={-1}`**, the skip link's target. The title is the page's `h1` (`Empty`'s `titleAs="h1"`). A 404's title is set in Jost Demibold (`--poster`), a missing page being a standalone poster; every other status keeps the UI face.
 - **A site's own words.** `title`, `text` and `homeLabel` replace the default words for this error, for a site whose copy is edited content (julieedwards.info's 404 is Carrel copy in D1). `as="div"` renders the region as a div when the site's Layout already has the page's one `main`.
 - **A page gone on purpose (410) is not an error.** Nothing failed and nothing will come back, so it is no alert and has no Try again: its one way out is `gone` ("Read the blog", `/blog`), else the home link.
+- **An icon after the home link's words.** `homeIcon` (an `svg` with `data-icon="end"` and `aria-hidden="true"`) follows the home link's words, or the 410's own way out, for a site whose buttons that go somewhere carry an arrow (bsw).
 - **More ways out.** `actions` adds links after the home link (a dashboard, a demo), in the same row.
 - **A site's own title band.** `hero` (a function of the page's words) draws the site's interior-page band with the `h1`; the sentence and the ways out follow it, centered. A site that keeps a client's brand uses it instead of laying out its own error page. The band runs the page's width and the body stays in a 48rem column; `--error-page-body-pad-block` (default 0) sets the space above and below the body.
 - **Signed out is its own page.** `SignedOutPage` (`app`, `signIn`, `byChoice`, `access`) is what an app shows once its session is gone: a polite status, the heading "Signed out", and "Sign in again" (or "Reload to sign in" when the session ended on its own). Behind Access it says an open Access session may sign the person straight back in.
