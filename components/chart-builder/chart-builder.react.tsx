@@ -19,13 +19,13 @@ import {
 import { Check, Field } from "../field/field.react.tsx";
 import { Segmented } from "../segmented/segmented.react.tsx";
 import { Select } from "../select/select.react.tsx";
+import { csvColumns } from "@drdustinedwards/site-helpers/source";
 import {
   CHART_TYPES,
   MAX_CSV_BYTES,
   chartDirective,
   chartReady,
   chooseColumns,
-  csvColumns,
   csvFileProblem,
   type ChartFields,
   type ChartType,

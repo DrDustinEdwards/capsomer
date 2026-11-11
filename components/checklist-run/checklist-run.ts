@@ -88,9 +88,9 @@ export function start(root: HTMLElement, options: RunOptions = {}): () => void {
   if (stepItems.length === 0) throw new Error("checklist-run: this page has no steps to run");
   // A step is addressed by its own id, else its section and number: numbering restarts in a
   // section that starts its own list, so the number alone is not unique.
-  const sectionOf = (li: HTMLElement) =>
+  const stepSection = (li: HTMLElement) =>
     li.closest("section[aria-labelledby]")?.getAttribute("aria-labelledby") ?? "";
-  const keyOf = (li: HTMLElement) => li.id || `${sectionOf(li)}.${li.dataset.step}`;
+  const keyOf = (li: HTMLElement) => li.id || `${stepSection(li)}.${li.dataset.step}`;
   const stepKeys = stepItems.map(keyOf);
   const timerStep = new Map<string, string>();
   const scaleForm = root.querySelector<HTMLFormElement>(o.scaleForm);
