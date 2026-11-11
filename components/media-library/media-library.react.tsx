@@ -29,7 +29,8 @@ import {
   useMediaMode,
   type MediaFields,
 } from "../media/media.react.tsx";
-import { bareType, byteSize, copyText, CROPPABLE, type MediaRecord } from "../media/media.ts";
+import { bareType, byteSize, CROPPABLE, type MediaRecord } from "../media/media.ts";
+import { copyText } from "../copy/copy.ts";
 import { acceptLabel, formatBytes } from "../drop-zone/drop-zone.ts";
 import { readPref, writePref } from "../shell/shell.ts";
 import { Keys, useShortcut } from "../shortcuts/shortcuts.react.tsx";

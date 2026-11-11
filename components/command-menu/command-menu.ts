@@ -81,6 +81,19 @@ export interface MenuOptions {
   label?: string;
   // Shown in the empty input; "Search commands" by default.
   placeholder?: string;
+  // Live results as the person types, as the React menu's `search`: see AttachOptions.
+  search?: AttachOptions["search"];
+  searchDelay?: number;
+}
+
+export interface AttachOptions {
+  // Results from an async source as the person types (books, people, records). Called with the
+  // trimmed query and an AbortSignal, `searchDelay` ms (180) after the last key, never for an
+  // empty query; the signal aborts when the query changes or the menu closes. Its commands come
+  // after the matching commands, in their own groups and order, unfiltered; their ids must not
+  // repeat a command's. The last results stay until new ones arrive; a failed search keeps them.
+  search?: (query: string, signal: AbortSignal) => Promise<Command[]>;
+  searchDelay?: number;
 }
 
 const SEARCH_ICON =
@@ -217,8 +230,13 @@ export interface Attached {
 
 // Wires one menu dialog: the shared dialog's rules (Esc, the backdrop, focus handed back), the
 // shared listbox over the commands (filtering, the active option, Enter, a click), and Ctrl K to
-// close. `run` is called with the chosen option after the dialog has closed.
-export function attach(dialog: HTMLDialogElement, run: (option: HTMLElement) => void): Attached {
+// close. `run` is called with the chosen option after the dialog has closed, and with its command
+// when the option is a live result (`opts.search`).
+export function attach(
+  dialog: HTMLDialogElement,
+  run: (option: HTMLElement, found?: Command) => void,
+  opts: AttachOptions = {},
+): Attached {
   const unwireBase = wireDialog(dialog);
   const input = dialog.querySelector<HTMLInputElement>("[role='combobox']");
   const list = dialog.querySelector<HTMLElement>("[role='listbox']");
@@ -235,6 +253,8 @@ export function attach(dialog: HTMLDialogElement, run: (option: HTMLElement) => 
     } else if (o.getAttribute("aria-selected") === "false") o.removeAttribute("aria-selected");
   }
 
+  // A live search not yet answered: the list is busy, and an empty one says Searching.
+  let busy = false;
   const lb: Listbox = createListbox(list, {
     input,
     empty,
@@ -242,7 +262,8 @@ export function attach(dialog: HTMLDialogElement, run: (option: HTMLElement) => 
     filterInput: true,
     onFilter(count, query) {
       input.setAttribute("aria-expanded", String(count > 0));
-      if (empty) empty.textContent = count === 0 && query.trim() ? emptyText(query) : "";
+      if (empty)
+        empty.textContent = count > 0 || !query.trim() ? "" : busy ? SEARCHING : emptyText(query);
     },
   });
   list.dataset.capReady = "";
@@ -250,8 +271,74 @@ export function attach(dialog: HTMLDialogElement, run: (option: HTMLElement) => 
   const choose = (o: HTMLElement | null | undefined) => {
     if (!o) return;
     dialog.close();
-    run(o);
+    run(o, live.get(o.dataset.capCommand ?? ""));
   };
+
+  // The live results: groups built as buildMenu builds them, marked data-live, after the menu's
+  // own. Each keeps the query as its keyword, so the menu's filter shows it whatever its words.
+  const live = new Map<string, Command>();
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  let pending: AbortController | null = null;
+  const setBusy = (next: boolean) => {
+    busy = next;
+    if (next) list.setAttribute("aria-busy", "true");
+    else list.removeAttribute("aria-busy");
+  };
+  const show = (commands: Command[], query: string) => {
+    for (const g of list.querySelectorAll("[data-live]")) g.remove();
+    live.clear();
+    for (const g of buildMenu(commands).querySelectorAll<HTMLElement>(".cap-listbox-group")) {
+      g.dataset.live = "";
+      for (const o of g.querySelectorAll<HTMLElement>("[role='option']"))
+        o.dataset.keywords = query.toLowerCase();
+      list.append(g);
+    }
+    for (const c of commands) live.set(c.id, c);
+    lb.filter(input.value);
+  };
+  const stopSearch = () => {
+    clearTimeout(timer);
+    pending?.abort();
+    pending = null;
+  };
+  const startSearch = () => {
+    const ask = opts.search;
+    if (!ask) return;
+    stopSearch();
+    const q = input.value.trim();
+    if (!q) {
+      setBusy(false);
+      show([], "");
+      return;
+    }
+    const ctrl = new AbortController();
+    pending = ctrl;
+    setBusy(true);
+    lb.filter(input.value);
+    timer = setTimeout(() => {
+      ask(q, ctrl.signal).then(
+        (commands) => {
+          if (ctrl.signal.aborted) return;
+          setBusy(false);
+          show(commands, q);
+        },
+        () => {
+          if (ctrl.signal.aborted) return;
+          setBusy(false);
+          lb.filter(input.value);
+        },
+      );
+    }, opts.searchDelay ?? 180);
+  };
+  const onClose = () => {
+    stopSearch();
+    setBusy(false);
+  };
+  // After the listbox's own input listener, so its filter has run.
+  if (opts.search) {
+    input.addEventListener("input", startSearch);
+    dialog.addEventListener("close", onClose);
+  }
   const onSelect = (e: Event) => choose((e as CustomEvent<{ option: HTMLElement }>).detail.option);
   const onKey = (e: KeyboardEvent) => {
     // The key that opened it closes it.
@@ -272,6 +359,7 @@ export function attach(dialog: HTMLDialogElement, run: (option: HTMLElement) => 
       if (dialog.open) return;
       input.value = query;
       lb.filter(query);
+      startSearch();
       openDialog(dialog, opener, { focus: input });
     },
     close() {
@@ -281,6 +369,9 @@ export function attach(dialog: HTMLDialogElement, run: (option: HTMLElement) => 
     detach() {
       list.removeEventListener("cap:option-select", onSelect);
       input.removeEventListener("keydown", onKey);
+      input.removeEventListener("input", startSearch);
+      dialog.removeEventListener("close", onClose);
+      stopSearch();
       lb.detach();
       unwireBase();
     },
@@ -315,7 +406,10 @@ export function createCommandMenu(commands: Command[], opts: MenuOptions = {}): 
   const dialog = buildMenu(commands, opts);
   document.body.append(dialog);
   const byId = new Map(commands.map((c) => [c.id, c]));
-  const a = attach(dialog, (o) => byId.get(o.dataset.capCommand ?? "")?.run());
+  const a = attach(dialog, (o, found) => (found ?? byId.get(o.dataset.capCommand ?? ""))?.run(), {
+    search: opts.search,
+    searchDelay: opts.searchDelay,
+  });
   current = a;
   ensureShortcut();
   return {

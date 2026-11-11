@@ -1,0 +1,112 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* A marquee: a row of marks (client logos, journals) drifting sideways in a loop, with a visible
+   Pause control that works without script (WCAG 2.2.2 Pause, Stop, Hide: anything moving for more
+   than five seconds beside other content can be paused). The list is written twice; the second copy
+   is aria-hidden and inert, so it is seen, never read or reached. Hover and keyboard focus pause it
+   too. With less motion asked for nothing moves: the marks wrap into rows and the copy is hidden. */
+
+@layer cap.components {
+  /* Toward the start side, by one copy: left in a left-to-right page, right in a right-to-left one. */
+  @keyframes cap-marquee-drift {
+    to {
+      translate: var(--marquee-to) 0;
+    }
+  }
+
+  .cap-marquee {
+    --marquee-duration: 120s;
+    --marquee-gap: var(--space-8);
+    inline-size: 100%;
+    overflow: hidden;
+    mask-image: linear-gradient(to right, transparent, #000 10%, #000 90%, transparent);
+  }
+
+  .cap-marquee-track {
+    --marquee-to: -50%;
+    display: flex;
+    inline-size: max-content;
+    &:dir(rtl), :where([dir="rtl"]) & {
+      --marquee-to: 50%;
+    }
+  }
+  .cap-marquee-list {
+    display: flex;
+    align-items: center;
+    gap: var(--marquee-gap);
+    margin: 0;
+    padding: 0 calc(var(--marquee-gap) / 2);
+    list-style: none;
+    & > * {
+      flex-shrink: 0;
+      padding-inline: calc(var(--marquee-gap) / 2);
+    }
+    & > :first-child {
+      padding-inline-start: 0;
+    }
+  }
+
+  /* The group holds one or more marquees and their one Pause control. */
+  .cap-marquee-pause {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-3);
+    min-block-size: var(--target);
+    padding: var(--space-2) var(--space-5);
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-full);
+    font-weight: 600;
+    cursor: pointer;
+
+    & > input {
+      inline-size: 1rem;
+      block-size: 1rem;
+      margin: 0;
+      accent-color: var(--primary);
+    }
+    &:has(> input:focus-visible) {
+      outline: 2px solid var(--ring);
+      outline-offset: 2px;
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .cap-marquee-track {
+      animation: cap-marquee-drift var(--marquee-duration) linear infinite;
+    }
+    .cap-marquee[data-direction="reverse"] .cap-marquee-track {
+      animation-direction: reverse;
+    }
+    .cap-marquee:is(:hover, :focus-within) .cap-marquee-track,
+    .cap-marquee-group:has(.cap-marquee-pause > input:checked) .cap-marquee-track,
+    .cap-marquee[data-paused] .cap-marquee-track {
+      animation-play-state: paused;
+    }
+    /* Right to left drifts the other way. */
+    .cap-marquee:dir(rtl) .cap-marquee-track {
+      animation-direction: reverse;
+    }
+    .cap-marquee[data-direction="reverse"]:dir(rtl) .cap-marquee-track {
+      animation-direction: normal;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cap-marquee {
+      mask-image: none;
+    }
+    .cap-marquee-track {
+      inline-size: auto;
+    }
+    .cap-marquee-list {
+      flex-wrap: wrap;
+      justify-content: center;
+      row-gap: var(--space-5);
+    }
+    .cap-marquee-list[aria-hidden="true"],
+    .cap-marquee-group .cap-marquee-pause {
+      display: none;
+    }
+  }
+}

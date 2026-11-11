@@ -82,6 +82,53 @@
     }
   }
 
+  /* Clear at rest (data-rest="clear"): at the top of the page the band shows the page under it, with
+     no line; once it is stuck it takes its ground and its line. A scroll-state query on the header,
+     with no scroll listener (Chrome's Modern Web Guidance, state-aware-sticky-headers). A container's
+     queries style only what is inside it, so the ground and the line are its first child,
+     .cap-site-header-ground, and only that child's opacity changes, so nothing moves. Where
+     scroll-state queries are missing the ground is drawn all the time, as an ordinary header:
+     content never scrolls under a clear band. */
+  .cap-site-header-ground {
+    display: none;
+  }
+  @supports (container-type: scroll-state) {
+    .cap-site-header[data-rest="clear"]:not([data-sticky="false"]) {
+      container: cap-site-header / scroll-state;
+      background: transparent;
+      border-block-end-color: transparent;
+      backdrop-filter: none;
+
+      & > .cap-site-header-ground {
+        display: block;
+        position: absolute;
+        inset: 0 0 -1px;
+        z-index: -1;
+        background: var(--header-bg);
+        border-block-end: 1px solid var(--header-line);
+        pointer-events: none;
+      }
+      &[data-translucent] > .cap-site-header-ground {
+        background: color-mix(in srgb, var(--header-bg) 85%, transparent);
+        backdrop-filter: blur(12px);
+      }
+    }
+    /* At rest the ground is hidden; stuck, it shows. Same weight in both, so the query wins. */
+    .cap-site-header-ground {
+      opacity: 0;
+    }
+    @container cap-site-header scroll-state(stuck: top) {
+      .cap-site-header-ground {
+        opacity: 1;
+      }
+    }
+    @media (prefers-reduced-motion: no-preference) {
+      .cap-site-header-ground {
+        transition: opacity var(--dur-base) var(--ease-out);
+      }
+    }
+  }
+
   /* A focused control or an anchor never lands under the header (WCAG 2.4.11). */
   :root:has(.cap-site-header:not([data-sticky="false"])) {
     scroll-padding-top: calc(var(--header-h) + var(--space-3));

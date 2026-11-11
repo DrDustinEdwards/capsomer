@@ -76,7 +76,14 @@ jobs:
       # pulls slower than this step's 17 s download.
       - name: Install Chromium
         if: steps.pick.outputs.mode != 'none'
-        run: npx playwright install --with-deps --only-shell chromium
+        # --with-deps installs Chromium's system packages through apt. When the Ubuntu mirror is unreachable
+        # (2026-11-11: security.ubuntu.com did not resolve for hours), the browser alone is installed: the
+        # ubuntu-latest image already carries Chrome's libraries and its own fonts.
+        run: |
+          npx playwright install --with-deps --only-shell chromium || {
+            echo "::warning::apt could not install Chromium's system packages; installing the browser alone"
+            npx playwright install --only-shell chromium
+          }
       # One worker per vCPU, with tests, not files, shared out (fullyParallel, playwright.config.ts).
       # Not sharded (playwright.dev/docs/test-sharding): each shard would repeat about a minute of
       # setup (install, build, browser) and a merge job, for a full run now estimated at 10 to 13 minutes.
