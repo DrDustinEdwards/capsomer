@@ -2,6 +2,12 @@
 
 Each release names every removed or renamed token or class, and every changed HTML contract.
 
+## [0.94.0]
+
+- **The site header takes a site's own hooks.** `attributes` (data-* only) on the `<header>`, `toolsEnd` after the theme control and the account, and `end` at the end of the header, for a site's palette hooks and island templates. No change to the header's own markup.
+- **Tooltip `as="span"`.** The tip can be a `<span>`, valid inside a `<p>`. `Time tip` now renders through `Tooltip` with it; its markup is unchanged.
+- No token or class was removed or renamed.
+
 ## [0.93.0]
 
 From the sites, batch 9: an inspector, React Router bindings, a work queue with Later, a role grid and a Compare that works before the script runs.
@@ -16,12 +22,6 @@ From the sites, batch 9: an inspector, React Router bindings, a work queue with 
 - **The lightbox and site header specs take over dustinedwards.info's browser cases** for Capsomer's own behavior (a modal viewer, focus on open, the original image; a panel's toggle and `aria-current`), and the test helpers gain `countCssRules(page)`, which counts nested rules, so a states page missing its stylesheet fails.
 
 No token or class was removed or renamed.
-
-## [0.93.0]
-
-- **The site header takes a site's own hooks.** `attributes` (data-* only) on the `<header>`, `toolsEnd` after the theme control and the account, and `end` at the end of the header, for a site's palette hooks and island templates. No change to the header's own markup.
-- **Tooltip `as="span"`.** The tip can be a `<span>`, valid inside a `<p>`. `Time tip` now renders through `Tooltip` with it; its markup is unchanged.
-- No token or class was removed or renamed.
 
 ## [0.92.0]
 
