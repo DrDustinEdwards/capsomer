@@ -5,8 +5,8 @@ summary: A button that copies another element's text, or shares a link, and says
 parts: [css, behavior, react]
 tool: native + own JavaScript
 states: [rest, copied, failed, icon only, with a label, share, repeated block]
-added: 0.91.0
-updated: 0.91.0
+added: 0.92.0
+updated: 0.92.0
 source: Chrome's Modern Web Guidance copy-button guide; replaces the copy code in germomics (copy-status.ts, use-copy-feedback.ts, CopyLink.tsx, site/share.ts), Foxhound (copy-link-button.tsx, islands/copy-link.ts, api-keys RevealKey), dustinedwards.info (lib/clipboard.ts), the Capsid Portal (App.tsx) and Capsomer's own media actions
 replaces:
   - 'navigator\.clipboard\.writeText'

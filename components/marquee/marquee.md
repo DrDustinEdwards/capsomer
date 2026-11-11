@@ -5,8 +5,8 @@ summary: A row of marks drifting sideways in a seamless loop, with a visible Pau
 parts: [css, react]
 tool: native
 states: [moving, paused by the control, paused under the pointer, reverse, reduced motion]
-added: 0.91.0
-updated: 0.91.0
+added: 0.92.0
+updated: 0.92.0
 source: WCAG 2.2.2 Pause, Stop, Hide; Chrome's Modern Web Guidance motion guidance; replaces bsw's logo marquees (ui.tsx Marquee, app.css .logo-marquee and .logo-track)
 replaces:
   - '\.logo-(marquee|track)\s*\{'

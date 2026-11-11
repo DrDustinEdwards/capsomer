@@ -4,7 +4,7 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
-## [0.91.0]
+## [0.92.0]
 
 Shared components from the network audit: parts each site wrote for itself, now in Capsomer so every site behaves the same.
 
@@ -28,6 +28,11 @@ Shared components from the network audit: parts each site wrote for itself, now 
 - **Carousel:** the slides' width no longer widens a phone's page (one `minmax(0, 1fr)` column).
 - **React picture** names the ratio from the file's width and height in the image's style, as the sites' own copies did (no LazyLoadImage issue in Chrome).
 - **Command menu: live results without React.** `createCommandMenu(commands, { search, searchDelay })` and `attach(dialog, run, { search })` take the React menu's `search(query, signal)`: asked 180 ms after the last key, the one before aborted (and on close), results after the matching commands, the list `aria-busy` and "Searching…" until they come. `run(option, found)` gets a live result's command. It replaces the live search Foxing wrote around `attach` (search-palette.ts) and is what dustinedwards.info's palette moves onto.
+
+## [0.91.0]
+
+- **New: the draft compare's merge mode** (`DraftMerge`, `mergePlan`, `merged`; from Carrel's merge view). Two texts that both moved on from one version, block by block, each difference kept from either side or both, starting on the side that changed it when the base is known. Its diff is the compare's own, so it needs no diff library. New classes: `.cap-merge` and its parts (`-intro`, `-list`, `-same`, `-choice`, `-sides`, `-side`, `-text`, `-empty`, `-mark`, `-actions`). No token or class was removed or renamed.
+- **New: rich text field** (`capsomer/react/rich-text-field`, `capsomer/behavior/rich-text-field`, `capsomer/rich-text-field.css`; from txasm's abstract editor). A short text with a few inline tags and nothing else, a formatting toolbar (one tab stop) whose buttons toggle and show where the caret is, and `sanitizeRichText`, which the server runs on every save. The box is built from DOM nodes, never from a markup string, so it needs no Trusted Types policy. New classes: `.cap-rich-text`, `.cap-rich-text-bar`, `.cap-rich-text-box`, `.cap-rich-text-count`. No token or class was removed or renamed.
 
 ## [0.90.0]
 
