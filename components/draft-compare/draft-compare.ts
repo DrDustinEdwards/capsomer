@@ -13,6 +13,7 @@
 import { isImeEnter } from "../shortcuts/shortcuts.ts";
 import { singleKeysOff } from "../row-list/row-list.ts";
 import { type CompareView, STORAGE_KEY, VIEWS } from "./draft-compare-render.ts";
+import { readStored, writeStored } from "../hooks/hooks.ts";
 
 export {
   tokenize,
@@ -79,20 +80,12 @@ export type {
 const READY = "data-cap-ready";
 
 function readView(): CompareView | null {
-  try {
-    const v = localStorage.getItem(STORAGE_KEY);
-    return v && (VIEWS as readonly string[]).includes(v) ? (v as CompareView) : null;
-  } catch {
-    return null;
-  }
+  const v = readStored(STORAGE_KEY);
+  return v && (VIEWS as readonly string[]).includes(v) ? (v as CompareView) : null;
 }
 
 function writeView(v: CompareView): void {
-  try {
-    localStorage.setItem(STORAGE_KEY, v);
-  } catch {
-    // Private windows and blocked storage: the choice simply is not remembered.
-  }
+  writeStored(STORAGE_KEY, v);
 }
 
 // The view the radios show now.

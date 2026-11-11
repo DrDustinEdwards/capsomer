@@ -21,36 +21,17 @@ import {
   typingRecede,
   type Layout,
 } from "./editor-workspace.ts";
-
-// One store for every hook reading a key, so two switches on a page stay in step. When storage is
-// refused the choice is kept for this page in memory.
-const memory = new Map<string, Layout>();
-const listeners = new Set<() => void>();
-const subscribe = (listener: () => void) => {
-  listeners.add(listener);
-  window.addEventListener("storage", listener);
-  return () => {
-    listeners.delete(listener);
-    window.removeEventListener("storage", listener);
-  };
-};
+import { subscribeStored } from "../hooks/hooks.ts";
 
 // The layout remembered in this browser under `key`; Write on the server and in the render that
 // hydrates, so they agree, then the stored one.
 export function useWorkspaceLayout(key = LAYOUT_KEY): [Layout, (next: Layout) => void] {
   const layout = useSyncExternalStore(
-    subscribe,
-    () => storedLayout(key) ?? memory.get(key) ?? "write",
+    subscribeStored,
+    () => storedLayout(key) ?? "write",
     () => "write" as Layout,
   );
-  const choose = useCallback(
-    (next: Layout) => {
-      memory.set(key, next);
-      storeLayout(next, key);
-      for (const l of listeners) l();
-    },
-    [key],
-  );
+  const choose = useCallback((next: Layout) => storeLayout(next, key), [key]);
   return [layout, choose];
 }
 

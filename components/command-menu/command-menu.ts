@@ -14,6 +14,7 @@ import {
   type Listbox,
 } from "../listbox/listbox.ts";
 import { keysFragment, register } from "../shortcuts/shortcuts.ts";
+import { readStored, writeStored } from "../hooks/hooks.ts";
 
 export interface Command {
   id: string;
@@ -89,7 +90,7 @@ export function markQuery(text: string, query: string): Array<{ text: string; ma
 export const RECENT_MAX = 5;
 export function readRecent(key: string): string[] {
   try {
-    const v = JSON.parse(localStorage.getItem(key) ?? "[]");
+    const v = JSON.parse(readStored(key) ?? "[]");
     return Array.isArray(v) ? v.filter((x): x is string => typeof x === "string") : [];
   } catch {
     return [];
@@ -97,11 +98,7 @@ export function readRecent(key: string): string[] {
 }
 export function rememberRecent(key: string, id: string): string[] {
   const next = [id, ...readRecent(key).filter((x) => x !== id)].slice(0, RECENT_MAX);
-  try {
-    localStorage.setItem(key, JSON.stringify(next));
-  } catch {
-    // Storage blocked: the menu works the same, only without recents.
-  }
+  writeStored(key, JSON.stringify(next));
   return next;
 }
 

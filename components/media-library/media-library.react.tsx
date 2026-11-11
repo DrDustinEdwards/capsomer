@@ -7,7 +7,6 @@ import {
   type FormEvent,
   type KeyboardEvent,
   useLayoutEffect,
-  useSyncExternalStore,
 } from "react";
 import { CommandMenu, type Command } from "../command-menu/command-menu.react.tsx";
 import type {
@@ -60,9 +59,7 @@ import {
   type KitMediaChanges,
   type MediaSort,
 } from "./media-library.ts";
-
-// For useSyncExternalStore's hydration flag: nothing to subscribe to.
-const noSubscribe = () => () => {};
+import { useHydrated } from "../hooks/hooks.react.tsx";
 
 // The viewer's last layout and tile size, remembered in this browser (shell.ts readPref).
 const LAYOUT_PREF = "cap-media-layout";
@@ -168,11 +165,7 @@ export function MediaLibrary({
   const title =
     mode === "picker" ? "Choose an image" : plural.charAt(0).toUpperCase() + plural.slice(1);
   // False on the server and while hydrating, true once hydrated.
-  const mounted = useSyncExternalStore(
-    noSubscribe,
-    () => true,
-    () => false,
-  );
+  const mounted = useHydrated();
   const { query, page, offers, can } = data;
   const path = action.split("?")[0] ?? action;
   const href = (q: MediaQuery) => mediaHref(path, q);

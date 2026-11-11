@@ -4,6 +4,8 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+- **One hydration flag and one storage path inside Capsomer.** Thirteen components had their own `useSyncExternalStore` hydration flag (field, people-roles, bulk-bar, mentions-list, dictionary-entry, media-library, history-list, content, posts-list, time, scope-chip) or browser-zone hook (schedule-dialog, writing-progress); each now uses `useHydrated` or `useBrowserZone` from `capsomer/react/hooks`. Six kept their own try/catch around `localStorage` (shell's `readPref`/`writePref`, editor-workspace, draft-compare, command-menu's recents, authorship, the player's memory); each now goes through hooks.ts' `readStored`/`writeStored`, so where storage is refused a choice lasts the page and every reader of a key stays in step. checklist-run keeps its own, since it tells "blocked" from "full". Removed: `useBrowserZone` from `capsomer/react/schedule-dialog` (use `capsomer/react/hooks`, `useBrowserZone(null)`). No token, class or HTML contract changes.
+
 ## [0.103.0]
 
 - **New light entries for the command menu's host: `capsomer/react/command-host`** (`useCommandHost`, `LazyCommandMenu`) **and `capsomer/behavior/command-host`** (`createCommandHost`). Importing `useCommandHost` from `capsomer/react/command-menu` put the whole menu (about 6.4 KB gzip) into every route of an app that meant to load it when idle; these import nothing of the menu until the page is idle or the menu is asked for (Ctrl K, Cmd K, a button), then load it with `lazy()` or `import()`. `capsomer/react/command-menu` still exports `useCommandHost`.
