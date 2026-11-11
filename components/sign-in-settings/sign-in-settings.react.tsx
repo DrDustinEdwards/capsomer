@@ -1,10 +1,4 @@
-import {
-  type ComponentType,
-  type FormHTMLAttributes,
-  type ReactNode,
-  useEffect,
-  useState,
-} from "react";
+import { type ComponentType, type ReactNode, useEffect, useState } from "react";
 import {
   canOfferPasskey,
   signalPasskeys,
@@ -26,9 +20,14 @@ import { Time } from "../time/time.react.tsx";
 // Auth's own client calls, since WebAuthn and the providers run in the browser.
 
 /** The host router's form (React Router's <Form>), so a post stays in the app; a plain form without one. */
-export type FormComponent = ComponentType<
-  FormHTMLAttributes<HTMLFormElement> & { method?: "get" | "post" }
->;
+// Only the props these pages pass, so React Router's <Form> (whose encType is a union) fits.
+export type FormComponent = ComponentType<{
+  method?: "get" | "post";
+  action?: string;
+  className?: string;
+  noValidate?: boolean;
+  children?: ReactNode;
+}>;
 const PlainForm: FormComponent = (props) => <form {...props} />;
 
 type ClientAnswer = Promise<{ error?: unknown } | null | undefined>;
