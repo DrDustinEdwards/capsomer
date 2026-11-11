@@ -212,10 +212,11 @@ export function SiteHeader(props: SiteHeaderProps) {
 
   return (
     // data-cap-ready: React wires this header itself, so a page-wide enhance() leaves it alone.
+    // A header that never hydrates (wiredBy "enhance") leaves it off, so enhance() wires it.
     <header
       className="cap-site-header"
       data-cap="site-header"
-      data-cap-ready=""
+      data-cap-ready={props.wiredBy === "enhance" ? undefined : ""}
       data-variant={variant}
       data-links={links}
       data-band={band}

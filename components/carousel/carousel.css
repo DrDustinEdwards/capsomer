@@ -10,6 +10,8 @@
     --carousel-gap: var(--space-6);
     position: relative;
     display: grid;
+    /* minmax(0, 1fr): the slides' own width never widens the page past a phone's window. */
+    grid-template-columns: minmax(0, 1fr);
     gap: var(--space-4);
   }
 

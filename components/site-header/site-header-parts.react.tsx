@@ -135,6 +135,9 @@ export interface SiteHeaderProps {
   translucent?: boolean;
   // Clear at rest: no ground or line until the header is stuck (a scroll-state query).
   rest?: "clear";
+  // Who wires the menus: React when the header hydrates (the default), or the page's enhance() from
+  // capsomer/behavior/site-header when it is rendered on the server and never hydrated.
+  wiredBy?: "react" | "enhance";
   // Off only for a header drawn inside a frame that scrolls itself (a specimen).
   sticky?: boolean;
   // The skip link's target, first in the tab order ("#main").
