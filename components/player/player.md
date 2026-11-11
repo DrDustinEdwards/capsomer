@@ -31,6 +31,7 @@ One way to show a video, an audio file or another service's player. A JSX page r
 - **An embed loads nothing until a click.** It is a link to the service with the site's own poster from its library (never the service's thumbnail, which is a request to the service), a play button and a bar naming the service and the title. Without script the link opens the service; with script the player takes its place and focus moves into it. YouTube plays from its no-cookie host and Vimeo is told not to track.
 - **A video needs a poster, a width and a height**, so the box holds its shape and the page downloads none of the video before play (`preload="none"`). Captions are a track; a transcript link sits under the player where there is one.
 - **Audio downloads nothing before play** and always has its transcript one link away.
+- **A player below the fold waits** (`loading="lazy"`, the default; Chromium): its poster is not fetched until it nears the screen. A video at the top of the page passes `loading="eager"` so its poster comes at once (Modern Web Guidance, lazy-load-video-and-audio).
 - **A song or an episode is a strip**, not a 16:9 screen (`data-service="spotify"` or `"soundcloud"`).
 
 ## Keyboard
@@ -61,7 +62,7 @@ One way to show a video, an audio file or another service's player. A JSX page r
 </figure>
 
 <figure class="cap-player" data-kind="video">
-  <video src="/media/demo.mp4" poster="/media/demo-poster.jpg?w=1408" width="1280" height="720" controls preload="none" playsinline aria-label="The title">
+  <video src="/media/demo.mp4" poster="/media/demo-poster.jpg?w=1408" width="1280" height="720" controls preload="none" loading="lazy" playsinline aria-label="The title">
     <track kind="captions" src="/media/demo.vtt" srclang="en" label="English" default>
   </video>
   <p class="cap-player-transcript"><a href="/writing/demo-transcript">Transcript: The title</a></p>
@@ -69,7 +70,7 @@ One way to show a video, an audio file or another service's player. A JSX page r
 </figure>
 
 <figure class="cap-player" data-kind="audio">
-  <audio src="/media/talk.mp3" controls preload="none" aria-label="The title"></audio>
+  <audio src="/media/talk.mp3" controls preload="none" loading="lazy" aria-label="The title"></audio>
   <p class="cap-player-transcript"><a href="/writing/talk-transcript">Transcript: The title</a></p>
 </figure>
 ```

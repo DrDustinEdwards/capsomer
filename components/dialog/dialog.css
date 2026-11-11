@@ -70,7 +70,12 @@
     }
 
     /* The backdrop: the scrim with a light blur, where the browser can. */
+    /* A scroll over the backdrop does not scroll the page behind: overflow makes the backdrop a scroll container,
+       which overscroll-behavior then contains (Chrome 144, Firefox 150; Modern Web Guidance,
+       prevent-page-scroll-under-modal-dialog). The dialog itself contains its own scroll above. */
     &::backdrop {
+      overflow: hidden;
+      overscroll-behavior: contain;
       background: var(--scrim);
       @supports (backdrop-filter: blur(1px)) {
         backdrop-filter: blur(4px);
@@ -136,11 +141,6 @@
       margin-block: var(--cap-dialog-top) auto;
       max-height: calc(100dvh - var(--cap-dialog-top) - var(--cap-dialog-gap));
     }
-  }
-
-  /* The page behind does not scroll while a dialog is open. */
-  :root:has(.cap-dialog:modal) {
-    overflow: hidden;
   }
 
   /* The header: the title, and the description under it. */
@@ -267,12 +267,13 @@
   }
 
   /* The footer: a muted band under a dialog (as Alert Dialog's), a plain row under a sheet.
-     Actions stack on a phone with the main one first (column-reverse), and sit in a row
-     at the end from there up. data-align="between" sets Cancel apart at the far end. */
+     Actions stack on a phone in their source order (the main one last, nearest the thumb), so Tab
+     moves in the order they are seen, and sit in a row at the end from there up. data-align="between"
+     sets Cancel apart at the far end. */
   .cap-dialog-footer {
     display: flex;
     flex: none;
-    flex-direction: column-reverse;
+    flex-direction: column;
     gap: var(--space-3);
     padding: var(--pad-card);
     border-block-start: 1px solid var(--line);
@@ -354,10 +355,15 @@
     }
     /* Drag to dismiss (dialog.ts): a sheet's header is its handle, once script has wired it;
        the backdrop thins as the sheet goes. A bottom sheet shows a grab bar. */
+    /* Only the drag's own axis is taken: a bottom sheet keeps sideways panning in its header, a side sheet keeps
+       vertical scrolling (touch-action none blocked both; Modern Web Guidance, accessibility). */
     .cap-dialog:is([data-placement="bottom"], [data-placement="right"], [data-placement="left"])[data-cap-wired]:not([data-cap-modal-lock], [role="alertdialog"]) > .cap-dialog-header {
-      touch-action: none;
+      touch-action: pan-y;
       -webkit-user-select: none;
       user-select: none;
+    }
+    .cap-dialog[data-placement="bottom"][data-cap-wired]:not([data-cap-modal-lock], [role="alertdialog"]) > .cap-dialog-header {
+      touch-action: pan-x;
     }
     .cap-dialog[data-placement="bottom"][data-cap-wired]:not([data-cap-modal-lock], [role="alertdialog"]) > .cap-dialog-header::before {
       content: "";

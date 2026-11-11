@@ -1,3 +1,4 @@
+import { isImeEnter } from "../shortcuts/shortcuts.ts";
 import {
   useId,
   useLayoutEffect,
@@ -191,7 +192,7 @@ export function Tree({
   const onKeyDown = (e: KeyboardEvent<HTMLUListElement>) => {
     const id =
       (e.target as HTMLElement).closest<HTMLElement>("[data-cap-id]")?.dataset.capId ?? null;
-    if (!id || e.nativeEvent.isComposing) return;
+    if (!id || e.nativeEvent.isComposing || isImeEnter(e.nativeEvent)) return;
     const row = e.target as HTMLElement;
     if (e.key === "Enter" && row.matches("a[href]")) return;
     const typing = Date.now() - typed.current.at <= TYPEAHEAD_MS && typed.current.buffer !== "";

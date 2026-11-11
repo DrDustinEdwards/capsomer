@@ -123,7 +123,7 @@
   }
   .cap-site-header-sep {
     color: var(--header-fg-muted);
-    font-size: 18px;
+    font-size: 1.125rem;
   }
   .cap-site-header-switch {
     display: inline-flex;
@@ -160,7 +160,7 @@
     border-radius: var(--radius-m);
     background: var(--header-cta);
     color: var(--header-cta-fg);
-    font-size: 11px;
+    font-size: 0.6875rem;
     font-weight: 600;
 
     /* The letter is drawn, not text: the button is named by the business, and a letter in the
@@ -233,17 +233,22 @@
       color: var(--header-fg);
     }
     /* A site's --link-rule (off by default) grows an underline in under the pointer. */
+    /* It grows by scale, not width, so the change is composited and lays nothing out (Modern Web Guidance, motion). */
     &:not([aria-current="page"], [data-current])::after {
       content: "";
       position: absolute;
-      inset-inline-start: 0;
+      inset-inline: 0;
       bottom: 4px;
-      inline-size: 0;
       block-size: var(--link-rule);
       background: var(--header-accent);
+      scale: 0 1;
+      transform-origin: left center;
+    }
+    &:not([aria-current="page"], [data-current]):dir(rtl)::after {
+      transform-origin: right center;
     }
     &:not([aria-current="page"], [data-current]):is(:hover, :focus-visible)::after {
-      inline-size: 100%;
+      scale: 1 1;
     }
     &[aria-current="page"],
     &[data-current] {
@@ -338,7 +343,7 @@
     background: var(--primary);
     color: var(--primary-fg);
     box-shadow: 0 0 0 2px var(--header-bg);
-    font-size: 10px;
+    font-size: 0.625rem;
     font-weight: 700;
     line-height: 1;
     font-variant-numeric: var(--figures);
@@ -386,7 +391,7 @@
       border-radius: var(--radius-full);
       background: var(--header-avatar);
       color: var(--header-avatar-fg);
-      font-size: 12px;
+      font-size: 0.75rem;
       font-weight: 600;
       letter-spacing: 0.02em;
     }
@@ -540,7 +545,7 @@
     border-radius: var(--radius-full);
     background: var(--primary);
     color: var(--primary-fg);
-    font-size: 10px;
+    font-size: 0.625rem;
     font-weight: 700;
     line-height: 16px;
     text-align: center;
@@ -872,7 +877,7 @@
       scrollbar-width: none;
       /* No hairline between the rows (Dustin, 2026-10-27): the band is one sign. */
       border-block-start: 0;
-      font-size: 15px;
+      font-size: 0.9375rem;
       font-weight: 500;
 
       & > ul {
@@ -1078,13 +1083,13 @@
   }
   .cap-site-header-agency {
     color: var(--header-fg-muted);
-    font-size: 12.5px;
+    font-size: 0.7812rem;
     line-height: 1;
     text-box: trim-both cap alphabetic;
   }
   .cap-site-header-name {
     color: var(--header-fg);
-    font-size: 20px;
+    font-size: 1.25rem;
     font-weight: 700;
     line-height: 1;
     letter-spacing: -0.01em;
@@ -1104,7 +1109,7 @@
 
     & > :is(.cap-site-header-agency, .cap-site-header-name) {
       color: var(--header-fg);
-      font-size: 22px;
+      font-size: 1.375rem;
       font-weight: 700;
       letter-spacing: -0.01em;
     }
@@ -1114,7 +1119,7 @@
      site at its end, so the admin's band is as tall as its public pages'. */
   .cap-site-header-trail {
     gap: var(--space-4);
-    font-size: 15px;
+    font-size: 0.9375rem;
 
     & ol {
       display: flex;
@@ -1294,8 +1299,8 @@
     }
   }
 
-  /* On a phone the letterhead keeps its links row, which swipes and fades at its end to show there
-     is more; the menu button and its sheet stay only where there is no links row (an admin). The
+  /* On a phone the letterhead keeps its links row, which swipes and fades at an end with more to
+     show; the menu button and its sheet stay only where there is no links row (an admin). The
      search icon stays. */
   @media (max-width: 767.98px) {
     .cap-site-header[data-variant="letterhead"] {
@@ -1316,9 +1321,9 @@
       &:not(:has(> .cap-site-header-sections)) .cap-site-header-tools:has(> .cap-site-header-menu) > .cap-site-header-account {
         display: none;
       }
+      /* Its fade shows only at an end with more links to swipe to (css/utilities.css, scroll fades). */
       & > .cap-site-header-sections {
         display: flex;
-        mask-image: linear-gradient(to right, #000 calc(100% - var(--space-6)), transparent);
       }
       & > .cap-site-header-trail > .cap-site-header-view {
         display: none;
@@ -1341,7 +1346,7 @@
         color var(--dur-fast) var(--ease-out);
     }
     .cap-site-header-link::after {
-      transition: inline-size var(--dur-base) var(--ease-out);
+      transition: scale var(--dur-base) var(--ease-out);
     }
     .cap-site-header-chev {
       transition: rotate var(--dur-fast) var(--ease-out);

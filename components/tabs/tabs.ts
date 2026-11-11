@@ -5,6 +5,42 @@
 // React wrapper uses the same pure functions.
 
 const READY = "data-cap-ready";
+const STOP = "data-cap-tabstop";
+
+// Where the browser has `hidden="until-found"` (Chrome, Edge, Firefox 148), an inactive panel is hidden that way, so
+// find-in-page and a link to text inside it still reach it: the browser fires `beforematch` on the panel, which
+// chooses its tab. Elsewhere (Safari) the panel is plainly `hidden`, as before. (Modern Web Guidance,
+// search-hidden-content.)
+export const FINDS_HIDDEN =
+  typeof HTMLElement !== "undefined" && "onbeforematch" in HTMLElement.prototype;
+
+// A disabled tab's panel cannot be chosen, so a match must not open it: it stays plainly hidden.
+function disabledTabOf(panel: HTMLElement): boolean {
+  const id = panel.getAttribute("aria-labelledby");
+  const tab = id ? panel.ownerDocument.getElementById(id) : null;
+  return !!tab && isDisabled(tab);
+}
+
+/** Shows a panel, or hides it in the way this browser can still search (not the panel of a disabled tab). */
+export function setPanelHidden(panel: HTMLElement, hide: boolean): void {
+  if (!hide) {
+    panel.hidden = false;
+    // Its tab stop back (taken below while it was hidden until found).
+    if (panel.hasAttribute(STOP)) {
+      panel.setAttribute("tabindex", panel.getAttribute(STOP) ?? "0");
+      panel.removeAttribute(STOP);
+    }
+  } else if (FINDS_HIDDEN && !disabledTabOf(panel)) {
+    panel.setAttribute("hidden", "until-found");
+    // The browser skips the panel's contents but not the panel itself, whose tabindex="0" would still be a Tab stop.
+    // (inert would end that too, but inert text is left out of find-in-page.)
+    const stop = panel.getAttribute("tabindex");
+    if (stop !== null && stop !== "-1" && !panel.hasAttribute(STOP)) {
+      panel.setAttribute(STOP, stop);
+      panel.tabIndex = -1;
+    }
+  } else panel.hidden = true;
+}
 
 export type Orientation = "horizontal" | "vertical";
 export type Activation = "automatic" | "manual";
@@ -82,7 +118,7 @@ export function select(
     t.setAttribute("aria-selected", String(on));
     t.tabIndex = on ? 0 : -1;
     const panel = panelOf(root, t);
-    if (panel) panel.hidden = !on;
+    if (panel) setPanelHidden(panel, !on);
   }
   if (options.focus) tab.focus();
   // A long list scrolls the chosen tab into view, the least distance that shows it. Only the list
@@ -193,6 +229,20 @@ function attach(root: HTMLElement): () => void {
     if (next && list.contains(next)) return;
     for (const t of tabsOf(root)) t.tabIndex = t.getAttribute("aria-selected") === "true" ? 0 : -1;
   });
+
+  // Find-in-page or a text fragment matched inside an inactive panel: choose its tab first.
+  if (FINDS_HIDDEN) {
+    const panels = [...root.querySelectorAll<HTMLElement>(":scope > [role='tabpanel']")];
+    for (const p of panels) if (p.hidden) setPanelHidden(p, true);
+    const onMatch = (e: Event) => {
+      const panel = e.target as HTMLElement;
+      if (!panels.includes(panel)) return;
+      const tab = tabsOf(root).find((t) => t.getAttribute("aria-controls") === panel.id);
+      if (tab && select(root, tab)) writeHash(tab);
+    };
+    root.addEventListener("beforematch", onMatch);
+    undo.push(() => root.removeEventListener("beforematch", onMatch));
+  }
 
   if (hashed()) {
     window.addEventListener("hashchange", fromHash);

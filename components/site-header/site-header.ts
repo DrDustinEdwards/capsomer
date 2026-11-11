@@ -12,6 +12,7 @@
 import { closeDialog, openDialog, wireDialog } from "../dialog/dialog.ts";
 import { escapeHtml } from "@dustinedwards/site-runtime/html";
 import { place } from "../popover/popover.ts";
+import { isImeEnter } from "../shortcuts/shortcuts.ts";
 import { attach as attachTip, hideTip } from "../tooltip/tooltip.ts";
 
 // A count is a glance, not a figure: past 99 it says 99+, in the header, the sheet, the bottom bar
@@ -477,7 +478,7 @@ export function wireSearch(
       else close(true);
       return;
     }
-    if (e.key === "Enter") {
+    if (e.key === "Enter" && !isImeEnter(e)) {
       const row = rows()[active];
       if (listed() && row) {
         e.preventDefault();

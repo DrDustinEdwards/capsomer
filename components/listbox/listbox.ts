@@ -479,7 +479,15 @@ export function createListbox(el: HTMLElement, opts: ListboxOptions = {}): Listb
   };
 
   const handleKey = (e: KeyboardEvent): boolean => {
-    if (e.defaultPrevented || e.isComposing || e.ctrlKey || e.metaKey || e.altKey) return false;
+    if (
+      e.defaultPrevented ||
+      e.isComposing ||
+      (e.key === "Enter" && e.keyCode === 229) ||
+      e.ctrlKey ||
+      e.metaKey ||
+      e.altKey
+    )
+      return false;
     const k = e.key;
     const roving = mode === "roving";
     const typing = typeaheadOn && Date.now() - typed.at <= TYPEAHEAD_MS && typed.buffer !== "";

@@ -5,8 +5,9 @@
 // tree owns no storage: a move is a cancelable `cap:tree-move` event, and the host saves it.
 // No framework; the React wrapper uses the same pure functions.
 
+import { isImeEnter } from "../shortcuts/shortcuts.ts";
 import { TYPEAHEAD_MS, type TypeaheadState, nextTypeahead } from "../listbox/listbox.ts";
-import { announcer, startPointerDrag } from "../sortable-list/sortable-list.ts";
+import { announcer, moveNode, startPointerDrag } from "../sortable-list/sortable-list.ts";
 import {
   type TreeMove,
   type TreeNodeLike,
@@ -245,8 +246,9 @@ export function createTree(el: HTMLElement): Tree {
       ul = p.group;
       open.add(m.to.parent);
     }
-    li.remove();
-    ul.insertBefore(li, itemsIn(ul)[m.to.index] ?? null);
+    // The row keeps its focus and state where the browser can move it whole (moveNode); focusRow covers the rest.
+    const siblings = itemsIn(ul).filter((x) => x !== li);
+    moveNode(ul, li, siblings[m.to.index] ?? null);
     paint();
     say(movedText(model, m));
     if (hadFocus) focusRow(m.id);
@@ -257,7 +259,7 @@ export function createTree(el: HTMLElement): Tree {
   let typed: TypeaheadState = { buffer: "", at: 0 };
   const onKey = (e: KeyboardEvent) => {
     const row = (e.target as Element | null)?.closest<HTMLElement>("[role='treeitem']");
-    if (!row || !el.contains(row) || e.defaultPrevented || e.isComposing) return;
+    if (!row || !el.contains(row) || e.defaultPrevented || e.isComposing || isImeEnter(e)) return;
     const id = row.closest<HTMLElement>(".cap-tree-item")?.dataset.value ?? null;
     const rows = visibleRows(model, open);
     // Enter on a link is the link's own: the browser follows it, and the click selects.
