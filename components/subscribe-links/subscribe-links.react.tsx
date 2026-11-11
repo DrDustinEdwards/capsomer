@@ -2,7 +2,8 @@ import type { ReactNode } from "react";
 
 export interface SubscribeLink {
   href: string;
-  label: string;
+  // The destination's name; a site may add its own away cue after it.
+  label: ReactNode;
   // The app's mark, decorative (aria-hidden): an <svg>.
   icon?: ReactNode;
   // Another site (a podcast app): rel="external" and the link system's away mark.

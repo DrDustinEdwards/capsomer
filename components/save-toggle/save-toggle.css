@@ -15,8 +15,9 @@
   .cap-save[aria-pressed="true"] .cap-save-icon {
     fill: currentColor;
   }
-  /* The filled bookmark is the pressed mark, so the chip's tick would say it twice. */
-  .cap-chip.cap-save[aria-pressed="true"]::before {
+  /* The filled bookmark is the pressed mark, so the chip's tick would say it twice. The class is
+     doubled to outweigh the chip's pressed rule, whose :is() counts as an attribute and an element more. */
+  .cap-chip.cap-save.cap-save[aria-pressed="true"]::before {
     content: none;
   }
   @media (forced-colors: active) {
