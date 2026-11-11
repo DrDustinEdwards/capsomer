@@ -4,6 +4,10 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+## [0.101.0]
+
+- **Command menu**: the extras 0.100.0 gave the React menu, without React. New `createCommandHost(commands, opts)` (the menu built when the page is idle; `open`, `runWhenReady`, `menu`; Ctrl K or a `[data-cap-command-open]` button before then builds it at once). `createCommandMenu` and `attach` take `recentKey` and `ask`; a command's `snippet` is built as `.cap-cmd-snippet` in its label, the typed words marked by `markSnippet` (nodes, never HTML). A menu in markup takes `data-recent-key`, `data-ask` and `data-ask-href` on the dialog. HTML contract additions only: the Recent group (`data-recent`), the Ask group (`data-ask-group`, its option `data-cap-ask`), and `data-label` on an option with a snippet. Nothing is removed or renamed.
+
 ## [0.100.0]
 
 Batch 4 of the shared-components audit (C24 to C38, without C37): the parts the sites and the Portal built for themselves, now in Capsomer. Nothing is removed or renamed; every HTML contract change below is an addition.
