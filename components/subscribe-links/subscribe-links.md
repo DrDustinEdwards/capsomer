@@ -51,14 +51,14 @@ Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the a
 <section class="cap-subscribe" aria-labelledby="subscribe">
   <h2 class="cap-subscribe-title" id="subscribe">Listen and subscribe</h2>
   <ul class="cap-subscribe-list">
-    <li><a class="cap-subscribe-link" href="https://podcasts.example.com/show" rel="external" data-link="away"><svg aria-hidden="true">...</svg>Example Podcasts</a></li>
-    <li><a class="cap-subscribe-link" href="/feed/podcast/"><svg aria-hidden="true">...</svg>RSS</a></li>
+    <li><a class="cap-chip cap-subscribe-link" data-size="sm" href="https://podcasts.example.com/show" rel="external" data-link="away"><svg aria-hidden="true">...</svg>Example Podcasts</a></li>
+    <li><a class="cap-chip cap-subscribe-link" data-size="sm" href="/feed/podcast/"><svg aria-hidden="true">...</svg>RSS</a></li>
     <li><a class="cap-subscribe-more" href="/subscribe">More ways to listen</a></li>
   </ul>
 </section>
 ```
 
-React: `SubscribeLinks` from `capsomer/react/subscribe-links` takes `title`, `headingId`, `level`, `links` (`href`, `label`, `icon`, `away`), `more` and `renderLink`. Load `subscribe-links.css` and `link.css`.
+React: `SubscribeLinks` from `capsomer/react/subscribe-links` takes `title`, `headingId`, `level`, `links` (`href`, `label`, `icon`, `away`), `more` and `renderLink`. Load `chips.css` (each link is a chip), `subscribe-links.css` and `link.css`.
 
 ## Exceptions in production
 

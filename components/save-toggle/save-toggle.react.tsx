@@ -31,7 +31,8 @@ export function SaveToggle({
   return (
     <button
       type="button"
-      className="cap-save"
+      className="cap-chip cap-save"
+      data-size="sm"
       aria-pressed={saved}
       onClick={() => toggleSaved(storageKey, id)}
     >

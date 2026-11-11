@@ -1,32 +1,10 @@
 /* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
-/* Save for later: a pill toggle (aria-pressed) whose bookmark fills when saved. The list is kept
+/* Save for later: a toggle chip (chips.css) whose bookmark fills when saved. The list is kept
    in this browser only. Extracted from germomics' SaveButton (app/components/content/PostDetail.tsx). */
 @layer cap.components {
-  .cap-save {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-2);
-    min-block-size: var(--target);
-    padding: 0 var(--space-3);
-    border: 1px solid var(--line-strong);
-    border-radius: var(--radius-full);
-    background: var(--surface);
-    color: var(--text);
-    font: inherit;
-    font-size: var(--fs-label);
-    cursor: pointer;
-    &:is(:hover, [data-force="hover"]) {
-      border-color: var(--accent);
-    }
-    &[aria-pressed="true"] {
-      border-color: var(--accent);
-      & .cap-save-icon {
-        fill: var(--accent);
-      }
-    }
-  }
+  /* The pill is the toggle chip (chips.css .cap-chip, aria-pressed); this adds the bookmark. */
   .cap-save-icon {
     flex: none;
     fill: none;
@@ -35,12 +13,7 @@
     stroke-linejoin: round;
   }
   .cap-save[aria-pressed="true"] .cap-save-icon {
-    stroke: var(--accent);
-  }
-  @media (prefers-reduced-motion: no-preference) {
-    .cap-save {
-      transition: border-color var(--dur-fast) var(--ease-out);
-    }
+    fill: currentColor;
   }
   @media (forced-colors: active) {
     .cap-save[aria-pressed="true"] .cap-save-icon {

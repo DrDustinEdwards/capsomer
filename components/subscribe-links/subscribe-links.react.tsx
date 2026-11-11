@@ -40,7 +40,8 @@ export function SubscribeLinks({
         {links.map((l) => (
           <li key={l.href}>
             <a
-              className="cap-subscribe-link"
+              className="cap-chip cap-subscribe-link"
+              data-size="sm"
               href={l.href}
               {...(l.away ? { rel: "external", "data-link": "away" } : {})}
             >

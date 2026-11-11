@@ -28,7 +28,7 @@ Any view with a control that destroys or ends something: remove a site, delete a
 ## The default and its reason
 
 - **Last on the page or form**, after Save and every safe control (GOV.UK and GitHub settings put it last): the reader reaches it on purpose.
-- **Labelled "Danger"** in small capitals, and the group is named by that label, so a screen reader announces the group before its buttons.
+- **Labeled "Danger"** in small capitals, and the group is named by that label, so a screen reader announces the group before its buttons.
 - **The edge is `--crit`, the ground `--crit-soft`**; the label and text stay `--text`, never red text on red ground.
 - **Each control still previews and confirms** (the confirm dialog or confirm page). The zone sets them apart; it does not make them safe.
 - **A note beside the controls** says what is kept ("Its history stays."), in `--muted`.

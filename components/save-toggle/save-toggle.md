@@ -51,13 +51,13 @@ Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the a
 ## HTML contract
 
 ```html
-<button type="button" class="cap-save" data-cap="save-toggle" data-key="example-saved" data-id="spring-update" aria-pressed="false">
+<button type="button" class="cap-chip cap-save" data-size="sm" data-cap="save-toggle" data-key="example-saved" data-id="spring-update" aria-pressed="false">
   <svg class="cap-save-icon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" focusable="false"><path d="M4 2.5h8v11L8 10.5l-4 3z"/></svg>
   <span class="cap-save-label">Save</span>
 </button>
 ```
 
-React: `SaveToggle` from `capsomer/react/save-toggle` takes `storageKey`, `id`, `label` and `savedLabel`. A page with no React calls `enhance()` from `capsomer/behavior/save-toggle`; `savedIds(savedRaw(key))` lists what a reader saved. Load `save-toggle.css`.
+React: `SaveToggle` from `capsomer/react/save-toggle` takes `storageKey`, `id`, `label` and `savedLabel`. A page with no React calls `enhance()` from `capsomer/behavior/save-toggle`; `savedIds(savedRaw(key))` lists what a reader saved. Load `chips.css` (the pill is a toggle chip) and `save-toggle.css`.
 
 ## Exceptions in production
 

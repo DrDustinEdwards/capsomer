@@ -89,7 +89,7 @@ export function RangeSlider({
           <input
             key={which}
             type="range"
-            className="cap-range-slider-input"
+            className="cap-range cap-range-slider-input"
             name={names[i]}
             min={min}
             max={max}

@@ -61,14 +61,14 @@ Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the a
     <output class="cap-range-slider-value" aria-hidden="true">$0 – $500+</output>
   </div>
   <div class="cap-range-slider-track">
-    <input type="range" class="cap-range-slider-input" name="amountMin" min="0" max="50000" step="1000" value="0" aria-label="Minimum amount" />
-    <input type="range" class="cap-range-slider-input" name="amountMax" min="0" max="50000" step="1000" value="50000" aria-label="Maximum amount" />
+    <input type="range" class="cap-range cap-range-slider-input" name="amountMin" min="0" max="50000" step="1000" value="0" aria-label="Minimum amount" />
+    <input type="range" class="cap-range cap-range-slider-input" name="amountMax" min="0" max="50000" step="1000" value="50000" aria-label="Maximum amount" />
   </div>
   <div class="cap-range-slider-ends" aria-hidden="true"><span>$0</span><span>$500+</span></div>
 </div>
 ```
 
-React: `RangeSlider` from `capsomer/react/range-slider` takes `label`, `min`, `max`, `low`, `high`, `step`, `names`, `handleLabels`, `format`, `onCommit` and `className`. A page with no React calls `enhance()` from `capsomer/behavior/range-slider` and listens for `cap:range-commit`; `rangeFill(value, min, max)` gives a single slider's `--cap-range-fill`. Load `range-slider.css`.
+React: `RangeSlider` from `capsomer/react/range-slider` takes `label`, `min`, `max`, `low`, `high`, `step`, `names`, `handleLabels`, `format`, `onCommit` and `className`. A page with no React calls `enhance()` from `capsomer/behavior/range-slider` and listens for `cap:range-commit`; `rangeFill(value, min, max)` gives a single slider's `--cap-range-fill`. Load `field.css` (each handle is its `.cap-range`) and `range-slider.css`.
 
 ## Exceptions in production
 
