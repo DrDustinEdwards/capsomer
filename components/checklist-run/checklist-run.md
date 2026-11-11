@@ -5,7 +5,7 @@ summary: A page of steps worked through once, at the bench or the counter, with 
 parts: [css, behavior]
 tool: native
 states: [ready, running, one step at a time, finished]
-added: 0.91.0
+added: 0.92.0
 source: dustinedwards.info's run mode (app/enhance/run.ts, app/kb/procedures/run.mjs, app/styles/run.css)
 replaces:
   - 'class="run-bar"'

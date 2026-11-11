@@ -5,7 +5,7 @@ summary: Turn Web Push on for this browser, see the devices that have it and tur
 parts: [css, behavior, react]
 tool: own JavaScript
 states: [no devices, devices, a note after a change, turning on failed, not set up, a browser with no Web Push]
-added: 0.91.0
+added: 0.92.0
 source: the Capsid Portal's PhoneAlerts (dashboard/src/views/PhoneAlerts.tsx) and its service worker (dashboard/public/sw.js)
 replaces:
   - 'PushManager'

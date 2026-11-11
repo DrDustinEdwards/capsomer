@@ -5,7 +5,7 @@ summary: A list's scope (every site, or one) as a GET form with one select, the 
 parts: [css, behavior, react]
 tool: native
 states: [every site, one site, one scope required (no unscoped choice), no script (Show button)]
-added: 0.91.0
+added: 0.92.0
 source: Carrel's ScopeChip (app/components/scope-chip.tsx, .app-scope in app/app.css)
 replaces:
   - 'class="app-scope"'
