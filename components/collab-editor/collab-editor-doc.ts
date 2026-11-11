@@ -32,7 +32,9 @@ import { editorSchema } from "../rich-editor/rich-editor-schema.mjs";
 import { settle, type JsonDoc } from "./collab-editor-suggest.ts";
 
 export const FRAGMENT = "default";
-const META = "carrel";
+/** The Y.Map holding the room's own state (version, saved text, prints), which a suggester never changes.
+ * Named "carrel" because rooms already store it under that name. A room server reads it by this name. */
+export const META = "carrel";
 const PRINTS = "prints";
 
 export type RoomMeta = {
