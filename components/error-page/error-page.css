@@ -44,6 +44,7 @@
      follow it, centered in the reading column. */
   .cap-error-page:has(> .cap-error-page-body) {
     align-items: stretch;
+    gap: var(--error-page-hero-gap, var(--gap));
     max-inline-size: none;
     padding: 0 0 var(--space-8);
   }
