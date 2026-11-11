@@ -1,17 +1,13 @@
 // Save for later: a set of ids kept in this browser (localStorage, as a JSON array under one key),
-// no account and no server. The button is a toggle (aria-pressed). Every read and write is in
-// try/catch: a blocked store saves nothing and says nothing breaks. Same-tab listeners and the
-// `storage` event keep every button for the same id, here and in other tabs, in step.
+// no account and no server. The button is a toggle (aria-pressed). Reads and writes go through
+// capsomer/behavior/hooks' storage: where the store is blocked the list lasts the page, and every
+// button for the same id, here and in other tabs, stays in step.
 
-const listeners = new Set<() => void>();
+import { readStored, subscribeStored, writeStored } from "../hooks/hooks.ts";
 
-// The stored list, or "[]" when nothing is stored or the store is blocked.
+// The stored list, or "[]" when nothing is stored.
 export function savedRaw(key: string): string {
-  try {
-    return localStorage.getItem(key) || "[]";
-  } catch {
-    return "[]";
-  }
+  return readStored(key) || "[]";
 }
 
 export function savedIds(raw: string): string[] {
@@ -31,23 +27,13 @@ export function isSaved(raw: string, id: string): boolean {
 export function toggleSaved(key: string, id: string): boolean {
   const list = savedIds(savedRaw(key));
   const next = list.includes(id) ? list.filter((s) => s !== id) : [...list, id];
-  try {
-    localStorage.setItem(key, JSON.stringify(next));
-  } catch {
-    // Blocked or full: nothing is kept, and the button shows the stored state.
-  }
-  for (const f of listeners) f();
+  writeStored(key, JSON.stringify(next));
   return next.includes(id);
 }
 
 // For useSyncExternalStore: this tab's changes, and other tabs' through `storage`.
 export function subscribeSaved(onChange: () => void): () => void {
-  listeners.add(onChange);
-  window.addEventListener("storage", onChange);
-  return () => {
-    listeners.delete(onChange);
-    window.removeEventListener("storage", onChange);
-  };
+  return subscribeStored(onChange);
 }
 
 // The button's words and icon from its state.

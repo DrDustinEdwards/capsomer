@@ -193,6 +193,8 @@ export interface SiteHeaderProps {
   // The band: dark in both themes, and translucent over the page.
   band?: "dark";
   translucent?: boolean;
+  // Clear at rest: no ground or line until the header is stuck (a scroll-state query).
+  rest?: "clear";
   // Off only for a header drawn inside a frame that scrolls itself (a specimen).
   sticky?: boolean;
   // The skip link's target, first in the tab order ("#main").

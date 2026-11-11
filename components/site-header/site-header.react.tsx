@@ -64,6 +64,7 @@ export function SiteHeader(props: SiteHeaderProps) {
     signIn,
     band,
     translucent,
+    rest,
     sticky = true,
     skipTo,
     renderLink = plainLink,
@@ -254,8 +255,10 @@ export function SiteHeader(props: SiteHeaderProps) {
         data-sheet-icons={sheetIcons}
         data-band={band}
         data-translucent={translucent ? "" : undefined}
+        data-rest={rest}
         data-sticky={sticky ? undefined : "false"}
       >
+        {rest === "clear" ? <span className="cap-site-header-ground" aria-hidden="true" /> : null}
         {skipTo ? (
           <a className="cap-site-header-skip" href={skipTo}>
             Skip to content

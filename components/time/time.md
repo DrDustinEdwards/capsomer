@@ -6,7 +6,7 @@ parts: [css, behavior, react]
 tool: native + own JavaScript
 states: [less than a minute ago, minutes ago, hours ago, yesterday, a date, in the future, exact time shown, unreadable time, live refresh, hydrated from a server, a long date in UTC, a duration as a timecode and in words, with its exact time in a tooltip, no time at all]
 added: 0.1.0
-updated: 0.99.0
+updated: 0.100.0
 source: Capsid Portal, dashboard/src/lib/format.ts (ms, portalNow, ago, utc, exactTime) and ui/When.tsx
 replaces:
   - "timeago|date-fns/formatDistance|dayjs\\(\\)\\.fromNow"

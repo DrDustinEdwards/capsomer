@@ -5,6 +5,7 @@ import { StrictMode, useEffect, useRef, useState, type ReactNode } from "react";
 import { createRoot } from "react-dom/client";
 import {
   Combobox,
+  ComboboxFreeText,
   ComboboxMultiple,
   type ComboboxOption,
   type ComboboxProps,
@@ -110,6 +111,69 @@ function Highlighted() {
   );
 }
 
+// A server stand-in: answers after a short wait, as a network would, and stops when aborted.
+// "fail" in the text makes it fail, for the failed state.
+function searchSites(query: string, signal: AbortSignal): Promise<ComboboxOption[]> {
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(() => {
+      if (query.includes("fail")) reject(new Error("offline"));
+      else resolve(SITES.filter((s) => s.label.toLowerCase().includes(query.toLowerCase())));
+    }, 300);
+    signal.addEventListener("abort", () => {
+      clearTimeout(timer);
+      reject(signal.reason);
+    });
+  });
+}
+
+// Institutions with their city, for the free-text field.
+const PLACES: ComboboxOption[] = [
+  { value: "north", label: "Example University", hint: "Austin, TX" },
+  { value: "south", label: "Example State University", hint: "Denton, TX" },
+  { value: "lake", label: "Example College", hint: "Waco, TX" },
+  { value: "coast", label: "Example Institute", hint: "Houston, TX" },
+];
+
+function searchPlaces(query: string, signal: AbortSignal): Promise<ComboboxOption[]> {
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(
+      () => resolve(PLACES.filter((p) => p.label.toLowerCase().includes(query.toLowerCase()))),
+      200,
+    );
+    signal.addEventListener("abort", () => {
+      clearTimeout(timer);
+      reject(signal.reason);
+    });
+  });
+}
+
+// A free-text field that writes its text and the picked suggestion beside it for a test.
+function Institution() {
+  const [text, setText] = useState("");
+  const [city, setCity] = useState("");
+  return (
+    <>
+      <ComboboxFreeText
+        label="Institution"
+        value={text}
+        onValueChange={(next) => {
+          setText(next);
+          setCity("");
+        }}
+        // onPick follows onValueChange, so a pick's city stands.
+        onPick={(item) => setCity(item.hint ?? "")}
+        search={searchPlaces}
+        minSearchLength={2}
+        help="Pick one to fill the city, or type a name that is not listed."
+        name="institution"
+      />
+      <p className="cap-muted" data-text={text} data-city={city}>
+        Institution: {text || "none"}. City: {city || "none"}
+      </p>
+    </>
+  );
+}
+
 const SPECIMENS: Record<string, () => ReactNode> = {
   closed: () => (
     <Held
@@ -175,6 +239,16 @@ const SPECIMENS: Record<string, () => ReactNode> = {
   ),
   grouped: () => <Held label="Site" items={GROUPED} placeholder="For example: docs" defaultOpen />,
   loading: () => <Held label="Site" items={[]} loading loadingText="Loading sites" defaultOpen />,
+  search: () => (
+    <Held
+      label="Deploy target"
+      items={[]}
+      search={searchSites}
+      placeholder="For example: shop"
+      help="Sites come from the server as you type."
+    />
+  ),
+  free: () => <Institution />,
 };
 
 for (const el of Array.from(document.querySelectorAll<HTMLElement>("[data-mount]"))) {

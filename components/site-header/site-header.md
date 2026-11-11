@@ -6,7 +6,7 @@ parts: [css, behavior, react]
 tool: native + own JavaScript
 states: [public signed out, signed in, user's dashboard, your admin, links on the right with a divider, links centered, dark band, translucent band, switcher open, section panel open, account menu open, the site's own panel, phone row, phone sheet, phone bottom bar, written by hand, written by the server with no hydration, a wide panel, a switcher whose rows post, sign out as a form post, a button kept in the phone's row, a site's own look by tokens, the phone's row under 1024px]
 added: 0.9.0
-updated: 0.99.0
+updated: 0.100.0
 source: docs/design/design-site-header.md and its mockup; Dustin's ten answers of 2026-10-13; Foxhound's header.tsx and Foxing's page-shell.tsx
 replaces:
   - 'class="(site-header|header|topbar|navbar)"'
@@ -52,7 +52,7 @@ An email, a printed page or an embedded widget has no header. A page inside anot
 | --- | --- |
 | Logo | An SVG or image at most 24px tall and 160px wide, and its name (`logo`) |
 | Accent | Its color family (`data-family` on the page) |
-| Band | `--header-bg`, `--header-fg`, `--header-fg-muted`, `--header-line`; or `data-band="dark"` (dark in both themes), and `data-translucent` (the band at `--header-translucent-mix`, 85%, blurred by `--header-blur`, 12px) |
+| Band | `--header-bg`, `--header-fg`, `--header-fg-muted`, `--header-line`; or `data-band="dark"` (dark in both themes), and `data-translucent` (the band at `--header-translucent-mix`, 85%, blurred by `--header-blur`, 12px); `data-rest="clear"` (React `rest="clear"`) with `<span class="cap-site-header-ground" aria-hidden="true"></span>` as the header's first child: no ground or line while the page is at its top, the band once the header is stuck (a scroll-state query; where that is missing the band always shows) |
 | Height | `--header-h` on `:root` (default 3.5rem) |
 | Column | `--header-max-inline-size` (default `100%`): the bar's contents keep to a centered column of that width |
 | Edge and scrolled look | `--header-edge`; after a scroll (`data-scrolled`) `--header-scrolled-edge`, `--header-scrolled-shadow`, `--header-scrolled-mix` |

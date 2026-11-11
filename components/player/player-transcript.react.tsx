@@ -6,6 +6,7 @@
 // (never moving the page), and a reader who scrolls away gets "Jump to current". Search filters it;
 // "Copy with link" copies the selection with a link to its time.
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { useCopy } from "../copy/copy.react.tsx";
 import { SearchField } from "../field/field.react.tsx";
 import {
   TRANSCRIPT_TRACK_LABEL,
@@ -73,7 +74,7 @@ export function PlayerTranscript({
   const [nativeStart, setNativeStart] = useState<number | null>(null);
   const [following, setFollowing] = useState(true);
   const [query, setQuery] = useState("");
-  const [copied, setCopied] = useState(false);
+  const clipboard = useCopy();
   const [boxVisible, setBoxVisible] = useState(false);
   const box = useRef<HTMLDivElement>(null);
   const programmatic = useRef(false);
@@ -162,7 +163,7 @@ export function PlayerTranscript({
 
   const jump = (seconds: number) => (isThis ? p.seek(seconds) : p.playTrackAt(track, seconds));
 
-  // Switch to 0.91.0's copy part when it lands; until then the clipboard is called here.
+  // Copied through the copy part, so a refused clipboard says Copy failed as every copy button does.
   const copyQuote = async () => {
     const sel = window.getSelection();
     let text = sel ? sel.toString().trim() : "";
@@ -178,13 +179,7 @@ export function PlayerTranscript({
     const url = shareUrl
       ? shareUrl(t)
       : new URL(`${track.href ?? location.pathname}?t=${t}`, location.href).href;
-    try {
-      await navigator.clipboard.writeText(`${text}\n\n${attribution(track.title, url)}`);
-      setCopied(true);
-      window.setTimeout(() => setCopied(false), 1800);
-    } catch {
-      // Clipboard refused: nothing was copied and the button says nothing changed.
-    }
+    await clipboard.copy(`${text}\n\n${attribution(track.title, url)}`);
   };
 
   if (!cues.length) return <p className="cap-player-transcript-raw">{fallback ?? ""}</p>;
@@ -233,7 +228,13 @@ export function PlayerTranscript({
               data-size="sm"
               onClick={() => void copyQuote()}
             >
-              <span aria-live="polite">{copied ? "Copied" : "Copy with link"}</span>
+              <span aria-live="polite">
+                {clipboard.state === "done"
+                  ? "Copied"
+                  : clipboard.state === "failed"
+                    ? "Copy failed"
+                    : "Copy with link"}
+              </span>
             </button>
           ) : null}
         </div>

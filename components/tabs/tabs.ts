@@ -7,6 +7,8 @@
 // module's own on purpose: Chrome's focusgroup does not skip a disabled tab (#321). No framework;
 // the React wrapper uses the same pure functions.
 
+import { readStored, subscribeStored, writeStored } from "../hooks/hooks.ts";
+
 const READY = "data-cap-ready";
 const STOP = "data-cap-tabstop";
 
@@ -20,37 +22,6 @@ export const FINDS_HIDDEN =
 // Remembered tabs (data-remember="<key>", or the React wrapper's `remember`): the reader's choice is kept on this
 // device under "capsomer.tabs.<key>" and chosen in every tab set on every page that names the same key, and in other
 // windows. Storage can be refused (a private window, blocked site data); the choice then lasts the page.
-// readStored, writeStored and subscribeStored have the shape of 0.91.0's capsomer/behavior/hooks functions of the same
-// names: switch to them by replacing these three definitions with one import from "../hooks/hooks.ts".
-const memory = new Map<string, string>();
-const listeners = new Set<() => void>();
-function readStored(key: string): string | null {
-  try {
-    return localStorage.getItem(key) ?? memory.get(key) ?? null;
-  } catch {
-    return memory.get(key) ?? null;
-  }
-}
-function writeStored(key: string, value: string | null): void {
-  if (value === null) memory.delete(key);
-  else memory.set(key, value);
-  try {
-    if (value === null) localStorage.removeItem(key);
-    else localStorage.setItem(key, value);
-  } catch {
-    /* not kept; this page still follows the choice, from memory */
-  }
-  for (const listener of listeners) listener();
-}
-function subscribeStored(listener: () => void): () => void {
-  listeners.add(listener);
-  window.addEventListener("storage", listener);
-  return () => {
-    listeners.delete(listener);
-    window.removeEventListener("storage", listener);
-  };
-}
-
 const REMEMBER_PREFIX = "capsomer.tabs.";
 
 export function readRemembered(key: string): string | null {
