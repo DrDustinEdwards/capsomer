@@ -6,6 +6,7 @@ Each release names every removed or renamed token or class, and every changed HT
 
 - **The site header takes a site's own hooks.** `attributes` (data-* only) on the `<header>`, `toolsEnd` after the theme control and the account, and `end` at the end of the header, for a site's palette hooks and island templates. No change to the header's own markup.
 - **Tooltip `as="span"`.** The tip can be a `<span>`, valid inside a `<p>`. `Time tip` now renders through `Tooltip` with it; its markup is unchanged.
+- **Prose tables: a row header keeps the rows' hairline.** The 2px `--prose-table-rule` is on `thead th` only; a `th` in the body (a row header) had it too.
 - No token or class was removed or renamed.
 
 ## [0.93.0]

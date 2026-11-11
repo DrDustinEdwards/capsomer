@@ -211,8 +211,11 @@
       text-align: start;
     }
     & :where(th) {
-      border-block-end: 2px solid var(--prose-table-rule, var(--text));
       font-weight: 600;
+    }
+    /* The head's rule only: a row header (th in tbody) keeps the rows' hairline. */
+    & :where(thead th) {
+      border-block-end: 2px solid var(--prose-table-rule, var(--text));
     }
     /* A link in a header cell is bold already, so weight cannot tell it from the text beside it: italic
        is its cue (WCAG 1.4.1, G183). */
