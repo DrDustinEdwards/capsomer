@@ -318,7 +318,7 @@
   .cap-site-header-tools {
     display: flex;
     align-items: center;
-    gap: var(--space-3);
+    gap: var(--header-tools-gap, var(--space-3));
     margin-inline-start: auto;
   }
   .cap-site-header[data-links="right"] .cap-site-header-sections + .cap-site-header-tools {
@@ -326,6 +326,8 @@
 
     &::before {
       content: "";
+      /* A site without the divider sets --header-sep: none. */
+      display: var(--header-sep, block);
       inline-size: 1px;
       block-size: 16px;
       margin-inline-end: var(--space-2);
@@ -335,22 +337,38 @@
   .cap-site-header-extras {
     display: flex;
     align-items: center;
-    gap: var(--space-3);
+    gap: var(--header-tools-gap, var(--space-3));
+  }
+  /* The order of the tools: the icon extras, then the button extra, then the theme, by default. A site
+     may put its button first among the extras (--header-cta-order: -1) or the theme first among the
+     tools (--header-theme-order: -1), on a phone or everywhere. */
+  .cap-site-header-extras > .cap-site-header-cta {
+    order: var(--header-cta-order, 0);
+  }
+  .cap-site-header-tools > .cap-site-header-theme {
+    order: var(--header-theme-order, 0);
+  }
+  .cap-site-header .cap-site-header-icon.cap-site-header-theme .cap-theme-icon {
+    width: var(--header-icon-glyph, 18px);
+    height: var(--header-icon-glyph, 18px);
+    stroke-width: var(--header-icon-stroke, 1.6);
   }
 
   /* Every icon control: a 36px target, an 18px glyph from the family's icon set (24 box, 1.6
-     stroke), a name and a tip naming it and its key. The theme button wears this too. */
+     stroke), a name and a tip naming it and its key. The theme button wears this too. A site sets
+     its own size, glyph, stroke and fill with --header-icon-size, --header-icon-glyph, --header-icon-stroke
+     and --header-icon-bg. */
   .cap-site-header .cap-site-header-icon {
     position: relative;
     display: inline-grid;
     place-items: center;
     flex: none;
-    inline-size: 36px;
-    block-size: 36px;
+    inline-size: var(--header-icon-size, 36px);
+    block-size: var(--header-icon-size, 36px);
     padding: 0;
     border: var(--icon-border) solid var(--header-line);
     border-radius: var(--icon-radius);
-    background: none;
+    background: var(--header-icon-bg, none);
     color: var(--header-fg-muted);
     font: inherit;
     text-decoration: none;
@@ -363,11 +381,11 @@
       color: var(--header-fg);
     }
     & > svg {
-      inline-size: 18px;
-      block-size: 18px;
+      inline-size: var(--header-icon-glyph, 18px);
+      block-size: var(--header-icon-glyph, 18px);
       fill: none;
       stroke: currentColor;
-      stroke-width: 1.6;
+      stroke-width: var(--header-icon-stroke, 1.6);
       stroke-linecap: round;
       stroke-linejoin: round;
     }
@@ -749,7 +767,7 @@
       padding-inline: var(--space-4);
     }
     .cap-site-header .cap-site-header-tools {
-      gap: var(--space-2);
+      gap: var(--header-tools-gap, var(--space-2));
 
       &::before {
         display: none;
@@ -759,8 +777,19 @@
     .cap-site-header[data-links="right"] .cap-site-header-sections + .cap-site-header-tools {
       margin-inline-start: auto;
     }
+    /* The menu button can stand bare (--header-menu-line: transparent; --header-menu-bg: none) and
+       take its own size and glyph (--header-menu-size, --header-menu-glyph). */
     .cap-site-header .cap-site-header-menu {
       display: inline-grid;
+      inline-size: var(--header-menu-size, var(--header-icon-size, 36px));
+      block-size: var(--header-menu-size, var(--header-icon-size, 36px));
+      border-color: var(--header-menu-line, var(--header-line));
+      background: var(--header-menu-bg, var(--header-icon-bg, none));
+
+      & > svg {
+        inline-size: var(--header-menu-glyph, var(--header-icon-glyph, 18px));
+        block-size: var(--header-menu-glyph, var(--header-icon-glyph, 18px));
+      }
     }
     .cap-site-header-signin {
       inline-size: 36px;
