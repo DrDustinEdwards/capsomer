@@ -50,7 +50,7 @@ A collection of dozens to thousands of items that share fields, where a person n
 
 - `summaryText(def, result)`: "Showing all 14 articles", "Showing 3 of 14 articles", "No articles match. 14 in all." `activeCount(result)` is the number on "Filters (2)"; `facetCounts(result, key)` is one facet's counts by value.
 - `group.empty` names the heading for items with no value ("Undated"); the default is "Other".
-- `catalogRecords(def, items, state, { id, url, keys: "key", allFields })` is the rows of a CSV or JSON download, the same rows the page shows; `state` may be the request's query. Write the CSV with the [csv](../csv/csv.md) component.
+- `catalogRecords(def, items, state, { id, url, keys: "key", allFields })` is the rows of a CSV or JSON download, the same rows the page shows; `state` may be the request's query. Write the CSV with site-runtime's `./csv`.
 - `catalogMarkdown(def, items, state, { origin, href, empty })` is the same rows as a Markdown table for the page's `.md` twin, the first column linked, every cell escaped (`markdownCell`: pipes escaped, line breaks collapsed).
 - `catalogDownloads(def, result)` is the three addresses: `<base>.csv` and `<base>.json` with this view's filters, and `<base>.md`.
 - `catalogRedirect(def, url, { keepUnknown: true })` sends a hand-typed or stale address to its one canonical form but serves a parameter the catalog does not read (a campaign tag) instead of redirecting it away. `catalogParams(def)` is the names it reads.
