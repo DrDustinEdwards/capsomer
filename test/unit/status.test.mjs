@@ -18,7 +18,7 @@ test("each conclusion has one tone", () => {
   assert.deepEqual(outcomeStatus("success"), { tone: "ok", running: false, label: "Passed" });
   assert.equal(outcomeStatus("neutral").tone, "ok");
   assert.equal(outcomeStatus("skipped").tone, "nodata");
-  assert.equal(outcomeStatus("cancelled").tone, "warn");
+  assert.equal(outcomeStatus("cancelled").tone, "warn"); // codespell:ignore
   assert.equal(outcomeStatus("timed_out").tone, "warn");
   assert.deepEqual(outcomeStatus("startup_failure"), {
     tone: "crit",

@@ -28,6 +28,6 @@ replaces:
 
 ## What it does not do
 
-- Money: [money](../money/money.md).
+- Money: site-runtime's `./money` (`@dustinedwards/site-runtime/money`), not Capsomer.
 - Dates and durations: [time](../time/time.md).
 - A site's own rule on what a rate means (a privacy floor below which a median is withheld, a churn rate in basis points) stays in the site and calls these.

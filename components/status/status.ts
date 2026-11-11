@@ -161,7 +161,7 @@ export interface Outcome {
 
 // The conclusion of a run (a CI check, a build, a backup copy, a scheduled task) as a status. The
 // words are GitHub's check-run conclusions and Cloudflare's build outcomes, which cover the rest:
-// success and neutral are ok, skipped did not run (no data), cancelled and timed out stopped
+// success and neutral are ok, skipped did not run (no data), canceled and timed out stopped
 // before an answer (warning), and every other conclusion failed. No conclusion yet is running.
 // A site that words a state its own way passes `labels` ("Built", "Green").
 export function outcomeStatus(
@@ -183,7 +183,7 @@ export function outcomeStatus(
       return { tone: "ok", running: false, label: said("Neutral") };
     case "skipped":
       return { tone: "nodata", running: false, label: said("Skipped") };
-    case "cancelled":
+    case "cancelled": // GitHub's conclusion value. codespell:ignore
     case "canceled":
       return { tone: "warn", running: false, label: said("Canceled") };
     case "timed_out":
