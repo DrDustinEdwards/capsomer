@@ -248,3 +248,50 @@ export function enhance(root: ParentNode = document): () => void {
     }
   };
 }
+
+// A zone name the browser's Intl knows, else "UTC": a zone from a form or from Cloudflare's
+// request.cf.timezone can be missing or unknown, and Intl throws on an unknown one. From Carrel
+// (lib/writing/progress.ts).
+export function knownZone(zone: string | null | undefined): string {
+  if (!zone) return "UTC";
+  try {
+    new Intl.DateTimeFormat("en-US", { timeZone: zone });
+    return zone;
+  } catch {
+    return "UTC";
+  }
+}
+
+// The hour of the morning a thing set aside with Later comes back.
+export const LATER_HOUR = 8;
+
+// When Later brings something back: `hour` (8 am) on the next calendar day in the person's
+// zone (UTC when the zone is unknown), as an ISO instant. The wall-clock time is found by
+// correcting a first guess by the zone's offset, twice, so a change to or from summer time
+// overnight still lands on 8 am. From Carrel's Home (lib/desk.server.ts, laterUntil).
+export function laterUntil(
+  now: Date | number,
+  zone: string | null | undefined,
+  hour: number = LATER_HOUR,
+): string {
+  const format = new Intl.DateTimeFormat("en-US", {
+    timeZone: knownZone(zone),
+    hourCycle: "h23",
+    year: "numeric",
+    month: "numeric",
+    day: "numeric",
+    hour: "numeric",
+    minute: "numeric",
+  });
+  const wall = (at: number) => {
+    const p = new Map(format.formatToParts(at).map((x) => [x.type, Number(x.value)]));
+    const part = (type: Intl.DateTimeFormatPartTypes) => p.get(type) ?? 0;
+    const [y, m, d] = [part("year"), part("month"), part("day")];
+    return { y, m, d, ms: Date.UTC(y, m - 1, d, part("hour"), part("minute")) };
+  };
+  const today = wall(typeof now === "number" ? now : now.getTime());
+  const want = Date.UTC(today.y, today.m - 1, today.d + 1, hour);
+  let at = want;
+  for (let i = 0; i < 2; i++) at += want - wall(at).ms;
+  return new Date(at).toISOString();
+}

@@ -1,7 +1,21 @@
-import { Fragment, useId, useState, type ReactNode } from "react";
-import { Row, RowList, type RowLinkProps } from "../row-list/row-list.react.tsx";
-import { Status } from "../status/status.react.tsx";
+import { Fragment, useEffect, useId, useState, type ReactNode } from "react";
+import { Empty } from "../empty/empty.react.tsx";
+import { useOptionalMessage } from "../message/message.react.tsx";
 import {
+  Row,
+  RowList,
+  usePlainRowForm,
+  type RowForm,
+  type RowLinkProps,
+} from "../row-list/row-list.react.tsx";
+import { Pill, Status } from "../status/status.react.tsx";
+import { Time } from "../time/time.react.tsx";
+import {
+  URGENCY_ORDER,
+  URGENCY_TITLE,
+  focusNeighbor,
+  needsShown,
+  type Need,
   TONE_WORD,
   arrange,
   problemCount,
@@ -12,7 +26,18 @@ import {
   type AttentionItem,
 } from "./attention-list.ts";
 
-export type { AttentionGroupInfo, AttentionItem, AttentionTone } from "./attention-list.ts";
+export type {
+  AttentionGroupInfo,
+  AttentionItem,
+  AttentionTone,
+  Inbox,
+  InboxApp,
+  InboxItem,
+  InboxSeverity,
+  Need,
+  NeedUrgency,
+} from "./attention-list.ts";
+export type { RowForm };
 
 export type AttentionLinkProps = RowLinkProps;
 
@@ -214,5 +239,218 @@ export function AttentionList(props: AttentionListProps) {
         </RowList>
       ) : null}
     </section>
+  );
+}
+
+// ---- NeedsList: a person's work queue, with Later ----------------------------------------
+
+// A link a needs list draws: a row's title, or its main action (a primary button).
+export interface NeedLinkProps extends RowLinkProps {
+  className?: string;
+  "data-variant"?: string;
+}
+
+const plainNeedLink = ({ children, ...props }: NeedLinkProps) => <a {...props}>{children}</a>;
+
+export interface NeedsListProps<G extends string = string> {
+  needs: Need<G>[];
+  // "all", "later" (what is set aside) or one of the app's groups.
+  show: "all" | "later" | G;
+  // The list's name. Default "Needs you", or "Set aside for later".
+  label?: string;
+  // The person's zone, sent with Later so the server brings the row back at 8 am there (the
+  // server's own guess when the script is off).
+  zone: string;
+  // A router's link component; a plain <a> by default.
+  renderLink?: (props: NeedLinkProps) => ReactNode;
+  // Each row's form for Later and Bring back (React Router: useRouterRowForm). The form posts
+  // intent ("later" or "back"), need, title and zone. Default: a plain form that posts.
+  useRowForm?: () => RowForm;
+  // Undo of a Later: bring the need back (post intent "back").
+  onBack?: (need: Need<G>) => void;
+  // The key that opens search ("⌘" or "Ctrl"), to name it in the keys line; left out without.
+  searchKey?: string;
+  // The empty state's words, for the list and for Later.
+  emptyText?: ReactNode;
+  emptyLaterText?: ReactNode;
+  // The page's main list: j and k work on it before focus is inside it.
+  primary?: boolean;
+}
+
+function NeedRow<G extends string>({
+  need,
+  zone,
+  noteId,
+  onBack,
+  renderLink,
+  useRowForm,
+}: {
+  need: Need<G>;
+  zone: string;
+  noteId: string;
+  onBack?: (need: Need<G>) => void;
+  renderLink: (props: NeedLinkProps) => ReactNode;
+  useRowForm: () => RowForm;
+}) {
+  const { Form, pending } = useRowForm();
+  const message = useOptionalMessage();
+  // The row leaves the list as soon as it is sent; it is back if the server refused it.
+  if (pending) return null;
+  const aside = need.later !== undefined;
+  return (
+    <Row
+      className="cap-need-row"
+      title={need.title}
+      href={need.action.href}
+      detail={need.detail}
+      meta={
+        aside ? (
+          <span>
+            Back <Time at={need.later!} />
+          </span>
+        ) : need.at ? (
+          <Time at={need.at} />
+        ) : undefined
+      }
+      renderLink={renderLink}
+      actions={
+        <>
+          <Form
+            method="post"
+            onSubmit={(e) => {
+              const row = e.currentTarget.closest<HTMLElement>(".cap-need-row");
+              if (row) focusNeighbor(row);
+              if (aside) message?.say(`Back on the list: ${need.title}`);
+              else
+                message?.say(`Set for later, until tomorrow morning: ${need.title}`, {
+                  undo: onBack ? () => onBack(need) : undefined,
+                  undone: `Back on the list: ${need.title}`,
+                });
+            }}
+          >
+            <input type="hidden" name="intent" value={aside ? "back" : "later"} />
+            <input type="hidden" name="need" value={need.id} />
+            <input type="hidden" name="title" value={need.title} />
+            <input type="hidden" name="zone" value={zone} />
+            <button
+              type="submit"
+              className="cap-btn"
+              data-variant="quiet"
+              data-cap-part="later"
+              aria-describedby={aside ? undefined : noteId}
+            >
+              {aside ? "Bring back" : "Later"}
+            </button>
+          </Form>
+          {renderLink({
+            href: need.action.href,
+            className: "cap-btn",
+            "data-variant": "primary",
+            children: need.action.label,
+          })}
+        </>
+      }
+    />
+  );
+}
+
+// What waits on one person, Blocking first, then Waiting for you, oldest first within each, as
+// one row list (so j and k move through both) with the urgency headings between the rows. Each
+// row has its one main action and Later, which sets it aside until 8 am tomorrow in the
+// person's zone; the row leaves at once, focus moves to the next row, and the message offers
+// Undo. `l` on a row sets it aside (or brings it back in the Later view): a single key that acts
+// only while focus is on a row (WCAG 2.1.4) and obeys `data-cap-single-keys="off"` on <html>.
+// From Carrel's Home (app/routes/home.tsx).
+export function NeedsList<G extends string = string>({
+  needs,
+  show,
+  label,
+  zone,
+  renderLink = plainNeedLink,
+  useRowForm = usePlainRowForm,
+  onBack,
+  searchKey,
+  emptyText,
+  emptyLaterText,
+  primary,
+}: NeedsListProps<G>) {
+  const noteId = useId();
+  const later = show === "later";
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== "l" || e.ctrlKey || e.metaKey || e.altKey || e.defaultPrevented) return;
+      if (document.documentElement.dataset.capSingleKeys === "off") return;
+      const row = document.activeElement?.closest<HTMLElement>(".cap-need-row");
+      const button = row?.querySelector<HTMLButtonElement>("[data-cap-part='later']");
+      if (!button) return;
+      e.preventDefault();
+      button.click();
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, []);
+  const rows = needsShown(needs, show);
+  if (rows.length === 0)
+    return later ? (
+      <Empty kind="all-clear" flush title="Nothing set aside">
+        {emptyLaterText ?? "Later on a row hides it until tomorrow morning."}
+      </Empty>
+    ) : (
+      <Empty kind="all-clear" flush title="Nothing needs you">
+        {emptyText ??
+          (show === "all" ? "Everything waiting on you is done." : "Nothing here. Try All.")}
+      </Empty>
+    );
+  return (
+    <>
+      <RowList label={label ?? (later ? "Set aside for later" : "Needs you")} primary={primary}>
+        {URGENCY_ORDER.map((u) => {
+          const group = rows.filter((n) => n.urgency === u);
+          if (group.length === 0) return null;
+          return [
+            <li key={u} className="cap-need-group">
+              <h3 className="cap-need-head">
+                <Pill tone={u === "blocking" ? "crit" : undefined} variant="secondary">
+                  {URGENCY_TITLE[u]}
+                </Pill>
+                <span className="cap-need-count">{group.length}</span>
+              </h3>
+            </li>,
+            ...group.map((n) => (
+              <NeedRow
+                key={n.id}
+                need={n}
+                zone={zone}
+                noteId={noteId}
+                onBack={onBack}
+                renderLink={renderLink}
+                useRowForm={useRowForm}
+              />
+            )),
+          ];
+        })}
+      </RowList>
+      <p className="cap-need-keys">
+        <span className="cap-need-key">
+          <kbd>j</kbd> <kbd>k</kbd> move
+        </span>
+        <span className="cap-need-key">
+          <kbd>Enter</kbd> open
+        </span>
+        <span className="cap-need-key">
+          <kbd>l</kbd> {later ? "bring back" : "later"}
+        </span>
+        {searchKey ? (
+          <span className="cap-need-key">
+            <kbd>{searchKey}</kbd> <kbd>K</kbd> search
+          </span>
+        ) : null}
+        <span id={noteId}>
+          {later
+            ? "These come back on their own at 8 am, or sooner if they change."
+            : "Later hides a row until 8 am tomorrow, or sooner if it changes."}
+        </span>
+      </p>
+    </>
   );
 }

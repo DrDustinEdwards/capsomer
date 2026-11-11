@@ -2,11 +2,14 @@ import { expect, test, type Page } from "@playwright/test";
 import {
   eachTheme,
   expectContrast,
+  countCssRules,
   expectNoAxeViolations,
   visitStates,
   settled,
 } from "../../test/helpers.ts";
 
+// Floor for the CSS rules a site-header specimen page holds: 3,581 measured 2026-11-11, with the 5% under it.
+const FLOOR = 3400;
 const PHONE = { width: 390, height: 760 };
 
 // Where each named control sits, left to right, in the header's one row.
@@ -303,6 +306,58 @@ eachTheme((theme) => {
     await page.keyboard.press("Space");
     await expect(panel).toBeVisible();
     await page.keyboard.press("Escape");
+  });
+
+  test("behavior: a click on a section button opens its panel and a second click closes it, aria-expanded following", async ({
+    page,
+  }) => {
+    await visitStates(page, "site-header", theme, "fx-public");
+    const books = page.getByRole("button", { name: "Books" });
+    const panel = page.locator("#" + (await books.getAttribute("aria-controls")));
+    await expect(books).toHaveAttribute("aria-expanded", "false");
+    await books.click();
+    await expect(panel).toBeVisible();
+    await expect(books).toHaveAttribute("aria-expanded", "true");
+    // Park the pointer off the button so the second click is not a hover's.
+    await books.click();
+    await expect(panel).toBeHidden();
+    await expect(books).toHaveAttribute("aria-expanded", "false");
+  });
+
+  test('accessibility: aria-current is only ever "page", never on a section button, and marks one section link at most in the links row', async ({
+    page,
+  }) => {
+    for (const only of [
+      "lh-public",
+      "lh-admin",
+      "fh-public",
+      "fh-dashboard",
+      "fx-public",
+      "fx-reader",
+    ]) {
+      await visitStates(page, "site-header", theme, only);
+      const header = page.locator(".cap-site-header");
+      const sections = header.locator(".cap-site-header-sections");
+      const values = await sections
+        .locator("[aria-current]")
+        .evaluateAll((els) => els.map((el) => el.getAttribute("aria-current")));
+      expect(
+        values.every((v) => v === "page"),
+        `${only}: ${values}`,
+      ).toBe(true);
+      await expect(sections.locator("button[aria-current]"), `${only}: a button`).toHaveCount(0);
+      expect(
+        await sections.locator("a[aria-current]").count(),
+        `${only}: section links marked current`,
+      ).toBeLessThanOrEqual(1);
+    }
+  });
+
+  test("accessibility: the states page's stylesheets arrived: a missing one leaves every measure below about browser defaults", async ({
+    page,
+  }) => {
+    await visitStates(page, "site-header", theme, "fh-public");
+    expect(await countCssRules(page), "CSS rules reachable").toBeGreaterThanOrEqual(FLOOR);
   });
 
   test("keyboard: Tab past a panel's last item closes it and goes on to the next control", async ({

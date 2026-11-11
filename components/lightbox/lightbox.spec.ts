@@ -44,6 +44,22 @@ eachTheme((theme) => {
     await expect(page.getByRole("dialog")).toHaveCount(0);
   });
 
+  test("behavior: the viewer is a modal dialog that takes focus and shows the link's original, not the resized copy", async ({
+    page,
+  }) => {
+    await visitStates(page, "lightbox", theme);
+    const link = page.locator("#sample-photo");
+    const original = await link.getAttribute("href");
+    await link.click();
+    const dialog = page.locator("dialog.cap-lightbox");
+    await expect(dialog).toBeVisible();
+    // :modal is true only after showModal(): attributes on a div claim a modal, this proves one.
+    expect(await dialog.evaluate((el) => el.matches(":modal"))).toBe(true);
+    expect(await dialog.evaluate((el) => el.contains(document.activeElement))).toBe(true);
+    // The raw attribute, not currentSrc: the page's copy is the small one.
+    await expect(dialog.locator("img")).toHaveAttribute("src", original!);
+  });
+
   test("behavior: a modified click leaves the link alone", async ({ page }) => {
     await visitStates(page, "lightbox", theme);
     await page.locator("#sample-photo").click({ modifiers: ["Shift"] });

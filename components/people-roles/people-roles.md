@@ -4,9 +4,9 @@ title: People and roles
 summary: An app's members page. Who has access, their title, when it ends and whether Cloudflare matches, with add, change title, renew, remove, the term review and each person's history.
 parts: [css, behavior, react]
 tool: native + own JavaScript
-states: [a lead's page, review open, changing a title, one person's history, an Owner's page after adding someone, a change Cloudflare refused, nobody added yet]
+states: [a lead's page, review open, changing a title, one person's history, an Owner's page after adding someone, a change Cloudflare refused, nobody added yet, role grid]
 added: 0.7.0
-updated: 0.7.0
+updated: 0.105.0
 source: capsid docs/design/design-identity-roles.md, "The members page"; Dustin's rulings of 2026-10-09
 replaces:
   - 'href="/people"'
@@ -41,6 +41,27 @@ For an app's users (readers, teachers, merchants, authors), who sign in through 
 ## Matches
 
 shadcn/ui `Table` (from `table`), `Field`, `Input` and `NativeSelect` (from `field` and `select`), `Badge` (the status words and the You pill, from `status`), `Button`, `Alert Dialog` (the remove confirm, from `confirm-dialog`), `RadioGroup` (the review's Keep or Remove) and `Card` (the review and the add form). shadcn has no members page; the closest is its "Team members" block, a card with a role select per person. Deliberately different: a role here changes only with a reason, and every row says whether Cloudflare has caught up.
+
+## The role grid: people by scopes
+
+An app where a person has a role on each project (Carrel: Reader, Editor or Author per project) shows `RoleGrid` beside or instead of the titled list above: people as rows, projects as columns, a role select in each cell.
+
+**Provenance.** EXTRACTED from Carrel's People page (`routes/people.tsx`, `PersonRow`, `AccessButton`, and app.css `.app-roles`): the grid, the sticky person column, save on change, Disable with Undo, the per-row Save before the script runs, the Owner's row that spans the projects. From dustinedwards.info's lab (`app/lab/members.server.ts`): the address and lead helpers. REWRITTEN: the saves and the access change are callbacks, not React Router fetchers, so the grid works in any app; the options per cell are the app's (`options(person, scope)`), since only the app knows that a reviewer is offered no Editor.
+
+- **A cell saves when it changes** (`onRoleChange`), and the message region says "Saved: Rosa Park on Letters, Reader." Before the script runs, each row has Save, which posts every scope's role at once: `intent=roles`, `person`, and `role-<scope id>` per scope.
+- **Disable is reversible, so it acts at once and offers Undo** (`onAccess(person, "disable")`, then Undo calls `onAccess(person, "enable")`). Without the script it is a form that posts `intent` and `person`. A disabled person keeps their roles and shows "Disabled" with the date.
+- **The person stays in view** while the scopes scroll sideways (a sticky row header); a select keeps its longest word whole.
+- **The Owner's row** (`everyScope`) spans the scopes with one sentence and has no Save or Disable.
+- **The address names only someone the page lists.** `personFromParam(params, "person" | "change", emails, allowed)` reads `?person=` (whose history is open) and `?change=` (whose change row is open), lower-cased, and returns nobody for an address that names a person the viewer may not see or manage. `manageLead(titles, notice)` writes the line under the heading, "You manage Lab managers and Lab workers."
+
+```tsx
+import { RoleGrid } from "capsomer/react/people-roles";
+
+<RoleGrid people={people} scopes={projects} caption="People, and their role on each project"
+  options={(person, project) => rolesFor(person, project)}
+  onRoleChange={(person, project, role) => fetcher.submit({ intent: "role", person: person.id, project: project.id, role }, { method: "post" })}
+  onAccess={(person, intent) => fetcher.submit({ intent, person: person.id }, { method: "post" })} />
+```
 
 ## Keyboard
 

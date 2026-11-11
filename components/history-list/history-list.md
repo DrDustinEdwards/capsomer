@@ -4,8 +4,9 @@ title: History list
 summary: One line per change to a draft or post, with who, when, the signed size change in words and a one-line summary; autosaves folded, any two versions picked to compare, and restoring that makes a new version.
 parts: [css, behavior, react]
 tool: native + own JavaScript
-states: [read-only with no word counts, load into editor, current version, edit, autosave, run of autosaves collapsed, run of autosaves open, named version, publish with destinations and statuses, restore line, one version picked, two versions picked, a third pick refused, size change up, down and none, hover, restored with Undo, empty, load older, comfortable density, phone width]
+states: [read-only with no word counts, load into editor, current version, edit, autosave, run of autosaves collapsed, run of autosaves open, named version, publish with destinations and statuses, restore line, one version picked, two versions picked, a third pick refused, compare before the script runs, size change up, down and none, hover, restored with Undo, empty, load older, comfortable density, phone width]
 added: 0.3.0
+updated: 0.105.0
 source: Alex Rivera's site admin, app/components/admin/revision-list.tsx (RevisionList, RevisionMeta, DiffBlock), app/routes/admin.posts.$slug.history.tsx and app/styles/admin-history.css; app/components/post-history.tsx for the dated facts. shadcn/ui Item and Checkbox for the craft.
 replaces:
   - 'class="(history-list|history-entry|history-meta|history-actions)"'
@@ -44,6 +45,9 @@ The history of one document that changes over time and where people go back: a p
 - **Load into editor is the other action, for a draft with an editor the history is not the record of.** Set `data-load-href` on the root (React: `loadHref`) and each earlier line shows "Load into editor", a link to that address plus the version's id (`/posts/spring-update/edit?load=v-70`), in place of Restore. It works as delivered: the editor's page reads `?load=` and fills the editor. Nothing is added to the history, because the text is only loaded; the editor's own save makes the version, on top, and the history is never rewritten. There is no Undo line, because nothing happened yet. An app that loads the text in place cancels the cancelable `cap:history-load` (detail `{ entry }`; React `onLoad`), which stops the navigation. The two actions are one or the other on a list, never both: Restore acts at once and a loaded text waits for a save, and two buttons that look alike would say neither. The current version has no action in either mode.
 - **Paging:** "Load older versions" is a link (`?before=<id>`), so the page works as delivered. An app that fetches the page itself cancels `cap:history-older` and calls `appendEntries`. The pagination component is not used: it pages by number, and a history is read from the top and extended downward.
 - **Empty is the empty component's nothing-yet kind:** "No versions yet. The first save of this post makes the first version."
+- **Compare works before the script runs.** The pick boxes belong to a GET form in the bar (their `form` attribute), whose submit button says "Compare 2 versions" until the script is live; ticking two and pressing it opens the compare view with `?compare=<id>&compare=<id>`. Then the link above takes its place. The compare view reads either address with `comparePicks(searchParams, at)`, which puts the pair older first, so a server never orders it by hand (from Carrel's revision picker, which was a GET form only). `defaultPicked` keeps the compare view's own pair ticked when the list is drawn beside it.
+- **A revision's commit message is its summary in words.** `messageSummary(message, path)` keeps the first line, drops the file's path and any id every line would repeat, and turns a bare verb into what happened ("Save" is "Saved"), for a history read from a site's revisions (Carrel's `revisionLabel`).
+- **An audit row says what changed in words.** `changeText(before, after, { labels, skip })` writes "amount: 5 to 3; status: in_stock to empty" from the two rows or their JSON, "Added" with no before, "Removed" with no after, "No change" when they agree; `id` is skipped by default (dustinedwards.info's lab inventory).
 - **The pick bar is sticky,** so a second pick far down a long list can be compared without scrolling back.
 - **A narrow list** gathers the title and the kind line, with the size change and the time at the end and the action underneath.
 
@@ -94,11 +98,13 @@ Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the a
   <h2 id="history-h">History</h2>
   <div class="cap-hist-bar">
     <p class="cap-hist-picked" role="status" data-cap-part="picked">Pick two versions to compare.</p>
-    <a class="cap-btn" data-variant="primary" data-cap-part="compare" role="link" aria-disabled="true" tabindex="0">Compare 2 versions</a>
+    <form id="history-compare" method="get" action="/posts/spring-update/compare" hidden></form>
+    <button type="submit" form="history-compare" class="cap-btn" data-variant="primary" data-cap-part="compare-submit">Compare 2 versions</button>
+    <a class="cap-btn" data-variant="primary" data-cap-part="compare" role="link" aria-disabled="true" tabindex="0" hidden>Compare 2 versions</a>
   </div>
   <ul class="cap-rows cap-hist-list" role="list" aria-labelledby="history-h" data-cap-primary>
     <li class="cap-row cap-hist-row" data-kind="edit" data-id="v-31" data-at="2026-10-02T14:52:00Z" data-words="1954" data-who="Alex Rivera" data-current>
-      <span class="cap-hist-pick"><label class="cap-check"><input type="checkbox" name="compare" value="v-31" data-cap-part="pick"><span class="cap-sr-only">Compare this version, Oct 2, 2:52 PM UTC, by Alex Rivera</span></label></span>
+      <span class="cap-hist-pick"><label class="cap-check"><input type="checkbox" name="compare" value="v-31" form="history-compare" data-cap-part="pick"><span class="cap-sr-only">Compare this version, Oct 2, 2:52 PM UTC, by Alex Rivera</span></label></span>
       <span class="cap-hist-who" id="h-v-31-who"><span class="cap-avatar" data-size="sm" aria-hidden="true"><span class="cap-avatar-fallback">AR</span></span><span class="cap-hist-name">Alex Rivera</span></span>
       <div class="cap-row-title"><a href="?version=v-31" aria-describedby="h-v-31-w h-v-31-t" title="Added the 2019 annual report">Added the 2019 annual report</a></div>
       <span class="cap-hist-delta" id="h-v-31-w" data-sign="plus"><svg aria-hidden="true">...</svg><span>+42 words</span></span>
@@ -116,7 +122,7 @@ Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the a
 </section>
 ```
 
-`import { enhance, condense, wordDelta, pickTwo, restoreVersion, appendEntries } from "capsomer/behavior/history-list"`. `enhance()` attaches `j` and `k`, the groups, the picks, Restore and Load older, and needs the message component's region on the page (it adds one after the list if there is none). The pure helpers: `condense(entries)` groups the autosaves, `wordDelta(before, after)` is the signed change from two texts or two counts, `deltaText(n)` writes it, `pickTwo(picked, id)` toggles a pick and says when a third was refused, `orderPair(picked, at)` puts the pair older first, `compareHref(base, older, newer)`. Events on the root: `cap:history-restored` and `cap:history-unrestored` (detail `{ source, entry }`), and the cancelable `cap:history-older` and `cap:history-load` (detail `{ entry }`, load-into-editor mode).
+`import { enhance, condense, wordDelta, pickTwo, restoreVersion, appendEntries } from "capsomer/behavior/history-list"`. `enhance()` attaches `j` and `k`, the groups, the picks, Restore and Load older, and needs the message component's region on the page (it adds one after the list if there is none). The pure helpers: `condense(entries)` groups the autosaves, `wordDelta(before, after)` is the signed change from two texts or two counts, `deltaText(n)` writes it, `pickTwo(picked, id)` toggles a pick and says when a third was refused, `orderPair(picked, at)` puts the pair older first, `compareHref(base, older, newer)`, `comparePicks(params, at)`, `messageSummary(message, path)`, `changeText(before, after)`. Events on the root: `cap:history-restored` and `cap:history-unrestored` (detail `{ source, entry }`), and the cancelable `cap:history-older` and `cap:history-load` (detail `{ entry }`, load-into-editor mode).
 
 In React, `import { HistoryList } from "capsomer/react/history-list"` inside a `<MessageProvider>`:
 

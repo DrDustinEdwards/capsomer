@@ -4,9 +4,9 @@ title: Attention list
 summary: The overview's one list of what is wrong, worst first, with like rows folded into one that opens in place, a cap on warnings, and the notices closed at the foot.
 parts: [css, behavior, react]
 tool: native + own JavaScript
-states: [mixed list, a group open in place, warnings past the cap, all clear, phone width]
+states: [mixed list, a group open in place, warnings past the cap, all clear, phone width, a work queue with Later, set aside for later, nothing needs you]
 added: 0.1.0
-updated: 0.2.0
+updated: 0.105.0
 source: Capsid Portal, dashboard/src/views/Overview.tsx ("Needs attention") and styles.css ("attention strip"), dashboard/src/lib/derive.ts (attentionGroups)
 replaces:
   - 'class="attention"'
@@ -41,6 +41,28 @@ A list of one kind of thing (jobs, deploys, mentions) is a row-list, or a feed f
 - **The header says how many problems there are, the order and how fresh the reading is:** "5 problems", "Worst first. Read 40 seconds ago" (patterns.md "Data that updates itself").
 - **Empty is "All clear"** with an ok status and "Nothing needs you.", never a blank panel (patterns.md "Empty"). Notices still show below it.
 - **The list is row-list's primary list**, so `j` and `k` move focus among the rows, the group buttons and the notices button.
+
+## A person's work queue: NeedsList
+
+The attention list says what is wrong with the systems. `NeedsList` is its sibling for what waits on one person (Carrel's Home): the same row list, Blocking first and then Waiting for you, each row with one main action and **Later**.
+
+**Provenance.** EXTRACTED from Carrel: the `Need` shape (app/lib/desk.server.ts), `NeedRow`, `focusNeighbor`, the `l` key and the keys line (app/routes/home.tsx), and `laterUntil` (now in the time component). From Capsid: the inbox feed's `Inbox`, `InboxApp`, `InboxItem` and `severityOf` (src/inbox.ts, src/ops-types/feed.ts), made generic: the kinds that wait on a person are the sender's argument.
+
+- **Later sets a row aside until 8 am tomorrow in the person's zone**, or sooner when the need changes. The row leaves at once (it is back if the server refused), focus moves to the next row's title (else the previous one, else the current filter tab), and the message offers Undo. The Later view lists what is set aside, with when it comes back and Bring back. The server works out the time with `laterUntil(now, zone)` from `capsomer/behavior/time`; the form sends the browser's zone, and the server's own guess stands in when the script is off.
+- **The form works as delivered.** Each row's Later is a POST form with `intent` ("later" or "back"), `need`, `title` and `zone`. `useRowForm` gives each row its own form and pending state (React Router: `useRouterRowForm` from `capsomer/react/router`), so one row leaving does not hold the list.
+- **`l` is the row's own key**: it acts only while focus is on a row (WCAG 2.1.4) and obeys `data-cap-single-keys="off"` on `<html>`, as the row list's `j` and `k` do. The keys line under the list names them, and hides them on a touch screen, where only what Later does stays.
+- **One list, with the urgency headings between the rows,** so `j` and `k` move through Blocking and Waiting alike.
+- **Counts leave out what is set aside:** `needCount(needs)` for a header badge or a tab, `needsShown(needs, show)` for a view.
+- **An inbox's severity**: `severityOf(items, waitsOnPerson)` is needs-you when any item waits on a person, failing when only a machine fault is open, none otherwise; `worstSeverity` combines apps; `severityTone` is the admin shell's badge tone (violet "need", red "crit").
+
+```tsx
+import { NeedsList } from "capsomer/react/attention-list";
+import { useRouterRowForm } from "capsomer/react/router";
+
+<NeedsList needs={needs} show={show} zone={zone} useRowForm={useRouterRowForm}
+  renderLink={({ href, children, ...rest }) => <Link to={href} {...rest}>{children}</Link>}
+  onBack={(need) => submit({ intent: "back", need: need.id }, { method: "post", navigate: false })} />
+```
 
 ## Keyboard
 
