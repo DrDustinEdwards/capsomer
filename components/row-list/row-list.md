@@ -4,9 +4,9 @@ title: Row list
 summary: Rows that each open a detail, the title stretched over the row as its one link, with j and k to move between rows.
 parts: [css, behavior, react]
 tool: native + own JavaScript
-states: [mixed worst first, outline and muted variants, sizes, media, comfortable density, critical row, hover, keyboard focus, row with actions, long title cut with an ellipsis, a row that opens in place, phone width with a wrapping title]
+states: [mixed worst first, outline and muted variants, sizes, media, comfortable density, critical row, hover, keyboard focus, row with actions, long title cut with an ellipsis, a row that opens in place, phone width with a wrapping title, a row that is read, not opened, a reply opened in a row]
 added: 0.1.0
-updated: 0.2.0
+updated: 0.100.0
 source: Capsid Portal, dashboard/src/styles.css (.att-row, .qrow, .frow) and dashboard/src/views/shared.tsx (QueueRows, IncidentFeed)
 replaces:
   - 'class="(att-row|qrow|frow)'
@@ -43,6 +43,8 @@ Data compared across columns (versions, counts, several numbers per item) is a t
 - **Long titles and details take two lines, then are cut with an ellipsis**, and the full text stays in the link's name. Two lines, not one, so text that fits still fits with a reader's own text spacing (WCAG 1.4.12). **In a narrow column the title wraps instead**: on a phone there is no hover and no wider view to read the rest in (Portal: "titles wrap instead of being cut"). The detail stays cut at two lines (the moderation queue's excerpt wraps instead: it is what a decision is made on).
 - **A row that opens in place** (a group of like rows) uses a `button` title with `aria-expanded` and `aria-controls`, and a `.cap-row-chevron` after the time, which turns when it is open. The attention list's group rows are these.
 
+- **A row that is read, not opened** (0.100.0): a `Row` with no `href` and no `onOpen` has a plain-text title and no hover, and only its actions are controls (a checklist step, a fact). Markup: `<li class="cap-row" data-static>` with `<span class="cap-row-text">` in the title.
+
 ## The shadcn component it matches
 
 Item (`item.tsx`): Item, ItemGroup, ItemMedia, ItemContent (the title and detail), ItemActions. Matched: the rounded row, outline and muted variants, three sizes, media, actions, the group gap, the 100 ms color transition, the stretched hit area (shadcn renders the Item itself as the link; Capsomer stretches the title's link instead, so the row has one named link and its actions stay real buttons).
@@ -58,6 +60,8 @@ Different on purpose: the default is flush with a `--raised` hover and no border
 | `k` | Moves focus to the previous row's title (from outside the primary list, to its last row) |
 | Enter | Follows the focused row's link, or presses its button |
 | Enter or Space on a group row's button | Shows or hides the rows it holds |
+
+- **A reply opens in its row** (`reply`, with `RowReply`): answering a question or saying what unblocked a job happens where the row is, not on another page. The box is labeled for what the words are for ("Your answer, sent to its driver"), takes focus when it opens, says why an empty or refused reply was not sent (announced), sends on Ctrl or Cmd+Enter (not during an IME composition) and cancels on Esc. It sits under the row's text, across the row and above the stretched link.
 
 ## Accessibility
 

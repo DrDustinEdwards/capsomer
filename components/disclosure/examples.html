@@ -123,6 +123,60 @@
   </ul>
 </section>
 
+<section class="cap-specimen" aria-labelledby="s-inline">
+  <h2 id="s-inline">Inline, with the sign marker: in a post and under a step</h2>
+  <div id="inline-specimen">
+    <p>The plaque counts below come from three plates per dilution.</p>
+    <details class="cap-disclosure" data-variant="inline" data-marker="sign" id="inline-closed">
+      <summary>Show the counts</summary>
+      <div class="cap-disclosure-body"><p>10<sup>-6</sup>: 212, 198, 205. 10<sup>-7</sup>: 22, 19, 25.</p></div>
+    </details>
+    <details class="cap-disclosure" data-variant="inline" data-marker="sign" open id="inline-open">
+      <summary>How the titer is worked out</summary>
+      <div class="cap-disclosure-body"><p>The mean count at a countable dilution, divided by the volume plated and the dilution.</p></div>
+    </details>
+    <ol>
+      <li>Plate 100 microliters of each dilution in top agar.
+        <details class="cap-disclosure" data-variant="inline" data-marker="sign" data-print="hide" id="step-calc">
+          <summary>Calculator: titer from a plate count</summary>
+          <div class="cap-disclosure-body">
+            <p>The fields start on the lab's worked example. Enter your own numbers.</p>
+            <label class="cap-field-label" for="calc-count">Plaques counted</label>
+            <input class="cap-input" id="calc-count" inputmode="numeric" value="205">
+          </div>
+        </details>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-expand">
+  <h2 id="s-expand">Expand toggle: a step's email, and a table row's detail</h2>
+  <div id="expand-specimen">
+    <p>Reminder email sent 2 hours ago. Opened.
+      <button type="button" class="cap-link-btn cap-expand-toggle" data-cap="expand" aria-expanded="false" aria-controls="email-preview" data-open-label="Hide email" data-closed-label="View email"><span class="cap-expand-label">View email</span></button>
+    </p>
+    <div class="cap-expand-region" id="email-preview" hidden>
+      <p>Your card ending 4242 was declined. Update it here to keep your plan.</p>
+    </div>
+    <div class="cap-table-wrap" role="region" aria-label="Webhook events" tabindex="0">
+      <table class="cap-table">
+        <caption>Webhook events</caption>
+        <thead><tr><th scope="col">Event</th><th scope="col">Status</th><th scope="col">Received</th></tr></thead>
+        <tbody>
+          <tr>
+            <th scope="row"><button type="button" class="cap-link-btn cap-expand-toggle cap-expand-row" data-cap="expand" aria-expanded="false" aria-controls="evt-1-payload" id="evt-1"><span class="cap-expand-label">invoice.payment_failed</span><span class="cap-sr-only"> payload</span></button></th>
+            <td>Processed</td><td>09:12</td>
+          </tr>
+          <tr class="cap-expand-detail" id="evt-1-payload" hidden>
+            <td colspan="3"><pre tabindex="0" aria-label="invoice.payment_failed payload">{ "id": "evt_sample", "type": "invoice.payment_failed" }</pre></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
 <section class="cap-specimen" aria-labelledby="s-card-sm">
   <h2 id="s-card-sm">Compact card, a form behind its title</h2>
   <p class="cap-muted">Small cards beside each other on an admin page: each opens in place to a form or a list ("Edit sponsor", "Add an item", "Chair (3)").</p>

@@ -88,3 +88,21 @@ export function Wait({ label, children }: WaitProps) {
     </div>
   );
 }
+
+export interface MissingProps {
+  // The word for no value. Default "none".
+  children?: ReactNode;
+  // Why there is none, read out with the word (and shown on hover when it is text).
+  reason?: string;
+}
+
+// No value in a table cell or a line of facts: a muted word, never a blank cell or a dash, so a
+// screen reader says it and the eye sees it is missing on purpose.
+export function Missing({ children = "none", reason }: MissingProps) {
+  return (
+    <span className="cap-missing" title={reason}>
+      {children}
+      {reason ? <span className="cap-sr-only">: {reason}</span> : null}
+    </span>
+  );
+}

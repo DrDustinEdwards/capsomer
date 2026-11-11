@@ -43,6 +43,8 @@ Over any list where several rows or tiles can be chosen: posts, media, mentions,
 
 - **After an action, one outcome per item.** A site can refuse one item and do the rest (a version that moved, a post with no front matter, a file still in use), so the bar can list what happened to each: a line that counts them ("2 done, 1 not done."), then one line per item, refusals first, each a word and a shape (Done, Not done), the item's name and why, and for a refused delete every place it is still used. While the list is there the bar stays in view with nothing selected and stops sticking, so a long list never covers the page. Dismiss results takes it away; it needs script, so a server renders it `hidden` and the script shows it. This is Carrel's Result panel, built once, in the bar.
 
+- **A React list's selection is `useBulkSelection(rows)`** (0.100.0): stored ids read through what is in view (`visibleSelection`), so a filter or a new page never leaves a hidden row counted or sent; the header checkbox selects exactly the rows in view, or clears them (`toggleAllVisible`), and is mixed when some are; after an action `keepFailed(outcomes)` leaves exactly the items not done selected, so the next press retries those. The outcome list puts them first (`orderOutcomes`).
+
 ## The shadcn component it matches
 
 shadcn has no bulk bar. The nearest are its Data Table's selection footer ("3 of 24 row(s) selected") and the floating Sonner surface. Matched: the popover surface (raised, rounded, a hairline edge, a shadow), the compact buttons, the muted detail text. Not in shadcn: the live count, the preview and the Undo.
