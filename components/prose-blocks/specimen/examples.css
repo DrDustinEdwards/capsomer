@@ -17,4 +17,8 @@
   --prose-code-ink: var(--accent-text);
   --prose-block-radius: var(--radius-l);
   --prose-image-radius: var(--radius-l);
+  --prose-heading-gap: 1.1rem;
+  --prose-heading-measure: none;
+  --prose-item-space: 0.55rem;
+  --prose-link-hover-decoration: underline;
 }

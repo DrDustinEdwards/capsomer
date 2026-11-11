@@ -6,12 +6,20 @@
    down, the one-pointer way and the way with no script; and where the list allows, Remove and
    a Move to select. An item that is up (by keyboard) or under the pointer is raised and edged
    in the accent, so the cue is a shape and an edge as well as a color. The "stack" layout is a
-   card per line with a head line over its content, for an item whose body is fields. */
+   card per line with a head line over its content, for an item whose body is fields.
+   A site's own look is tokens, each defaulting to the look below (set on the list or above it):
+     --sortable-gap            the space between items (rows 4px, stack 8px, cards --gap)
+     --sortable-item-pad, --sortable-item-gap, --sortable-item-radius, --sortable-item-align   a row
+     --sortable-card-pad, --sortable-card-radius          a card or stack item
+     --sortable-item-border, --sortable-item-bg           the item's box (none: 0 and transparent)
+     --sortable-step-ink, --sortable-remove-ink, --sortable-remove-hover-ink, --sortable-remove-fs,
+     --sortable-remove-weight                             the buttons' words
+     --sortable-lane-pad, --sortable-lane-border, --sortable-lane-radius, --sortable-lane-bg   a board's list */
 @layer cap.components {
   .cap-sortable {
     box-sizing: border-box;
     display: grid;
-    gap: var(--space-2);
+    gap: var(--sortable-gap, var(--space-2));
     margin: 0;
     padding: 0;
     list-style: none;
@@ -21,10 +29,10 @@
 
     &[data-layout="cards"] {
       grid-template-columns: repeat(auto-fill, minmax(min(100%, 14rem), 1fr));
-      gap: var(--gap);
+      gap: var(--sortable-gap, var(--gap));
     }
     &[data-layout="stack"] {
-      gap: var(--space-3);
+      gap: var(--sortable-gap, var(--space-3));
     }
 
     &[data-sorting] {
@@ -37,13 +45,13 @@
     position: relative;
     box-sizing: border-box;
     display: flex;
-    align-items: center;
-    gap: var(--space-2);
+    align-items: var(--sortable-item-align, center);
+    gap: var(--sortable-item-gap, var(--space-2));
     min-width: 0;
-    padding: var(--space-1) var(--space-1) var(--space-1) var(--space-1);
-    border: 1px solid var(--line);
-    border-radius: var(--radius-m);
-    background: var(--surface);
+    padding: var(--sortable-item-pad, var(--space-1));
+    border: var(--sortable-item-border, 1px solid var(--line));
+    border-radius: var(--sortable-item-radius, var(--radius-m));
+    background: var(--sortable-item-bg, var(--surface));
 
     &[data-lifted],
     &[data-dragging],
@@ -64,8 +72,8 @@
       "handle head steps"
       "body body body";
     align-items: start;
-    padding: var(--space-2) var(--space-2) var(--pad-card);
-    border-radius: var(--radius-l);
+    padding: var(--sortable-card-pad, var(--space-2) var(--space-2) var(--pad-card));
+    border-radius: var(--sortable-card-radius, var(--radius-l));
 
     & > .cap-sortable-handle {
       grid-area: handle;
@@ -157,10 +165,22 @@
 
     /* Quiet until wanted; a button at an end keeps the button's own disabled look. */
     & .cap-btn:not(:disabled) {
-      color: var(--muted);
+      color: var(--sortable-step-ink, var(--muted));
 
       &:hover {
         color: var(--text);
+      }
+    }
+    & .cap-btn[data-cap-part="remove"] {
+      font-size: var(--sortable-remove-fs, var(--cap-btn-fs));
+      font-weight: var(--sortable-remove-weight, 500);
+
+      &:not(:disabled) {
+        color: var(--sortable-remove-ink, var(--sortable-step-ink, var(--muted)));
+
+        &:hover {
+          color: var(--sortable-remove-hover-ink, var(--text));
+        }
       }
     }
   }
@@ -208,6 +228,10 @@
     display: grid;
     gap: var(--space-2);
     min-width: 0;
+    padding: var(--sortable-lane-pad, 0);
+    border: var(--sortable-lane-border, 0);
+    border-radius: var(--sortable-lane-radius, 0);
+    background: var(--sortable-lane-bg, none);
   }
 
   @media (prefers-reduced-motion: no-preference) {

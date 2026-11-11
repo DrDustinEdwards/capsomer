@@ -291,3 +291,24 @@
   font-size: 0.625rem;
   font-weight: 700;
 }
+
+/* A site with its own look (examples.tsx, ownHeader): bsw's header values, by token only. */
+.sh-own {
+  --header-h: 4rem;
+
+  & .cap-site-header {
+    --header-max-inline-size: 72rem;
+    --header-link-weight: 600;
+    --header-link-current-weight: 600;
+    --header-edge: transparent;
+    --header-scrolled-edge: var(--line);
+    --header-translucent-mix: 70%;
+    --header-scrolled-mix: 90%;
+  }
+  /* The site's own button, drawn by its own class. */
+  & .sh-own-cta {
+    border: 1px solid var(--accent);
+    background: var(--surface);
+    color: var(--accent-text);
+  }
+}

@@ -199,15 +199,53 @@
       border-start-start-radius: var(--radius-m);
       border-start-end-radius: var(--radius-m);
     }
+    /* A site's own spacing, by token (each defaults to the look here): --disclosure-pad around
+       the whole card, --disclosure-summary-pad and --disclosure-summary-min-h for the title,
+       --disclosure-body-pad and --disclosure-body-gap (the space over the body). */
+    padding: var(--disclosure-pad, 0);
+
     & > summary {
-      padding: var(--space-2) var(--space-4);
+      min-height: var(--disclosure-summary-min-h, max(var(--target), var(--control)));
+      padding: var(--disclosure-summary-pad, var(--space-2) var(--space-4));
       font-size: var(--fs-body);
       font-weight: 600;
     }
     & > .cap-disclosure-body {
-      padding: 0 var(--space-4) var(--space-4);
+      margin-block-start: var(--disclosure-body-gap, 0);
+      padding: var(--disclosure-body-pad, 0 var(--space-4) var(--space-4));
       color: var(--text);
     }
+  }
+
+  /* The marker as a small triangle at the start, turning down when open, as the browser's own
+     (data-marker="triangle"), in place of a variant's plus or chevron. */
+  .cap-disclosure[data-marker="triangle"] > summary {
+    justify-content: start;
+
+    &::before {
+      content: "";
+      order: 0;
+      flex: none;
+      inline-size: 0;
+      block-size: 0;
+      margin-inline: 0;
+      border: 0;
+      border-block: 0.3em solid transparent;
+      border-inline-start: 0.5em solid currentColor;
+      transform: none;
+    }
+    &::after {
+      content: none;
+    }
+  }
+  .cap-disclosure[data-marker="triangle"][open] > summary::before {
+    transform: rotate(90deg);
+  }
+  .cap-disclosure[data-marker="triangle"] > summary:dir(rtl)::before {
+    transform: scaleX(-1);
+  }
+  .cap-disclosure[data-marker="triangle"][open] > summary:dir(rtl)::before {
+    transform: rotate(-90deg) scaleX(-1);
   }
 
   /* A group row: the button names what it holds and how many ("Notices, 4"). */

@@ -12,8 +12,9 @@ export interface DisclosureProps {
   variant?: "accordion" | "card" | "inline";
   // "sm" on the card: the compact card for a form or a list behind its title.
   size?: "sm";
-  // "sign": a mono plus that becomes a minus, in place of the chevron.
-  marker?: "sign";
+  // "sign": a mono plus that becomes a minus, in place of the chevron. "triangle": a small
+  // triangle at the start, as the browser's own, in place of the variant's chevron or plus.
+  marker?: "sign" | "triangle";
   // Sections are open on paper. "hide" leaves this one off the printed page (a calculator).
   print?: "hide";
   className?: string;
