@@ -25,9 +25,20 @@ export function rovingIndex(
 // keeps its own arrows, so it does not belong in a toolbar (APG).
 const TOOLBAR_ITEMS = ":is(button, a[href]):not(:disabled, [hidden])";
 
+export interface ToolbarOptions {
+  // An editor's formatting bar: a press with a pointer does not take focus from the editor (its
+  // caret and selection stay), and a control used from the keyboard (Enter or Space) hands focus
+  // back to the editor once it has run. Returns the editor.
+  keepFocus?: () => HTMLElement | null;
+}
+
 // Gives one bar its single tab stop and arrow keys. `items` picks its controls. Returns a function
 // that detaches. Controls added later join it: the bar is read on every key.
-export function attachToolbar(bar: HTMLElement, items = TOOLBAR_ITEMS): () => void {
+export function attachToolbar(
+  bar: HTMLElement,
+  items = TOOLBAR_ITEMS,
+  options: ToolbarOptions = {},
+): () => void {
   const all = () => [...bar.querySelectorAll<HTMLElement>(items)];
   const stopOn = (el: HTMLElement | undefined) => {
     for (const item of all()) item.tabIndex = item === el ? 0 : -1;
@@ -55,11 +66,26 @@ export function attachToolbar(bar: HTMLElement, items = TOOLBAR_ITEMS): () => vo
     e.preventDefault();
     now[next]?.focus();
   };
+  const { keepFocus } = options;
+  const onDown = (e: PointerEvent) => {
+    if ((e.target as Element).closest(items)) e.preventDefault();
+  };
+  // After the control's own click handler has run (the editor has its command), focus goes back.
+  const onUsed = (e: MouseEvent) => {
+    if (e.detail !== 0 || !(e.target as Element).closest(items)) return;
+    queueMicrotask(() => keepFocus?.()?.focus({ preventScroll: true }));
+  };
   bar.addEventListener("focusin", onFocus);
   bar.addEventListener("keydown", onKey);
+  if (keepFocus) {
+    bar.addEventListener("pointerdown", onDown);
+    bar.addEventListener("click", onUsed);
+  }
   return () => {
     bar.removeEventListener("focusin", onFocus);
     bar.removeEventListener("keydown", onKey);
+    bar.removeEventListener("pointerdown", onDown);
+    bar.removeEventListener("click", onUsed);
   };
 }
 

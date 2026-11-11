@@ -88,9 +88,34 @@
   </main>
 </template>
 
+<section class="cap-specimen" aria-labelledby="s-virtual">
+  <h2 id="s-virtual">At a virtual anchor: a text selection</h2>
+  <div class="cap-specimen-row">
+    <p id="virtual-text" tabindex="-1">Select a word in this sentence about the spring survey.</p>
+    <button type="button" class="cap-btn" id="virtual-open">Note on "spring survey"</button>
+    <div class="cap-popover" id="pop-virtual" popover="auto" role="dialog" aria-labelledby="pop-virtual-t" data-side="bottom">
+      <h2 class="cap-popover-title" id="pop-virtual-t">A note on the selection</h2>
+      <p class="cap-popover-description">Placed beside the selected words, not beside a button.</p>
+    </div>
+  </div>
+</section>
+
 <script type="module">
-  import { enhance, open } from "./popover.ts";
+  import { enhance, open, openAt } from "./popover.ts";
   enhance();
+  // A popover at a text range: the button selects "spring survey" and opens the note beside it;
+  // closing it returns focus to the sentence.
+  document.getElementById("virtual-open").addEventListener("click", () => {
+    const text = document.getElementById("virtual-text");
+    const node = text.firstChild;
+    const at = node.textContent.indexOf("spring survey");
+    const range = document.createRange();
+    range.setStart(node, at);
+    range.setEnd(node, at + "spring survey".length);
+    getSelection().removeAllRanges();
+    getSelection().addRange(range);
+    openAt(document.getElementById("pop-virtual"), range, { returnFocus: text });
+  });
   // Specimen only: show the popups whose state is "open", without the one-tooltip-at-a-time rule.
   for (const root of document.querySelectorAll("[data-specimen-open]")) {
     const popup = root.querySelector(".cap-popover");
