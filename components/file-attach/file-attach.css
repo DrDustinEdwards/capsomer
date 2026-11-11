@@ -1,0 +1,78 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* File attach: the drop zone's file input drawn as a button (the label is the button, the
+   input is clipped out of sight but keeps the keyboard and the focus ring), the limits beside
+   it, refusals in words, and the attached files as a list. */
+@layer cap.components {
+  .cap-attach {
+    display: grid;
+    gap: var(--space-2);
+    min-width: 0;
+  }
+  .cap-attach-control {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2) var(--space-3);
+  }
+  .cap-attach-button {
+    position: relative;
+    display: inline-flex;
+    border-radius: var(--radius-m);
+
+    &:has(.cap-attach-input:focus-visible) {
+      outline: var(--ring-width) solid var(--ring);
+      outline-offset: 1px;
+    }
+    & > .cap-btn {
+      cursor: pointer;
+    }
+  }
+  .cap-attach-input {
+    position: absolute;
+    inset: 0;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+  .cap-attach-hint,
+  .cap-attach-unavailable,
+  .cap-attach-empty,
+  .cap-attach-meta {
+    margin: 0;
+    color: var(--muted);
+    font-size: var(--fs-detail);
+  }
+  .cap-attach-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .cap-attach-item {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-1) var(--space-3);
+    padding-block: var(--space-2);
+    overflow-wrap: anywhere;
+
+    & + & {
+      border-top: 1px solid var(--line);
+    }
+    & > a {
+      display: inline-flex;
+      align-items: center;
+      min-block-size: var(--target);
+    }
+  }
+  .cap-attach-item-end {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3);
+  }
+}

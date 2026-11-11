@@ -1,0 +1,10 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* Read-only form: the refusal is Capsomer's banner (capsomer/banner.css), set apart from the
+   form's last control. */
+@layer cap.components {
+  .cap-read-only-form > .cap-banner {
+    margin-block-start: var(--space-3);
+  }
+}

@@ -1,0 +1,45 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* Schema form: fields from their specs in a grid, two columns where the form has room, and
+   Save with its status line under them. */
+@layer cap.components {
+  .cap-schema-form {
+    display: grid;
+    gap: var(--space-5);
+    container-type: inline-size;
+  }
+  .cap-schema-fields {
+    display: grid;
+    gap: var(--space-4) var(--space-5);
+  }
+  @container (min-width: 36rem) {
+    .cap-schema-fields {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .cap-schema-cell[data-wide] {
+      grid-column: 1 / -1;
+    }
+  }
+  .cap-schema-cell {
+    min-width: 0;
+  }
+  .cap-schema-readonly {
+    margin: 0;
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: var(--fs-detail);
+    overflow-wrap: anywhere;
+  }
+  .cap-schema-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3);
+  }
+  .cap-schema-status {
+    margin: 0;
+    color: var(--muted);
+    font-size: var(--fs-detail);
+  }
+}

@@ -251,6 +251,131 @@ export function keyValue(
   return stepValue(value, step, key === "PageUp" ? 10 : -10, min, max);
 }
 
+// Money in a text field: integer cents in the app, dollars in the box. Whole dollars show with no
+// decimals ("5000"), anything else with two ("12.50"); null or a non-integer is the empty box.
+export function centsToDollars(cents: number | null | undefined): string {
+  if (cents == null || !Number.isInteger(cents)) return "";
+  const sign = cents < 0 ? "-" : "";
+  const abs = Math.abs(cents);
+  const whole = Math.floor(abs / 100);
+  const rest = abs % 100;
+  return `${sign}${whole}${rest ? `.${String(rest).padStart(2, "0")}` : ""}`;
+}
+
+// What a person typed as dollars, back to integer cents: "1,250.5" is 125050, "$3" is 300. Read
+// as a string, never through a float, so 1.005 cannot round the wrong way. Null for anything
+// that is not a non-negative amount with at most two decimals (a negative needs allowNegative).
+export function dollarsToCents(
+  text: FormDataEntryValue | string | null | undefined,
+  { allowNegative = false }: { allowNegative?: boolean } = {},
+): number | null {
+  if (typeof text !== "string") return null;
+  const m = /^(-)?\$?(\d{1,3}(?:,\d{3})+|\d+)?(?:\.(\d{1,2}))?$/.exec(
+    text.trim().replace(/^\$-/, "-$"),
+  );
+  if (!m || (m[2] === undefined && m[3] === undefined)) return null;
+  if (m[1] && !allowNegative) return null;
+  const cents =
+    Number((m[2] ?? "0").replaceAll(",", "")) * 100 + Number((m[3] ?? "0").padEnd(2, "0"));
+  if (!Number.isSafeInteger(cents)) return null;
+  return m[1] && cents !== 0 ? -cents : cents;
+}
+
+// The parts of a moment on the wall clock of a time zone (IANA name), to the minute.
+function wallClock(date: Date, timeZone: string): Record<string, string> {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone,
+    hourCycle: "h23",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+  }).formatToParts(date);
+  return Object.fromEntries(parts.map((p) => [p.type, p.value]));
+}
+
+// A moment as the value a datetime-local input takes ("2026-11-11T08:30"), on the wall clock of
+// `timeZone` (default UTC, the Worker's own zone). The empty string for no date or a bad one.
+export function toDateTimeLocal(date: Date | null | undefined, timeZone = "UTC"): string {
+  if (!date || Number.isNaN(date.getTime())) return "";
+  const p = wallClock(date, timeZone);
+  return `${p.year}-${p.month}-${p.day}T${p.hour}:${p.minute}`;
+}
+
+// A datetime-local value back to the moment it names on the wall clock of `timeZone`; null when
+// it does not parse. A wall time a clock change skips is read on the offset from before it.
+export function fromDateTimeLocal(
+  value: FormDataEntryValue | string | null | undefined,
+  timeZone = "UTC",
+): Date | null {
+  if (typeof value !== "string") return null;
+  const m = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})(?::(\d{2}))?$/.exec(value.trim());
+  if (!m) return null;
+  const [y, mo, d, h, mi, s] = m.slice(1).map((n) => Number(n ?? 0)) as number[];
+  const asUtc = Date.UTC(y!, mo! - 1, d!, h!, mi!, s ?? 0);
+  const check = new Date(asUtc);
+  if (check.getUTCMonth() !== mo! - 1 || check.getUTCDate() !== d! || h! > 23 || mi! > 59)
+    return null;
+  // The zone's offset (wall clock minus UTC) at a moment, to the minute.
+  const offset = (at: number) => {
+    const p = wallClock(new Date(at), timeZone);
+    return (
+      Date.UTC(+p.year!, +p.month! - 1, +p.day!, +p.hour!, +p.minute!) -
+      Math.floor(at / 60000) * 60000
+    );
+  };
+  // Found twice, from a first guess, so a time beside a clock change settles on its own side.
+  const guess = asUtc - offset(asUtc);
+  return new Date(asUtc - offset(guess));
+}
+
+// A plain GET search form (data-keep-focus) on a page with no client router loads its results
+// afresh, and focus would go to the top. This puts it back on the control the person sent the
+// form from (the field, caret at the end, or the button). Storage is read in try/catch: blocked,
+// the page simply loads without it. `skip` returns true when the router submits in place (a
+// hydrated app), where focus stays without help. Call once per page; returns the detach.
+export function keepFocus({
+  key = "cap-keep-focus",
+  skip = () => false,
+}: { key?: string; skip?: () => boolean } = {}): () => void {
+  const onSubmit = (event: Event) => {
+    const form = event.target;
+    if (skip() || !(form instanceof HTMLFormElement) || !form.hasAttribute("data-keep-focus"))
+      return;
+    const at = Array.from(form.elements).indexOf(document.activeElement as Element);
+    try {
+      sessionStorage.setItem(
+        key,
+        JSON.stringify({ path: new URL(form.action, location.href).pathname, at }),
+      );
+    } catch {
+      /* storage blocked */
+    }
+  };
+  document.addEventListener("submit", onSubmit);
+  let saved: { path?: unknown; at?: unknown } | null;
+  try {
+    saved = JSON.parse(sessionStorage.getItem(key) ?? "null") as {
+      path?: unknown;
+      at?: unknown;
+    } | null;
+    sessionStorage.removeItem(key);
+  } catch {
+    saved = null;
+  }
+  if (saved && saved.path === location.pathname && typeof saved.at === "number" && saved.at >= 0) {
+    const target =
+      document.querySelector<HTMLFormElement>("form[data-keep-focus]")?.elements[saved.at];
+    if (target instanceof HTMLElement) {
+      target.focus();
+      if (target instanceof HTMLInputElement && /^(search|text)$/.test(target.type))
+        target.setSelectionRange(target.value.length, target.value.length);
+    }
+  }
+  return () => document.removeEventListener("submit", onSubmit);
+}
+
 const bound = (s: string): number | undefined => (s === "" ? undefined : Number(s));
 
 // Sets a control's value as typing would, so the field's checks and a React onChange see it.

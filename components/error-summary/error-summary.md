@@ -41,7 +41,7 @@ Any form whose submit finds two or more fields in error, and any page the server
 | --- | --- |
 | (a submit finds two or more fields in error) | Focus moves to the summary; its title and links are read |
 | Tab | Moves through the links, then on into the form |
-| Enter on a link | Puts focus in that field, with its label in view |
+| Enter on a link | Puts focus in that field, with its label in view; a link to a group (a fieldset, a repeater) lands on its control in error, else its first empty one (`focusTarget`) |
 
 ## Accessibility
 

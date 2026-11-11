@@ -4,6 +4,21 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+## [0.98.0]
+
+Forms and inputs (shared-code audit pass 2, batch 2: C14 to C20). Nothing removed or renamed; no HTML contract changed.
+
+- **Field.** `action` puts one button after the control in a new `.cap-field-row`; `helpPlacement="after"` puts the help under the control; `showRequired={false}` keeps the control required without the word. New React parts: `TextField`, `RangeField` (the value read out by the label, through `aria-valuetext` too, and words at the two ends: `.cap-range-field-head`, `.cap-range-field-value`, `.cap-range-field-ends`), `SlugField` (Prelum's `SLUG_PATTERN` and `slugify`, following a title until typed in), `MoneyField` and `DateTimeField`. New behavior functions: `centsToDollars`, `dollarsToCents` (read as a string, never a float), `toDateTimeLocal` and `fromDateTimeLocal` (on a named time zone, default UTC) and `keepFocus()` (a plain GET search form marked `data-keep-focus` keeps the focus across its reload). `Switch` takes `ref`.
+- **Error summary.** A link to a group lands on its control in error, else its first empty one (`focusTarget`).
+- **New: repeater field** (`repeater-field`). Rows a person adds, removes and reorders; each row a named group; focus never lost; each change said in the status region; posts with no script (`name[i][key]`, spare rows) or as one JSON field, read by `rowsFromForm`.
+- **New: schema form** (`schema-form`). `FieldSpec` per field, `FieldFromSpec`, `SchemaFields`, `SettingsForm`, `JsonField`; on the server `readSpecs` and `parseJsonField` (null, never a fallback to empty).
+- **New: settings row** (`settings-row`). `SettingsRow`, `SwitchRow` (`submitOnChange`, `form`, `disabledReason`) and `SettingsLayout` (the page head with a phone-only link back to the settings index).
+- **New: inline confirm** (`inline-confirm`). A two-step action in place that works with no script and opens on Cancel.
+- **New: read-only form** (`read-only-form`). A demo or viewer's submit stays in the page, with the reason in a banner.
+- **New: secret reveal** (`secret-reveal`). A secret shown once, focused, with its warning and the app's copy button.
+- **New: file attach** (`file-attach`). The drop zone's input as a button, its checks before sending, and the attached files listed.
+- Needs `@drdustinedwards/site-helpers` 0.45.0 (`SLUG_PATTERN`, `isSlug`) for `SlugField`.
+
 ## [0.89.0]
 
 - **Chart frame: the chart's toolbar is Enarratio's** (Enarratio 0.12.0, its record 0035; Dustin approved 2026-11-11). Enarratio now draws one toolbar above the chart, with Sound, Range and a Download menu ("Download CSV", then the drawing's files and Copy embed), each an icon and a word on one row that never wraps, phones included. Its data table is always visually hidden, for screen readers and AI agents, so "Show data" is gone and no table opens under a chart to push the page down. Capsomer's own Download menu is removed: `components/chart-frame/chart-downloads.ts` and `groupDownloads()` are deleted, along with the class `span.cap-chart-downloads` and the grouping in `capsomer/behavior/chart-enhance` and React's `ChartFrame`. A page with charts no longer needs `capsomer/menu.css`. `css/enarratio-tokens.css` sizes the toolbar on Capsomer's tokens (new `--enarratio-control-height`, `--enarratio-padding-control`, `--enarratio-radius-control`, `--enarratio-gap-controls`, `--enarratio-gap-icon`, `--enarratio-padding-panel`, `--enarratio-panel-shadow`), and `css/enarratio.css` takes the link system's file mark and tint off "Download CSV" in the menu. Removed rules: `.enarratio-export` in `css/base.css` and `css/enarratio.css`, and in `chart-frame.css` the "Show data" summary, the CSV link's target, the open range's row and the scrolling data table. The stat tile's and usage meter's tables (`dataTableBlock`) are hidden the same way, with no tab stop. The enarratio peer range is `^0.12.0`.
