@@ -1,8 +1,15 @@
 import { expect, test } from "@playwright/test";
-import { eachTheme, expectContrast, expectNoAxeViolations, visitStates } from "../../test/helpers.ts";
+import {
+  eachTheme,
+  expectContrast,
+  expectNoAxeViolations,
+  visitStates,
+} from "../../test/helpers.ts";
 
 eachTheme((theme) => {
-  test("accessibility: no axe violations, and the price and text reach their contrast", async ({ page }) => {
+  test("accessibility: no axe violations, and the price and text reach their contrast", async ({
+    page,
+  }) => {
     await visitStates(page, "price-card", theme);
     await expectNoAxeViolations(page);
     await expectContrast(page, [

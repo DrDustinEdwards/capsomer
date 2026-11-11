@@ -5,14 +5,20 @@ import { test } from "node:test";
 import { jsonData, parseEvent, readSse, takeEvents } from "../../components/sse/sse.ts";
 
 test("one space after the colon is framing; more is data; comments and empty data are skipped", () => {
-  assert.deepEqual(parseEvent("event: cut\ndata:  two\n: a comment\ndata:x"), { event: "cut", data: " two\nx" });
+  assert.deepEqual(parseEvent("event: cut\ndata:  two\n: a comment\ndata:x"), {
+    event: "cut",
+    data: " two\nx",
+  });
   assert.equal(parseEvent(": keep-alive"), null);
   assert.deepEqual(parseEvent("data"), { event: "message", data: "" });
 });
 
 test("CRLF, LF and CR all end lines and events", () => {
   const { events, rest } = takeEvents("data: a\r\n\r\ndata: b\n\ndata: c\r\rdata: d");
-  assert.deepEqual(events.map((e) => e.data), ["a", "b", "c"]);
+  assert.deepEqual(
+    events.map((e) => e.data),
+    ["a", "b", "c"],
+  );
   assert.equal(rest, "data: d");
 });
 

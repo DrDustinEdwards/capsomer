@@ -1,3 +1,13 @@
 /* Layout for the states page only. */
-.feature-demo { margin: 0; padding: 2rem; color: var(--muted); text-align: center; }
-.feature-demo-rows { margin: 0; padding: 1rem 1.5rem; display: grid; gap: 0.75rem; }
+.feature-demo {
+  margin: 0;
+  padding: 2rem;
+  color: var(--muted);
+  text-align: center;
+}
+.feature-demo-rows {
+  margin: 0;
+  padding: 1rem 1.5rem;
+  display: grid;
+  gap: 0.75rem;
+}

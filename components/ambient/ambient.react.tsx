@@ -18,7 +18,13 @@ export function Ambient({ variant, count, phoneCount, random }: AmbientProps) {
     return pauseOffscreen(el);
   }, [variant, count, phoneCount, random]);
   return (
-    <div ref={ref} className="cap-ambient" data-variant={variant} data-cap-ready="" aria-hidden="true">
+    <div
+      ref={ref}
+      className="cap-ambient"
+      data-variant={variant}
+      data-cap-ready=""
+      aria-hidden="true"
+    >
       {Array.from({ length: SPANS[variant] }, (_, i) => (
         <span key={i} />
       ))}

@@ -75,7 +75,12 @@ export interface FeatureCardItem {
   id?: string;
 }
 
-export function FeatureCard({ icon, title, text, headingLevel: H = "h3" }: FeatureCardItem & {
+export function FeatureCard({
+  icon,
+  title,
+  text,
+  headingLevel: H = "h3",
+}: FeatureCardItem & {
   headingLevel?: "h2" | "h3" | "h4" | "p";
 }) {
   return (

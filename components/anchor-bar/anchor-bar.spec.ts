@@ -149,12 +149,19 @@ eachTheme((theme) => {
     const nav = page.getByRole("navigation", { name: "Sections" });
     const lefts = await nav
       .getByRole("link")
-      .evaluateAll((els) => [...new Set(els.map((e) => Math.round(e.getBoundingClientRect().left)))]);
+      .evaluateAll((els) => [
+        ...new Set(els.map((e) => Math.round(e.getBoundingClientRect().left))),
+      ]);
     expect(lefts).toHaveLength(1);
-    await page.locator("#vx-alerts").scrollIntoView();
+    await page.locator("#vx-alerts").evaluate((e) => e.scrollIntoView());
     await page.evaluate(() => window.scrollBy(0, 1));
-    await expect(nav.getByRole("link", { name: "When it alerts" })).toHaveAttribute("aria-current", "location");
-    const h = await page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue("--cap-anchors-h"));
+    await expect(nav.getByRole("link", { name: "When it alerts" })).toHaveAttribute(
+      "aria-current",
+      "location",
+    );
+    const h = await page.evaluate(() =>
+      getComputedStyle(document.documentElement).getPropertyValue("--cap-anchors-h"),
+    );
     expect(h.trim()).toBe("0px");
   });
 });

@@ -1,8 +1,15 @@
 import { test } from "@playwright/test";
-import { eachTheme, expectContrast, expectNoAxeViolations, visitStates } from "../../test/helpers.ts";
+import {
+  eachTheme,
+  expectContrast,
+  expectNoAxeViolations,
+  visitStates,
+} from "../../test/helpers.ts";
 
 eachTheme((theme) => {
-  test("accessibility: no axe violations, and every tone reaches its contrast", async ({ page }) => {
+  test("accessibility: no axe violations, and every tone reaches its contrast", async ({
+    page,
+  }) => {
     await visitStates(page, "eyebrow", theme);
     await expectNoAxeViolations(page);
     await expectContrast(page, [

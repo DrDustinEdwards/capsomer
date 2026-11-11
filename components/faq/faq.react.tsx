@@ -23,7 +23,13 @@ function Answer({ answer }: { answer: ReactNode }) {
 }
 
 // The HTML contract in faq.md.
-export function Faq({ items, variant = "accordion", name = "faq", openFirst, headingLevel: H = "h3" }: FaqProps) {
+export function Faq({
+  items,
+  variant = "accordion",
+  name = "faq",
+  openFirst,
+  headingLevel: H = "h3",
+}: FaqProps) {
   if (variant === "list") {
     return (
       <ul className="cap-faq" data-variant="list">

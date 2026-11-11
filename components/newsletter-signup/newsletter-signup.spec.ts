@@ -1,8 +1,15 @@
 import { expect, test } from "@playwright/test";
-import { eachTheme, expectContrast, expectNoAxeViolations, visitStates } from "../../test/helpers.ts";
+import {
+  eachTheme,
+  expectContrast,
+  expectNoAxeViolations,
+  visitStates,
+} from "../../test/helpers.ts";
 
 eachTheme((theme) => {
-  test("accessibility: no axe violations, and the consent, error and sent lines reach their contrast", async ({ page }) => {
+  test("accessibility: no axe violations, and the consent, error and sent lines reach their contrast", async ({
+    page,
+  }) => {
     await visitStates(page, "newsletter-signup", theme);
     await expectNoAxeViolations(page);
     await expectContrast(page, [
@@ -12,7 +19,9 @@ eachTheme((theme) => {
     ]);
   });
 
-  test("keyboard: the form will not send without an email and the consent box", async ({ page }) => {
+  test("keyboard: the form will not send without an email and the consent box", async ({
+    page,
+  }) => {
     await visitStates(page, "newsletter-signup", theme);
     const form = page.locator("#nl-card form");
     const email = form.getByRole("textbox", { name: "Email address" });
@@ -23,7 +32,9 @@ eachTheme((theme) => {
     expect(await form.evaluate((f: HTMLFormElement) => f.checkValidity())).toBe(true);
   });
 
-  test("behavior: the field and button share a row when wide and stack on a phone", async ({ page }) => {
+  test("behavior: the field and button share a row when wide and stack on a phone", async ({
+    page,
+  }) => {
     await page.setViewportSize({ width: 360, height: 800 });
     await visitStates(page, "newsletter-signup", theme);
     const [i, b] = await Promise.all([

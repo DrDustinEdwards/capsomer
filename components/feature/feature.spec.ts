@@ -1,5 +1,10 @@
 import { expect, test } from "@playwright/test";
-import { eachTheme, expectContrast, expectNoAxeViolations, visitStates } from "../../test/helpers.ts";
+import {
+  eachTheme,
+  expectContrast,
+  expectNoAxeViolations,
+  visitStates,
+} from "../../test/helpers.ts";
 
 eachTheme((theme) => {
   test("accessibility: no axe violations", async ({ page }) => {
@@ -7,7 +12,9 @@ eachTheme((theme) => {
     await expectNoAxeViolations(page);
   });
 
-  test("accessibility: eyebrow, title, body and card text reach their contrast", async ({ page }) => {
+  test("accessibility: eyebrow, title, body and card text reach their contrast", async ({
+    page,
+  }) => {
     await visitStates(page, "feature", theme);
     await expectContrast(page, [
       { sel: "#fe-stacked .cap-eyebrow", what: "the eyebrow" },
@@ -17,7 +24,9 @@ eachTheme((theme) => {
     ]);
   });
 
-  test("keyboard: a tall preview is a named region Tab reaches and arrows scroll", async ({ page }) => {
+  test("keyboard: a tall preview is a named region Tab reaches and arrows scroll", async ({
+    page,
+  }) => {
     await visitStates(page, "feature", theme);
     const region = page.getByRole("region", { name: "Sample change history" });
     await region.focus();

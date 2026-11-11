@@ -10,11 +10,13 @@ export function shares(votes: number[]): number[] {
 export function setShares(poll: ParentNode): void {
   const options = Array.from(poll.querySelectorAll<HTMLElement>(".cap-poll-option[data-votes]"));
   const s = shares(options.map((o) => Number(o.dataset.votes) || 0));
-  options.forEach((o, i) => o.style.setProperty("--share", s[i].toFixed(4)));
+  options.forEach((o, i) => o.style.setProperty("--share", (s[i] ?? 0).toFixed(4)));
 }
 
 export function enhance(root: ParentNode = document): () => void {
-  const polls = Array.from(root.querySelectorAll<HTMLElement>('[data-cap="poll"]:not([data-cap-ready])'));
+  const polls = Array.from(
+    root.querySelectorAll<HTMLElement>('[data-cap="poll"]:not([data-cap-ready])'),
+  );
   const observers: MutationObserver[] = [];
   for (const poll of polls) {
     poll.dataset.capReady = "";

@@ -1,5 +1,10 @@
 import { expect, test } from "@playwright/test";
-import { eachTheme, expectContrast, expectNoAxeViolations, visitStates } from "../../test/helpers.ts";
+import {
+  eachTheme,
+  expectContrast,
+  expectNoAxeViolations,
+  visitStates,
+} from "../../test/helpers.ts";
 
 eachTheme((theme) => {
   test("accessibility: no axe violations", async ({ page }) => {
@@ -20,11 +25,13 @@ eachTheme((theme) => {
   }) => {
     await visitStates(page, "process", theme);
     const tops = (id: string) =>
-      page.locator(`${id} .cap-process-step`).evaluateAll((els) => els.map((e) => Math.round(e.getBoundingClientRect().top)));
+      page
+        .locator(`${id} .cap-process-step`)
+        .evaluateAll((els) => els.map((e) => Math.round(e.getBoundingClientRect().top)));
     const wide = await tops("#pr-columns");
     expect(new Set(wide).size).toBe(1);
     const narrow = await tops("#pr-narrow");
-    expect(narrow[1]).toBeGreaterThan(narrow[0]);
+    expect(narrow[1]).toBeGreaterThan(narrow[0] ?? 0);
     await expect(page.locator("#pr-columns ol")).toMatchAriaSnapshot(`
       - list:
         - listitem:

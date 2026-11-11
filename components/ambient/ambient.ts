@@ -11,7 +11,12 @@ export interface HexOptions {
   random?: () => number;
 }
 
-const COLORS = ["var(--cap-ambient-1)", "var(--cap-ambient-2)", "var(--cap-ambient-3)", "var(--cap-ambient-4)"];
+const COLORS = [
+  "var(--cap-ambient-1)",
+  "var(--cap-ambient-2)",
+  "var(--cap-ambient-3)",
+  "var(--cap-ambient-4)",
+];
 
 // The source's ranges: size 45 to 89px, top 0 to 90%, left 0 to 95%, 25 to 44s a cycle, started up to 29s in.
 export function drawHexes(field: HTMLElement, options: HexOptions = {}): HTMLElement[] {
@@ -24,7 +29,7 @@ export function drawHexes(field: HTMLElement, options: HexOptions = {}): HTMLEle
     hex.style.setProperty("--s", `${(45 + random() * 44).toFixed(1)}px`);
     hex.style.setProperty("--y", `${(random() * 90).toFixed(1)}%`);
     hex.style.setProperty("--x", `${(random() * 95).toFixed(1)}%`);
-    hex.style.setProperty("--c", COLORS[i % COLORS.length]);
+    hex.style.setProperty("--c", COLORS[i % COLORS.length] ?? "");
     hex.style.setProperty("--d", `${(25 + random() * 19).toFixed(1)}s`);
     hex.style.setProperty("--l", `${(-random() * 29).toFixed(1)}s`);
     hexes.push(hex);
@@ -46,7 +51,9 @@ export function pauseOffscreen(layer: HTMLElement): () => void {
 
 export function enhance(root: ParentNode = document, options: HexOptions = {}): () => void {
   const stops: (() => void)[] = [];
-  for (const layer of root.querySelectorAll<HTMLElement>('[data-cap="ambient"]:not([data-cap-ready])')) {
+  for (const layer of root.querySelectorAll<HTMLElement>(
+    '[data-cap="ambient"]:not([data-cap-ready])',
+  )) {
     layer.dataset.capReady = "";
     if (layer.dataset.variant === "hex-field") drawHexes(layer, options);
     stops.push(pauseOffscreen(layer));

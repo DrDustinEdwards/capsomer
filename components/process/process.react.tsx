@@ -21,7 +21,13 @@ export interface ProcessStepsProps {
 }
 
 // The HTML contract in steps.md.
-export function ProcessSteps({ steps, layout = "columns", flush, headingLevel: H = "h3", label }: ProcessStepsProps) {
+export function ProcessSteps({
+  steps,
+  layout = "columns",
+  flush,
+  headingLevel: H = "h3",
+  label,
+}: ProcessStepsProps) {
   return (
     <div
       className="cap-process"

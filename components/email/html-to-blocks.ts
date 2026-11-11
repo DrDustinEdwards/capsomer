@@ -167,7 +167,7 @@ function decodeEntities(s: string): string {
       const valid = code > 0 && code <= 0x10ffff && !(code >= 0xd800 && code <= 0xdfff);
       return valid ? String.fromCodePoint(code) : whole;
     }
-    return Object.hasOwn(NAMED, ref) ? NAMED[ref] : whole;
+    return Object.hasOwn(NAMED, ref) ? (NAMED[ref] ?? whole) : whole;
   });
 }
 
@@ -178,7 +178,7 @@ function decodeEntities(s: string): string {
 function parseAttrs(raw: string): Map<string, string> {
   const out = new Map<string, string>();
   for (const m of raw.matchAll(ATTR)) {
-    const name = m[1].toLowerCase();
+    const name = (m[1] ?? "").toLowerCase();
     if (!out.has(name)) out.set(name, decodeEntities(m[2] ?? m[3] ?? m[4] ?? ""));
   }
   return out;
@@ -347,8 +347,9 @@ export function htmlToBlocks(html: string): Block[] {
       .map((l) => ({ label: squash(l.label), url: l.url }))
       .filter((l) => l.label);
     // A block that is nothing but one link is a button.
-    if (links.length === 1 && text === links[0].label) {
-      blocks.push({ type: "button", label: links[0].label, url: links[0].url });
+    const only = links.length === 1 ? links[0] : undefined;
+    if (only && text === only.label) {
+      blocks.push({ type: "button", label: only.label, url: only.url });
       return;
     }
     if (text) blocks.push({ type: p.kind === "paragraph" && p.allSmall ? "fine" : p.kind, text });
@@ -363,7 +364,7 @@ export function htmlToBlocks(html: string): Block[] {
 
   let last = 0;
   for (const m of source.matchAll(TAG)) {
-    const [whole, slash, rawName, rawAttrs, selfClose] = m;
+    const [whole, slash, rawName = "", rawAttrs = "", selfClose] = m;
     const name = rawName.toLowerCase();
     const closing = slash === "/";
     const between = source.slice(last, m.index);

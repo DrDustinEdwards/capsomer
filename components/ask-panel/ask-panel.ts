@@ -70,7 +70,11 @@ export interface AskHandle {
 const defaultRead = (e: SseEvent): AskRead => ({ delta: completionDelta(jsonData(e)) });
 const sameOrigin = (url: string) => url.startsWith("/") && !url.startsWith("//");
 
-function el<K extends keyof HTMLElementTagNameMap>(tag: K, className?: string, text?: string): HTMLElementTagNameMap[K] {
+function el<K extends keyof HTMLElementTagNameMap>(
+  tag: K,
+  className?: string,
+  text?: string,
+): HTMLElementTagNameMap[K] {
   const node = document.createElement(tag);
   if (className) node.className = className;
   if (text) node.textContent = text;
@@ -81,7 +85,8 @@ function el<K extends keyof HTMLElementTagNameMap>(tag: K, className?: string, t
 export function ask(container: HTMLElement, options: AskOptions): AskHandle {
   const w = { ...ASK_WORDS, ...options.words };
   const read = options.read ?? defaultRead;
-  const split = options.split ?? ((answer: string) => ({ answer }));
+  const split =
+    options.split ?? ((answer: string): { answer: string; followUp?: string } => ({ answer }));
   const allow = options.allowSource ?? sameOrigin;
   const controller = new AbortController();
   container.replaceChildren();
@@ -125,12 +130,17 @@ export function ask(container: HTMLElement, options: AskOptions): AskHandle {
       const li = el("li");
       const a = el("a");
       a.href = s.url;
-      a.append(el("span", "cap-ask-source-index", `${items.length + 1}. `), el("span", undefined, s.title));
+      a.append(
+        el("span", "cap-ask-source-index", `${items.length + 1}. `),
+        el("span", undefined, s.title),
+      );
       li.append(a);
       if (s.kind) li.append(el("span", "cap-ask-source-kind", ` ${s.kind}`));
       items.push(li);
     }
-    sources.replaceChildren(...(items.length ? [el("li", "cap-ask-sources-heading", w.sources), ...items] : []));
+    sources.replaceChildren(
+      ...(items.length ? [el("li", "cap-ask-sources-heading", w.sources), ...items] : []),
+    );
     sources.hidden = items.length === 0;
   };
 
@@ -190,7 +200,9 @@ export function ask(container: HTMLElement, options: AskOptions): AskHandle {
     if (controller.signal.aborted) return;
     body.removeAttribute("aria-busy");
     if (!answer.trim()) fail(w.empty);
-    else announcer.textContent = w.announce(split(answer).answer) + (cutNote.hidden ? "" : ` ${w.cut}`);
+    else
+      announcer.textContent =
+        w.announce(split(answer).answer) + (cutNote.hidden ? "" : ` ${w.cut}`);
   })();
 
   return {
@@ -208,10 +220,14 @@ export function ask(container: HTMLElement, options: AskOptions): AskHandle {
 // DOM, so two bundles on one page never stream two answers for one click. `options` gives the request for a question.
 export function enhance(
   root: ParentNode = document,
-  options: Omit<AskOptions, "request"> & { request: (question: string, signal: AbortSignal) => Promise<Response> },
+  options: Omit<AskOptions, "request"> & {
+    request: (question: string, signal: AbortSignal) => Promise<Response>;
+  },
 ): () => void {
   const undo: Array<() => void> = [];
-  for (const mount of root.querySelectorAll<HTMLElement>('[data-cap="ask"]:not([data-cap-ready])')) {
+  for (const mount of root.querySelectorAll<HTMLElement>(
+    '[data-cap="ask"]:not([data-cap-ready])',
+  )) {
     const trigger = mount.querySelector<HTMLButtonElement>("[data-ask-trigger]");
     const container = mount.querySelector<HTMLElement>("[data-ask-container]");
     if (!trigger || !container) continue;

@@ -70,9 +70,18 @@ export function NewsletterSignup({
       ) : null}
     </>
   );
-  const formProps = { className: "cap-newsletter-form", method: "post", action, "aria-labelledby": titleId };
+  const formProps = {
+    className: "cap-newsletter-form",
+    method: "post",
+    action,
+    "aria-labelledby": titleId,
+  };
   return (
-    <section className="cap-newsletter" data-variant={plain ? "plain" : undefined} aria-labelledby={titleId}>
+    <section
+      className="cap-newsletter"
+      data-variant={plain ? "plain" : undefined}
+      aria-labelledby={titleId}
+    >
       <H className="cap-newsletter-title" id={titleId}>
         {title}
       </H>

@@ -85,12 +85,14 @@ export function jsonData(e: SseEvent): unknown {
 // The text a chat completion event adds (OpenAI's `choices[0].delta.content`, which Workers AI and AI Search stream),
 // or undefined.
 export function completionDelta(data: unknown): string | undefined {
-  const delta = (data as { choices?: Array<{ delta?: { content?: unknown } }> } | null)?.choices?.[0]?.delta?.content;
+  const delta = (data as { choices?: Array<{ delta?: { content?: unknown } }> } | null)
+    ?.choices?.[0]?.delta?.content;
   return typeof delta === "string" ? delta : undefined;
 }
 
 // Why the model stopped (`choices[0].finish_reason`: "stop" finished, "length" cut at max_tokens), or undefined.
 export function finishReason(data: unknown): string | undefined {
-  const reason = (data as { choices?: Array<{ finish_reason?: unknown }> } | null)?.choices?.[0]?.finish_reason;
+  const reason = (data as { choices?: Array<{ finish_reason?: unknown }> } | null)?.choices?.[0]
+    ?.finish_reason;
   return typeof reason === "string" && reason.length > 0 ? reason : undefined;
 }

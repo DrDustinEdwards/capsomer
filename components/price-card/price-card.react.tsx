@@ -83,7 +83,15 @@ export interface PlanChoiceProps {
   required?: boolean;
 }
 
-export function PlanChoice({ name, legend, options, defaultValue, value, onChange, required }: PlanChoiceProps) {
+export function PlanChoice({
+  name,
+  legend,
+  options,
+  defaultValue,
+  value,
+  onChange,
+  required,
+}: PlanChoiceProps) {
   return (
     <fieldset className="cap-plan-choice">
       <legend>{legend}</legend>

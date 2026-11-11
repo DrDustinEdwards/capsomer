@@ -1,8 +1,15 @@
 import { expect, test } from "@playwright/test";
-import { eachTheme, expectContrast, expectNoAxeViolations, visitStates } from "../../test/helpers.ts";
+import {
+  eachTheme,
+  expectContrast,
+  expectNoAxeViolations,
+  visitStates,
+} from "../../test/helpers.ts";
 
 eachTheme((theme) => {
-  test("accessibility: no axe violations, and the kind, title and details reach their contrast", async ({ page }) => {
+  test("accessibility: no axe violations, and the kind, title and details reach their contrast", async ({
+    page,
+  }) => {
     await visitStates(page, "sources-list", theme);
     await expectNoAxeViolations(page);
     await expectContrast(page, [
@@ -12,9 +19,15 @@ eachTheme((theme) => {
     ]);
   });
 
-  test("behavior: a closed list is still in the page, and a link that leaves says so", async ({ page }) => {
+  test("behavior: a closed list is still in the page, and a link that leaves says so", async ({
+    page,
+  }) => {
     await visitStates(page, "sources-list", theme);
     await expect(page.locator("#sl-closed .cap-source")).toHaveCount(1);
-    await expect(page.locator("#sl-mixed").getByRole("link", { name: "A field guide to field notes (another site)" })).toBeVisible();
+    await expect(
+      page
+        .locator("#sl-mixed")
+        .getByRole("link", { name: "A field guide to field notes (another site)" }),
+    ).toBeVisible();
   });
 });

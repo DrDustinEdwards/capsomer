@@ -1,3 +1,14 @@
 /* Layout for the states page only. */
-.band-demo { margin: 0; padding: 2rem; text-align: center; font-size: 1.25rem; }
-.band-demo-before, .band-demo-after { padding: 7rem 1rem; text-align: center; background: var(--sunken); color: var(--text); }
+.band-demo {
+  margin: 0;
+  padding: 2rem;
+  text-align: center;
+  font-size: 1.25rem;
+}
+.band-demo-before,
+.band-demo-after {
+  padding: 7rem 1rem;
+  text-align: center;
+  background: var(--sunken);
+  color: var(--text);
+}

@@ -1,2 +1,5 @@
 /* Layout for the states page only. */
-.eyebrow-demo { display: grid; gap: 0.75rem; }
+.eyebrow-demo {
+  display: grid;
+  gap: 0.75rem;
+}

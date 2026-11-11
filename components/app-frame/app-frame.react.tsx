@@ -13,7 +13,14 @@ export interface AppFrameProps {
 }
 
 // The HTML contract in app-frame.md.
-export function AppFrame({ children, address, variant = "browser", foot, decorative, description }: AppFrameProps) {
+export function AppFrame({
+  children,
+  address,
+  variant = "browser",
+  foot,
+  decorative,
+  description,
+}: AppFrameProps) {
   return (
     <>
       {decorative && description ? <p className="cap-sr-only">{description}</p> : null}

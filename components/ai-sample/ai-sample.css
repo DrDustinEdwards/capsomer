@@ -1,0 +1,145 @@
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* A live AI sample: the reader picks an input, presses Generate, and sees what the model writes,
+   labelled as AI and as made for a fictional person. The output is labelled fields (a subject, a
+   body) so a sample email reads as one. Extracted from Foxhound's home page email generator
+   (components/email-samples.tsx, islands/email-generator.ts). */
+@layer cap.components {
+  .cap-ai-sample {
+    border: 1px solid var(--line);
+    border-radius: var(--radius-l);
+    background: var(--raised);
+    color: var(--text);
+  }
+
+  .cap-ai-sample-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-5);
+    border-block-end: 1px solid var(--line);
+  }
+
+  .cap-ai-sample-title {
+    margin: 0;
+    color: var(--muted);
+    font-family: var(--mono);
+    font-size: var(--fs-label);
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  /* "Calls real AI": a status, with a dot that pulses only for readers who allow motion. */
+  .cap-ai-sample-live {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    color: var(--ok);
+    font-family: var(--mono);
+    font-size: var(--fs-label);
+
+    &::before {
+      content: "";
+      inline-size: 6px;
+      block-size: 6px;
+      border-radius: var(--radius-full);
+      background: currentColor;
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .cap-ai-sample-live::before {
+      animation: cap-ai-sample-pulse 2s var(--ease-out) infinite;
+    }
+  }
+
+  @keyframes cap-ai-sample-pulse {
+    50% {
+      opacity: 0.35;
+    }
+  }
+
+  .cap-ai-sample-controls {
+    display: grid;
+    gap: var(--space-4);
+    padding: var(--space-5);
+  }
+
+  .cap-ai-sample-action {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-2);
+
+    & > .cap-btn {
+      min-inline-size: min(100%, 17.5rem);
+    }
+  }
+
+  .cap-ai-sample-hint,
+  .cap-ai-sample-note {
+    margin: 0;
+    color: var(--muted);
+    font-family: var(--mono);
+    font-size: var(--fs-label);
+    text-align: center;
+  }
+
+  .cap-ai-sample-note {
+    margin-block-start: var(--space-3);
+    text-align: start;
+  }
+
+  /* The live region: empty until a sample or a failure lands. */
+  .cap-ai-sample-out:empty {
+    display: none;
+  }
+
+  .cap-ai-sample-result,
+  .cap-ai-sample-error {
+    margin: 0;
+    padding: var(--space-5);
+    border-block-start: 1px solid var(--line);
+  }
+
+  .cap-ai-sample-error {
+    color: var(--crit);
+    font-size: var(--fs-detail);
+  }
+
+  .cap-ai-sample-label {
+    margin: 0 0 var(--space-2);
+    color: var(--muted);
+    font-family: var(--mono);
+    font-size: var(--fs-label);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .cap-ai-sample-field {
+    margin: 0 0 var(--space-4);
+    padding: var(--space-2) var(--space-3);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-m);
+    background: var(--ground);
+    font-weight: 500;
+    overflow-wrap: anywhere;
+    white-space: pre-wrap;
+
+    &[data-variant="mono"] {
+      padding-block: var(--space-3);
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: var(--fs-detail);
+      font-weight: 400;
+      line-height: 1.7;
+    }
+
+    &:last-of-type {
+      margin-block-end: 0;
+    }
+  }
+}

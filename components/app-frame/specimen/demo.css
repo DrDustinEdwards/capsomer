@@ -1,2 +1,7 @@
 /* Layout for the states page only. */
-.frame-demo { margin: 0; padding: 2rem; color: var(--muted); text-align: center; }
+.frame-demo {
+  margin: 0;
+  padding: 2rem;
+  color: var(--muted);
+  text-align: center;
+}

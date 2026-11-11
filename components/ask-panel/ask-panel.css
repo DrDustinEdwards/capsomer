@@ -76,6 +76,13 @@
     font-size: var(--fs-detail);
   }
 
+  /* Each link is at least a 24px target (WCAG 2.5.8): the list is tight, so its links are not left to spacing. */
+  :is(.cap-ask-sources, .cap-ask-followup) a {
+    display: inline-flex;
+    align-items: center;
+    min-block-size: 24px;
+  }
+
   .cap-ask-sources-heading {
     color: var(--muted);
     font-size: var(--fs-label);
