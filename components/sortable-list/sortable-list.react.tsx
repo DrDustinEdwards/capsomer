@@ -17,7 +17,7 @@ import {
   type SortMove,
 } from "./sortable-list.ts";
 
-import { Arrow, Grip } from "./sortable-icons.react.tsx";
+import { Arrow, Grip, labelFor, useSay } from "./sortable-icons.react.tsx";
 
 export { indexAtPoint, keyTarget, moveId, sortText } from "./sortable-list.ts";
 export type { Layout, SortMove, Group, GroupMove } from "./sortable-list.ts";
@@ -67,7 +67,7 @@ export function SortableList<T>({
   const [draft, setDraft] = useState<string[] | null>(null);
   const [lifted, setLifted] = useState<{ id: string; from: number } | null>(null);
   const [dragging, setDragging] = useState<string | null>(null);
-  const [said, setSaid] = useState("");
+  const [said, say] = useSay(announce);
   const order = (draft ?? ids).filter((id) => byId.has(id));
   const helpId = useId();
   const handles = useRef(new Map<string, HTMLElement>());
@@ -92,12 +92,7 @@ export function SortableList<T>({
     if (el && document.activeElement !== el) el.focus({ preventScroll: true });
   });
 
-  const say = (text: string) =>
-    announce ? announce(text) : setSaid((prev) => (prev === text ? `${text} ` : text));
-  const labelOf = (id: string) => {
-    const it = byId.get(id);
-    return it === undefined ? id : getLabel(it);
-  };
+  const labelOf = labelFor(byId, getLabel);
   const finish = (next: string[], id: string, from: number) => {
     const to = next.indexOf(id);
     setDraft(null);

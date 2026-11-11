@@ -18,7 +18,7 @@ import {
   type Group,
   type GroupMove,
 } from "./sortable-list.ts";
-import { Arrow, Grip } from "./sortable-icons.react.tsx";
+import { Arrow, Grip, labelFor, useSay } from "./sortable-icons.react.tsx";
 
 // Items in several lists that move within and between them: the sections of a book, the sessions
 // of a program. One handle per item picks it up (Space or Enter) and the arrows carry it past a
@@ -62,7 +62,7 @@ export function SortableGroups<T>({
   const [draft, setDraft] = useState<Group[] | null>(null);
   const [lifted, setLifted] = useState<{ id: string; group: string; from: number } | null>(null);
   const [dragging, setDragging] = useState<string | null>(null);
-  const [said, setSaid] = useState("");
+  const [said, say] = useSay(announce);
   const order = draft ?? base;
   const helpId = useId();
   const uid = useId();
@@ -87,12 +87,7 @@ export function SortableGroups<T>({
     if (el && document.activeElement !== el) el.focus({ preventScroll: true });
   });
 
-  const say = (text: string) =>
-    announce ? announce(text) : setSaid((prev) => (prev === text ? `${text} ` : text));
-  const labelOf = (id: string) => {
-    const it = byId.get(id);
-    return it === undefined ? id : getLabel(it);
-  };
+  const labelOf = labelFor(byId, getLabel);
   const where = (g: Group[], id: string) => {
     const at = locate(g, id)!;
     const group = g[at.group]!;
