@@ -59,7 +59,11 @@
     font-weight: var(--weight-heading);
     line-height: 1.35;
 
+    /* A target at least --target tall, so a title on a touch screen is 44px to tap (WCAG 2.5.8). */
     a {
+      display: inline-flex;
+      align-items: center;
+      min-block-size: var(--target);
       color: var(--text);
     }
   }
