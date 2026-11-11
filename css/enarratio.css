@@ -162,16 +162,17 @@
 }
 
 /* Unlayered, as Enarratio's base rules are, so these win over them (a layered rule never would).
-   A figure's links (the source and "Download CSV", and 0.5's "Download SVG" and "Download PNG"
-   buttons beside them) are links in the link system (css/base.css, components/link/link.md):
-   semibold in the link color with no underline, the hover and pressed tints, the visited color
-   and the focus ring. Enarratio's own rules (`.enarratio-source a { color: inherit }`, its
-   underline, a button's focus outline) would beat that layered system, so revert-layer sets
-   aside every unlayered value of these properties, Enarratio's included, and the link system's
-   win. Enarratio's tick labels ask for tabular figures, and the interface face's tabular set gives the
+   A figure's links (the source, a note's or caption's) are links in the link system
+   (css/base.css, components/link/link.md): semibold in the link color with no underline, the
+   hover and pressed tints, the visited color and the focus ring. Enarratio's own rules
+   (`.enarratio-source a { color: inherit }`, its underline) would beat that layered system, so
+   revert-layer sets aside every unlayered value of these properties, Enarratio's included, and
+   the link system's win. "Download CSV" in the toolbar's Download menu is a menu item, not a text
+   link: Enarratio draws it as one, and the link system's file mark and tint are taken off.
+   Enarratio's tick labels ask for tabular figures, and the interface face's tabular set gives the
    comma and the 1 a full figure's width ("1 , 600"); they take --figures, as the page's own
    numbers do. */
-.enarratio :is(.enarratio-source, .enarratio-note, .enarratio-caption) :is(a, .enarratio-export) {
+.enarratio :is(.enarratio-source, .enarratio-note, .enarratio-caption) a {
   color: revert-layer;
   font-weight: revert-layer;
   text-decoration: revert-layer;
@@ -182,11 +183,12 @@
     box-shadow: revert-layer;
   }
 }
+.enarratio .enarratio-menu > a {
+  box-shadow: none;
+  &::after {
+    content: none;
+  }
+}
 .enarratio svg :is([data-enarratio-mark$="tick label"], .enarratio-numeric) {
   font-variant-numeric: var(--figures);
-}
-/* The export buttons beside the CSV link (Download SVG, Download PNG, Copy embed) are full
-   targets, 44px on a touch screen, over Enarratio's 24px minimum. */
-.enarratio .enarratio-source .enarratio-export {
-  min-height: var(--target);
 }

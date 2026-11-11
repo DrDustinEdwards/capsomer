@@ -101,10 +101,8 @@ eachTheme((theme) => {
     await tiles.first().focus();
     const count = await tiles.count();
     for (let i = 1; i < count; i++) {
+      // A tile's numbers are a table for screen readers, with no tab stop of its own.
       await page.keyboard.press("Tab");
-      // A tile with its numbers has one more stop after it: its "Show data".
-      if (await page.locator(".enarratio-data > summary:focus").count())
-        await page.keyboard.press("Tab");
       await expect(tiles.nth(i)).toBeFocused();
     }
   });
@@ -172,22 +170,21 @@ eachTheme((theme) => {
     }
   });
 
-  test("behavior: a tile with its numbers has Show data under it, outside the link", async ({
+  test("behavior: a tile with its numbers has them as a hidden table under it, outside the link", async ({
     page,
   }) => {
     await visitStates(page, "stat-tile", theme);
     const frame = page.locator("#grid-sites-data");
     await expect(frame.locator("a.cap-tile")).toHaveCount(1);
-    await expect(frame.locator("a.cap-tile details, a.cap-tile summary")).toHaveCount(0);
-    await expect(frame.getByText("Show data")).toBeVisible();
+    await expect(frame.locator("a.cap-tile table")).toHaveCount(0);
+    // Read by screen readers and AI agents, never shown, so it never pushes the grid down.
+    await expect(frame.locator(".enarratio-data.enarratio-visually-hidden table")).toHaveCount(1);
     // The sparkline is an inline primitive: an image named by its numbers, no frame of its own.
     await expect(
       frame.getByRole("img", { name: "Sites up, last 7 days: 6 of 6 every day." }),
     ).toHaveCount(1);
     await expect(frame.locator(".cap-chart")).toHaveCount(0);
-    await frame.locator("summary").focus();
-    await page.keyboard.press("Enter");
-    await expect(frame.getByRole("table")).toBeVisible();
-    await expect(frame.getByRole("row", { name: /Tue, Sep 29/ })).toBeVisible();
+    await expect(frame.getByRole("table")).toHaveCount(1);
+    await expect(frame.getByRole("row", { name: /Tue, Sep 29/ })).toHaveCount(1);
   });
 });

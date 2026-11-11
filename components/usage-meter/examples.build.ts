@@ -1,4 +1,4 @@
-// The usage meter's numbers behind "Show data", drawn by Enarratio's dataTableBlock() when the
+// The usage meter's numbers as a hidden table, drawn by Enarratio's dataTableBlock() when the
 // states page is built (bin/states.mjs), in usageTable()'s columns.
 import { dataTableBlock } from "enarratio";
 

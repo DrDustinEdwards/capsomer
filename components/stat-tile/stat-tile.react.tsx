@@ -26,9 +26,9 @@ interface StatTileBase {
   // One sentence with the chart's numbers, "Actions minutes per day, last 7 days: 260 rising to
   // 340.", when the SVG's own name is not it: the slot becomes the image, named by this.
   chartSummary?: string;
-  // The chart's numbers (Enarratio's sparklineTable().table). With it Enarratio's "Show data"
-  // opens the table under the tile, outside the link. Name it in chartTableLabel ("Actions
-  // minutes by day").
+  // The chart's numbers (Enarratio's sparklineTable().table). With it Enarratio's table, visually
+  // hidden for screen readers and AI agents, sits under the tile, outside the link. Name it in
+  // chartTableLabel ("Actions minutes by day").
   chartTable?: DataTable;
   chartTableLabel?: string;
   // Opens the view behind the figure: a link with href, or a button with onClick.
@@ -144,7 +144,7 @@ export function StatTile(props: StatTileProps) {
       </button>
     );
 
-  // With a table, "Show data" sits under the tile, never inside the link.
+  // With a table, its hidden table sits under the tile, never inside the link.
   if (hasChart && chartTable) {
     return (
       <div className="cap-data">

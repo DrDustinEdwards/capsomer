@@ -60,18 +60,15 @@
      focus ring; a text link (no component class, or a kind of the link system: components/link)
      is semibold, turns the visited color once followed (outside a nav), and under the pointer darkens on a soft
      tint, which a press makes stronger. The tint is a background and a 2px shadow of the same
-     color, cloned onto each line a link wraps to. A link that is a control is drawn by its component.
-     A chart's Download SVG and PNG buttons (Enarratio's .enarratio-export) sit beside its links
-     and are drawn as one, every state but visited; css/enarratio.css hands them back here. */
-  a,
-  :where(.enarratio-export) {
+     color, cloned onto each line a link wraps to. A link that is a control is drawn by its component. */
+  a {
     color: var(--accent-text);
     text-decoration: var(--link-decoration);
     &:is(:not([class*="cap-"]), [data-link], .cap-footnote-ref) {
       font-weight: var(--link-weight);
     }
     /* Not in a nav: a menu is told by its place, and draws its own tint (link.md). */
-    &:is([href], .enarratio-export):is(:not([class*="cap-"]), [data-link], .cap-footnote-ref):not(nav a) {
+    &[href]:is(:not([class*="cap-"]), [data-link], .cap-footnote-ref):not(nav a) {
       border-radius: 3px;
       -webkit-box-decoration-break: clone;
       box-decoration-break: clone;

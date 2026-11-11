@@ -98,7 +98,6 @@ const drawings: Record<string, string> = {
       id: "cf-up",
       width: 480,
       height: 28,
-      dataTable: "details",
     }),
     { inline: true },
   ),
@@ -150,10 +149,7 @@ const drawings: Record<string, string> = {
       width: 640,
       height: 280,
     });
-    return drawn("bar", barChart(options), options).replace(
-      '<details class="enarratio-data">',
-      '<details class="enarratio-data" open>',
-    );
+    return drawn("bar", barChart(options), options);
   })(),
   line: drawn("line", lineChart(lineSpec), lineSpec),
   area: drawn("area", areaChart(areaSpec), areaSpec),

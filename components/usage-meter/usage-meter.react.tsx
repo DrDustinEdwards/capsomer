@@ -30,7 +30,7 @@ export interface UsageMeterProps {
   stale?: boolean;
   // The text legend under the bars; on by default.
   legend?: boolean;
-  // Names the numbers behind "Show data" (Enarratio's disclosure): "Usage against free limits".
+  // Names the numbers' table (Enarratio's, hidden for screen readers): "Usage against free limits".
   tableLabel?: string;
 }
 

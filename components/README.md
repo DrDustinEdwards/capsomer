@@ -36,7 +36,7 @@ A chart a person reads on its own goes in the chart frame (`.cap-chart`) with it
 - it is `role="img"` with an `aria-label` that states its values or its finding ("Uptime of foxhound.app, 7 days: 96.1% up; down on Tuesday, September 29, from 11:50 to 18:20 UTC."). Enarratio's `inline: true` output is this; pass `alt` when its own sentence is not the one the reader needs, and keep its numbers the same as the visible ones beside it; or
 - it is `aria-hidden="true"` beside visible text that gives the numbers it draws.
 
-A hidden sentence (`.cap-sr-only`) beside an `aria-hidden` drawing is neither: the eye gets a picture without its numbers. Numbers behind "Show data" for something that is not a chart (a stat tile's table, a usage meter's) sit in `.cap-data`, never in `.cap-chart`, so nothing reads them as a chart missing its title. The stat tile and the uptime strip are built this way; Prelum's chart check accepts exactly this.
+A hidden sentence (`.cap-sr-only`) beside an `aria-hidden` drawing is neither: the eye gets a picture without its numbers. Numbers as a hidden table for something that is not a chart (a stat tile's table, a usage meter's) sit in `.cap-data`, never in `.cap-chart`, so nothing reads them as a chart missing its title. The stat tile and the uptime strip are built this way; Prelum's chart check accepts exactly this.
 
 ## The behavior module
 
