@@ -112,6 +112,12 @@
       border-width: 3px 0 0;
     }
   }
+  /* A station that links to its page is a target: 44px tall on a touch screen (WCAG 2.5.8). */
+  .cap-steps a.cap-step-name {
+    display: flex;
+    align-items: center;
+    min-block-size: var(--target);
+  }
   .cap-step-dot {
     position: relative;
     display: grid;

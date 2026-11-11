@@ -64,6 +64,13 @@
     margin: 0;
     font-size: var(--fs-lead);
     line-height: 1.35;
+
+    /* The title is the result's target: 44px tall on a touch screen (WCAG 2.5.8). */
+    & > a {
+      display: inline-flex;
+      align-items: center;
+      min-block-size: var(--target);
+    }
   }
   .cap-search-context,
   .cap-search-why {
