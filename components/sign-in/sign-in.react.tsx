@@ -7,7 +7,7 @@ import {
   useRef,
   useState,
 } from "react";
-import { passkeySignIn } from "@dustinedwards/site-runtime/sign-in-passkey";
+import { passkeySignIn, signalCurrentUserDetails } from "@dustinedwards/site-runtime/sign-in-passkey";
 import {
   SIGN_IN_EXPIRES_IN_WORDS,
   SIGN_IN_LINK_WORDS,
@@ -404,6 +404,12 @@ export function EmailConfirm({
   const shown = problem ? words[problem] : done ? words[done] : words.confirm;
   const text =
     done === "changed" && email ? `Your ${siteName} account email is now ${email}.` : shown.text;
+  // The change is made: the password manager shows the new address on this account's passkeys
+  // (site-runtime signalCurrentUserDetails, the WebAuthn Signal API; a browser without it does nothing).
+  const changedTo = done === "changed" ? (email ?? null) : null;
+  useEffect(() => {
+    if (changedTo) void signalCurrentUserDetails({ name: changedTo });
+  }, [changedTo]);
   return (
     <AuthCard title={shown.title} lede={text} brand={brand} layout={layout}>
       {problem || done ? (

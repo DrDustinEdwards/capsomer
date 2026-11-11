@@ -40,7 +40,7 @@ Admin pages are behind Cloudflare Access, which draws its own sign-in. An app's 
 - **"Check your inbox" names the address and the time** (10 minutes) and takes the code in one input (`CodeInput`), because the link signs in the browser that opens it, often the mail app's. The heading takes focus, so a screen reader hears the screen change. "Send a new link and code" is a plain GET of the page.
 - **Every way in is a full-width button in one column**, at the large size.
 - **The emailed link opens a page with one button** (`SignInConfirm`), never a sign-in on the GET, because a mail scanner opens every link. A refused link says which way it failed (used, expired, cut short) and offers a new one.
-- **The email-change page is the same shape** (`EmailConfirm`): one button, then what happened, and the way back to the settings page.
+- **The email-change page is the same shape** (`EmailConfirm`): one button, then what happened, and the way back to the settings page. Once the change is made, it tells the password manager the new address for this account's passkeys (`signalCurrentUserDetails`), so the site passes `email` when this browser is signed in.
 
 ## Parts
 
