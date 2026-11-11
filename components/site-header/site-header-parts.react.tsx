@@ -202,6 +202,13 @@ export interface SiteHeaderProps {
   // with no script at all (popovertarget), and nothing here wires itself.
   hydrate?: boolean;
   renderLink?: (props: LinkProps) => ReactNode;
+  // The site's own data attributes on the <header> (a command palette's hooks, say). Only data-*
+  // names: the header's own attributes are set after these and win.
+  attributes?: Record<`data-${string}`, string>;
+  // The site's own markup in the tools, after the theme control and the account (before the
+  // phone's menu button), and at the very end of the <header>: an island's <template>, say.
+  toolsEnd?: ReactNode;
+  end?: ReactNode;
 }
 
 export const plainLink = ({ children, ...props }: LinkProps) => <a {...props}>{children}</a>;
