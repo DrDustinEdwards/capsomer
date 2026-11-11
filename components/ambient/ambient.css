@@ -62,6 +62,12 @@
     & > span:nth-child(4) { --c: var(--cap-ambient-2); --o: 0.38; --y: -36%; --x: 70%; --s: 26rem; --dx: -20px; --dy: -18px; --k: 1.08; --d: 38s; --l: -2s; }
   }
 
+  /* Right to left, the drift is mirrored, as the blobs' places are. An attribute, not :dir(), which the
+     build lowers to a :lang() list that a dir attribute does not match. */
+  [dir="rtl"] .cap-ambient {
+    --cap-ambient-flip: -1;
+  }
+
   :root[data-theme="dark"] .cap-ambient[data-variant="blobs"] {
     opacity: var(--cap-ambient-strength-dark, 0.35);
   }
@@ -148,7 +154,7 @@
 
   @keyframes cap-ambient-drift {
     from { transform: translate3d(0, 0, 0) scale(1); }
-    to { transform: translate3d(var(--dx, 0), var(--dy, 0), 0) scale(var(--k, 1)); }
+    to { transform: translate3d(calc(var(--dx, 0px) * var(--cap-ambient-flip, 1)), var(--dy, 0), 0) scale(var(--k, 1)); }
   }
 
   @keyframes cap-ambient-bar {

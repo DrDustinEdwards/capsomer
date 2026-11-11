@@ -16,7 +16,8 @@
     border: 1px solid var(--line);
     border-inline-start: 3px solid var(--accent);
     border-radius: var(--cap-ask-radius, var(--radius-s));
-    background: var(--accent-soft);
+    /* A step lighter than the link tint (--link-hover-bg), so a link in the panel still shows its hover. */
+    background: var(--accent-2);
     color: var(--text);
 
     &:focus-visible {
@@ -76,11 +77,12 @@
     font-size: var(--fs-detail);
   }
 
-  /* Each link is at least a 24px target (WCAG 2.5.8): the list is tight, so its links are not left to spacing. */
+  /* Each link is a full target (--target: 24px, 44px on touch; WCAG 2.5.8): the list is tight, so its links are not
+     left to spacing. */
   :is(.cap-ask-sources, .cap-ask-followup) a {
     display: inline-flex;
     align-items: center;
-    min-block-size: 24px;
+    min-block-size: var(--target);
   }
 
   .cap-ask-sources-heading {

@@ -40,7 +40,9 @@
     color: var(--text);
     overflow-wrap: anywhere;
 
+    /* Inline padding raises the title link to a 24px target (WCAG 2.5.8) without changing the line. */
     &:is(a) {
+      padding-block: 2px;
       color: var(--accent-text);
       font-weight: 500;
     }

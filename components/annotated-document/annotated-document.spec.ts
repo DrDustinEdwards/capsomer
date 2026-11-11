@@ -26,10 +26,16 @@ test("behavior: the views show the original, the edit and every change from one 
 }) => {
   await visitStates(page, "annotated-document", "light");
   const doc = page.locator("#ad-edited .cap-annotated-doc");
-  await expect(doc.locator("mark[data-note='n2']").first()).toHaveText("30 days", { useInnerText: true });
+  await expect(doc.locator("mark[data-note='n2']").first()).toHaveText("30 days", {
+    useInnerText: true,
+  });
   await page.locator("#ad-edited").getByLabel("Original").check();
-  await expect(doc.locator("mark[data-note='n2']").first()).toHaveText("about a month", { useInnerText: true });
-  await expect(page.locator("#ad-all mark")).toHaveText("about a month30 days", { useInnerText: true });
+  await expect(doc.locator("mark[data-note='n2']").first()).toHaveText("about a month", {
+    useInnerText: true,
+  });
+  await expect(page.locator("#ad-all mark")).toHaveText("about a month30 days", {
+    useInnerText: true,
+  });
 });
 
 test("keyboard: a note lights every passage it is about, and a second press turns it off", async ({

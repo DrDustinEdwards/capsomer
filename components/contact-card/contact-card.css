@@ -124,15 +124,12 @@
       color: var(--muted);
     }
 
+    /* The base link cues (weight, hover tint, visited) are the link's own; this adds the figures and a 24px target. */
     & a {
-      color: var(--accent-text);
-      font-weight: 600;
-      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      min-block-size: 24px;
       font-variant-numeric: tabular-nums;
-
-      &:hover {
-        text-decoration: underline;
-      }
     }
   }
 
