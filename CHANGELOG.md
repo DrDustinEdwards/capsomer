@@ -14,6 +14,10 @@ Each release names every removed or renamed token or class, and every changed HT
 - **Prose tables: a row header keeps the rows' hairline.** The 2px `--prose-table-rule` is on `thead th` only; a `th` in the body (a row header) had it too.
 - **Scroll-driven animations survive a minifier.** The scroll fades (tab rows, anchor bar, header links row, prose tables), the truncated label, the letterhead's header fade and 0.99.0's Reveal are written as longhands with `animation-duration: auto`. Lightning CSS, which Vite minifies with, folded the `animation` shorthand and its timeline into one with a 0s duration, which Chromium runs as finished: a wide table showed both fades at rest, and its first letters were faded.
 
+## [0.103.1]
+
+- **Enarratio 0.13 is supported.** The `enarratio` peer range is `^0.12.0 || ^0.13.0`, and the showcase site and the browser suite run on 0.13.1 (live on npm), whose charts fit a phone's drawing. No token, class or HTML contract changes.
+
 ## [0.103.0]
 
 - **New light entries for the command menu's host: `capsomer/react/command-host`** (`useCommandHost`, `LazyCommandMenu`) **and `capsomer/behavior/command-host`** (`createCommandHost`). Importing `useCommandHost` from `capsomer/react/command-menu` put the whole menu (about 6.4 KB gzip) into every route of an app that meant to load it when idle; these import nothing of the menu until the page is idle or the menu is asked for (Ctrl K, Cmd K, a button), then load it with `lazy()` or `import()`. `capsomer/react/command-menu` still exports `useCommandHost`.
