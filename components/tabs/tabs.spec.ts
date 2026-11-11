@@ -452,6 +452,8 @@ eachTheme((theme) => {
   }) => {
     await visitStates(page, "tabs", theme);
     const set = page.locator("#tabs-pill");
+    // The mouse works in the viewport: the specimen is far down the page.
+    await set.scrollIntoViewIfNeeded();
     const box = async (sel: string) => {
       const b = await page.locator(sel).boundingBox();
       if (!b) throw new Error(`no box for ${sel}`);

@@ -16,7 +16,7 @@ eachTheme((theme) => {
     page,
   }) => {
     await visitStates(page, "player", theme, "surface");
-    await expect(page.getByRole("region", { name: "Player" })).toBeVisible();
+    await expect(page.getByRole("region", { name: /^Player for / })).toBeVisible();
     await expectNoAxeViolations(page);
   });
 
@@ -60,7 +60,9 @@ eachTheme((theme) => {
     page,
   }) => {
     await visitStates(page, "player", theme, "surface");
-    const seek = page.getByRole("region", { name: "Player" }).getByRole("slider", { name: "Seek" });
+    const seek = page
+      .getByRole("region", { name: /^Player for / })
+      .getByRole("slider", { name: "Seek" });
     await seek.focus();
     await page.keyboard.press("PageUp");
     await expect(seek).toHaveAttribute("aria-valuetext", /^1 minute/);
@@ -74,7 +76,7 @@ eachTheme((theme) => {
     page,
   }) => {
     await visitStates(page, "player", theme, "surface");
-    const surface = page.getByRole("region", { name: "Player" });
+    const surface = page.getByRole("region", { name: /^Player for / });
     await surface.getByRole("button", { name: "Play", exact: true }).click();
     const dock = page.locator(".cap-player-dock");
     await expect(dock).toHaveAttribute("inert", "");
@@ -89,7 +91,9 @@ eachTheme((theme) => {
     await visitStates(page, "player", theme, "surface");
     const line = page.getByRole("button", { name: /^The first thing we moved was the player/ });
     await line.click();
-    const seek = page.getByRole("region", { name: "Player" }).getByRole("slider", { name: "Seek" });
+    const seek = page
+      .getByRole("region", { name: /^Player for / })
+      .getByRole("slider", { name: "Seek" });
     await expect(seek).toHaveAttribute("aria-valuetext", /^3\d seconds of/);
     await expect(line).toHaveAttribute("aria-current", "true");
   });

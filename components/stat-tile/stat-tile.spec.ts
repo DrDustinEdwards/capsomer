@@ -197,7 +197,7 @@ eachTheme((theme) => {
     await expect(page.locator(`${sec} .cap-tile`).first()).toHaveCSS("cursor", "default");
     // The label comes before the figure, so it reads "Open rate 41% +3 points".
     await expect(page.locator(`${sec} .cap-tile`).nth(1)).toHaveText(
-      /^Open rate\s*41%\s*\+3 points\s*Against/,
+      /Open rate\s*41%\s*\+3 points\s*Against/,
     );
     await expectContrast(page, [
       { sel: `${sec} .cap-tile-label`, what: "a static tile's label" },

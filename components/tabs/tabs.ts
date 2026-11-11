@@ -18,46 +18,59 @@ export const FINDS_HIDDEN =
   typeof HTMLElement !== "undefined" && "onbeforematch" in HTMLElement.prototype;
 
 // Remembered tabs (data-remember="<key>", or the React wrapper's `remember`): the reader's choice is kept on this
-// device under "capsomer.tabs.<key>" and chosen in every tab set on every page that names the same key. Storage can
-// be refused (a private window, blocked site data), so every read and write is in try/catch and the choice then lasts
-// the page. Switch to 0.91.0's useRemembered storage when it lands.
+// device under "capsomer.tabs.<key>" and chosen in every tab set on every page that names the same key, and in other
+// windows. Storage can be refused (a private window, blocked site data); the choice then lasts the page.
+// readStored, writeStored and subscribeStored have the shape of 0.91.0's capsomer/behavior/hooks functions of the same
+// names: switch to them by replacing these three definitions with one import from "../hooks/hooks.ts".
+const memory = new Map<string, string>();
+const listeners = new Set<() => void>();
+function readStored(key: string): string | null {
+  try {
+    return localStorage.getItem(key) ?? memory.get(key) ?? null;
+  } catch {
+    return memory.get(key) ?? null;
+  }
+}
+function writeStored(key: string, value: string | null): void {
+  if (value === null) memory.delete(key);
+  else memory.set(key, value);
+  try {
+    if (value === null) localStorage.removeItem(key);
+    else localStorage.setItem(key, value);
+  } catch {
+    /* not kept; this page still follows the choice, from memory */
+  }
+  for (const listener of listeners) listener();
+}
+function subscribeStored(listener: () => void): () => void {
+  listeners.add(listener);
+  window.addEventListener("storage", listener);
+  return () => {
+    listeners.delete(listener);
+    window.removeEventListener("storage", listener);
+  };
+}
+
 const REMEMBER_PREFIX = "capsomer.tabs.";
-export const REMEMBER_EVENT = "cap:tabs-remember";
 
 export function readRemembered(key: string): string | null {
-  try {
-    return localStorage.getItem(REMEMBER_PREFIX + key);
-  } catch {
-    return null;
-  }
+  return readStored(REMEMBER_PREFIX + key);
 }
 
-/** Keeps a choice and tells every tab set on the page that remembers the same key (a `cap:tabs-remember` event on window). */
+/** Keeps a choice; every tab set remembering the same key follows it. */
 export function writeRemembered(key: string, value: string): void {
-  try {
-    localStorage.setItem(REMEMBER_PREFIX + key, value);
-  } catch {
-    /* not kept; this page still follows the choice */
-  }
-  if (typeof window !== "undefined")
-    window.dispatchEvent(new CustomEvent(REMEMBER_EVENT, { detail: { key, value } }));
+  writeStored(REMEMBER_PREFIX + key, value);
 }
 
-/** Calls back with each choice made for `key`, on this page or (through the storage event) in another window. */
+/** Calls back with each new choice made for `key`, on this page or in another window. */
 export function onRemembered(key: string, fn: (value: string) => void): () => void {
-  const here = (e: Event) => {
-    const d = (e as CustomEvent<{ key: string; value: string }>).detail;
-    if (d?.key === key) fn(d.value);
-  };
-  const there = (e: StorageEvent) => {
-    if (e.key === REMEMBER_PREFIX + key && e.newValue !== null) fn(e.newValue);
-  };
-  window.addEventListener(REMEMBER_EVENT, here);
-  window.addEventListener("storage", there);
-  return () => {
-    window.removeEventListener(REMEMBER_EVENT, here);
-    window.removeEventListener("storage", there);
-  };
+  let last = readRemembered(key);
+  return subscribeStored(() => {
+    const now = readRemembered(key);
+    if (now === null || now === last) return;
+    last = now;
+    fn(now);
+  });
 }
 
 // A first guess when nothing is remembered: data-remember-guess="platform" picks the tab whose value is the reader's

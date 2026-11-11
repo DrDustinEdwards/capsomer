@@ -728,7 +728,13 @@
     margin: 0;
     line-height: 1.7;
   }
+  /* A whole target (WCAG 2.5.8), though it sits in a line of text. */
   :where(button.cap-player-at) {
+    display: inline-flex;
+    align-items: center;
+    min-inline-size: var(--target);
+    min-block-size: var(--target);
+    vertical-align: middle;
     padding: 0 var(--space-1);
     border: 0;
     border-radius: var(--radius-s);

@@ -460,6 +460,7 @@ export function ChaptersControl({ container }: { container?: HTMLElement | null 
           {
             type: "radio-group",
             label: "Chapters",
+            closeOnClick: true,
             value: String(cur),
             onValueChange: (v) => {
               const c = chapters[Number(v)];

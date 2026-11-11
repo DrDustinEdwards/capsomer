@@ -234,21 +234,24 @@ export function StaticStatTile(props: StaticStatTileProps) {
           </span>
         )}
         {delta && !nodata ? (
-          <span className="cap-tile-delta" data-tone={delta.tone ?? DELTA_TONE[delta.direction]}>
-            <svg
-              viewBox="0 0 16 16"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.8"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              aria-hidden="true"
-              focusable="false"
-            >
-              <path d={ARROW[delta.direction]} />
-            </svg>
-            {delta.text}
-          </span>
+          <>
+            {" "}
+            <span className="cap-tile-delta" data-tone={delta.tone ?? DELTA_TONE[delta.direction]}>
+              <svg
+                viewBox="0 0 16 16"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.8"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+                focusable="false"
+              >
+                <path d={ARROW[delta.direction]} />
+              </svg>
+              {delta.text}
+            </span>
+          </>
         ) : null}
       </p>
       {props.tone === "nodata" ? (
