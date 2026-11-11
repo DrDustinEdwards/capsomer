@@ -5,7 +5,7 @@ summary: The one sign-in screen every site shows, a passkey first, Google and Ap
 parts: [css, react]
 tool: native + site-runtime's sign-in
 states: [passkey, Google and Apple, email link, refused, notice, check your inbox, wrong code, link page, link expired, email change, email changed, own page]
-added: 0.92.0
+added: 0.94.0
 source: Foxhound app/components/auth-card.tsx, Foxing app/components/auth-shell.tsx, txasm app/routes/signin.tsx (shared-code audit, 2026-11-11, items 19 and 21)
 replaces:
   - "fx-auth-shell"

@@ -1,0 +1,52 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+/* The account settings (sign-in-settings.md): one panel per part, each a list of rows with the
+   row's words at the start and its buttons at the end, wrapping under the words when the panel is
+   narrow. Nothing here names a site. */
+@layer cap.components {
+  .cap-account {
+    display: grid;
+    gap: var(--space-6);
+  }
+  .cap-account-stack,
+  .cap-account-form {
+    display: grid;
+    gap: var(--space-4);
+    margin: 0;
+  }
+  .cap-account-list {
+    display: grid;
+    gap: var(--space-3);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .cap-account-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    margin: 0;
+    & > .cap-field {
+      flex: 1 1 14rem;
+    }
+  }
+  .cap-account-what {
+    display: grid;
+    gap: var(--space-1);
+    min-inline-size: 0;
+    overflow-wrap: anywhere;
+  }
+  .cap-account-meta {
+    margin: 0;
+    color: var(--muted);
+    font-size: var(--fs-detail);
+  }
+  .cap-account-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin: 0;
+  }
+}
