@@ -504,6 +504,17 @@
       max-width: calc(var(--measure) + 2 * (var(--pad-card) + var(--space-3)));
       margin-inline: auto;
     }
+    /* Three widths, one padding rule: a page that is a form or a single record ("narrow", 768px),
+       a page of panels centered at 1280px ("page", Recova's dashboard width), or the full 1480px
+       ("wide", the default). */
+    &[data-width="narrow"] {
+      max-width: calc(768px + 2 * (var(--pad-card) + var(--space-3)));
+      margin-inline: auto;
+    }
+    &[data-width="page"] {
+      max-width: calc(1280px + 2 * (var(--pad-card) + var(--space-3)));
+      margin-inline: auto;
+    }
   }
 
   /* A phone (under 768px, the header's own width): the strip and the menu live in the header's
