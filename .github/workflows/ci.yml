@@ -174,10 +174,7 @@ jobs:
     with:
       worker-name: capsomer
       health-url: https://capsomer.dustinedwards.info/health
-      verify-command: >-
-        code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 20 https://capsomer.dustinedwards.info/ || true);
-        echo "home page answered $code";
-        if [ "$code" = 200 ]; then exit 0; elif [ "$code" = 000 ]; then exit 3; else exit 1; fi
+      verify-command: node "$DEVKIT_DIR/bin/verify-deploy.mjs" https://capsomer.dustinedwards.info
       node-version-file: .node-version
       install: npm ci --ignore-scripts
       pre-deploy: npm run site
