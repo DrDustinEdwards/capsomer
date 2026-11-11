@@ -9,6 +9,9 @@
    card per line with a head line over its content, for an item whose body is fields.
    A site's own look is tokens, each defaulting to the look below (set on the list or above it):
      --sortable-gap            the space between items (rows 4px, stack 8px, cards --gap)
+     --sortable-item-wrap, --sortable-body-basis   a row's parts wrap (nowrap); a body basis of 100% puts the buttons under the content
+     --sortable-steps-gap, --sortable-body-pad-inline   the buttons' gap (4px) and a stack item's content inset
+     --sortable-empty-pad, --sortable-empty-border   the empty place (a dashed box; 0 and 0 leave only its words)
      --sortable-item-pad, --sortable-item-gap, --sortable-item-radius, --sortable-item-align   a row
      --sortable-card-pad, --sortable-card-radius          a card or stack item
      --sortable-item-border, --sortable-item-bg           the item's box (none: 0 and transparent)
@@ -45,6 +48,7 @@
     position: relative;
     box-sizing: border-box;
     display: flex;
+    flex-wrap: var(--sortable-item-wrap, nowrap);
     align-items: var(--sortable-item-align, center);
     gap: var(--sortable-item-gap, var(--space-2));
     min-width: 0;
@@ -86,7 +90,7 @@
     }
     & > .cap-sortable-body {
       grid-area: body;
-      padding-inline: calc(var(--pad-card) - var(--space-2));
+      padding-inline: var(--sortable-body-pad-inline, calc(var(--pad-card) - var(--space-2)));
     }
   }
   /* With no handle (a read-only list) the head starts the line. */
@@ -151,7 +155,7 @@
   }
 
   .cap-sortable-body {
-    flex: 1 1 auto;
+    flex: 1 1 var(--sortable-body-basis, auto);
     min-width: 0;
 
     /* A card (card.css) as a card item's content, such as a corkboard's scene: the item is already
@@ -173,7 +177,7 @@
     flex-wrap: wrap;
     align-items: center;
     justify-content: end;
-    gap: var(--space-1);
+    gap: var(--sortable-steps-gap, var(--space-1));
 
     /* Quiet until wanted; a button at an end keeps the button's own disabled look. */
     & .cap-btn:not(:disabled) {
@@ -217,8 +221,8 @@
   /* An empty list says so in a dashed place the pointer can drop into; it goes once the list has
      an item. */
   .cap-sortable-empty {
-    padding: var(--space-4);
-    border: 1px dashed var(--line-strong);
+    padding: var(--sortable-empty-pad, var(--space-4));
+    border: var(--sortable-empty-border, 1px dashed var(--line-strong));
     border-radius: var(--radius-m);
     color: var(--muted);
     font-size: var(--fs-detail);
