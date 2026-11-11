@@ -2,6 +2,10 @@
 
 Each release names every removed or renamed token or class, and every changed HTML contract.
 
+## [0.99.0]
+
+- **Series nav and related links: the furniture under a post is Capsomer's** (moved from dustinedwards.info, 2026-11-11). New `components/series-nav/` (`nav.cap-series` with `.cap-series-title`, `ol.cap-series-parts` and the manual's signs as `.cap-series-steps`; React `SeriesNav`, and `seriesPlace()` in `capsomer/behavior/series-nav`): where a post sits in its series, every part with this one marked `aria-current="page"`, and the parts either side as signs. New `components/related-links/` (`.cap-related` with `data-kind="internal|external|mentions"`, `.cap-related-title`, `ul.cap-related-list`, `.cap-related-name`, `.cap-related-excerpt`, `time.cap-related-date`; React `RelatedLinks`, and `httpHref()`, `sitePath()` and `longDate()` in `capsomer/behavior/related-links`): Further reading, Linked from and Mentions in one look; a path on this site is a router link. A mention's address is re-parsed and only http and https become a link, with `rel="nofollow ugc noopener noreferrer"`. The manual's signs get a React wrapper, `Signs` in `capsomer/react/manual`. No token or class was removed or renamed.
+
 ## [0.98.0]
 
 - **Batch 8 of the shared-components audit: specialized components** (clusters C73 to C85). Each was extracted from a site that had its own copy; the sites move onto this release and delete theirs. Every new component has a doc page, a states page and its specs.
