@@ -814,6 +814,19 @@
       container: cap-site-header-row / inline-size;
     }
   }
+  /* A header clear at rest is already the cap-site-header scroll-state container, and that later,
+     narrower rule would drop the row's name: it keeps both. A browser without scroll-state queries
+     drops this declaration and keeps the row's alone. */
+  @media (max-width: 767.98px) {
+    .cap-site-header[data-rest="clear"]:not([data-sticky="false"]) {
+      container: cap-site-header cap-site-header-row / scroll-state inline-size;
+    }
+  }
+  @media (max-width: 1023.98px) {
+    .cap-site-header[data-collapse="lg"][data-rest="clear"]:not([data-sticky="false"]) {
+      container: cap-site-header cap-site-header-row / scroll-state inline-size;
+    }
+  }
   @container cap-site-header-row (width >= 0) {
     .cap-site-header :is(.cap-site-header-switcher, .cap-site-header-sections, .cap-site-header-cta) {
       display: none;
