@@ -136,7 +136,6 @@ export function CommandMenu({
   const [found, setFound] = useState<Command[]>([]);
   const [busy, setBusy] = useState(false);
   const [recent, setRecent] = useState<string[]>([]);
-  // oxlint-disable-next-line react/set-state-in-effect -- storage is read after mount, so the server and the first client render agree
   useEffect(() => setRecent(recentKey && open ? readRecent(recentKey) : []), [recentKey, open]);
   const shown = useMemo(() => {
     const typed = query.trim();

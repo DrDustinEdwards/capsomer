@@ -1,9 +1,4 @@
-import {
-  compareFigures,
-  deltaText,
-  type CompareOptions,
-  type Delta as DeltaValue,
-} from "./delta.ts";
+import { compareFigures, type CompareOptions, type Delta as DeltaValue } from "./delta.ts";
 
 export { compareFigures, deltaText, UNCHANGED_BELOW_PCT, type CompareOptions } from "./delta.ts";
 export type { DeltaValue };
