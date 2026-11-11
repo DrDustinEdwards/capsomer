@@ -5,8 +5,8 @@ summary: Every row against every column at a glance, each cell a status glyph na
 parts: [css, react]
 tool: native
 states: [areas on every site with its key, a cell not checked]
-added: 0.100.0
-updated: 0.100.0
+added: 0.99.0
+updated: 0.99.0
 source: the Capsid Portal's Completeness tab (dashboard/src/views/Completeness.tsx Mark and the grid, Completeness.css)
 ---
 

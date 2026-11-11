@@ -5,8 +5,8 @@ summary: A read's states said one way in every app (reading, failed, nothing rea
 parts: [css, react]
 tool: native
 states: [reading, failed, nothing yet, stale answer, one source of several, read again, reading again, admin table, admin table empty]
-added: 0.100.0
-updated: 0.100.0
+added: 0.99.0
+updated: 0.99.0
 source: Capsid Portal (Backups, Activity, Claims, Convergence, Maintenance, Projects, Queue: "read 5m ago · Read again"; SiteTraffic, Packages, Workers, Library, SharedCode, Completeness: Reading and Source); Foxhound's admin pages (audit log, users, crons, operations, webhooks, errors: the table panel and "Reading again")
 replaces:
   - 'label="Reading again"'

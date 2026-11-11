@@ -5,8 +5,8 @@ summary: The move beside a figure against its last value, an arrow and a whole p
 parts: [css, behavior, react]
 tool: native
 states: [better, worse, down and better, no change]
-added: 0.100.0
-updated: 0.100.0
+added: 0.99.0
+updated: 0.99.0
 source: Foxhound's audit dashboard (routes/app/audit/dashboard.tsx Move, lib/audit/trend.ts compareRuns)
 replaces:
   - "function Move\\("

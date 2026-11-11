@@ -6,7 +6,7 @@ parts: [css, behavior, react]
 tool: native + own JavaScript
 states: [closed, open, open with arrow, tooltip, tooltip with a key, flipped, at a virtual anchor]
 added: 0.2.0
-updated: 0.100.0
+updated: 0.99.0
 source: shadcn/ui Popover, Tooltip and Hover Card (Base UI flavor), rebuilt in plain CSS on the native Popover API
 replaces:
   - 'class="(popover|popup|dropdown-panel|flyout)[ "]'

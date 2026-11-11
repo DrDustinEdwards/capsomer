@@ -6,7 +6,7 @@ parts: [css, react]
 tool: native
 states: [card parts (description, action, footer), flush body with a padded block, small size, comfortable density, with a header and a source, with a count and a link to the full view, body only, holding a list with no body padding, a panel that is a link, figures beside the heading, a View all link from its address, reading again, bare]
 added: 0.1.0
-updated: 0.100.0
+updated: 0.99.0
 source: Capsid Portal, dashboard/src/styles.css ("panels") and dashboard/src/views/shared.tsx (Panel)
 replaces:
   - 'class="panel"'
@@ -35,7 +35,7 @@ A page with one subject needs no box around it; the page heading is enough. A me
 - **A panel the anchor bar links to** takes `id` and `data-section="Sites"` on the `section`; the bar names the link from `data-section`.
 - **A panel is a plain `section` with a heading, not a named region.** A console page holds eight panels; eight extra landmarks make the landmark list useless. Headings carry the structure.
 - **A panel can be a link** (`a.cap-panel`, a card that leads somewhere): its edge firms to the strong line under the pointer, its words keep the text color, and focus keeps the link's ring. A site may lift it (`--card-lift`, a negative length) and turn the edge to the accent (`--card-edge: 1`); the lift drops under reduced motion. A site's `--card-shadow` gives every panel a resting shadow.
-- **Props for the common header parts** (0.100.0): `meta` is a line of figures beside the heading ("12 total · 3 active"), in the count's ink; `moreHref` makes the link to the full view from its address alone ("View all", or `moreLabel`); `reading` puts "Reading again" with a spinner in the source line and marks the panel `aria-busy`; `href` makes the whole panel one link (`a.cap-panel`), which may then hold no other link or control.
+- **Props for the common header parts** (0.99.0): `meta` is a line of figures beside the heading ("12 total · 3 active"), in the count's ink; `moreHref` makes the link to the full view from its address alone ("View all", or `moreLabel`); `reading` puts "Reading again" with a spinner in the source line and marks the panel `aria-busy`; `href` makes the whole panel one link (`a.cap-panel`), which may then hold no other link or control.
 - **A bare panel**: with no title and nothing else for its header, the panel is its surface and body alone, no header band.
 - **An admin table in its panel** is `TablePanel` (components/read-state has its states): the heading names the table's scrolling region, a reread shows "Reading again", and an empty answer is the Empty.
 - **The heading level follows the page**: `h2` under the page's `h1`, `h3` inside a grouped section.

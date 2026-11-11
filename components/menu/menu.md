@@ -6,7 +6,7 @@ parts: [css, behavior, react]
 tool: Base UI
 states: [form menu closed, form menu open, form menu link item, closed, trigger hover, trigger keyboard focus, open, item highlighted, disabled item with its reason, danger item, shortcut shown, checkbox and radio items, submenu, group labels, comfortable density]
 added: 0.1.0
-updated: 0.100.0
+updated: 0.99.0
 source: none (new in Capsomer)
 replaces:
   - "role=\"menu\""
@@ -123,7 +123,7 @@ A form menu, with no script (HTML, or React `FormMenu` which renders exactly thi
 </details>
 ```
 
-`import { enhance } from "capsomer/behavior/menu"` adds the keys. In React, `import { FormMenu } from "capsomer/react/menu"`: `<FormMenu label="Actions for example.org" action="/admin/sites/example-org" hidden={{ site: "example-org" }} items={[{ label: "Open site", value: "open", href: "/sites/example-org" }, { label: "Archive", value: "archive", disabled: true, reason: "Not while a deploy runs." }, { label: "Delete site", value: "delete", danger: true }]} />`; `items` keep the order given except danger items, which go last after a separator; an item with `href` is a link. A link item with `onSelect` runs it instead of following the link once script runs (the posts list's Reschedule… opens a dialog), and with no script goes to the page that does it; only such a link may be a danger item. `form` names a form elsewhere on the page instead (a card in a list whose one form carries the row's fields): the menu renders no form of its own and each button submits that one (0.100.0); `size="sm"` makes a small trigger for a dense row or a card. A press closes the menu as it posts.
+`import { enhance } from "capsomer/behavior/menu"` adds the keys. In React, `import { FormMenu } from "capsomer/react/menu"`: `<FormMenu label="Actions for example.org" action="/admin/sites/example-org" hidden={{ site: "example-org" }} items={[{ label: "Open site", value: "open", href: "/sites/example-org" }, { label: "Archive", value: "archive", disabled: true, reason: "Not while a deploy runs." }, { label: "Delete site", value: "delete", danger: true }]} />`; `items` keep the order given except danger items, which go last after a separator; an item with `href` is a link. A link item with `onSelect` runs it instead of following the link once script runs (the posts list's Reschedule… opens a dialog), and with no script goes to the page that does it; only such a link may be a danger item. `form` names a form elsewhere on the page instead (a card in a list whose one form carries the row's fields): the menu renders no form of its own and each button submits that one (0.99.0); `size="sm"` makes a small trigger for a dense row or a card. A press closes the menu as it posts.
 
 ## Matches shadcn
 

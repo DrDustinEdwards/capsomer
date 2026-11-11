@@ -5,8 +5,8 @@ summary: A new account's first steps, each Done or To do with its one way to do 
 parts: [react]
 tool: native
 states: [part done, all done]
-added: 0.100.0
-updated: 0.100.0
+added: 0.99.0
+updated: 0.99.0
 source: Foxhound (components/recovery-dashboard-panels.tsx OnboardingChecklist and StaticRow, routes/app/welcome.tsx)
 replaces:
   - "function OnboardingChecklist"

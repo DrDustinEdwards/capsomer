@@ -5,8 +5,8 @@ summary: The band at the top of an app's content while it is a demo with sample 
 parts: [css, react]
 tool: native
 states: [demo for a visitor, viewing as a customer]
-added: 0.100.0
-updated: 0.100.0
+added: 0.99.0
+updated: 0.99.0
 source: Foxhound (layouts/app-shell.tsx demo band and view-as banner); Capsid Portal (app/DemoNotice.tsx, lib/demo.ts)
 replaces:
   - "function DemoNotice"

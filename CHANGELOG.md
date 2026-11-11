@@ -2,7 +2,7 @@
 
 Each release names every removed or renamed token or class, and every changed HTML contract.
 
-## [0.100.0]
+## [0.99.0]
 
 Batch 4 of the shared-components audit (C24 to C38, without C37): the parts the sites and the Portal built for themselves, now in Capsomer. Nothing is removed or renamed; every HTML contract change below is an addition.
 

@@ -5,8 +5,8 @@ summary: The answer to "is anything wrong?" in one line, the problems named as l
 parts: [css, react]
 tool: native
 states: [all good, problems by name with the rest as a link, one warning, not known]
-added: 0.100.0
-updated: 0.100.0
+added: 0.99.0
+updated: 0.99.0
 source: the Capsid Portal's Health verdict (dashboard/src/views/Health.tsx Verdict, styles.css .verdict)
 ---
 

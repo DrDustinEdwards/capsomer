@@ -5,8 +5,8 @@ summary: An operator's add and edit form for a list of settings, with the editor
 parts: [css, react]
 tool: native
 states: [a list with Add and Edit, the form open on a new row, the form editing a row with its Danger area, the hint while the draft cannot be sent]
-added: 0.100.0
-updated: 0.100.0
+added: 0.99.0
+updated: 0.99.0
 source: the Capsid Portal's ConfigForm (dashboard/src/views/ConfigForm.tsx) and its editors in Sites.tsx, Packages.tsx and Projects.tsx
 ---
 

@@ -5,8 +5,8 @@ summary: The round mark by tone, and the one-purpose page it sits on (unsubscrib
 parts: [css, react]
 tool: native
 states: [the marks, done, not valid, asking first]
-added: 0.100.0
-updated: 0.100.0
+added: 0.99.0
+updated: 0.99.0
 source: Foxhound (routes/utility/unsubscribe.tsx, card-update.tsx, audit/connect.tsx, auth/connect.tsx)
 replaces:
   - "data-status-mark="

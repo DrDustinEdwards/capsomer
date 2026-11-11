@@ -6,7 +6,7 @@ parts: [css, behavior]
 tool: own JavaScript
 states: [default with a disabled button, a separator, toggle buttons pressed and not, a link in the bar, right to left, vertical, hover, comfortable density]
 added: 0.56.0
-updated: 0.100.0
+updated: 0.99.0
 source: WAI-ARIA Authoring Practices, Toolbar; the markdown editor's toolbar, which now uses it
 replaces:
   - 'role="toolbar"'
@@ -31,7 +31,7 @@ Three or more commands that act on one thing and sit together: a draft's Save, P
 
 - **One tab stop, a roving tabindex** (APG Toolbar). The stop starts on the first control (or the one written with `tabindex="0"`) and stays on the last one focused, so Tab back into the bar returns there.
 - **Left and Right move, and wrap; Home and End go to the ends.** In a right-to-left page Left moves forward. `aria-orientation="vertical"` stacks the bar and uses Up and Down.
-- **An editor's formatting bar keeps the editor's focus** (`attachToolbar(bar, items, { keepFocus: () => editor })`, 0.100.0): a press with a pointer does not move focus out of the editor, so its caret and selection stay, and a control used from the keyboard hands focus back to the editor once its command has run. The bar keeps its one tab stop and arrows.
+- **An editor's formatting bar keeps the editor's focus** (`attachToolbar(bar, items, { keepFocus: () => editor })`, 0.99.0): a press with a pointer does not move focus out of the editor, so its caret and selection stay, and a control used from the keyboard hands focus back to the editor once its command has run. The bar keeps its one tab stop and arrows.
 - **A disabled button is skipped**, as it cannot take focus. Use `aria-disabled="true"` instead where a person should still find it and hear why.
 - **A toggle button is a `.cap-btn` with `aria-pressed`**; pressed, it takes the chips' accent edge and tint with the edge doubled, so pressed is a change of shape as well as color.
 - **It wraps** rather than scrolling sideways on a phone.
