@@ -229,6 +229,11 @@
         padding-inline: 0 var(--space-3);
         vertical-align: top;
       }
+      /* With no cell padding, a link in a cell is as short as its text: inline padding takes its hit
+         area to the 24 px minimum (WCAG 2.5.8) and leaves the row's height alone. */
+      & :where(th, td) > :where(a[href]) {
+        padding-block: calc((24px - 1em) / 2);
+      }
       & :where(thead th) {
         border-block-end: 1px solid var(--text);
         color: var(--muted);

@@ -220,7 +220,7 @@ function Sections() {
   }));
   return (
     <>
-      <label className="sortable-sample-out">
+      <label className="cap-check">
         <input type="checkbox" checked={locked} onChange={(e) => setLocked(e.target.checked)} />{" "}
         Published (locked)
       </label>

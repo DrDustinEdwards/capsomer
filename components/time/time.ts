@@ -240,13 +240,15 @@ type Unit = keyof typeof UNIT_WORDS;
 // differ in support still print the same text.
 function durationWords(parts: Partial<Record<Unit, number>>, style: DurationStyle): string {
   const units = (Object.keys(UNIT_WORDS) as Unit[]).filter((u) => (parts[u] ?? 0) > 0);
-  if (units.length === 0) units.push("seconds");
+  // Nothing at all reads as "0 seconds". DurationFormat leaves out zero units unless told to show one.
+  const zero = units.length === 0;
+  if (zero) units.push("seconds");
   const ctor = (Intl as unknown as { DurationFormat?: DurationFormatCtor }).DurationFormat;
   if (ctor) {
     try {
       const out: Record<string, number> = {};
       for (const u of units) out[u] = parts[u] ?? 0;
-      return new ctor("en-US", { style }).format(out);
+      return new ctor("en-US", zero ? { style, secondsDisplay: "always" } : { style }).format(out);
     } catch {
       /* an engine with a partial implementation: use the fallback */
     }

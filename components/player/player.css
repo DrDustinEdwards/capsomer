@@ -348,6 +348,10 @@
     text-overflow: ellipsis;
     white-space: nowrap;
   }
+  /* A link's hit area reaches the 24 px minimum (WCAG 2.5.8) without changing the line it sits on. */
+  :where(a.cap-player-title, a.cap-player-host-name) {
+    padding-block: max(0px, (24px - 1lh) / 2);
+  }
   :where(a.cap-player-title:hover) {
     color: var(--accent-text);
   }
@@ -424,8 +428,10 @@
     text-overflow: ellipsis;
     white-space: nowrap;
   }
+  /* The transport and the settings wrap onto a second line in a narrow column (WCAG 1.4.10). */
   :where(.cap-player-surface-row) {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     gap: var(--space-2);
     margin-block-start: var(--space-2);
