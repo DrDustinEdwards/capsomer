@@ -1,0 +1,30 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* A file link and its meta, the part of the link system (link.md) that a component's own file link
+   needs (generated-file, document-archive): a site loads this alone to get them without link.css's
+   marks on every other link. link.css imports it. A link marks only what opts in here: an
+   a[data-link] with no --link-after set draws nothing. */
+@layer cap.components {
+  a[data-link="file"] {
+    --link-after: "\2193";
+  }
+  /* Draws the after mark a kind names in --link-after (link.css sets the rest), with no
+     specificity, so a component's own ::after always wins. */
+  :where(a[data-link], a:not([class*="cap-"]))::after {
+    content: var(--link-after) / var(--link-alt, "");
+    margin-inline-start: 0.2em;
+    font-weight: 400;
+    font-variant-emoji: text;
+  }
+
+  /* The meta: a file's format and size, or a language's name, as a sibling after the link (a
+     space between), in the mono face, smaller and muted. Outside the link, so the link's name
+     stays the words and the meta is read after it. */
+  .cap-link-meta {
+    color: var(--muted);
+    font: 400 0.75em / 1 var(--mono);
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+  }
+}

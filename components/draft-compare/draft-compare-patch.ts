@@ -1,5 +1,6 @@
 // Draft compare's unified-diff view: parsePatch and renderPatch (draft-compare.ts).
 
+import { commonSubsequence } from "./draft-compare-diff.ts";
 import { esc, plural, sr } from "./draft-compare-render.ts";
 
 // ---------------------------------------------------------------------------------------
@@ -197,4 +198,115 @@ export function renderPatch(patch: string, options: PatchOptions = {}): string {
     return `<section ${attrs}><p class="cap-compare-none" role="status"><strong>No changes.</strong> This patch has no lines to show.</p></section>`;
   const key = `<ul class="cap-compare-key" aria-label="Key to the marks"><li><span class="cap-compare-key-mark" data-kind="ins">Added</span> a plus opens the line</li><li><span class="cap-compare-key-mark" data-kind="del">Removed</span> a minus opens the line</li></ul>`;
   return `<section ${attrs}><div class="cap-compare-bar"><div class="cap-compare-legend">${key}<p class="cap-compare-counts">${esc(patchCountsText(patchCounts(files)))}</p></div></div>${files.map((f, i) => patchFile(f, id, i + 1)).join("")}</section>`;
+}
+
+// ---------------------------------------------------------------------------------------
+// Writing a patch: two texts the app holds (a draft against the site's text, or against an
+// AI draft) as a unified patch, in the shape jsdiff's createTwoFilesPatch writes, which is the
+// shape site-api's revision diffs come in. So every patch an app shows reads the same.
+// ---------------------------------------------------------------------------------------
+
+export interface UnifiedSide {
+  text: string;
+  // What this side is ("The site's text", "Your draft"), written after the file name.
+  label?: string;
+}
+
+export interface UnifiedOptions {
+  // Unchanged lines shown around each change. Default 3.
+  context?: number;
+  // The most changed lines the line diff looks for before it calls the whole text replaced.
+  maxEdits?: number;
+}
+
+// A text's lines, each with its newline; the last has none when the text does not end in one.
+function linesOf(text: string): string[] {
+  const t = text.replace(/\r\n?/g, "\n");
+  if (t === "") return [];
+  const out = t.split(/(?<=\n)/);
+  return out;
+}
+
+interface Step {
+  op: PatchOp;
+  line: string;
+}
+
+function steps(a: string[], b: string[], maxEdits: number): Step[] {
+  const pairs = commonSubsequence(a, b, maxEdits) ?? [];
+  const out: Step[] = [];
+  let i = 0;
+  let j = 0;
+  for (const [x, y] of [...pairs, [a.length, b.length] as [number, number]]) {
+    while (i < x) out.push({ op: "del", line: a[i++] ?? "" });
+    while (j < y) out.push({ op: "ins", line: b[j++] ?? "" });
+    if (x < a.length && y < b.length) {
+      out.push({ op: "same", line: a[x] ?? "" });
+      i = x + 1;
+      j = y + 1;
+    }
+  }
+  return out;
+}
+
+const MARK: Record<PatchOp, string> = { same: " ", ins: "+", del: "-" };
+
+// The patch from `before` to `after`. Both sides carry the same name, so a viewer shows one file
+// changed, not a rename; what each side is goes in its label. Two texts that are the same give a
+// patch with no hunks, which DraftPatch says in words. Pure, so a server builds it.
+export function unifiedPatch(
+  name: string,
+  before: UnifiedSide,
+  after: UnifiedSide,
+  options: UnifiedOptions = {},
+): string {
+  const context = options.context ?? 3;
+  const all = steps(linesOf(before.text), linesOf(after.text), options.maxEdits ?? 5000);
+  const head = (sign: string, side: UnifiedSide) =>
+    `${sign} ${name}${side.label === undefined ? "" : `\t${side.label}`}`;
+  const out = [
+    `Index: ${name}`,
+    "===================================================================",
+    head("---", before),
+    head("+++", after),
+  ];
+  // The line numbers each step starts at, on both sides.
+  const oldAt: number[] = [];
+  const newAt: number[] = [];
+  let o = 1;
+  let n = 1;
+  for (const s of all) {
+    oldAt.push(o);
+    newAt.push(n);
+    if (s.op !== "ins") o++;
+    if (s.op !== "del") n++;
+  }
+  const changed = all.flatMap((s, k) => (s.op === "same" ? [] : [k]));
+  let k = 0;
+  while (k < changed.length) {
+    const first = changed[k] ?? 0;
+    let last = first;
+    // Changes closer than two contexts apart share a hunk.
+    while (k + 1 < changed.length && (changed[k + 1] ?? 0) - last - 1 <= context * 2)
+      last = changed[++k] ?? last;
+    k++;
+    const from = Math.max(0, first - context);
+    const to = Math.min(all.length - 1, last + context);
+    const part = all.slice(from, to + 1);
+    const oldLines = part.filter((s) => s.op !== "ins").length;
+    const newLines = part.filter((s) => s.op !== "del").length;
+    const oldStart = (oldAt[from] ?? 1) - (oldLines === 0 ? 1 : 0);
+    const newStart = (newAt[from] ?? 1) - (newLines === 0 ? 1 : 0);
+    out.push(`@@ -${oldStart},${oldLines} +${newStart},${newLines} @@`);
+    for (const s of part) {
+      out.push(MARK[s.op] + s.line.replace(/\n$/, ""));
+      if (!s.line.endsWith("\n")) out.push("\\ No newline at end of file");
+    }
+  }
+  return `${out.join("\n")}\n`;
+}
+
+// True when a patch carries at least one changed line.
+export function hasChanges(patch: string): boolean {
+  return /^@@ /m.test(patch);
 }

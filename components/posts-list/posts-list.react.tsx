@@ -17,12 +17,8 @@ import type {
   ScheduledUpdateView,
   SubmitIntent,
 } from "../content/content.ts";
-import {
-  ContentBulkBar,
-  PlainForm,
-  useIntents,
-  type FormComponent,
-} from "../content/content.react.tsx";
+import { ContentBulkBar, useIntents } from "../content/content.react.tsx";
+import { PlainForm, type FormComponent } from "../plain-form/plain-form.react.tsx";
 import { Empty } from "../empty/empty.react.tsx";
 import { FormMenu } from "../menu/menu.react.tsx";
 import { Pill, Status } from "../status/status.react.tsx";

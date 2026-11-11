@@ -1,0 +1,175 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* The dictionary entry: headword, pronunciation with its speaker, part of speech, numbered senses
+   and the origin in a quieter voice, set between two rules so it reads as an entry lifted from a
+   dictionary page. From dustinedwards.info (app/styles/dictionary-entry.css). */
+@layer cap.components {
+  .cap-dictionary-entry {
+    margin: var(--space-3) 0 var(--space-7);
+    padding: var(--space-5) 0 var(--space-5);
+    border-block-start: 2px solid var(--text);
+    border-block-end: 1px solid var(--line);
+    font-family: var(--prose);
+    color: var(--text);
+  }
+
+  .cap-dictionary-entry-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2) var(--space-5);
+    margin: 0;
+  }
+
+  .cap-dictionary-entry-word {
+    font-size: 1.75rem;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--text);
+  }
+
+  /* The pronunciation and its speaker wrap together, so on a narrow screen the speaker never sits alone. */
+  .cap-dictionary-entry-pron {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2) var(--space-4);
+    font-size: var(--fs-body);
+    color: var(--muted);
+  }
+
+  .cap-dictionary-entry-ipa {
+    font-family: var(--prose);
+    font-size: 1.0625rem;
+    color: var(--text);
+  }
+
+  .cap-dictionary-entry-respell {
+    font-family: var(--ui);
+    letter-spacing: 0.02em;
+  }
+
+  /* The speaker: a link without script, the button with it. The same round box either way, so the
+     swap moves nothing. */
+  .cap-dictionary-entry-listen {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    inline-size: max(var(--control), var(--target));
+    block-size: max(var(--control), var(--target));
+    padding: 0;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-full);
+    background: transparent;
+    color: var(--accent-text);
+    font: inherit;
+    text-decoration: none;
+    cursor: pointer;
+
+    &[hidden] {
+      display: none;
+    }
+    &:is(:hover, [data-force="hover"]) {
+      border-color: var(--accent-text);
+      background: var(--accent-soft);
+    }
+    &:focus-visible {
+      outline: var(--ring-width) solid var(--ring);
+      outline-offset: var(--focus-offset);
+    }
+    /* Playing: filled, and in motion the waves pulse. */
+    &[aria-pressed="true"] {
+      border-color: var(--primary-line);
+      background: var(--primary);
+      color: var(--primary-fg);
+    }
+    & svg {
+      inline-size: 20px;
+      block-size: 20px;
+    }
+  }
+
+  .cap-dictionary-entry-pos {
+    margin: var(--space-2) 0 var(--space-4);
+    color: var(--muted);
+  }
+
+  .cap-dictionary-entry-senses {
+    margin: 0 0 var(--space-5);
+    padding-inline-start: 1.75rem;
+    list-style: decimal;
+    font-size: 1.0625rem;
+    line-height: 1.6;
+
+    & li {
+      margin-block-end: var(--space-2);
+      padding-inline-start: var(--space-2);
+    }
+    & li::marker {
+      font-family: var(--ui);
+      font-weight: 600;
+      color: var(--muted);
+    }
+  }
+
+  /* The subject label before a specialized sense, italic and quieter, as a dictionary sets it. */
+  .cap-dictionary-entry-label {
+    color: var(--muted);
+  }
+
+  .cap-dictionary-entry-ety {
+    margin: 0;
+    font-size: var(--fs-body);
+    line-height: 1.5;
+    color: var(--muted);
+  }
+
+  .cap-dictionary-entry-ety-label {
+    font-family: var(--ui);
+    font-size: var(--fs-detail);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .cap-dictionary-entry-listen {
+      transition:
+        background-color var(--dur-fast) var(--ease-out),
+        border-color var(--dur-fast) var(--ease-out),
+        color var(--dur-fast) var(--ease-out);
+    }
+    .cap-dictionary-entry-listen[aria-pressed="true"] .cap-dictionary-entry-wave {
+      animation: cap-dictionary-entry-wave 900ms var(--ease-in-out) infinite;
+    }
+    .cap-dictionary-entry-listen[aria-pressed="true"] .cap-dictionary-entry-wave + .cap-dictionary-entry-wave {
+      animation-delay: 180ms;
+    }
+  }
+
+  @keyframes cap-dictionary-entry-wave {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0;
+    }
+  }
+
+  /* Forced colors: the pressed fill is gone, so a playing speaker keeps a heavier edge. */
+  @media (forced-colors: active) {
+    .cap-dictionary-entry-listen {
+      border-color: ButtonText;
+      color: ButtonText;
+    }
+    .cap-dictionary-entry-listen[aria-pressed="true"] {
+      border-width: 3px;
+      border-color: Highlight;
+      color: Highlight;
+    }
+  }
+}

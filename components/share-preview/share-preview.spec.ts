@@ -66,4 +66,22 @@ eachTheme((theme) => {
       expect(fits, sel).toBe(true);
     }
   });
+
+  test("behavior: the width meter says the width in pixels, and past the cut says so in words", async ({
+    page,
+  }) => {
+    await visitStates(page, "share-preview", theme);
+    const meters = page.locator("#sp-width .cap-meter");
+    await expect(meters).toHaveCount(3);
+    await expect(meters.nth(0)).toHaveAttribute("data-tone", "ok");
+    await expect(meters.nth(0)).not.toContainText("Google cuts it off");
+    await expect(meters.nth(1)).toHaveAttribute("data-tone", "warn");
+    await expect(meters.nth(1).locator(".cap-status")).toHaveText("Google cuts it off");
+    await expect(meters.nth(1).locator(".cap-meter-value")).toContainText(
+      /of 600 px · 73 characters/,
+    );
+    await expectContrast(page, [
+      { sel: "#sp-width .cap-meter[data-tone=warn] .cap-status", what: "the cut, in words" },
+    ]);
+  });
 });

@@ -5,8 +5,8 @@ summary: A box of fixed height whose content scrolls inside it, with a thin scro
 parts: [css]
 tool: native
 states: [rest, keyboard focus, more contrast, no frame]
-added: 0.98.0
-updated: 0.98.0
+added: 0.99.0
+updated: 0.99.0
 source: Chrome's Modern Web Guidance adapt-scrollbar-to-contrast-preferences guide; WCAG 1.4.11 and 2.1.1; replaces bsw's manuscript scroll boxes (app.css .psms-scroll-box)
 replaces:
   - '::-webkit-scrollbar-thumb\s*\{'

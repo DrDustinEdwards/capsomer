@@ -1,0 +1,236 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* Schedule: a meeting's program by day, time slot and parallel track. From txasm's public
+   program (meetings.$slug.program.tsx), its builder (program-builder/) and its printed program
+   (lib/program-book.ts). The day nav is links; each slot is a list item with its time as the
+   heading; parallel tracks sit side by side where they fit and stack where they do not, with
+   no sideways scroll and no column count set from script. */
+@layer cap.components {
+  .cap-schedule {
+    container: cap-schedule / inline-size;
+    display: grid;
+    gap: var(--space-7);
+    font-family: var(--ui);
+    min-width: 0;
+  }
+
+  .cap-schedule-zone {
+    margin: 0;
+    color: var(--muted);
+    font-size: var(--fs-detail);
+  }
+
+  .cap-schedule-day {
+    display: grid;
+    gap: var(--space-4);
+    min-width: 0;
+  }
+
+  .cap-schedule-day-title {
+    margin: 0;
+    padding-bottom: var(--space-2);
+    border-bottom: 1px solid var(--line);
+    font-size: var(--fs-h2);
+    font-weight: var(--weight-heading);
+  }
+
+  .cap-schedule-empty {
+    margin: 0;
+    color: var(--muted);
+  }
+
+  .cap-schedule-slots {
+    display: grid;
+    gap: var(--space-6);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  /* A slot: its time over its tracks; from 40rem the time takes a column of its own. */
+  .cap-schedule-slot {
+    display: grid;
+    gap: var(--space-3);
+    min-width: 0;
+  }
+
+  @container cap-schedule (min-width: 40rem) {
+    .cap-schedule-slot {
+      grid-template-columns: 9rem minmax(0, 1fr);
+      gap: var(--gap);
+    }
+  }
+
+  .cap-schedule-when {
+    display: grid;
+    gap: var(--space-1);
+    align-content: start;
+  }
+
+  .cap-schedule-time {
+    margin: 0;
+    color: var(--text);
+    font-size: var(--fs-body);
+    font-variant-numeric: var(--figures);
+    font-weight: 600;
+  }
+
+  .cap-schedule-count {
+    margin: 0;
+    color: var(--muted);
+    font-size: var(--fs-detail);
+  }
+
+  .cap-schedule-body {
+    display: grid;
+    gap: var(--space-3);
+    min-width: 0;
+  }
+
+  /* Parallel tracks: as many columns as fit at 16rem each, every one as wide as the rest. A
+     track that does not fit wraps under the others, in the list's order. */
+  .cap-schedule-tracks {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+    gap: var(--gap);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .cap-schedule-track {
+    display: grid;
+    gap: var(--space-2);
+    align-content: start;
+    min-width: 0;
+  }
+
+  .cap-schedule-track-name {
+    margin: 0;
+    color: var(--muted);
+    font-size: var(--fs-label);
+    font-weight: 600;
+  }
+
+  .cap-schedule-session {
+    display: grid;
+    gap: var(--space-2);
+    align-content: start;
+    padding: var(--pad-card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-l);
+    background: var(--surface);
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .cap-schedule-session-title {
+    margin: 0;
+    font-size: var(--fs-h3);
+    font-weight: var(--weight-heading);
+  }
+
+  .cap-schedule-session-meta {
+    display: grid;
+    gap: var(--space-1);
+    color: var(--muted);
+    font-size: var(--fs-detail);
+
+    & > * {
+      margin: 0;
+    }
+  }
+
+  /* A session's talks, in order, under its facts. */
+  .cap-schedule-talks {
+    display: grid;
+    gap: var(--space-1);
+    margin: 0;
+    padding-inline-start: var(--space-5);
+    font-size: var(--fs-body);
+  }
+
+  /* The day nav: one link per day, the current one tinted, edged and heavier. */
+  .cap-schedule-daybar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3) var(--gap);
+  }
+
+  .cap-schedule-daynav ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .cap-schedule-daybar-extra {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .cap-schedule-day-link {
+    display: inline-flex;
+    align-items: center;
+    box-sizing: border-box;
+    min-height: var(--control);
+    padding: 0 var(--pad-x);
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-m);
+    color: var(--accent-text);
+    font-family: var(--ui);
+    font-size: var(--fs-body);
+    font-weight: 500;
+    text-decoration: none;
+    white-space: nowrap;
+
+    &:visited {
+      color: var(--accent-text);
+    }
+    &:hover,
+    &[data-force="hover"] {
+      background: var(--raised);
+      color: var(--accent-hover);
+    }
+    &:focus-visible {
+      outline: var(--ring-width) solid var(--ring);
+      outline-offset: 1px;
+    }
+    &[aria-current="page"] {
+      border-color: var(--accent-text);
+      background: var(--sel);
+      color: var(--text);
+      font-weight: 600;
+      box-shadow: inset 0 -2px 0 var(--accent-text);
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .cap-schedule-day-link {
+      transition:
+        background-color var(--dur-fast) var(--ease-out),
+        color var(--dur-fast) var(--ease-out);
+    }
+  }
+
+  /* Forced colors: the current day keeps a heavier edge, since the tint and the bar are gone. */
+  @media (forced-colors: active) {
+    .cap-schedule-day-link[aria-current="page"] {
+      border: 2px solid Highlight;
+    }
+  }
+
+  @media print {
+    .cap-schedule-daybar {
+      display: none;
+    }
+    .cap-schedule-slot {
+      break-inside: avoid;
+    }
+  }
+}

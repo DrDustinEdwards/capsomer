@@ -1,0 +1,10 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* Rich text: stored HTML rendered into an element. It takes the look of where it sits (a title, a
+   paragraph, the prose column); the one thing it adds is the reading measure, on request. */
+@layer cap.components {
+  .cap-rich-text[data-measure="text"] {
+    max-inline-size: var(--measure);
+  }
+}
