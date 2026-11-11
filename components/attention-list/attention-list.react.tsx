@@ -1,5 +1,6 @@
 import { Fragment, useEffect, useId, useState, type ReactNode } from "react";
 import { Empty } from "../empty/empty.react.tsx";
+import { Spinner } from "../skeleton/skeleton.react.tsx";
 import { useOptionalMessage } from "../message/message.react.tsx";
 import {
   Row,
@@ -46,6 +47,9 @@ export interface AttentionListProps {
   title?: string;
   // How fresh the reading is, after "Worst first.": "Read 40 seconds ago".
   read?: ReactNode;
+  // The list is being read again: the last good rows stay, the section is marked busy and a spinner
+  // says "Reading again" in place of `read`, as a panel's `reading` does (patterns.md "Loading").
+  reading?: boolean;
   headingLevel?: 2 | 3;
   // Said beside the ok status when no problem needs attention.
   clearText?: string;
@@ -82,6 +86,7 @@ export function AttentionList(props: AttentionListProps) {
     items,
     title = "Needs attention",
     read,
+    reading = false,
     headingLevel = 2,
     clearText = "Nothing needs you.",
     noticesDetail = "Nothing to act on now",
@@ -170,13 +175,23 @@ export function AttentionList(props: AttentionListProps) {
   const empty = arranged.problems.length === 0 && arranged.more.length === 0;
 
   return (
-    <section className="cap-attention" aria-labelledby={`${id}-h`}>
+    <section className="cap-attention" aria-labelledby={`${id}-h`} aria-busy={reading || undefined}>
       <header className="cap-attention-head">
         <Heading id={`${id}-h`} className="cap-attention-title">
           {title}
         </Heading>
         <span className="cap-attention-count">{problemCount(arranged)}</span>
-        <span className="cap-attention-src">Worst first.{read ? <> {read}</> : null}</span>
+        <span className="cap-attention-src">
+          Worst first.
+          {reading ? (
+            <>
+              {" "}
+              <Spinner size="sm" label="Reading again" />
+            </>
+          ) : read ? (
+            <> {read}</>
+          ) : null}
+        </span>
       </header>
       {empty ? (
         <p className="cap-attention-clear">

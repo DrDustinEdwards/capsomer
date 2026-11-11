@@ -54,6 +54,15 @@
     max-inline-size: var(--page-max);
     margin-inline: auto;
     padding-inline: max(var(--page-gutter), env(safe-area-inset-left, 0px)) max(var(--page-gutter), env(safe-area-inset-right, 0px));
+
+    /* The admin page's widths for a page outside a shell: "page" is 1280px of content (Recova's
+       dashboard width), "narrow" 768px, each plus the gutters. */
+    &[data-width="page"] {
+      max-inline-size: calc(1280px + 2 * var(--page-gutter));
+    }
+    &[data-width="narrow"] {
+      max-inline-size: calc(768px + 2 * var(--page-gutter));
+    }
   }
   .cap-label {
     font-size: var(--fs-label);

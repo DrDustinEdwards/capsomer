@@ -153,6 +153,18 @@
   .cap-sortable-body {
     flex: 1 1 auto;
     min-width: 0;
+
+    /* A card (card.css) as a card item's content, such as a corkboard's scene: the item is already
+       the card's box, so the card keeps its regions and its stretched link and drops its own edge,
+       padding, surface and lift. */
+    & > .cap-card {
+      padding: 0;
+      border: 0;
+      border-radius: 0;
+      background: none;
+      box-shadow: none;
+      translate: none;
+    }
   }
 
   .cap-sortable-steps {

@@ -4,6 +4,18 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+## [0.103.0]
+
+The follow-ups from moving the sites onto shared components: the parts Carrel, Foxing, Foxhound, bsw and the Portal still drew for themselves.
+
+- **New: search suggestions** (`capsomer/search-suggest.css`, `capsomer/behavior/search-suggest`, `capsomer/react/search-suggest`). A site's search box that suggests pages as a person types: the search field's GET form still searches, with no script too, and a suggestion is a page to go to. One behavior module (`attachSuggest`, `enhance`) on the shared listbox in input mode serves React and a page that does not hydrate, in place of Foxing's two copies (search-box.tsx and its island). New classes `.cap-search-suggest`, `.cap-search-suggest-list`.
+- **Search field: `labelHidden`** (React `SearchField` and `Field`): the label is read and not shown, for a search box whose icon and place make it plain. Every other field shows its label.
+- **Fields side by side: `.cap-fields`.** As many columns of at least `--fields-min` (16rem) as fit, lined up on their controls whatever help one carries, a checkbox among them level with the inputs. Carrel's `.app-fields` moves here.
+- **Card inside a sortable list's card item.** A `.cap-card` as a `.cap-sortable-body`'s content drops its own edge, padding, surface and lift, since the item is already the card's box; its regions and stretched link stay. Carrel's corkboard cards move onto the card.
+- **Attention list: `reading`** (React). While the data is read again the last rows stay, the section is `aria-busy` and the "Reading again" spinner takes the place of `read`, as a panel's `reading` does. Foxhound's admin overview drops its own wrapper and spinner.
+- **Status matrix: `glyph`** on a cell and a key item, in place of the tone's. A check that could not measure is `tone: "muted"` with `glyph: "unknown"`, a question mark, neither a pass nor a failure; the Portal's Completeness grid used the info glyph.
+- **Error page: `homeIcon`** (React), an icon after the home link's words (an `svg` with `data-icon="end"`), for a site whose buttons that go somewhere carry an arrow (bsw).
+- **Page column widths: `.cap-page[data-width="page"]`** (1280px of content, Recova's dashboard width, as the admin page's `data-width="page"`) **and `"narrow"`** (768px), for a page outside a shell. Foxhound's audit results page moves off its own `max-w-[1280px]`.
 - **One hydration flag and one storage path inside Capsomer.** Thirteen components had their own `useSyncExternalStore` hydration flag (field, people-roles, bulk-bar, mentions-list, dictionary-entry, media-library, history-list, content, posts-list, time, scope-chip) or browser-zone hook (schedule-dialog, writing-progress); each now uses `useHydrated` or `useBrowserZone` from `capsomer/react/hooks`. Six kept their own try/catch around `localStorage` (shell's `readPref`/`writePref`, editor-workspace, draft-compare, command-menu's recents, authorship, the player's memory); each now goes through hooks.ts' `readStored`/`writeStored`, so where storage is refused a choice lasts the page and every reader of a key stays in step. checklist-run keeps its own, since it tells "blocked" from "full". Removed: `useBrowserZone` from `capsomer/react/schedule-dialog` (use `capsomer/react/hooks`, `useBrowserZone(null)`). No token, class or HTML contract changes.
 
 ## [0.102.0]
