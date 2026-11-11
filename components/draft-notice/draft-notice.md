@@ -5,8 +5,8 @@ summary: The line at the top of a page only its author can see yet, "Draft: only
 parts: [css, react]
 tool: native
 states: [default at the top of a page, other words, not a draft]
-added: 0.91.0
-updated: 0.91.0
+added: 0.92.0
+updated: 0.92.0
 source: dustinedwards.info app/routes/content-page.tsx:148, protocols.tsx:155, procedure.tsx:110 (p.procedure-draft, styles/procedure.css:65), phages.tsx:138, lab.kind.tsx:359, about.tsx:108
 replaces:
   - "Draft: only you can see this page"

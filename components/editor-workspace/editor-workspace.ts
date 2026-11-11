@@ -83,7 +83,9 @@ export function typingRecede(options: { surface?: string; root?: HTMLElement } =
 // its [data-cap-layout] group, remembered under its data-key (or LAYOUT_KEY), and shows only the
 // panes ([data-pane="write"], [data-pane="preview"]) that layout holds. Without script the
 // layout the HTML was written with stays.
-export function enhance(root: ParentNode = document): () => void {
+// The root is Element | Document | DocumentFragment, not ParentNode: under @cloudflare/workers-types
+// an HTMLFormElement does not type as a ParentNode, so a site could not pass its form.
+export function enhance(root: Element | Document | DocumentFragment = document): () => void {
   const undo: Array<() => void> = [];
   for (const el of root.querySelectorAll<HTMLElement>('[data-cap="editor-workspace"]')) {
     if (el.hasAttribute("data-cap-ready")) continue;

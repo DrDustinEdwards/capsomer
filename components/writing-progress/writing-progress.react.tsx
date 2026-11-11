@@ -3,7 +3,7 @@ import { barChart } from "enarratio/lite/bar";
 import { Alert } from "../banner/banner.react.tsx";
 import { Button } from "../button/button.react.tsx";
 import { ChartFrame, type ChartFit } from "../chart-frame/chart-frame.react.tsx";
-import { PlainForm, type FormComponent } from "../content/content.react.tsx";
+import { PlainForm, type FormComponent } from "../plain-form/plain-form.react.tsx";
 import { Disclosure } from "../disclosure/disclosure.react.tsx";
 import { Check, Field } from "../field/field.react.tsx";
 import { Meter } from "../meter/meter.react.tsx";

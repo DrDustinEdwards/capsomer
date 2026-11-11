@@ -11,7 +11,8 @@ export interface ScaleControlProps {
   value: number;
   min?: number;
   max?: number;
-  step?: number;
+  // "any" for a quantity that need not be whole (1.5 servings); the steppers still step by 1.
+  step?: number | "any";
   // The unit or system select, when there is one: its label, query name, options and value.
   units?: { label: string; name: string; options: SelectOption[]; value: string };
   // The button's word: "Show", "Scale". Default: "Scale".

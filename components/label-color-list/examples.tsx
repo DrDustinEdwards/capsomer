@@ -2,7 +2,8 @@
 import { StrictMode, type ReactElement } from "react";
 import { createRoot } from "react-dom/client";
 import { colorLabels } from "./label-color-list.ts";
-import { ColorLabelPill, LabelColorEditor } from "./label-color-list.react.tsx";
+import { LabelColorEditor } from "../label-color-editor/label-color-editor.react.tsx";
+import { ColorLabelPill } from "./label-color-list.react.tsx";
 
 const STAGES = colorLabels("Idea", "Drafting", "Ready", "Scheduled");
 

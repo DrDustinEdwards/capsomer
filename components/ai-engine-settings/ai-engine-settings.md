@@ -5,8 +5,8 @@ summary: Which engine does each AI job, a person's subscription or the API. What
 parts: [css, behavior, react]
 tool: native + React (composes table, select, panel, field, row list, status and empty)
 states: [both engines ready with spend, the API for a few days with the subscription not connected and nothing spent]
-added: 0.91.0
-updated: 0.91.0
+added: 0.92.0
+updated: 0.92.0
 source: Carrel, app/routes/ai.tsx (the status line, the engine table, the spend panel and the action that reads the form) and app/lib/ai-engine.server.ts (FEATURES, the settings' shape); site-runtime ai-engine.mjs (EngineSettings, the engines and the prices).
 replaces:
   - 'className="app-engine-(status|table)[ "]'
@@ -75,7 +75,7 @@ const saved = settingsFromForm((name) => form.get(name), FEATURES);
 
 It renders `div.cap-ai-engine`: `dl.cap-ai-engine-status`, `p.cap-ai-engine-note`, a form holding the panel with `table.cap-table.cap-ai-engine-table` (a job's note is `.cap-ai-engine-job-note` in its row header), and the spend panel (`.cap-ai-engine-spend`).
 
-Props: `settings` (site-runtime's `EngineSettings`: `master`, `features`, `override`, `apiCapMicros`), `models`, `jobs` (`{ key, label, note }[]`), `modelOptions` (`{ value, label }[]`, the first "The job's own default" with value ""), `ready` (`{ subscription, api }`), `readyNote`, `spentMicros`, `usage` (`{ job, calls, micros }[]`), `capHelp`, `costNote`, `action`, `Form`, `pending`. Pure, from `capsomer/behavior/ai-engine-settings`: `settingsFromForm`, `dollars`, `engineWord`, `ENGINE_OPTIONS`.
+Props: `settings` (site-runtime's `EngineSettings`: `master`, `features`, `override`, `apiCapMicros`), `models` (each job's model, a partial map: a job left out uses its default), `jobs` (`{ key, label, note }[]`), `modelOptions` (`{ value, label }[]`, the first "The job's own default" with value ""), `ready` (`{ subscription, api }`), `readyNote`, `spentMicros`, `usage` (`{ job, calls, micros }[]`), `capHelp`, `costNote`, `action`, `Form`, `pending`. Pure, from `capsomer/behavior/ai-engine-settings`: `settingsFromForm`, `dollars`, `engineWord`, `ENGINE_OPTIONS`.
 
 ## Exceptions in production
 

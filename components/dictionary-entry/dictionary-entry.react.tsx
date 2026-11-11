@@ -137,7 +137,9 @@ function Listen({ src, label }: { src: string; label: string }) {
 }
 
 // The HTML contract in dictionary-entry.md. A React page needs no enhance() call: the speaker is
-// React state. The section carries data-cap-ready so a page that also calls enhance() skips it.
+// React state. Once hydrated the section carries data-cap-ready, set in an effect, so a later
+// enhance() call skips it; server HTML that is never hydrated (an islands page) has none, so
+// enhance() wires its speaker.
 export function DictionaryEntry(props: DictionaryEntryProps) {
   const {
     term,
@@ -151,12 +153,17 @@ export function DictionaryEntry(props: DictionaryEntryProps) {
     audio,
     listen = listenLabel(term),
   } = props;
+  const root = useRef<HTMLElement>(null);
+  // React owns this one once it runs: a later enhance() call on the page leaves it alone.
+  useEffect(() => {
+    if (root.current) root.current.dataset.capReady = "";
+  }, []);
   return (
     <section
+      ref={root}
       className="cap-dictionary-entry"
       aria-label={`Dictionary entry: ${term}`}
       data-cap="dictionary-entry"
-      data-cap-ready=""
     >
       <p className="cap-dictionary-entry-head">
         <dfn className="cap-dictionary-entry-word">

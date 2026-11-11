@@ -5,8 +5,8 @@ summary: A dialog that builds a chart block from pasted or chosen CSV, a type, t
 parts: [css, behavior, react]
 tool: native + own JavaScript
 states: [closed, open and empty, data with too few columns, a file refused, columns chosen, a column that is not all numbers, the check flags, the check flags nothing, a drafted finding offered, the chart drawn here, previewed as the site renders it, insert waiting for a finding]
-added: 0.91.0
-updated: 0.91.0
+added: 0.92.0
+updated: 0.92.0
 source: Carrel, app/components/editor/chart-insert.tsx, app/lib/chart-block.ts (CHART_KINDS, csvColumns, chartBlock) and app.css (.app-chart-csv, .app-chart-y, .app-chart-suggestion, .app-chart-findings, .app-chart-preview)
 replaces:
   - 'className="app-chart-(csv|y|suggestion|findings|preview)'

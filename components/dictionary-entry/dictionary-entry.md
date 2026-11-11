@@ -5,8 +5,8 @@ summary: A word set as a dictionary sets it, between two rules, with its pronunc
 parts: [css, behavior, react]
 tool: native + own JavaScript
 states: [default with the speaker as a button, playing, hover, keyboard focus, without script the speaker is a link, a clip that cannot play brings the link back, no clip and no etymology]
-added: 0.91.0
-updated: 0.91.0
+added: 0.92.0
+updated: 0.92.0
 source: dustinedwards.info, app/styles/dictionary-entry.css, app/components/dictionary-entry.tsx and app/enhance/pronounce.ts
 replaces:
   - '\.term-(entry|head|word|pron|ipa|listen|senses|ety)\s*\{'
@@ -73,7 +73,7 @@ A word set as a dictionary sets it: the headword with its syllable dots, the pro
 </section>
 ```
 
-The speaker's SVG is a speaker with two waves, each wave `class="cap-dictionary-entry-wave"` (React exports it as `SpeakerIcon`). Call `enhance()` once on the page; `wireListen(button, link)` wires one pair on its own.
+The speaker's SVG is a speaker with two waves, each wave `class="cap-dictionary-entry-wave"` (React exports it as `SpeakerIcon`). Call `enhance()` once on the page; `wireListen(button, link)` wires one pair on its own. `DictionaryEntry` rendered on the server and never hydrated (an islands page) is wired by `enhance()` too: React marks the entry `data-cap-ready` only once it runs, so a hydrated one is left to React.
 
 ```tsx
 import { DictionaryEntry } from "capsomer/react/dictionary-entry";

@@ -1,6 +1,6 @@
 import { useEffect, useId, useLayoutEffect, useRef, useState, type ReactNode } from "react";
 import { ConfirmDialog } from "../confirm-dialog/confirm-dialog.react.tsx";
-import { PlainForm, type FormComponent } from "../content/content.react.tsx";
+import { PlainForm, type FormComponent } from "../plain-form/plain-form.react.tsx";
 import { Empty } from "../empty/empty.react.tsx";
 import { isTyping, listOwnsKeys, moveRowFocus, singleKeysOff } from "../row-list/row-list.ts";
 import { Status } from "../status/status.react.tsx";

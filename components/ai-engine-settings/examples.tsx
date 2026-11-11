@@ -2,7 +2,7 @@
 // nowhere.
 import { StrictMode, type ReactElement } from "react";
 import { createRoot } from "react-dom/client";
-import type { FormComponent } from "../content/content.react.tsx";
+import type { FormComponent } from "../plain-form/plain-form.react.tsx";
 import { AiEngineSettings, type EngineJob } from "./ai-engine-settings.react.tsx";
 
 const JOBS: EngineJob[] = [

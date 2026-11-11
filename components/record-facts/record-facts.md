@@ -5,8 +5,8 @@ summary: A record's labelled facts (year, venue, identifier, kind) as a narrow r
 parts: [css, react]
 tool: native
 states: [a record's facts, a linked identifier in mono, a missing fact left out, in a rail aligned to the text]
-added: 0.91.0
-updated: 0.91.0
+added: 0.92.0
+updated: 0.92.0
 source: dustinedwards.info app/routes/publications.$slug.tsx:143-188 (the paper page's "machine" rail, p.paper-machine) and styles/paper.css (.paper-machine, .paper-machine b)
 replaces:
   - 'className="paper-machine'

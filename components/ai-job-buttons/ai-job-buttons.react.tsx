@@ -1,6 +1,6 @@
 import { Alert } from "../banner/banner.react.tsx";
 import { Button } from "../button/button.react.tsx";
-import { PlainForm, type FormComponent } from "../content/content.react.tsx";
+import { PlainForm, type FormComponent } from "../plain-form/plain-form.react.tsx";
 import {
   ENGINE_NAME,
   canRetry,

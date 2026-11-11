@@ -5,8 +5,8 @@ summary: A drawing with numbered callouts on leader lines, in a wide and a narro
 parts: [css, behavior, react]
 tool: own JavaScript
 states: [default with two layouts, the key outside the figure, a narrow container shows the narrow drawing, a callout and its entry lit, leaders drawing in, reduced motion]
-added: 0.91.0
-updated: 0.91.0
+added: 0.92.0
+updated: 0.92.0
 source: dustinedwards.info, app/components/plate-i.tsx, app/components/plate-i-geometry.ts, app/enhance/plate.ts and app/styles/home.css (the plate and its key)
 replaces:
   - '\.plate-(plaque|leader|label|key|key-entry|key-art)\s*\{'
@@ -31,7 +31,7 @@ A drawing that names its parts: each part is a target with a leader line out to 
 
 - **One drawing, in one or two layouts.** A wide drawing puts the labels beside it; a narrow one folds them in for a phone. The figure's own width picks one (`data-layout="wide"` below 32rem shows `"narrow"`), and `display: none` takes the other out of the accessibility tree, so a reader meets one drawing either way.
 - **Every target is drawn before any leader**, so no fill ever covers a line.
-- **Each view box is sized so its unit is about one CSS pixel** at its drawn width, so 12px labels stay 12px.
+- **Each view box is sized so its unit is about one CSS pixel** at its drawn width, so the labels, at `--fs-detail` in both layouts, read at the same size in the wide and the narrow drawing.
 - **The drawing is a named group**: its `title` and a `desc` that names every callout, and each target is `role="img"` with its own name. The labels on the drawing are `aria-hidden`, since the targets and the key already say them.
 - **A callout and its key entry light together**: a mouse over either previews it; a tap pins it until the next tap, so a touch reader can look from one to the other. Lit is a heavier line and bold numbers, never color alone (`data-lit`).
 - **No focus stops for the lighting.** The key already pairs each number with its name in text; a stop on every target and entry, which are not controls, would cost a keyboard reader more than the highlight gives.

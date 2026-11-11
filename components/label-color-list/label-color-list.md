@@ -5,8 +5,8 @@ summary: A person's own short list of labels, each a word with one of the eight 
 parts: [css, behavior, react]
 tool: native
 states: [every color, a value matched ignoring case, a value not on the list, editor with empty rows]
-added: 0.91.0
-updated: 0.91.0
+added: 0.92.0
+updated: 0.92.0
 source: Carrel, app/lib/writing/status.ts (cleanLabels, labelFor, COLOR_NAMES), app/components/writing/status-label.tsx (StatusLabelPill), app/routes/book.settings.tsx (the list and its editor) and app/app.css (.app-label, .app-label-dot, .app-label-list, .app-label-edit, lines 918 to 980).
 replaces:
   - 'className="app-label(-dot|-list|-edit)?[ "]'
@@ -71,7 +71,8 @@ Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the a
 `data-color` is 1 to 8, for `--series-1` to `--series-8`.
 
 ```tsx
-import { ColorLabelPill, LabelColorList, LabelColorEditor } from "capsomer/react/label-color-list";
+import { ColorLabelPill, LabelColorList } from "capsomer/react/label-color-list";
+import { LabelColorEditor } from "capsomer/react/label-color-editor";
 import { cleanLabels, rowsFromForm } from "capsomer/behavior/label-color-list";
 
 <LabelColorList labels={labels} label="Statuses, in order" />
@@ -82,7 +83,7 @@ import { cleanLabels, rowsFromForm } from "capsomer/behavior/label-color-list";
 const result = cleanLabels(rowsFromForm(form.getAll("label"), form.getAll("color")));
 ```
 
-`ColorLabelPill`: `labels`, `value`, `unknownNote`. `LabelColorList`: `labels`, `label`. `LabelColorEditor`: `labels`, `spare` (default 2), `max` (default 12), `nameLabel`, `colorLabel`. Pure, from `capsomer/behavior/label-color-list`: `colorLabels`, `labelFor`, `cleanLabels`, `editRows`, `rowsFromForm`, `COLOR_NAMES`, `COLORS`, `MAX_LABELS`, `MAX_LABEL_LENGTH`, and the type `ColorLabel`.
+`ColorLabelPill`: `labels`, `value`, `unknownNote`. `LabelColorList`: `labels`, `label`. `LabelColorEditor` (its own module, so a page that only shows labels loads no field or select): `labels`, `spare` (default 2), `max` (default 12), `nameLabel`, `colorLabel`. Pure, from `capsomer/behavior/label-color-list`: `colorLabels`, `labelFor`, `cleanLabels`, `editRows`, `rowsFromForm`, `COLOR_NAMES`, `COLORS`, `MAX_LABELS`, `MAX_LABEL_LENGTH`, and the type `ColorLabel`.
 
 ## Exceptions in production
 

@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { Button } from "../button/button.react.tsx";
-import { PlainForm, type FormComponent } from "../content/content.react.tsx";
+import { PlainForm, type FormComponent } from "../plain-form/plain-form.react.tsx";
 
 export type { FormComponent };
 

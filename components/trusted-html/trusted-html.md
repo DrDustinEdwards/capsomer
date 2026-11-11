@@ -6,7 +6,7 @@ parts: [css, behavior, react]
 tool: own JavaScript
 states: [stored statement kept to the measure, titles inside a line, an empty title with its fallback, a paragraph with the page's class]
 added: 0.79.3
-updated: 0.91.0
+updated: 0.92.0
 source: Capsomer's own scripts (0.79.3, trusted-html.ts); RichText from txasm, 28 dangerouslySetInnerHTML of stored sanitized HTML in 20 files (routes/meetings.$slug.abstracts.$ref.tsx, awards.$slug.tsx, review.$assignmentId.tsx and the rest) and routes/accessibility.tsx's inline maxWidth 65ch
 replaces:
   - "dangerouslySetInnerHTML=\\{\\{\\s*__html:\\s*(?!jsonLdText)"

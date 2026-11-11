@@ -72,7 +72,9 @@ export function wireListen(button: HTMLButtonElement, link: HTMLAnchorElement): 
 
 // Attaches to every [data-cap="dictionary-entry"] under root not yet attached. Returns a function
 // that detaches.
-export function enhance(root: ParentNode = document): () => void {
+// The root is Element | Document | DocumentFragment, not ParentNode: under @cloudflare/workers-types
+// an HTMLFormElement does not type as a ParentNode, so a site could not pass its form.
+export function enhance(root: Element | Document | DocumentFragment = document): () => void {
   const undo: Array<() => void> = [];
   for (const entry of root.querySelectorAll<HTMLElement>(
     "[data-cap='dictionary-entry']:not([data-cap-ready])",

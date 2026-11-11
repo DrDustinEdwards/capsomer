@@ -23,7 +23,10 @@
     flex: 999 1 20rem;
   }
 
+  /* The form is controls: the UI face, inside a page's prose (whose --face is the serif) as
+     outside. The result keeps the page's face. */
   .cap-calculator-form {
+    font-family: var(--ui);
     display: grid;
     gap: var(--space-5);
     align-content: start;

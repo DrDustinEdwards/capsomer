@@ -1,6 +1,6 @@
 import { useId, type ReactNode } from "react";
 import { Button } from "../button/button.react.tsx";
-import { PlainForm, type FormComponent } from "../content/content.react.tsx";
+import { PlainForm, type FormComponent } from "../plain-form/plain-form.react.tsx";
 import { Empty } from "../empty/empty.react.tsx";
 import { Field } from "../field/field.react.tsx";
 import { Panel } from "../panel/panel.react.tsx";
@@ -19,8 +19,9 @@ export type { EngineJob, EngineSettingsLike, FormComponent };
 
 export interface AiEngineSettingsProps {
   settings: EngineSettingsLike;
-  // The model each job's API run uses: "fast", "standard", "deep", or none for the job's default.
-  models: Record<string, string>;
+  // The model each job's API run uses: "fast", "standard", "deep", or none (left out) for the
+  // job's default. A partial map, as site-runtime's settings reader returns it.
+  models: Readonly<Partial<Record<string, string>>>;
   jobs: readonly EngineJob[];
   // The model choices, with their prices (from site-runtime's MODEL_IDS and PRICES). The first is
   // "The job's own default", value "".

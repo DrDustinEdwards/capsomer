@@ -5,8 +5,8 @@ summary: A quantity with steppers, an optional unit select and the button that s
 parts: [css, react]
 tool: native + own JavaScript (Field's steppers, Select's popup)
 states: [a quantity and a unit system, a count alone at its least, keyboard focus, stepped up and down]
-added: 0.91.0
-updated: 0.91.0
+added: 0.92.0
+updated: 0.92.0
 source: dustinedwards.info, app/styles/procedure.css (.procedure-scale) and app/components/procedure-materials.tsx (ScaleForm)
 replaces:
   - '\.procedure-scale\s*\{'
@@ -31,10 +31,11 @@ It is its own component, not a part of the calculator, because its contract is d
 ## The default and its reason
 
 - **A plain GET to the page itself.** With no script the button loads the page at the new scale; the state lives in the address, where an agent reading the page sees the same numbers as a person, and a copied link keeps the scale.
-- **The quantity is Field's number**: `type="number"` with `min`, `max` and `step`, and Decrease and Increase steppers that show with script (Field's `enhance()`), out of the Tab order because the arrow keys do the same.
+- **The quantity is Field's number**: `type="number"` with `min`, `max` and `step` (`step="any"` for a quantity that need not be whole, so `?servings=1.5` passes the browser's check; the steppers then step by 1), and Decrease and Increase steppers that show with script (Field's `enhance()`), out of the Tab order because the arrow keys do the same.
 - **The unit choice is a Select** whose first option is "As written", so the page's own units stay the default.
 - **Nothing rescales until the button is pressed** (Show, Scale): a page that moves under every keystroke loses the reader's place.
 - **One line that wraps**, the fields aligned at their inputs' edge, the button last.
+- **In the UI face, and gone from print.** It sets `--ui`, so it looks the same inside a page's prose; a printed page is already at the scale in its address, so the control is hidden there.
 
 ## Keyboard
 

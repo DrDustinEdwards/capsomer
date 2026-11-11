@@ -235,7 +235,9 @@ export function toggleAll(root: Element): void {
 
 // Attaches to every [data-cap="draft-compare"] under root (or root itself) not yet attached.
 // Returns a function that detaches them all.
-export function enhance(root: ParentNode = document): () => void {
+// The root is Element | Document | DocumentFragment, not ParentNode: under @cloudflare/workers-types
+// an HTMLFormElement does not type as a ParentNode, so a site could not pass its form.
+export function enhance(root: Element | Document | DocumentFragment = document): () => void {
   const found = [
     ...root.querySelectorAll<HTMLElement>("[data-cap='draft-compare']:not([data-cap-ready])"),
   ];

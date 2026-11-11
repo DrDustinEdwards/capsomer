@@ -214,9 +214,11 @@ export function attach(root: HTMLElement, run: CalculatorRun): () => void {
 /**
  * Attaches to every [data-cap="calculator"] under root not yet attached, each with the `run` its
  * `data-calculator` names in `runs`. A calculator with no run is an error, not a silent dead form.
+ * The root is Element | Document | DocumentFragment, not ParentNode: under
+ * @cloudflare/workers-types an HTMLFormElement does not type as a ParentNode.
  */
 export function enhance(
-  root: ParentNode = document,
+  root: Element | Document | DocumentFragment = document,
   runs: Record<string, CalculatorRun> = {},
 ): () => void {
   const undo: Array<() => void> = [];

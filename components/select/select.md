@@ -6,7 +6,7 @@ parts: [css, behavior, react]
 tool: native + own JavaScript
 states: [default, keyboard focus, hover, open, groups, placeholder, a disabled option, invalid with its message, disabled with its reason, small, native without enhancement]
 added: 0.1.0
-updated: 0.2.0
+updated: 0.92.0
 source: Capsid Portal, dashboard/src/styles.css (select.field, select.search)
 replaces:
   - '<select class="(?:[^"]*\s)?(field|search)[\s"]'

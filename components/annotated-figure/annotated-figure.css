@@ -35,10 +35,12 @@
     }
   }
 
+  /* The labels' size is a token, the same in both layouts: each view box's unit is about one CSS
+     pixel at the width it is drawn, so the narrow drawing's labels read at the wide one's size. */
   .cap-annotated-figure-label {
     fill: var(--cap-figure-ink);
     font-family: var(--face);
-    font-size: 12px;
+    font-size: var(--fs-detail);
   }
 
   .cap-annotated-figure-leader line {

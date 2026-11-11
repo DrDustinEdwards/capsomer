@@ -5,8 +5,8 @@ summary: One line at the foot of a list that starts a new thing by name. A field
 parts: [css, react]
 tool: native
 states: [one field, two fields with one optional, a short select beside the name, narrow column]
-added: 0.91.0
-updated: 0.91.0
+added: 0.92.0
+updated: 0.92.0
 source: Carrel, app/app.css (.app-inline-form) and its forms in app/routes/book.tsx (New chapter, First scene), book.chapter.tsx (New scene) and book.bible.tsx (New entry, Name).
 replaces:
   - 'className="app-inline-form[ "]'
@@ -72,6 +72,8 @@ import { InlineAddForm } from "capsomer/react/inline-add-form";
   <Field label="First scene"><input className="cap-input" name="scene" placeholder="Scene name" autoComplete="off" /></Field>
 </InlineAddForm>
 ```
+
+A short field is `<Field size="short" label="Kind"><select className="cap-select" name="kind">...</select></Field>`.
 
 Props: `children` (the fields), `submit` (the button's words), `hidden` (hidden fields), `action`, `Form` (the router's form; a plain `form` without it), `pending`, `label`.
 
