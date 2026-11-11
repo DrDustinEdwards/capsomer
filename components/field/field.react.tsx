@@ -610,14 +610,27 @@ export function DateInput(
 
 // An email address (field.md, "Autocomplete for personal data"): type="email", no spellcheck or
 // autocapitalize, Enter goes on. `signIn` makes it the sign-in id: autocomplete "username webauthn",
-// so the browser also offers saved passkeys in its suggestions.
+// so the browser also offers saved passkeys in its suggestions. `someoneElse` is another person's
+// address (an invite, a share): autocomplete "off", since "email" names the person filling the form
+// (HTML's autofill field names) and would offer their own.
 export function EmailInput(
   props: FieldText &
     Omit<InputHTMLAttributes<HTMLInputElement>, "type" | "style" | "autoComplete"> & {
       signIn?: boolean;
+      someoneElse?: boolean;
     },
 ) {
-  const { label, help, error, announce, required, signIn = false, className: _c, ...rest } = props;
+  const {
+    label,
+    help,
+    error,
+    announce,
+    required,
+    signIn = false,
+    someoneElse = false,
+    className: _c,
+    ...rest
+  } = props;
   return (
     <Field label={label} help={help} error={error} announce={announce} required={required}>
       <input
@@ -625,7 +638,7 @@ export function EmailInput(
         {...rest}
         className="cap-input"
         type="email"
-        autoComplete={signIn ? "username webauthn" : "email"}
+        autoComplete={signIn ? "username webauthn" : someoneElse ? "off" : "email"}
         spellCheck={false}
         autoCapitalize="none"
       />
