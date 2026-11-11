@@ -6,6 +6,7 @@ parts: [css, behavior, react]
 tool: native + own JavaScript
 states: [full width, a phone's width, tray open, filters chosen with chips, search with best match, no match, nothing yet, paged, no script]
 added: 0.4.0
+updated: 0.102.0
 source: The site's publications filters and phage table (app/routes/publications.tsx, app/enhance/phages.ts in dustinedwards-info), generalized; Capsomer's chips, table, pagination and empty components underneath.
 replaces:
   - 'class="(?:[^"]*\s)?(facet|facets|filter-panel|catalog)[\s"]'
@@ -34,6 +35,7 @@ A collection of dozens to thousands of items that share fields, where a person n
 - **Counts say what choosing would give.** Each option shows how many items would match with it chosen, the search and the other filters held and the facet's own filter not (so a facet's options do not collapse as you choose in it). A chosen option with no matches stays, so it can be released.
 - **A facet with no options is not drawn**: when the search and the other filters leave a facet nothing to choose, or no item has a value for it, its heading and "Any" are left out rather than shown empty.
 - **General facets first.** Facets marked `general` are listed first; the rest follow in the order declared. Values within a facet combine with "or"; facets combine with "and". A facet of one value (kind of thing) is a radio with "Any".
+- **A span of years is a range facet** (`facet: { kind: "range", span }`): two native menus, From and To, each with "Any", submitted as `?year-from=2019&year-to=2024` (or the `params` you name). An item matches when its own span overlaps the chosen one (`span(item)` returns `[start, end]`, `Infinity` for "to now", or null for an undated item, which no range matches). An inverted range is read the way it was meant, and the chip says it in words: "Year: 2019 to 2024", "Year: from 2019", "Year: 2024".
 - **Active filters are chips that are links.** Each removes only itself; "Clear all" removes them all. They are above the results, where the count is. A chip is the link system's tag pill, so a catalog page loads `capsomer/link.css` with `capsomer/catalog.css` ([link](../link/link.md)).
 - **The count is words with the total, in a live region** ("3 of 140 articles"), as the chips component's is.
 - **Search ranks while it is typed.** Every word must match; a word that starts a word of a field counts double; fields count by their weight. "Best match" is the first sort while a search is typed, and an item with no value in a sort field sorts last either way.
@@ -43,6 +45,16 @@ A collection of dozens to thousands of items that share fields, where a person n
 - **An empty result says which kind of empty it is**: no items at all is "nothing yet"; filters that hide everything is "no match" with Clear filters ([empty](../empty/empty.md)).
 - **Updating in place never traps a failure.** If the fetch fails for any reason the browser navigates to the address, which is what a link would have done. Changing a filter replaces the history entry instead of adding one, as the chips component does.
 - **Focus follows the change.** When the control a person used is one the swap removes (a chip, a page link), focus moves to the count line, which says what the page now shows.
+
+## Helpers around it
+
+- `summaryText(def, result)`: "Showing all 14 articles", "Showing 3 of 14 articles", "No articles match. 14 in all." `activeCount(result)` is the number on "Filters (2)"; `facetCounts(result, key)` is one facet's counts by value.
+- `group.empty` names the heading for items with no value ("Undated"); the default is "Other".
+- `catalogRecords(def, items, state, { id, url, keys: "key", allFields })` is the rows of a CSV or JSON download, the same rows the page shows; `state` may be the request's query. Write the CSV with the [csv](../csv/csv.md) component.
+- `catalogMarkdown(def, items, state, { origin, href, empty })` is the same rows as a Markdown table for the page's `.md` twin, the first column linked, every cell escaped (`markdownCell`: pipes escaped, line breaks collapsed).
+- `catalogDownloads(def, result)` is the three addresses: `<base>.csv` and `<base>.json` with this view's filters, and `<base>.md`.
+- `catalogRedirect(def, url, { keepUnknown: true })` sends a hand-typed or stale address to its one canonical form but serves a parameter the catalog does not read (a campaign tag) instead of redirecting it away. `catalogParams(def)` is the names it reads.
+- For a page's own settings outside the catalog: `oneOf(value, allowed, fallback)`, `listParam(params, key, known)` (repeated or comma-separated, deduplicated) and `yearParam(raw)`.
 
 ## What the catalog does not do
 

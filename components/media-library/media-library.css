@@ -301,4 +301,54 @@
     flex-wrap: wrap;
     gap: var(--space-3);
   }
+
+  /* One chosen image (a share image, a feature image): the preview beside its controls where both
+     fit, above them in a narrow column. The preview keeps the shape it will be shown at. */
+  .cap-image-field {
+    display: grid;
+    gap: var(--space-2);
+  }
+  .cap-image-field-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
+    gap: var(--space-4);
+    align-items: start;
+  }
+  .cap-image-field-thumb {
+    display: grid;
+    max-inline-size: 20rem;
+    place-items: center;
+    aspect-ratio: 1200 / 630;
+    overflow: hidden;
+    padding: var(--space-2);
+    border: 1px dashed var(--line-strong);
+    border-radius: var(--radius-s);
+    background: var(--sunken);
+    font-size: var(--fs-detail);
+    text-align: center;
+  }
+  .cap-image-field-thumb:has(img) {
+    padding: 0;
+    border-style: solid;
+  }
+  .cap-image-field-thumb img {
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: cover;
+  }
+  .cap-image-field-controls {
+    display: grid;
+    gap: var(--space-3);
+    min-inline-size: 0;
+  }
+  .cap-image-field-url {
+    margin: 0;
+    overflow-wrap: anywhere;
+    font-size: var(--fs-detail);
+  }
+  .cap-image-field-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
 }

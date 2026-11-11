@@ -1,7 +1,8 @@
 import type { EnhanceOptions } from "enarratio/enhance";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from "react";
-import type { Gridlines } from "./chart-frame.ts";
+import { type ChartFit, type Gridlines, shownHeight } from "./chart-frame.ts";
 import { Glyph } from "../status/status.react.tsx";
+import { Panel } from "../panel/panel.react.tsx";
 import { markup } from "../trusted-html/trusted-html.ts";
 
 // The width a chart is drawn at on the server and before the first measurement: Enarratio's own
@@ -15,33 +16,7 @@ export function drawWidth(measured: number, min = MIN_WIDTH): number {
   return Math.max(min, Math.floor(measured));
 }
 
-// What a redraw keeps from the first drawing: the height it showed at the frame's width.
-export interface ChartFit {
-  height?: number;
-}
-
-// A drawing 30rem or wider keeps that width and scrolls under it (Enarratio's .enarratio-frame-wide).
-const WIDE_REM = 30;
-
-// The height the first drawing (`first`, drawn at the server's width) shows at in a frame `width`
-// wide: scaled down to the frame, never up, and not below 30rem for a wide drawing. The redraw
-// draws at this height, so swapping it in after hydration moves nothing under the chart (web.dev,
-// "Optimize CLS"); the rule is enarratio/redraw's own (Enarratio record 0033), for pages drawn
-// without React.
-// A primitive's figure (a heat strip, timeline, sparkline, uptime strip or progress ring; Enarratio
-// marks it `data-enarratio-static`) gets none: its height is its own, not its width's shape. A
-// heat strip keeps the height it is given at any width, so fitting it to a 640 drawing shrunk into
-// 300 px would redraw it 9 px tall, not 20; a timeline's height comes from its lanes and ignores
-// `height`, and under 30rem it shows its list, not the SVG. enarratio/redraw redraws charts only.
-export function shownHeight(first: string, width: number, rem = 16): number | undefined {
-  if (/<figure\b[^>]*\sdata-enarratio-static\b/.test(first)) return undefined;
-  const box = /<svg\b[^>]*?\sviewBox="[\d.]+ [\d.]+ ([\d.]+) ([\d.]+)"/.exec(first);
-  const w = Number(box?.[1]);
-  const h = Number(box?.[2]);
-  if (!(w > 0 && h > 0)) return undefined;
-  const shown = first.includes("enarratio-frame-wide") ? Math.max(width, WIDE_REM * rem) : width;
-  return Math.round(((h * Math.min(shown, w)) / w) * 100) / 100;
-}
+export { shownHeight, type ChartFit };
 
 const rootRem = () =>
   typeof document === "undefined"
@@ -207,5 +182,123 @@ export function ChartFrame({
       )}
       {children}
     </div>
+  );
+}
+
+export interface ChartPanelProps extends Omit<ChartFrameProps, "noData" | "className"> {
+  // The panel's heading. Given, the panel's head names the chart and Enarratio's own title is kept
+  // for screen readers and the table only; left out, the figure's title is the heading.
+  title?: string;
+  level?: 2 | 3;
+  description?: ReactNode;
+  more?: ReactNode;
+  src?: ReactNode;
+  id?: string;
+  // Nothing to draw, and why: the frame's no-data state under the panel's title.
+  empty?: { reason: string } | null;
+  // A later read failed and the chart still shows the last one: says so above it.
+  stale?: string | null;
+  className?: string;
+}
+
+// A chart in a panel: the dashboard's card. One place for the heading, the empty state and a
+// read that failed after the chart was drawn, so every dashboard says them the same way.
+export function ChartPanel({
+  title,
+  level,
+  description,
+  more,
+  src,
+  id,
+  empty,
+  stale,
+  className,
+  ...frame
+}: ChartPanelProps) {
+  const body = (
+    <>
+      {stale ? (
+        <p className="cap-chart-stale" role="status">
+          <span className="cap-status" data-tone="warn">
+            <Glyph name="warn" />
+            Not refreshed
+          </span>{" "}
+          {stale}
+        </p>
+      ) : null}
+      <ChartFrame
+        {...frame}
+        noData={empty ? { title: title ?? "No data", reason: empty.reason } : undefined}
+      />
+    </>
+  );
+  const cls = className ? `cap-chart-panel ${className}` : "cap-chart-panel";
+  if (title == null)
+    return (
+      <section className={`cap-panel ${cls}`} id={id}>
+        <div className="cap-panel-body">{body}</div>
+      </section>
+    );
+  return (
+    <Panel
+      title={title}
+      level={level}
+      description={description}
+      more={more}
+      src={src}
+      id={id}
+      className={cls}
+    >
+      {body}
+    </Panel>
+  );
+}
+
+export interface DataPreviewProps {
+  id?: string;
+  heading: ReactNode;
+  // The drawing, already drawn (an inline sparkline from enarratio). Hidden from assistive
+  // technology: `summary` says what it shows, so it must stay visible and true to the numbers.
+  chart: string;
+  summary: ReactNode;
+  // Where the whole dataset lives on the site.
+  link: { href: string; label: ReactNode };
+  // Where the numbers come from.
+  source?: { href: string; label: ReactNode };
+  level?: 2 | 3 | 4;
+}
+
+// A card that previews a dataset beside an article: a heading, a small drawing, the sentence that
+// says what it shows, a link to the full data and the source.
+export function DataPreview({
+  id,
+  heading,
+  chart,
+  summary,
+  link,
+  source,
+  level = 3,
+}: DataPreviewProps) {
+  const Heading = `h${level}` as "h2" | "h3" | "h4";
+  return (
+    <aside className="cap-data-preview" id={id} aria-labelledby={id ? `${id}-heading` : undefined}>
+      <Heading className="cap-data-preview-heading" id={id ? `${id}-heading` : undefined}>
+        {heading}
+      </Heading>
+      <div
+        className="cap-data-preview-chart"
+        aria-hidden="true"
+        dangerouslySetInnerHTML={markup(chart)}
+      />
+      <p className="cap-data-preview-summary">{summary}</p>
+      <p className="cap-data-preview-link">
+        <a href={link.href}>{link.label}</a>
+      </p>
+      {source ? (
+        <p className="cap-data-preview-source">
+          <a href={source.href}>{source.label}</a>
+        </p>
+      ) : null}
+    </aside>
   );
 }

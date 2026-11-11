@@ -23,6 +23,7 @@ import type { FormComponent } from "../content/content.react.tsx";
 import type { MediaRecord } from "../media/media.ts";
 import { MessageProvider } from "../message/message.react.tsx";
 import { MediaLibrary } from "./media-library.react.tsx";
+import { ImageField } from "./media-picker.react.tsx";
 import { type KitMediaChanges, type KitMediaRow } from "./media-library.ts";
 import { setStaticHtml } from "../trusted-html/trusted-html.ts";
 
@@ -1017,4 +1018,29 @@ if (uploadHost)
       <MediaLibrary data={loadIdeas(IDEAS, { upload: true })} action="/media" shortcuts={false} />,
       { identifierPrefix: "upload" },
     ),
+  );
+
+const fieldHost = document.getElementById("media-image-field");
+if (fieldHost)
+  createRoot(fieldHost).render(
+    <StrictMode>
+      <div style={{ display: "grid", gap: "var(--space-6)" }}>
+        <ImageField
+          label="Share image"
+          value="/media/2026/09/launch-hero.png"
+          src={thumb("#4a6b8a")}
+          alt="A blue tile with a pale circle"
+          picker={{ endpoint: "/media/api" }}
+          onPick={() => {}}
+          onRemove={() => {}}
+        />
+        <ImageField
+          label="Feature image"
+          value=""
+          none="No feature image"
+          picker={{ endpoint: "/media/api" }}
+          onPick={() => {}}
+        />
+      </div>
+    </StrictMode>,
   );

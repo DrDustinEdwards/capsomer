@@ -3,6 +3,7 @@
 // and `enhance`, which draws each row's bar through the shared meter (components/meter) from
 // its ARIA values through the CSSOM. No framework; the React wrapper uses the same functions.
 //
+import { plural } from "../format/format.ts";
 import { enhance as enhanceMeter, update as drawBar } from "../meter/meter.ts";
 import { DAY, HOUR } from "../time/time.ts";
 
@@ -50,7 +51,6 @@ export interface UsageAssessment {
 }
 
 const ms = (t: number | Date): number => (typeof t === "number" ? t : t.getTime());
-const plural = (n: number, word: string): string => `${n} ${word}${n === 1 ? "" : "s"}`;
 
 // A duration in plain words, rounded to the unit a person would say: "40 minutes",
 // "3 hours", "2 days".

@@ -1,6 +1,7 @@
 // Times in words. Relative in rows ("5 minutes ago", never "5m"), exact in the viewer's
 // zone with UTC beside it. The pure functions take the zone so they can be checked anywhere; in a page
 // the zone is the viewer's.
+import { plural } from "../format/format.ts";
 
 export const SEC = 1000;
 export const MIN = 60 * SEC;
@@ -18,10 +19,6 @@ const ZONELESS = /^\d{4}-\d{2}-\d{2}[ T]\d{2}:\d{2}(:\d{2}(\.\d+)?)?$/;
 export function parse(iso: string): number {
   const s = iso.trim();
   return Date.parse(ZONELESS.test(s) ? `${s.replace(" ", "T")}Z` : s);
-}
-
-function plural(n: number, unit: string): string {
-  return `${n} ${unit}${n === 1 ? "" : "s"}`;
 }
 
 const dayKey = (zone?: string) =>

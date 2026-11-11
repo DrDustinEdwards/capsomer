@@ -1,0 +1,19 @@
+<section class="cap-specimen" aria-labelledby="s-player">
+  <h2 id="s-player">A flow played step by step</h2>
+  <div data-cap="step-player" id="player" data-step-interval="400">
+    <p><button class="cap-btn" type="button" data-step-play hidden>Play</button></p>
+    <nav class="cap-btn-group" aria-label="Steps">
+      <a class="cap-btn" href="#step-1" data-step-go="1">Step 1</a>
+      <a class="cap-btn" href="#step-2" data-step-go="2">Step 2</a>
+      <a class="cap-btn" href="#step-3" data-step-go="3">Step 3</a>
+    </nav>
+    <p data-step id="step-1">A draft is saved.</p>
+    <p data-step id="step-2" hidden>The checks run on the draft.</p>
+    <p data-step id="step-3" hidden>The post is published.</p>
+  </div>
+</section>
+
+<script type="module">
+  import { enhance } from "./step-player.ts";
+  enhance();
+</script>

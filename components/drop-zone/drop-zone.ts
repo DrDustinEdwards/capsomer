@@ -4,6 +4,7 @@
 // script; this module adds drop (on the zone, or anywhere on the page), paste, and the checks.
 // A dragenter depth counter keeps the page-wide target steady, and a drop off the zone never
 // navigates away. Every file is checked and each refusal named. No framework; the React wrapper uses the same pure functions.
+import { formatBytes } from "../format/format.ts";
 
 const READY = "data-cap-ready";
 
@@ -90,13 +91,8 @@ export function acceptLabel(accept: string | null | undefined): string {
   return `${names.slice(0, -1).join(", ")} and ${names[names.length - 1]}`;
 }
 
-// A size as a person reads it. Binary division, as the site's media page states sizes.
-export function formatBytes(size: number): string {
-  if (size < 1024) return `${size} B`;
-  if (size < 1024 * 1024) return `${Math.round(size / 1024)} kB`;
-  const mb = size / (1024 * 1024);
-  return `${mb >= 100 ? Math.round(mb) : mb.toFixed(1).replace(/\.0$/, "")} MB`;
-}
+// A size as a person reads it: the format module's, re-exported for the drop zone's callers.
+export { formatBytes };
 
 export function rejectionMessage(file: FileLike, reason: RejectReason, rules: DropRules): string {
   if (reason === "type")
