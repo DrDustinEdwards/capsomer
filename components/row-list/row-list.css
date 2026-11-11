@@ -64,7 +64,7 @@
       padding-inline: var(--pad-x);
       row-gap: 0;
 
-      & .cap-row-title :is(a, button) {
+      & .cap-row-title :is(a, button, .cap-row-text) {
         font-size: var(--fs-detail);
       }
       & .cap-row-detail {
@@ -75,6 +75,10 @@
     &:hover,
     &[data-force="hover"] {
       background: var(--raised);
+    }
+    /* A row that is read, not opened (a checklist step, a fact): no hover, nothing to press. */
+    &[data-static]:hover {
+      background: transparent;
     }
 
     /* The focused row: the selection tint and an inset ring in --ring, 3:1 against --sel
@@ -140,7 +144,7 @@
 
     /* The title and the detail take two lines at most: one that fits on a line still fits with
        a reader's own text spacing (WCAG 1.4.12). */
-    & :is(a, button) {
+    & :is(a, button, .cap-row-text) {
       display: -webkit-box;
       width: 100%;
       overflow: hidden;
@@ -165,6 +169,11 @@
         inset: 0;
       }
     }
+  }
+
+  /* A static row's title opens nothing: no stretched hit area. */
+  .cap-row-text::after {
+    content: none;
   }
 
   .cap-row-detail {
