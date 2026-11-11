@@ -829,6 +829,7 @@ const ownHeader: SiteHeaderProps = {
   translucent: true,
   links: "center",
   collapse: "lg",
+  sheetIcons: "auto",
   logo: { href: "#home", label: "Example Writers", name: "Example Writers home" },
   sections: [
     {

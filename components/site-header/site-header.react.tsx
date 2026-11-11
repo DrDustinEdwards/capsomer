@@ -71,6 +71,7 @@ export function SiteHeader(props: SiteHeaderProps) {
     search,
     trail,
     collapse,
+    sheetIcons,
   } = props;
   const letterhead = variant === "letterhead";
   const id = useId();
@@ -250,6 +251,7 @@ export function SiteHeader(props: SiteHeaderProps) {
         data-variant={variant}
         data-links={links}
         data-collapse={collapse}
+        data-sheet-icons={sheetIcons}
         data-band={band}
         data-translucent={translucent ? "" : undefined}
         data-sticky={sticky ? undefined : "false"}

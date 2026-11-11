@@ -60,6 +60,7 @@ An email, a printed page or an embedded widget has no header. A page inside anot
 | The logo's name | `logo.name`, where the link should say more than `label` ("BioScience Writers home"); it starts with the visible words |
 | A control's look | `className` on an extra: the site's own class on an icon control, or on the button extra in the bar and in the sheet |
 | Where the phone's row starts | Under 768px; `collapse="lg"` (`data-collapse="lg"`) under 1024px |
+| The sheet's icon column | Kept by default; `sheetIcons="auto"` (`data-sheet-icons="auto"`) drops it where no row has an icon |
 | UI face | `--font-ui` |
 | Extras | Up to two icon controls and one button (`extras`) |
 | Section links' place | `data-links="left"`, `"center"` or `"right"` (before the extras, after a thin divider) |
@@ -85,7 +86,7 @@ Media queries cannot read a custom property, so the width is an attribute: under
 - **One row, 56px:** the logo; up to two of the site's icons; the theme; the avatar or Sign in (an icon); the menu button, last, on every page.
 - **The menu button opens one sheet** (the shared dialog from the bottom): the site's own rows first (in your admin the family's apps), the switchers, the section links grouped as the desktop panels group them, the button extra full width; the account rows are pinned under the list, so Sign out is always in view. Opening it puts focus on its heading.
 - **No second row of links.**
-- **The icon column.** Where any row in the sheet has an icon, every row's label starts after the same 24px column; where none has, there is no column and labels start at the row's edge.
+- **The icon column.** Every row's label starts after the same 24px column, with an icon or without. With `sheetIcons="auto"` (`data-sheet-icons="auto"` on the header) a sheet in which no row has an icon has no column, and its labels start at the row's edge.
 - **A bottom bar (`SiteTabs`, `nav.cap-site-tabs`) only where a person is signed in** and there is a set of top pages: up to five tabs, and no More, because the menu button opens the full list.
 
 ## Keyboard
@@ -128,7 +129,7 @@ The family sites (dustinedwards.info, Capsid, Capsomer, Prelum, Carrel, Enarrati
 ## Markup
 
 ```html
-<header class="cap-site-header" data-cap="site-header" data-links="right" data-band="dark" [data-collapse="lg"] [data-scrolled, set by the behavior]>
+<header class="cap-site-header" data-cap="site-header" data-links="right" data-band="dark" [data-collapse="lg"] [data-sheet-icons="auto"] [data-scrolled, set by the behavior]>
   <a class="cap-site-header-skip" href="#main">Skip to content</a>
   <a class="cap-site-header-logo" href="/" aria-label="Foxhound">[mark, wordmark]</a>
   <div class="cap-site-header-switcher">

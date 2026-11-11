@@ -683,8 +683,9 @@
   [aria-current] > .cap-site-header-sheet-icon {
     color: inherit;
   }
-  /* A sheet in which no row has an icon has no icon column: its labels start at the row's edge. */
-  .cap-site-header-sheet:not(:has(.cap-site-header-sheet-icon:not(:empty))) .cap-site-header-sheet-icon {
+  /* data-sheet-icons="auto": a sheet in which no row has an icon has no icon column, so its labels
+     start at the row's edge. By default every sheet keeps the column. */
+  .cap-site-header[data-sheet-icons="auto"] .cap-site-header-sheet:not(:has(.cap-site-header-sheet-icon:not(:empty))) .cap-site-header-sheet-icon {
     display: none;
   }
   /* Two classes, so the dialog's own link color (.cap-dialog-body nav a) does not win. */

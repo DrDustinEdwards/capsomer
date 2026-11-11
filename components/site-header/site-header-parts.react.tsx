@@ -187,6 +187,9 @@ export interface SiteHeaderProps {
   // The width under which the bar becomes the phone's one row with the menu sheet: 768px by
   // default; "lg" is 1024px, for a bar whose links need more room (data-collapse="lg").
   collapse?: "lg";
+  // "auto": the sheet drops its 24px icon column when no row has an icon (data-sheet-icons="auto").
+  // By default every row keeps the column.
+  sheetIcons?: "auto";
   // The band: dark in both themes, and translucent over the page.
   band?: "dark";
   translucent?: boolean;
