@@ -2,6 +2,10 @@
 
 Each release names every removed or renamed token or class, and every changed HTML contract.
 
+## [0.99.1]
+
+- **Enarratio 0.13 is supported.** The `enarratio` peer range is `^0.12.0 || ^0.13.0`, and the showcase site and the browser suite run on 0.13.1 (live on npm), whose charts fit a phone's drawing. No token, class or HTML contract changes.
+
 ## [0.98.0]
 
 - **Batch 8 of the shared-components audit: specialized components** (clusters C73 to C85). Each was extracted from a site that had its own copy; the sites move onto this release and delete theirs. Every new component has a doc page, a states page and its specs.
