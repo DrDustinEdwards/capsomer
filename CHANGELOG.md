@@ -4,6 +4,8 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+## [0.90.1]
+
 - **A chart no longer redraws 16 px tall.** With Enarratio 0.12 the figure holds the toolbar's 16 by 16 icons before the chart, and `ChartFrame` took its redraw height from the first `viewBox` it found, so every redrawn chart collapsed (seen in the Capsid Portal on 0.90.0). It now skips `enarratio-icon` drawings (`chartViewBox` in `components/chart-frame/chart-frame.ts`).
 
 ## [0.90.0]
