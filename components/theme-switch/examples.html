@@ -97,9 +97,11 @@
   import { enhance, toggleTheme } from "./theme-switch.ts";
   import { register } from "../shortcuts/shortcuts.ts";
   if (new URLSearchParams(location.search).get("only")) {
-    // The site's save, for the signed-in account: here it only writes down what it was handed.
+    // The site's save, for the signed-in account, only where the specimen shows one: a save means
+    // the server keeps the choice, so the switch starts from the page's data-theme. Here it only
+    // writes down what it was handed.
     const saved = document.getElementById("saved");
-    enhance(document, { onSave: (choice) => saved && (saved.textContent = choice) });
+    enhance(document, saved ? { onSave: (choice) => (saved.textContent = choice) } : {});
     const key = document.querySelector("[data-cap='theme-switch']")?.dataset.capPref;
     register({ key: "t", label: "Switch light and dark", group: "Actions", run: () => toggleTheme(key) });
   }

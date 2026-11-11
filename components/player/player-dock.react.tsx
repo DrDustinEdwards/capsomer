@@ -213,7 +213,7 @@ export interface PlayerSurfaceProps {
   peaks?: readonly number[] | null;
   // Leave the waveform out.
   waveform?: boolean;
-  // The surface's name.
+  // The surface's name: "Player for <title>" by default, apart from the dock's "Audio player".
   label?: string;
   // Where its Transcript link goes: "#transcript" when the transcript is on this page.
   transcriptHref?: string;
@@ -226,7 +226,7 @@ export function PlayerSurface({
   track,
   peaks = null,
   waveform = true,
-  label = "Player",
+  label,
   transcriptHref,
   renderLink = plainLink,
   children,
@@ -268,7 +268,11 @@ export function PlayerSurface({
   const transcript = transcriptHref ?? track.transcript;
 
   return (
-    <section ref={section} className="cap-player-surface" aria-label={label}>
+    <section
+      ref={section}
+      className="cap-player-surface"
+      aria-label={label ?? `Player for ${track.title}`}
+    >
       {chapter ? <p className="cap-player-chapter-now">{chapter.title}</p> : null}
       {waveform ? (
         <Suspense fallback={<div className="cap-player-wave-box" aria-hidden="true" />}>

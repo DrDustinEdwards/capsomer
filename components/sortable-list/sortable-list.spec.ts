@@ -12,7 +12,9 @@ import {
 // stage" (cards) and "Posts in the series" (rows in a form).
 const list = (page: Page, name: string) => page.getByRole("list", { name });
 const order = (l: Locator) =>
-  l.locator(":scope > li").evaluateAll((els) => els.map((e) => (e as HTMLElement).dataset.value));
+  l
+    .locator(":scope > li.cap-sortable-item")
+    .evaluateAll((els) => els.map((e) => (e as HTMLElement).dataset.value));
 const focusedName = (page: Page) =>
   page.evaluate(() => document.activeElement?.textContent?.trim() ?? "");
 const said = (l: Locator) => l.locator("xpath=following-sibling::*[@data-cap-part='announce'][1]");
@@ -324,7 +326,9 @@ eachTheme((theme) => {
     await first.focus();
     await page.keyboard.press("Alt+ArrowDown");
     expect(await order(l)).toEqual(["s2", "s1", "s3"]);
-    await expect(first, "focus stays in the field that was typed in").toBeFocused();
+    // The field that was typed in moved down with its step and still has focus.
+    await expect(l.getByRole("textbox").nth(1)).toHaveValue("Rinse the tube twice.");
+    await expect(l.getByRole("textbox").nth(1)).toBeFocused();
     await expect(said(l)).toHaveText("Moved to step 2 of 3.");
     await expect(l.locator(".cap-sortable-head")).toHaveText(["Step 1", "Step 2", "Step 3"]);
     await expect(l.getByRole("button", { name: /Move .* down/ }).first()).toHaveAttribute(
@@ -339,7 +343,7 @@ eachTheme((theme) => {
     const b = page.locator("[data-mount='sections']");
     const out = page.locator("#sections-out");
     const lane = (name: string) => b.getByRole("list", { name });
-    const announce = b.locator("xpath=following-sibling::*[@data-cap-part='announce'][1]");
+    const announce = b.locator("[data-cap-part='announce']");
     // The select in each item is the one-pointer way across lists.
     await b
       .getByRole("combobox", { name: "Move Release notes for the new protocol to" })
@@ -390,14 +394,15 @@ eachTheme((theme) => {
       "posters",
     );
     // Alt and an arrow on a grip moves one place.
-    await page.getByRole("button", { name: "Move Getting started", exact: true }).focus();
+    await page.getByRole("button", { name: "Move Field notes", exact: true }).focus();
     await page.keyboard.press("Alt+ArrowDown");
-    await expect(out).toHaveText("t1: talks to talks, now talks: t1.");
+    await expect(out).toHaveText("p1: posters to posters, now posters: t2, p1.");
     // An arrow past the end of the list goes on into the next one.
+    await page.getByRole("button", { name: "Move Getting started", exact: true }).focus();
     await page.keyboard.press("Space");
     await page.keyboard.press("ArrowDown");
     await page.keyboard.press("Space");
-    expect(await order(posters)).toEqual(["t1", "p1", "t2"]);
+    expect(await order(posters)).toEqual(["t1", "t2", "p1"]);
     expect(await order(talks)).toEqual([]);
     // Remove: the page hears it, and the item goes.
     await page.getByRole("button", { name: "Remove Field notes" }).click();
