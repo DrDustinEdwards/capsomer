@@ -607,3 +607,66 @@ export function DateInput(
     </fieldset>
   );
 }
+
+// An email address (field.md, "Autocomplete for personal data"): type="email", no spellcheck or
+// autocapitalize, Enter goes on. `signIn` makes it the sign-in id: autocomplete "username webauthn",
+// so the browser also offers saved passkeys in its suggestions. `someoneElse` is another person's
+// address (an invite, a share): autocomplete "off", since "email" names the person filling the form
+// (HTML's autofill field names) and would offer their own.
+export function EmailInput(
+  props: FieldText &
+    Omit<InputHTMLAttributes<HTMLInputElement>, "type" | "style" | "autoComplete"> & {
+      signIn?: boolean;
+      someoneElse?: boolean;
+    },
+) {
+  const {
+    label,
+    help,
+    error,
+    announce,
+    required,
+    signIn = false,
+    someoneElse = false,
+    className: _c,
+    ...rest
+  } = props;
+  return (
+    <Field label={label} help={help} error={error} announce={announce} required={required}>
+      <input
+        enterKeyHint="go"
+        {...rest}
+        className="cap-input"
+        type="email"
+        autoComplete={signIn ? "username webauthn" : someoneElse ? "off" : "email"}
+        spellCheck={false}
+        autoCapitalize="none"
+      />
+    </Field>
+  );
+}
+
+// The one-time code (field.md, "One-time code"): one input, never a box per digit, with no
+// maxlength or pattern, so a pasted "123 456" is not cut; the server takes the spaces out.
+export function CodeInput(
+  props: FieldText &
+    Omit<InputHTMLAttributes<HTMLInputElement>, "type" | "style" | "autoComplete" | "inputMode">,
+) {
+  const { label, help, error, announce, required, className: _c, ...rest } = props;
+  return (
+    <Field label={label} help={help} error={error} announce={announce} required={required}>
+      <input
+        enterKeyHint="done"
+        {...rest}
+        className="cap-input"
+        data-variant="code"
+        type="text"
+        autoComplete="one-time-code"
+        inputMode="numeric"
+        spellCheck={false}
+        autoCapitalize="none"
+        autoCorrect="off"
+      />
+    </Field>
+  );
+}

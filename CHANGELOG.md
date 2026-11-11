@@ -4,6 +4,13 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+## [0.93.0]
+
+- **Sign-in: one sign-in screen and its link pages for every site** (shared-code audit 2026-11-11, items 19 and 21; Dustin: a UI that is a component belongs in Capsomer). New `components/sign-in/` (`capsomer/react/sign-in`, `capsomer/sign-in.css`): `AuthCard`, `SignIn` (passkey first, Google and Apple where the site has them, then the emailed link with its code, Turnstile on the link), `SignInConfirm` (the page the emailed link opens) and `EmailConfirm` (the email-change links' page), on site-runtime's `./sign-in-form`, `./sign-in-words` and `./sign-in-passkey`. New classes: `.cap-auth` and its parts. Replaces Foxhound's `auth-card.tsx`, Foxing's `auth-shell.tsx` and txasm's sign-in page. No token or class was removed or renamed.
+- **Field: `EmailInput` and `CodeInput`.** `EmailInput` is `type="email"` with no spellcheck or capitals; `signIn` makes it the sign-in id (`autocomplete="username webauthn"`), so saved passkeys show in its suggestions. `CodeInput` is the one-time code: one input, `autocomplete="one-time-code"`, numeric, no `maxlength`, so a pasted "123 456" is kept whole. New: `.cap-input[data-variant="code"]`.
+- **Account settings: one account page for every site** (audit item 20). New `components/sign-in-settings/` (`capsomer/react/sign-in-settings`, `capsomer/sign-in-settings.css`): `AccountSettings` and its parts (`EmailSettings`, `PasskeySettings`, `ProviderSettings`, `DeviceSettings`, `SecurityHistory`, `DeleteAccount`) and `PasskeyOffer`, on site-runtime's `accountFormAction`, `ACCOUNT_WORDS` and `securityHistoryWords`. The email change, a device's sign-out and deletion are posts to the page's action; deletion asks for one ticked box. New classes: `.cap-account` and its parts. Replaces Foxhound's `sign-in-settings.tsx` and account controls, Foxing's account sections and passkey offer, and txasm's account page. No token or class was removed or renamed.
+- The site-runtime dependency is v0.121.0 and the peer range `>=0.121.0`.
+
 ## [0.92.0]
 
 From the network shared-code audit, items 22 to 30 (Dustin's rule of 2026-11-11: any UI that is a component lives in Capsomer). Every site moves onto these parts and deletes its own copy.
