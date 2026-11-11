@@ -1,10 +1,19 @@
-import { useSyncExternalStore, type ComponentProps, type ReactElement } from "react";
+import { useSyncExternalStore, type ReactElement, type ReactNode } from "react";
 
 // For useSyncExternalStore's hydration flag: nothing to subscribe to.
 const noSubscribe = () => () => {};
 
 export type ScopeOption = { value: string; label: string };
-export type ScopeFormProps = ComponentProps<"form"> & { "data-cap": string };
+// Exactly the props the form gets, so a router's form (React Router's <Form>, whose method and
+// encType are unions) takes them as they are.
+export type ScopeFormProps = {
+  method: "get";
+  action?: string;
+  className: string;
+  "data-cap": string;
+  "data-cap-ready"?: string;
+  children: ReactNode;
+};
 
 export interface ScopeChipProps {
   // The scopes to choose from (each site, say).
