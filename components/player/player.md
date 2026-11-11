@@ -144,6 +144,17 @@ import { PlayerDock, PlayerProvider, PlayerSurface, PlayerTranscript, ChapterLis
   <Outlet />
   <PlayerDock renderLink={routerRenderLink} />
 </PlayerProvider>
+```
+
+In an app's root, where every page (an admin too) loads what it imports, take the provider from `capsomer/react/player-context` and load the dock when a track is loaded, so its menus and sheet stay out of the first load:
+
+```tsx
+import { PlayerProvider, usePlayer } from "capsomer/react/player-context";
+const PlayerDock = lazy(() => import("capsomer/react/player").then(({ PlayerDock }) => ({ default: PlayerDock })));
+function Dock() {
+  if (!usePlayer().current) return null;
+  return <Suspense fallback={null}><PlayerDock renderLink={routerRenderLink} /></Suspense>;
+}
 
 const track = { id: 12, title: "Getting started", src: "/media/ep12.mp3", album: "Episode 12", chapters, href: "/getting-started", transcript: "/getting-started#transcript", duration: 1834 };
 <PlayerSurface track={track} peaks={peaks} transcriptHref="#transcript" />
