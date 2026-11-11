@@ -4,6 +4,14 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+## [0.99.1]
+
+- **A page that hydrates after `enhance()` no longer fails hydration for a dark-theme visitor.** On a header rendered with `hydrate={false}`, `enhance()` renames the theme button and its tip to the theme showing ("Switch to light theme"), so when such a page hydrated later (germomics' hydrate on intent) React found text that differed from the server's and threw error #418. The button and the tip's text now carry `suppressHydrationWarning` while `hydrate` is false.
+- **New: `capsomer/react/player-context`** (`PlayerProvider`, `usePlayer`). Importing the provider from `capsomer/react/player` in an app's root put the whole player (the dock, its menus and its sheet, about 50 KB gzip) into every page's first load once the dock was loaded lazily, since the bundler keeps the barrel and all it re-exports together; the root imports the provider from here and loads `PlayerDock` with `lazy()` when a track is loaded. `capsomer/react/player` still exports both.
+- **The site header takes a site's own icon controls, order and divider.** New custom properties, each defaulting to today's look: `--header-icon-size` (36px), `--header-icon-glyph` (18px), `--header-icon-stroke` (1.6) and `--header-icon-bg` (none) for every icon control and the theme button's glyph; `--header-tools-gap` for the tools and the extras; `--header-sep: none` drops the divider before the tools; `--header-cta-order: -1` puts the button extra before the icon extras and `--header-theme-order: -1` the theme first among the tools; and the phone's menu button takes `--header-menu-size`, `--header-menu-glyph`, `--header-menu-line` and `--header-menu-bg`. From germomics, whose header keeps its 34px filled circles, 16px glyphs and Subscribe-first order on Capsomer's header.
+- **Removed: `toParagraphs` from `capsomer/player`.** The transcript groups its cues with Prelum's `toParagraphs` (`@drdustinedwards/site-helpers/vtt`, 0.47.0), the same rule (a paragraph ends at a sentence's end after 45 words, or at a pause over 2.5 seconds), so the optional peer `@drdustinedwards/site-helpers` is now `>=0.47.0`. Import `toParagraphs` from Prelum instead.
+- No token or class was removed or renamed.
+
 ## [0.99.0]
 
 Shared components from the network audit: parts each site wrote for itself, now in Capsomer so every site behaves the same.
