@@ -4,6 +4,7 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+- **Chart builder reads its CSV with Prelum's `csvColumns`** (`@drdustinedwards/site-helpers/source`, 0.49.0), so the optional peer is now `>=0.49.0` and `csvColumns` is no longer exported from `capsomer/behavior/chart-builder`; import it from Prelum. Two local helpers with names Prelum also exports do different jobs and are renamed: `lineText` in the email part (now `plainLine`) and `sectionOf` in checklist-run (now `stepSection`). No token, class or HTML change.
 - **The showcase site enforces Trusted Types.** site-runtime 0.132.0 (dev dependency) sets the capsomer registry entry's `trustedTypes` to `true`, so `_headers` and the Worker send `require-trusted-types-for 'script'` in the enforced Content-Security-Policy. No token, class or HTML contract changes.
 
 ## [0.102.0]
