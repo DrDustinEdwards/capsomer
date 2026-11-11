@@ -1,0 +1,26 @@
+/* The specimen's layout: the contents beside a scrolling sample post. */
+.toc-demo {
+  display: grid;
+  grid-template-columns: 14rem minmax(0, 1fr);
+  gap: 2rem;
+  block-size: 24rem;
+  overflow-y: auto;
+}
+.toc-demo-post {
+  padding-block-end: 20rem;
+}
+.toc-demo-post p {
+  margin-block-end: 8rem;
+}
+.toc-demo .cap-toc[data-variant="sidebar"] {
+  top: 0;
+}
+/* The specimen shows both variants at every width. */
+.cap-specimens .cap-toc[data-variant] {
+  display: block;
+}
+@media (max-width: 40rem) {
+  .toc-demo {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

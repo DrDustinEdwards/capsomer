@@ -1,0 +1,26 @@
+<link rel="stylesheet" href="./specimen/demo.css" />
+<section class="cap-specimen" aria-labelledby="s-run">
+  <h2 id="s-run">A checklist, ready to run</h2>
+  <article class="run-demo" id="run-demo" data-cap="checklist-run" data-run-noun="checklist" data-run-path="/sample/field-day" data-run-version="1.0" data-run-title="Field day">
+    <section aria-labelledby="run-demo-a">
+      <h3 id="run-demo-a">Before you go</h3>
+      <ol>
+        <li data-step="1" id="before-1"><p data-run-text>Pack the notebook and two pencils.</p></li>
+        <li data-step="2" id="before-2" data-timers='[{"label":"Charge","text":"2 minutes","min":2,"max":null,"unit":"minutes"}]'><p data-run-text>Charge the camera.</p></li>
+      </ol>
+    </section>
+    <section aria-labelledby="run-demo-b">
+      <h3 id="run-demo-b">At the plot</h3>
+      <ol>
+        <li data-step="1" id="plot-1"><p data-run-text><span data-run-flag="critical">Critical:</span> Photograph every marker before you move it.</p></li>
+        <li data-step="2" id="plot-2"><p data-run-text>Write the date and the weather.</p></li>
+      </ol>
+    </section>
+    <p data-run-start></p>
+  </article>
+</section>
+
+<script type="module">
+  import { enhance } from "./checklist-run.ts";
+  enhance();
+</script>

@@ -1,0 +1,5 @@
+/* Specimen only: a column like an error page's main, so the ad sits at its foot. */
+.ad-demo-page {
+  display: flex;
+  flex-direction: column;
+}
