@@ -5,7 +5,7 @@ summary: How old the data on screen is, with a ring counting down to the next re
 parts: [css, behavior, react]
 tool: native
 states: [fresh with ring, stale, without the second clause, reading]
-added: 0.93.0
+added: 0.94.0
 source: the Capsid Portal's Freshness and FreshRing (dashboard/src/app/App.tsx, .fresh in styles.css)
 replaces:
   - 'className="fresh'

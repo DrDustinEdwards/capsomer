@@ -5,7 +5,7 @@ summary: Save for later, kept in this browser only: a toggle button whose bookma
 parts: [css, behavior, react]
 tool: own JavaScript
 states: [not saved, saved, hover, storage blocked]
-added: 0.93.0
+added: 0.94.0
 source: germomics' SaveButton (app/components/content/PostDetail.tsx)
 replaces:
   - 'germomics-saved'

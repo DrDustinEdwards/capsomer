@@ -5,7 +5,7 @@ summary: The risky controls of a form or a detail, set apart from the safe ones 
 parts: [css, react]
 tool: native
 states: [one control with a note, two controls, button hover]
-added: 0.93.0
+added: 0.94.0
 source: the Capsid Portal's Danger (dashboard/src/views/shared.tsx, the UX audit's M9)
 replaces:
   - 'data-danger=""'

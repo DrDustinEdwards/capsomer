@@ -116,3 +116,25 @@ test("row actions: Retry first while Cloudflare lags, Renew otherwise, nothing f
     true,
   );
 });
+
+test("personFromParam: names only a person the page lists, and for a change one the viewer manages", async () => {
+  const { personFromParam } = await import("../../components/people-roles/people-roles.ts");
+  const emails = ["rosa@example.com", "lee@example.com"];
+  const p = (q) => new URLSearchParams(q);
+  assert.equal(personFromParam(p("person=Rosa@Example.com"), "person", emails), "rosa@example.com");
+  assert.equal(personFromParam(p("person=someone@example.com"), "person", emails), undefined);
+  assert.equal(
+    personFromParam(p("change=lee@example.com"), "change", emails, (e) => e !== "lee@example.com"),
+    undefined,
+  );
+});
+
+test("manageLead: the titles as groups in a list, and the notice after", async () => {
+  const { manageLead } = await import("../../components/people-roles/people-roles.ts");
+  assert.equal(
+    manageLead(["Lab manager", "Lab worker"]),
+    "You manage Lab managers and Lab workers.",
+  );
+  assert.equal(manageLead(["A", "B", "Cs"], "Set dates."), "You manage As, Bs and Cs. Set dates.");
+  assert.equal(manageLead([]), undefined);
+});

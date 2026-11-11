@@ -5,7 +5,7 @@ summary: A toggle that stores a page and its files in this browser, so it opens 
 parts: [css, behavior]
 tool: own JavaScript (a service worker)
 states: [not kept, kept, removed, could not keep, a browser with no service worker (nothing shown)]
-added: 0.93.0
+added: 0.94.0
 source: dustinedwards.info's Keep on this device (app/enhance/offline.ts, public/sw.js)
 replaces:
   - 'class="offline-keep"'

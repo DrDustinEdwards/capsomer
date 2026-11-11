@@ -5,7 +5,7 @@ summary: A process as numbered steps down a line that fills from the first to th
 parts: [css, behavior, react]
 tool: own JavaScript
 states: [filled (seen, or no script), empty before it is seen, reduced motion, a site's own look, narrow]
-added: 0.93.0
+added: 0.94.0
 source: bsw's process timeline (app/components/Timeline.tsx, app/islands/timeline.ts, app.css .vertical-timeline)
 replaces:
   - 'vertical-timeline'

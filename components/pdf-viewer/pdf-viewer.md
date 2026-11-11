@@ -5,7 +5,7 @@ summary: A PDF's current page drawn in the page by PDF.js, with page-through, zo
 parts: [css, behavior, react]
 tool: own JavaScript (PDF.js, hosted by the site)
 states: [loading, a page shown, last page, failed to load]
-added: 0.93.0
+added: 0.94.0
 source: txasm's PdfViewer (app/components/pdf-viewer.tsx, app/islands/pdf-viewer.ts, app.css .pdf-viewer)
 replaces:
   - 'class="pdf-viewer'

@@ -327,3 +327,78 @@ export function enhance(root: ParentNode = document): () => void {
   }
   return () => undo.forEach((f) => f());
 }
+
+// ---- The members page's address and lead line (from dustinedwards.info's lab, members.server.ts)
+
+// "A, B and C".
+export function listText(words: readonly string[]): string {
+  if (words.length <= 1) return words.join("");
+  return `${words.slice(0, -1).join(", ")} and ${words[words.length - 1]}`;
+}
+
+// A title as a group of people: "Lab worker" is "Lab workers"; a title already plural stays.
+export function pluralTitle(label: string): string {
+  return label.endsWith("s") ? label : `${label}s`;
+}
+
+// The line under the heading: "You manage Lab workers and Lab managers." from the titles the
+// viewer may give, highest first. `notice` follows it when something must be set up first (no
+// term dates yet). Undefined when the viewer gives no title.
+export function manageLead(titles: readonly string[], notice?: string): string | undefined {
+  if (titles.length === 0) return undefined;
+  return `You manage ${listText(titles.map(pluralTitle))}.${notice ? ` ${notice}` : ""}`;
+}
+
+// The person an address names (`?person=` opens their history, `?change=` their inline change
+// row), matched against the people the viewer may see and, for a change, `allowed` (whom the
+// viewer manages). Anything else names nobody, so an address can never show a person the page
+// would not list.
+export function personFromParam(
+  params: URLSearchParams,
+  name: "person" | "change",
+  emails: readonly string[],
+  allowed: (email: string) => boolean = () => true,
+): string | undefined {
+  const asked = params.get(name)?.trim().toLowerCase();
+  if (!asked) return undefined;
+  return emails.some((e) => e.toLowerCase() === asked) && allowed(asked) ? asked : undefined;
+}
+
+// ---- The role grid: people by scopes (from Carrel's People page) ---------------------------
+
+// One column: a project, a site, an app.
+export interface RoleScope {
+  id: string;
+  name: string;
+}
+
+export interface RoleOption {
+  value: string;
+  label: string;
+}
+
+// One row of the grid.
+export interface RoleGridPerson {
+  id: string;
+  email: string;
+  name?: string;
+  // Each scope's role value; a scope that is absent is "" (no access).
+  roles: Readonly<Record<string, string>>;
+  // Words shown as badges under the name: "Agent (AI)", "Reviewer (AI)".
+  badges?: string[];
+  // When the person was disabled, ISO; a disabled person keeps their roles.
+  disabledAt?: string;
+  // A person whose roles are not set here (the Owner): this sentence spans the scopes, and the
+  // row has no Save and no Disable.
+  everyScope?: string;
+}
+
+// "Saved: Rosa Park on Field notes, Editor."
+export function roleSavedText(person: string, scope: string, role: string): string {
+  return `Saved: ${person} on ${scope}, ${role}.`;
+}
+
+// The name the grid shows for a person.
+export function personName(p: Pick<RoleGridPerson, "name" | "email">): string {
+  return p.name || p.email;
+}

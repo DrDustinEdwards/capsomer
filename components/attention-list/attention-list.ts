@@ -240,3 +240,126 @@ export function enhance(root: ParentNode = document): () => void {
   }
   return () => undo.forEach((f) => f());
 }
+
+// ---- A person's work queue: needs, with Later ----------------------------------------------
+// The attention list above is what is wrong with the systems. A work queue (Carrel's Home) is
+// what waits on one person: each need has one main action and Later, which sets it aside until
+// tomorrow morning. The shapes and rules are Carrel's (app/lib/desk.server.ts, Need, and
+// app/routes/home.tsx, NeedRow and focusNeighbor), made generic: the groups are the app's.
+
+// Blocking: something is stuck until the person acts. Waiting: the work is theirs to pick up.
+export type NeedUrgency = "blocking" | "waiting";
+
+export const URGENCY_ORDER: readonly NeedUrgency[] = ["blocking", "waiting"];
+
+export const URGENCY_TITLE: Record<NeedUrgency, string> = {
+  blocking: "Blocking",
+  waiting: "Waiting for you",
+};
+
+export interface Need<G extends string = string> {
+  id: string;
+  // The app's own kind of need ("ai", "due", "flags"): the filter tabs pick by it.
+  group: G;
+  urgency: NeedUrgency;
+  title: string;
+  detail?: string;
+  // The one main action, as a link.
+  action: { label: string; href: string };
+  // When it started waiting, ISO, or null.
+  at: string | null;
+  // Set aside with Later: when it comes back, ISO. Such a need is off the list and out of the
+  // count until then.
+  later?: string;
+}
+
+// The needs a view shows: "later" the ones set aside, "all" every one that is not, and a group
+// name that group's ones that are not.
+export function needsShown<G extends string>(
+  needs: readonly Need<G>[],
+  show: "all" | "later" | G,
+): Need<G>[] {
+  return needs.filter((n) =>
+    show === "later"
+      ? n.later !== undefined
+      : n.later === undefined && (show === "all" || n.group === show),
+  );
+}
+
+// The needs in a count (a header badge, a tab's number): every one not set aside.
+export function needCount(needs: readonly Pick<Need, "later">[]): number {
+  return needs.filter((n) => n.later === undefined).length;
+}
+
+// Moves focus off a row that is about to leave the list: to the next row's title, else the
+// previous one's, else the current filter tab in the same panel, so a keyboard user keeps their
+// place.
+export function focusNeighbor(row: HTMLElement, rowSelector = ".cap-need-row"): void {
+  const list = row.closest(".cap-rows");
+  const rows = list ? Array.from(list.querySelectorAll<HTMLElement>(rowSelector)) : [];
+  const at = rows.indexOf(row);
+  const next = rows[at + 1] ?? rows[at - 1];
+  const target =
+    next?.querySelector<HTMLElement>(".cap-row-title :is(a, button)") ??
+    row.closest(".cap-panel")?.querySelector<HTMLElement>("[aria-current='page']");
+  target?.focus();
+}
+
+// ---- An inbox: what each app has waiting, as one feed ------------------------------------
+// The shape Capsid's inbox feed sends (src/ops-types/feed.ts) and the admin shell's badges and
+// an attention list read. The kinds are the sender's; which of them wait on a person decides
+// the severity.
+
+export type InboxSeverity = "needs-you" | "failing" | "none";
+
+export interface InboxItem<K extends string = string> {
+  title: string;
+  kind: K;
+  // Where to act on it, or null when there is no page for it.
+  link: string | null;
+  // When it started waiting, ISO.
+  since: string;
+  // The job it is, when the sender's kind is a job.
+  job?: string;
+}
+
+export interface InboxApp<K extends string = string> {
+  namespace: string;
+  name: string;
+  count: number;
+  severity: InboxSeverity;
+  items: InboxItem<K>[];
+}
+
+export interface Inbox<K extends string = string> {
+  generated: string;
+  // Items across the apps this caller may read.
+  count: number;
+  severity: InboxSeverity;
+  apps: InboxApp<K>[];
+}
+
+const SEVERITY_ORDER: readonly InboxSeverity[] = ["needs-you", "failing", "none"];
+
+// The worst severity of a set of items: needs-you when any waits on a person, failing when only
+// a machine fault is open, none when there are none. Needs-you wins, because only a person can
+// clear it.
+export function severityOf<K extends string>(
+  items: readonly Pick<InboxItem<K>, "kind">[],
+  waitsOnPerson: ReadonlySet<K> | ((kind: K) => boolean),
+): InboxSeverity {
+  const waits =
+    typeof waitsOnPerson === "function" ? waitsOnPerson : (k: K) => waitsOnPerson.has(k);
+  if (items.some((i) => waits(i.kind))) return "needs-you";
+  return items.length > 0 ? "failing" : "none";
+}
+
+// The worst of several severities (an inbox's, from its apps').
+export function worstSeverity(severities: readonly InboxSeverity[]): InboxSeverity {
+  return SEVERITY_ORDER.find((s) => severities.includes(s)) ?? "none";
+}
+
+// The admin shell's badge tone for a severity: violet "need", red "crit", or none.
+export function severityTone(s: InboxSeverity): "need" | "crit" | undefined {
+  return s === "needs-you" ? "need" : s === "failing" ? "crit" : undefined;
+}

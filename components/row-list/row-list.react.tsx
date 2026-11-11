@@ -1,4 +1,12 @@
-import { useEffect, useId, useRef, type ReactNode } from "react";
+import {
+  useEffect,
+  useId,
+  useRef,
+  type ComponentProps,
+  type ComponentType,
+  type FormHTMLAttributes,
+  type ReactNode,
+} from "react";
 import { attachRowList } from "./row-list.ts";
 
 export interface RowListProps {
@@ -141,4 +149,27 @@ export function Row({
       {actions != null && <div className="cap-row-actions">{actions}</div>}
     </li>
   );
+}
+
+// What a row action needs from the app's router: a form that posts without leaving the page,
+// and whether its post is under way (the row hides itself until the server answers). Each row
+// calls the hook once, so each row has its own (React Router: useRouterRowForm in
+// capsomer/react/router).
+export interface RowForm {
+  Form: ComponentType<
+    Omit<FormHTMLAttributes<HTMLFormElement>, "method"> & {
+      method?: "post" | "get";
+      children?: ReactNode;
+    }
+  >;
+  pending: boolean;
+}
+
+function PlainForm({ method = "post", ...props }: ComponentProps<"form">) {
+  return <form method={method} {...props} />;
+}
+
+// The default: a plain form that posts and loads the page the server answers with.
+export function usePlainRowForm(): RowForm {
+  return { Form: PlainForm as RowForm["Form"], pending: false };
 }
