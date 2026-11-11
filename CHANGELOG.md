@@ -4,6 +4,11 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+## [0.91.0]
+
+- **New: the draft compare's merge mode** (`DraftMerge`, `mergePlan`, `merged`; from Carrel's merge view). Two texts that both moved on from one version, block by block, each difference kept from either side or both, starting on the side that changed it when the base is known. Its diff is the compare's own, so it needs no diff library. New classes: `.cap-merge` and its parts (`-intro`, `-list`, `-same`, `-choice`, `-sides`, `-side`, `-text`, `-empty`, `-mark`, `-actions`). No token or class was removed or renamed.
+- **New: rich text field** (`capsomer/react/rich-text-field`, `capsomer/behavior/rich-text-field`, `capsomer/rich-text-field.css`; from txasm's abstract editor). A short text with a few inline tags and nothing else, a formatting toolbar (one tab stop) whose buttons toggle and show where the caret is, and `sanitizeRichText`, which the server runs on every save. The box is built from DOM nodes, never from a markup string, so it needs no Trusted Types policy. New classes: `.cap-rich-text`, `.cap-rich-text-bar`, `.cap-rich-text-box`, `.cap-rich-text-count`. No token or class was removed or renamed.
+
 ## [0.90.0]
 
 Fixes from a review against Chrome's Modern Web Guidance v1 (all 208 guides, 2026-11-11). Every site gets them by bumping Capsomer.
