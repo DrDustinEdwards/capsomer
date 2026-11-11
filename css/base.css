@@ -111,6 +111,8 @@
   /* A trailing arrow in a link or button. A site's --arrow-rest and --arrow-shift (shown and in place
      by default) can hide it until the pointer or focus arrives, when it slides in. */
   .cap-arrow {
+    /* The size an Icon (components/icons, a later layer) reads, so an Icon drawn as the arrow keeps it. */
+    --icon-size: 1.1em;
     inline-size: 1.1em;
     block-size: 1.1em;
     flex: none;
