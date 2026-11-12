@@ -458,7 +458,11 @@ export function GroupList({
                     {l.label}
                     {l.count ? " " : null}
                     {l.count ? (
-                      <span className="cap-site-header-count" aria-hidden="true">
+                      <span
+                        className="cap-badge cap-site-header-count"
+                        data-tone="need"
+                        aria-hidden="true"
+                      >
                         {badgeText(l.count)}
                       </span>
                     ) : null}
@@ -497,7 +501,11 @@ function SheetList({
               <span className="cap-site-header-sheet-name">{l.label}</span>
               {l.count ? " " : null}
               {l.count ? (
-                <span className="cap-site-header-count" aria-hidden="true">
+                <span
+                  className="cap-badge cap-site-header-count"
+                  data-tone="need"
+                  aria-hidden="true"
+                >
                   {badgeText(l.count)}
                 </span>
               ) : null}

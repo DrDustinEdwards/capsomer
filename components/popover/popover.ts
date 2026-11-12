@@ -10,6 +10,8 @@
 // computes it from getBoundingClientRect with a flip and a shift. Every dynamic value goes
 // through the CSSOM (apps keep style-src 'self').
 
+import { clamp } from "../hooks/hooks.ts";
+
 export type Side = "top" | "bottom" | "left" | "right" | "inline-start" | "inline-end";
 export type Align = "start" | "center" | "end";
 
@@ -50,10 +52,6 @@ function physical(side: Side, rtl: boolean): "top" | "bottom" | "left" | "right"
   if (side === "inline-start") return rtl ? "right" : "left";
   if (side === "inline-end") return rtl ? "left" : "right";
   return side;
-}
-
-function clamp(n: number, lo: number, hi: number): number {
-  return Math.max(lo, Math.min(n, Math.max(lo, hi)));
 }
 
 function sideOf(popup: HTMLElement): Side {

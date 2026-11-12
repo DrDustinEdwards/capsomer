@@ -4,6 +4,7 @@
 // state that is and what may happen next.
 
 import { formatBytes } from "../drop-zone/drop-zone.ts";
+import { toMsOrNull } from "../time/time.ts";
 
 // How long a run may hold the lock. A run still "generating" after this is taken to have died
 // (a crashed Worker never records a failure), and a new run may start. txasm's is 5 minutes.
@@ -42,12 +43,6 @@ export interface GeneratedView {
   reason: string | null;
 }
 
-const ms = (v: number | Date | string | null | undefined): number | null => {
-  if (v == null || v === "") return null;
-  const t = typeof v === "number" ? v : v instanceof Date ? v.getTime() : Date.parse(v);
-  return Number.isFinite(t) ? t : null;
-};
-
 // The reason a run that died says, since it recorded none.
 export const STALLED_REASON = "The last run stopped without finishing.";
 
@@ -57,13 +52,13 @@ export function fileState(
   now: number = Date.now(),
   lockMs: number = LOCK_MS,
 ): GeneratedView {
-  const generatedAt = ms(rec?.generatedAt);
+  const generatedAt = toMsOrNull(rec?.generatedAt);
   const bytes = rec?.bytes ?? null;
   const hasFile = generatedAt !== null;
   const base = { hasFile, generatedAt, bytes, stalled: false, reason: null as string | null };
   const status = rec?.status ?? null;
   if (status === "generating") {
-    const started = ms(rec?.startedAt);
+    const started = toMsOrNull(rec?.startedAt);
     // A run with no start time cannot be aged; it holds the lock until it records an outcome.
     if (started === null || now - started < lockMs)
       return { ...base, state: "generating", canStart: false };
@@ -72,7 +67,7 @@ export function fileState(
   if (status === "failed")
     return { ...base, state: "failed", canStart: true, reason: rec?.reason || null };
   if (status === "ready" || hasFile) {
-    const changed = ms(rec?.changedAt);
+    const changed = toMsOrNull(rec?.changedAt);
     const stale = changed !== null && generatedAt !== null && changed > generatedAt;
     return { ...base, hasFile: true, state: stale ? "stale" : "ready", canStart: true };
   }

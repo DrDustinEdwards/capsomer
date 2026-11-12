@@ -2,7 +2,7 @@
 // Focus itself moves (there is no second selection), so Enter follows the link, the
 // browser scrolls the row into view, and a screen reader reads the row it lands on.
 // No framework; the React wrapper uses the same functions.
-import { isImeEnter, singleKeysOff } from "../shortcuts/shortcuts.ts";
+import { isImeEnter, isTyping, singleKeysOff } from "../shortcuts/shortcuts.ts";
 
 // Every row's one link or button, in order, skipping rows hidden or disabled.
 export function rowTargets(list: ParentNode): HTMLElement[] {
@@ -32,33 +32,11 @@ export function moveRowFocus(list: ParentNode, step: 1 | -1): HTMLElement | null
   return el;
 }
 
-// A key typed into a field, or with a modifier, is never a list shortcut.
-export function isTyping(e: KeyboardEvent): boolean {
-  if (e.ctrlKey || e.metaKey || e.altKey || e.isComposing || isImeEnter(e)) return true;
-  const t = e.target as HTMLElement | null;
-  if (!t) return false;
-  return (
-    t.isContentEditable ||
-    /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName) ||
-    t.closest("[role='combobox'], [role='textbox']") !== null
-  );
-}
-
-// The same check for a list whose rows hold their own checkboxes (the moderation queue, the
-// history list): a checkbox, a radio or a button is not typing, so a list key works from a box
-// a person has just ticked.
-const TEXT_INPUT =
-  /^(text|search|email|url|tel|password|number|date|datetime-local|month|week|time)$/;
+// A key typed into a field, or with a modifier, is never a list shortcut. A checkbox, a radio or a
+// button is not a field (shortcuts' isTyping), so a list key works from a box a person has just
+// ticked.
 export function isTypingKey(e: KeyboardEvent): boolean {
-  if (e.ctrlKey || e.metaKey || e.altKey || e.isComposing || isImeEnter(e)) return true;
-  const t = e.target as HTMLElement | null;
-  if (!t) return false;
-  if (t instanceof HTMLInputElement) return TEXT_INPUT.test(t.type || "text");
-  return (
-    t.isContentEditable ||
-    /^(TEXTAREA|SELECT)$/.test(t.tagName) ||
-    t.closest("[role='combobox'], [role='textbox']") !== null
-  );
+  return e.ctrlKey || e.metaKey || e.altKey || e.isComposing || isImeEnter(e) || isTyping(e.target);
 }
 
 // Single-key shortcuts can be switched off (DEFAULTS.md): the shortcuts switch is the one source.
@@ -83,7 +61,7 @@ export function attachRowList(list: HTMLElement): () => void {
   list.dataset.capReady = "";
   const onKey = (e: KeyboardEvent) => {
     if (e.defaultPrevented || (e.key !== "j" && e.key !== "k")) return;
-    if (isTyping(e) || singleKeysOff() || !listOwnsKeys(list)) return;
+    if (isTypingKey(e) || singleKeysOff() || !listOwnsKeys(list)) return;
     if (moveRowFocus(list, e.key === "j" ? 1 : -1) || list.contains(document.activeElement))
       e.preventDefault();
   };

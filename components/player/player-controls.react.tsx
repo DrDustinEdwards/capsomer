@@ -5,7 +5,9 @@
 // taking over a different track that is playing; the dock passes none and drives the current one.
 // Speed, volume and sleep are the player's own settings and need no track.
 import { useEffect, useId, useRef, type ReactNode, type RefObject } from "react";
+import { clamp } from "../hooks/hooks.ts";
 import { Menu } from "../menu/menu.react.tsx";
+import { ratio } from "../meter/meter.ts";
 import { Popover, PopoverContent, PopoverTrigger } from "../popover/popover.react.tsx";
 import { plainLink, type LinkProps } from "../shell/shell.react.tsx";
 import {
@@ -76,10 +78,7 @@ function useRangeFill(
 ) {
   useEffect(() => {
     const share = max > min ? ((value - min) / (max - min)) * 100 : 0;
-    ref.current?.style.setProperty(
-      "--cap-range-fill",
-      `${Math.min(100, Math.max(0, share)).toFixed(2)}%`,
-    );
+    ref.current?.style.setProperty("--cap-range-fill", `${(ratio(share, 100) * 100).toFixed(2)}%`);
   }, [ref, value, min, max]);
 }
 
@@ -200,7 +199,7 @@ export function Scrubber({ track, ticks = false }: { track?: PlayerTrack; ticks?
   const chapters = (isThis ? (track ?? p.current)?.chapters : track?.chapters) ?? [];
   useRangeFill(input, Math.min(pos, dur || 1), 0, dur || 1);
   const seekTo = (s: number) => {
-    const to = Math.max(0, Math.min(s, dur || s));
+    const to = clamp(s, 0, dur || s);
     if (isThis) p.seek(to);
     else if (track) p.playTrackAt(track, to);
   };

@@ -5,6 +5,8 @@
 // A dragenter depth counter keeps the page-wide target steady, and a drop off the zone never
 // navigates away. Every file is checked and each refusal named. No framework; the React wrapper uses the same pure functions.
 
+import { listText, plural } from "../hooks/hooks.ts";
+
 const READY = "data-cap-ready";
 
 // ---------------------------------------------------------------------------------------
@@ -85,9 +87,7 @@ export function acceptLabel(accept: string | null | undefined): string {
     const name = KIND_NAMES[rule] ?? (rule.startsWith(".") ? rule.slice(1).toUpperCase() : rule);
     if (!names.includes(name)) names.push(name);
   }
-  if (names.length === 0) return "any file";
-  if (names.length === 1) return names[0] ?? "";
-  return `${names.slice(0, -1).join(", ")} and ${names[names.length - 1]}`;
+  return names.length === 0 ? "any file" : listText(names);
 }
 
 // A size as a person reads it. Binary division, as the site's media page states sizes.
@@ -104,7 +104,7 @@ export function rejectionMessage(file: FileLike, reason: RejectReason, rules: Dr
   if (reason === "size")
     return `${file.name}: too big at ${formatBytes(file.size)}. The limit is ${formatBytes(rules.maxBytes ?? 0)}.`;
   const n = rules.maxFiles ?? 0;
-  return `${file.name}: too many files. The limit is ${n} ${n === 1 ? "file" : "files"} at a time, so this one was left out.`;
+  return `${file.name}: too many files. The limit is ${plural(n, "file", "files")} at a time, so this one was left out.`;
 }
 
 // Checks every file, in order. A file is refused for its type first, then its size; the files

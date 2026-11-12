@@ -2,10 +2,12 @@
 // cubic ease out. The server renders the final figure, so the page reads right before any script
 // runs, and a reader who asks for reduced motion sees it still. Text only changes; nothing moves.
 
+import { ratio } from "../meter/meter.ts";
+
 export const DURATION_MS = 600;
 
 export function easeOutCubic(t: number): number {
-  const x = Math.max(0, Math.min(1, t));
+  const x = ratio(t, 1);
   return 1 - Math.pow(1 - x, 3);
 }
 

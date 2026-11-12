@@ -1,11 +1,11 @@
 // Authorship marks: who wrote each passage of a text, shown or hidden by one switch.
 //
 // A passage is a "run" (`.cap-run` with data-kind "you", "ai" or "quoted"). This module has the
-// pure counting (countWords, summarize, summaryText, summaryHtml: safe on a server and in node's
+// pure counting (summarize, summaryText, summaryHtml: safe on a server and in node's
 // test runner) and the behavior (enhance: the switch, the remembered choice, the summary).
 
 import { escapeHtml as esc } from "@dustinedwards/site-runtime/html";
-import { countWords } from "../draft-compare/draft-compare.ts";
+import { wordCount } from "@drdustinedwards/site-helpers/text";
 import { syncWord } from "../switch/switch.ts";
 import { readStored, writeStored } from "../hooks/hooks.ts";
 
@@ -15,8 +15,6 @@ export const KINDS: readonly Kind[] = ["you", "ai", "quoted"];
 // What each kind is called in the summary line, and on a run's label.
 export const KIND_WORD: Record<Kind, string> = { you: "you", ai: "AI", quoted: "quoted" };
 export const KIND_LABEL: Record<Kind, string> = { you: "You", ai: "AI", quoted: "Quoted" };
-
-export { countWords };
 
 export interface RunInput {
   kind: Kind;
@@ -48,7 +46,7 @@ export function summarize(runs: readonly RunInput[]): Summary {
   const words: Record<Kind, number> = { you: 0, ai: 0, quoted: 0 };
   for (const r of runs) {
     if (!(r.kind in words)) continue;
-    words[r.kind] += r.words ?? countWords(r.text ?? "");
+    words[r.kind] += r.words ?? wordCount(r.text ?? "");
   }
   const total = words.you + words.ai + words.quoted;
   // Largest remainder: floor every share, then give the spare points to the biggest remainders.
@@ -122,7 +120,7 @@ export function collectRuns(root: Element): RunInput[] {
     if (!parent || parent.closest(".cap-run-label, .cap-authorship-bar")) continue;
     const run = parent.closest(".cap-run");
     if (!run || !root.contains(run)) continue;
-    totals.set(run, (totals.get(run) ?? 0) + countWords(n.textContent ?? ""));
+    totals.set(run, (totals.get(run) ?? 0) + wordCount(n.textContent ?? ""));
   }
   const out: RunInput[] = [];
   for (const [run, words] of totals) {

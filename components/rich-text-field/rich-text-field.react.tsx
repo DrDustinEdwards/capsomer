@@ -1,3 +1,4 @@
+import { plural } from "../hooks/hooks.ts";
 import {
   useEffect,
   useId,
@@ -246,7 +247,7 @@ export function RichTextField({
       <input type="hidden" name={name} value={value} />
       {wordCount ? (
         <p className="cap-field-help cap-rich-text-count" id={countId} aria-live="polite">
-          {words} {words === 1 ? "word" : "words"}
+          {plural(words, "word", "words")}
         </p>
       ) : null}
       <p className="cap-field-error" id={errorId} hidden={!hasError}>

@@ -435,28 +435,14 @@
     }
   }
 
-  /* A count on an icon: one bubble, as in the admin shell (16px, 10px figures, 99+ past 99), its
-     left edge 2px past the glyph and its middle on the glyph's top edge, ringed in the band. */
+  /* A count on an icon: a badge (badge.css, 99+ past 99), its left edge 2px past the glyph and its
+     middle on the glyph's top edge, ringed in the band. */
   .cap-site-header-badge {
-    --_bubble: 16px;
+    --_bubble: var(--space-5);
     position: absolute;
     top: calc(50% - 9px - var(--_bubble) / 2);
     inset-inline-start: calc(50% + 9px + 2px);
-    display: inline-grid;
-    place-items: center;
-    box-sizing: border-box;
-    min-inline-size: var(--_bubble);
-    block-size: var(--_bubble);
-    padding-inline: 3px;
-    border-radius: var(--radius-full);
-    background: var(--primary);
-    color: var(--primary-fg);
     box-shadow: 0 0 0 2px var(--header-bg);
-    font-size: 0.625rem;
-    font-weight: 700;
-    line-height: 1;
-    font-variant-numeric: var(--figures);
-    white-space: nowrap;
   }
 
   /* The one button extra (Free audit, Join free). */
@@ -672,17 +658,6 @@
   }
   .cap-site-header-count {
     margin-inline-start: auto;
-    min-inline-size: 16px;
-    block-size: 16px;
-    padding-inline: 3px;
-    border-radius: var(--radius-full);
-    background: var(--primary);
-    color: var(--primary-fg);
-    font-size: 0.625rem;
-    font-weight: 700;
-    line-height: 16px;
-    text-align: center;
-    font-variant-numeric: var(--figures);
   }
 
   /* The phone's sheet: the shared dialog from the bottom, holding everything the top row does not:

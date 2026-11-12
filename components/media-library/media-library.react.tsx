@@ -1,6 +1,5 @@
 import {
   useEffect,
-  useId,
   useMemo,
   useRef,
   useState,
@@ -9,13 +8,14 @@ import {
   useLayoutEffect,
 } from "react";
 import { CommandMenu, type Command } from "../command-menu/command-menu.react.tsx";
-import type {
-  ContentLabels,
-  IntentResult,
-  MediaData,
-  MediaQuery,
-  PickedMedia,
-  SubmitIntent,
+import {
+  nounsOf,
+  type ContentLabels,
+  type IntentResult,
+  type MediaData,
+  type MediaQuery,
+  type PickedMedia,
+  type SubmitIntent,
 } from "../content/content.ts";
 import { ContentBulkBar, useIntents } from "../content/content.react.tsx";
 import { PlainForm, type FormComponent } from "../plain-form/plain-form.react.tsx";
@@ -48,7 +48,6 @@ import {
   lensChips,
   mediaActions,
   mediaHref,
-  nounsOf,
   ORIENTATION_WORDS,
   oversized,
   pickable,
@@ -59,7 +58,7 @@ import {
   type KitMediaChanges,
   type MediaSort,
 } from "./media-library.ts";
-import { useHydrated } from "../hooks/hooks.react.tsx";
+import { useCleanId, useHydrated } from "../hooks/hooks.react.tsx";
 
 // The viewer's last layout and tile size, remembered in this browser (shell.ts readPref).
 const LAYOUT_PREF = "cap-media-layout";
@@ -159,9 +158,9 @@ export function MediaLibrary({
   bytesHref,
   changes,
 }: MediaLibraryProps) {
-  const uid = useId().replace(/[^a-zA-Z0-9]/g, "");
+  const uid = useCleanId();
   const formId = `${uid}-bulk`;
-  const { plural } = nounsOf(labels);
+  const { plural } = nounsOf(labels, "file");
   const title =
     mode === "picker" ? "Choose an image" : plural.charAt(0).toUpperCase() + plural.slice(1);
   // False on the server and while hydrating, true once hydrated.
@@ -333,7 +332,11 @@ export function MediaLibrary({
         field.select();
       }
     },
-    { label: `Find a ${nounsOf(labels).noun}`, group: "Media", when: () => shortcuts && !picker },
+    {
+      label: `Find a ${nounsOf(labels, "file").noun}`,
+      group: "Media",
+      when: () => shortcuts && !picker,
+    },
   );
   // Copying an address says so, in words, where the person is looking.
   const [copied, setCopied] = useState("");
@@ -527,7 +530,7 @@ export function MediaLibrary({
         action={action}
         encType="multipart/form-data"
         className="cap-media-lib-upload"
-        aria-label={`Upload a ${nounsOf(labels).noun}`}
+        aria-label={`Upload a ${nounsOf(labels, "file").noun}`}
         onSubmit={dropAltIfDecorative}
       >
         <input type="hidden" name="intent" value="upload" />
@@ -572,7 +575,7 @@ export function MediaLibrary({
         method="post"
         action={action}
         className="cap-media-lib-upload"
-        aria-label={`Import a ${nounsOf(labels).noun} from the web`}
+        aria-label={`Import a ${nounsOf(labels, "file").noun} from the web`}
         onSubmit={dropAltIfDecorative}
       >
         <input type="hidden" name="intent" value="import" />
@@ -1357,7 +1360,7 @@ export function MediaLibrary({
           commands={[]}
           search={find}
           bindKeys={false}
-          label={`Find a ${nounsOf(labels).noun}`}
+          label={`Find a ${nounsOf(labels, "file").noun}`}
           placeholder="Name, address or alt text"
         />
       ) : null}

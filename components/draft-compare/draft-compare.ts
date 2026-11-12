@@ -17,7 +17,6 @@ import { readStored, writeStored } from "../hooks/hooks.ts";
 
 export {
   tokenize,
-  countWords,
   commonSubsequence,
   diffWords,
   splitSentences,
@@ -36,7 +35,6 @@ export type {
   Counts,
   Analysis,
 } from "./draft-compare-diff.ts";
-export { escapeHtml as esc } from "@dustinedwards/site-runtime/html";
 export { VIEWS, STORAGE_KEY, renderCompare } from "./draft-compare-render.ts";
 export type {
   CompareView,

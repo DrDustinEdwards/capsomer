@@ -18,6 +18,5 @@
     "tokens/*.mjs",
     "test/**/*.{ts,mjs}"
   ],
-  "project": ["**/*.{ts,tsx,mjs}"],
-  "ignoreDependencies": ["@dustinedwards/devkit"]
+  "project": ["**/*.{ts,tsx,mjs}"]
 }

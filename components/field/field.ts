@@ -6,6 +6,7 @@
 // steppers, a search field's Clear and a date input's real-date check. No framework; the
 // React wrapper and switch-reason use the same functions.
 
+import { wordCount } from "@drdustinedwards/site-helpers/text";
 import {
   hideSummary,
   setTitleError,
@@ -205,7 +206,7 @@ export function countText(
   limit: number,
   words = false,
 ): { text: string; over: boolean } {
-  const used = words ? (value.match(/\S+/g)?.length ?? 0) : value.length;
+  const used = words ? wordCount(value) : value.length;
   const n = Math.abs(limit - used);
   const unit = `${words ? "word" : "character"}${n === 1 ? "" : "s"}`;
   return used > limit

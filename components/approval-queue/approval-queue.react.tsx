@@ -1,8 +1,9 @@
-import { useEffect, useId, useLayoutEffect, useRef, useState, type ReactNode } from "react";
+import { useCleanId } from "../hooks/hooks.react.tsx";
+import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
 import { ConfirmDialog } from "../confirm-dialog/confirm-dialog.react.tsx";
 import { PlainForm, type FormComponent } from "../plain-form/plain-form.react.tsx";
 import { Empty } from "../empty/empty.react.tsx";
-import { isTyping, listOwnsKeys, moveRowFocus, singleKeysOff } from "../row-list/row-list.ts";
+import { isTypingKey, listOwnsKeys, moveRowFocus, singleKeysOff } from "../row-list/row-list.ts";
 import { Status } from "../status/status.react.tsx";
 import { Time } from "../time/time.react.tsx";
 import {
@@ -57,7 +58,7 @@ export function ApprovalQueue({
   empty = { title: "All clear", text: "Nothing is waiting." },
   now,
 }: ApprovalQueueProps) {
-  const uid = useId().replace(/[^a-zA-Z0-9]/g, "");
+  const uid = useCleanId();
   const rootRef = useRef<HTMLElement | null>(null);
   const [closed, setClosed] = useState<string[]>([]);
   const [asking, setAsking] = useState<{
@@ -105,7 +106,7 @@ export function ApprovalQueue({
     const onKey = (e: KeyboardEvent) => {
       const root = rootRef.current;
       const list = root?.querySelector<HTMLElement>(".cap-mq-list");
-      if (!root || !list || e.defaultPrevented || e.repeat || isTyping(e) || singleKeysOff())
+      if (!root || !list || e.defaultPrevented || e.repeat || isTypingKey(e) || singleKeysOff())
         return;
       if (document.querySelector("dialog:modal")) return;
       // Focus in another queue on the page: that queue's keys, not these.

@@ -1,4 +1,5 @@
 import { useCallback, useId, useState, type ReactNode } from "react";
+import { copyText } from "../copy/copy.ts";
 import { Dialog, DialogBody, DialogHeader, DialogTitle } from "../dialog/dialog.react.tsx";
 
 export interface DetailPanelProps {
@@ -97,10 +98,8 @@ export function DetailCommand({
   const id = useId();
   const [said, setSaid] = useState("");
   const copy = async () => {
-    try {
-      await navigator.clipboard.writeText(text);
-      setSaid(`${what} copied.`);
-    } catch {
+    if (await copyText(text)) setSaid(`${what} copied.`);
+    else {
       const el = document.getElementById(id);
       if (el) {
         const range = document.createRange();

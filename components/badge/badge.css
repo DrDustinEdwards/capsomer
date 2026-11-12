@@ -1,0 +1,50 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* A count: a small number in a round bubble, on a tab, a menu row or an icon. The bubble is one
+   size and one shape everywhere; a plain count is a neutral gray, and the tone says what the number
+   means. Where it sits (beside a word, on an icon's corner, ringed in the bar's color) is the
+   host's. */
+@layer cap.components {
+  .cap-badge {
+    display: inline-grid;
+    place-items: center;
+    flex: none;
+    box-sizing: border-box;
+    min-inline-size: var(--space-5);
+    block-size: var(--space-5);
+    padding-inline: var(--space-2);
+    border-radius: var(--radius-full);
+    background: var(--muted);
+    color: var(--ground);
+    font-size: var(--fs-label);
+    font-weight: 700;
+    line-height: 1;
+    font-variant-numeric: var(--figures);
+    white-space: nowrap;
+
+    &:empty {
+      display: none;
+    }
+    &[data-tone="need"] {
+      background: var(--primary);
+      color: var(--primary-fg);
+    }
+    &[data-tone="crit"] {
+      background: var(--crit-soft);
+      color: var(--crit);
+    }
+    &[data-tone="warn"] {
+      background: var(--warn-soft);
+      color: var(--warn);
+    }
+  }
+
+  @media (forced-colors: active) {
+    .cap-badge {
+      border: 1px solid CanvasText;
+      background: Canvas;
+      color: CanvasText;
+    }
+  }
+}

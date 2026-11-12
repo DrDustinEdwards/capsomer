@@ -157,7 +157,7 @@ export function SiteHeader(props: SiteHeaderProps) {
       <>
         {e.icon}
         {e.count ? (
-          <span className="cap-site-header-badge" aria-hidden="true">
+          <span className="cap-badge cap-site-header-badge" data-tone="need" aria-hidden="true">
             {badgeText(e.count)}
           </span>
         ) : null}
@@ -678,7 +678,11 @@ export function SiteTabs({
                 {t.label}
                 {t.count ? " " : null}
                 {t.count ? (
-                  <span className="cap-site-header-badge" aria-hidden="true">
+                  <span
+                    className="cap-badge cap-site-header-badge"
+                    data-tone="need"
+                    aria-hidden="true"
+                  >
                     {badgeText(t.count)}
                   </span>
                 ) : null}

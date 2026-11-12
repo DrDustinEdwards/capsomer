@@ -5,6 +5,8 @@
 // and the live test count, and site/redirect.ts sends old admin links on. Its look is Supergraphics (Barbara Stauffacher Solomon, The Sea Ranch, 1966):
 // flat letter tiles too big for the page, cut by its edge, painted in Capsomer's own families.
 // The dashboard of tests, pairs and changes is the admin at /admin/ (site/main.tsx).
+import { slugify } from "@drdustinedwards/site-helpers/slug";
+import { htmlToText } from "@drdustinedwards/site-helpers/text";
 import { escapeHtml as esc } from "@dustinedwards/site-runtime/html";
 import { readFileSync, readdirSync, existsSync } from "node:fs";
 import { resolve } from "node:path";
@@ -66,14 +68,6 @@ export interface Data {
 // Backticks in a summary become code, as on the admin's pages.
 const prose = (s: string) => esc(s).replace(/`([^`]+)`/g, "<code>$1</code>");
 const fam = (f: Family) => ` data-family="${f}"`;
-const plain = (html: string) =>
-  html
-    .replace(/<[^>]+>/g, "")
-    .replace(/&amp;/g, "&")
-    .replace(/&lt;/g, "<")
-    .replace(/&gt;/g, ">")
-    .replace(/&quot;/g, '"')
-    .trim();
 // The markup as an app writes it: no forced demo states, indented from the left edge.
 const tidy = (html: string) => {
   const lines = html
@@ -108,7 +102,7 @@ function examplesOf(html: string): Example[] {
     const h = new RegExp(`<h2 id="${id}">([\\s\\S]*?)</h2>`).exec(body);
     out.push({
       id,
-      title: plain(h?.[1] ?? id),
+      title: htmlToText(h?.[1] ?? id),
       code: tidy(body.replace(h?.[0] ?? "", "")),
       kind: "example",
       height: 0,
@@ -120,7 +114,7 @@ function examplesOf(html: string): Example[] {
   )) {
     out.push({
       id: t[1] ?? "",
-      title: plain(t[2] ?? ""),
+      title: htmlToText(t[2] ?? ""),
       code: tidy(t[4] ?? ""),
       kind: "only",
       height: Number(t[3] ?? 360),
@@ -510,13 +504,7 @@ export function renderComponent(d: Data, name: string): string {
   const [hero, ...rest] = c.examples;
   const docHeads = [...c.body.matchAll(/^## (.+)$/gm)].map((m) => {
     const text = (m[1] ?? "").trim();
-    return [
-      `doc-${text
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, "-")
-        .replace(/^-|-$/g, "")}`,
-      text.replace(/`/g, ""),
-    ] as [string, string];
+    return [`doc-${slugify(text)}`, text.replace(/`/g, "")] as [string, string];
   });
   const usesCss = c.parts.includes("css") || c.parts.length === 0;
   const enhance = c.behavior.includes("enhance");

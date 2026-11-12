@@ -4,7 +4,9 @@
 // loads, and the inline audio button (enhance). The React parts (player.react.tsx and the
 // player-*.react.tsx files it re-exports) use these; a site's own pre-React script imports them too.
 
-import { readStored, writeStored } from "../hooks/hooks.ts";
+import { clamp, readStored, writeStored } from "../hooks/hooks.ts";
+import { ratio } from "../meter/meter.ts";
+import { SEC, duration, timecode } from "../time/time.ts";
 
 // ---------------------------------------------------------------------------------------
 // The track.
@@ -59,7 +61,7 @@ export const RESUME_SAVE_SECONDS = 5;
 export const RESTART_SECONDS = 3;
 
 export const clampRate = (r: number): number => Math.min(RATE_MAX, Math.max(RATE_MIN, r));
-export const clampVolume = (v: number): number => Math.min(1, Math.max(0, v));
+export const clampVolume = (v: number): number => ratio(v, 1);
 
 // ---------------------------------------------------------------------------------------
 // What the player remembers, in localStorage under a prefix the site chooses ("germomics-" keeps
@@ -115,27 +117,11 @@ export function playerStorage(prefix = "cap-player-"): PlayerStorage {
 // ---------------------------------------------------------------------------------------
 // Time and labels.
 
-function splitSeconds(total?: number | null): [number, number, number] {
-  const t = Math.max(0, Math.floor(Number.isFinite(total) ? (total as number) : 0));
-  return [Math.floor(t / 3600), Math.floor((t % 3600) / 60), t % 60];
-}
-
 // "1:02:03" or "4:05".
-export function formatTime(seconds?: number | null): string {
-  const [h, m, s] = splitSeconds(seconds);
-  const ss = String(s).padStart(2, "0");
-  return h ? `${h}:${String(m).padStart(2, "0")}:${ss}` : `${m}:${ss}`;
-}
+export const formatTime = (seconds?: number | null): string => timecode(Number(seconds) * SEC);
 
-// "3 minutes 12 seconds", for aria-valuetext.
-export function spokenTime(seconds?: number | null): string {
-  const [h, m, s] = splitSeconds(seconds);
-  const parts: string[] = [];
-  if (h) parts.push(`${h} hour${h === 1 ? "" : "s"}`);
-  if (m) parts.push(`${m} minute${m === 1 ? "" : "s"}`);
-  if (s || !parts.length) parts.push(`${s} second${s === 1 ? "" : "s"}`);
-  return parts.join(" ");
-}
+// "3 minutes, 12 seconds", for aria-valuetext.
+export const spokenTime = (seconds?: number | null): string => duration(Number(seconds) * SEC);
 
 // "1.0x", "1.25x".
 export function formatRate(r: number): string {
@@ -180,7 +166,7 @@ export function setPositionState(audio: HTMLMediaElement | null): void {
     session.setPositionState({
       duration: dur,
       playbackRate: Number.isFinite(r) && r > 0 ? r : 1,
-      position: Math.min(Math.max(pos, 0), dur),
+      position: clamp(pos, 0, dur),
     });
   } catch {
     // Some browsers throw on odd values.

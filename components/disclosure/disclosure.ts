@@ -3,10 +3,19 @@
 // hides the rows it groups. Two levels at most, and a critical item is never inside a
 // collapsed group. No framework; the React wrapper uses the same rules.
 
-// Shows or hides one group's rows and keeps its button's state true.
+// Shows or hides what one button controls (a group's rows, a step's email, the warnings past the
+// cap) and keeps the button's state true. A button with data-open-label says that while open
+// ("Fewer warnings") and its own words again when closed (data-closed-label, else the words it
+// had); an expand toggle's words are its .cap-expand-label.
 export function setGroup(button: HTMLElement, expanded: boolean): void {
   button.setAttribute("aria-expanded", String(expanded));
-  const rows = document.getElementById(button.getAttribute("aria-controls") ?? "");
+  const openLabel = button.dataset.openLabel;
+  if (openLabel) {
+    const words = button.querySelector<HTMLElement>(".cap-expand-label") ?? button;
+    button.dataset.closedLabel ??= words.textContent ?? "";
+    words.textContent = expanded ? openLabel : button.dataset.closedLabel;
+  }
+  const rows = button.ownerDocument.getElementById(button.getAttribute("aria-controls") ?? "");
   if (rows) rows.hidden = !expanded;
 }
 
@@ -32,15 +41,7 @@ export function enhanceExpand(root: ParentNode = document): () => void {
   )) {
     button.dataset.capReady = "";
     setGroup(button, button.getAttribute("aria-expanded") === "true");
-    const onClick = () => {
-      toggleGroup(button);
-      const swap =
-        button.dataset[
-          button.getAttribute("aria-expanded") === "true" ? "openLabel" : "closedLabel"
-        ];
-      const label = button.querySelector<HTMLElement>(".cap-expand-label");
-      if (swap && label) label.textContent = swap;
-    };
+    const onClick = () => toggleGroup(button);
     button.addEventListener("click", onClick);
     undo.push(() => {
       button.removeEventListener("click", onClick);

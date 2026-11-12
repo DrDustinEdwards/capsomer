@@ -1,4 +1,4 @@
-import { useId, useState, type ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import { barChart } from "enarratio/lite/bar";
 import { Alert } from "../banner/banner.react.tsx";
 import { Button } from "../button/button.react.tsx";
@@ -23,7 +23,7 @@ import {
   type Goal,
   type SaveEntry,
 } from "./writing-progress.ts";
-import { useBrowserZone } from "../hooks/hooks.react.tsx";
+import { useBrowserZone, useCleanId } from "../hooks/hooks.react.tsx";
 
 export type { FormComponent, Goal, SaveEntry };
 
@@ -124,7 +124,7 @@ export function WritingProgress({
   now: fixedNow,
 }: WritingProgressProps) {
   const zone = useBrowserZone(serverZone);
-  const chartId = `progress-${useId().replace(/[^a-zA-Z0-9]/g, "")}`;
+  const chartId = `progress-${useCleanId()}`;
   const [mode, setMode] = useState(goal.mode);
   // A new goal from the server replaces the mode being chosen, adjusted while rendering.
   const [goalMode, setGoalMode] = useState(goal.mode);

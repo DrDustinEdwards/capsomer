@@ -31,7 +31,7 @@ import {
   type RoleScope,
   type TitleOption,
 } from "./people-roles.ts";
-import { useHydrated } from "../hooks/hooks.react.tsx";
+import { useCleanId, useHydrated } from "../hooks/hooks.react.tsx";
 
 export type { HistoryEntry, PersonRow, RoleGridPerson, RoleOption, RoleScope, TitleOption };
 
@@ -105,7 +105,7 @@ export function PeopleRoles({
   // The time the page was drawn, when the page does not pass one.
   const [drawnAt] = useState(() => Date.now());
   const now = nowProp ?? drawnAt;
-  const id = useId().replace(/[^a-zA-Z0-9]/g, "");
+  const id = useCleanId();
   const H = `h${headingLevel}` as "h2" | "h3";
   const Sub = `h${headingLevel + 1}` as "h3" | "h4";
   const live = data.people.filter((p) => p.status === "active").length;

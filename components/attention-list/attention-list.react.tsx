@@ -1,3 +1,4 @@
+import { plural } from "../hooks/hooks.ts";
 import { Fragment, useEffect, useId, useState, type ReactNode } from "react";
 import { Empty } from "../empty/empty.react.tsx";
 import { Spinner } from "../skeleton/skeleton.react.tsx";
@@ -228,7 +229,7 @@ export function AttentionList(props: AttentionListProps) {
               <Row
                 className="cap-attention-notices"
                 status={<Status tone="info">{TONE_WORD.info}</Status>}
-                title={`${n} ${n === 1 ? "notice" : "notices"}`}
+                title={plural(n, "notice", "notices")}
                 onOpen={() => toggle("notices")}
                 expanded={noticesOpen}
                 controls={regionId("notices")}

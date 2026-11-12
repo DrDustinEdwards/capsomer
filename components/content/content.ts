@@ -137,6 +137,27 @@ export interface ContentLabels {
   plural?: string;
 }
 
+// What a list calls its items: the site's words, else `fallback` ("post", "file") and its "s".
+export function nounsOf(
+  labels: ContentLabels = {},
+  fallback: string,
+): { noun: string; plural: string } {
+  const noun = labels.noun ?? fallback;
+  return { noun, plural: labels.plural ?? `${noun}s` };
+}
+
+// "24 files", or "Showing 48 of 210 files" when the page holds fewer than the total.
+export function countText(
+  shown: number,
+  total: number | null | undefined,
+  { noun, plural }: { noun: string; plural: string },
+): string {
+  const word = (k: number) => (k === 1 ? noun : plural);
+  return total != null && total > shown
+    ? `Showing ${shown} of ${total} ${word(total)}`
+    : `${shown} ${word(shown)}`;
+}
+
 // ---------------------------------------------------------------------------------------
 // Posts.
 

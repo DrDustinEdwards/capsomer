@@ -95,17 +95,6 @@ export interface MarkdownEditorHandle {
 // ---- pure helpers --------------------------------------------------------------------------
 
 export const LINK_RESULT_LIMIT = 8;
-const DEFAULT_WORDS_PER_MINUTE = 200;
-
-// Markdown syntax counts as words on purpose: it is the count the site's published reading
-// times were built with.
-export function countWords(text: string): number {
-  return text.trim().split(/\s+/).filter(Boolean).length;
-}
-
-export function minutesForWords(words: number, wordsPerMinute = DEFAULT_WORDS_PER_MINUTE): number {
-  return Math.max(1, Math.round(words / wordsPerMinute));
-}
 
 export function looksLikeUrl(text: string): boolean {
   return /^(https?:\/\/|mailto:|\/|#)/i.test(text.trim());

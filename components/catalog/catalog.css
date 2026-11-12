@@ -59,7 +59,7 @@
     font-variant-numeric: var(--figures);
   }
   .cap-catalog-count:focus-visible {
-    outline: 2px solid var(--ring);
+    outline: var(--focus-width) solid var(--ring);
     outline-offset: 2px;
   }
   .cap-catalog-actions {
@@ -112,7 +112,7 @@
   /* The chip is the link system's tag pill (components/link/link.css), which a catalog page loads. */
   .cap-catalog-chip:focus-visible,
   .cap-catalog-clear:focus-visible {
-    outline: 2px solid var(--ring);
+    outline: var(--focus-width) solid var(--ring);
     outline-offset: 2px;
   }
   .cap-catalog-clear {
@@ -169,14 +169,14 @@
       display: grid;
       position: absolute;
       inset: 0 0 auto 0;
-      z-index: var(--z-overlay, 50);
+      z-index: var(--z-overlay);
       max-height: min(80dvh, 38rem);
       overflow-y: auto;
       padding: var(--space-5);
       background: var(--surface);
       border: 1px solid var(--line-strong);
-      border-radius: var(--radius-lg, 12px);
-      box-shadow: 0 12px 32px color-mix(in srgb, var(--text) 18%, transparent);
+      border-radius: var(--radius-l);
+      box-shadow: var(--shadow-l);
     }
     .cap-catalog-filters:target .cap-catalog-tray-head,
     .cap-catalog[data-tray="open"] .cap-catalog-tray-head {

@@ -4,6 +4,7 @@
 // by minutes or at the end of the track, buffering and error states, a resume position per track
 // (never in its last five seconds), and the whole Media Session surface: metadata with chapterInfo
 // and an artwork fallback, the position, every action handler and the playback state.
+import { clamp } from "../hooks/hooks.ts";
 import {
   createContext,
   useCallback,
@@ -222,7 +223,7 @@ export function PlayerProvider({
   const seek = useCallback((seconds: number) => {
     const audio = audioRef.current;
     if (!audio) return;
-    audio.currentTime = Math.max(0, Math.min(seconds, audio.duration || seconds));
+    audio.currentTime = clamp(seconds, 0, audio.duration || seconds);
     setCurrentTime(audio.currentTime);
     setPositionState(audio);
   }, []);

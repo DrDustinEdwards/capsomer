@@ -9,6 +9,8 @@
 // A timer's remaining time is computed from the moment it ends, not counted down, so a phone that
 // sleeps or a page that reloads mid-incubation still knows how long is left.
 
+import { SEC, timecode } from "../time/time.ts";
+
 export const RUN_VERSION = 1;
 
 // Seconds in each unit a timer can use.
@@ -182,15 +184,7 @@ export function tickTimers(run: Run, now: number): { run: Run; rang: string[] } 
 }
 
 // "2:05", "1:30:00": a countdown as a person reads it at the bench, rounding up so 0:00 means done.
-export function clock(ms: number): string {
-  const total = Math.ceil(Math.max(0, ms) / 1000);
-  const h = Math.floor(total / 3600);
-  const m = Math.floor((total % 3600) / 60);
-  const s = total % 60;
-  return h > 0
-    ? `${h}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`
-    : `${m}:${String(s).padStart(2, "0")}`;
-}
+export const clock = (ms: number): string => timecode(Math.ceil(Math.max(0, ms) / SEC) * SEC);
 
 // How far along a run is, over the steps the checklist has (not the steps the run mentions).
 export function runProgress(

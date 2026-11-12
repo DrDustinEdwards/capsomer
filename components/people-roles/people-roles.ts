@@ -5,10 +5,12 @@
 // allowed) live in the app's server, in site-runtime's `./members`; this module only shows
 // what the server already decided.
 
+import { plural } from "../hooks/hooks.ts";
 import { confirm } from "../confirm-dialog/confirm-dialog.ts";
 import { enhance as enhanceFields } from "../field/field.ts";
 import { enhance as enhanceMenus } from "../menu/menu.ts";
-import { DAY } from "../time/time.ts";
+import { listText } from "../hooks/hooks.ts";
+import { DAY, formatDate } from "../time/time.ts";
 
 // One person as the page shows them. The server fills `manageable` and `renewTo` from
 // site-runtime's checkChange and defaultEndDate, so the page never offers what it would refuse.
@@ -63,35 +65,11 @@ export const SOON_DAYS = 21;
 export const REASON_MISSING = "Type a reason. It is recorded with the change.";
 
 // "Dec 18, 2026", from a YYYY-MM-DD date, in UTC: American English, as the family writes dates.
-export function dayText(date: string): string {
-  return new Intl.DateTimeFormat("en-US", {
-    timeZone: "UTC",
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  }).format(new Date(`${date}T00:00:00Z`));
-}
+export const dayText = (date: string): string => formatDate(date, { style: "medium" }) ?? date;
 
 // "Oct 2, 2026, 2:52 PM UTC", from an ISO time.
-export function timeText(iso: string): string {
-  const t = new Date(iso);
-  const day = new Intl.DateTimeFormat("en-US", {
-    timeZone: "UTC",
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  }).format(t);
-  // From the parts: some engines put a narrow no-break space before AM and PM.
-  const p: Record<string, string> = {};
-  for (const x of new Intl.DateTimeFormat("en-US", {
-    timeZone: "UTC",
-    hour: "numeric",
-    minute: "2-digit",
-    hour12: true,
-  }).formatToParts(t))
-    p[x.type] = x.value;
-  return `${day}, ${p.hour}:${p.minute} ${p.dayPeriod} UTC`;
-}
+export const timeText = (iso: string): string =>
+  formatDate(iso, { style: "medium", time: true, zoneName: true }) ?? iso;
 
 // Whole days from `now` until the end of the end date (0 on the end date itself).
 export function daysLeft(endDate: string, now: number): number {
@@ -108,8 +86,7 @@ export function accessText(
   if (p.endDate === null) return "Does not expire";
   const left = daysLeft(p.endDate, now);
   if (left === 0) return `Ends today, ${dayText(p.endDate)}`;
-  if (left <= SOON_DAYS)
-    return `Ends ${dayText(p.endDate)}, in ${left} day${left === 1 ? "" : "s"}`;
+  if (left <= SOON_DAYS) return `Ends ${dayText(p.endDate)}, in ${plural(left, "day")}`;
   return `Ends ${dayText(p.endDate)}`;
 }
 
@@ -329,12 +306,6 @@ export function enhance(root: ParentNode = document): () => void {
 }
 
 // ---- The members page's address and lead line (from dustinedwards.info's lab, members.server.ts)
-
-// "A, B and C".
-export function listText(words: readonly string[]): string {
-  if (words.length <= 1) return words.join("");
-  return `${words.slice(0, -1).join(", ")} and ${words[words.length - 1]}`;
-}
 
 // A title as a group of people: "Lab worker" is "Lab workers"; a title already plural stays.
 export function pluralTitle(label: string): string {

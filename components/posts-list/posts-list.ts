@@ -1,8 +1,10 @@
 // The posts list's pure helpers: the status of a post in words, the addresses of its filters,
 // which actions a person is offered here and why the others are withheld, and the forms the
 // script path posts. No DOM; the React component and a server render use the same functions.
-import { DAY } from "../time/time.ts";
+import { DAY, toMs, two } from "../time/time.ts";
 import {
+  countText,
+  nounsOf,
   queryHref,
   type ContentLabels,
   type ContentStatus,
@@ -28,7 +30,7 @@ const utcDay = (ms: number) => Math.floor(ms / DAY);
 
 // How far off a scheduled time is, in whole UTC days. Past it, the site has not published it yet.
 export function inDays(at: string, now: number): string {
-  const t = Date.parse(at);
+  const t = toMs(at);
   if (!Number.isFinite(t)) return "";
   if (t <= now) return "due now";
   const days = utcDay(t) - utcDay(now);
@@ -71,11 +73,6 @@ export function rowStatus(
 // ---------------------------------------------------------------------------------------
 // Words.
 
-export function nounsOf(labels: ContentLabels = {}): { noun: string; plural: string } {
-  const noun = labels.noun ?? "post";
-  return { noun, plural: labels.plural ?? `${noun}s` };
-}
-
 export const STATUS_TABS: ReadonlyArray<{ status: ContentStatus | undefined; label: string }> = [
   { status: undefined, label: "All" },
   { status: "draft", label: "Drafts" },
@@ -95,7 +92,7 @@ const TRASH_DAYS = 30;
 
 // The Trash view's line: what happens to what is in it.
 export function trashLine(labels?: ContentLabels): string {
-  const { plural } = nounsOf(labels);
+  const { plural } = nounsOf(labels, "post");
   return `${plural.charAt(0).toUpperCase() + plural.slice(1)} in Trash are deleted for good ${TRASH_DAYS} days after they were moved there.`;
 }
 
@@ -105,12 +102,7 @@ export function countLine(
   data: Pick<PostsData, "rows" | "page"> & { query?: PostsQuery },
   labels?: ContentLabels,
 ): string {
-  const { noun, plural } = nounsOf(labels);
-  const n = data.rows.length;
-  const total = data.page.total;
-  const word = (k: number) => (k === 1 ? noun : plural);
-  const counted =
-    total != null && total > n ? `Showing ${n} of ${total} ${word(total)}` : `${n} ${word(n)}`;
+  const counted = countText(data.rows.length, data.page.total, nounsOf(labels, "post"));
   const base = data.query?.trashed ? `${counted} in Trash` : counted;
   return data.page.sortedOnPage ? `${base}, sorted on this page only` : base;
 }
@@ -143,7 +135,7 @@ export function emptyWords(
   q: PostsQuery,
   labels?: ContentLabels,
 ): { kind: "nothing-yet" | "no-match" | "all-clear"; title: string; text: string } {
-  const { noun, plural } = nounsOf(labels);
+  const { noun, plural } = nounsOf(labels, "post");
   if (filtered(q)) {
     const dates =
       q.from && q.to
@@ -179,7 +171,7 @@ export function emptyWords(
       return {
         kind: "nothing-yet",
         title: "No drafts",
-        text: `Every ${nounsOf(labels).noun} here is scheduled or published.`,
+        text: `Every ${nounsOf(labels, "post").noun} here is scheduled or published.`,
       };
     case "scheduled":
       return {
@@ -197,7 +189,7 @@ export function emptyWords(
       return {
         kind: "nothing-yet",
         title: `No ${plural} yet`,
-        text: `The first ${nounsOf(labels).noun} you start shows here.`,
+        text: `The first ${nounsOf(labels, "post").noun} you start shows here.`,
       };
   }
 }
@@ -264,7 +256,7 @@ export function postActions(
   data: Pick<PostsData, "offers" | "can"> & { query?: PostsQuery },
   labels?: ContentLabels,
 ): { bulk: OfferedAction[]; withheld: string[] } {
-  const { plural } = nounsOf(labels);
+  const { plural } = nounsOf(labels, "post");
   const { offers, can } = data;
   const bulk: OfferedAction[] = [];
   const withheld: string[] = [];
@@ -372,13 +364,11 @@ export function rowActions(row: PostRow, data: Pick<PostsData, "offers" | "can">
 // ---------------------------------------------------------------------------------------
 // The reschedule time field.
 
-const pad = (n: number) => String(n).padStart(2, "0");
-
 // An ISO time as a datetime-local value in this browser's zone ("2030-01-01T16:00").
 export function localInputValue(iso: string): string {
-  const d = new Date(iso);
+  const d = new Date(toMs(iso));
   if (!Number.isFinite(d.getTime())) return "";
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  return `${d.getFullYear()}-${two(d.getMonth() + 1)}-${two(d.getDate())}T${two(d.getHours())}:${two(d.getMinutes())}`;
 }
 
 // A datetime-local value, read in this browser's zone, as the UTC time the kit takes
