@@ -6,6 +6,10 @@ Each release names every removed or renamed token or class, and every changed HT
 
 - **Internal: shared helpers used instead of copies.** Button, lightbox, anchor bar, annotated figure, dialog and the player's transcript and extras read reduced motion through count-up's `reducedMotion`; writing-progress's `knownZone` is time's, re-exported under the same name; draft-compare's `esc` is re-exported from site-runtime's `escapeHtml` directly. No behavior, token, class or HTML contract changes, and nothing is removed or renamed.
 
+## [0.110.0]
+
+- **Pagination: space and a hairline above, and 44 px controls at every width.** `.cap-pagination` now carries `margin-block-start` (`--pagination-gap`, `--space-7` by default), `padding-block-start` (`--space-4`) and a `border-block-start` hairline in `--line`, as the site's `.pager` and search pager did, so a pager no longer touches the last item above it. Pages, Previous, Next and the gap are at least 44 px (`--control-h-coarse`) on a desktop too, not only on a touch screen, as a navigation target. The controls no longer follow `data-density`, since the 44 px floor is above every density's height. New token `--pagination-gap`. Nothing is removed or renamed.
+
 ## [0.109.0]
 
 - **Site header: no divider before the tools on a phone with `data-links="right"`.** The divider rule from 0.99.1 out-ranked the phone rule that hides it, so a thin line stood left of the theme button wherever the links were folded away.

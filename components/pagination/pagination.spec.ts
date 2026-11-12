@@ -321,17 +321,4 @@ eachTheme((theme) => {
     await expect(page.locator("#pg-words").getByRole("link", { name: "Older" })).toBeVisible();
     await expect(page.locator("#pg-words .cap-pagination-status")).toHaveCount(0);
   });
-
-  test("behavior: comfortable density makes the controls taller", async ({ page }) => {
-    await visitStates(page, "pagination", theme);
-    const compact = await page
-      .locator("#pg-middle .cap-page")
-      .first()
-      .evaluate((el) => el.getBoundingClientRect().height);
-    const roomy = await page
-      .locator("#pg-comfortable .cap-page")
-      .first()
-      .evaluate((el) => el.getBoundingClientRect().height);
-    expect(roomy).toBeGreaterThan(compact);
-  });
 });
