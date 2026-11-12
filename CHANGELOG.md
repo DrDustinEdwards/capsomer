@@ -4,6 +4,10 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+## [0.116.0]
+
+- **New: `capsomer/links.css`, the link system's base alone.** Every link's base cues (the link color, semibold with no line, the hover and pressed tints, the visited color) move from `css/base.css` into `css/links.css`, which base.css imports, so a site that loads base.css gets the same rules as before. A Tailwind site that keeps its own reset and body styles (Foxhound) imports `capsomer/links.css` alone, as it imports `capsomer/utilities.css`, and its links are the network's links instead of hand-written underline classes. The focus ring stays in base.css. Removed or renamed: no token or class.
+
 ## [0.115.0]
 
 - **Chips: checkbox chips.** A filter in a form that works with no script: `<label class="cap-chip"><input class="cap-chip-input" type="checkbox" …> Word <span class="cap-chip-count">n</span></label>`, in a `fieldset.cap-chips` whose `legend` is the `.cap-chips-label`. The checkbox covers the chip, unseen; a checked one wears the pressed look (tick, accent edge, tint), its focus ring is the chip's, a disabled one is the dashed disabled chip, and forced colors draw it in Highlight. New class: `.cap-chip-input`. `fieldset.cap-chips` loses its frame. From dustinedwards.info's CV filters (`.cv-chip`). Removed or renamed: no token or class.
