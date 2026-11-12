@@ -14,7 +14,7 @@ replaces:
 
 # Link
 
-How a link looks and what it says it does. `css/base.css` gives every link its base; `capsomer/link.css` (`components/link/link.css`) gives each kind its one cue. `capsomer/react/link` is React Router's `Link` and `NavLink`, prefetching on intent (below).
+How a link looks and what it says it does. `css/base.css` gives every link its base (through `css/links.css`, which a site that does not load base.css, such as a Tailwind site, imports alone as `capsomer/links.css`); `capsomer/link.css` (`components/link/link.css`) gives each kind its one cue. `capsomer/react/link` is React Router's `Link` and `NavLink`, prefetching on intent (below).
 
 ## The base: four cues and two states
 
