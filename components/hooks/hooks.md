@@ -1,13 +1,13 @@
 ---
 name: hooks
 title: Hooks
-summary: The small React hooks every app wrote its own copy of, each hydration-safe - useHydrated, ClientOnly, useMedia, usePrefersReducedMotion, useBrowserZone, useRemembered, useNow - and cn for class names.
+summary: The small React hooks every app wrote its own copy of, each hydration-safe - useHydrated, ClientOnly, useMedia, usePrefersReducedMotion, useBrowserZone, useRemembered, useNow, useShownFor - and cn for class names.
 parts: [behavior, react]
 tool: own JavaScript
 states: []
 added: 0.99.0
-updated: 0.99.0
-source: Foxing (lib/hydrated.ts, lib/cn.ts, search-commands.ts recents, reader-view.tsx), Carrel (lib/hydrated.ts, lib/remembered.ts), germomics (util/ClientOnly.tsx, EpisodeExtras.tsx usePrefersReducedMotion), the Capsid Portal (App.tsx useTick)
+updated: 0.113.0
+source: Foxhound (five self-clearing results: payments, payment detail, settings/email, audit dashboard), Foxing (lib/hydrated.ts, lib/cn.ts, search-commands.ts recents, reader-view.tsx), Carrel (lib/hydrated.ts, lib/remembered.ts), germomics (util/ClientOnly.tsx, EpisodeExtras.tsx usePrefersReducedMotion), the Capsid Portal (App.tsx useTick)
 replaces:
   - 'export function (useHydrated|useRemembered|usePrefersReducedMotion|useBrowserZone|ClientOnly)\b'
   - 'export (function|const) cn\b'
@@ -26,6 +26,7 @@ replaces:
 | `useBrowserZone(fallback)` | the browser's time zone | `fallback` |
 | `useRemembered(key)` | `[value, remember]`: a value kept in localStorage; `remember(null)` forgets it. Every reader of the key follows, in this tab and others | null |
 | `useNow(ms?, serverNow?)` | `Date.now()`, every `ms` (30 s) | `serverNow` (0) |
+| `useShownFor(result, ms, clears?)` | `[shown, hide]`: `result` until `ms` after it arrived, then undefined; `clears(result)` false keeps it (a failure) until `hide()` or the next result | `result` |
 | `cn(...)` | class names joined, falsy ones dropped | the same |
 
 ## The default and its reason

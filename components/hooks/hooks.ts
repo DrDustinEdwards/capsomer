@@ -11,9 +11,11 @@ export function clamp(n: number, lo: number, hi: number): number {
   return Math.max(lo, Math.min(n, Math.max(lo, hi)));
 }
 
-/** "A, B and C", the family's list (no comma before "and"): the platform's own, in the English that has none. */
-export function listText(words: readonly string[]): string {
-  return new Intl.ListFormat("en-GB").format(words);
+/** "A, B, and C" (and "A and B"; "A, B, or C" with "or"): the platform's own list, in American English with its serial comma. */
+export function listText(words: readonly string[], join: "and" | "or" = "and"): string {
+  return new Intl.ListFormat("en-US", {
+    type: join === "or" ? "disjunction" : "conjunction",
+  }).format(words);
 }
 
 /** A count with its noun: `plural(1, "post")` is "1 post", `plural(3, "post")` "3 posts"; an irregular noun passes its plural. */

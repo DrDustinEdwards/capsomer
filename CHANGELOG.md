@@ -4,9 +4,15 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
-## [0.113.0]
+## [0.114.0]
 
 - **Card: the one-destination card wraps a `div`, not an `article`.** The markup is now `<a href><div class="cap-card">…</div></a>` (was `<a href><article class="cap-card">…</article></a>`). In Chromium a link around an `article` has no accessible name (screen readers announce a bare link, and `getByRole('link', { name })` finds nothing); a link around a `div` is named from its text, headings included. `a:has(> .cap-card)` in card.css already matched either, so no CSS changes; a site's linked cards change `<article>` to `<div>` (a card that is not inside a link, and the stretched-link and choice kinds, stay as they are). Removed or renamed: no token or class.
+
+## [0.113.0]
+
+- **New: Save bar** (`capsomer/save-bar.css`, `capsomer/react/save-bar`, `.cap-save-bar`, `.cap-save-bar-status`): the foot of a settings form, the result of the last save beside a primary Save button, in one status region that is on the page from the start. Extracted from Foxhound's seven settings bars.
+- **New: `useShownFor(result, ms, clears?)`** in `capsomer/react/hooks`: `[shown, hide]`, a result shown for `ms` after it arrives, then gone; `clears` keeps the ones that should stay (a failure) until `hide()` or the next result. Replaces Foxhound's five self-clearing timers.
+- **`listText` writes American English lists.** `Intl.ListFormat("en-US")`, so three or more items take the serial comma: "A, B, and C" (it was "A, B and C"); two stay "A and B". Visible in the drop zone's accepted types ("JPEG, PNG, and WebP") and people-roles' "You manage ..." line. New second argument: `listText(words, "or")` gives "A, B, or C".
 
 ## [0.112.0]
 
