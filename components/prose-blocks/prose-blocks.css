@@ -38,7 +38,7 @@
                                needs its number in the words)
          --prose-item-space    the space after each list item
          --prose-list-indent, --prose-item-indent   a list's indent (1.5em) and an item's own, after
-                               its marker (none)
+                               its marker (0)
          --prose-quote-line, --prose-quote-ink, --prose-quote-style
          --prose-code-bg, --prose-code-ink, --prose-code-radius   inline code
          --prose-pre-bg, --prose-pre-pad (one length), --prose-block-radius    code blocks, callouts, details
@@ -91,7 +91,7 @@
     }
     & :where(li) {
       margin-block-end: var(--prose-item-space, 0.3em);
-      padding-inline-start: var(--prose-item-indent);
+      padding-inline-start: var(--prose-item-indent, 0);
     }
     & :where(li > ul, li > ol) {
       margin-block: var(--prose-item-space, 0.3em) 0;
