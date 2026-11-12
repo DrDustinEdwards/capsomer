@@ -3,7 +3,7 @@
 
 /* A card: one piece of content or one choice, its regions (media, header, content, footer) as direct
    children in source order, placed by element selector with no wrapper classes. Built to Chrome's
-   Modern Web Guidance card guide: <a><article> for one destination, a stretched heading link
+   Modern Web Guidance card guide: <a><div> for one destination, a stretched heading link
    (.cap-card-link) when the card also holds its own actions, <label> around a radio or checkbox for a
    choice. The look reads the panel's card tokens (--card-shadow, --card-lift, --card-edge), so a
    site's cards and panels agree. */
@@ -159,7 +159,7 @@
     }
   }
 
-  /* One destination: the link wraps the article. Its edge firms under the pointer and a site may
+  /* One destination: the link wraps the card (a div, so the link keeps its accessible name). Its edge firms under the pointer and a site may
      lift it, as a linked panel does; the focus ring is the link's own, drawn round the card. */
   a:has(> .cap-card) {
     display: grid;

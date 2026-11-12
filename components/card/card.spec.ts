@@ -10,6 +10,7 @@ eachTheme((theme) => {
   test("accessibility: no axe violations", async ({ page }) => {
     await visitStates(page, "card", theme);
     await expectNoAxeViolations(page);
+    await expect(page.getByRole("link", { name: /getting started/i })).toBeVisible();
   });
 
   test("accessibility: headings and text reach their contrast", async ({ page }) => {

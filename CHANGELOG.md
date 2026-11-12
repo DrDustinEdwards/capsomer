@@ -4,6 +4,10 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+## [0.113.0]
+
+- **Card: the one-destination card wraps a `div`, not an `article`.** The markup is now `<a href><div class="cap-card">…</div></a>` (was `<a href><article class="cap-card">…</article></a>`). In Chromium a link around an `article` has no accessible name (screen readers announce a bare link, and `getByRole('link', { name })` finds nothing); a link around a `div` is named from its text, headings included. `a:has(> .cap-card)` in card.css already matched either, so no CSS changes; a site's linked cards change `<article>` to `<div>` (a card that is not inside a link, and the stretched-link and choice kinds, stay as they are). Removed or renamed: no token or class.
+
 ## [0.112.0]
 
 - **Frontmatter fields: `useTyped` and `TypedBox` exported** from `capsomer/react/frontmatter-fields` (a box that keeps what is typed while it has focus), so an app's own fields beside these stop keeping a copy.
