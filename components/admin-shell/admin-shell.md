@@ -160,7 +160,7 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
 </div>
 ```
 
-`import { enhance, toggleMenu, jumpTarget } from "capsomer/behavior/admin-shell"` wires the collapse control, the remembered choice and the keys for markup written by hand, and calls site-header's `enhance` for the header's panels and sheet. Load `admin-shell.css` with `site-header.css`, `theme-switch.css`, `dialog.css`, `popover.css` and `badge.css`. `data-variant="user"` drops the strip and widens the menu to 288px. In React, `import { AdminShell, FIRST_PAGE } from "capsomer/react/admin-shell"` and `<AdminShell app="carrel" page={FIRST_PAGE} nav={…} badges={…} onRefresh={…}>`; `FAMILY_APPS` and `OWNER` are exported from the same module.
+`import { enhance, toggleMenu, jumpTarget } from "capsomer/behavior/admin-shell"` wires the collapse control, the remembered choice and the keys for markup written by hand, and calls site-header's `enhance` for the header's panels and sheet. Load `admin-shell.css` with `site-header.css`, `theme-switch.css`, `dialog.css`, `popover.css` and `count.css`. `data-variant="user"` drops the strip and widens the menu to 288px. In React, `import { AdminShell, FIRST_PAGE } from "capsomer/react/admin-shell"` and `<AdminShell app="carrel" page={FIRST_PAGE} nav={…} badges={…} onRefresh={…}>`; `FAMILY_APPS` and `OWNER` are exported from the same module.
 
 ## Density
 

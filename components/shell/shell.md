@@ -72,7 +72,7 @@ Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the a
 
 ## Markup
 
-The tab bar's count is a badge: load `badge.css` with `shell.css`.
+The tab bar's count is a Count: load `count.css` with `shell.css`.
 
 ```html
 <div class="cap-shell" data-cap="shell">

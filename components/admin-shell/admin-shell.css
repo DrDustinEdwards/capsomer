@@ -185,7 +185,7 @@
     flex: none;
   }
 
-  /* Every count and badge is a Capsomer badge (badge.css), open and collapsed, in the strip, the
+  /* Every count and badge is a Capsomer count (count.css), open and collapsed, in the strip, the
      menu and the sheet: one size, one shape, one type, and the same number everywhere (99+ past
      99). A plain count is a neutral gray bubble; violet needs you; red and amber are status colors
      and keep their meaning. A badge sits on another app's tile or on Inbox, never on the app you

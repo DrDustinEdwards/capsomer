@@ -435,7 +435,7 @@
     }
   }
 
-  /* A count on an icon: a badge (badge.css, 99+ past 99), its left edge 2px past the glyph and its
+  /* A count on an icon: a count (count.css, 99+ past 99), its left edge 2px past the glyph and its
      middle on the glyph's top edge, ringed in the band. */
   .cap-site-header-badge {
     --_bubble: var(--space-5);
