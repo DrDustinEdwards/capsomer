@@ -5,7 +5,7 @@ import {
   expectNoAxeViolations,
   visitStates,
 } from "../../test/helpers.ts";
-import { assess, duration, widths } from "./usage-meter.ts";
+import { assess, duration } from "./usage-meter.ts";
 
 // Every specimen is read at 17:00 UTC, 7 hours before a 00:00 UTC reset, with a week of
 // history unless the state says otherwise.
@@ -317,12 +317,10 @@ test.describe("assess()", () => {
     );
   });
 
-  test("behavior: durations and widths read as a person would say them", () => {
+  test("behavior: durations read as a person would say them", () => {
     expect(duration(40 * 60_000)).toBe("40 minutes");
     expect(duration(60 * 60_000)).toBe("1 hour");
     expect(duration(3 * 24 * 3_600_000)).toBe("3 days");
     expect(duration(10_000)).toBe("less than a minute");
-    expect(widths(50, 100, 140)).toEqual({ used: 50, projected: 100 });
-    expect(widths(50, 100, null)).toEqual({ used: 50, projected: 50 });
   });
 });

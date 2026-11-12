@@ -4,7 +4,8 @@
 // text (drawn here in the chart frame, or rendered by the site in a sandboxed frame), and inserts
 // the block through `onInsert`. The block's syntax is the app's `write` (Prelum's by default).
 
-import { useCallback, useEffect, useId, useMemo, useState, type ReactNode } from "react";
+import { useCleanId } from "../hooks/hooks.react.tsx";
+import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
 import { Button } from "../button/button.react.tsx";
 import { ChartFrame, type ChartFit } from "../chart-frame/chart-frame.react.tsx";
 import {
@@ -95,7 +96,7 @@ export function ChartBuilder({
   const [fileError, setFileError] = useState("");
   const [checked, setChecked] = useState<({ block: string } & ChartCheck) | null>(null);
   const [previewed, setPreviewed] = useState(false);
-  const id = useId().replace(/[^a-zA-Z0-9]/g, "");
+  const id = useCleanId();
   const frame = `cap-chart-preview-${id}`;
   const titleId = `cap-chart-builder-${id}`;
   const set = (patch: Partial<ChartFields>) => setF((cur) => ({ ...cur, ...patch }));

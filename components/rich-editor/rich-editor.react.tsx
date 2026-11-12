@@ -14,6 +14,8 @@
 // and works out the Markdown, and `value` only feeds the word count. This file imports no Yjs, so an
 // editor outside a room does not carry it.
 
+import { plural } from "../hooks/hooks.ts";
+import { readingMinutes, wordCount } from "@drdustinedwards/site-helpers/text";
 import { Editor, type AnyExtension, type JSONContent } from "@tiptap/core";
 import { Placeholder } from "@tiptap/extensions";
 import { DOMParser as SchemaParser } from "@tiptap/pm/model";
@@ -21,11 +23,9 @@ import type { EditorState } from "@tiptap/pm/state";
 import type { EditorView } from "@tiptap/pm/view";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import {
-  countWords,
   defaultImageMarkdown,
   filterLinkTargets,
   looksLikeUrl,
-  minutesForWords,
   type ImageDescription,
   type LinkTarget,
   type Scaffold,
@@ -125,7 +125,7 @@ export function RichEditor(props: RichEditorProps) {
   const propsRef = useRef(props);
   const readOnlyRef = useRef(readOnly);
   const [ready, setReady] = useState(false);
-  const [words, setWords] = useState(() => countWords(value));
+  const [words, setWords] = useState(() => wordCount(value));
   const [palette, setPalette] = useState<Palette | null>(null);
   const [slash, setSlash] = useState<number | null>(null);
   const [upload, setUploadState] = useState<Upload>(null);
@@ -170,7 +170,7 @@ export function RichEditor(props: RichEditorProps) {
       prints: fingerprints(editor.getJSON() as JsonNode),
       last: source,
     };
-    setWords(countWords(source));
+    setWords(wordCount(source));
   };
 
   // The editor itself: made once, after the page is in the browser.
@@ -271,7 +271,7 @@ export function RichEditor(props: RichEditorProps) {
         if (roomRef.current) return;
         const md = markdown(e);
         origin.current.last = md;
-        setWords(countWords(md));
+        setWords(wordCount(md));
         propsRef.current.onChange(md);
         syncSlash(e);
       },
@@ -298,7 +298,7 @@ export function RichEditor(props: RichEditorProps) {
   // room, a replacement arrives through the room itself, and the value is only counted.
   useEffect(() => {
     const editor = editorRef.current;
-    if (room) setWords(countWords(value));
+    if (room) setWords(wordCount(value));
     else if (editor && value !== origin.current.last) load(editor, value);
     // oxlint-disable-next-line react/exhaustive-deps -- a new value only: the room and load are read as they are when it comes
   }, [value]);
@@ -709,7 +709,7 @@ export function RichEditor(props: RichEditorProps) {
           <p className="cap-md-stats">
             <span className="cap-md-count">
               {words.toLocaleString("en")} word{words === 1 ? "" : "s"}
-              {words > 0 ? ` · ${minutesForWords(words)} min read` : ""}
+              {words > 0 ? ` · ${readingMinutes(words)} min read` : ""}
             </span>
           </p>
         </div>
@@ -893,7 +893,7 @@ export function RichEditor(props: RichEditorProps) {
               ? `Enter links to ${typedUrl}.`
               : matches.length === 0
                 ? "No page matches. Type a full address to link to it."
-                : `${matches.length} page${matches.length === 1 ? "" : "s"}.`}
+                : `${plural(matches.length, "page")}.`}
           </p>
         </div>
       ) : null}

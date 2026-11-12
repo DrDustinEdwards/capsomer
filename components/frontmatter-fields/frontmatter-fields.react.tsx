@@ -31,7 +31,15 @@ export interface FrontmatterFieldsProps {
 
 // What is typed stays in the box while it has focus; the stored value is the writer's, trimmed and
 // cleaned, which would otherwise move the caret and swallow a comma being typed.
-function useTyped(stored: string) {
+export interface TypedBox {
+  /** What the box shows: what is typed, else the stored value. */
+  value: string;
+  /** Keeps what was just typed (call from onChange). */
+  keep: (typed: string) => void;
+  /** Gives the box back to the stored value (call from onBlur). */
+  done: () => void;
+}
+export function useTyped(stored: string): TypedBox {
   const [typed, setTyped] = useState<string | null>(null);
   return { value: typed ?? stored, keep: setTyped, done: () => setTyped(null) };
 }

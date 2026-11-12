@@ -5,7 +5,6 @@ import { test } from "node:test";
 import {
   analyze,
   commonSubsequence,
-  countWords,
   countsText,
   diffSentences,
   diffWords,
@@ -103,11 +102,6 @@ test("diffWords: a punctuation mark is a word of its own", () => {
     parts.filter((p) => p.op !== "same"),
     [{ op: "del", text: "." }],
   );
-  assert.equal(countWords("It ended."), 2);
-});
-
-test("diffWords: apostrophes and hyphens stay inside a word", () => {
-  assert.equal(countWords("Don't over-think the editor's job"), 5);
 });
 
 test("splitSentences: splits at sentence ends, not at abbreviations or lowercase", () => {

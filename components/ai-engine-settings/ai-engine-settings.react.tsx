@@ -1,4 +1,5 @@
-import { useId, type ReactNode } from "react";
+import { useCleanId } from "../hooks/hooks.react.tsx";
+import { type ReactNode } from "react";
 import { Button } from "../button/button.react.tsx";
 import { PlainForm, type FormComponent } from "../plain-form/plain-form.react.tsx";
 import { Empty } from "../empty/empty.react.tsx";
@@ -58,7 +59,7 @@ export function AiEngineSettings({
   Form = PlainForm,
   pending = false,
 }: AiEngineSettingsProps) {
-  const uid = useId().replace(/[^a-zA-Z0-9]/g, "");
+  const uid = useCleanId();
   const formId = `${uid}-engines`;
   const until = settings.override?.until.slice(0, 10);
   const engines = ENGINE_OPTIONS.map((e) => ({ value: e.value, label: e.label }));

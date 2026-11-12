@@ -1,5 +1,8 @@
 // Draft compare's diff: by sentence, then by word, and the counts (draft-compare.ts).
 
+import { plural } from "../hooks/hooks.ts";
+import { wordCount } from "@drdustinedwards/site-helpers/text";
+
 // ---------------------------------------------------------------------------------------
 // The diff
 // ---------------------------------------------------------------------------------------
@@ -22,19 +25,11 @@ interface Token {
 
 // A word (letters and digits, with an inner apostrophe or hyphen), or one punctuation mark.
 const TOKEN = /(\s*)([\p{L}\p{N}]+(?:['’-][\p{L}\p{N}]+)*|[^\s\p{L}\p{N}])/gu;
-const WORDY = /[\p{L}\p{N}]/u;
 
 export function tokenize(s: string): Token[] {
   const out: Token[] = [];
   for (const m of s.matchAll(TOKEN)) out.push({ lead: m[1] ?? "", text: m[2] ?? "" });
   return out;
-}
-
-// How many words a string holds (punctuation and spacing do not count).
-export function countWords(s: string): number {
-  let n = 0;
-  for (const t of tokenize(s)) if (WORDY.test(t.text)) n++;
-  return n;
 }
 
 export interface DiffOptions {
@@ -395,12 +390,12 @@ export interface Analysis {
 }
 
 const wordsOf = (parts: WordPart[], op: Op) =>
-  parts.reduce((n, p) => (p.op === op ? n + countWords(p.text) : n), 0);
+  parts.reduce((n, p) => (p.op === op ? n + wordCount(p.text) : n), 0);
 
 // Counts what an entry adds and removes, in words.
 function entryWords(e: Entry): { added: number; removed: number } {
-  if (e.op === "ins") return { added: countWords(e.b.text), removed: 0 };
-  if (e.op === "del") return { added: 0, removed: countWords(e.a.text) };
+  if (e.op === "ins") return { added: wordCount(e.b.text), removed: 0 };
+  if (e.op === "del") return { added: 0, removed: wordCount(e.a.text) };
   if (e.op === "change")
     return { added: wordsOf(e.parts, "ins"), removed: wordsOf(e.parts, "del") };
   return { added: 0, removed: 0 };
@@ -443,6 +438,6 @@ export function analyze(before: string, after: string, options: SentenceOptions 
 
 // "14 words added, 9 removed, 3 changes".
 export function countsText(c: Counts): string {
-  const w = (n: number) => `${n} word${n === 1 ? "" : "s"}`;
-  return `${w(c.added)} added, ${c.removed} removed, ${c.changes} change${c.changes === 1 ? "" : "s"}`;
+  const w = (n: number) => plural(n, "word");
+  return `${w(c.added)} added, ${c.removed} removed, ${plural(c.changes, "change")}`;
 }

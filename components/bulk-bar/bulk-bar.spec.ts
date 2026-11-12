@@ -5,14 +5,7 @@ import {
   expectNoAxeViolations,
   visitStates,
 } from "../../test/helpers.ts";
-import {
-  countText,
-  fillCount,
-  orderOutcomes,
-  outcomeSummary,
-  plural,
-  previewItems,
-} from "./bulk-bar.ts";
+import { countText, fillCount, orderOutcomes, outcomeSummary, previewItems } from "./bulk-bar.ts";
 
 const check = (page: Page, list: string, n: number) =>
   page.locator(`#${list} li:nth-child(${n}) input`);
@@ -21,8 +14,6 @@ test("behavior: the count, the templates and the preview are pure", () => {
   expect(countText(3)).toBe("3 selected");
   expect(fillCount("Bin {n} item{s}", 12)).toBe("Bin 12 items");
   expect(fillCount("Bin {n} item{s}", 1)).toBe("Bin 1 item");
-  expect(plural(1, "draft")).toBe("draft");
-  expect(plural(2, "draft")).toBe("drafts");
   expect(
     previewItems([
       { id: "a", label: "First" },

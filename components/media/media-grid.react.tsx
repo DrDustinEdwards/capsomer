@@ -2,6 +2,7 @@
 
 import { type KeyboardEvent, type ReactNode, useCallback, useId, useRef } from "react";
 import { singleKeysOff } from "../shortcuts/shortcuts.ts";
+import { percent } from "../meter/meter.ts";
 import { Glyph } from "../status/status.react.tsx";
 import {
   type Direction,
@@ -11,6 +12,7 @@ import {
   describeRecord,
   flagsFor,
   nextTile,
+  tileId,
 } from "./media.ts";
 
 // ---------------------------------------------------------------------------------------
@@ -39,10 +41,6 @@ export interface MediaTileProps {
   selectable?: boolean;
 }
 
-function slug(key: string): string {
-  return key.replace(/[^a-z0-9]+/gi, "-").toLowerCase();
-}
-
 export function MediaTile({
   item,
   active,
@@ -57,7 +55,7 @@ export function MediaTile({
   selectForm,
   selectable: canSelect = true,
 }: MediaTileProps) {
-  const id = `tile-${slug(item.key)}`;
+  const id = tileId(item.key);
   const flags = flagsFor(item);
   const selectable = item.state === "ready" || item.state === "binned";
   const checkable = selectable && canSelect;
@@ -86,7 +84,7 @@ export function MediaTile({
       <span className="cap-media-meta">{meta}</span>
     </>
   );
-  const pct = Math.max(0, Math.min(100, Math.round(item.progress ?? 0)));
+  const pct = percent(item.progress ?? 0);
   return (
     <li
       className="cap-media-tile"

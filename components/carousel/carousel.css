@@ -34,7 +34,7 @@
       display: none;
     }
     &:focus-visible {
-      outline: 2px solid var(--ring);
+      outline: var(--focus-width) solid var(--ring);
       outline-offset: 4px;
     }
 
@@ -130,7 +130,7 @@
         color: var(--accent-text);
       }
       &:focus-visible {
-        outline: 2px solid var(--ring);
+        outline: var(--focus-width) solid var(--ring);
         outline-offset: 2px;
       }
       &:disabled {
@@ -190,7 +190,7 @@
         background: var(--accent-hover);
       }
       &:focus-visible {
-        outline: 2px solid var(--ring);
+        outline: var(--focus-width) solid var(--ring);
         outline-offset: 0;
       }
     }

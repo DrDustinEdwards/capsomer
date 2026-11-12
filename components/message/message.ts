@@ -9,7 +9,7 @@
 // written), an Undo that failed, or a failure (a refresh, a copy) stays until you dismiss
 // it, whatever happens after it: the missing audit row is the one fact that cannot be
 // found later by looking.
-import { singleKeysOff } from "../shortcuts/shortcuts.ts";
+import { isTyping, singleKeysOff } from "../shortcuts/shortcuts.ts";
 import { setStaticHtml } from "../trusted-html/trusted-html.ts";
 
 export type ReturnFocus = HTMLElement | (() => HTMLElement | null);
@@ -98,19 +98,6 @@ export function resolveFocus(f: ReturnFocus | undefined): HTMLElement | null {
   return el?.isConnected ? el : null;
 }
 
-const TEXT_INPUT =
-  /^(text|search|email|url|tel|password|number|date|datetime-local|month|week|time)$/;
-
-// True where a typed z is text, not a command: text inputs, textareas, selects, editable
-// content, and anything that says it is a text box or a combobox.
-export function isTypingTarget(target: EventTarget | null): boolean {
-  if (!(target instanceof Element)) return false;
-  if (target instanceof HTMLInputElement) return TEXT_INPUT.test(target.type || "text");
-  if (target instanceof HTMLTextAreaElement || target instanceof HTMLSelectElement) return true;
-  if (target instanceof HTMLElement && target.isContentEditable) return true;
-  return !!target.closest("[role='textbox'], [role='combobox'], [role='searchbox']");
-}
-
 // `z` alone: no Ctrl, Alt, Meta or Shift, not a held repeat, not typed into a field.
 export function isUndoKey(e: KeyboardEvent): boolean {
   return (
@@ -122,7 +109,7 @@ export function isUndoKey(e: KeyboardEvent): boolean {
     !e.shiftKey &&
     !e.repeat &&
     !e.defaultPrevented &&
-    !isTypingTarget(e.composedPath()[0] ?? e.target)
+    !isTyping(e.composedPath()[0] ?? e.target)
   );
 }
 
@@ -458,6 +445,17 @@ export function runUndo(): Promise<boolean> {
   const r = find();
   const m = r ? currentUndo(r.messages) : undefined;
   return r && m ? undoIn(r, m.id) : Promise.resolve(false);
+}
+
+// The page's status region for results and Undo is one; a component that needs it where the page
+// has none yet places one after `after`.
+export function ensureRegion(after: Element): void {
+  if (document.querySelector("[data-cap='message']")) return;
+  const region = document.createElement("div");
+  region.className = "cap-message";
+  region.dataset.cap = "message";
+  after.after(region);
+  enhance(region.parentNode ?? document);
 }
 
 // Attaches to every [data-cap="message"] under root not yet attached: the region is empty

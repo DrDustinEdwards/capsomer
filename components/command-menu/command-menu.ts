@@ -4,7 +4,7 @@
 // the active option, Enter runs it, Esc closes. Ctrl K, Cmd K and "/" open it, through the
 // shortcut registry. Every command shows its shortcut. No framework; the React wrapper uses
 // the same pure functions.
-import { closeDialog, openDialog, uid, wireDialog } from "../dialog/dialog.ts";
+import { closeDialog, openDialog, wireDialog } from "../dialog/dialog.ts";
 import {
   createListbox,
   filterCommands as filterItems,
@@ -14,7 +14,7 @@ import {
   type Listbox,
 } from "../listbox/listbox.ts";
 import { keysFragment, register } from "../shortcuts/shortcuts.ts";
-import { readStored, writeStored } from "../hooks/hooks.ts";
+import { readStored, uid, writeStored } from "../hooks/hooks.ts";
 
 export interface Command {
   id: string;

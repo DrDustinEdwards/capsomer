@@ -1,4 +1,4 @@
-import { useEffect, useId, useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { Glyph } from "../status/status.react.tsx";
 import {
   allVisibleSelected,
@@ -14,7 +14,7 @@ import {
   type BulkItem,
   type BulkOutcome,
 } from "./bulk-bar.ts";
-import { useHydrated } from "../hooks/hooks.react.tsx";
+import { useCleanId, useHydrated } from "../hooks/hooks.react.tsx";
 
 export type { BulkOutcome };
 
@@ -89,7 +89,7 @@ export function BulkBar({
 }: BulkBarProps) {
   // False on the server and while hydrating, true once hydrated.
   const mounted = useHydrated();
-  const resultsId = `${useId().replace(/[^a-zA-Z0-9]/g, "")}-results`;
+  const resultsId = `${useCleanId()}-results`;
   const showing = outcomes.length > 0;
   const n = items.length;
   // A status region that is shown and filled in one step is often missed: the count is written

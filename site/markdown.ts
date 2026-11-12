@@ -2,8 +2,8 @@
 // tables, fenced code, inline code, bold, italics and links. Every character is escaped
 // first, so the output holds only the markup this file writes.
 
-const escape = (s: string) =>
-  s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+import { slugify } from "@drdustinedwards/site-helpers/slug";
+import { escapeHtml } from "@dustinedwards/site-runtime/html";
 
 /**
  * Every code box on the site is a named region keyboard users can reach, Prelum's pattern for rendered code: tabindex="0" so a
@@ -11,14 +11,14 @@ const escape = (s: string) =>
  * role="region" because ARIA prohibits aria-label on a plain pre, and the name "Code: <what it holds>". base.css draws its ring.
  */
 export const codeRegion = (name: string) =>
-  `tabindex="0" role="region" aria-label="${escape(`Code: ${name}`)}"`;
+  `tabindex="0" role="region" aria-label="${escapeHtml(`Code: ${name}`)}"`;
 /** The same three attributes for a React pre. */
 export const codeRegionProps = (name: string) =>
   ({ tabIndex: 0, role: "region", "aria-label": `Code: ${name}` }) as const;
 
 function inline(s: string): string {
   const codes: string[] = [];
-  let out = escape(s).replace(/`([^`]+)`/g, (_, c: string) => {
+  let out = escapeHtml(s).replace(/`([^`]+)`/g, (_, c: string) => {
     codes.push(`<code>${c}</code>`);
     return `\uE000${codes.length - 1}\uE000`;
   });
@@ -61,7 +61,7 @@ export function renderMarkdown(src: string, headingOffset = 1): string {
       while (i < lines.length && !(lines[i] ?? "").startsWith("```")) body.push(lines[i++] ?? "");
       i++;
       out.push(
-        `<pre class="site-code" ${codeRegion(lang || "example")}><code>${escape(body.join("\n"))}</code></pre>`,
+        `<pre class="site-code" ${codeRegion(lang || "example")}><code>${escapeHtml(body.join("\n"))}</code></pre>`,
       );
       continue;
     }
@@ -69,11 +69,7 @@ export function renderMarkdown(src: string, headingOffset = 1): string {
     if (h) {
       const level = Math.min(6, (h[1]?.length ?? 1) + headingOffset);
       const text = h[2] ?? "";
-      const id = text
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, "-")
-        .replace(/^-|-$/g, "");
-      out.push(`<h${level} id="doc-${id}">${inline(text)}</h${level}>`);
+      out.push(`<h${level} id="doc-${slugify(text)}">${inline(text)}</h${level}>`);
       i++;
       continue;
     }

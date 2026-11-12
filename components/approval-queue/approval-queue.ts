@@ -17,7 +17,7 @@ export interface ApprovalAction {
   // A single key that runs it on the focused item ("a", "r"). Approve and reject only, by default.
   key?: string;
   // A one-way action asks first, in the confirm dialog, with focus on Cancel.
-  confirm?: { title: string; lead?: string; action: string };
+  confirm?: { title: string; lead?: string; body?: string[]; action: string };
 }
 
 export interface ApprovalItem {

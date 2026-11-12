@@ -1,4 +1,4 @@
-import { Suspense, useCallback, useMemo, useSyncExternalStore, type ReactNode } from "react";
+import { Suspense, useCallback, useId, useMemo, useSyncExternalStore, type ReactNode } from "react";
 import { readStored, subscribeStored, writeStored } from "./hooks.ts";
 
 export { cn } from "./hooks.ts";
@@ -8,6 +8,11 @@ export { cn } from "./hooks.ts";
 // arrives in the next render with no effect setting state.
 
 const noSubscribe = () => () => {};
+
+/** React's useId with only letters and digits, safe in an id, a selector and an anchor (React's own has colons). */
+export function useCleanId(): string {
+  return useId().replace(/[^a-zA-Z0-9]/g, "");
+}
 
 /** False on the server and in the render that hydrates; true after, and at once for a part first drawn in the browser. */
 export function useHydrated(): boolean {

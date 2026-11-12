@@ -61,6 +61,7 @@
       .cap-admin-bar,
       .cap-page-head,
       .cap-md-toolbar,
+      .cap-inspector,
       [data-cap-layout],
       [data-cap-recede]
     ):not(:focus-within) {
@@ -78,6 +79,7 @@
       .cap-admin-bar,
       .cap-page-head,
       .cap-md-toolbar,
+      .cap-inspector,
       [data-cap-layout],
       [data-cap-recede]
     ) {
@@ -87,7 +89,7 @@
 
   /* Forced colors keep the chrome readable: the step back is for a person who can see it. */
   @media (forced-colors: active) {
-    html[data-cap-typing] :is(.cap-site-header, .cap-admin-strip, .cap-admin-menu, .cap-site-tabs, .cap-admin-bar, .cap-page-head, .cap-md-toolbar, [data-cap-layout], [data-cap-recede]) {
+    html[data-cap-typing] :is(.cap-site-header, .cap-admin-strip, .cap-admin-menu, .cap-site-tabs, .cap-admin-bar, .cap-page-head, .cap-md-toolbar, .cap-inspector, [data-cap-layout], [data-cap-recede]) {
       opacity: 1;
     }
   }

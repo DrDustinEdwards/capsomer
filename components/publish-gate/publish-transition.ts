@@ -4,6 +4,8 @@
 // The pressed button's intent carries the transition, not a hidden field: a submitter's value is the
 // one part of a form sent because of what was pressed, so the buttons mean the same without script.
 
+import { parse } from "../time/time.ts";
+
 export type PostState = "draft" | "scheduled" | "published";
 
 export interface Transition {
@@ -100,7 +102,7 @@ export function saveInPlaceIntent(state: PostState): string {
 export function stateOf(fields: { draft: boolean; publishAt: string }, now: number): PostState {
   if (fields.draft) return "draft";
   if (!fields.publishAt) return "published";
-  const at = Date.parse(fields.publishAt);
+  const at = parse(fields.publishAt);
   // An unparseable publish_at is not a schedule; treating it as one would hide a live post.
   if (Number.isNaN(at)) return "published";
   return at > now ? "scheduled" : "published";

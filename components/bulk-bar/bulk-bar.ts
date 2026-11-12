@@ -27,11 +27,6 @@ export function countText(n: number): string {
   return `${n} selected`;
 }
 
-// "item" or "items" for a count; `noun` is the singular.
-export function plural(n: number, noun: string, many?: string): string {
-  return n === 1 ? noun : (many ?? `${noun}s`);
-}
-
 // Fills {n} and {s} in a template: "Bin {n} item{s}" gives "Bin 12 items" and "Bin 1 item".
 export function fillCount(template: string, n: number): string {
   return template.replace(/\{n\}/g, String(n)).replace(/\{s\}/g, n === 1 ? "" : "s");

@@ -185,31 +185,16 @@
     flex: none;
   }
 
-  /* One bubble for every count and badge, open and collapsed, in the strip, the menu and the
-     sheet: one size, one shape, one type, and the same number everywhere (99+ past 99). A plain
-     count is a neutral gray bubble; violet needs you; red and amber are status colors and keep
-     their meaning. A badge sits on another app's tile or on Inbox, never on the app you are in.
-     On an icon every bubble is in one place relative to its glyph: its left edge 2px past the
-     glyph's right edge, its middle on the glyph's top edge, so it never covers the glyph. Each
-     host says where its glyph is (--_gx, its left; --_gw, its size). */
+  /* Every count and badge is a Capsomer count (count.css), open and collapsed, in the strip, the
+     menu and the sheet: one size, one shape, one type, and the same number everywhere (99+ past
+     99). A plain count is a neutral gray bubble; violet needs you; red and amber are status colors
+     and keep their meaning. A badge sits on another app's tile or on Inbox, never on the app you
+     are in. On an icon every bubble is in one place relative to its glyph: its left edge 2px past
+     the glyph's right edge, its middle on the glyph's top edge, so it never covers the glyph.
+     Each host says where its glyph is (--_gx, its left; --_gw, its size). */
   .cap-admin-badge,
   .cap-admin-count {
-    --_bubble: 16px;
-    display: inline-grid;
-    place-items: center;
-    flex: none;
-    box-sizing: border-box;
-    min-width: var(--_bubble);
-    height: var(--_bubble);
-    padding-inline: 3px;
-    border-radius: var(--radius-full);
-    background: var(--muted);
-    color: var(--ground);
-    font-size: 0.625rem;
-    font-weight: 700;
-    line-height: 1;
-    font-variant-numeric: var(--figures);
-    white-space: nowrap;
+    --_bubble: var(--space-5);
   }
   .cap-admin-badge {
     --_gx: calc(50% - 10px);
@@ -217,8 +202,6 @@
     position: absolute;
     top: calc(50% - var(--_gw) / 2 - var(--_bubble) / 2);
     inset-inline-start: calc(var(--_gx) + var(--_gw) + 2px);
-    background: var(--primary);
-    color: var(--primary-fg);
     box-shadow: 0 0 0 2px var(--admin-strip-bg);
   }
   .cap-admin-btn > .cap-admin-badge {
@@ -341,23 +324,6 @@
     font-weight: 500;
   }
 
-  .cap-admin-count {
-    &:empty {
-      display: none;
-    }
-    &[data-tone="need"] {
-      background: var(--primary);
-      color: var(--primary-fg);
-    }
-    &[data-tone="crit"] {
-      background: var(--crit-soft);
-      color: var(--crit);
-    }
-    &[data-tone="warn"] {
-      background: var(--warn-soft);
-      color: var(--warn);
-    }
-  }
   .cap-admin-menu a[aria-current="page"] .cap-admin-count:not([data-tone]) {
     background: var(--admin-pill-fg);
     color: var(--admin-pill);

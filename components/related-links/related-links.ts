@@ -1,5 +1,7 @@
 // The pure half of related links: the one href check a stranger's link passes, and the date line.
 
+import { formatDate, toMs } from "../time/time.ts";
+
 // An http(s) address re-parsed, or null. A mention's addresses were chosen by a stranger, so
 // anything else (javascript:, data:, a relative path) is never a link.
 export function httpHref(value: string | null | undefined): string | null {
@@ -18,20 +20,11 @@ export function sitePath(value: string | null | undefined): value is string {
   return !!value && value.startsWith("/") && !value.startsWith("//") && !value.startsWith("/\\");
 }
 
-const LONG_DATE = new Intl.DateTimeFormat("en-US", {
-  year: "numeric",
-  month: "long",
-  day: "numeric",
-  timeZone: "UTC",
-});
-
 // "September 5, 2026" and its ISO form, in UTC so the server and the browser agree; null for a
 // value that is not a date.
 export function longDate(
   value: string | number | Date | null | undefined,
 ): { text: string; iso: string } | null {
-  if (value === null || value === undefined || value === "") return null;
-  const date = value instanceof Date ? value : new Date(value);
-  if (Number.isNaN(date.getTime())) return null;
-  return { text: LONG_DATE.format(date), iso: date.toISOString() };
+  const text = formatDate(value);
+  return text === null ? null : { text, iso: new Date(toMs(value)).toISOString() };
 }

@@ -109,7 +109,7 @@ Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the a
 </div>
 ```
 
-The logic, with no DOM: `import { groupByDay, dayRange, dayKeys, pickDay, dayLabel, clock, slotLabel, zoneLine, tracksLabel, dayKeyOf, NO_DATE } from "capsomer/behavior/schedule"`.
+The logic, with no DOM: `import { groupByDay, dayRange, dayKeys, pickDay, dayLabel, slotLabel, zoneLine, tracksLabel, NO_DATE } from "capsomer/behavior/schedule"`.
 
 ```ts
 const days = groupByDay(sessions, (s) => ({ start: s.startsAt, end: s.endsAt, day: s.sessionDate, track: s.location, order: s.sortOrder }), "America/Chicago");

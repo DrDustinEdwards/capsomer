@@ -12,6 +12,7 @@ import {
   type RefObject,
   useLayoutEffect,
 } from "react";
+import { Spinner } from "../skeleton/skeleton.react.tsx";
 
 export interface ComboboxOption {
   value: string;
@@ -226,8 +227,7 @@ function Popup({
           <Base.Status className="cap-combobox-status">
             {loading ? (
               <>
-                <span className="cap-combobox-spinner" aria-hidden="true" />
-                {loadingText}
+                <Spinner label={loadingText} />
               </>
             ) : null}
           </Base.Status>
@@ -610,8 +610,7 @@ export function ComboboxFreeText(props: ComboboxFreeTextProps) {
               <Free.Status className="cap-combobox-status">
                 {loading || found.loading ? (
                   <>
-                    <span className="cap-combobox-spinner" aria-hidden="true" />
-                    {loadingText}
+                    <Spinner label={loadingText} />
                   </>
                 ) : found.failed ? (
                   searchFailedText

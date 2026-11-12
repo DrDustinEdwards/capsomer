@@ -10,13 +10,18 @@ const READY = "data-cap-ready";
 
 export type PageItem = number | "gap-start" | "gap-end";
 
+// A page number held to 1 to `count`; a value that is not a number is page 1.
+function clampPage(page: number, count: number): number {
+  return Math.min(Math.max(1, Math.floor(page) || 1), count);
+}
+
 // The numbers to show for `page` of `count`: always seven slots when there are more than
 // seven pages, so the list never changes width as a person moves. The first and last page
 // are always there; a gap stands for the pages between.
 export function pageItems(page: number, count: number): PageItem[] {
   const n = Math.max(0, Math.floor(count));
   if (n <= 7) return Array.from({ length: n }, (_, i) => i + 1);
-  const p = Math.min(Math.max(1, Math.floor(page)), n);
+  const p = clampPage(page, n);
   if (p <= 4) return [1, 2, 3, 4, 5, "gap-end", n];
   if (p >= n - 3) return [1, "gap-start", n - 4, n - 3, n - 2, n - 1, n];
   return [1, "gap-start", p - 1, p, p + 1, "gap-end", n];
@@ -77,7 +82,7 @@ export function pageEnvelope(page: number, perPage: number | "all", total: numbe
   const count = Math.max(0, Math.floor(total));
   const size = perPage === "all" ? Math.max(1, count) : Math.max(1, Math.floor(perPage));
   const pageCount = pageCountOf(count, size);
-  const at = Math.min(Math.max(1, Math.floor(page) || 1), pageCount);
+  const at = clampPage(page, pageCount);
   const { from, to } = showingRange(at, size, count);
   return {
     page: at,
@@ -217,7 +222,7 @@ export function setPage(
   options: { silent?: boolean } = {},
 ): boolean {
   const count = numberOf(nav.dataset.pageCount, 1);
-  const to = Math.min(Math.max(1, Math.floor(page)), count);
+  const to = clampPage(page, count);
   if (to === numberOf(nav.dataset.page, 1)) return false;
   const had = nav.contains(document.activeElement);
   const kind = (document.activeElement as HTMLElement | null)?.dataset?.kind;

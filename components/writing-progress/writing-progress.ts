@@ -40,27 +40,10 @@ export const WEEKDAYS = [
 /** How far back a streak is followed; the loader sends this many days of saves. */
 export const STREAK_HORIZON_DAYS = 400;
 
-const formatters = new Map<string, Intl.DateTimeFormat>();
+import { plural } from "../hooks/hooks.ts";
+import { dayKey } from "../time/time.ts";
 
-export { knownZone } from "../time/time.ts";
-
-/** The calendar day (YYYY-MM-DD) an instant falls on in a time zone. */
-export function dayKey(at: string | Date, timeZone: string): string {
-  let format = formatters.get(timeZone);
-  if (!format) {
-    format = new Intl.DateTimeFormat("en-CA", {
-      timeZone,
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-    });
-    formatters.set(timeZone, format);
-  }
-  const parts = Object.fromEntries(
-    format.formatToParts(typeof at === "string" ? new Date(at) : at).map((p) => [p.type, p.value]),
-  );
-  return `${parts.year}-${parts.month}-${parts.day}`;
-}
+export { dayKey, knownZone } from "../time/time.ts";
 
 /** The weekday of a calendar day, 0 Sunday. Computed at noon UTC, which every zone shares as the same date. */
 function weekdayOf(day: string): number {
@@ -276,7 +259,7 @@ export function weekdayName(day: string): string {
 /** The pace a deadline asks for, or why there is none, in a sentence. */
 export function paceLine(paced: Pace, deadline: string): string {
   if (paced.ok)
-    return `${n(paced.remaining)} words to go by ${deadline}: ${n(paced.perDay)} a day over ${paced.days} writing day${paced.days === 1 ? "" : "s"}.`;
+    return `${n(paced.remaining)} words to go by ${deadline}: ${n(paced.perDay)} a day over ${plural(paced.days, "writing day")}.`;
   switch (paced.reason) {
     case "no-target":
       return "No project target yet, so there is no pace to work out.";
@@ -300,7 +283,7 @@ export function weekSentence(
   if (target !== null) {
     const writing = days.filter((d) => d.writingDay);
     const met = writing.filter((d) => d.words >= target).length;
-    return `The ${n(target)}-word target was met on ${met} of the last ${writing.length} writing day${writing.length === 1 ? "" : "s"}.`;
+    return `The ${n(target)}-word target was met on ${met} of the last ${plural(writing.length, "writing day")}.`;
   }
   const top = days.reduce((a, d) => (d.words > a.words ? d : a), days[0]!);
   const total = days.reduce((sum, d) => sum + d.words, 0);

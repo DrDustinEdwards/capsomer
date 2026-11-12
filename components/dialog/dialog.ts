@@ -72,12 +72,6 @@ export function errorText(e: unknown): string {
   return "Something went wrong and nothing says what.";
 }
 
-let seq = 0;
-export function uid(prefix: string): string {
-  seq += 1;
-  return `${prefix}-${seq}`;
-}
-
 // A dialog is busy while its action runs: aria-busy on the dialog. Esc, Close, Cancel and the
 // backdrop all refuse until it is cleared.
 export function isBusy(dialog: HTMLDialogElement): boolean {

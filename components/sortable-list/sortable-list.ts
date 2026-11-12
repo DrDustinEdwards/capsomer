@@ -4,6 +4,8 @@
 // The list owns no storage: every finished move is a `cap:sortable-change` event with the
 // new order, and the host saves it. No framework; the React wrapper uses the same functions.
 
+import { clamp } from "../hooks/hooks.ts";
+
 // ---------------------------------------------------------------------------------------
 // Pure functions.
 
@@ -19,7 +21,7 @@ export function moveId(order: readonly string[], id: string, to: number): string
   const from = order.indexOf(id);
   if (from < 0) return [...order];
   const out = order.filter((x) => x !== id);
-  out.splice(Math.max(0, Math.min(out.length, to)), 0, id);
+  out.splice(clamp(to, 0, out.length), 0, id);
   return out;
 }
 
@@ -75,7 +77,7 @@ export function moveBetween(lists: Lists, id: string, toList: string, to: number
   const out: Lists = {};
   for (const [list, ids] of Object.entries(lists)) out[list] = ids.filter((x) => x !== id);
   const target = out[toList] ?? [];
-  target.splice(Math.max(0, Math.min(target.length, to)), 0, id);
+  target.splice(clamp(to, 0, target.length), 0, id);
   return out;
 }
 
