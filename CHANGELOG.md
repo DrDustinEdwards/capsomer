@@ -4,6 +4,12 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+## [0.113.0]
+
+- **New: Save bar** (`capsomer/save-bar.css`, `capsomer/react/save-bar`, `.cap-save-bar`, `.cap-save-bar-status`): the foot of a settings form, the result of the last save beside a primary Save button, in one status region that is on the page from the start. Extracted from Foxhound's seven settings bars.
+- **New: `useShownFor(result, ms, clears?)`** in `capsomer/react/hooks`: `[shown, hide]`, a result shown for `ms` after it arrives, then gone; `clears` keeps the ones that should stay (a failure) until `hide()` or the next result. Replaces Foxhound's five self-clearing timers.
+- **`listText` writes American English lists.** `Intl.ListFormat("en-US")`, so three or more items take the serial comma: "A, B, and C" (it was "A, B and C"); two stay "A and B". Visible in the drop zone's accepted types ("JPEG, PNG, and WebP") and people-roles' "You manage ..." line. New second argument: `listText(words, "or")` gives "A, B, or C".
+
 ## [0.112.0]
 
 - **Frontmatter fields: `useTyped` and `TypedBox` exported** from `capsomer/react/frontmatter-fields` (a box that keeps what is typed while it has focus), so an app's own fields beside these stop keeping a copy.

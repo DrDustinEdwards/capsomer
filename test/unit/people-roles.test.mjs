@@ -135,6 +135,6 @@ test("manageLead: the titles as groups in a list, and the notice after", async (
     manageLead(["Lab manager", "Lab worker"]),
     "You manage Lab managers and Lab workers.",
   );
-  assert.equal(manageLead(["A", "B", "Cs"], "Set dates."), "You manage As, Bs and Cs. Set dates.");
+  assert.equal(manageLead(["A", "B", "Cs"], "Set dates."), "You manage As, Bs, and Cs. Set dates.");
   assert.equal(manageLead([]), undefined);
 });
