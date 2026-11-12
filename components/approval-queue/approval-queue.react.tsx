@@ -287,7 +287,7 @@ export function ApprovalQueue({
         open={asking !== null}
         title={asking?.action.confirm?.title ?? ""}
         lead={asking?.action.confirm?.lead}
-        body={asking ? [asking.item.text] : []}
+        body={asking ? (asking.action.confirm?.body ?? [asking.item.text]) : []}
         action={asking?.action.confirm?.action ?? ""}
         returnTo={asking?.button}
         perform={async () => {

@@ -459,7 +459,7 @@ export function GroupList({
                     {l.count ? " " : null}
                     {l.count ? (
                       <span
-                        className="cap-badge cap-site-header-count"
+                        className="cap-count cap-site-header-count"
                         data-tone="need"
                         aria-hidden="true"
                       >
@@ -502,7 +502,7 @@ function SheetList({
               {l.count ? " " : null}
               {l.count ? (
                 <span
-                  className="cap-badge cap-site-header-count"
+                  className="cap-count cap-site-header-count"
                   data-tone="need"
                   aria-hidden="true"
                 >

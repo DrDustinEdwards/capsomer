@@ -48,7 +48,7 @@ export function onSaveKey(save: () => void, target: Window | HTMLElement = windo
 }
 
 // The surfaces whose typing counts: the markdown editor's and any element the app marks.
-export const TYPING_SURFACE = ".cm-editor, [data-cap-typing-surface]";
+export const TYPING_SURFACE = ".cm-editor, .cap-rich-editor-surface, [data-cap-typing-surface]";
 export const TYPING_ATTR = "data-cap-typing";
 
 // While someone types a character in a writing surface, `data-cap-typing` on the document makes

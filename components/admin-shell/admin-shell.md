@@ -137,7 +137,7 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
   <nav class="cap-admin-strip" aria-label="Apps">
     <ul class="cap-admin-strip-group">
       <li><a class="cap-admin-tile" href="https://portal.dustinedwards.info/" aria-current="true"><svg class="cap-admin-logo">[the app's mark]</svg>[tip]</a></li>
-      <li><a class="cap-admin-tile" href="https://desk.dustinedwards.info/" aria-label="Carrel Desk, 2 need you"><svg class="cap-admin-logo">…</svg><span class="cap-badge cap-admin-badge" data-tone="need" aria-hidden="true">2</span>[tip]</a></li>
+      <li><a class="cap-admin-tile" href="https://desk.dustinedwards.info/" aria-label="Carrel Desk, 2 need you"><svg class="cap-admin-logo">…</svg><span class="cap-count cap-admin-badge" data-tone="need" aria-hidden="true">2</span>[tip]</a></li>
       [dustinedwards.info, germomics, Foxhound, Foxing, Capsomer, in that order]
     </ul>
   </nav>
@@ -145,8 +145,8 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
     <button type="button" class="cap-admin-collapse" data-cap-part="menu-toggle" aria-label="Collapse menu" aria-expanded="true" aria-controls="cap-admin-menu">[icon]<span class="cap-admin-label">Collapse menu</span><span class="cap-keys"><kbd>[</kbd></span><span class="cap-admin-tip cap-popover" data-variant="tooltip" data-side="right" data-offset="12" popover="manual" role="tooltip" aria-hidden="true"><span class="cap-admin-tip-text">Collapse menu</span></span></button>
     <div class="cap-admin-group" role="group" aria-labelledby="g-watch">
       <div class="cap-admin-group-label" id="g-watch">Watch</div>
-      <a href="/" aria-current="page">[icon]<span>Overview</span> <span class="cap-badge cap-admin-count"></span></a>
-      <a href="/queue" aria-label="Queue, 5 blocked">[icon]<span class="cap-admin-label">Queue</span><span class="cap-admin-tip cap-popover" data-variant="tooltip" data-side="right" data-offset="12" popover="manual" role="tooltip" aria-hidden="true"><span class="cap-admin-tip-text">Queue</span></span> <span class="cap-badge cap-admin-count" data-tone="need">5</span></a>
+      <a href="/" aria-current="page">[icon]<span>Overview</span> <span class="cap-count cap-admin-count"></span></a>
+      <a href="/queue" aria-label="Queue, 5 blocked">[icon]<span class="cap-admin-label">Queue</span><span class="cap-admin-tip cap-popover" data-variant="tooltip" data-side="right" data-offset="12" popover="manual" role="tooltip" aria-hidden="true"><span class="cap-admin-tip-text">Queue</span></span> <span class="cap-count cap-admin-count" data-tone="need">5</span></a>
     </div>
   </nav>
   <main class="cap-admin-main" id="cap-main" tabindex="-1">

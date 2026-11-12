@@ -168,7 +168,7 @@ export function Shell(props: ShellProps) {
               {e.label}
               {e.count ? " " : null}
               {e.count ? (
-                <span className="cap-badge cap-shell-badge" data-tone="crit">
+                <span className="cap-count cap-shell-badge" data-tone="crit">
                   {e.count}
                 </span>
               ) : null}

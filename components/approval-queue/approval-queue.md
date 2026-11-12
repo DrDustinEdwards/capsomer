@@ -113,7 +113,7 @@ import { ApprovalQueue, type ApprovalItem } from "capsomer/react/approval-queue"
 <ApprovalQueue items={items} label="Waiting on you" hideLabel Form={Form} pending={busy} textLabel={(i) => `Post text for ${i.who}`} findingsLabel="What the lint held it for" />
 ```
 
-`ApprovalItem`: `id`, `who`, `status` (`{ tone, word }`), `context`, `findings`, `text`, `editable`, `at`, `actions`, `fields`. `ApprovalAction`: `intent`, `label`, `variant` (`primary`, `danger`, `default`), `key`, `confirm` (`{ title, lead, action }`). Props: `items`, `label`, `hideLabel`, `action` (where the forms post), `Form` (the router's form; a plain `form` without it), `pending`, `textLabel`, `findingsLabel`, `empty` (`{ title, text }`), `now`. The pure helpers, from `capsomer/behavior/approval-queue`: `keyOf`, `actionForKey`, `nextAfter`, `summaryLine`, `DEFAULT_KEYS`.
+`ApprovalItem`: `id`, `who`, `status` (`{ tone, word }`), `context`, `findings`, `text`, `editable`, `at`, `actions`, `fields`. `ApprovalAction`: `intent`, `label`, `variant` (`primary`, `danger`, `default`), `key`, `confirm` (`{ title, lead, body, action }`; `body` is the lines the dialog lists, the item's text when left out). Props: `items`, `label`, `hideLabel`, `action` (where the forms post), `Form` (the router's form; a plain `form` without it), `pending`, `textLabel`, `findingsLabel`, `empty` (`{ title, text }`), `now`. The pure helpers, from `capsomer/behavior/approval-queue`: `keyOf`, `actionForKey`, `nextAfter`, `summaryLine`, `DEFAULT_KEYS`.
 
 ## Exceptions in production
 
