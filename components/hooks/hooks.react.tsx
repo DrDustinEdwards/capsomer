@@ -1,4 +1,13 @@
-import { Suspense, useCallback, useId, useMemo, useSyncExternalStore, type ReactNode } from "react";
+import {
+  Suspense,
+  useCallback,
+  useEffect,
+  useId,
+  useMemo,
+  useState,
+  useSyncExternalStore,
+  type ReactNode,
+} from "react";
 import { readStored, subscribeStored, writeStored } from "./hooks.ts";
 
 export { cn } from "./hooks.ts";
@@ -99,4 +108,27 @@ function createClock(ms: number, start: number) {
     },
     read: () => now,
   };
+}
+
+/**
+ * A result shown for `ms` after it arrives, then gone: "Saved", "Copied", a bulk action's count.
+ * Returns the result while it shows (undefined after) and a function that hides it now (a close
+ * button). A new result (another object) shows again. `clears` picks the results that go on their
+ * own; the rest (a failure, usually) stay until hidden or replaced. The hook remembers the one it
+ * hid, so a re-render does not bring it back.
+ */
+export function useShownFor<T>(
+  result: T | null | undefined,
+  ms: number,
+  clears: (result: T) => boolean = () => true,
+): [shown: T | undefined, hide: () => void] {
+  const [hidden, setHidden] = useState<unknown>(undefined);
+  const goes = result != null && clears(result);
+  useEffect(() => {
+    if (!goes) return;
+    const timer = setTimeout(() => setHidden(result), ms);
+    return () => clearTimeout(timer);
+  }, [result, goes, ms]);
+  const hide = useCallback(() => setHidden(result), [result]);
+  return [result != null && result !== hidden ? result : undefined, hide];
 }
