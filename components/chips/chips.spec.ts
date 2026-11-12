@@ -23,6 +23,14 @@ async function recordChanges(page: Page): Promise<void> {
   });
 }
 
+/** A chip's edge, fill and tick, to compare one chip's look with another's. */
+function chipLook(page: Page, sel: string): Promise<string[]> {
+  return page.locator(sel).evaluate((el) => {
+    const cs = getComputedStyle(el);
+    return [cs.borderColor, cs.backgroundColor, getComputedStyle(el, "::before").content];
+  });
+}
+
 eachTheme((theme) => {
   test("accessibility: no axe violations", async ({ page }) => {
     await visitStates(page, "chips", theme);
@@ -54,11 +62,7 @@ eachTheme((theme) => {
     page,
   }) => {
     await visitStates(page, "chips", theme);
-    const look = (sel: string) =>
-      page.locator(sel).evaluate((el) => {
-        const cs = getComputedStyle(el);
-        return [cs.borderColor, cs.backgroundColor, getComputedStyle(el, "::before").content];
-      });
+    const look = (sel: string) => chipLook(page, sel);
     expect(await look("#chip-link-current")).toEqual(await look("#chip-pressed"));
     expect(await look("#chip-link")).toEqual(await look("#chip-unpressed"));
     await expectContrast(page, [
@@ -71,11 +75,7 @@ eachTheme((theme) => {
     page,
   }) => {
     await visitStates(page, "chips", theme);
-    const look = (sel: string) =>
-      page.locator(sel).evaluate((el) => {
-        const cs = getComputedStyle(el);
-        return [cs.borderColor, cs.backgroundColor, getComputedStyle(el, "::before").content];
-      });
+    const look = (sel: string) => chipLook(page, sel);
     expect(await look("#chip-box-checked")).toEqual(await look("#chip-pressed"));
     expect(await look("#chip-box")).toEqual(await look("#chip-unpressed"));
     const talks = page.getByRole("checkbox", { name: /Invited talks/ });
