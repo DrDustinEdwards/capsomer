@@ -1,7 +1,7 @@
 ---
 name: card
 title: Card
-summary: One piece of content or one choice, its picture, heading, text and actions as direct children in source order. A whole card that goes one place is a link around an article; a card with its own actions stretches its heading link; a choice is a label around a radio or checkbox.
+summary: One piece of content or one choice, its picture, heading, text and actions as direct children in source order. A whole card that goes one place is a link around a div; a card with its own actions stretches its heading link; a choice is a label around a radio or checkbox.
 parts: [css]
 tool: native
 states: [content, one destination, hover, stretched link with actions, focus, lead, side layout, aligned grid, choice, choice checked, choice disabled, book cover ratio]
@@ -15,7 +15,7 @@ replaces:
 
 # Card
 
-A card groups one piece of content or one choice. It is a look, not a role: the root is an `<article>`, and what it does is a native link, a native button or a native radio or checkbox. Import `capsomer/card.css`.
+A card groups one piece of content or one choice. It is a look, not a role: the root is an `<article>` (a `<div>` inside a link, below), and what it does is a native link, a native button or a native radio or checkbox. Import `capsomer/card.css`.
 
 ## When to use it
 
@@ -46,7 +46,7 @@ Inside a sortable list's card item (`.cap-sortable-body > .cap-card`, a corkboar
 
 ## The three kinds
 
-- **One destination, no other actions**: `<a href><article class="cap-card">…</article></a>`. The link's name is the card's text, so keep it short. No link, button or field inside.
+- **One destination, no other actions**: `<a href><div class="cap-card">…</div></a>`. The link's name is the card's text, so keep it short. No link, button or field inside. The card is a `div` here, not an `article`: Chromium gives a link around an article no name from its content (the link is announced nameless and `getByRole('link', { name })` finds nothing), while a link around a div is named from its text, headings included.
 - **A destination and its own actions**: `<article class="cap-card">` with `<h3><a class="cap-card-link" href>…</a></h3>`. Only that one link gets `.cap-card-link`; its hit area stretches over the card, and every other link, button and field sits above it. Focus and hover are drawn on the card.
 - **A choice**: `<label class="cap-card">` with `<input type="radio">` or `checkbox` as its first child. The checked card's edge turns the primary color and gains an outline: nothing changes size, so nothing moves.
 
