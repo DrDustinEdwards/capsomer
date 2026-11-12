@@ -4,6 +4,8 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+- **Prose: `--prose-item-indent` has a declared default.** `li` now reads `var(--prose-item-indent, 0)`, so the token is declared where it is used (devkit's css-vars check flags a var with no default and no declaration). The rendered output is unchanged: unset, the padding was already 0. No token, class or HTML contract changes.
+
 ## [0.111.0]
 
 - **Field: `.cap-field-row`, one layout for a row of fields and its buttons.** A flex row that wraps, lined up on the controls, `--space-3` between lines and `--space-4` between controls; `.cap-field-wide` on one field (the search) takes the room the others leave, from 16rem. Seven components had their own copy of that rule and now use it.
