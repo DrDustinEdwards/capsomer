@@ -4,6 +4,8 @@
 // dustinedwards.info (app/components/plate-i.tsx, plate-i-geometry.ts and app/enhance/plate.ts); the
 // drawing's own shapes and coordinates stay with the site.
 
+import { reducedMotion } from "../count-up/count-up.ts";
+
 export type Point = [x: number, y: number];
 export type Segment = [x1: number, y1: number, x2: number, y2: number];
 
@@ -91,8 +93,6 @@ export function drawLeaders(svg: Element): void {
   });
 }
 
-const reduced = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
 /**
  * Wires one figure: its callouts and the entries of every key that names it (`data-for` its id)
  * light together. With `data-draw` on the figure, the drawing on show draws its leaders in once it
@@ -142,7 +142,7 @@ export function attach(figure: HTMLElement): () => void {
   const shown = [...figure.querySelectorAll("svg.cap-annotated-figure-drawing")].find(
     (s) => s.getBoundingClientRect().width > 0,
   );
-  if (figure.hasAttribute("data-draw") && shown && !reduced()) {
+  if (figure.hasAttribute("data-draw") && shown && !reducedMotion()) {
     const r = shown.getBoundingClientRect();
     // Already in view: start now, before the next paint, so the finished drawing never flashes first.
     if (r.top < window.innerHeight && r.bottom > 0) drawLeaders(shown);

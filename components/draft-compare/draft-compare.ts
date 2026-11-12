@@ -36,7 +36,8 @@ export type {
   Counts,
   Analysis,
 } from "./draft-compare-diff.ts";
-export { VIEWS, STORAGE_KEY, esc, renderCompare } from "./draft-compare-render.ts";
+export { escapeHtml as esc } from "@dustinedwards/site-runtime/html";
+export { VIEWS, STORAGE_KEY, renderCompare } from "./draft-compare-render.ts";
 export type {
   CompareView,
   CompareSide,

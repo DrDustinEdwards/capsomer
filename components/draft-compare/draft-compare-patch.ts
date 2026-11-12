@@ -1,7 +1,8 @@
 // Draft compare's unified-diff view: parsePatch and renderPatch (draft-compare.ts).
 
 import { commonSubsequence } from "./draft-compare-diff.ts";
-import { esc, plural, sr } from "./draft-compare-render.ts";
+import { escapeHtml as esc } from "@dustinedwards/site-runtime/html";
+import { plural, sr } from "./draft-compare-render.ts";
 
 // ---------------------------------------------------------------------------------------
 // The patch mode: a unified git patch shown as it is, by line

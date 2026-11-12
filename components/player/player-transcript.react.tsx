@@ -8,6 +8,7 @@
 import { toParagraphs, type Cue } from "@drdustinedwards/site-helpers/vtt";
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { useCopy } from "../copy/copy.react.tsx";
+import { reducedMotion } from "../count-up/count-up.ts";
 import { SearchField } from "../field/field.react.tsx";
 import {
   TRANSCRIPT_TRACK_LABEL,
@@ -39,9 +40,6 @@ function highlight(text: string, q: string): ReactNode {
   if (from < text.length) out.push(text.slice(from));
   return out;
 }
-
-const reduced = () =>
-  typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 export interface PlayerTranscriptProps {
   cues: readonly TranscriptCue[];
@@ -132,7 +130,7 @@ export function PlayerTranscript({
     const t = target.getBoundingClientRect();
     const delta = t.top - c.top - (container.clientHeight - t.height) / 2;
     if (Math.abs(delta) < 2) return;
-    const snap = reduced();
+    const snap = reducedMotion();
     programmatic.current = true;
     container.scrollBy({ top: delta, behavior: snap ? "auto" : "smooth" });
     window.clearTimeout(settle.current);

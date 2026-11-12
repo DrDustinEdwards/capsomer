@@ -6,6 +6,8 @@
 // an address entry that Back takes away, and a keyboard stop on a body that scrolls.
 // No framework; the React wrapper and the other overlays call the same functions.
 
+import { reducedMotion } from "../count-up/count-up.ts";
+
 // ---------------------------------------------------------------------------------------
 // Helpers every overlay shares (confirm-dialog.ts re-exports the first six for 0.1 imports).
 
@@ -155,7 +157,7 @@ function wireDrag(dialog: HTMLDialogElement): () => void {
     if (
       !["bottom", "right", "left"].includes(placement ?? "") ||
       isLocked(dialog) ||
-      matchMedia("(prefers-reduced-motion: reduce)").matches
+      reducedMotion()
     )
       return;
     if ((e.target as Element).closest("a, button, input, select, textarea, [contenteditable]"))
