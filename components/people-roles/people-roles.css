@@ -128,11 +128,8 @@
     background: var(--sunken);
   }
 
+  /* A .cap-field-row; its fields share the width. */
   .cap-people-change {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: end;
-    gap: var(--space-3) var(--space-4);
     white-space: normal;
 
     & .cap-field {

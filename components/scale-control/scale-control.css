@@ -6,18 +6,12 @@
    From dustinedwards.info (app/styles/procedure.css, .procedure-scale), which re-drew the input, the
    select and the button by hand; here they are Field's number, Select's native select and a Button. */
 @layer cap.components {
+  /* A .cap-field-row. */
   .cap-scale-control {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: end;
-    gap: var(--space-4) var(--space-5);
     margin: 0 0 var(--space-5);
     /* A control: the UI face, so it looks the same inside a page's prose (whose --face is the serif). */
     font-family: var(--ui);
 
-    & > .cap-field {
-      flex: 0 1 auto;
-    }
     /* The quantity is a few digits: the group keeps its steppers and about five figures. */
     & .cap-input-group:has(> input[type="number"]) {
       inline-size: 10rem;

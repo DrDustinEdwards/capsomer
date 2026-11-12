@@ -766,7 +766,7 @@ export function MediaLibrary({
       <Form
         method="get"
         action={path}
-        className="cap-media-lib-filters"
+        className="cap-field-row"
         role="search"
         aria-label={`Find ${plural}`}
       >
@@ -784,7 +784,7 @@ export function MediaLibrary({
             "group",
           ] as const
         ).map((k) => (query[k] ? <input key={k} type="hidden" name={k} value={query[k]} /> : null))}
-        <div className="cap-field cap-media-lib-search">
+        <div className="cap-field cap-field-wide">
           <label className="cap-field-label" htmlFor={`${uid}-q`}>
             Search
           </label>

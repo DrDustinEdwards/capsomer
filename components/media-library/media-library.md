@@ -84,7 +84,7 @@ React renders it; a server renders the same HTML. The parts, in order:
 ```html
 <section class="cap-media-lib" data-cap="media-library" aria-label="Files">
   <nav class="cap-tabs-list cap-media-lib-tabs" aria-label="Files: library or Trash">...Library, Trash, with counts...</nav>
-  <form class="cap-media-lib-filters" role="search" aria-label="Find files" method="get" action="/media">...Search, Show...</form>
+  <form class="cap-field-row" role="search" aria-label="Find files" method="get" action="/media">...Search, Show...</form>
   <nav class="cap-media-lib-chips" aria-label="Narrow the files">
     <ul class="cap-chips" aria-label="Tags"><li><a class="cap-chip" href="/media?tag=release" aria-current="true">release <span class="cap-chip-count">4</span></a></li></ul>
     <ul class="cap-chips" aria-label="Lenses">...</ul>

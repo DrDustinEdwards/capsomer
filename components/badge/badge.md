@@ -5,7 +5,7 @@ summary: A count in a small round bubble, neutral or toned by what the number me
 parts: [css]
 tool: native
 states: [a count and its tones]
-added: 0.111.0
+added: 0.112.0
 updated: 0.111.0
 source: the admin shell's count, the site header's count and the shell's tab badge, which each drew the same bubble
 replaces:

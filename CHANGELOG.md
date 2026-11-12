@@ -13,6 +13,14 @@ Each release names every removed or renamed token or class, and every changed HT
 - **Theme server.** The 400 answer is `private, no-store` (site-runtime's `textResponse`), so the peer `@dustinedwards/site-runtime` is `>=0.113.0`. The `capsomer` command lists files with devkit's `walkFiles`: an optional peer `@dustinedwards/devkit` `>=0.33.0`.
 - **Tokens where literals were.** The catalog's filter tray used `--radius-lg` (no such token) and `--z-overlay, 50`; it is now `--radius-l`, `--z-overlay` (40) and `--shadow-l`. The checkbox and permission-matrix box, the link's favicon and the timeline's rail take `--radius-s` (the two boxes were 4px, the favicon and the rail 3px already), the dialog's grabber and the scroll area's thumb `--radius-full`; fourteen focus rings take `--focus-width` (still 2px). The confirm dialog's page shares the dialog's surface rule. The showcase's stand-in styles for panel, table, status, button, banner and empty are gone (the real components are loaded). No class or token is removed or renamed by this item.
 
+## [0.111.0]
+
+- **Field: `.cap-field-row`, one layout for a row of fields and its buttons.** A flex row that wraps, lined up on the controls, `--space-3` between lines and `--space-4` between controls; `.cap-field-wide` on one field (the search) takes the room the others leave, from 16rem. Seven components had their own copy of that rule and now use it.
+  - Removed classes (use `.cap-field-row`): `.cap-catalog-bar`, `.cap-media-lib-filters`, `.cap-posts-filters`, `.cap-posts-update-form`.
+  - Removed classes (use `.cap-field-wide`): `.cap-catalog-search`, `.cap-media-lib-search`, `.cap-posts-search`.
+  - Changed HTML contract: `.cap-people-change`, `.cap-player-transcript-bar` and `.cap-scale-control` now also carry `cap-field-row` (React and `examples.html` updated; a hand-written copy needs the class added).
+  - Spacing that moves to the shared values: the catalog's lines when its bar wraps (16px to 12px) and its search's basis (18rem to 16rem); the posts update form and the transcript bar between controls (12px to 16px); the scale control (16px by 20px to 12px by 16px). The redundant `margin: 0` on fields in these rows is gone (`.cap-field` has no margin).
+
 ## [0.110.0]
 
 - **Pagination: space and a hairline above, and 44 px controls at every width.** `.cap-pagination` now carries `margin-block-start` (`--pagination-gap`, `--space-7` by default), `padding-block-start` (`--space-4`) and a `border-block-start` hairline in `--line`, as the site's `.pager` and search pager did, so a pager no longer touches the last item above it. Pages, Previous, Next and the gap are at least 44 px (`--control-h-coarse`) on a desktop too, not only on a touch screen, as a navigation target. The controls no longer follow `data-density`, since the 44 px floor is above every density's height. New token `--pagination-gap`. Nothing is removed or renamed.

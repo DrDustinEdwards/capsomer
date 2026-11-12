@@ -176,6 +176,22 @@
     }
   }
 
+  /* Fields in a row (.cap-field-row): a filter or action bar, the fields at their own widths, then
+     its buttons, lined up on their controls and wrapping on a narrow space. .cap-field-wide on one
+     field (the search) takes the room the others leave. Unlike .cap-fields, no column is stretched
+     to match another, so a button keeps its own width. */
+  .cap-field-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    gap: var(--space-3) var(--space-4);
+
+    & > .cap-field-wide {
+      flex: 1 1 16rem;
+      min-inline-size: 0;
+    }
+  }
+
   /* A line between groups of fields, with an optional word in it. */
   .cap-field-separator {
     position: relative;
