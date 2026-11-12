@@ -560,7 +560,7 @@ export function PostsList({
       <Form
         method="get"
         action={action.split("?")[0]}
-        className="cap-posts-filters"
+        className="cap-field-row"
         role="search"
         aria-label={`Find ${plural}`}
       >
@@ -568,7 +568,7 @@ export function PostsList({
           <input type="hidden" name="status" value={query.status} />
         ) : null}
         {query.trashed ? <input type="hidden" name="trashed" value="1" /> : null}
-        <div className="cap-field cap-posts-search">
+        <div className="cap-field cap-field-wide">
           <label className="cap-field-label" htmlFor={`${uid}-q`}>
             Search
           </label>
@@ -1070,7 +1070,7 @@ export function PostScheduledUpdate({
       {intents.resultBox}
 
       {may && !scripted ? (
-        <Form method="post" action={action} className="cap-posts-update-form">
+        <Form method="post" action={action} className="cap-field-row">
           <input type="hidden" name="ids" value={data.id} />
           <input type="hidden" name="versions" value={data.live.version} />
           <RescheduleField id={`${uid}-at`} at={data.publishAt} />

@@ -13,23 +13,6 @@
     min-inline-size: 0;
   }
 
-  /* Search, kind, tag, author, the published dates and sort, each with a visible label, Show and
-     Clear filters. Wraps on a narrow space. */
-  .cap-posts-filters {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: end;
-    gap: var(--space-3) var(--space-4);
-
-    & > .cap-field {
-      margin: 0;
-    }
-  }
-  .cap-posts-search {
-    flex: 1 1 16rem;
-    min-inline-size: 0;
-  }
-
   /* The count at the start, the toolbar (a host's own actions, New post) at the end. */
   .cap-posts-bar {
     display: flex;
@@ -209,16 +192,6 @@
     display: grid;
     gap: var(--space-5);
     min-inline-size: 0;
-  }
-  .cap-posts-update-form {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: end;
-    gap: var(--space-3);
-
-    & > .cap-field {
-      margin: 0;
-    }
   }
   /* Each side of the compare named over its column, in the viewer's zone: "Live post · on the
      site since …", "Scheduled update · goes live …". One column under 40rem, as the compare. */

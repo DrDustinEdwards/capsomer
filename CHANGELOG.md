@@ -4,6 +4,13 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+## [0.111.0]
+
+- **Field: `.cap-field-row`, one layout for a row of fields and its buttons.** A flex row that wraps, lined up on the controls, `--space-3` between lines and `--space-4` between controls; `.cap-field-wide` on one field (the search) takes the room the others leave, from 16rem. Seven components had their own copy of that rule and now use it.
+  - Removed classes (use `.cap-field-row`): `.cap-catalog-bar`, `.cap-media-lib-filters`, `.cap-posts-filters`, `.cap-posts-update-form`.
+  - Removed classes (use `.cap-field-wide`): `.cap-catalog-search`, `.cap-media-lib-search`, `.cap-posts-search`.
+  - Changed HTML contract: `.cap-people-change`, `.cap-player-transcript-bar` and `.cap-scale-control` now also carry `cap-field-row` (React and `examples.html` updated; a hand-written copy needs the class added).
+  - Spacing that moves to the shared values: the catalog's lines when its bar wraps (16px to 12px) and its search's basis (18rem to 16rem); the posts update form and the transcript bar between controls (12px to 16px); the scale control (16px by 20px to 12px by 16px). The redundant `margin: 0` on fields in these rows is gone (`.cap-field` has no margin).
 - **Internal: shared helpers used instead of copies.** Button, lightbox, anchor bar, annotated figure, dialog and the player's transcript and extras read reduced motion through count-up's `reducedMotion`; writing-progress's `knownZone` is time's, re-exported under the same name; draft-compare's `esc` is re-exported from site-runtime's `escapeHtml` directly. No behavior, token, class or HTML contract changes, and nothing is removed or renamed.
 
 ## [0.110.0]

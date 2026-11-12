@@ -15,7 +15,7 @@ replaces:
 
 # Scale control
 
-One line over a recipe or a protocol that rescales it: how many (servings, tubes, copies), in which units if the page offers a choice, and the button that shows it. `.cap-scale-control` from `capsomer/scale-control.css` lays out parts that already exist: Field's number with steppers, Select, and a Button. `ScaleControl` from `capsomer/react/scale-control` renders it.
+One line over a recipe or a protocol that rescales it: how many (servings, tubes, copies), in which units if the page offers a choice, and the button that shows it. `.cap-scale-control` from `capsomer/scale-control.css` lays out parts that already exist, in Field's `.cap-field-row`: Field's number with steppers, Select, and a Button. `ScaleControl` from `capsomer/react/scale-control` renders it.
 
 It is its own component, not a part of the calculator, because its contract is different: it has no result region. The page it sits on is the result, rendered again by the server from the address; a calculator keeps its page and answers beside its form.
 
@@ -55,7 +55,7 @@ It is its own component, not a part of the calculator, because its contract is d
 ## Markup
 
 ```html
-<form class="cap-scale-control" method="get" action="/recipes/bread" aria-label="Scale this recipe">
+<form class="cap-scale-control cap-field-row" method="get" action="/recipes/bread" aria-label="Scale this recipe">
   <div class="cap-field">
     <label class="cap-field-label" for="servings">Servings</label>
     <div class="cap-input-group">

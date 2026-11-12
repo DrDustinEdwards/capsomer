@@ -693,11 +693,8 @@
     display: grid;
     gap: var(--space-4);
   }
+  /* A .cap-field-row: the search, the match count, then Copy at the end. */
   :where(.cap-player-transcript-bar) {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: end;
-    gap: var(--space-3);
     & > .cap-btn:last-child {
       margin-inline-start: auto;
     }
