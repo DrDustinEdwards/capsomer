@@ -4,6 +4,10 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+## [0.115.0]
+
+- **Chips: checkbox chips.** A filter in a form that works with no script: `<label class="cap-chip"><input class="cap-chip-input" type="checkbox" …> Word <span class="cap-chip-count">n</span></label>`, in a `fieldset.cap-chips` whose `legend` is the `.cap-chips-label`. The checkbox covers the chip, unseen; a checked one wears the pressed look (tick, accent edge, tint), its focus ring is the chip's, a disabled one is the dashed disabled chip, and forced colors draw it in Highlight. New class: `.cap-chip-input`. `fieldset.cap-chips` loses its frame. From dustinedwards.info's CV filters (`.cv-chip`). Removed or renamed: no token or class.
+
 ## [0.114.0]
 
 - **Card: the one-destination card wraps a `div`, not an `article`.** The markup is now `<a href><div class="cap-card">…</div></a>` (was `<a href><article class="cap-card">…</article></a>`). In Chromium a link around an `article` has no accessible name (screen readers announce a bare link, and `getByRole('link', { name })` finds nothing); a link around a `div` is named from its text, headings included. `a:has(> .cap-card)` in card.css already matched either, so no CSS changes; a site's linked cards change `<article>` to `<div>` (a card that is not inside a link, and the stretched-link and choice kinds, stay as they are). Removed or renamed: no token or class.

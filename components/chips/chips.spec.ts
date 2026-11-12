@@ -67,6 +67,31 @@ eachTheme((theme) => {
     ]);
   });
 
+  test("behavior: a checkbox chip toggles by click and Space, wears the pressed look when checked, and submits", async ({
+    page,
+  }) => {
+    await visitStates(page, "chips", theme);
+    const look = (sel: string) =>
+      page.locator(sel).evaluate((el) => {
+        const cs = getComputedStyle(el);
+        return [cs.borderColor, cs.backgroundColor, getComputedStyle(el, "::before").content];
+      });
+    expect(await look("#chip-box-checked")).toEqual(await look("#chip-pressed"));
+    expect(await look("#chip-box")).toEqual(await look("#chip-unpressed"));
+    const talks = page.getByRole("checkbox", { name: /Invited talks/ });
+    await page.locator("#chip-box").click({ position: { x: 6, y: 6 } });
+    await expect(talks).toBeChecked();
+    await page.mouse.move(0, 0);
+    const pressed = await look("#chip-pressed");
+    await expect.poll(() => look("#chip-box")).toEqual(pressed);
+    await page.keyboard.press("Space");
+    await expect(talks).not.toBeChecked();
+    const sent = await page
+      .locator("#chips-boxes-form")
+      .evaluate((f) => new FormData(f as HTMLFormElement).getAll("type"));
+    expect(sent).toEqual(["grant"]);
+  });
+
   test("accessibility: roles, names and pressed states", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "chips", theme);
     await expect(page.locator("#chips-live")).toMatchAriaSnapshot(`
