@@ -66,8 +66,6 @@ const RUN_LABEL: Record<RunKind, string> = { you: "You", ai: "AI", quoted: "Quot
 
 import { escapeHtml as esc } from "@dustinedwards/site-runtime/html";
 
-export { esc };
-
 export const plural = (n: number, one: string, many: string) => `${n} ${n === 1 ? one : many}`;
 export const sr = (s: string) => `<span class="cap-sr-only"> ${s} </span>`;
 

@@ -2,6 +2,7 @@
 // inline audio button that plays a short clip inside running text.
 import { useEffect, useId, useRef, useState, type ReactNode } from "react";
 import { Avatar } from "../avatar/avatar.react.tsx";
+import { reducedMotion } from "../count-up/count-up.ts";
 import {
   activeChapterIndex,
   enhance,
@@ -10,9 +11,6 @@ import {
   type PlayerTrack,
 } from "./player.ts";
 import { usePlayer } from "./player-context.react.tsx";
-
-const reduced = () =>
-  typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 // Seeks the loaded track, or loads this one at that time.
 function useSeekTrack(track: PlayerTrack) {
@@ -119,7 +117,7 @@ export function KeyMoments({
                   go(m.seconds);
                   if (playerId)
                     document.getElementById(playerId)?.scrollIntoView({
-                      behavior: reduced() ? "auto" : "smooth",
+                      behavior: reducedMotion() ? "auto" : "smooth",
                       block: "center",
                     });
                   setSaid(`Jumped to ${formatTime(m.seconds)}`);

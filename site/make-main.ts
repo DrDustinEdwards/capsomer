@@ -13,6 +13,7 @@ import "@fontsource/montserrat/600.css";
 import "@fontsource/montserrat/700.css";
 import "@fontsource/fraunces/600.css";
 import "@fontsource/fraunces/700.css";
+import { copyText } from "../components/copy/copy.ts";
 import { enhance as enhanceMeters } from "../components/meter/meter.ts";
 import { enhance as enhanceHeader } from "../components/site-header/site-header.ts";
 import { enhance as enhanceTabs } from "../components/tabs/tabs.ts";
@@ -586,12 +587,7 @@ const say = (text: string) => {
   }, 2500);
 };
 const clip = async (text: string, done: string) => {
-  try {
-    await navigator.clipboard.writeText(text);
-    say(done);
-  } catch {
-    say("Copy failed. Select the text and copy it yourself.");
-  }
+  say((await copyText(text)) ? done : "Copy failed. Select the text and copy it yourself.");
 };
 part("copy")?.addEventListener("click", () => {
   if (current)

@@ -4,6 +4,8 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+- **Internal: shared helpers used instead of copies.** Button, lightbox, anchor bar, annotated figure, dialog and the player's transcript and extras read reduced motion through count-up's `reducedMotion`; writing-progress's `knownZone` is time's, re-exported under the same name; draft-compare's `esc` is re-exported from site-runtime's `escapeHtml` directly. No behavior, token, class or HTML contract changes, and nothing is removed or renamed.
+
 ## [0.109.0]
 
 - **Site header: no divider before the tools on a phone with `data-links="right"`.** The divider rule from 0.99.1 out-ranked the phone rule that hides it, so a thin line stood left of the theme button wherever the links were folded away.

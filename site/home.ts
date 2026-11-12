@@ -6,7 +6,6 @@
 // flat letter tiles too big for the page, cut by its edge, painted in Capsomer's own families.
 // The dashboard of tests, pairs and changes is the admin at /admin/ (site/main.tsx).
 import { escapeHtml as esc } from "@dustinedwards/site-runtime/html";
-export { esc };
 import { readFileSync, readdirSync, existsSync } from "node:fs";
 import { resolve } from "node:path";
 import { familyFooterHtml } from "../components/family-footer/family-footer.ts";
