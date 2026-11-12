@@ -257,7 +257,7 @@
 
   /* The Add button under a list; and a board of lists whose items move between them. */
   .cap-sortable + [data-cap-part="add"] {
-    margin-block-start: var(--space-3);
+    margin-block-start: var(--sortable-add-gap, var(--space-3));
   }
   .cap-sortable-board {
     display: grid;
