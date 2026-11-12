@@ -8,6 +8,9 @@
 // editor is its own chunk. The pure helpers (edits, counting, filtering, roving) are
 // exported so the React wrapper and a node test can use them without the browser.
 
+import { plural } from "../hooks/hooks.ts";
+import { clamp } from "../hooks/hooks.ts";
+import { readingMinutes, wordCount } from "@drdustinedwards/site-helpers/text";
 import { type Listbox, createListbox } from "../listbox/listbox.ts";
 import { isImeEnter } from "../shortcuts/shortcuts.ts";
 import { place } from "../popover/popover.ts";
@@ -20,14 +23,12 @@ import {
   type MarkdownEditorOptions,
   type Scaffold,
   blockEdit,
-  countWords,
   defaultImageMarkdown,
   filterLinkTargets,
   footnoteEdit,
   headingEdit,
   linkEdit,
   looksLikeUrl,
-  minutesForWords,
   scaffoldCursor,
   slashBlockEdit,
   wrapEdit,
@@ -36,8 +37,6 @@ import type { Surface } from "./markdown-editor.view.ts";
 
 export { rovingIndex } from "../toolbar/toolbar.ts";
 export {
-  countWords,
-  minutesForWords,
   looksLikeUrl,
   filterLinkTargets,
   lineBounds,
@@ -235,8 +234,8 @@ export async function mountMarkdownEditor(
   };
 
   function updateStats(value: string) {
-    const words = countWords(value);
-    const mins = minutesForWords(words, o.wordsPerMinute);
+    const words = wordCount(value);
+    const mins = readingMinutes(words, 0, o.wordsPerMinute);
     statsCount.textContent = `${words.toLocaleString("en")} word${words === 1 ? "" : "s"}${words > 0 ? ` · ${mins} min read` : ""}`;
     const max = maxLength();
     if (max === undefined) {
@@ -354,7 +353,7 @@ export async function mountMarkdownEditor(
     const was = [...toolbar.querySelectorAll(".cap-md-tool")].findIndex(
       (b) => b.getAttribute("tabindex") === "0",
     );
-    const activeTool = Math.min(Math.max(0, was), Math.max(0, all.length - 1));
+    const activeTool = clamp(was, 0, all.length - 1);
     const nodes: Node[] = [];
     all.forEach((t, i) => {
       if (i === main.length && blocks.length > 0)
@@ -465,7 +464,7 @@ export async function mountMarkdownEditor(
     l.note.textContent = url
       ? "Enter to link to this address"
       : l.matches.length > 0
-        ? `${l.matches.length} page${l.matches.length === 1 ? "" : "s"}. Up and Down choose, Enter links.`
+        ? `${plural(l.matches.length, "page")}. Up and Down choose, Enter links.`
         : o.linkTargets
           ? "No pages match. Type a URL to link out."
           : "Type a URL to link to.";

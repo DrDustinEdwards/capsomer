@@ -7,6 +7,8 @@
 // attentionGroups, GROUP_CHILDREN, PROBLEM_ROWS; views/Overview.tsx: NeedsAttention),
 // made generic: the Portal's own feed types and its group table are the caller's here.
 
+import { plural } from "../hooks/hooks.ts";
+import { toggleGroup } from "../disclosure/disclosure.ts";
 import { attachRowList } from "../row-list/row-list.ts";
 
 export type AttentionTone = "crit" | "warn" | "nodata" | "info";
@@ -183,7 +185,7 @@ export function arrange(items: readonly AttentionItem[], options: ArrangeOptions
 // The sentence in the header: "3 problems", "no problems".
 export function problemCount(a: Arranged): string {
   const n = a.problems.length + a.more.length;
-  return n ? `${n} ${n === 1 ? "problem" : "problems"}` : "No problems";
+  return n ? plural(n, "problem", "problems") : "No problems";
 }
 
 // "All 7 in CI and merges" when the group holds more than it shows, else "Open CI and merges".
@@ -193,26 +195,6 @@ export function viewLinkText(g: AttentionGroupEntry): string {
       ? `All ${g.total} in ${g.view.label}`
       : `Open ${g.view.label}`
     : "";
-}
-
-// Shows or hides what one button controls (a group's rows, the warnings past the cap, the
-// notices) and keeps the button's state true. A button with data-open-label says that while
-// open ("Fewer warnings") and its own text again when closed, as the Portal's does.
-export function setGroup(button: HTMLElement, open: boolean): void {
-  button.setAttribute("aria-expanded", String(open));
-  const openLabel = button.dataset.openLabel;
-  if (openLabel) {
-    if (button.dataset.closedLabel === undefined)
-      button.dataset.closedLabel = button.textContent ?? "";
-    button.textContent = open ? openLabel : button.dataset.closedLabel;
-  }
-  const id = button.getAttribute("aria-controls");
-  const members = id ? button.ownerDocument.getElementById(id) : null;
-  if (members) members.hidden = !open;
-}
-
-export function toggleGroup(button: HTMLElement): void {
-  setGroup(button, button.getAttribute("aria-expanded") !== "true");
 }
 
 // Attaches to every [data-cap="attention-list"] under root that is not attached yet: the

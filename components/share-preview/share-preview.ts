@@ -4,6 +4,7 @@
 // letters. The widths and limits are Prelum's (`serpWidth`, `SERP_TITLE`, `SERP_DESCRIPTION`), the
 // ones the sites' head tags and `prelum-audit` use, so the meter and the audit agree. Pure.
 
+import { plural } from "../hooks/hooks.ts";
 import { SERP_DESCRIPTION, SERP_TITLE, serpWidth } from "@drdustinedwards/site-helpers/head";
 
 export type SerpPart = "title" | "description";
@@ -29,7 +30,7 @@ export interface SerpReading {
 
 const charsOf = (text: string) => {
   const n = Array.from(text).length;
-  return `${n} character${n === 1 ? "" : "s"}`;
+  return plural(n, "character");
 };
 
 // The meter's words for a width. `px` null is still being measured.

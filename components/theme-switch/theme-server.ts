@@ -3,6 +3,8 @@
 // localStorage instead. No DOM and no framework, so it runs in a Worker, in Node and in the browser alike.
 // dustinedwards.info, Foxhound and txasm each wrote this for themselves; it lives here once.
 
+import { textResponse } from "@dustinedwards/site-runtime/http";
+
 export type ThemeChoice = "light" | "dark";
 
 /** The localStorage key the theme switch remembers the choice under, unless a switch names its own (data-cap-pref). */
@@ -164,11 +166,7 @@ export async function themeAction(
 ): Promise<Response> {
   const { cookie = THEME_COOKIE, secure = true, save } = opts;
   const choice = await readThemeChoice(request);
-  if (!choice)
-    return new Response("Theme must be light or dark.\n", {
-      status: 400,
-      headers: { "content-type": "text/plain; charset=utf-8", "cache-control": "no-store" },
-    });
+  if (!choice) return textResponse("Theme must be light or dark.\n", 400);
   if (save) await save(choice);
   const headers = new Headers({ "cache-control": "no-store" });
   if (cookie !== false) headers.set("set-cookie", themeCookie(choice, { name: cookie, secure }));

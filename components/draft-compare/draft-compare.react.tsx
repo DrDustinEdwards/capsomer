@@ -1,4 +1,6 @@
-import { useEffect, useId, useMemo, useRef, useState } from "react";
+import { useCleanId } from "../hooks/hooks.react.tsx";
+import { plural } from "../hooks/hooks.ts";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   enhance,
   renderCompare,
@@ -57,7 +59,7 @@ export function DraftCompare({
   id,
   heads,
 }: DraftCompareProps) {
-  const own = useId().replace(/[^a-zA-Z0-9]/g, "");
+  const own = useCleanId();
   const host = useRef<HTMLDivElement>(null);
   const [first] = useState<CompareView>(view ?? "side");
   const controlled = view !== undefined;
@@ -130,7 +132,7 @@ export interface DraftPatchProps {
 // The patch mode: a unified patch by line, with a literal plus or minus on each changed line.
 // Pure markup, so a server render and the browser agree; there is no behavior to attach.
 export function DraftPatch({ patch, title, id }: DraftPatchProps) {
-  const own = useId().replace(/[^a-zA-Z0-9]/g, "");
+  const own = useCleanId();
   const html = useMemo(
     () => renderPatch(patch, { id: id ?? `patch-${own}`, title }),
     [patch, title, id, own],
@@ -183,7 +185,7 @@ const MERGE_LABELS: MergeLabels = {
 export function mergeCountsText(plan: MergePlan): string {
   const choices = choicesOf(plan);
   const both = choices.filter((c) => c.changedBy === null).length;
-  const n = `${choices.length} ${choices.length === 1 ? "difference" : "differences"}`;
+  const n = plural(choices.length, "difference", "differences");
   return plan.hasBase ? `${n}, ${both} changed on both` : n;
 }
 
@@ -256,7 +258,7 @@ export function DraftMerge({ plan, onApply, pending = false, labels, level = 3 }
           if (s.kind === "same") {
             return (
               <li key={i} className="cap-merge-same">
-                {s.blocks.length} {s.blocks.length === 1 ? "passage" : "passages"} the same on both
+                {plural(s.blocks.length, "passage", "passages")} the same on both
               </li>
             );
           }

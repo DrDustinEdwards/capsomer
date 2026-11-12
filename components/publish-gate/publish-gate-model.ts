@@ -1,5 +1,7 @@
 // The publish gate's data and its pure helpers (publish-gate.ts).
 
+import { plural } from "../hooks/hooks.ts";
+
 export type GateState = "blocked" | "held" | "ready" | "published";
 export type CheckState = "failing" | "advisory" | "passed";
 
@@ -119,8 +121,6 @@ export function countChecks(checks: readonly Pick<GateCheck, "ok" | "required">[
     total: checks.length,
   };
 }
-
-const plural = (n: number, one: string, many: string = `${one}s`) => `${n} ${n === 1 ? one : many}`;
 
 // The headings: "Required, 2 failing", "Advisory, 3", "9 checks passed".
 export const requiredHeading = (n: number) => `Required, ${n} failing`;

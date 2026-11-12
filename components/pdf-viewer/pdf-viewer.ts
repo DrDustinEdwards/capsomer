@@ -4,6 +4,8 @@
 // folder, named by data-pdfjs (default /pdfjs/), and this module imports it from there at
 // runtime, in the browser only. When loading fails the page is replaced by a link to the PDF.
 
+import { clamp } from "../hooks/hooks.ts";
+
 export const MIN_SCALE = 0.5;
 export const MAX_SCALE = 3;
 export const SCALE_STEP = 0.25;
@@ -35,7 +37,7 @@ export function clampView(
   to: { page?: number; scale?: number },
   at: { page: number; scale: number; pages: number },
 ): { page: number; scale: number } {
-  const page = Math.min(Math.max(1, to.page ?? at.page), at.pages || 1);
+  const page = clamp(to.page ?? at.page, 1, at.pages || 1);
   const scale = Math.min(
     MAX_SCALE,
     Math.max(MIN_SCALE, Math.round((to.scale ?? at.scale) * 100) / 100),

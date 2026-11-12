@@ -1,12 +1,4 @@
-import {
-  useEffect,
-  useId,
-  useMemo,
-  useRef,
-  useState,
-  type MouseEvent,
-  useLayoutEffect,
-} from "react";
+import { useEffect, useMemo, useRef, useState, type MouseEvent, useLayoutEffect } from "react";
 import type { IntentResult, MentionsData, SubmitIntent } from "../content/content.ts";
 import { ContentBulkBar, useIntents } from "../content/content.react.tsx";
 import { PlainForm, type FormComponent } from "../plain-form/plain-form.react.tsx";
@@ -25,6 +17,7 @@ import {
   type Mention,
   type ModState,
 } from "../moderation-queue/moderation-queue.ts";
+import { initials } from "../avatar/avatar.ts";
 import { listOwnsKeys, moveRowFocus, singleKeysOff } from "../row-list/row-list.ts";
 import { Pill } from "../status/status.react.tsx";
 import { TabLink, TabsNav } from "../tabs/tabs.react.tsx";
@@ -39,7 +32,7 @@ import {
   withMentions,
 } from "./mentions-list.ts";
 import { markup } from "../trusted-html/trusted-html.ts";
-import { useHydrated } from "../hooks/hooks.react.tsx";
+import { useCleanId, useHydrated } from "../hooks/hooks.react.tsx";
 
 export type { FormComponent, IntentResult, Mention, MentionsData, SubmitIntent };
 
@@ -77,13 +70,6 @@ function StatusWord({ state }: { state: ModState }) {
 }
 
 const nameOf = (m: Mention) => `${m.author} (${m.host})`;
-const initials = (name: string) =>
-  name
-    .split(/\s+/)
-    .map((w) => w[0] ?? "")
-    .slice(0, 2)
-    .join("")
-    .toUpperCase() || "?";
 
 // One page of one site's mentions, the moderation queue on the contract's states: tabs with the
 // site's counts, each row's decisions as forms, the bulk bar with each mention's outcome, Undo,
@@ -98,7 +84,7 @@ export function MentionsList({
   result = null,
   now,
 }: MentionsListProps) {
-  const uid = useId().replace(/[^a-zA-Z0-9]/g, "");
+  const uid = useCleanId();
   const formId = `${uid}-bulk`;
   // False on the server and while hydrating, true once hydrated.
   const mounted = useHydrated();
@@ -373,7 +359,7 @@ export function MentionsList({
                     onClick={toggle(m.id)}
                   >
                     <span className="cap-avatar" data-size="sm" aria-hidden="true">
-                      <span className="cap-avatar-fallback">{initials(m.author)}</span>
+                      <span className="cap-avatar-fallback">{initials(m.author) || "?"}</span>
                     </span>{" "}
                     <span className="cap-mq-name">{m.author}</span>{" "}
                     <span className="cap-mq-host">{m.host}</span>

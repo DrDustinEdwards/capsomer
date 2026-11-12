@@ -9,6 +9,7 @@
 // once on hover, with no delay, and on click; on touch, on tap. Opened from the keyboard, focus
 // moves to its first item; Up and Down move between items, Home and End go to the ends, Esc closes
 // it and focus goes back to its button.
+import { plural } from "../hooks/hooks.ts";
 import { closeDialog, openDialog, wireDialog } from "../dialog/dialog.ts";
 import { escapeHtml } from "@dustinedwards/site-runtime/html";
 import { place } from "../popover/popover.ts";
@@ -531,9 +532,7 @@ export function wireSearch(
     empty.textContent = top.length
       ? ""
       : `No match for “${query}”. Try fewer words, or open all results.`;
-    status.textContent = top.length
-      ? `${hits.length} ${hits.length === 1 ? "match" : "matches"}`
-      : "No match";
+    status.textContent = top.length ? plural(hits.length, "match", "matches") : "No match";
     mark(-1);
     results.hidden = false;
     input.setAttribute("aria-expanded", "true");

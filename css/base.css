@@ -229,3 +229,10 @@
   }
 }
 
+/* One turn, for every spinner: the skeleton's arc, a busy button's ring, the player's loading icon. */
+@keyframes cap-spin {
+  to {
+    rotate: 1turn;
+  }
+}
+

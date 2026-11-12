@@ -1,9 +1,11 @@
-import { useEffect, useId, useRef, useState, type FormEvent, type ReactNode } from "react";
-import type {
-  ContentLabels,
-  IntentOutcome,
-  IntentResult,
-  SubmitIntent,
+import { useCleanId } from "../hooks/hooks.react.tsx";
+import { useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
+import {
+  nounsOf,
+  type ContentLabels,
+  type IntentOutcome,
+  type IntentResult,
+  type SubmitIntent,
 } from "../content/content.ts";
 import {
   Dialog,
@@ -16,7 +18,6 @@ import {
 } from "../dialog/dialog.react.tsx";
 import { DropZone } from "../drop-zone/drop-zone.react.tsx";
 import { formatBytes } from "../drop-zone/drop-zone.ts";
-import { nounsOf } from "./media-library.ts";
 
 // The library's upload as a dialog (Desk redesign, 2026-11-10: "the library is the page; upload is an
 // action"). The toolbar's Upload opens it. With script and `submit`, it takes several files and asks,
@@ -85,8 +86,8 @@ export function uploadsResult(
 
 export function UploadDialog(props: UploadDialogProps) {
   const { scripted, inPage, closeHref, noScript, importForm, labels } = props;
-  const uid = useId().replace(/[^a-zA-Z0-9]/g, "");
-  const { noun } = nounsOf(labels);
+  const uid = useCleanId();
+  const { noun } = nounsOf(labels, "file");
   if (!scripted) {
     if (!inPage) return null;
     // As delivered: in the page until a page with script takes it, its form posting as it is.
@@ -131,7 +132,7 @@ function ScriptedUpload({
   labels,
   uid,
 }: UploadDialogProps & { uid: string }) {
-  const { noun, plural } = nounsOf(labels);
+  const { noun, plural } = nounsOf(labels, "file");
   const formId = `${uid}-files`;
   const [files, setFiles] = useState<Chosen[]>([]);
   const [busy, setBusy] = useState<{ at: number; of: number } | null>(null);

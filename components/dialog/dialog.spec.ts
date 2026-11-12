@@ -6,7 +6,7 @@ import {
   visitStates,
   settled,
 } from "../../test/helpers.ts";
-import { errorText, uid } from "./dialog.ts";
+import { errorText } from "./dialog.ts";
 
 const dlg = (page: Page, name: string) => page.getByRole("dialog", { name });
 const alertDlg = (page: Page, name = "Revoke deploy-agent?") =>
@@ -33,13 +33,6 @@ test("behavior: errorText reads an Error, a string, or says nothing is known", (
   expect(errorText("Offline")).toBe("Offline");
   expect(errorText(new Error(""))).toMatch(/nothing says what/);
   expect(errorText(undefined)).toMatch(/nothing says what/);
-});
-
-test("behavior: uid returns a new id on every call, with the prefix", () => {
-  const a = uid("cap-dialog");
-  const b = uid("cap-dialog");
-  expect(a).toMatch(/^cap-dialog-\d+$/);
-  expect(b).not.toBe(a);
 });
 
 test("behavior: a sheet dragged down by its header closes past a third and hands focus back; a short drag springs back", async ({

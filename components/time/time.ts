@@ -2,6 +2,8 @@
 // zone with UTC beside it. The pure functions take the zone so they can be checked anywhere; in a page
 // the zone is the viewer's.
 
+import { plural } from "../hooks/hooks.ts";
+
 export const SEC = 1000;
 export const MIN = 60 * SEC;
 export const HOUR = 60 * MIN;
@@ -20,10 +22,6 @@ export function parse(iso: string): number {
   return Date.parse(ZONELESS.test(s) ? `${s.replace(" ", "T")}Z` : s);
 }
 
-function plural(n: number, unit: string): string {
-  return `${n} ${unit}${n === 1 ? "" : "s"}`;
-}
-
 // "in 3 hours", "5 minutes ago", and with numeric: "auto", "yesterday" and "tomorrow", "today", "last
 // month": the words come from the platform's Intl.RelativeTimeFormat, not from strings kept here
 // (MDN: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/RelativeTimeFormat).
@@ -36,19 +34,37 @@ export function toMs(at: number | Date | string | null | undefined): number {
   return typeof at === "number" ? at : at instanceof Date ? at.getTime() : parse(at);
 }
 
-const dayKey = (zone?: string) =>
-  new Intl.DateTimeFormat("en-CA", {
-    timeZone: zone,
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  });
+// The same, null where toMs gives NaN, for a caller that tests for "no time" with `== null`.
+export function toMsOrNull(at: number | Date | string | null | undefined): number | null {
+  const t = toMs(at);
+  return Number.isFinite(t) ? t : null;
+}
+
+const dayFormats = new Map<string, Intl.DateTimeFormat>();
+const dayFormat = (zone = "") => {
+  let f = dayFormats.get(zone);
+  if (!f) {
+    f = new Intl.DateTimeFormat("en-CA", {
+      timeZone: zone || undefined,
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    });
+    dayFormats.set(zone, f);
+  }
+  return f;
+};
+
+// The calendar day of a moment in a zone, "2027-03-06" (the browser's zone without one). A
+// meeting's day is its own zone's, not the viewer's.
+export function dayKey(at: number | Date | string, zone?: string): string {
+  return dayFormat(zone).format(toMs(at));
+}
 
 // Whole calendar days from `t` to `now` in the zone: 1 is yesterday, -1 tomorrow.
 export function calendarDays(t: number, now: number, zone?: string): number {
-  const f = dayKey(zone);
   const at = (x: number) => {
-    const [y = 0, m = 1, d = 1] = f.format(x).split("-").map(Number);
+    const [y = 0, m = 1, d = 1] = dayKey(x, zone).split("-").map(Number);
     return Date.UTC(y, m - 1, d);
   };
   return Math.round((at(now) - at(t)) / DAY);
@@ -111,18 +127,22 @@ export function utc(t: number): string {
 // ---------------------------------------------------------------------------------------
 // Dates with no "ago": a long date, a medium one, a month and day, with or without the time.
 
-export type DateStyle = "long" | "medium" | "monthDay" | "weekday" | "time";
+export type DateStyle = "long" | "medium" | "monthDay" | "monthYear" | "weekday" | "time";
 
 export interface FormatDateOptions {
   // "long": "September 12, 2026". "medium": "Sep 12, 2026". "monthDay": "Sep 12", for a chart's
-  // axis or a window short enough that the year is noise. "weekday": "Saturday, September 12", a
+  // axis or a window short enough that the year is noise. "monthYear": "September 2026", a group's heading. "weekday": "Saturday, September 12", a
   // meeting's day heading. "time": the time of day alone, "3:04 PM" (with `zoneName`, "3:04 PM UTC").
   // Default "long".
   style?: DateStyle;
-  // Add the time of day: "Sep 12, 2026, 3:04 PM". Ignored for "monthDay" and "weekday".
+  // Add the time of day: "Sep 12, 2026, 3:04 PM". Ignored for "monthDay", "monthYear" and "weekday".
   time?: boolean;
   // Name the zone after a time: "Sep 12, 2026, 3:04 PM UTC". Only with `time`.
   zoneName?: boolean;
+  // Show the year (true) or leave it out (false) whatever the style does by default: "Sep 12, 2026"
+  // for a date in another year than today's and "Sep 12" for one in this year; "Saturday,
+  // September 12, 2026" for a meeting's day heading. Not for "time" or "monthYear".
+  year?: boolean;
   // An IANA zone, or "viewer" for the reader's own. Default "UTC": a page that is rendered on a
   // server and hydrated in the browser needs the same text on both sides, and a server cannot
   // know the viewer's zone (a local zone makes a hydration mismatch).
@@ -146,30 +166,48 @@ export function formatDate(
 ): string | null {
   const t = toMs(at);
   if (!Number.isFinite(t)) return null;
-  const { style = "long", time = false, zoneName: named = false, zone: z = "UTC" } = options;
+  const { style = "long", time = false, zoneName: named = false, zone: z = "UTC", year } = options;
   const zone = z === "viewer" ? undefined : z;
-  const dayOnly = style === "monthDay" || style === "weekday";
+  const dayOnly = style === "monthDay" || style === "monthYear" || style === "weekday";
   const timed = style === "time" || (time && !dayOnly);
-  const key = `${style}|${timed}|${zone ?? ""}`;
+  const key = `${style}|${timed}|${zone ?? ""}|${year}`;
   const f = cachedFormat(key, () =>
-    style === "monthDay"
-      ? new Intl.DateTimeFormat("en-US", { timeZone: zone, month: "short", day: "numeric" })
-      : style === "weekday"
-        ? new Intl.DateTimeFormat("en-US", {
-            timeZone: zone,
-            weekday: "long",
-            month: "long",
-            day: "numeric",
-          })
-        : style === "time"
-          ? new Intl.DateTimeFormat("en-US", { timeZone: zone, hour: "numeric", minute: "2-digit" })
-          : new Intl.DateTimeFormat("en-US", {
-              timeZone: zone,
-              dateStyle: style,
-              timeStyle: time ? "short" : undefined,
-            }),
+    year !== undefined &&
+    (style === "long" || style === "medium" || style === "monthDay" || style === "weekday")
+      ? new Intl.DateTimeFormat("en-US", {
+          timeZone: zone,
+          weekday: style === "weekday" ? "long" : undefined,
+          month: style === "long" || style === "weekday" ? "long" : "short",
+          day: "numeric",
+          year: year ? "numeric" : undefined,
+          hour: timed ? "numeric" : undefined,
+          minute: timed ? "2-digit" : undefined,
+        })
+      : style === "monthDay"
+        ? new Intl.DateTimeFormat("en-US", { timeZone: zone, month: "short", day: "numeric" })
+        : style === "monthYear"
+          ? new Intl.DateTimeFormat("en-US", { timeZone: zone, month: "long", year: "numeric" })
+          : style === "weekday"
+            ? new Intl.DateTimeFormat("en-US", {
+                timeZone: zone,
+                weekday: "long",
+                month: "long",
+                day: "numeric",
+              })
+            : style === "time"
+              ? new Intl.DateTimeFormat("en-US", {
+                  timeZone: zone,
+                  hour: "numeric",
+                  minute: "2-digit",
+                })
+              : new Intl.DateTimeFormat("en-US", {
+                  timeZone: zone,
+                  dateStyle: style,
+                  timeStyle: time ? "short" : undefined,
+                }),
   );
-  const text = f.format(t);
+  // Some engines put a narrow no-break space before AM and PM; a plain space reads and copies the same everywhere.
+  const text = f.format(t).replaceAll("\u202f", " ");
   return timed && named ? `${text} ${zoneName(t, zone)}` : text;
 }
 
@@ -206,6 +244,9 @@ export function fromUtcInputValue(value: string): number {
 const whole = (n: number | null | undefined) =>
   Number.isFinite(n) ? Math.max(0, Math.floor(n as number)) : 0;
 
+/** A number as two digits, "07". */
+export const two = (n: number): string => String(n).padStart(2, "0");
+
 // A duration as a player's timecode writes it: "4:05", "1:02:03". With hours: "always", the form
 // a feed wants for <itunes:duration>: "00:04:05", "01:02:03". Negative, missing or NaN is zero.
 export function timecode(
@@ -215,8 +256,7 @@ export function timecode(
   const total = Math.floor(whole(ms) / SEC);
   const h = Math.floor(total / 3600);
   const m = Math.floor((total % 3600) / 60);
-  const sec = String(total % 60).padStart(2, "0");
-  const two = (n: number) => String(n).padStart(2, "0");
+  const sec = two(total % 60);
   if (options.hours === "always") return `${two(h)}:${two(m)}:${sec}`;
   return h ? `${h}:${two(m)}:${sec}` : `${m}:${sec}`;
 }
@@ -427,7 +467,7 @@ export function setClock(fn: (() => number) | null): void {
 
 // "now" for an element: a frozen data-cap-now on it or an ancestor (specimens, tests,
 // printed reports), else the clock.
-function nowFor(el: Element): { now: number; frozen: boolean } {
+export function nowFor(el: Element): { now: number; frozen: boolean } {
   const fixed = el.closest<HTMLElement>("[data-cap-now]")?.dataset.capNow;
   return fixed ? { now: parse(fixed), frozen: true } : { now: clock(), frozen: false };
 }

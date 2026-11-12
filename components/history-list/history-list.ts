@@ -6,9 +6,9 @@
 // action creates: the picks, the restore, the group that opens, a page of older lines.
 // No framework; the React wrapper uses the same helpers.
 import { toggleGroup } from "../disclosure/disclosure.ts";
-import { GLYPHS, enhance as enhanceMessage, say } from "../message/message.ts";
+import { GLYPHS, ensureRegion, say } from "../message/message.ts";
 import { isTypingKey, listOwnsKeys, moveRowFocus, singleKeysOff } from "../row-list/row-list.ts";
-import { enhance as enhanceTime, parse } from "../time/time.ts";
+import { enhance as enhanceTime, nowFor, parse } from "../time/time.ts";
 import {
   type HistoryEntry,
   type HistoryKind,
@@ -23,10 +23,9 @@ import {
   restoredMessage,
   stamp,
 } from "./history-list-model.ts";
-import { actionFor, buildRow, buildRun, h, statusEl } from "./history-list-rows.ts";
+import { actionFor, buildRow, buildRun, statusEl } from "./history-list-rows.ts";
 
 export {
-  countWords,
   wordDelta,
   deltaSign,
   deltaText,
@@ -76,11 +75,6 @@ export { isTypingKey };
 
 const READY = "data-cap-ready";
 
-function nowOf(root: Element): number {
-  const fixed = root.closest<HTMLElement>("[data-cap-now]")?.dataset.capNow;
-  return fixed ? parse(fixed) : Date.now();
-}
-
 const rowsOf = (root: HTMLElement) => root.querySelector<HTMLElement>(":scope > .cap-hist-list");
 
 // j and k between the lines' titles, row-list's movement (moveRowFocus) with its isTypingKey check.
@@ -105,21 +99,6 @@ const lineRows = (root: HTMLElement) =>
 const rowById = (root: HTMLElement, id: string) =>
   lineRows(root).find((r) => r.dataset.id === id) ?? null;
 
-// The status region for results and Undo is the page's one; where the page has none yet,
-// one is placed after the list.
-function ensureRegion(after: Element): void {
-  if (document.querySelector("[data-cap='message']")) return;
-  const region = h("div", {
-    class: "cap-message",
-    "data-cap": "message",
-    role: "status",
-    "aria-label": "Results and failures",
-    "aria-atomic": "false",
-  });
-  after.after(region);
-  enhanceMessage(region.parentNode ?? document);
-}
-
 function entryOf(row: HTMLElement): HistoryEntry {
   return {
     id: row.dataset.id ?? "",
@@ -135,7 +114,7 @@ function setCurrent(root: HTMLElement, row: HTMLLIElement, current: boolean): vo
   const entry = entryOf(row);
   const actions = row.querySelector<HTMLElement>(".cap-row-actions");
   if (!actions) return;
-  const now = nowOf(root);
+  const now = nowFor(root).now;
   if (current) {
     row.dataset.current = "";
     actions.replaceChildren(statusEl("ok", GLYPHS.ok, "Current"));
@@ -177,7 +156,7 @@ export function restoreVersion(root: HTMLElement, id: string): HTMLLIElement | n
   const sourceRow = rowById(root, id);
   const previous = currentRow(root);
   if (!list || !sourceRow || !previous || sourceRow === previous) return null;
-  const now = nowOf(root);
+  const now = nowFor(root).now;
   const prefix = root.id || "cap-hist";
   const source = entryOf(sourceRow);
   const entry = restoredEntry(
@@ -238,7 +217,7 @@ export function appendEntries(
 ): void {
   const list = rowsOf(root);
   if (!list) return;
-  const now = nowOf(root);
+  const now = nowFor(root).now;
   const prefix = root.id || "cap-hist";
   const lines = condense(entries.map((e) => e));
   let index = 0;
@@ -291,7 +270,7 @@ export function syncPicks(root: HTMLElement, blocked = false): string[] {
     if (!b.checked && picked.length >= 2) b.setAttribute("aria-disabled", "true");
     else b.removeAttribute("aria-disabled");
   }
-  const now = nowOf(root);
+  const now = nowFor(root).now;
   const status = root.querySelector<HTMLElement>("[data-cap-part='picked']");
   if (status) {
     const text = pair

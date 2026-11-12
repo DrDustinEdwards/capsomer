@@ -4,7 +4,7 @@
 // The subject (what a session is, where it is stored) stays in the app; it hands over each
 // item's times through an accessor.
 
-import { DAY, zoneName } from "../time/time.ts";
+import { DAY, dayKey, formatDate, toMsOrNull, zoneName } from "../time/time.ts";
 
 // The day key of items that have no date yet. Sorts after every real day.
 export const NO_DATE = "no-date";
@@ -37,24 +37,6 @@ export interface ScheduleDay<T> {
   slots: ScheduleSlot<T>[];
 }
 
-// A time in milliseconds, or null when there is none or it cannot be read.
-export function toMs(v: number | Date | string | null | undefined): number | null {
-  if (v == null || v === "") return null;
-  const t = typeof v === "number" ? v : v instanceof Date ? v.getTime() : Date.parse(v);
-  return Number.isFinite(t) ? t : null;
-}
-
-// The calendar day of a moment in a zone: "2027-03-06". A meeting's day is its own zone's,
-// not the viewer's, so a 9 PM session in Austin is not filed under the next day in London.
-export function dayKeyOf(t: number, zone = "UTC"): string {
-  return new Intl.DateTimeFormat("en-CA", {
-    timeZone: zone,
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  }).format(t);
-}
-
 const isKey = (k: string) => /^\d{4}-\d{2}-\d{2}$/.test(k);
 
 // Real days first, in order, then NO_DATE.
@@ -83,10 +65,10 @@ export function groupByDay<T>(
   const days = new Map<string, Row[]>();
   for (const item of items) {
     const t = timesOf(item);
-    const start = toMs(t.start);
-    const end = toMs(t.end);
+    const start = toMsOrNull(t.start);
+    const end = toMsOrNull(t.end);
     const day = t.day && isKey(t.day) ? t.day : null;
-    const key = day ?? (start !== null ? dayKeyOf(start, zone) : NO_DATE);
+    const key = day ?? (start !== null ? dayKey(start, zone) : NO_DATE);
     const row = { item, start, end, track: t.track ?? "", order: t.order ?? 0 };
     const list = days.get(key);
     if (list) list.push(row);
@@ -136,11 +118,11 @@ export function dayRange(
   to: number | Date | string | null | undefined,
   zone = "UTC",
 ): string[] {
-  const a = toMs(from);
+  const a = toMsOrNull(from);
   if (a === null) return [];
-  const b = toMs(to) ?? a;
-  const start = Date.parse(`${dayKeyOf(a, zone)}T00:00:00Z`);
-  const end = Date.parse(`${dayKeyOf(b, zone)}T00:00:00Z`);
+  const b = toMsOrNull(to) ?? a;
+  const start = Date.parse(`${dayKey(a, zone)}T00:00:00Z`);
+  const end = Date.parse(`${dayKey(b, zone)}T00:00:00Z`);
   const out: string[] = [];
   for (let t = start; t <= end; t += DAY) out.push(new Date(t).toISOString().slice(0, 10));
   return out;
@@ -173,22 +155,7 @@ export function dayLabel(
   if (key === NO_DATE) return noDate;
   const t = Date.parse(`${key}T00:00:00Z`);
   if (!Number.isFinite(t)) return key;
-  return new Intl.DateTimeFormat("en-US", {
-    timeZone: "UTC",
-    weekday: "long",
-    month: "long",
-    day: "numeric",
-    year: year ? "numeric" : undefined,
-  }).format(t);
-}
-
-// "9:00 AM", on the American 12-hour clock, in the schedule's zone.
-export function clock(t: number, zone = "UTC"): string {
-  return new Intl.DateTimeFormat("en-US", {
-    timeZone: zone,
-    hour: "numeric",
-    minute: "2-digit",
-  }).format(t);
+  return formatDate(t, { style: "weekday", year }) as string;
 }
 
 // A slot's time in words: "9:00 AM to 10:30 AM", "From 9:00 AM", "Until 10:30 AM", or
@@ -199,10 +166,11 @@ export function slotLabel(
   zone = "UTC",
   none = "No time set",
 ): string {
-  if (start !== null && end !== null && end > start)
-    return `${clock(start, zone)} to ${clock(end, zone)}`;
-  if (start !== null) return `From ${clock(start, zone)}`;
-  if (end !== null) return `Until ${clock(end, zone)}`;
+  // "9:00 AM", on the American 12-hour clock, in the schedule's zone.
+  const clock = (t: number) => formatDate(t, { style: "time", zone });
+  if (start !== null && end !== null && end > start) return `${clock(start)} to ${clock(end)}`;
+  if (start !== null) return `From ${clock(start)}`;
+  if (end !== null) return `Until ${clock(end)}`;
   return none;
 }
 

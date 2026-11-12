@@ -137,7 +137,7 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
   <nav class="cap-admin-strip" aria-label="Apps">
     <ul class="cap-admin-strip-group">
       <li><a class="cap-admin-tile" href="https://portal.dustinedwards.info/" aria-current="true"><svg class="cap-admin-logo">[the app's mark]</svg>[tip]</a></li>
-      <li><a class="cap-admin-tile" href="https://desk.dustinedwards.info/" aria-label="Carrel Desk, 2 need you"><svg class="cap-admin-logo">…</svg><span class="cap-admin-badge" aria-hidden="true">2</span>[tip]</a></li>
+      <li><a class="cap-admin-tile" href="https://desk.dustinedwards.info/" aria-label="Carrel Desk, 2 need you"><svg class="cap-admin-logo">…</svg><span class="cap-count cap-admin-badge" data-tone="need" aria-hidden="true">2</span>[tip]</a></li>
       [dustinedwards.info, germomics, Foxhound, Foxing, Capsomer, in that order]
     </ul>
   </nav>
@@ -145,8 +145,8 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
     <button type="button" class="cap-admin-collapse" data-cap-part="menu-toggle" aria-label="Collapse menu" aria-expanded="true" aria-controls="cap-admin-menu">[icon]<span class="cap-admin-label">Collapse menu</span><span class="cap-keys"><kbd>[</kbd></span><span class="cap-admin-tip cap-popover" data-variant="tooltip" data-side="right" data-offset="12" popover="manual" role="tooltip" aria-hidden="true"><span class="cap-admin-tip-text">Collapse menu</span></span></button>
     <div class="cap-admin-group" role="group" aria-labelledby="g-watch">
       <div class="cap-admin-group-label" id="g-watch">Watch</div>
-      <a href="/" aria-current="page">[icon]<span>Overview</span> <span class="cap-admin-count"></span></a>
-      <a href="/queue" aria-label="Queue, 5 blocked">[icon]<span class="cap-admin-label">Queue</span><span class="cap-admin-tip cap-popover" data-variant="tooltip" data-side="right" data-offset="12" popover="manual" role="tooltip" aria-hidden="true"><span class="cap-admin-tip-text">Queue</span></span> <span class="cap-admin-count" data-tone="need">5</span></a>
+      <a href="/" aria-current="page">[icon]<span>Overview</span> <span class="cap-count cap-admin-count"></span></a>
+      <a href="/queue" aria-label="Queue, 5 blocked">[icon]<span class="cap-admin-label">Queue</span><span class="cap-admin-tip cap-popover" data-variant="tooltip" data-side="right" data-offset="12" popover="manual" role="tooltip" aria-hidden="true"><span class="cap-admin-tip-text">Queue</span></span> <span class="cap-count cap-admin-count" data-tone="need">5</span></a>
     </div>
   </nav>
   <main class="cap-admin-main" id="cap-main" tabindex="-1">
@@ -160,7 +160,7 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
 </div>
 ```
 
-`import { enhance, toggleMenu, jumpTarget } from "capsomer/behavior/admin-shell"` wires the collapse control, the remembered choice and the keys for markup written by hand, and calls site-header's `enhance` for the header's panels and sheet. Load `admin-shell.css` with `site-header.css`, `theme-switch.css`, `dialog.css` and `popover.css`. `data-variant="user"` drops the strip and widens the menu to 288px. In React, `import { AdminShell, FIRST_PAGE } from "capsomer/react/admin-shell"` and `<AdminShell app="carrel" page={FIRST_PAGE} nav={…} badges={…} onRefresh={…}>`; `FAMILY_APPS` and `OWNER` are exported from the same module.
+`import { enhance, toggleMenu, jumpTarget } from "capsomer/behavior/admin-shell"` wires the collapse control, the remembered choice and the keys for markup written by hand, and calls site-header's `enhance` for the header's panels and sheet. Load `admin-shell.css` with `site-header.css`, `theme-switch.css`, `dialog.css`, `popover.css` and `count.css`. `data-variant="user"` drops the strip and widens the menu to 288px. In React, `import { AdminShell, FIRST_PAGE } from "capsomer/react/admin-shell"` and `<AdminShell app="carrel" page={FIRST_PAGE} nav={…} badges={…} onRefresh={…}>`; `FAMILY_APPS` and `OWNER` are exported from the same module.
 
 ## Density
 

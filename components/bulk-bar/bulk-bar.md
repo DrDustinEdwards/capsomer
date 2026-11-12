@@ -156,7 +156,7 @@ bar.addEventListener("cap-bulk-action", (e) => refresh(e.detail)); // { action, 
 bar.addEventListener("cap-bulk-change", (e) => (e.detail.count)); // { items, count } on every change
 ```
 
-`performBulk({ action, items, run, undo, destructive, confirmTitle, confirmLead, confirmAction, said, undone, returnTo })` is the whole flow for an app that keeps its own selection. Pure helpers: `countText`, `fillCount`, `plural`, `previewItems`, and for the outcome list `outcomeSummary` and `orderOutcomes` (a `BulkOutcome` is `{ id, label, ok, message?, usedBy? }`). A `run` rejects with an `Error` whose message says what happened.
+`performBulk({ action, items, run, undo, destructive, confirmTitle, confirmLead, confirmAction, said, undone, returnTo })` is the whole flow for an app that keeps its own selection. Pure helpers: `countText`, `fillCount`, `previewItems`, and for the outcome list `outcomeSummary` and `orderOutcomes` (a `BulkOutcome` is `{ id, label, ok, message?, usedBy? }`). A `run` rejects with an `Error` whose message says what happened.
 
 ```tsx
 import { BulkBar } from "capsomer/react/bulk-bar";

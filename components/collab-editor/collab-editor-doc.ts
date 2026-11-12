@@ -32,7 +32,7 @@ import { editorSchema } from "../rich-editor/rich-editor-schema.mjs";
 import { settle, type JsonDoc } from "./collab-editor-suggest.ts";
 
 export const FRAGMENT = "default";
-const META = "carrel";
+export const META = "carrel";
 const PRINTS = "prints";
 
 export type RoomMeta = {

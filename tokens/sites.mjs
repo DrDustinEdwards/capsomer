@@ -165,11 +165,12 @@ const SITES = {
   foxing: {
     family: "fox",
     on: "<html>",
-    note: "Foxing's cream and charcoal neutrals (design-system.md), its faces (DM Sans for the UI, DM Mono, Fraunces to display), which the site self-hosts (Fontsource names the variable files DM Sans Variable and Fraunces Variable), and the sky-blue on state of its Rule 05",
+    note: "Foxing's cream and charcoal neutrals (design-system.md), its faces (DM Sans for the UI, DM Mono, Fraunces to display), which the site self-hosts (Fontsource names the variable files DM Sans Variable and Fraunces Variable), the sky-blue on state of its Rule 05, and its 0.75rem card radius (Rule 06)",
     all: {
       ui: '"DM Sans Variable", "DM Sans", "DM Sans Fallback", system-ui, sans-serif',
       "font-ui": '"DM Sans Variable", "DM Sans", "DM Sans Fallback", system-ui, sans-serif',
       mono: '"DM Mono", "DM Mono Fallback", ui-monospace, monospace',
+      "radius-l": "0.75rem",
       display: '"Fraunces Variable", "Fraunces", "Fraunces Fallback", Georgia, serif',
     },
     // Rule 05's sky blue #43a1d8 is 2.7:1 on the cream ground, under the 3:1 a checked box needs,

@@ -7,13 +7,11 @@ import {
 } from "../../test/helpers.ts";
 import {
   blockEdit,
-  countWords,
   filterLinkTargets,
   footnoteEdit,
   headingEdit,
   linkEdit,
   looksLikeUrl,
-  minutesForWords,
   scaffoldCursor,
   wrapEdit,
 } from "./markdown-editor.ts";
@@ -94,14 +92,6 @@ async function pairRatio(page: Page, fg: string, bg: string): Promise<number> {
 }
 
 // ---- pure helpers (no browser) -------------------------------------------------------------
-test("behavior: words and reading time count markdown as the site's published times do", () => {
-  expect(countWords("")).toBe(0);
-  expect(countWords("  one  two\nthree ")).toBe(3);
-  expect(countWords("## A heading")).toBe(3);
-  expect(minutesForWords(0)).toBe(1);
-  expect(minutesForWords(400)).toBe(2);
-  expect(minutesForWords(500, 250)).toBe(2);
-});
 
 test("behavior: a typed address is recognized, and a query filters the pages by title, address and hint", () => {
   expect(

@@ -27,7 +27,7 @@
       inset-inline-start: calc(var(--cap-timeline-node) / 2 - 1.5px);
       inset-block: calc(var(--cap-timeline-node) / 2);
       inline-size: 3px;
-      border-radius: 3px;
+      border-radius: var(--radius-s);
     }
     &::before {
       background: var(--cap-timeline-track);

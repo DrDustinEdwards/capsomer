@@ -6,6 +6,7 @@
 // islands/search-box.ts), which drew it twice, once for React and once for a page that does not
 // hydrate; this one module serves both.
 
+import { uid } from "../hooks/hooks.ts";
 import { createListbox, type Listbox } from "../listbox/listbox.ts";
 
 export interface Suggestion {
@@ -41,8 +42,6 @@ export const SUGGEST_MIN = 2;
 export function suggestionsText(count: number): string {
   return count === 0 ? "" : count === 1 ? "1 suggestion" : `${count} suggestions`;
 }
-
-let counter = 0;
 
 /** Draws one suggestion as an option: its label, then its hint at the end. */
 export function suggestionOption(s: Suggestion, id: string): HTMLElement {
@@ -80,7 +79,6 @@ export function attachSuggest(root: HTMLElement, opts: SuggestOptions): () => vo
   const min = opts.min ?? SUGGEST_MIN;
   const go = opts.go ?? ((href: string) => location.assign(href));
   const announce = opts.announce ?? suggestionsText;
-  const n = ++counter;
 
   let list = root.querySelector<HTMLElement>("[role='listbox']");
   const madeList = !list;
@@ -91,7 +89,7 @@ export function attachSuggest(root: HTMLElement, opts: SuggestOptions): () => vo
     list.dataset.variant = "surface";
     root.append(list);
   }
-  list.id ||= `cap-suggest-${n}`;
+  list.id ||= uid("cap-suggest");
   list.hidden = true;
   if (!list.hasAttribute("aria-label") && !list.hasAttribute("aria-labelledby"))
     list.setAttribute("aria-label", "Suggestions");

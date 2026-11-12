@@ -309,7 +309,7 @@ function stripApps(
 
 const Badge = ({ count }: { count?: number }) =>
   count ? (
-    <span className="cap-admin-badge" aria-hidden="true">
+    <span className="cap-count cap-admin-badge" data-tone="need" aria-hidden="true">
       {badgeText(count)}
     </span>
   ) : null;
@@ -443,7 +443,7 @@ export function AdminShell(props: AdminShellProps) {
             {/* The tip before the count: collapsed, the two are the row's visible words, in the
                 order its name says them ("Queue, 5"; WCAG 2.5.3). */}
             <Tip text={e.label} offset={12} describe={false} />{" "}
-            <span className="cap-admin-count" data-tone={e.tone}>
+            <span className="cap-count cap-admin-count" data-tone={e.tone}>
               {e.count ? badgeText(e.count) : ""}
             </span>
           </>

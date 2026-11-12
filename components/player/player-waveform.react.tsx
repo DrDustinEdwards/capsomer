@@ -6,6 +6,7 @@
 // - WaveformPreview, in an editor: a still picture (role="img") with chapter markers.
 // Both are SVG: the bars' heights are attributes, so nothing needs a style attribute.
 import { useLayoutEffect, useMemo, useRef, useState } from "react";
+import { ratio } from "../meter/meter.ts";
 import { WAVEFORM_BARS, formatTime, normalizePeaks, syntheticPeaks } from "./player.ts";
 
 export interface WaveformProps {
@@ -45,7 +46,7 @@ export function Waveform({
 
   const shareAt = (clientX: number) => {
     const r = box.current?.getBoundingClientRect();
-    return r && r.width > 0 ? Math.min(1, Math.max(0, (clientX - r.left) / r.width)) : 0;
+    return r ? ratio(clientX - r.left, r.width) : 0;
   };
 
   return (

@@ -1,6 +1,5 @@
 import {
   useEffect,
-  useId,
   useMemo,
   useRef,
   useState,
@@ -8,13 +7,14 @@ import {
   type FormEvent,
   type KeyboardEvent,
 } from "react";
-import type {
-  ContentLabels,
-  IntentResult,
-  PostRow,
-  PostsData,
-  ScheduledUpdateView,
-  SubmitIntent,
+import {
+  nounsOf,
+  type ContentLabels,
+  type IntentResult,
+  type PostRow,
+  type PostsData,
+  type ScheduledUpdateView,
+  type SubmitIntent,
 } from "../content/content.ts";
 import { ContentBulkBar, useIntents } from "../content/content.react.tsx";
 import { PlainForm, type FormComponent } from "../plain-form/plain-form.react.tsx";
@@ -47,7 +47,6 @@ import {
   inDays,
   isoFromLocal,
   localInputValue,
-  nounsOf,
   postActions,
   postsHref,
   rowActions,
@@ -57,7 +56,7 @@ import {
   type RowAction,
 } from "./posts-list.ts";
 import type { ConfirmRequest } from "../content/content.ts";
-import { useHydrated } from "../hooks/hooks.react.tsx";
+import { useCleanId, useHydrated } from "../hooks/hooks.react.tsx";
 
 export { contentStatus };
 export type { ContentLabels, IntentResult, PostRow, PostsData, ScheduledUpdateView, SubmitIntent };
@@ -181,7 +180,7 @@ function RescheduleDialog({
   Form: FormComponent;
   onClose: () => void;
 }) {
-  const uid = useId().replace(/[^a-zA-Z0-9]/g, "");
+  const uid = useCleanId();
   return (
     <Dialog
       open={!!moving}
@@ -247,7 +246,7 @@ function RenameDialog({
   Form: FormComponent;
   onClose: () => void;
 }) {
-  const uid = useId().replace(/[^a-zA-Z0-9]/g, "");
+  const uid = useCleanId();
   return (
     <Dialog
       open={!!renaming}
@@ -325,7 +324,7 @@ function PreviewLinkBox({
   noun: string;
   scripted: boolean;
 }) {
-  const uid = useId().replace(/[^a-zA-Z0-9]/g, "");
+  const uid = useCleanId();
   const [copied, setCopied] = useState("");
   const [copiedFor, setCopiedFor] = useState(link?.url);
   if (link?.url !== copiedFor) {
@@ -401,9 +400,9 @@ export function PostsList({
   labels,
   now,
 }: PostsListProps) {
-  const uid = useId().replace(/[^a-zA-Z0-9]/g, "");
+  const uid = useCleanId();
   const formId = `${uid}-bulk`;
-  const { noun, plural } = nounsOf(labels);
+  const { noun, plural } = nounsOf(labels, "post");
   const title = plural.charAt(0).toUpperCase() + plural.slice(1);
   // False on the server and while hydrating, true once hydrated.
   const mounted = useHydrated();
@@ -993,8 +992,8 @@ export function PostScheduledUpdate({
   labels,
   now,
 }: PostScheduledUpdateProps) {
-  const uid = useId().replace(/[^a-zA-Z0-9]/g, "");
-  const { noun } = nounsOf(labels);
+  const uid = useCleanId();
+  const { noun } = nounsOf(labels, "post");
   const name = data.title || "Untitled";
   const names = useMemo(() => new Map([[data.id, name]]), [data.id, name]);
   const intents = useIntents({ action, Form, submit, result, names, cancelHref: action });

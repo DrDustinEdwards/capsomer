@@ -184,7 +184,7 @@ enhance(); // the jump keys, the remembered view, Expand all
 </section>
 ```
 
-`parsePatch(patch)`, `patchCounts(files)`, `patchCountsText(counts)`, `unifiedPatch(name, before, after, options)` and `hasChanges(patch)` belong to the patch mode; `mergePlan(mine, theirs, base)`, `merged(plan, picks)`, `choicesOf(plan)` and `startPicks(plan)` (with `MergePlan`, `MergeSegment`, `MergeChoice`, `MergeBlock`, `MergePick`) to the merge mode. `diffWords(a, b)`, `diffSentences(a, b)`, `analyze(a, b)`, `splitSentences(text)`, `countWords(text)`, `countsText(counts)` and `commonSubsequence(a, b)` are pure and exported, with their types (`WordPart`, `Entry`, `Analysis`, `Counts`, `CompareSide`, `CompareOptions`). `setView(root, view)` and `toggleAll(root)` drive a compare from code.
+`parsePatch(patch)`, `patchCounts(files)`, `patchCountsText(counts)`, `unifiedPatch(name, before, after, options)` and `hasChanges(patch)` belong to the patch mode; `mergePlan(mine, theirs, base)`, `merged(plan, picks)`, `choicesOf(plan)` and `startPicks(plan)` (with `MergePlan`, `MergeSegment`, `MergeChoice`, `MergeBlock`, `MergePick`) to the merge mode. `diffWords(a, b)`, `diffSentences(a, b)`, `analyze(a, b)`, `splitSentences(text)`, `countsText(counts)` and `commonSubsequence(a, b)` are pure and exported, with their types (`WordPart`, `Entry`, `Analysis`, `Counts`, `CompareSide`, `CompareOptions`). `setView(root, view)` and `toggleAll(root)` drive a compare from code.
 
 In React, `import { DraftCompare } from "capsomer/react/draft-compare"`:
 

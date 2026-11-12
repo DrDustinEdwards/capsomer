@@ -1,3 +1,4 @@
+import { clamp } from "../hooks/hooks.ts";
 import { escapeHtml } from "@dustinedwards/site-runtime/html";
 
 export interface PatchOptions {
@@ -19,7 +20,7 @@ export interface PatchOptions {
  * patch is decorative: the page says the same in words beside it, so it is hidden from screen readers.
  */
 export function patchSvg({ id, name, foot, count, unit }: PatchOptions): string {
-  const n = Math.min(Math.max(count, 0), 24);
+  const n = clamp(count, 0, 24);
   const dots = Array.from({ length: n }, (_, i) => {
     const a = -Math.PI / 2 + (i * 2 * Math.PI) / n;
     return `<circle class="cap-patch-dot" cx="${(70 + 36 * Math.cos(a)).toFixed(2)}" cy="${(70 + 36 * Math.sin(a)).toFixed(2)}" r="3.4"/>`;
