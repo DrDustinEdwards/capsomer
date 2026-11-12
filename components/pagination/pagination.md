@@ -6,7 +6,7 @@ parts: [css, behavior, react]
 tool: native + own JavaScript
 states: [links in the middle, a gap on both sides, first page, last page, few pages, other words for the ends, buttons client-side, narrow space compact form, comfortable density, steps form, steps form with a total that moves]
 added: 0.3.0
-updated: 0.100.0
+updated: 0.110.0
 source: The site's Pager (app/components/post-row.tsx, .pager in app/styles/listing.css) and the admin's "Showing N of M posts" line (app/components/admin/posts-table.tsx); shadcn/ui Pagination
 replaces:
   - '<nav[^>]*aria-label="Pagination'
@@ -18,7 +18,7 @@ replaces:
 
 A `nav` named "Pagination" holding a "Showing 21 to 40 of 312 posts" line and a list: Previous, the page numbers, Next. The current page is `aria-current="page"`. Real links when each page is a URL; buttons when the list is filtered in the browser.
 
-**Provenance.** EXTRACTED and REWROTE, from the site's `Pager` (`nav aria-label="Pagination"`, "Newer", "Page 3 of 16", "Older", links with `?page=n`, nothing when there is one page) and the admin posts table's count line ("Showing 20 of 312 posts."). Kept: the landmark and its name, real links to `?page=n`, words at the ends (Newer and Older are `prevLabel` and `nextLabel`), "Page 3 of 16" as the compact form, no pager for a single page. Added: page numbers with gaps, a count line that says which items, a disabled end that is still readable, and a button form. The site's links are 15 px text with a 44 px minimum on a touch screen only; here every page is at least `var(--control)` square.
+**Provenance.** EXTRACTED and REWROTE, from the site's `Pager` (`nav aria-label="Pagination"`, "Newer", "Page 3 of 16", "Older", links with `?page=n`, nothing when there is one page) and the admin posts table's count line ("Showing 20 of 312 posts."). Kept: the landmark and its name, real links to `?page=n`, words at the ends (Newer and Older are `prevLabel` and `nextLabel`), "Page 3 of 16" as the compact form, no pager for a single page. Added: page numbers with gaps, a count line that says which items, a disabled end that is still readable, and a button form. The site's links are 15 px text with a 44 px minimum on a touch screen only; here every page is at least 44 px square (`--control-h-coarse`) at every width.
 
 ## When to use it
 

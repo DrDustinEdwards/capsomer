@@ -4,6 +4,10 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+## [0.110.0]
+
+- **Pagination: space and a hairline above, and 44 px controls at every width.** `.cap-pagination` now carries `margin-block-start` (`--pagination-gap`, `--space-7` by default), `padding-block-start` (`--space-4`) and a `border-block-start` hairline in `--line`, as the site's `.pager` and search pager did, so a pager no longer touches the last item above it. Pages, Previous, Next and the gap are at least 44 px (`--control-h-coarse`) on a desktop too, not only on a touch screen, as a navigation target. New token `--pagination-gap`. Nothing is removed or renamed.
+
 ## [0.109.0]
 
 - **Site header: no divider before the tools on a phone with `data-links="right"`.** The divider rule from 0.99.1 out-ranked the phone rule that hides it, so a thin line stood left of the theme button wherever the links were folded away.
