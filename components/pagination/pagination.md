@@ -4,7 +4,7 @@ title: Pagination
 summary: Move between pages of a long list, with a "Showing 21 to 40 of 312" line, as links or as buttons.
 parts: [css, behavior, react]
 tool: native + own JavaScript
-states: [links in the middle, a gap on both sides, first page, last page, few pages, other words for the ends, buttons client-side, narrow space compact form, comfortable density, steps form, steps form with a total that moves]
+states: [links in the middle, a gap on both sides, first page, last page, few pages, other words for the ends, buttons client-side, narrow space compact form, steps form, steps form with a total that moves]
 added: 0.3.0
 updated: 0.110.0
 source: The site's Pager (app/components/post-row.tsx, .pager in app/styles/listing.css) and the admin's "Showing N of M posts" line (app/components/admin/posts-table.tsx); shadcn/ui Pagination
