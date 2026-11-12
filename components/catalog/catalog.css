@@ -13,18 +13,8 @@
     min-width: 0;
   }
 
-  /* Search, sort and the buttons share a row that wraps. Apply is for the no-script path; once the behavior is
+  /* Search, sort and the buttons share a .cap-field-row. Apply is for the no-script path; once the behavior is
      attached every control updates the page at once and Apply goes away. */
-  .cap-catalog-bar {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: end;
-    gap: var(--space-4);
-  }
-  .cap-catalog-search {
-    flex: 1 1 18rem;
-    min-width: 0;
-  }
   .cap-catalog-sort {
     flex: 0 1 15rem;
     min-width: 0;

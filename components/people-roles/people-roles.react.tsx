@@ -333,7 +333,7 @@ function ChangeRow({
     <tr className="cap-people-edit" id={id}>
       <td colSpan={5}>
         <form
-          className="cap-people-change"
+          className="cap-people-change cap-field-row"
           data-cap="field"
           method="post"
           action={action}

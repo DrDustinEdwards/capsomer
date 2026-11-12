@@ -201,7 +201,11 @@ The parts in React render the markup above, with their state in React (the butto
 
 `Field` also takes a function as its child, given the control's props, for a control inside a group, and `after` for what goes between the control and its error. `NumberField` takes `step` as a number or `"any"`: any value passes the browser's step check, and the steppers and Page Up and Page Down step by 1. `size="short"` writes `data-size="short"` on the `.cap-field`, for a field that needs only its control's room beside a long one; a layout that sets field widths reads it (the inline add form).
 
-Fields side by side: `<div class="cap-fields">` around `.cap-field`s (and `.cap-check`s) puts as many in a row as fit at `--fields-min` (16rem) each, one column on a phone, lined up on their controls whatever help one carries. `labelHidden` on `Field` or `SearchField` reads the label and does not show it, for a site's search box only.
+Fields side by side: `<div class="cap-fields">` around `.cap-field`s (and `.cap-check`s) puts as many in a row as fit at `--fields-min` (16rem) each, one column on a phone, lined up on their controls whatever help one carries.
+
+Fields in a row: `<div class="cap-field-row">` (or a `form`) around `.cap-field`s and then the buttons lays them out at their own widths, lined up on their controls, wrapping on a narrow space (gap `--space-3` by `--space-4`). `.cap-field-wide` on one field, the search, gives it the room the others leave (at least 16rem before it wraps). It is the filter bar of the catalog, the media library and the posts list, the posts list's update form, the people change form, the transcript bar and the scale control. Use `.cap-fields` instead for a form whose fields should share equal columns.
+
+`labelHidden` on `Field` or `SearchField` reads the label and does not show it, for a site's search box only.
 
 Fields in an input group, a choice card and horizontal fields:
 

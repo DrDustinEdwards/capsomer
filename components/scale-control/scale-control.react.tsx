@@ -40,7 +40,12 @@ export function ScaleControl(props: ScaleControlProps) {
   } = props;
   const [count, setCount] = useState<number | null>(value);
   return (
-    <form className="cap-scale-control" method="get" action={action} aria-label={formLabel}>
+    <form
+      className="cap-scale-control cap-field-row"
+      method="get"
+      action={action}
+      aria-label={formLabel}
+    >
       <NumberField
         label={label}
         name={name}

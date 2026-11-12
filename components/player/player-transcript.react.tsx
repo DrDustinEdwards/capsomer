@@ -214,7 +214,7 @@ export function PlayerTranscript({
   return (
     <div className="cap-player-transcript">
       {search || copy ? (
-        <div className="cap-player-transcript-bar">
+        <div className="cap-player-transcript-bar cap-field-row">
           {search ? (
             <SearchField label="Search transcript" value={query} onChange={setQuery} />
           ) : null}

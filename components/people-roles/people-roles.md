@@ -128,7 +128,7 @@ The React wrapper renders the contract, and the states page is generated from it
               </form></details>
           </div></td>
         </tr>
-        <tr class="cap-people-edit" id="pr-change-rosa"><td colspan="5"><form class="cap-people-change" data-cap="field" method="post">...title select, reason (required), Change title, Cancel...</form></td></tr>
+        <tr class="cap-people-edit" id="pr-change-rosa"><td colspan="5"><form class="cap-people-change cap-field-row" data-cap="field" method="post">...title select, reason (required), Change title, Cancel...</form></td></tr>
       </tbody>
     </table>
   </div>
