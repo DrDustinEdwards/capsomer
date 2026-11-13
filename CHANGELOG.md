@@ -33,6 +33,7 @@ Each release names every removed or renamed token or class, and every changed HT
 - **Fix: rich text field reads only its own entity names.** `&constructor;` or `&toString;` decoded to a function's source text (the name table is a plain object); they now stay as written. Ctrl or Cmd+I is blocked in a field that does not allow `em`, as B and U already were, so the browser's italic never shows what the value drops.
 - **Route hooks: `useScrollToHash` survives a malformed hash** ("#%E0" threw inside the frame callback; the hash is now read as written). **Removed:** the re-export of `filterParams`, `pagePending` and `withParam` from `capsomer/react/route-hooks`; import them from `capsomer/behavior/form-hooks` (no consumer imported them from route-hooks).
 - **Save toggle keeps one label.** The button no longer switches "Save" to "Saved" while it also sets `aria-pressed` (a screen reader heard "Saved, toggle button, pressed"); the pressed chip and filled bookmark show the state. **Removed:** `SaveToggle`'s `savedLabel` prop and the behavior's `data-saved-label` and `data-label`.
+- Scale control: the units select sits in the shared `Field` (its id from `useId`, so two controls on a page no longer share `${name}-${units.name}`), and the submit is the shared `Button`.
 
 ## [0.139.1]
 
