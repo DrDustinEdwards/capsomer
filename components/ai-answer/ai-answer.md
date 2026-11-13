@@ -5,8 +5,8 @@ summary: A generated answer in its own labeled region, saying it is AI generated
 parts: [css, behavior]
 tool: own JavaScript
 states: [looking it up, answered with sources and a follow-up, cut off, failed]
-added: 0.124.0
-updated: 0.124.0
+added: 0.126.0
+updated: 0.126.0
 source: dustinedwards.info's Ask (app/enhance/ask.ts, app/styles/ask.css, app/styles/palette-dialog.css)
 ---
 
