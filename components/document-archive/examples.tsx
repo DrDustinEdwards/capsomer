@@ -1,11 +1,10 @@
 // Mounts the document archive specimens. Every element with data-mount="<state>" gets that state.
 import { StrictMode, type ReactNode } from "react";
 import { createRoot } from "react-dom/client";
-import { adjacent } from "./document-archive.ts";
+import { seriesPlace } from "../series-nav/series-nav.ts";
 import {
   DocumentArchive,
   DocumentList,
-  DocumentPager,
   DocumentViewer,
   type ArchiveDoc,
 } from "./document-archive.react.tsx";
@@ -51,14 +50,14 @@ const NOTES: ArchiveDoc[] = [
 
 function Page({ at, level = 2 }: { at: string; level?: 1 | 2 }) {
   const doc = REPORTS.find((d) => d.key === at) ?? REPORTS[0]!;
-  const { prev, next } = adjacent(REPORTS, at, (d) => d.key);
+  const { previous, next } = seriesPlace(REPORTS, at, (d) => d.key);
   return (
     <DocumentViewer
       title={doc.title}
       level={level}
       subtitle={doc.detail}
       download={{ href: `${doc.href}.pdf`, bytes: 4_404_019 }}
-      prev={prev}
+      prev={previous}
       next={next}
       collection={`Annual reports (${at})`}
     >
@@ -100,7 +99,9 @@ const SPECIMENS: Record<string, () => ReactNode> = {
   narrow: () => (
     <div className="cap-archive">
       <DocumentList docs={NOTES} label="Field notes, phone width" />
-      <DocumentPager
+      <DocumentViewer
+        title="Field notes, summer"
+        level={2}
         prev={{ title: "Field notes, autumn, with the long survey appendix", href: "#autumn" }}
         next={{ title: "Release notes, version 4", href: "#release-notes-4" }}
         collection="Field notes, phone width"

@@ -18,7 +18,7 @@ replaces:
 
 An archive of past documents, the newsletters, programs and abstract books of earlier meetings: each category a list whose rows link to a document's page, and the page itself, with the document's title and subtitle, its download, the app's viewer and Previous and Next within its category.
 
-**Provenance.** EXTRACTED and REWROTE, from txasm. Extracted: `adjacentSlugs` (as `adjacent`, which returns the neighbors themselves so the pager can name them), the category list (txasm's `card-list` of title links with a "Fall 1991 · Editor" line), the page's order (breadcrumb, title, subtitle, a primary Download button, the viewer, then a `nav` named "More in Programs" with `rel="prev"` and `rel="next"` links). Rewritten: the list is row-list's (`.cap-rows`), so each row is one link with the subtitle as its description; Previous and Next say the neighbor's title as well as the direction, and an end is left out instead of a hidden empty `span`; the download says its format and size; `groupByCategory` is added for a page that shows every category. The PDF viewer (txasm's PDF.js island, `components/pdf-viewer.tsx`) stays the app's and goes in as `children`: Capsomer has no PDF viewer yet.
+**Provenance.** EXTRACTED and REWROTE, from txasm. Extracted: `adjacentSlugs` (now series-nav's `seriesPlace`, which returns the neighbors themselves so the signs can name them), the category list (txasm's `card-list` of title links with a "Fall 1991 · Editor" line), the page's order (breadcrumb, title, subtitle, a primary Download button, the viewer, then a `nav` named "More in Programs" with `rel="prev"` and `rel="next"` links). Rewritten: the list is row-list's (`.cap-rows`), so each row is one link with the subtitle as its description; Previous and Next say the neighbor's title as well as the direction, and an end is left out instead of a hidden empty `span`; the download says its format and size; `groupByCategory` is added for a page that shows every category. The PDF viewer (txasm's PDF.js island, `components/pdf-viewer.tsx`) stays the app's and goes in as `children`: Capsomer has no PDF viewer yet.
 
 ## When to use it
 
@@ -33,10 +33,10 @@ Documents that come one per meeting, season or year and are read as a set: newsl
 ## The default and its reason
 
 - **A category is a named list of links**, a row list with the document's title as the link and the season, year and editor as the line under it. A screen reader user hears the list's name and size and moves link to link; the line is the link's description.
-- **Previous and Next name the neighbor.** "Previous: Annual report 2026", so a person knows where it goes; the word is above the title, muted, with a drawn chevron a reader does not hear.
-- **An end is left out, and Next keeps the right.** The first document has only Next, at the right edge, where it always is. txasm drew an empty `aria-hidden` span to hold the place; a flex margin does it.
-- **The order is the app's.** `adjacent` takes the category's list as the app sorts it (newest first, by year then season), so the list and the pager agree.
-- **A document outside the list has no neighbors.** `adjacent` returns none when the key is not in the list, never a neighbor from elsewhere.
+- **Previous and Next are the manual's signs** (`Signs`, `nav.cap-signs`), as series nav's are: each shows the neighbor's title, the arrow shows the way, and a screen reader hears "Previous: Annual report 2026".
+- **An end is left out.** The first document has only Next; txasm drew an empty `aria-hidden` span to hold the place.
+- **The order is the app's.** `seriesPlace(list, key, keyOf)` takes the category's list as the app sorts it (newest first, by year then season), so the list and the pager agree.
+- **A document outside the list has no neighbors.** `seriesPlace` returns none when the key is not in the list, never a neighbor from elsewhere.
 - **The download is a primary button with the format and size beside it**, since reading it offline is the page's main action.
 - **The page is an `article`**, the title its `h1` by default (`level`), the breadcrumb before it (`before`).
 
@@ -84,18 +84,18 @@ Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the a
     <p class="cap-docview-download"><a href="/documents/fall-2026/download" class="cap-btn" data-variant="primary" download>Download the PDF</a> <span class="cap-link-meta">PDF, 2.4 MB</span></p>
   </header>
   <div class="cap-docview-body">[the app's PDF viewer]</div>
-  <nav class="cap-docpager" aria-label="More in Programs">
-    <a class="cap-docpager-link" rel="prev" href="/archive/programs/spring-2027"><span class="cap-docpager-dir">Previous</span> <span class="cap-docpager-title">Spring 2027 program</span></a>
-    <a class="cap-docpager-link" rel="next" href="/archive/programs/spring-2026"><span class="cap-docpager-dir">Next</span> <span class="cap-docpager-title">Spring 2026 program</span></a>
+  <nav class="cap-signs" aria-label="More in Programs">
+    <a class="cap-sign" rel="prev" href="/archive/programs/spring-2027"><span class="cap-sr-only">Previous: </span>Spring 2027 program</a>
+    <a class="cap-sign" rel="next" href="/archive/programs/spring-2026"><span class="cap-sr-only">Next: </span>Spring 2026 program</a>
   </nav>
 </article>
 ```
 
-Load `capsomer/document-archive.css` with `capsomer/row-list.css`, `capsomer/button.css` and, for the download's format and size (`.cap-link-meta`), `capsomer/link-file.css` (or the whole `capsomer/link.css`, which imports it).
+Load `capsomer/document-archive.css` with `capsomer/row-list.css`, `capsomer/button.css` and, for the download's format and size (`.cap-link-meta`), `capsomer/link-file.css` (or the whole `capsomer/link.css`, which imports it), and `capsomer/manual.css` for the signs.
 
-The helpers, with no DOM: `import { adjacent, groupByCategory } from "capsomer/behavior/document-archive"`. `adjacent(list, slug, (d) => d.slug)` gives `{ prev, next }`; `groupByCategory(docs, (d) => d.category, ["newsletter", "program", "abstract_book"])` gives the categories in that order, empty ones kept.
+The helpers, with no DOM: `import { groupByCategory } from "capsomer/behavior/document-archive"` and `import { seriesPlace } from "capsomer/behavior/series-nav"`. `seriesPlace(list, slug, (d) => d.slug)` gives `{ previous, next }`; `groupByCategory(docs, (d) => d.category, ["newsletter", "program", "abstract_book"])` gives the categories in that order, empty ones kept.
 
-In React, `import { DocumentArchive, DocumentList, DocumentViewer, DocumentPager } from "capsomer/react/document-archive"`:
+In React, `import { DocumentArchive, DocumentList, DocumentViewer } from "capsomer/react/document-archive"`:
 
 ```tsx
 <DocumentList docs={docs.map((d) => ({ key: d.slug, title: d.title, href: `${basePath}/${d.slug}`, detail: documentSubtitle(d) }))}
