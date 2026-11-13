@@ -8,10 +8,10 @@
 @layer cap.components {
   .cap-eyebrow {
     margin: 0;
-    color: var(--muted);
+    color: var(--cap-eyebrow-color, var(--muted));
     font-family: var(--ui);
-    font-size: var(--fs-label);
-    font-weight: 600;
+    font-size: var(--cap-eyebrow-size, var(--fs-label));
+    font-weight: var(--cap-eyebrow-weight, 600);
     line-height: 1.4;
     letter-spacing: var(--cap-eyebrow-tracking, 0.1em);
     text-transform: uppercase;
@@ -19,12 +19,16 @@
 
     &[data-variant="mono"] {
       font-family: var(--mono);
-      font-weight: 500;
+      font-weight: var(--cap-eyebrow-weight, 500);
       letter-spacing: var(--cap-eyebrow-tracking, 0.06em);
     }
 
     &[data-tone="accent"] {
       color: var(--accent-text);
+    }
+
+    &[data-tone="dim"] {
+      color: var(--dim);
     }
 
     &[data-tone="text"] {
