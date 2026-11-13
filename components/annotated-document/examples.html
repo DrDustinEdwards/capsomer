@@ -1,0 +1,82 @@
+<section class="cap-specimen" aria-labelledby="s-edited">
+  <h2 id="s-edited">An edit with its notes</h2>
+  <div class="cap-annotated" data-cap="annotated" id="ad-edited">
+    <fieldset class="cap-seg cap-annotated-view">
+      <legend class="cap-sr-only">Markup view</legend>
+      <div class="cap-seg-options">
+        <label><input type="radio" name="ad-view" value="original" /> Original</label>
+        <label><input type="radio" name="ad-view" value="edited" checked /> Simple markup</label>
+        <label><input type="radio" name="ad-view" value="all" /> All markup</label>
+      </div>
+    </fieldset>
+    <div class="cap-annotated-layout">
+      <div class="cap-annotated-doc" role="region" aria-label="Document" tabindex="0">
+        <h3>Release notes</h3>
+        <p>
+          <mark data-note="n1" data-tone="info">This release <del>makes a lot of improvements to</del><ins>speeds up</ins> the export</mark>, which now finishes in
+          under a minute for most accounts. <ins>Exports you saved before the upgrade stay where they were.</ins>
+        </p>
+        <p>
+          The retention window is <mark data-note="n2" data-tone="ok"><del>about a month</del><ins>30 days</ins></mark>. After it ends, logs are deleted and
+          cannot be restored, <mark data-note="n3" data-tone="crit">so export anything you need to keep</mark>.
+        </p>
+        <p>Questions go to <mark data-note="n2" data-tone="ok">the address on the account</mark>.</p>
+      </div>
+      <ul class="cap-annotated-notes" aria-label="Notes">
+        <li>
+          <button type="button" class="cap-annotated-note" data-note="n1" data-tone="info">
+            <span class="cap-annotated-note-icon" aria-hidden="true">E</span>
+            <span class="cap-annotated-note-kind">Editorial</span>
+            <span class="cap-annotated-note-text">Say what got better, not that something did.</span>
+          </button>
+        </li>
+        <li>
+          <button type="button" class="cap-annotated-note" data-note="n2" data-tone="ok">
+            <span class="cap-annotated-note-icon" aria-hidden="true">P</span>
+            <span class="cap-annotated-note-kind">Precision</span>
+            <span class="cap-annotated-note-text">Give the exact window, and say where questions go.</span>
+          </button>
+        </li>
+        <li>
+          <button type="button" class="cap-annotated-note" data-note="n3" data-tone="crit">
+            <span class="cap-annotated-note-icon" aria-hidden="true">R</span>
+            <span class="cap-annotated-note-kind">Risk</span>
+            <span class="cap-annotated-note-text">A deletion that cannot be undone needs its warning in the same sentence.</span>
+          </button>
+        </li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-all">
+  <h2 id="s-all">Every change marked</h2>
+  <div class="cap-annotated" data-cap="annotated" id="ad-all">
+    <fieldset class="cap-seg cap-annotated-view">
+      <legend class="cap-sr-only">Markup view</legend>
+      <div class="cap-seg-options">
+        <label><input type="radio" name="ad-view-2" value="original" /> Original</label>
+        <label><input type="radio" name="ad-view-2" value="edited" /> Simple markup</label>
+        <label><input type="radio" name="ad-view-2" value="all" checked /> All markup</label>
+      </div>
+    </fieldset>
+    <div class="cap-annotated-layout">
+      <div class="cap-annotated-doc" role="region" aria-label="Document, every change" tabindex="0">
+        <p>The retention window is <mark data-note="m1" data-tone="ok"><del>about a month</del><ins>30 days</ins></mark>.</p>
+      </div>
+      <ul class="cap-annotated-notes" aria-label="Notes, every change">
+        <li>
+          <button type="button" class="cap-annotated-note" data-note="m1" data-tone="ok" data-force="hover">
+            <span class="cap-annotated-note-kind">Precision</span>
+            <span class="cap-annotated-note-text">Give the exact window.</span>
+          </button>
+        </li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<script type="module">
+  import { enhance } from "./annotated-document.ts";
+  enhance();
+</script>

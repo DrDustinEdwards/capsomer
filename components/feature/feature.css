@@ -1,0 +1,177 @@
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* Marketing feature blocks and cards. A block is one feature told at length: an eyebrow, a title,
+   a paragraph and a picture of it working (a preview panel), centered over the preview or beside
+   it. Blocks in a `.cap-features` stack alternate sides when `data-alternate` is set. A card is one
+   feature in a grid: an icon, a title and a line. Extracted from Foxhound's product sections and
+   its guide's scope cards. */
+@layer cap.components {
+  /* The stack is the container the blocks measure: a block lays itself out by the space it is given. */
+  .cap-features {
+    container-type: inline-size;
+    display: grid;
+    gap: var(--cap-features-gap, var(--space-9));
+  }
+
+  .cap-feature {
+    display: grid;
+    gap: var(--space-5);
+    min-inline-size: 0;
+  }
+
+  .cap-feature-text {
+    display: grid;
+    gap: var(--space-3);
+    align-content: start;
+    min-inline-size: 0;
+    max-inline-size: 40rem;
+  }
+
+  .cap-feature:not([data-align="start"]) .cap-feature-text {
+    justify-self: center;
+    text-align: center;
+  }
+
+  .cap-feature-title {
+    margin: 0;
+    color: var(--text);
+    font-family: var(--display);
+    font-size: var(--fs-h2);
+    font-weight: var(--weight-heading);
+    line-height: 1.25;
+    overflow-wrap: anywhere;
+    text-wrap: balance;
+  }
+
+  .cap-feature-body {
+    margin: 0;
+    color: var(--muted);
+    font-size: var(--fs-lead);
+    line-height: var(--leading);
+  }
+
+  /* The picture of the feature: a bordered surface with no padding of its own, so the preview
+     inside sets its own. */
+  .cap-feature-media {
+    min-inline-size: 0;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-l);
+    background: var(--surface);
+  }
+
+  /* A tall preview (a table) scrolls inside a fixed window: a region a keyboard can reach. */
+  .cap-feature-scroll {
+    max-block-size: var(--cap-feature-scroll-h, 30rem);
+    overflow: auto;
+    overscroll-behavior: contain;
+
+    &:focus-visible {
+      outline: var(--ring-width) solid var(--ring);
+      outline-offset: calc(-1 * var(--ring-width));
+    }
+  }
+
+  .cap-feature[data-variant="lifted"] {
+    padding: var(--space-6);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-xl);
+    background: var(--raised);
+    box-shadow: var(--card-shadow);
+  }
+
+  /* Beside: text on one side, the picture on the other, from 48rem of the stack's width. */
+  @container (min-width: 48rem) {
+    .cap-feature[data-layout="beside"] {
+      grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+      align-items: center;
+      gap: var(--space-7);
+
+      .cap-feature-text {
+        justify-self: start;
+        text-align: start;
+      }
+    }
+  }
+
+  .cap-features[data-alternate] > .cap-feature[data-layout="beside"]:nth-child(even) {
+    @container (min-width: 48rem) {
+      grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+
+      .cap-feature-text {
+        order: 2;
+      }
+    }
+  }
+
+  /* Cards: one feature each, in a grid of as many columns as fit. */
+  .cap-feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--cap-feature-card-min, 16rem)), 1fr));
+    gap: var(--space-3);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .cap-feature-card {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: var(--space-1) var(--space-3);
+    align-content: start;
+    padding: var(--pad-card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-l);
+    background: var(--surface);
+    min-inline-size: 0;
+
+    & > :not(.cap-feature-card-icon) {
+      grid-column: 2;
+    }
+
+    &:not(:has(.cap-feature-card-icon)) {
+      grid-template-columns: minmax(0, 1fr);
+
+      & > * {
+        grid-column: 1;
+      }
+    }
+  }
+
+  .cap-feature-card-icon {
+    grid-row: 1 / span 2;
+    display: inline-flex;
+    color: var(--accent-text);
+    padding-block-start: 0.15em;
+
+    & svg {
+      inline-size: 1.125rem;
+      block-size: 1.125rem;
+    }
+  }
+
+  .cap-feature-card-title {
+    margin: 0;
+    color: var(--text);
+    font-size: var(--text-size);
+    font-weight: 600;
+    line-height: 1.35;
+    overflow-wrap: anywhere;
+  }
+
+  .cap-feature-card-text {
+    margin: 0;
+    color: var(--muted);
+    font-size: var(--fs-detail);
+    line-height: var(--leading);
+    overflow-wrap: anywhere;
+  }
+}
+
+@media (forced-colors: active) {
+  .cap-feature-media,
+  .cap-feature-card,
+  .cap-feature[data-variant="lifted"] {
+    border-color: CanvasText;
+  }
+}

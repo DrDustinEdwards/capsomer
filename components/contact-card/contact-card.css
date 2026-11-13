@@ -1,0 +1,147 @@
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* Contact cards: how to reach someone, by kind. Each card has a heading and either a list of ways
+   (an email, a profile, a map link, each a link) or labeled numbers (a description list: what the
+   line is for, then its numbers). Cards sit in `.cap-contact-grid`; `data-variant="plain"` drops
+   the card's border and ground and draws a rule between cards instead, for a contact section on a
+   page's own ground. Extracted from BioScience Writers' contact page and julieedwards.info's
+   contact section. */
+@layer cap.components {
+  .cap-contact-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--cap-contact-card-min, 16rem)), 1fr));
+    gap: var(--space-4);
+  }
+
+  .cap-contact-card {
+    display: grid;
+    gap: var(--space-3);
+    align-content: start;
+    min-inline-size: 0;
+    padding: var(--pad-card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-l);
+    background: var(--surface);
+  }
+
+  .cap-contact-grid[data-variant="plain"] {
+    gap: var(--space-6);
+
+    .cap-contact-card {
+      padding: 0;
+      border: 0;
+      border-radius: 0;
+      background: none;
+    }
+
+    @media (min-width: 48rem) {
+      .cap-contact-card + .cap-contact-card {
+        padding-inline-start: var(--space-6);
+        border-inline-start: 1px solid var(--line);
+      }
+    }
+  }
+
+  .cap-contact-card-title {
+    margin: 0;
+    color: var(--text);
+    font-family: var(--display);
+    font-size: var(--fs-h3);
+    font-weight: var(--weight-heading);
+    line-height: 1.3;
+  }
+
+  .cap-contact-ways {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 12rem), 1fr));
+    gap: var(--space-2) var(--space-4);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .cap-contact-way {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-block-size: var(--target);
+    color: var(--accent-text);
+    font-weight: 600;
+    overflow-wrap: anywhere;
+    text-decoration: none;
+
+    & svg {
+      flex: none;
+      inline-size: 1em;
+      block-size: 1em;
+    }
+
+    &:hover {
+      text-decoration: underline;
+      text-underline-offset: 0.2em;
+    }
+  }
+
+  /* An address is several lines in one link (to a map) or in an `address` element. */
+  .cap-contact-address {
+    display: grid;
+    margin: 0;
+    font-style: normal;
+    color: var(--muted);
+    line-height: var(--leading);
+
+    &:is(a) {
+      color: var(--accent-text);
+      text-decoration: none;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+
+  .cap-contact-lines {
+    display: grid;
+    gap: var(--space-2);
+    margin: 0;
+
+    & > div {
+      display: grid;
+      gap: var(--space-1);
+    }
+
+    & dt {
+      color: var(--text);
+      font-weight: 600;
+      font-size: var(--fs-detail);
+    }
+
+    & dd {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0 var(--space-3);
+      margin: 0;
+      color: var(--muted);
+    }
+
+    /* The base link cues (weight, hover tint, visited) are the link's own; this adds the figures and a 24px target. */
+    & a {
+      display: inline-flex;
+      align-items: center;
+      min-block-size: 24px;
+      font-variant-numeric: tabular-nums;
+    }
+  }
+
+  .cap-contact-text {
+    margin: 0;
+    color: var(--muted);
+    line-height: var(--leading);
+  }
+}
+
+@media (forced-colors: active) {
+  .cap-contact-card {
+    border-color: CanvasText;
+  }
+}

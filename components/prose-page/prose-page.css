@@ -1,0 +1,47 @@
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* The frame of a page that is mostly words (about, careers, policies): a title band across the
+   page with the title and an optional line under it, then one reading column in the prose context.
+   Every interior page of a marketing site is this one frame. Extracted from BioScience Writers'
+   PageHero and page-prose column, used by 21 of its 22 routes. */
+@layer cap.components {
+  .cap-prose-page-head {
+    padding: var(--cap-prose-page-head-pad, var(--space-9)) var(--page-gutter);
+    color: var(--cap-prose-page-head-text, var(--text));
+    background: var(--cap-prose-page-head-bg, var(--sunken));
+    text-align: center;
+  }
+
+  .cap-prose-page-title {
+    margin: 0 auto;
+    max-inline-size: 40rem;
+    font-family: var(--cap-prose-page-title-face, var(--display));
+    font-size: var(--cap-prose-page-title-size, clamp(2rem, 1.4rem + 2.4vw, 3rem));
+    font-weight: var(--cap-prose-page-title-weight, var(--weight-title));
+    line-height: 1.15;
+    letter-spacing: var(--cap-prose-page-title-tracking, -0.01em);
+    text-transform: var(--cap-prose-page-title-case, none);
+    text-wrap: balance;
+    overflow-wrap: anywhere;
+  }
+
+  .cap-prose-page-lead {
+    margin: var(--space-4) auto 0;
+    max-inline-size: 42rem;
+    color: var(--cap-prose-page-lead-text, var(--muted));
+    font-size: var(--fs-lead);
+    line-height: var(--leading);
+  }
+
+  .cap-prose-page-body {
+    box-sizing: border-box;
+    inline-size: 100%;
+    max-inline-size: calc(var(--cap-prose-page-measure, 48rem) + 2 * var(--page-gutter));
+    margin-inline: auto;
+    padding: var(--space-8) var(--page-gutter);
+
+    & > :first-child {
+      margin-block-start: 0;
+    }
+  }
+}
