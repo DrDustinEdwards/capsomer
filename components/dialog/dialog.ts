@@ -299,6 +299,8 @@ export function wireDialog(dialog: HTMLDialogElement, opts: DialogOptions = {}):
   const onFirstFocus = () => {
     if (!["bottom", "right", "left"].includes(dialog.dataset.placement ?? "")) return;
     dialog.removeEventListener("focusin", onFirstFocus);
+    // A server build (Vite sets import.meta.env.SSR) drops the chunk: no sheet takes focus there.
+    if ((import.meta as { env?: { SSR?: boolean } }).env?.SSR) return;
     void import("./dialog-drag.ts").then((m) => {
       if (!gone) unDrag = m.wireDrag(dialog);
     });
