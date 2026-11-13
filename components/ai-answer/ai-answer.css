@@ -13,6 +13,9 @@
     border-radius: var(--radius-s);
     background: var(--accent-soft);
     color: var(--text);
+    /* The panel is the accent's tint, the base link hover's own: a link here lifts to the surface
+       instead, so the pointer still shows. */
+    --link-hover-bg: var(--surface);
 
     &:focus-visible {
       outline: var(--focus-width) solid var(--ring);
@@ -60,9 +63,6 @@
       padding: 0;
       list-style: decimal inside;
     }
-    & li + li {
-      margin-block-start: var(--space-2);
-    }
     & li::marker {
       color: var(--muted);
       font-variant-numeric: tabular-nums;
@@ -78,13 +78,21 @@
     text-transform: uppercase;
   }
 
+  /* A source or the follow-up stands alone on its line, so it is a whole target (WCAG 2.5.8). */
+  .cap-ai-answer-sources a,
+  .cap-ai-answer-followup a {
+    display: inline-flex;
+    align-items: center;
+    min-block-size: var(--target);
+  }
+
   .cap-ai-answer-kind {
     color: var(--muted);
     font-size: var(--fs-label);
   }
 
   .cap-ai-answer-followup {
-    margin: var(--space-4) 0 0;
+    margin: var(--space-3) 0 0;
     font-size: var(--fs-body);
   }
 
