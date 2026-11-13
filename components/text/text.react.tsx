@@ -1,29 +1,29 @@
-import { createElement, type ReactNode } from "react";
+import { createElement, type ComponentPropsWithRef } from "react";
 
-interface Base {
-  children?: ReactNode;
-  className?: string;
-  id?: string;
-}
+// The element's own props pass through (a ref, tabIndex, htmlFor, scope, an aria or data attribute, a handler). `as` is any
+// intrinsic element: the element is the outline, the role is the look.
+type Own<Tag extends keyof React.JSX.IntrinsicElements> = Omit<
+  ComponentPropsWithRef<Tag>,
+  "color"
+> & { as?: Tag };
 
-export interface TitleProps extends Base {
-  // The look, 1 the largest to 6; 4 when omitted. The element is the outline, so `as` is not tied to it.
+export type TitleProps = Own<"h2"> & {
+  // The look, 1 the largest to 6; 4 when omitted. The heading level is `as` (h2 when omitted).
   size?: 1 | 2 | 3 | 4 | 5 | 6;
-  // The heading element: h2 when omitted.
-  as?: "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "p" | "div";
-}
+  as?: keyof React.JSX.IntrinsicElements;
+};
 
-export interface TextProps extends Base {
+export type TextProps = Own<"p"> & {
   size?: "tiny" | "small" | "lead";
   tone?: "muted" | "dim" | "ink" | "accent" | "ok" | "crit";
   weight?: "strong";
   face?: "ui" | "mono" | "prose" | "display";
   align?: "center" | "end";
   // The element: a paragraph when omitted.
-  as?: "p" | "span" | "div" | "li" | "dd" | "dt" | "small" | "strong" | "em";
-}
+  as?: keyof React.JSX.IntrinsicElements;
+};
 
-// The HTML contract in text.md. Any other attribute (a ref, an aria or data attribute) is passed through.
+// The HTML contract in text.md.
 export function Title({ size, as = "h2", className, ...rest }: TitleProps) {
   return createElement(as, {
     ...rest,
