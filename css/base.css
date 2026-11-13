@@ -3,6 +3,8 @@
 
 /* The utility classes (.cap-sr-only and friends), also exported alone as capsomer/utilities.css. */
 @import "./utilities.css";
+/* The link system's base (every link's cues), also exported alone as capsomer/links.css. */
+@import "./links.css";
 
 /* Element defaults every component assumes. Layered, so an app that keeps its own body
    or link styles wins without a fight. */
@@ -58,59 +60,11 @@
     font-size: var(--text-size);
     line-height: var(--leading);
   }
-  /* A link is told by weight, not a line (DEFAULTS.md). Every link takes the link color and the
-     focus ring; a text link (no component class, or a kind of the link system: components/link)
-     is semibold, turns the visited color once followed (outside a nav), and under the pointer darkens on a soft
-     tint, which a press makes stronger. The tint is a background and a 2px shadow of the same
-     color, cloned onto each line a link wraps to. A link that is a control is drawn by its component. */
-  a {
-    color: var(--accent-text);
-    text-decoration: var(--link-decoration);
-    &:is(:not([class*="cap-"]), [data-link], .cap-footnote-ref) {
-      font-weight: var(--link-weight);
-    }
-    /* Not in a nav: a menu is told by its place, and draws its own tint (link.md). */
-    &[href]:is(:not([class*="cap-"]), [data-link], .cap-footnote-ref):not(nav a) {
-      border-radius: 3px;
-      -webkit-box-decoration-break: clone;
-      box-decoration-break: clone;
-      /* :visited may set colors only, and getComputedStyle hides it, so a specimen forces it. */
-      &:visited,
-      &[data-force="visited"] {
-        color: var(--accent-visited);
-      }
-      &:hover,
-      &[data-force="hover"] {
-        color: var(--accent-hover);
-        background: var(--link-hover-bg);
-        box-shadow: 0 0 0 var(--link-tint-pad) var(--link-hover-bg);
-      }
-      &:active,
-      &[data-force="pressed"] {
-        color: var(--accent-hover);
-        background: var(--link-pressed-bg);
-        box-shadow: 0 0 0 var(--link-tint-pad) var(--link-pressed-bg);
-      }
-      /* Forced colors paint no tint, so the pointer gets the system's own cue. */
-      @media (forced-colors: active) {
-        &:hover {
-          text-decoration: underline;
-        }
-      }
-    }
-    &:hover {
-      color: var(--accent-hover);
-    }
-    @media (prefers-reduced-motion: no-preference) {
-      transition:
-        color var(--dur-fast) var(--ease-out),
-        background-color var(--dur-fast) var(--ease-out),
-        box-shadow var(--dur-fast) var(--ease-out);
-    }
-  }
   /* A trailing arrow in a link or button. A site's --arrow-rest and --arrow-shift (shown and in place
      by default) can hide it until the pointer or focus arrives, when it slides in. */
   .cap-arrow {
+    /* The size an Icon (components/icons, a later layer) reads, so an Icon drawn as the arrow keeps it. */
+    --icon-size: 1.1em;
     inline-size: 1.1em;
     block-size: 1.1em;
     flex: none;
@@ -224,6 +178,13 @@
       opacity: 0;
       transform: translateY(6px);
     }
+  }
+}
+
+/* One turn, for every spinner: the skeleton's arc, a busy button's ring, the player's loading icon. */
+@keyframes cap-spin {
+  to {
+    rotate: 1turn;
   }
 }
 

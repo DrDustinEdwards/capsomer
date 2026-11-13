@@ -1,7 +1,8 @@
 // The theme builder at /make/, written into site/make.html at build (site/vite.config.ts). The page is
 // whole HTML; site/make-main.ts runs it: it builds the theme from the settings with Capsomer's own
 // generator (tokens/palette-core.mjs), paints the two previews, checks every pair and writes the files.
-import { FOOTER, band, esc, header, runningHead } from "./home.ts";
+import { escapeHtml as esc } from "@dustinedwards/site-runtime/html";
+import { FOOTER, band, header, runningHead } from "./home.ts";
 import { codeRegion } from "./markdown.ts";
 import {
   DEFAULT,

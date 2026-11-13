@@ -4,7 +4,7 @@
 // the active option, Enter runs it, Esc closes. Ctrl K, Cmd K and "/" open it, through the
 // shortcut registry. Every command shows its shortcut. No framework; the React wrapper uses
 // the same pure functions.
-import { closeDialog, openDialog, uid, wireDialog } from "../dialog/dialog.ts";
+import { closeDialog, openDialog, wireDialog } from "../dialog/dialog.ts";
 import {
   createListbox,
   filterCommands as filterItems,
@@ -14,6 +14,7 @@ import {
   type Listbox,
 } from "../listbox/listbox.ts";
 import { keysFragment, register } from "../shortcuts/shortcuts.ts";
+import { readStored, uid, writeStored } from "../hooks/hooks.ts";
 
 export interface Command {
   id: string;
@@ -26,7 +27,79 @@ export interface Command {
   // A short note beside the label, in words, for what the command will do or ask: "asks a
   // reason", "preview first", an item's state. Read by a screen reader after the label.
   hint?: string;
+  // A line under the label from a search result's text: the words around the match, with the
+  // typed words marked.
+  snippet?: string;
   run: () => void;
+}
+
+// Commands that go to each page of an app's menu ("Go to Media"), found by their group too, so
+// the menu and the command menu never list different pages. `go` is the router's navigate.
+export function navCommands(
+  nav: ReadonlyArray<{ id: string; label: string; href: string; group?: string }>,
+  go: (href: string) => void,
+  group = "Go to",
+): Command[] {
+  return nav.map((e) => ({
+    id: `go-${e.id}`,
+    label: `Go to ${e.label}`,
+    group,
+    keywords: e.group ? [e.group, e.label] : [e.label],
+    run: () => go(e.href),
+  }));
+}
+
+// A text's pieces with the typed words marked, for a snippet: every case-insensitive match of
+// a word of the query, longest words first, never overlapping.
+export function markQuery(text: string, query: string): Array<{ text: string; mark: boolean }> {
+  const words = [
+    ...new Set(
+      query
+        .toLowerCase()
+        .split(/\s+/)
+        .filter((w) => w.length > 1),
+    ),
+  ].sort((a, b) => b.length - a.length);
+  if (!words.length) return [{ text, mark: false }];
+  const lower = text.toLowerCase();
+  const out: Array<{ text: string; mark: boolean }> = [];
+  let at = 0;
+  while (at < text.length) {
+    let next = -1;
+    let len = 0;
+    for (const w of words) {
+      const i = lower.indexOf(w, at);
+      if (i >= 0 && (next < 0 || i < next || (i === next && w.length > len))) {
+        next = i;
+        len = w.length;
+      }
+    }
+    if (next < 0) {
+      out.push({ text: text.slice(at), mark: false });
+      break;
+    }
+    if (next > at) out.push({ text: text.slice(at, next), mark: false });
+    out.push({ text: text.slice(next, next + len), mark: true });
+    at = next + len;
+  }
+  return out;
+}
+
+// The commands a person ran last, newest first, kept per site in localStorage under `key`
+// (ids only; a command no longer offered drops out). Shown, as "Recent", while nothing is typed.
+export const RECENT_MAX = 5;
+export function readRecent(key: string): string[] {
+  try {
+    const v = JSON.parse(readStored(key) ?? "[]");
+    return Array.isArray(v) ? v.filter((x): x is string => typeof x === "string") : [];
+  } catch {
+    return [];
+  }
+}
+export function rememberRecent(key: string, id: string): string[] {
+  const next = [id, ...readRecent(key).filter((x) => x !== id)].slice(0, RECENT_MAX);
+  writeStored(key, JSON.stringify(next));
+  return next;
 }
 
 // Every way to stop something lives in one group, so typing "stop" lists them all. A stop
@@ -81,6 +154,41 @@ export interface MenuOptions {
   label?: string;
   // Shown in the empty input; "Search commands" by default.
   placeholder?: string;
+  // Live results as the person types, as the React menu's `search`: see AttachOptions.
+  search?: AttachOptions["search"];
+  searchDelay?: number;
+  // Recents and Ask, as the React menu's: see AttachOptions.
+  recentKey?: string;
+  ask?: AttachOptions["ask"];
+}
+
+export interface AttachOptions {
+  // Results from an async source as the person types (books, people, records). Called with the
+  // trimmed query and an AbortSignal, `searchDelay` ms (180) after the last key, never for an
+  // empty query; the signal aborts when the query changes or the menu closes. Its commands come
+  // after the matching commands, in their own groups and order, unfiltered; their ids must not
+  // repeat a command's. The last results stay until new ones arrive; a failed search keeps them.
+  search?: (query: string, signal: AbortSignal) => Promise<Command[]>;
+  searchDelay?: number;
+  // Remember the commands run, per site, under this localStorage key, and list the last five as
+  // "Recent" while nothing is typed. In markup: data-recent-key on the dialog.
+  recentKey?: string;
+  // With words typed, a last option "Ask about “…”" hands them on (an assistant, a site
+  // search). In markup: data-ask (its words, "Ask about" when empty) and data-ask-href.
+  ask?: { label?: string; run: (query: string) => void };
+}
+
+// Fills a snippet with its text, the typed words in <mark>; built from nodes, never from HTML.
+export function markSnippet(el: HTMLElement, query: string): void {
+  const parts = markQuery(el.textContent ?? "", query);
+  el.replaceChildren(
+    ...parts.map((p) => {
+      if (!p.mark) return document.createTextNode(p.text);
+      const m = document.createElement("mark");
+      m.textContent = p.text;
+      return m;
+    }),
+  );
 }
 
 const SEARCH_ICON =
@@ -156,6 +264,14 @@ export function buildMenu(commands: Command[], opts: MenuOptions = {}): HTMLDial
       const text = document.createElement("span");
       text.className = "cap-option-label";
       text.textContent = c.label;
+      if (c.snippet) {
+        // The filter reads the label alone, as the React menu's does.
+        o.dataset.label = c.label;
+        const snip = document.createElement("span");
+        snip.className = "cap-cmd-snippet";
+        snip.textContent = c.snippet;
+        text.append(snip);
+      }
       o.append(text);
       if (c.shortcut || c.hint) {
         const keys = document.createElement("span");
@@ -217,8 +333,13 @@ export interface Attached {
 
 // Wires one menu dialog: the shared dialog's rules (Esc, the backdrop, focus handed back), the
 // shared listbox over the commands (filtering, the active option, Enter, a click), and Ctrl K to
-// close. `run` is called with the chosen option after the dialog has closed.
-export function attach(dialog: HTMLDialogElement, run: (option: HTMLElement) => void): Attached {
+// close. `run` is called with the chosen option after the dialog has closed, and with its command
+// when the option is a live result (`opts.search`).
+export function attach(
+  dialog: HTMLDialogElement,
+  run: (option: HTMLElement, found?: Command) => void,
+  opts: AttachOptions = {},
+): Attached {
   const unwireBase = wireDialog(dialog);
   const input = dialog.querySelector<HTMLInputElement>("[role='combobox']");
   const list = dialog.querySelector<HTMLElement>("[role='listbox']");
@@ -235,6 +356,8 @@ export function attach(dialog: HTMLDialogElement, run: (option: HTMLElement) => 
     } else if (o.getAttribute("aria-selected") === "false") o.removeAttribute("aria-selected");
   }
 
+  // A live search not yet answered: the list is busy, and an empty one says Searching.
+  let busy = false;
   const lb: Listbox = createListbox(list, {
     input,
     empty,
@@ -242,16 +365,149 @@ export function attach(dialog: HTMLDialogElement, run: (option: HTMLElement) => 
     filterInput: true,
     onFilter(count, query) {
       input.setAttribute("aria-expanded", String(count > 0));
-      if (empty) empty.textContent = count === 0 && query.trim() ? emptyText(query) : "";
+      if (empty)
+        empty.textContent = count > 0 || !query.trim() ? "" : busy ? SEARCHING : emptyText(query);
     },
   });
   list.dataset.capReady = "";
 
+  const recentKey = opts.recentKey ?? dialog.dataset.recentKey;
   const choose = (o: HTMLElement | null | undefined) => {
     if (!o) return;
+    const typed = input.value.trim();
     dialog.close();
-    run(o);
+    if (o.dataset.capAsk !== undefined) {
+      opts.ask?.run(typed);
+      return;
+    }
+    const cmd = o.dataset.capCommand ?? "";
+    if (recentKey && cmd) rememberRecent(recentKey, cmd);
+    run(o, live.get(cmd));
   };
+
+  // Recent (while nothing is typed: copies of the last commands run, first) and Ask (while words
+  // are typed: one option, last). Rebuilt on every key, before the listbox's filter runs again.
+  const extras = () => {
+    for (const g of list.querySelectorAll("[data-recent], [data-ask-group]")) g.remove();
+    const typed = input.value.trim();
+    for (const s of list.querySelectorAll<HTMLElement>(".cap-cmd-snippet")) markSnippet(s, typed);
+    if (recentKey && !typed) {
+      const copies = readRecent(recentKey).flatMap((rid) => {
+        const o = list.querySelector<HTMLElement>(
+          `[role='option'][data-cap-command="${CSS.escape(rid)}"]`,
+        );
+        if (!o || o.closest("[data-live]")) return [];
+        const copy = o.cloneNode(true) as HTMLElement;
+        copy.id = `${o.id}-recent`;
+        copy.dataset.group = "Recent";
+        copy.hidden = false;
+        delete copy.dataset.active;
+        return [copy];
+      });
+      if (copies.length) list.prepend(extraGroup("Recent", "data-recent", copies));
+    }
+    if (opts.ask && typed) {
+      const o = document.createElement("div");
+      o.className = "cap-option";
+      o.id = `${list.id}-ask`;
+      o.setAttribute("role", "option");
+      o.dataset.capAsk = "";
+      o.dataset.group = "Ask";
+      o.dataset.keywords = typed.toLowerCase();
+      const text = document.createElement("span");
+      text.className = "cap-option-label";
+      text.textContent = `${opts.ask.label ?? "Ask about"} “${typed}”`;
+      o.append(text);
+      list.append(extraGroup("Ask", "data-ask-group", [o]));
+    }
+  };
+  const extraGroup = (name: string, mark: string, options: HTMLElement[]) => {
+    const g = document.createElement("div");
+    g.className = "cap-listbox-group";
+    g.setAttribute("role", "group");
+    g.setAttribute(mark, "");
+    const title = document.createElement("div");
+    title.className = "cap-listbox-label";
+    title.id = `${list.id}-${mark}`;
+    title.setAttribute("role", "presentation");
+    title.textContent = name;
+    g.setAttribute("aria-labelledby", title.id);
+    g.append(title, ...options);
+    return g;
+  };
+  const hasExtras = Boolean(recentKey || opts.ask || list.querySelector(".cap-cmd-snippet"));
+  const onExtras = () => {
+    extras();
+    lb.filter(input.value);
+  };
+
+  // The live results: groups built as buildMenu builds them, marked data-live, after the menu's
+  // own. Each keeps the query as its keyword, so the menu's filter shows it whatever its words.
+  const live = new Map<string, Command>();
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  let pending: AbortController | null = null;
+  const setBusy = (next: boolean) => {
+    busy = next;
+    if (next) list.setAttribute("aria-busy", "true");
+    else list.removeAttribute("aria-busy");
+  };
+  const show = (commands: Command[], query: string) => {
+    for (const g of list.querySelectorAll("[data-live]")) g.remove();
+    live.clear();
+    for (const g of buildMenu(commands).querySelectorAll<HTMLElement>(".cap-listbox-group")) {
+      g.dataset.live = "";
+      for (const o of g.querySelectorAll<HTMLElement>("[role='option']"))
+        o.dataset.keywords = query.toLowerCase();
+      list.append(g);
+    }
+    for (const c of commands) live.set(c.id, c);
+    if (hasExtras || commands.some((c) => c.snippet)) extras();
+    lb.filter(input.value);
+  };
+  const stopSearch = () => {
+    clearTimeout(timer);
+    pending?.abort();
+    pending = null;
+  };
+  const startSearch = () => {
+    const ask = opts.search;
+    if (!ask) return;
+    stopSearch();
+    const q = input.value.trim();
+    if (!q) {
+      setBusy(false);
+      show([], "");
+      return;
+    }
+    const ctrl = new AbortController();
+    pending = ctrl;
+    setBusy(true);
+    lb.filter(input.value);
+    timer = setTimeout(() => {
+      ask(q, ctrl.signal).then(
+        (commands) => {
+          if (ctrl.signal.aborted) return;
+          setBusy(false);
+          show(commands, q);
+        },
+        () => {
+          if (ctrl.signal.aborted) return;
+          setBusy(false);
+          lb.filter(input.value);
+        },
+      );
+    }, opts.searchDelay ?? 180);
+  };
+  const onClose = () => {
+    stopSearch();
+    setBusy(false);
+  };
+  // After the listbox's own input listener, so its filter has run.
+  if (hasExtras) input.addEventListener("input", onExtras);
+  if (opts.search) {
+    input.addEventListener("input", startSearch);
+    dialog.addEventListener("close", onClose);
+  }
   const onSelect = (e: Event) => choose((e as CustomEvent<{ option: HTMLElement }>).detail.option);
   const onKey = (e: KeyboardEvent) => {
     // The key that opened it closes it.
@@ -271,7 +527,9 @@ export function attach(dialog: HTMLDialogElement, run: (option: HTMLElement) => 
     open(query = "", opener: Element | null = document.activeElement) {
       if (dialog.open) return;
       input.value = query;
+      if (hasExtras) extras();
       lb.filter(query);
+      startSearch();
       openDialog(dialog, opener, { focus: input });
     },
     close() {
@@ -281,6 +539,10 @@ export function attach(dialog: HTMLDialogElement, run: (option: HTMLElement) => 
     detach() {
       list.removeEventListener("cap:option-select", onSelect);
       input.removeEventListener("keydown", onKey);
+      input.removeEventListener("input", startSearch);
+      input.removeEventListener("input", onExtras);
+      dialog.removeEventListener("close", onClose);
+      stopSearch();
       lb.detach();
       unwireBase();
     },
@@ -315,7 +577,12 @@ export function createCommandMenu(commands: Command[], opts: MenuOptions = {}): 
   const dialog = buildMenu(commands, opts);
   document.body.append(dialog);
   const byId = new Map(commands.map((c) => [c.id, c]));
-  const a = attach(dialog, (o) => byId.get(o.dataset.capCommand ?? "")?.run());
+  const a = attach(dialog, (o, found) => (found ?? byId.get(o.dataset.capCommand ?? ""))?.run(), {
+    search: opts.search,
+    searchDelay: opts.searchDelay,
+    recentKey: opts.recentKey,
+    ask: opts.ask,
+  });
   current = a;
   ensureShortcut();
   return {
@@ -330,24 +597,47 @@ export function createCommandMenu(commands: Command[], opts: MenuOptions = {}): 
 }
 
 // Wires a menu written in markup: choosing an option follows its data-href, or dispatches a
-// "cap-command" event (detail: { id }) on the dialog. Also wires every
-// [data-cap-command-open] button under root, and binds the keys.
+// "cap-command" event (detail: { id }) on the dialog. With data-recent-key it lists recents;
+// with data-ask, Ask follows data-ask-href with the words in `q`, or dispatches "cap-command"
+// with { id: "ask", query }. Also wires every [data-cap-command-open] button under root, and
+// binds the keys.
 export function enhance(root: ParentNode = document): () => void {
   const undo: Array<() => void> = [];
   for (const dialog of root.querySelectorAll<HTMLDialogElement>(
     "dialog.cap-cmd[data-cap='command-menu']:not([data-cap-ready])",
   )) {
-    const a = attach(dialog, (o) => {
-      const href = o.dataset.href;
-      if (href) location.assign(href);
-      else
-        dialog.dispatchEvent(
-          new CustomEvent("cap-command", {
-            bubbles: true,
-            detail: { id: o.dataset.capCommand ?? o.id },
-          }),
-        );
-    });
+    const askHref = dialog.dataset.askHref;
+    const ask =
+      dialog.dataset.ask === undefined
+        ? undefined
+        : {
+            label: dialog.dataset.ask || undefined,
+            run: (query: string) => {
+              if (askHref) {
+                const url = new URL(askHref, location.href);
+                url.searchParams.set("q", query);
+                location.assign(url);
+              } else
+                dialog.dispatchEvent(
+                  new CustomEvent("cap-command", { bubbles: true, detail: { id: "ask", query } }),
+                );
+            },
+          };
+    const a = attach(
+      dialog,
+      (o) => {
+        const href = o.dataset.href;
+        if (href) location.assign(href);
+        else
+          dialog.dispatchEvent(
+            new CustomEvent("cap-command", {
+              bubbles: true,
+              detail: { id: o.dataset.capCommand ?? o.id },
+            }),
+          );
+      },
+      { ask },
+    );
     current = a;
     undo.push(a.detach);
   }

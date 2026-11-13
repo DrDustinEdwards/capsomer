@@ -128,11 +128,8 @@
     background: var(--sunken);
   }
 
+  /* A .cap-field-row; its fields share the width. */
   .cap-people-change {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: end;
-    gap: var(--space-3) var(--space-4);
     white-space: normal;
 
     & .cap-field {
@@ -209,11 +206,10 @@
     color: var(--muted);
   }
 
+  /* Its fields side by side: .cap-fields (field.css) at these sizes. */
   .cap-people-add-fields {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
-    align-items: end;
-    gap: var(--space-4);
+    --fields-min: 14rem;
+    --fields-gap: var(--space-4);
   }
 
   /* One person's history: a dated list of what changed and what Cloudflare said. */
@@ -288,6 +284,53 @@
     .cap-people-card,
     .cap-people-result {
       border-color: CanvasText;
+    }
+  }
+
+  /* The role grid (RoleGrid): people as rows, scopes as columns, a role select in each cell. The
+     person stays in view while the scopes scroll sideways. */
+  .cap-role-grid {
+    & th[scope="row"] {
+      position: sticky;
+      inset-inline-start: 0;
+      z-index: 1;
+      min-inline-size: 12rem;
+      background: var(--surface);
+    }
+    & td {
+      white-space: nowrap;
+    }
+    /* A role select keeps its longest word whole; the table scrolls sideways instead. */
+    & td > * {
+      min-inline-size: 8.5rem;
+    }
+  }
+  .cap-role-person {
+    display: block;
+  }
+  .cap-role-email {
+    display: block;
+    color: var(--muted);
+    font-size: var(--fs-detail);
+  }
+  .cap-role-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-1);
+    margin-block-start: var(--space-1);
+
+    &:empty {
+      display: none;
+    }
+  }
+  .cap-role-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin-block-start: var(--space-2);
+
+    & form {
+      display: contents;
     }
   }
 }

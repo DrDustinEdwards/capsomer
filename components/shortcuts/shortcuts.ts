@@ -4,7 +4,8 @@
 // or Alt always work. The choice lives on <html> as data-cap-single-keys, the one switch every
 // component's own single keys read. No framework; the React wrapper uses the same registry.
 import { readPref, writePref } from "../shell/shell.ts";
-import { openDialog, uid, wireDialog } from "../dialog/dialog.ts";
+import { openDialog, wireDialog } from "../dialog/dialog.ts";
+import { uid } from "../hooks/hooks.ts";
 
 export interface Shortcut {
   // "r", "?", "g o" (a sequence: g, then o within 1200 ms), "Mod+k" (Ctrl, or Cmd on a
@@ -137,7 +138,8 @@ export function isImeEnter(e: Pick<KeyboardEvent, "key" | "isComposing" | "keyCo
 export function isTyping(target: EventTarget | null): boolean {
   if (!(target instanceof Element)) return false;
   if (target instanceof HTMLInputElement) return !NOT_TYPING.has(target.type);
-  if (target.closest("textarea, select")) return true;
+  if (target.closest("textarea, select, [role='textbox'], [role='combobox'], [role='searchbox']"))
+    return true;
   return target instanceof HTMLElement && target.isContentEditable;
 }
 

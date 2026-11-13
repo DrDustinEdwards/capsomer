@@ -1,0 +1,54 @@
+<section class="cap-specimen" aria-labelledby="s-units">
+  <h2 id="s-units">A quantity and a unit system</h2>
+  <form class="cap-scale-control cap-field-row" id="sc-units" method="get" action="./states.html" aria-label="Scale this recipe">
+    <div class="cap-field">
+      <label class="cap-field-label" for="sc-servings">Servings</label>
+      <div class="cap-input-group">
+        <div class="cap-input-addon" data-align="inline-start">
+          <button type="button" class="cap-btn" data-size="xs" data-variant="quiet" data-icon-only data-cap-part="step-down" tabindex="-1" aria-label="Decrease servings" hidden>&minus;</button>
+        </div>
+        <input class="cap-input" id="sc-servings" name="servings" type="number" min="1" max="1000" step="1" value="4" />
+        <div class="cap-input-addon" data-align="inline-end">
+          <button type="button" class="cap-btn" data-size="xs" data-variant="quiet" data-icon-only data-cap-part="step-up" tabindex="-1" aria-label="Increase servings" hidden>+</button>
+        </div>
+      </div>
+    </div>
+    <div class="cap-field">
+      <label class="cap-field-label" for="sc-system">Units</label>
+      <div class="cap-select-wrap" data-cap="select">
+        <select class="cap-select" id="sc-system" name="units">
+          <option value="" selected>As written</option>
+          <option value="metric">Metric</option>
+          <option value="us">US customary</option>
+        </select>
+      </div>
+    </div>
+    <button type="submit" class="cap-btn" data-variant="secondary">Show</button>
+  </form>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-count">
+  <h2 id="s-count">A count alone, at its least</h2>
+  <form class="cap-scale-control cap-field-row" id="sc-count" method="get" action="./states.html" aria-label="Scale the print run">
+    <div class="cap-field">
+      <label class="cap-field-label" for="sc-copies">Copies</label>
+      <div class="cap-input-group">
+        <div class="cap-input-addon" data-align="inline-start">
+          <button type="button" class="cap-btn" data-size="xs" data-variant="quiet" data-icon-only data-cap-part="step-down" tabindex="-1" aria-label="Decrease copies" hidden>&minus;</button>
+        </div>
+        <input class="cap-input" id="sc-copies" name="n" type="number" min="1" max="1000" step="1" value="1" />
+        <div class="cap-input-addon" data-align="inline-end">
+          <button type="button" class="cap-btn" data-size="xs" data-variant="quiet" data-icon-only data-cap-part="step-up" tabindex="-1" aria-label="Increase copies" hidden>+</button>
+        </div>
+      </div>
+    </div>
+    <button type="submit" class="cap-btn" data-variant="secondary">Scale</button>
+  </form>
+</section>
+
+<script type="module">
+  import { enhance as fields } from "../field/field.ts";
+  import { enhance as selects } from "../select/select.ts";
+  fields();
+  selects();
+</script>

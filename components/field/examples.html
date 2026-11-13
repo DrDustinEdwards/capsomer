@@ -221,6 +221,39 @@
   </div>
 </section>
 
+<section class="cap-specimen" aria-labelledby="s-range-field">
+  <h2 id="s-range-field">Slider with its readout and the words at its ends</h2>
+  <div class="cap-field">
+    <label class="cap-field-label" for="rf-mrr"><span class="cap-range-field-head">Monthly revenue <span class="cap-range-field-value" aria-hidden="true">$25,000</span></span></label>
+    <input class="cap-range" id="rf-mrr" type="range" min="1000" max="500000" step="1000" value="25000" aria-valuetext="$25,000" />
+    <div class="cap-range-field-ends" aria-hidden="true"><span>$1,000</span><span>$500,000</span></div>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-action">
+  <h2 id="s-action">A field with its action, help under the control, and money</h2>
+  <div class="cap-field">
+    <label class="cap-field-label" for="fa-invite">Invite by email</label>
+    <div class="cap-field-row">
+      <input class="cap-input" id="fa-invite" type="email" autocomplete="off" aria-describedby="fa-invite-help" />
+      <button type="button" class="cap-btn">Send invite</button>
+    </div>
+    <p class="cap-field-help" id="fa-invite-help">They get a link that works for seven days.</p>
+  </div>
+  <div class="cap-field">
+    <label class="cap-field-label" for="fa-fee">Registration fee</label>
+    <div class="cap-input-group">
+      <div class="cap-input-addon" data-align="inline-start"><span class="cap-input-group-text" aria-hidden="true">$</span></div>
+      <input class="cap-input" id="fa-fee" type="text" inputmode="decimal" autocomplete="off" value="25" />
+    </div>
+  </div>
+  <div class="cap-field">
+    <label class="cap-field-label" for="fa-opens">Registration opens</label>
+    <p class="cap-field-help" id="fa-opens-help">In America/Chicago.</p>
+    <input class="cap-input" id="fa-opens" type="datetime-local" value="2026-12-01T09:00" aria-describedby="fa-opens-help" />
+  </div>
+</section>
+
 <section class="cap-specimen" aria-labelledby="s-password">
   <h2 id="s-password">Password with Show and Hide</h2>
   <div class="cap-field">

@@ -1,5 +1,8 @@
 /* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+/* The file kind, the meta and the rule that draws every kind's after mark, which a component's
+   own file link needs without the rest of this file (link-file.css). */
+@import "../link-file/link-file.css";
 
 /* The link system (link.md). css/base.css gives every link its four cues (the link color,
    semibold, the hover tint, the focus ring) and the visited and pressed states; this file gives
@@ -8,7 +11,8 @@
    mark is hidden from assistive technology: alt text "" on a glyph, no content on a drawn icon; the
    words a mark stands for are in the contract (visually hidden text, or the meta). */
 @layer cap.components {
-  /* A kind names its glyph in --link-after or --link-before; two rules of no specificity draw them,
+  /* A kind names its glyph in --link-after or --link-before; two rules of no specificity draw them
+     (the after one is link-file.css's),
      so a component's own ::before and ::after always win. A fallback (no data-link) speaks its
      words as alt text, since its author wrote none. */
   /* An outside site's own icon (.cap-link-icon, below) replaces the arrow. Prelum puts rel="external"
@@ -23,7 +27,6 @@
   a:not([data-link], [class*="cap-"], [rel~="external"])[target="_blank"] {
     --link-alt: ", opens in a new tab";
   }
-  a[data-link="file"],
   a:not([data-link], [class*="cap-"]):is([download], [href$=".pdf" i], [href$=".zip" i], [href$=".csv" i], [href$=".epub" i], [href$=".docx" i], [href$=".xlsx" i], [href$=".pptx" i]) {
     --link-after: "\2193";
   }
@@ -42,27 +45,11 @@
   a:not([data-link], [class*="cap-"])[href^="tel:" i] {
     --link-before: "\260E\FE0E";
   }
-  :where(a[data-link], a:not([class*="cap-"]))::after {
-    content: var(--link-after) / var(--link-alt, "");
-    margin-inline-start: 0.2em;
-    font-weight: 400;
-    font-variant-emoji: text;
-  }
   :where(a[data-link], a:not([class*="cap-"]))::before {
     content: var(--link-before) / "";
     margin-inline-end: 0.25em;
     font-weight: 400;
     font-variant-emoji: text;
-  }
-
-  /* The meta: a file's format and size, or a language's name, as a sibling after the link (a
-     space between), in the mono face, smaller and muted. Outside the link, so the link's name
-     stays the words and the meta is read after it. */
-  .cap-link-meta {
-    color: var(--muted);
-    font: 400 0.75em / 1 var(--mono);
-    letter-spacing: -0.01em;
-    white-space: nowrap;
   }
 
   /* An outside site's icon, fetched by the site (Prelum), as the link's first child: the family
@@ -74,7 +61,7 @@
     block-size: 1em;
     margin-inline-end: 0.3em;
     vertical-align: -0.14em;
-    border-radius: 3px;
+    border-radius: var(--radius-s);
     object-fit: contain;
     background: light-dark(transparent, var(--text));
     padding: 1px;

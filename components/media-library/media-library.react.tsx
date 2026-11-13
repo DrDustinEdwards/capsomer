@@ -1,29 +1,24 @@
 import {
   useEffect,
-  useId,
   useMemo,
   useRef,
   useState,
   type FormEvent,
   type KeyboardEvent,
   useLayoutEffect,
-  useSyncExternalStore,
 } from "react";
 import { CommandMenu, type Command } from "../command-menu/command-menu.react.tsx";
-import type {
-  ContentLabels,
-  IntentResult,
-  MediaData,
-  MediaQuery,
-  PickedMedia,
-  SubmitIntent,
-} from "../content/content.ts";
 import {
-  ContentBulkBar,
-  PlainForm,
-  useIntents,
-  type FormComponent,
-} from "../content/content.react.tsx";
+  nounsOf,
+  type ContentLabels,
+  type IntentResult,
+  type MediaData,
+  type MediaQuery,
+  type PickedMedia,
+  type SubmitIntent,
+} from "../content/content.ts";
+import { ContentBulkBar, useIntents } from "../content/content.react.tsx";
+import { PlainForm, type FormComponent } from "../plain-form/plain-form.react.tsx";
 import { Disclosure } from "../disclosure/disclosure.react.tsx";
 import { DropZone } from "../drop-zone/drop-zone.react.tsx";
 import { Empty } from "../empty/empty.react.tsx";
@@ -33,7 +28,8 @@ import {
   useMediaMode,
   type MediaFields,
 } from "../media/media.react.tsx";
-import { bareType, byteSize, copyText, CROPPABLE, type MediaRecord } from "../media/media.ts";
+import { bareType, byteSize, CROPPABLE, type MediaRecord } from "../media/media.ts";
+import { copyText } from "../copy/copy.ts";
 import { acceptLabel, formatBytes } from "../drop-zone/drop-zone.ts";
 import { readPref, writePref } from "../shell/shell.ts";
 import { Keys, useShortcut } from "../shortcuts/shortcuts.react.tsx";
@@ -52,7 +48,6 @@ import {
   lensChips,
   mediaActions,
   mediaHref,
-  nounsOf,
   ORIENTATION_WORDS,
   oversized,
   pickable,
@@ -63,9 +58,7 @@ import {
   type KitMediaChanges,
   type MediaSort,
 } from "./media-library.ts";
-
-// For useSyncExternalStore's hydration flag: nothing to subscribe to.
-const noSubscribe = () => () => {};
+import { useCleanId, useHydrated } from "../hooks/hooks.react.tsx";
 
 // The viewer's last layout and tile size, remembered in this browser (shell.ts readPref).
 const LAYOUT_PREF = "cap-media-layout";
@@ -165,17 +158,13 @@ export function MediaLibrary({
   bytesHref,
   changes,
 }: MediaLibraryProps) {
-  const uid = useId().replace(/[^a-zA-Z0-9]/g, "");
+  const uid = useCleanId();
   const formId = `${uid}-bulk`;
-  const { plural } = nounsOf(labels);
+  const { plural } = nounsOf(labels, "file");
   const title =
     mode === "picker" ? "Choose an image" : plural.charAt(0).toUpperCase() + plural.slice(1);
   // False on the server and while hydrating, true once hydrated.
-  const mounted = useSyncExternalStore(
-    noSubscribe,
-    () => true,
-    () => false,
-  );
+  const mounted = useHydrated();
   const { query, page, offers, can } = data;
   const path = action.split("?")[0] ?? action;
   const href = (q: MediaQuery) => mediaHref(path, q);
@@ -343,7 +332,11 @@ export function MediaLibrary({
         field.select();
       }
     },
-    { label: `Find a ${nounsOf(labels).noun}`, group: "Media", when: () => shortcuts && !picker },
+    {
+      label: `Find a ${nounsOf(labels, "file").noun}`,
+      group: "Media",
+      when: () => shortcuts && !picker,
+    },
   );
   // Copying an address says so, in words, where the person is looking.
   const [copied, setCopied] = useState("");
@@ -537,7 +530,7 @@ export function MediaLibrary({
         action={action}
         encType="multipart/form-data"
         className="cap-media-lib-upload"
-        aria-label={`Upload a ${nounsOf(labels).noun}`}
+        aria-label={`Upload a ${nounsOf(labels, "file").noun}`}
         onSubmit={dropAltIfDecorative}
       >
         <input type="hidden" name="intent" value="upload" />
@@ -582,7 +575,7 @@ export function MediaLibrary({
         method="post"
         action={action}
         className="cap-media-lib-upload"
-        aria-label={`Import a ${nounsOf(labels).noun} from the web`}
+        aria-label={`Import a ${nounsOf(labels, "file").noun} from the web`}
         onSubmit={dropAltIfDecorative}
       >
         <input type="hidden" name="intent" value="import" />
@@ -773,7 +766,7 @@ export function MediaLibrary({
       <Form
         method="get"
         action={path}
-        className="cap-media-lib-filters"
+        className="cap-field-row"
         role="search"
         aria-label={`Find ${plural}`}
       >
@@ -791,7 +784,7 @@ export function MediaLibrary({
             "group",
           ] as const
         ).map((k) => (query[k] ? <input key={k} type="hidden" name={k} value={query[k]} /> : null))}
-        <div className="cap-field cap-media-lib-search">
+        <div className="cap-field cap-field-wide">
           <label className="cap-field-label" htmlFor={`${uid}-q`}>
             Search
           </label>
@@ -1367,7 +1360,7 @@ export function MediaLibrary({
           commands={[]}
           search={find}
           bindKeys={false}
-          label={`Find a ${nounsOf(labels).noun}`}
+          label={`Find a ${nounsOf(labels, "file").noun}`}
           placeholder="Name, address or alt text"
         />
       ) : null}

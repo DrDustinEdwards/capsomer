@@ -1,0 +1,10 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* Schedule dialog: the Dialog and a Field; only the line that says the chosen time is its own. */
+@layer cap.components {
+  .cap-schedule-dialog-lead {
+    margin: var(--space-3) 0 0;
+    color: var(--muted);
+  }
+}

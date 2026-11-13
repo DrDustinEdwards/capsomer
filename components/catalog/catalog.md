@@ -6,7 +6,7 @@ parts: [css, behavior, react]
 tool: native + own JavaScript
 states: [full width, a phone's width, tray open, filters chosen with chips, search with best match, no match, nothing yet, paged, no script]
 added: 0.4.0
-updated: 0.92.0
+updated: 0.123.0
 source: The site's publications filters and phage table (app/routes/publications.tsx, app/enhance/phages.ts in dustinedwards-info), generalized; Capsomer's chips, table, pagination and empty components underneath.
 replaces:
   - 'class="(?:[^"]*\s)?(facet|facets|filter-panel|catalog)[\s"]'
@@ -83,8 +83,8 @@ A collection of dozens to thousands of items that share fields, where a person n
 
 ```html
 <form class="cap-catalog" data-cap="catalog" data-catalog="articles" method="get" action="/library/articles" aria-labelledby="h">
-  <div class="cap-catalog-bar">
-    <div class="cap-field cap-catalog-search">
+  <div class="cap-field-row">
+    <div class="cap-field cap-field-wide">
       <label class="cap-field-label" for="articles-q">Search articles</label>
       <input class="cap-input" id="articles-q" type="search" name="q" />
     </div>

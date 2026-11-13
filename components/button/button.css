@@ -367,13 +367,7 @@
       transition: color var(--dur-fast) var(--ease-out);
     }
     .cap-btn[aria-busy="true"] > .cap-btn-spinner {
-      animation: cap-btn-spin 0.8s linear infinite;
-    }
-  }
-
-  @keyframes cap-btn-spin {
-    to {
-      rotate: 1turn;
+      animation: cap-spin 0.8s linear infinite;
     }
   }
 

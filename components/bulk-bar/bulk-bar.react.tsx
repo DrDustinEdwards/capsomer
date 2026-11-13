@@ -1,6 +1,11 @@
-import { useEffect, useId, useState, type ReactNode, useSyncExternalStore } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { Glyph } from "../status/status.react.tsx";
 import {
+  allVisibleSelected,
+  failedIds,
+  toggleAllVisible,
+  toggleOne,
+  visibleSelection,
   countText,
   fillCount,
   orderOutcomes,
@@ -9,9 +14,7 @@ import {
   type BulkItem,
   type BulkOutcome,
 } from "./bulk-bar.ts";
-
-// For useSyncExternalStore's hydration flag: nothing to subscribe to.
-const noSubscribe = () => () => {};
+import { useCleanId, useHydrated } from "../hooks/hooks.react.tsx";
 
 export type { BulkOutcome };
 
@@ -85,12 +88,8 @@ export function BulkBar({
   onDismissOutcomes,
 }: BulkBarProps) {
   // False on the server and while hydrating, true once hydrated.
-  const mounted = useSyncExternalStore(
-    noSubscribe,
-    () => true,
-    () => false,
-  );
-  const resultsId = `${useId().replace(/[^a-zA-Z0-9]/g, "")}-results`;
+  const mounted = useHydrated();
+  const resultsId = `${useCleanId()}-results`;
   const showing = outcomes.length > 0;
   const n = items.length;
   // A status region that is shown and filled in one step is often missed: the count is written
@@ -259,4 +258,37 @@ export function BulkBar({
       ) : null}
     </div>
   );
+}
+
+export interface BulkSelection {
+  // The selected ids still in view, in the rows' order: the only set that is counted or sent.
+  ids: string[];
+  has: (id: string) => boolean;
+  toggle: (id: string) => void;
+  // The header checkbox: all in view, else none.
+  toggleAll: () => void;
+  allSelected: boolean;
+  // Some but not all in view: the header checkbox is mixed.
+  someSelected: boolean;
+  clear: () => void;
+  // After an action, keep exactly the items that were not done.
+  keepFailed: (outcomes: readonly BulkOutcome[]) => void;
+}
+
+// A React list's selection: stored ids, read through what is in view, so a filter or a new page
+// never leaves a hidden row selected.
+export function useBulkSelection(rows: ReadonlyArray<{ id: string }>): BulkSelection {
+  const [selected, setSelected] = useState<ReadonlySet<string>>(() => new Set());
+  const ids = visibleSelection(selected, rows);
+  const allSelected = allVisibleSelected(selected, rows);
+  return {
+    ids,
+    has: (id) => selected.has(id) && rows.some((r) => r.id === id),
+    toggle: (id) => setSelected((s) => toggleOne(s, id)),
+    toggleAll: () => setSelected((s) => toggleAllVisible(s, rows)),
+    allSelected,
+    someSelected: ids.length > 0 && !allSelected,
+    clear: () => setSelected(new Set()),
+    keepFailed: (outcomes) => setSelected(failedIds(outcomes)),
+  };
 }

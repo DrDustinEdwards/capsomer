@@ -3,9 +3,9 @@
 // and `enhance`, which draws each row's bar through the shared meter (components/meter) from
 // its ARIA values through the CSSOM. No framework; the React wrapper uses the same functions.
 //
-import { plural } from "../format/format.ts";
+import { plural } from "../hooks/hooks.ts";
 import { enhance as enhanceMeter, update as drawBar } from "../meter/meter.ts";
-import { DAY, HOUR } from "../time/time.ts";
+import { DAY, HOUR, toMs } from "../time/time.ts";
 
 // The rules (approved for 0.1): warning at 75% used, or when the projection runs out before
 // the reset; critical at 90%; no projection until 7 days of history.
@@ -50,8 +50,6 @@ export interface UsageAssessment {
   projection: string;
 }
 
-const ms = (t: number | Date): number => (typeof t === "number" ? t : t.getTime());
-
 // A duration in plain words, rounded to the unit a person would say: "40 minutes",
 // "3 hours", "2 days".
 export function duration(span: number): string {
@@ -65,13 +63,13 @@ export function duration(span: number): string {
 
 // "00:00 UTC". A reset is a UTC time in every provider this family uses.
 export function utcClock(t: number | Date): string {
-  return `${new Date(ms(t)).toISOString().slice(11, 16)} UTC`;
+  return `${new Date(toMs(t)).toISOString().slice(11, 16)} UTC`;
 }
 
 export function assess(input: UsageInput): UsageAssessment {
   const { used, limit, history, unit, atLimit } = input;
-  const now = ms(input.now);
-  const resetsAt = input.resetsAt == null ? null : ms(input.resetsAt);
+  const now = toMs(input.now);
+  const resetsAt = input.resetsAt == null ? null : toMs(input.resetsAt);
   const periodMs = input.periodMs ?? DAY;
   const frac = limit > 0 ? used / limit : 1;
   const percent = Math.round(frac * 100);
@@ -155,18 +153,6 @@ export function assess(input: UsageInput): UsageAssessment {
     return out("warn", "Over 75% used", lead, `${lead}: ${by}`);
   }
   return out("ok", "On track", "On track", `On track: ${by}`);
-}
-
-// The bar's widths, as percentages of the limit, clamped to the bar. The meter draws the
-// same shares as 0 to 1 ratios; these stay for apps that size their own marks.
-export function widths(
-  used: number,
-  limit: number,
-  projected: number | null,
-): { used: number; projected: number } {
-  const pct = (v: number) => (limit > 0 ? Math.min(100, Math.max(0, (v * 100) / limit)) : 100);
-  const u = pct(used);
-  return { used: u, projected: projected == null ? u : Math.max(u, pct(projected)) };
 }
 
 // The rows as a table, Enarratio's DataTable shape (the first column holds the row headers), for

@@ -1,0 +1,67 @@
+<link rel="stylesheet" href="./specimen/marquee-sample.css" />
+<section class="cap-specimen" aria-labelledby="s-moving">
+  <h2 id="s-moving">Moving, with its Pause control</h2>
+  <div class="cap-marquee-group" id="mq-group">
+    <div class="cap-marquee">
+      <div class="cap-marquee-track">
+        <ul class="cap-marquee-list" aria-label="Clients">
+          <li><span class="mq-mark">Example Co</span></li>
+          <li><span class="mq-mark">Northwind</span></li>
+          <li><span class="mq-mark">Field Lab</span></li>
+          <li><span class="mq-mark">Riverbank</span></li>
+          <li><span class="mq-mark">Summit Press</span></li>
+          <li><span class="mq-mark">Harbor Labs</span></li>
+        </ul>
+        <ul class="cap-marquee-list" aria-hidden="true" inert>
+          <li><span class="mq-mark">Example Co</span></li>
+          <li><span class="mq-mark">Northwind</span></li>
+          <li><span class="mq-mark">Field Lab</span></li>
+          <li><span class="mq-mark">Riverbank</span></li>
+          <li><span class="mq-mark">Summit Press</span></li>
+          <li><span class="mq-mark">Harbor Labs</span></li>
+        </ul>
+      </div>
+    </div>
+    <div class="cap-marquee" data-direction="reverse">
+      <div class="cap-marquee-track">
+        <ul class="cap-marquee-list" aria-label="Clients">
+          <li><span class="mq-mark">Sample Works</span></li>
+          <li><span class="mq-mark">Cedar Hall</span></li>
+          <li><span class="mq-mark">Lantern Group</span></li>
+          <li><span class="mq-mark">Bluestem</span></li>
+          <li><span class="mq-mark">Oak and Iron</span></li>
+        </ul>
+        <ul class="cap-marquee-list" aria-hidden="true" inert>
+          <li><span class="mq-mark">Sample Works</span></li>
+          <li><span class="mq-mark">Cedar Hall</span></li>
+          <li><span class="mq-mark">Lantern Group</span></li>
+          <li><span class="mq-mark">Bluestem</span></li>
+          <li><span class="mq-mark">Oak and Iron</span></li>
+        </ul>
+      </div>
+    </div>
+    <label class="cap-marquee-pause"><input type="checkbox" id="mq-pause" /> Pause the logos</label>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-paused">
+  <h2 id="s-paused">Paused</h2>
+  <div class="cap-marquee-group">
+    <div class="cap-marquee" data-paused>
+      <div class="cap-marquee-track">
+        <ul class="cap-marquee-list" aria-label="Clients">
+          <li><span class="mq-mark">Example Co</span></li>
+          <li><span class="mq-mark">Bluestem</span></li>
+          <li><span class="mq-mark">Cedar Hall</span></li>
+          <li><span class="mq-mark">Summit Press</span></li>
+        </ul>
+        <ul class="cap-marquee-list" aria-hidden="true" inert>
+          <li><span class="mq-mark">Example Co</span></li>
+          <li><span class="mq-mark">Bluestem</span></li>
+          <li><span class="mq-mark">Cedar Hall</span></li>
+          <li><span class="mq-mark">Summit Press</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>

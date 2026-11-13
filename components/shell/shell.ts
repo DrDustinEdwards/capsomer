@@ -3,23 +3,18 @@
 // the React wrapper uses the same functions. readPref and writePref are shared with the theme
 // switch and the shortcuts, so they stay exported.
 import { closeDialog, openDialog, wireDialog } from "../dialog/dialog.ts";
+import { readStored, writeStored } from "../hooks/hooks.ts";
 
 export const DEFAULT_PREF = "cap-rail";
 
+// A preference kept in this browser, through hooks.ts' storage: where storage is refused the
+// choice lasts for this page only.
 export function readPref(key: string): string | null {
-  try {
-    return localStorage.getItem(key);
-  } catch {
-    return null;
-  }
+  return readStored(key);
 }
 
 export function writePref(key: string, value: string): void {
-  try {
-    localStorage.setItem(key, value);
-  } catch {
-    // Private windows and blocked storage: the choice lasts for this page only.
-  }
+  writeStored(key, value);
 }
 
 // Collapses or expands the rail of one shell, and keeps its toggle's state and name true.

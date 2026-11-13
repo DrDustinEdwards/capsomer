@@ -1,6 +1,8 @@
 // The history list's data and its pure helpers (history-list.ts).
 
-import { parse } from "../time/time.ts";
+import { plural } from "../hooks/hooks.ts";
+import { wordCount } from "@drdustinedwards/site-helpers/text";
+import { dayKey, formatDate, parse } from "../time/time.ts";
 
 // ---------------------------------------------------------------------------------------
 // The data.
@@ -56,15 +58,10 @@ export type Line = Run | Single;
 // ---------------------------------------------------------------------------------------
 // Pure helpers.
 
-export function countWords(text: string): number {
-  const t = text.trim();
-  return t === "" ? 0 : t.split(/\s+/).length;
-}
-
 // The signed change in length, in words: `after` minus `before`. Each is the text or its
 // word count.
 export function wordDelta(before: string | number, after: string | number): number {
-  const n = (v: string | number) => (typeof v === "number" ? v : countWords(v));
+  const n = (v: string | number) => (typeof v === "number" ? v : wordCount(v));
   return n(after) - n(before);
 }
 
@@ -79,7 +76,7 @@ export function deltaSign(n: number): Sign {
 export function deltaText(n: number): string {
   if (n === 0) return "no change in length";
   const abs = Math.abs(n);
-  return `${n > 0 ? "+" : "\u2212"}${abs} word${abs === 1 ? "" : "s"}`;
+  return `${n > 0 ? "+" : "\u2212"}${plural(abs, "word")}`;
 }
 
 // The change each entry made, newest first: its length less the next older entry's. An
@@ -141,25 +138,14 @@ export function condense(entries: readonly HistoryEntry[], minRun = 2): Line[] {
   return out;
 }
 
-const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-const two = (n: number) => String(n).padStart(2, "0");
-
 // "Oct 2, 2:40 PM UTC", with the year when it is not the reference year ("Oct 2, 2025, ...").
 // American English, month first and the 12-hour clock. Always UTC, so the page delivered by a
 // server and the page a browser draws agree.
 export function stamp(iso: string, now: number = Date.now()): string {
   const t = parse(iso);
   if (!Number.isFinite(t)) return "an unreadable time";
-  const d = new Date(t);
-  const year =
-    d.getUTCFullYear() === new Date(now).getUTCFullYear() ? "" : `, ${d.getUTCFullYear()}`;
-  return `${MONTHS[d.getUTCMonth()]} ${d.getUTCDate()}${year}, ${clock12(d)} UTC`;
-}
-
-// "2:40 PM", in UTC.
-function clock12(d: Date): string {
-  const h = d.getUTCHours();
-  return `${h % 12 || 12}:${two(d.getUTCMinutes())} ${h < 12 ? "AM" : "PM"}`;
+  const year = new Date(t).getUTCFullYear() !== new Date(now).getUTCFullYear();
+  return formatDate(t, { style: "medium", time: true, zoneName: true, year }) as string;
 }
 
 // "Oct 2": the day alone, for a sentence ("Restored version from Oct 2").
@@ -169,10 +155,10 @@ export function dayOf(iso: string, now: number = Date.now()): string {
 
 // "2:02 PM to 2:40 PM UTC" for a run inside one UTC day; with days when it spans more than one.
 export function rangeText(fromIso: string, toIso: string, now: number = Date.now()): string {
-  const a = new Date(parse(fromIso));
-  const b = new Date(parse(toIso));
-  if (a.toISOString().slice(0, 10) === b.toISOString().slice(0, 10))
-    return `${clock12(a)} to ${clock12(b)} UTC`;
+  const a = parse(fromIso);
+  const b = parse(toIso);
+  if (dayKey(a, "UTC") === dayKey(b, "UTC"))
+    return `${formatDate(a, { style: "time" })} to ${formatDate(b, { style: "time", zoneName: true })}`;
   return `${stamp(fromIso, now)} to ${stamp(toIso, now)}`;
 }
 
@@ -251,4 +237,90 @@ export function restoredMessage(
 
 export function destinationWord(s: Destination["status"]): string {
   return s === "live" ? "Live" : s === "failed" ? "Failed" : "Queued";
+}
+
+// The pair a compare view shows, read from its address: `?from=&to=` (what the compare link
+// writes) or two `compare` values (what the pick boxes post as a plain GET form before the
+// script runs), put in time order, older first. Null when the address does not name two.
+export function comparePicks(
+  params: URLSearchParams,
+  at: (id: string) => number,
+): [string, string] | null {
+  const from = params.get("from");
+  const to = params.get("to");
+  if (from && to) return orderPair([from, to], at);
+  const picks = params.getAll("compare").filter(Boolean);
+  return picks.length === 2 ? orderPair(picks, at) : null;
+}
+
+const UUID = /\b[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\b/gi;
+const VERBS: Record<string, string> = {
+  save: "Saved",
+  edit: "Edited",
+  update: "Updated",
+  create: "Created",
+  add: "Added",
+};
+
+// A revision's commit message as a line's summary: its first line, without the file's own path
+// or an id (which every line would repeat), and a bare verb ("Save") as what happened ("Saved").
+// From Carrel's revision picker (revisionLabel).
+export function messageSummary(message: string, path?: string): string {
+  let m = message.split("\n")[0] ?? "";
+  if (path) m = m.split(path).join(" ");
+  m = m
+    .replace(UUID, " ")
+    .replace(/[[(]\s*[\])]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+  return VERBS[m.toLowerCase()] ?? (m || "Saved");
+}
+
+export interface ChangeTextOptions {
+  // Field names as a person reads them; any other name has its underscores read as spaces.
+  labels?: Readonly<Record<string, string>>;
+  // Fields never named (the row's id, a timestamp the write itself sets). Default ["id"].
+  skip?: readonly string[];
+}
+
+type Row = Record<string, unknown>;
+
+function asRow(v: string | Row | null | undefined): Row | null {
+  if (v == null || v === "") return null;
+  if (typeof v !== "string") return v;
+  try {
+    const parsed: unknown = JSON.parse(v);
+    return parsed && typeof parsed === "object" && !Array.isArray(parsed) ? (parsed as Row) : null;
+  } catch {
+    return null;
+  }
+}
+
+function valueText(v: unknown): string {
+  if (v === null || v === undefined || v === "") return "none";
+  return typeof v === "object" ? JSON.stringify(v) : String(v);
+}
+
+// One audit row's change in words, field by field: "amount: 5 to 3; status: in stock to empty".
+// A row with no before is "Added", with no after "Removed", and the same on both sides "No
+// change". Takes the rows as objects or as their JSON (an audit log's before and after columns).
+// From dustinedwards.info's lab inventory (workspace.inventory.lot.tsx, changeText), which also
+// called a removal "Changed" and missed a field the after row dropped.
+export function changeText(
+  before: string | Row | null | undefined,
+  after: string | Row | null | undefined,
+  { labels = {}, skip = ["id"] }: ChangeTextOptions = {},
+): string {
+  const b = asRow(before);
+  const a = asRow(after);
+  if (!b && !a) return "No change";
+  if (!b) return "Added";
+  if (!a) return "Removed";
+  const names = [...new Set([...Object.keys(b), ...Object.keys(a)])].filter(
+    (k) => !skip.includes(k) && JSON.stringify(a[k]) !== JSON.stringify(b[k]),
+  );
+  if (names.length === 0) return "No change";
+  return names
+    .map((k) => `${labels[k] ?? k.replaceAll("_", " ")}: ${valueText(b[k])} to ${valueText(a[k])}`)
+    .join("; ");
 }

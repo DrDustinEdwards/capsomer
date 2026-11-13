@@ -1,0 +1,74 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* Settings rows: a setting's name and line at the start, its control at the end, a rule
+   between rows. The settings page: a back link to the index on a phone, then the page head. */
+@layer cap.components {
+  .cap-settings-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2) var(--space-5);
+    padding-block: var(--space-4);
+
+    & + & {
+      border-top: 1px solid var(--line);
+    }
+  }
+  .cap-settings-row-text {
+    display: grid;
+    flex: 1 1 16rem;
+    gap: var(--space-1);
+    min-width: 0;
+  }
+  .cap-settings-row-label {
+    color: var(--text);
+    font-weight: 600;
+  }
+  .cap-settings-row-help {
+    margin: 0;
+    color: var(--muted);
+    font-size: var(--fs-detail);
+  }
+  .cap-settings-row-reason {
+    color: var(--text);
+  }
+  .cap-settings-row-control {
+    display: flex;
+    flex: none;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .cap-settings-page {
+    display: grid;
+    gap: var(--space-5);
+  }
+  .cap-settings-back {
+    display: inline-flex;
+    align-items: center;
+    justify-self: start;
+    gap: var(--space-1);
+    min-height: var(--target);
+    color: var(--muted);
+    font-size: var(--fs-detail);
+    text-decoration: none;
+
+    &:hover {
+      color: var(--text);
+    }
+    &:focus-visible {
+      outline: var(--ring-width) solid var(--ring);
+      outline-offset: 2px;
+      border-radius: var(--radius-s);
+    }
+  }
+  /* The settings menu shows beside the page from 48rem; the back link is for narrower. */
+  @media (min-width: 48rem) {
+    .cap-settings-back {
+      display: none;
+    }
+  }
+}

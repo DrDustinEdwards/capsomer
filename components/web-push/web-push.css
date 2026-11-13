@@ -1,0 +1,58 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* Phone alerts: turn Web Push on for this browser, the devices that have it (each with Turn
+   off), and a test alert. Extracted from the Capsid Portal's PhoneAlerts
+   (dashboard/src/views/PhoneAlerts.tsx). */
+@layer cap.components {
+  .cap-push {
+    display: grid;
+    gap: var(--space-3);
+  }
+  .cap-push-note {
+    padding: var(--space-2) var(--space-3);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-m);
+    background: var(--raised);
+    font-size: var(--fs-label);
+    &[data-tone="warn"] {
+      border-color: var(--warn);
+      background: var(--warn-soft);
+    }
+    &[data-tone="crit"] {
+      border-color: var(--crit);
+      background: var(--crit-soft);
+    }
+  }
+  .cap-push-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2);
+  }
+  .cap-push-unsupported,
+  .cap-push-device-detail {
+    color: var(--muted);
+    font-size: var(--fs-detail);
+  }
+  .cap-push-devices {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .cap-push-device {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2);
+    padding-block: var(--space-2);
+    border-block-start: 1px solid var(--line);
+    & .cap-btn {
+      margin-inline-start: auto;
+    }
+  }
+  .cap-push-device-name {
+    min-inline-size: 0;
+    overflow-wrap: anywhere;
+  }
+}

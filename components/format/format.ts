@@ -15,11 +15,6 @@ export function pluralWord(n: number, one: string, many: string = `${one}s`): st
   return n === 1 ? one : many;
 }
 
-// The count and its noun: "1 file", "0 files", "1,204 people".
-export function plural(n: number, one: string, many: string = `${one}s`): string {
-  return `${figures(n)} ${pluralWord(n, one, many)}`;
-}
-
 const BYTE_UNITS = ["kB", "MB", "GB", "TB"] as const;
 
 // A file size. Binary division (1 kB is 1,024 bytes), as Windows states a size and as every copy in
@@ -79,7 +74,11 @@ export interface PercentOptions {
 
 // part / whole as a percent number, rounded to `digits` places. Null when the whole is 0 or less,
 // or either is not a number: a rate of nothing is no data, never 0%.
-export function percent(part: number, whole: number, options: PercentOptions = {}): number | null {
+export function percentOf(
+  part: number,
+  whole: number,
+  options: PercentOptions = {},
+): number | null {
   if (!Number.isFinite(part) || !Number.isFinite(whole) || whole <= 0) return null;
   const scale = 10 ** (options.digits ?? 0);
   return Math.round((part / whole) * 100 * scale) / scale;
@@ -96,10 +95,4 @@ export function formatPercent(value: number, options: PercentOptions = {}): stri
 // Basis points as a percent: 2000 bps is "20%", 125 is "1.25%". `digits` fixes the places.
 export function formatBps(bps: number, options: PercentOptions = {}): string {
   return formatPercent(bps / 100, options);
-}
-
-// A list in words: "a", "a and b", "a, b and c" (no serial comma, as every family sentence is written).
-export function listText(items: readonly string[], and = "and"): string {
-  if (items.length <= 1) return items[0] ?? "";
-  return `${items.slice(0, -1).join(", ")} ${and} ${items[items.length - 1]}`;
 }

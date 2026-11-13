@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import type { MediaData, MediaRevision } from "../content/content.ts";
-import type { FormComponent } from "../content/content.react.tsx";
+import type { FormComponent } from "../plain-form/plain-form.react.tsx";
 import { byteSize, type MediaRecord } from "../media/media.ts";
 import { Glyph } from "../status/status.react.tsx";
 import {

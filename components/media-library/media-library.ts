@@ -2,23 +2,21 @@
 // is offered here and why the others are withheld, the count, the empty state, the upload rules in
 // words, and which files the picker offers. No DOM; the React component and a server render use the
 // same functions.
-import type {
-  ContentLabels,
-  IntentResult,
-  MediaData,
-  MediaOffers,
-  MediaQuery,
-  MediaRevision,
-  MediaSuggestions,
-  MediaUse,
+import {
+  countText,
+  nounsOf,
+  type ContentLabels,
+  type IntentResult,
+  type MediaData,
+  type MediaOffers,
+  type MediaQuery,
+  type MediaRevision,
+  type MediaSuggestions,
+  type MediaUse,
 } from "../content/content.ts";
 import { acceptLabel, formatBytes } from "../drop-zone/drop-zone.ts";
 import { altStateOf, type MediaRecord, type UsedIn } from "../media/media-record.ts";
-
-export function nounsOf(labels: ContentLabels = {}): { noun: string; plural: string } {
-  const noun = labels.noun ?? "file";
-  return { noun, plural: labels.plural ?? `${noun}s` };
-}
+import { formatDate } from "../time/time.ts";
 
 // ---------------------------------------------------------------------------------------
 // Addresses.
@@ -132,7 +130,7 @@ export function mediaActions(
   data: Pick<MediaData, "offers" | "can" | "query">,
   labels?: ContentLabels,
 ): { bulk: OfferedAction[]; withheld: string[] } {
-  const { plural } = nounsOf(labels);
+  const { plural } = nounsOf(labels, "file");
   const { offers, can } = data;
   const trash = data.query.view === "trash";
   const bulk: OfferedAction[] = [];
@@ -212,12 +210,7 @@ export function countLine(
   data: Pick<MediaData, "rows" | "page" | "query">,
   labels?: ContentLabels,
 ): string {
-  const { noun, plural } = nounsOf(labels);
-  const n = data.rows.length;
-  const total = data.page.total;
-  const word = (k: number) => (k === 1 ? noun : plural);
-  const base =
-    total != null && total > n ? `Showing ${n} of ${total} ${word(total)}` : `${n} ${word(n)}`;
+  const base = countText(data.rows.length, data.page.total, nounsOf(labels, "file"));
   return data.query.view === "trash" ? `${base} in Trash` : base;
 }
 
@@ -230,7 +223,7 @@ export function emptyWords(
   q: MediaQuery,
   labels?: ContentLabels,
 ): { kind: "nothing-yet" | "no-match" | "all-clear"; title: string; text: string } {
-  const { noun, plural } = nounsOf(labels);
+  const { noun, plural } = nounsOf(labels, "file");
   if (filtered(q)) {
     const what = [
       q.q ? `“${q.q}”` : null,
@@ -330,21 +323,6 @@ export function lensChips(
   return out;
 }
 
-const MONTHS = [
-  "January",
-  "February",
-  "March",
-  "April",
-  "May",
-  "June",
-  "July",
-  "August",
-  "September",
-  "October",
-  "November",
-  "December",
-];
-
 // The folder a file's id puts it in: everything before its last "/", or "Top level".
 export function folderOf(key: string): string {
   const at = key.lastIndexOf("/");
@@ -353,10 +331,7 @@ export function folderOf(key: string): string {
 
 // The month a file was uploaded, in UTC, so a heading does not move with the reader's time zone.
 export function monthOf(uploaded: string | undefined): string {
-  const at = uploaded ? Date.parse(uploaded) : Number.NaN;
-  if (Number.isNaN(at)) return "No upload date";
-  const d = new Date(at);
-  return `${MONTHS[d.getUTCMonth()]} ${d.getUTCFullYear()}`;
+  return formatDate(uploaded, { style: "monthYear" }) ?? "No upload date";
 }
 
 // The page's files under headings, each group in the order its first file came, so the sort still
@@ -625,18 +600,10 @@ export function filesToOpen(
   return out;
 }
 
-// A day as words, from the date at the start of an ISO string, so it reads the same in every zone:
-// "1 May 2026". The string itself when it holds no date.
-export function dayWords(iso: string): string {
-  const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso);
-  if (!m) return iso;
-  return `${Number(m[3])} ${MONTHS[Number(m[2]) - 1] ?? m[2]} ${m[1]}`;
-}
+// A day as words, in UTC, so it reads the same in every zone: "May 1, 2026". The string itself when it
+// holds no date.
+export const dayWords = (iso: string): string => formatDate(iso) ?? iso;
 
-// A moment in UTC, as words: "29 October 2026, 14:05 UTC".
-export function momentWords(iso: string): string {
-  const at = Date.parse(iso);
-  if (Number.isNaN(at)) return iso;
-  const d = new Date(at).toISOString();
-  return `${dayWords(d)}, ${d.slice(11, 16)} UTC`;
-}
+// A moment in UTC, as words: "Oct 29, 2026, 2:05 PM UTC".
+export const momentWords = (iso: string): string =>
+  formatDate(iso, { style: "medium", time: true, zoneName: true }) ?? iso;

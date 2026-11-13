@@ -19,7 +19,7 @@ import type {
   MediaQuery,
   MediaRevision,
 } from "../content/content.ts";
-import type { FormComponent } from "../content/content.react.tsx";
+import type { FormComponent } from "../plain-form/plain-form.react.tsx";
 import type { MediaRecord } from "../media/media.ts";
 import { MessageProvider } from "../message/message.react.tsx";
 import { MediaLibrary } from "./media-library.react.tsx";

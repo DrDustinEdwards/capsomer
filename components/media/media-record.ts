@@ -69,6 +69,11 @@ export interface MediaFields {
   tags: string[];
 }
 
+// A tile's id from its file's key, "tile-2026-09-a-png": the markup a server draws and the one a page
+// builds must agree.
+export const tileId = (key: string): string =>
+  `tile-${key.replace(/[^a-z0-9]+/gi, "-").toLowerCase()}`;
+
 // A file's size in words: the format module's formatBytes, so a size reads the same in the
 // library, the drop zone and every site ("412 kB", "2.4 MB").
 export const byteSize = formatBytes;

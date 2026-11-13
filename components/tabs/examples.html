@@ -156,6 +156,63 @@
   </div>
 </section>
 
+<section class="cap-specimen" aria-labelledby="s-pill">
+  <h2 id="s-pill">Pill variant: drag the pill, or click, or use the arrows; each tab its own tone; the panels inside a layout</h2>
+  <div class="cap-tabs" data-cap="tabs" id="tabs-pill">
+    <div class="cap-tabs-list" role="tablist" aria-label="Markup view" data-variant="pill">
+      <button type="button" class="cap-tab" role="tab" id="tp-original" aria-selected="false" aria-controls="tpp-original" tabindex="-1" data-tone="info">Original</button>
+      <button type="button" class="cap-tab" role="tab" id="tp-simple" aria-selected="true" aria-controls="tpp-simple" tabindex="0" data-tone="ok">Simple markup</button>
+      <button type="button" class="cap-tab" role="tab" id="tp-all" aria-selected="false" aria-controls="tpp-all" tabindex="-1" data-tone="warn">All markup</button>
+    </div>
+    <div class="cap-specimen-row">
+    <div class="cap-tabs-panel" role="tabpanel" id="tpp-original" aria-labelledby="tp-original" tabindex="0" hidden><p>The draft as Alex Rivera sent it, with no changes shown.</p></div>
+    <div class="cap-tabs-panel" role="tabpanel" id="tpp-simple" aria-labelledby="tp-simple" tabindex="0"><p>Changes marked in the margin; the text reads as edited.</p></div>
+    <div class="cap-tabs-panel" role="tabpanel" id="tpp-all" aria-labelledby="tp-all" tabindex="0" hidden><p>Every insertion and deletion inline, with Sam Lee's comments.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-pill-own">
+  <h2 id="s-pill-own">Pill variant in a site's own look: tabs of one width (--cap-tab-min-inline-size), the chosen label in the accent (--cap-tab-ink)</h2>
+  <div class="cap-tabs" data-cap="tabs" id="tabs-pill-own">
+    <div class="cap-tabs-list tabs-own-look" role="tablist" aria-label="Draft view" data-variant="pill">
+      <button type="button" class="cap-tab" role="tab" id="to-draft" aria-selected="true" aria-controls="top-draft" tabindex="0">Draft</button>
+      <button type="button" class="cap-tab" role="tab" id="to-notes" aria-selected="false" aria-controls="top-notes" tabindex="-1">Notes</button>
+    </div>
+    <div class="cap-tabs-panel" role="tabpanel" id="top-draft" aria-labelledby="to-draft" tabindex="0"><p>The draft Jordan Park is editing.</p></div>
+    <div class="cap-tabs-panel" role="tabpanel" id="top-notes" aria-labelledby="to-notes" tabindex="0" hidden><p>Two notes from Sam Lee.</p></div>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-progressive">
+  <h2 id="s-progressive">Progressive and remembered: links to every panel until script runs; the reader's choice kept for every set</h2>
+  <div class="cap-tabs" data-cap="tabs" data-progressive data-remember="specimen-platform" data-remember-guess="platform" id="tabs-progressive">
+    <div class="cap-tabs-list" data-variant="line" data-label="Platform">
+      <a class="cap-tab" href="#tg-install-macos" data-value="macos">macOS</a>
+      <a class="cap-tab" href="#tg-install-windows" data-value="windows">Windows</a>
+      <a class="cap-tab" href="#tg-install-linux" data-value="linux">Linux</a>
+    </div>
+    <div class="cap-tabs-panel" id="tg-install-macos"><p class="cap-tabs-panel-label">macOS</p><pre><code>brew install example-cli</code></pre></div>
+    <div class="cap-tabs-panel" id="tg-install-windows"><p class="cap-tabs-panel-label">Windows</p><pre><code>winget install Example.Cli</code></pre></div>
+    <div class="cap-tabs-panel" id="tg-install-linux"><p class="cap-tabs-panel-label">Linux</p><pre><code>sudo apt install example-cli</code></pre></div>
+  </div>
+  <div class="cap-tabs" data-cap="tabs" data-progressive data-remember="specimen-platform" data-remember-guess="platform" id="tabs-progressive-2">
+    <div class="cap-tabs-list" data-variant="line" data-label="Platform">
+      <a class="cap-tab" href="#tg-run-macos" data-value="macos">macOS</a>
+      <a class="cap-tab" href="#tg-run-windows" data-value="windows">Windows</a>
+      <a class="cap-tab" href="#tg-run-linux" data-value="linux">Linux</a>
+    </div>
+    <div class="cap-tabs-panel" id="tg-run-macos"><p class="cap-tabs-panel-label">macOS</p><pre><code>example-cli start --open</code></pre></div>
+    <div class="cap-tabs-panel" id="tg-run-windows"><p class="cap-tabs-panel-label">Windows</p><pre><code>example-cli.exe start --open</code></pre></div>
+    <div class="cap-tabs-panel" id="tg-run-linux"><p class="cap-tabs-panel-label">Linux</p><pre><code>example-cli start --open</code></pre></div>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-page-tabs">
+  <h2 id="s-page-tabs">Page tabs: each tab the page's address with ?tab=, other parameters kept</h2>
+  <div data-mount="page-tabs"></div>
+</section>
+
 <script type="module">
   import { enhance } from "./tabs.ts";
   enhance();

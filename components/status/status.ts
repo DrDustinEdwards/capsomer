@@ -2,9 +2,22 @@
 // rendered table, an SVG drawing), and the one table of glyphs the React Status draws from too.
 // Escaped here, so a reason or a label can never become markup.
 
-export type Tone = "crit" | "warn" | "ok" | "info" | "nodata";
-// A glyph is named by its tone, except running, which is an info tone with an arc.
-export type GlyphName = Tone | "running";
+// "muted" is the quiet gray for a state that is neither good nor bad: queued, unknown.
+export type Tone = "crit" | "warn" | "ok" | "info" | "nodata" | "muted";
+// A glyph is named by its tone, except running, which is an info tone with an arc, and the
+// marks a state or a kind of item has of its own (the Portal's queued, unknown, blocked,
+// and its inbox kinds). The quiet gray "muted" draws the no data circle unless a glyph is named.
+export type GlyphName =
+  | Tone
+  | "running"
+  | "queued"
+  | "unknown"
+  | "blocked"
+  | "question"
+  | "pr"
+  | "report"
+  | "proposal"
+  | "site-down";
 
 // One element of a glyph: its tag and attributes, in SVG's own names. React and the string
 // renderer both draw from these, so the shapes exist once.
@@ -21,6 +34,39 @@ const ring = {
   stroke: "currentColor",
   "stroke-width": "1.6",
 };
+
+// A 1.5 stroke with round ends and joins: the outline marks (pr, report).
+const line = {
+  fill: "none",
+  stroke: "currentColor",
+  "stroke-width": "1.5",
+  "stroke-linecap": "round",
+  "stroke-linejoin": "round",
+};
+// The question mark of unknown and question.
+const question = {
+  d: "M6.1 6.4a1.95 1.95 0 1 1 2.9 1.7c-.6.3-1 .7-1 1.4",
+  fill: "none",
+  stroke: "currentColor",
+  "stroke-width": "1.5",
+  "stroke-linecap": "round",
+};
+const questionDot = { cx: "8", cy: "11.7", r: ".9", fill: "currentColor" };
+
+// No data: a ring with a dash. The quiet gray "muted" draws it too.
+const NODATA: readonly GlyphPart[] = [
+  { tag: "circle", attrs: ring },
+  {
+    tag: "path",
+    attrs: {
+      d: "M5 8h6",
+      fill: "none",
+      stroke: "currentColor",
+      "stroke-width": "1.6",
+      "stroke-linecap": "round",
+    },
+  },
+];
 
 // One shape per meaning, so the shape carries it without color. Marks inside a filled shape are
 // cut out (evenodd), so the glyph reads on any background, a tint included. 16 by 16.
@@ -71,16 +117,82 @@ export const STATUS_GLYPH: Readonly<Record<GlyphName, readonly GlyphPart[]>> = {
       },
     },
   ],
-  nodata: [
+  nodata: NODATA,
+  muted: NODATA,
+  queued: [{ tag: "circle", attrs: ring }],
+  unknown: [
     { tag: "circle", attrs: ring },
+    { tag: "path", attrs: question },
+    { tag: "circle", attrs: questionDot },
+  ],
+  question: [
+    { tag: "circle", attrs: { ...ring, fill: "currentColor", "fill-opacity": "0.18" } },
+    { tag: "path", attrs: question },
+    { tag: "circle", attrs: questionDot },
+  ],
+  blocked: [
     {
       tag: "path",
       attrs: {
-        d: "M5 8h6",
+        fill: "currentColor",
+        "fill-rule": "evenodd",
+        d: "M4 1.5h8A2.5 2.5 0 0 1 14.5 4v8a2.5 2.5 0 0 1-2.5 2.5H4A2.5 2.5 0 0 1 1.5 12V4A2.5 2.5 0 0 1 4 1.5zM5.7 4.8h1.5v6.4H5.7zM8.8 4.8h1.5v6.4H8.8z",
+      },
+    },
+  ],
+  pr: [
+    { tag: "circle", attrs: { ...line, cx: "4.3", cy: "3.4", r: "1.8" } },
+    { tag: "circle", attrs: { ...line, cx: "4.3", cy: "12.6", r: "1.8" } },
+    { tag: "circle", attrs: { ...line, cx: "11.7", cy: "12.6", r: "1.8" } },
+    {
+      tag: "path",
+      attrs: {
+        ...line,
+        d: "M4.3 5.2v5.6M11.7 10.8V7.1A2.5 2.5 0 0 0 9.2 4.6H7.4M8.9 3 7.3 4.6l1.6 1.6",
+      },
+    },
+  ],
+  report: [
+    {
+      tag: "path",
+      attrs: {
+        ...line,
+        fill: "currentColor",
+        "fill-opacity": "0.18",
+        d: "M3.4 14.5V2M3.4 2.5h8.7l-1.8 3 1.8 3H3.4",
+      },
+    },
+  ],
+  proposal: [
+    {
+      tag: "path",
+      attrs: {
+        fill: "currentColor",
+        "fill-opacity": "0.18",
+        stroke: "currentColor",
+        "stroke-width": "1.5",
+        "stroke-linejoin": "round",
+        d: "M3.4 1.7h6.3l2.9 2.9v9.7H3.4z",
+      },
+    },
+    {
+      tag: "path",
+      attrs: {
         fill: "none",
         stroke: "currentColor",
-        "stroke-width": "1.6",
+        "stroke-width": "1.5",
         "stroke-linecap": "round",
+        d: "M5.7 8h4.6M5.7 10.9h4.6",
+      },
+    },
+  ],
+  "site-down": [
+    {
+      tag: "path",
+      attrs: {
+        fill: "currentColor",
+        "fill-rule": "evenodd",
+        d: "M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM7.2 4h1.6v4.1l1.5-1.5 1.1 1.1L8 11 4.6 7.7l1.1-1.1 1.5 1.5z",
       },
     },
   ],

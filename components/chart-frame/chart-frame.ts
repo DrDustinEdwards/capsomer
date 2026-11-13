@@ -3,6 +3,7 @@
 // data"); the frame is only the layout around it, so nothing here builds a second table or a
 // second head. No behavior of its own: the disclosure is Enarratio's native `details`.
 import { escapeHtml } from "@dustinedwards/site-runtime/html";
+import { listText } from "../hooks/hooks.ts";
 import { type RedrawSpec, redrawAttribute } from "enarratio/redraw";
 
 export type { RedrawSpec };
@@ -50,13 +51,15 @@ export const NARROW_WIDTH = 262;
 // this height moves nothing under the chart (web.dev, "Optimize CLS"); the rule is
 // enarratio/redraw's own (Enarratio record 0033).
 // A primitive's figure (a heat strip, timeline, sparkline, uptime strip or progress ring; Enarratio
-// marks it `data-enarratio-static`) gets none: its height is its own, not its width's shape.
+// marks it `data-enarratio-static`) gets none: its height is its own, not its width's shape. A
+// heat strip keeps the height it is given at any width, so fitting it to a 640 drawing shrunk into
+// 300 px would redraw it 9 px tall, not 20; a timeline's height comes from its lanes and ignores
+// `height`, and under 30rem it shows its list, not the SVG. enarratio/redraw redraws charts only.
 export function shownHeight(first: string, width: number, rem = 16): number | undefined {
   if (/<figure\b[^>]*\sdata-enarratio-static\b/.test(first)) return undefined;
-  const box = /<svg\b[^>]*?\sviewBox="[\d.]+ [\d.]+ ([\d.]+) ([\d.]+)"/.exec(first);
-  const w = Number(box?.[1]);
-  const h = Number(box?.[2]);
-  if (!(w > 0 && h > 0)) return undefined;
+  const box = chartViewBox(first);
+  if (!box || !(box.w > 0 && box.h > 0)) return undefined;
+  const { w, h } = box;
   const shown = first.includes("enarratio-frame-wide") ? Math.max(width, WIDE_REM * rem) : width;
   return Math.round(((h * Math.min(shown, w)) / w) * 100) / 100;
 }
@@ -102,9 +105,6 @@ export interface SeriesText {
   empty?: string;
 }
 
-const listOf = (items: readonly string[]) =>
-  items.length <= 1 ? (items[0] ?? "") : `${items.slice(0, -1).join(", ")} and ${items.at(-1)}`;
-
 // The sentence that says what a series shows, with its numbers: the span, the latest value, the
 // range and where it peaked. It is the chart's `alt` (Enarratio's finding) or an inline line's
 // accessible name, so it must stay true to the numbers drawn.
@@ -124,5 +124,18 @@ export function describeSeries(o: SeriesText): string {
   if (max === min) return `${span}: ${fmt(max)} each time.`;
   const peaks = o.x.filter((_, i) => totals[i] === max).map(fx);
   const latest = `${fmt(totals.at(-1)!)} in ${fx(o.x.at(-1)!)}`;
-  return `${span}: ${latest}, from ${fmt(min)} to ${fmt(max)}; most in ${listOf(peaks)}.`;
+  return `${span}: ${latest}, from ${fmt(min)} to ${fmt(max)}; most in ${listText(peaks)}.`;
+}
+
+/**
+ * The width and height of the chart's own drawing in `html`: the first `viewBox` that is not one of
+ * Enarratio's 16 px toolbar icons (`enarratio-icon`), which come before the chart in the figure.
+ */
+export function chartViewBox(html: string): { w: number; h: number } | undefined {
+  for (const tag of html.matchAll(/<svg\b[^>]*>/g)) {
+    if (/\sclass="[^"]*\benarratio-icon\b/.test(tag[0])) continue;
+    const box = /\sviewBox="[\d.]+ [\d.]+ ([\d.]+) ([\d.]+)"/.exec(tag[0]);
+    if (box) return { w: Number(box[1]), h: Number(box[2]) };
+  }
+  return undefined;
 }

@@ -1,0 +1,8 @@
+/* Specimen only: the sample checklist's own page styles. */
+.run-demo ol {
+  padding-inline-start: 1.75rem;
+}
+.run-demo [data-run-flag] {
+  font-weight: var(--weight-heading);
+  color: var(--crit);
+}

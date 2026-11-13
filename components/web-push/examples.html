@@ -1,0 +1,42 @@
+<section class="cap-specimen" aria-labelledby="s-devices">
+  <h2 id="s-devices">Two devices, after a change</h2>
+  <div class="cap-push" id="push-devices">
+    <div class="cap-push-note" role="status">Test alert sent to each device.</div>
+    <div class="cap-push-actions">
+      <button type="button" class="cap-btn" data-variant="primary">Turn on for this device</button>
+      <button type="button" class="cap-btn">Send a test alert</button>
+    </div>
+    <ul class="cap-push-devices" aria-label="Devices with alerts on">
+      <li class="cap-push-device">
+        <span class="cap-push-device-name">Chrome on Android <span class="cap-push-device-detail">turned on 3 days ago, last alert an hour ago</span></span>
+        <button type="button" class="cap-btn">Turn off</button>
+      </li>
+      <li class="cap-push-device">
+        <span class="cap-push-device-name">Safari on iOS <span class="cap-push-device-detail">turned on a week ago, no alert yet</span></span>
+        <button type="button" class="cap-btn">Turn off</button>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-failed">
+  <h2 id="s-failed">Turning on failed</h2>
+  <div class="cap-push">
+    <div class="cap-push-note" data-tone="crit" role="alert">This browser did not allow notifications. Allow them for this site in the browser's settings, then try again.</div>
+    <div class="cap-push-actions">
+      <button type="button" class="cap-btn" data-variant="primary">Turn on for this device</button>
+      <button type="button" class="cap-btn" disabled>Send a test alert</button>
+    </div>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-setup">
+  <h2 id="s-setup">Not set up, and a browser with no Web Push</h2>
+  <div class="cap-push" id="push-setup">
+    <div class="cap-push-note" data-tone="warn" role="status">Not set up yet: the VAPID key is not set.</div>
+    <div class="cap-push-actions">
+      <span class="cap-push-unsupported">This browser cannot receive Web Push.</span>
+      <button type="button" class="cap-btn" disabled>Send a test alert</button>
+    </div>
+  </div>
+</section>

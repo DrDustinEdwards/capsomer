@@ -80,8 +80,8 @@ export function Catalog<T>({
       action={def.basePath}
       aria-labelledby={labelledBy}
     >
-      <div className="cap-catalog-bar">
-        <div className="cap-field cap-catalog-search">
+      <div className="cap-field-row">
+        <div className="cap-field cap-field-wide">
           <label className="cap-field-label" htmlFor={`${id}-q`}>
             Search {noun}
           </label>

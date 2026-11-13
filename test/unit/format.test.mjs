@@ -2,13 +2,8 @@
 // that rounds up into the next unit, an empty median, a rate of nothing.
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import {
-  formatBytes,
-  formatCount,
-  median,
-  percent,
-  plural,
-} from "../../components/format/format.ts";
+import { formatBytes, formatCount, median, percentOf } from "../../components/format/format.ts";
+import { plural } from "../../components/hooks/hooks.ts";
 
 test("formatBytes climbs units and never shows 1024 kB", () => {
   assert.equal(formatBytes(512), "512 B");
@@ -33,9 +28,9 @@ test("median is null for nothing and the mean of the middle pair for an even cou
 });
 
 test("percent of nothing is no data, not 0%", () => {
-  assert.equal(percent(3, 0), null);
-  assert.equal(percent(1, 3), 33);
-  assert.equal(percent(1, 3, { digits: 1 }), 33.3);
+  assert.equal(percentOf(3, 0), null);
+  assert.equal(percentOf(1, 3), 33);
+  assert.equal(percentOf(1, 3, { digits: 1 }), 33.3);
   assert.equal(formatCount(9999), "9,999");
   assert.equal(formatCount(12_345), "12.3K");
 });

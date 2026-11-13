@@ -3,10 +3,19 @@
 // hides the rows it groups. Two levels at most, and a critical item is never inside a
 // collapsed group. No framework; the React wrapper uses the same rules.
 
-// Shows or hides one group's rows and keeps its button's state true.
+// Shows or hides what one button controls (a group's rows, a step's email, the warnings past the
+// cap) and keeps the button's state true. A button with data-open-label says that while open
+// ("Fewer warnings") and its own words again when closed (data-closed-label, else the words it
+// had); an expand toggle's words are its .cap-expand-label.
 export function setGroup(button: HTMLElement, expanded: boolean): void {
   button.setAttribute("aria-expanded", String(expanded));
-  const rows = document.getElementById(button.getAttribute("aria-controls") ?? "");
+  const openLabel = button.dataset.openLabel;
+  if (openLabel) {
+    const words = button.querySelector<HTMLElement>(".cap-expand-label") ?? button;
+    button.dataset.closedLabel ??= words.textContent ?? "";
+    words.textContent = expanded ? openLabel : button.dataset.closedLabel;
+  }
+  const rows = button.ownerDocument.getElementById(button.getAttribute("aria-controls") ?? "");
   if (rows) rows.hidden = !expanded;
 }
 
@@ -22,11 +31,32 @@ export function groupDepth(group: Element): number {
   return depth;
 }
 
+// Attaches to every expand toggle ([data-cap="expand"], a button with aria-expanded and
+// aria-controls) under root: a press shows or hides the region it names (a step's email, a table
+// row's detail row). Returns a function that detaches them.
+export function enhanceExpand(root: ParentNode = document): () => void {
+  const undo: Array<() => void> = [];
+  for (const button of root.querySelectorAll<HTMLElement>(
+    "[data-cap='expand']:not([data-cap-ready])",
+  )) {
+    button.dataset.capReady = "";
+    setGroup(button, button.getAttribute("aria-expanded") === "true");
+    const onClick = () => toggleGroup(button);
+    button.addEventListener("click", onClick);
+    undo.push(() => {
+      button.removeEventListener("click", onClick);
+      delete button.dataset.capReady;
+    });
+  }
+  return () => undo.forEach((f) => f());
+}
+
 // Attaches to every [data-cap="disclosure"] group under root. A collapsed group that holds
 // a critical item ([data-tone="crit"]) is opened, because critical items are never hidden.
 // Returns a function that detaches them.
 export function enhance(root: ParentNode = document): () => void {
   const undo: Array<() => void> = [];
+  undo.push(enhanceExpand(root));
   for (const group of root.querySelectorAll<HTMLElement>(
     ".cap-group[data-cap='disclosure']:not([data-cap-ready])",
   )) {

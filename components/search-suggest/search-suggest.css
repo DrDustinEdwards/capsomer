@@ -1,0 +1,27 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* Search suggestions: the search field (field.css) with a list of pages under it as a person types.
+   The list is the shared listbox on its own surface, as wide as the box and over the page below
+   it; the box keeps focus, so the list is no popup in the top layer and scrolls with the page. */
+@layer cap.components {
+  .cap-search-suggest {
+    position: relative;
+  }
+
+  .cap-search-suggest-list {
+    position: absolute;
+    z-index: var(--z-overlay);
+    inset-inline: 0;
+    inset-block-start: 100%;
+    margin-block-start: var(--space-2);
+    box-shadow: var(--shadow-l);
+    text-align: start;
+  }
+
+  @media (forced-colors: active) {
+    .cap-search-suggest-list {
+      border-color: CanvasText;
+    }
+  }
+}

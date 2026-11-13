@@ -18,6 +18,7 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 import { stripVTControlCharacters } from "node:util";
 import { gzipSync } from "node:zlib";
 import { frontmatter } from "@drdustinedwards/site-helpers/frontmatter";
+import { walkFiles } from "@dustinedwards/devkit/node";
 
 const PKG = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const args = process.argv.slice(2);
@@ -46,22 +47,14 @@ const SKIP_DIRS = new Set([
   "coverage",
 ]);
 
-function walk(dir, exts, out = []) {
-  let entries = [];
-  try {
-    entries = readdirSync(dir, { withFileTypes: true });
-  } catch {
-    return out;
-  }
-  for (const e of entries) {
-    if (e.name.startsWith(".") && e.name !== ".") continue;
-    const p = join(dir, e.name);
-    if (e.isDirectory()) {
-      if (!SKIP_DIRS.has(e.name)) walk(p, exts, out);
-    } else if (exts.includes(extname(e.name))) out.push(p);
-  }
-  return out;
-}
+// The files under a directory with one of the extensions, skipping dot names and SKIP_DIRS; none for a missing directory.
+const walk = (dir, exts) =>
+  existsSync(dir)
+    ? walkFiles(dir, {
+        keep: (name) => !name.startsWith(".") && exts.includes(extname(name)),
+        skipDir: (name) => name.startsWith(".") || SKIP_DIRS.has(name),
+      })
+    : [];
 
 function components(root) {
   const dir = join(root, "components");

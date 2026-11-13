@@ -1,0 +1,96 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* The label color list: a person's own labels, each a word with one of the eight series colors as
+   a dot beside it. The word carries the meaning and the dot repeats it, so color is never alone;
+   the dot is a series swatch, at 3:1 against every ground in both themes (the chart checks), and
+   the word is --text. Extracted from Carrel (app/app.css .app-label, .app-label-dot,
+   .app-label-list and .app-label-edit; components/writing/status-label.tsx). */
+@layer cap.components {
+  .cap-color-label {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: 1px var(--space-4) 1px var(--space-3);
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-full);
+    color: var(--text);
+    font-size: var(--fs-label);
+    font-weight: 600;
+    line-height: 1.4;
+    white-space: nowrap;
+  }
+  .cap-color-label-dot {
+    flex: none;
+    inline-size: 0.7em;
+    block-size: 0.7em;
+    border-radius: 50%;
+    background: var(--series-1);
+  }
+  .cap-color-label[data-color="2"] .cap-color-label-dot {
+    background: var(--series-2);
+  }
+  .cap-color-label[data-color="3"] .cap-color-label-dot {
+    background: var(--series-3);
+  }
+  .cap-color-label[data-color="4"] .cap-color-label-dot {
+    background: var(--series-4);
+  }
+  .cap-color-label[data-color="5"] .cap-color-label-dot {
+    background: var(--series-5);
+  }
+  .cap-color-label[data-color="6"] .cap-color-label-dot {
+    background: var(--series-6);
+  }
+  .cap-color-label[data-color="7"] .cap-color-label-dot {
+    background: var(--series-7);
+  }
+  .cap-color-label[data-color="8"] .cap-color-label-dot {
+    background: var(--series-8);
+  }
+
+  /* The list as it reads: the labels in order, as many to a line as fit. */
+  .cap-color-label-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  /* The editor: one row per label, its name and its color side by side, with the dot it will take. */
+  .cap-color-label-edit {
+    display: grid;
+    gap: var(--space-3);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+    & > li {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      gap: var(--space-3) var(--space-4);
+    }
+    & > li > .cap-field:first-of-type {
+      flex: 1 1 11rem;
+    }
+    & > li > .cap-field + .cap-field {
+      flex: 0 1 10rem;
+    }
+    /* The color a row will take, as its dot, level with the middle of the controls. */
+    & > li > .cap-color-label {
+      box-sizing: border-box;
+      min-block-size: var(--control);
+      padding-inline: var(--space-2);
+      border-color: transparent;
+    }
+  }
+
+  @media (forced-colors: active) {
+    .cap-color-label-dot {
+      background: CanvasText;
+    }
+  }
+}

@@ -1,6 +1,7 @@
 // The publish gate's data and its pure helpers (publish-gate.ts).
 
-import { plural } from "../format/format.ts";
+import { plural } from "../hooks/hooks.ts";
+
 export type GateState = "blocked" | "held" | "ready" | "published";
 export type CheckState = "failing" | "advisory" | "passed";
 

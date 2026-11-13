@@ -1,0 +1,27 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* "Keep on this device": a toggle button (aria-pressed) and its status line, added by script into
+   an empty [data-cap="offline-keep"]. Extracted from dustinedwards.info's offline keep
+   (app/enhance/offline.ts, public/sw.js). */
+@layer cap.components {
+  [data-cap="offline-keep"] {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2);
+    &:empty {
+      display: none;
+    }
+  }
+  .cap-keep[aria-pressed="true"] {
+    border-color: var(--accent);
+  }
+  .cap-keep-status {
+    font-size: var(--fs-detail);
+    color: var(--muted);
+    &:empty {
+      display: none;
+    }
+  }
+}

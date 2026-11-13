@@ -26,7 +26,7 @@ import {
   DialogTitle,
 } from "../dialog/dialog.react.tsx";
 import { Empty } from "../empty/empty.react.tsx";
-import type { FormComponent } from "../content/content.react.tsx";
+import type { FormComponent } from "../plain-form/plain-form.react.tsx";
 import type { MediaData } from "../content/content.ts";
 import { MediaLibrary } from "./media-library.react.tsx";
 import { libraryOf, loadMediaView } from "./media-picker.ts";

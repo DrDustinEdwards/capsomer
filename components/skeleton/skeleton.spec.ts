@@ -96,7 +96,7 @@ eachTheme((theme) => {
     );
     await expect(page.locator("#sample-spinner .cap-spinner-arc")).toHaveCSS(
       "animation-name",
-      "cap-spinner-turn",
+      "cap-spin",
     );
     await expect(page.locator("#sample-spinner .cap-spinner-arc")).toBeVisible();
   });
