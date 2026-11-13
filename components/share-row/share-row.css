@@ -1,5 +1,7 @@
 /* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+/* The marks are the icon set's. */
+@import "../icons/icons.css";
 
 /* The share row: "Share" and a link to each service's own share intent, plain links with no
    script or tracker, ruled off under a post's lead. Extracted from Foxhound's ShareRow

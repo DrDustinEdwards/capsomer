@@ -28,7 +28,7 @@ On a post or an article that people pass on, once, under the lead or at the foot
 ## The default and its reason
 
 - **Plain links, no script, no tracker.** Each service's own intent address (`x.com/intent/tweet`, `linkedin.com/sharing/share-offsite`, `bsky.app/intent/compose`, `facebook.com/sharer`, `mailto:`) does the sharing; no service's script loads on the page.
-- **Each link names the service in words** ("X", "LinkedIn") beside its mark, and its accessible name says the action ("Share on X").
+- **Each link names the service in words** ("X", "LinkedIn") beside its mark, and its accessible name says the action and that it leaves the site ("Share on X (opens another site)").
 - **X and LinkedIn by default**; a site adds Bluesky, Facebook or Email with `targets`.
 - **"Copy link" is Capsomer's copy button**, passed as a child, so the copied state and its announcement are the copy component's.
 - **The row is a named group** ("Share this page"); the visible "Share" label is hidden from assistive technology so it is not read twice.
@@ -52,8 +52,8 @@ Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the a
 ```html
 <div class="cap-share" role="group" aria-label="Share this page">
   <span class="cap-share-label" aria-hidden="true">Share</span>
-  <a class="cap-share-link" href="https://x.com/intent/tweet?text=...&url=..." aria-label="Share on X" rel="external noopener"><svg aria-hidden="true">...</svg>X</a>
-  <a class="cap-share-link" href="https://www.linkedin.com/sharing/share-offsite/?url=..." aria-label="Share on LinkedIn" rel="external noopener"><svg aria-hidden="true">...</svg>LinkedIn</a>
+  <a class="cap-share-link" href="https://x.com/intent/tweet?text=...&url=..." aria-label="Share on X (opens another site)" rel="external noopener noreferrer"><svg class="cap-icon" aria-hidden="true">...</svg>X</a>
+  <a class="cap-share-link" href="https://www.linkedin.com/sharing/share-offsite/?url=..." aria-label="Share on LinkedIn (opens another site)" rel="external noopener noreferrer"><svg class="cap-icon" aria-hidden="true">...</svg>LinkedIn</a>
   <!-- the copy button -->
 </div>
 ```
