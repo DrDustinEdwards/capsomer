@@ -9,6 +9,7 @@
 import type { BulkOutcome } from "../bulk-bar/bulk-bar.ts";
 import type { MediaRecord } from "../media/media.ts";
 import type { Mention, ModState, ModView } from "../moderation-queue/moderation-queue.ts";
+import { pluralWord } from "../format/format.ts";
 
 // ---------------------------------------------------------------------------------------
 // Shared by every list.
@@ -152,10 +153,9 @@ export function countText(
   total: number | null | undefined,
   { noun, plural }: { noun: string; plural: string },
 ): string {
-  const word = (k: number) => (k === 1 ? noun : plural);
   return total != null && total > shown
-    ? `Showing ${shown} of ${total} ${word(total)}`
-    : `${shown} ${word(shown)}`;
+    ? `Showing ${shown} of ${total} ${pluralWord(total, noun, plural)}`
+    : `${shown} ${pluralWord(shown, noun, plural)}`;
 }
 
 // ---------------------------------------------------------------------------------------
