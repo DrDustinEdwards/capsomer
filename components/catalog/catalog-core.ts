@@ -352,7 +352,7 @@ export function catalogRedirect<T>(
 }
 
 // Every URL parameter the catalog reads.
-export function catalogParams<T>(def: CatalogDefinition<T>): Set<string> {
+function catalogParams<T>(def: CatalogDefinition<T>): Set<string> {
   const names = new Set<string>(RESERVED_PARAMS);
   for (const field of def.fields) {
     if (!field.facet) continue;
@@ -724,7 +724,7 @@ export function catalogRecords<T>(
 }
 
 // A Markdown table cell: pipes escaped, whitespace (newlines included) collapsed to one space.
-export const markdownCell = (value: unknown): string =>
+const markdownCell = (value: unknown): string =>
   String(value ?? "")
     .replaceAll("|", "\\|")
     .replace(/\s+/g, " ")
@@ -787,35 +787,6 @@ export function catalogDownloads<T>(
     json: `${def.basePath}.json${query}`,
     markdown: `${def.basePath}.md`,
   };
-}
-
-// How many filters are on: one for the search, one for each chosen value, one for a range.
-export const activeCount = <T>(result: Pick<CatalogResult<T>, "chips">): number =>
-  result.chips.length;
-
-// A facet's counts by value: what each option would give, the other filters held.
-export function facetCounts<T>(
-  result: Pick<CatalogResult<T>, "facets">,
-  key: string,
-): Record<string, number> {
-  const facet = result.facets.find((f) => f.key === key);
-  return Object.fromEntries((facet?.options ?? []).map((o) => [o.value, o.count]));
-}
-
-// The status line in words, with the zero case: "Showing all 14 articles", "Showing 3 of 14
-// articles", "No articles match. 14 in all."
-export function summaryText<T>(
-  def: CatalogDefinition<T>,
-  result: Pick<CatalogResult<T>, "count" | "total">,
-): string {
-  const noun = (n: number) => (n === 1 ? def.noun[0] : def.noun[1]);
-  if (result.count === 0 && result.total > 0)
-    return `No ${def.noun[1]} match. ${result.total} in all.`;
-  if (result.count === result.total)
-    return result.total === 1
-      ? `Showing the one ${def.noun[0]}`
-      : `Showing all ${result.total} ${noun(result.total)}`;
-  return `Showing ${result.count} of ${result.total} ${noun(result.total)}`;
 }
 
 // Reading the address outside a catalog (a view's own settings, a page's options): a value from a
