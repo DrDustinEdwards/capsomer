@@ -34,7 +34,7 @@ Above a table or a row list whose loader reads its filters from the query.
 - **`role="search"` with a name** ("Filter payments"), so it is a landmark.
 - **The count is a polite live region** ("Showing 12 of 40 payments", `countText` from `capsomer/content`), heard as it changes.
 - **Clear is a link** to the address with only the kept keys (`clearedHref`, a sort and a page size survive), shown only while something is filtered.
-- **`live` applies as you type**, 300 ms after the last key, and at once on a select or a box; Apply stays a hidden submit for Enter. **Nothing is sent while an IME is composing**: a Chinese or Japanese reader's partial text never navigates (Foxhound's payments search did).
+- **`live` applies as you type**, 300 ms after the last key, and at once on a select or a box; Apply stays a hidden submit for Enter, out of the tab order. **Nothing is sent while an IME is composing**: a Chinese or Japanese reader's partial text never navigates (Foxhound's payments search did).
 - **`applyVariant="primary"`** when Apply is the view's main action (a search page such as Foxhound's customers or txasm's abstracts); the default button otherwise.
 - **React Router's `Form`** can be passed as `Form` for a client navigation (`replace` while live, so typing does not fill the history). An app on another router passes `onSubmit`, reads the fields with `new FormData(e.currentTarget)`, calls `preventDefault()` and navigates itself.
 
@@ -63,7 +63,7 @@ Above a table or a row list whose loader reads its filters from the query.
 </form>
 ```
 
-Add `data-live` and call `enhance()` from `capsomer/behavior/filter-bar` for live applying without React.
+Add `data-live` and call `enhance()` from `capsomer/behavior/filter-bar` for live applying without React; then give Apply `class="cap-sr-only" tabindex="-1"`, as React does.
 
 ## Exceptions in production
 
