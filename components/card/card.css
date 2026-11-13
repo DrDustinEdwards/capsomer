@@ -214,7 +214,7 @@
     }
     &:has(a.cap-card-link:focus-visible) {
       outline: var(--focus-width) solid var(--ring);
-      outline-offset: 2px;
+      outline-offset: var(--focus-offset);
     }
   }
 
@@ -247,11 +247,14 @@
     }
     &:has(> :focus-visible) {
       outline: var(--focus-width) solid var(--ring);
-      outline-offset: 2px;
+      outline-offset: var(--focus-offset);
     }
+    /* Disabled as a field's control is: a dashed edge, the sunken ground and muted words. */
     &:has(> :disabled) {
       cursor: not-allowed;
-      opacity: 0.6;
+      border-style: dashed;
+      background: var(--sunken);
+      color: var(--muted);
     }
   }
 
