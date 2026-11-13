@@ -52,4 +52,3 @@ test("chartDirective: Prelum's block, attributes escaped on one line, a fence in
   assert.equal(captioned.split("\n")[0], ':::chart{type="bar" x="a" y="b" alt=""}');
   assert.ok(captioned.endsWith("```\nSource: Example Co\n:::"));
 });
-

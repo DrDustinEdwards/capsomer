@@ -73,8 +73,7 @@ export interface StepInfo {
 export function timerMs(timer: StepTimer): number | null {
   const unit = UNIT_MS[String(timer.unit).toLowerCase()];
   const amount = timer.max ?? timer.min;
-  if (unit === undefined || amount === null || !Number.isFinite(amount) || amount <= 0)
-    return null;
+  if (unit === undefined || amount === null || !Number.isFinite(amount) || amount <= 0) return null;
   return Math.round(amount * unit);
 }
 
