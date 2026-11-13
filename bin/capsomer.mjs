@@ -4,7 +4,7 @@
 // checks the app's CSS against the tokens.
 //
 //   capsomer report [--out capsomer-report.json] [--a11y <playwright json>] [--app <name>]
-//   capsomer token-check [paths...]        warns, always exits 0 (rulings.md, rule 1)
+//   capsomer token-check [paths...] [--fix] warns, always exits 0 (rulings.md, rule 1); --fix writes the exact tokens
 //   capsomer size [--dist <dir>]           reports and warns, always exits 0 (decision 12)
 //   capsomer states                        writes components/<name>/states.html from examples.html (capsomer repo only)
 //   capsomer site-data                     the site's data files (capsomer repo only)
@@ -19,7 +19,7 @@ import { stripVTControlCharacters } from "node:util";
 import { gzipSync } from "node:zlib";
 import { frontmatter } from "@drdustinedwards/site-helpers/frontmatter";
 import { walkFiles } from "@dustinedwards/devkit/node";
-import { rawValues, tokenScale } from "../tokens/token-check.mjs";
+import { fixCss, rawValues, tokenScale } from "../tokens/token-check.mjs";
 
 const PKG = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const args = process.argv.slice(2);
@@ -93,7 +93,7 @@ function git(argsList, cwd) {
 
 // Raw design values in an app's CSS (tokens/token-check.mjs rawValues: every kind, with the token to use).
 // Generated files and Capsomer's own token files are skipped.
-export function tokenCheck(root, paths) {
+export function tokenCheck(root, paths, { fix = false } = {}) {
   const scale = tokenScale(readJsonFile(join(PKG, "tokens", "tokens.json")));
   const files = (
     paths.length
@@ -105,6 +105,13 @@ export function tokenCheck(root, paths) {
       !/capsomer[\\/]tokens/.test(f) &&
       !/[\\/](fonts-[\w-]+|fallback-fonts)\.css$/.test(f),
   );
+  // --fix: every value with an exact token becomes that token first; the report then lists what needs a choice.
+  if (fix)
+    for (const file of files) {
+      const css = readFileSync(file, "utf8");
+      const fixed = fixCss(css, scale);
+      if (fixed !== css.replace(/\r\n/g, "\n")) writeFileSync(file, fixed);
+    }
   const items = files.flatMap((file) =>
     rawValues(readFileSync(file, "utf8"), scale).map((it) => ({
       file: relative(root, file).replace(/\\/g, "/"),
@@ -727,6 +734,7 @@ if (cmd === "report") {
   const r = tokenCheck(
     process.cwd(),
     args.slice(1).filter((a) => !a.startsWith("--")),
+    { fix: args.includes("--fix") },
   );
   for (const it of r.items.slice(0, 200))
     console.warn(`${it.file}:${it.line}: ${it.kind} ${it.text}; use ${it.suggestion}`);
@@ -780,7 +788,7 @@ if (cmd === "report") {
   await fallbackFont();
 } else {
   console.log(
-    "usage: capsomer report | token-check [paths] | size [--dist dir] [--json out] | weight [--dist dir] [--json out] | loc [--json out] | bloat --knip f --jscpd f | states | site-data | fallback-font <file.woff2> [--family name] [--local face] [--weight 700=<file.woff2>]",
+    "usage: capsomer report | token-check [paths] [--fix] | size [--dist dir] [--json out] | weight [--dist dir] [--json out] | loc [--json out] | bloat --knip f --jscpd f | states | site-data | fallback-font <file.woff2> [--family name] [--local face] [--weight 700=<file.woff2>]",
   );
   process.exit(cmd ? 1 : 0);
 }

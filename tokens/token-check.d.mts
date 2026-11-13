@@ -39,6 +39,10 @@ export interface RawValue {
   kind: string;
   suggestion: string;
   exact: boolean;
+  /** Where the declaration's value starts and ends in the stylesheet. */
+  start: number;
+  end: number;
 }
 export function tokenScale(json: Record<string, unknown>): TokenScale;
 export function rawValues(css: string, scale: TokenScale): RawValue[];
+export function fixCss(css: string, scale: TokenScale): string;

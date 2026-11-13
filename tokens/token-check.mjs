@@ -370,11 +370,10 @@ function declarations(css) {
     }
     return lo + 1;
   };
-  return [...text.matchAll(/(?<=^|[;{\s])(--[\w-]+|[a-z-]+)\s*:\s*([^;{}]+)(?=[;}])/g)].map((d) => [
-    d[1],
-    d[2],
-    lineAt(d.index + d[0].length - d[2].length),
-  ]);
+  return [...text.matchAll(/(?<=^|[;{\s])(--[\w-]+|[a-z-]+)\s*:\s*([^;{}]+)(?=[;}])/g)].map((d) => {
+    const start = d.index + d[0].length - d[2].length;
+    return [d[1], d[2], lineAt(start), start];
+  });
 }
 
 /**
@@ -383,7 +382,7 @@ function declarations(css) {
  */
 export function rawValues(css, scale) {
   const items = [];
-  for (const [prop, raw, line] of declarations(css)) {
+  for (const [prop, raw, line, start] of declarations(css)) {
     const own = prop.startsWith("--");
     const v = bare(raw);
     const found = [];
@@ -499,8 +498,40 @@ export function rawValues(css, scale) {
         const tok = negate ? `calc(-1 * var(--${near[0]}))` : `var(--${near[0]})`;
         suggestion = exact ? tok : `${tok} (${near[1]}${unit}, off scale)`;
       }
-      items.push({ line, text, kind: k, suggestion, exact });
+      items.push({ line, text, kind: k, suggestion, exact, start, end: start + raw.length });
     }
   }
   return items;
+}
+
+/**
+ * The stylesheet with every raw value that has an exact token replaced by it (`capsomer token-check --fix`). Values off
+ * the scale, colors, easings and shadows need a person's choice, so they are left for the report.
+ */
+export function fixCss(css, scale) {
+  const esc = (t) => t.replace(/[.*+?^${}()|[\]\\/]/g, "\\$&");
+  let out = css.replace(/\r\n/g, "\n");
+  const edits = [];
+  const cursor = new Map();
+  for (const it of rawValues(out, scale)) {
+    if (!it.exact || ["color", "easing", "shadow"].includes(it.kind)) continue;
+    const decl = out.slice(it.start, it.end);
+    let token = it.suggestion;
+    if (it.kind === "size" && token === "var(--fs-small)" && /--mono/.test(decl))
+      token = "var(--mono-size)";
+    const slash = it.text.startsWith("/");
+    if (slash) token = `/ ${token}`;
+    const re = new RegExp(
+      `${slash ? `\\/\\s*${esc(it.text.slice(1))}` : `(?<![\\w.#-])${esc(it.text)}`}(?![\\w.%])`,
+      "g",
+    );
+    re.lastIndex = cursor.get(it.start) ?? 0;
+    const m = re.exec(decl);
+    if (!m) continue;
+    edits.push([it.start + m.index, m[0].length, token]);
+    cursor.set(it.start, m.index + m[0].length);
+  }
+  for (const [at, length, token] of edits.sort((a, b) => b[0] - a[0]))
+    out = out.slice(0, at) + token + out.slice(at + length);
+  return out;
 }

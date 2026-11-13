@@ -86,4 +86,13 @@ test("rawValues names each raw design value with its token, and leaves tokens, r
     "9 color #fff a color token from the palette",
     "10 space 8px var(--space-3)",
   ]);
+  // --fix writes each exact token in place, a multi-line shadow included, and leaves what needs a choice.
+  const { fixCss } = await import("../../tokens/token-check.mjs");
+  assert.equal(
+    fixCss(
+      ".b {\n  padding: 4px 7px;\n  box-shadow:\n    inset 0 -2px 0 red,\n    0 0 0 2px red;\n  font: 600 0.75rem / 1.5 var(--mono);\n}",
+      scale,
+    ),
+    ".b {\n  padding: var(--space-2) 7px;\n  box-shadow:\n    inset 0 calc(-1 * var(--line-w-thick)) 0 red,\n    0 0 0 var(--line-w-thick) red;\n  font: var(--weight-semibold) var(--mono-size) / var(--leading-normal) var(--mono);\n}",
+  );
 });
