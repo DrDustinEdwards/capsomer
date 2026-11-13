@@ -4,6 +4,10 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+## [0.122.0]
+
+- **germomics' palette is its site entry.** `site-germomics.css` now carries germomics' own colors in both themes (crystal violet buttons, cyan links and focus, violet-tinted neutrals), its Space Grotesk UI face, JetBrains Mono, its 60px header and its 2px ring, and goes on `<html>` on the public pages, so the site can drop its hand-made map onto Capsomer's roles and its Tailwind palette. It also sets `--surface`, `--muted` and `--accent`, the names germomics' own palette shared with Capsomer's. The cyan link, the control borders, dark muted and dim text and the dark primary hover are lifted to Capsomer's APCA floors, and prefers-contrast: more has its own values. A site entry may now set brand roles when `ownBrand` says why (two hues no family has), and may give its own `more` values. Removed: the admin's mono-only use of the entry; germomics' admin takes Capsomer's own look, mono included, and drops `data-cap-site` from its element.
+
 ## [0.121.0]
 
 - **Links: `--link-hover-decoration`, a line under the pointer.** New token (none): a text link's line on hover, drawn `--link-offset` under the text. Foxhound's entry now keeps the network's semibold link with no line at rest and shows the line on hover in place of the tint; its at-rest underline, weight and `--link-decoration` settings are removed (Dustin, 2026-11-13: "the links should not be underlined"). Removed or renamed: no token or class.
