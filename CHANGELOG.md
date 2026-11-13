@@ -4,6 +4,10 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+## [0.121.0]
+
+- **Links: `--link-hover-decoration`, a line under the pointer.** New token (none): a text link's line on hover, drawn `--link-offset` under the text. Foxhound's entry now keeps the network's semibold link with no line at rest and shows the line on hover in place of the tint; its at-rest underline, weight and `--link-decoration` settings are removed (Dustin, 2026-11-13: "the links should not be underlined"). Removed or renamed: no token or class.
+
 ## [0.120.0]
 
 - **Links: a site's line on text links only, and `--link-offset`.** `--link-decoration` now draws on text links (no component class, or a `data-link` kind) outside a `nav`, as the tints do; every other link has no line. New token `--link-offset` (auto) sets how far the line sits under the text. Foxhound's entry sets Recova's links: underlined 2px under the text at the text's own weight, with no tint (Dustin, 2026-11-13). Its entry now also goes on `<html>` on every page but the admin. Removed or renamed: no token or class.
