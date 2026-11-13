@@ -425,9 +425,11 @@ export type Suggest = (query: string, signal: AbortSignal) => Promise<SearchHit[
 export function wireSearchOnDemand(search: HTMLElement, suggest?: Suggest): () => void {
   let unwire: (() => void) | undefined;
   let gone = false;
-  void import("./site-header-search.ts").then((m) => {
-    if (!gone) unwire = m.wireSearch(search, suggest);
-  });
+  // A server build (Vite sets import.meta.env.SSR) leaves the chunk out: search is wired only in a browser.
+  if (!(import.meta as { env?: { SSR?: boolean } }).env?.SSR)
+    void import("./site-header-search.ts").then((m) => {
+      if (!gone) unwire = m.wireSearch(search, suggest);
+    });
   return () => {
     gone = true;
     unwire?.();
