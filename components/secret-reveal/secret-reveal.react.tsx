@@ -31,7 +31,13 @@ export function SecretReveal({
       <H className="cap-secret-title" id={heading}>
         {title}
       </H>
-      <pre className="cap-secret-value" ref={block} tabIndex={-1} aria-describedby={noteId}>
+      <pre
+        className="cap-secret-value"
+        ref={block}
+        tabIndex={-1}
+        aria-labelledby={heading}
+        aria-describedby={noteId}
+      >
         {secret}
       </pre>
       <div className="cap-secret-foot">
