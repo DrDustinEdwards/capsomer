@@ -4,6 +4,12 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+- **First-load weight: four code paths that run only on a click, or only on some sites, load on demand.** Measured on the Capsid Portal's heaviest first load, 217.8 to 215.6 KB gzip.
+  - The site header's search behavior (`wireSearch`) is `site-header-search.ts`. `enhance` and the React `SiteHeader` load it through the new `wireSearchOnDemand(search, suggest)`, and only on a header that has search. Until it arrives the icon is the link to the search page it always was. `wireSearch` and `SUGGEST_DELAY_MS` are no longer exported from `capsomer/behavior/site-header`; `SearchHit` and `Suggest` still are.
+  - The shortcut sheet (`renderSheetList`, `buildSheet`, `wireSheet`, `openShortcutSheet`) is `shortcuts-sheet.ts`. It loads the first time "?" or a `[data-cap-keys-open]` button asks for it, or when `enhance` finds a sheet in the markup. Those four are no longer exported from `capsomer/behavior/shortcuts`. An app with its own sheet (`setSheetOpener`) never loads it.
+  - A sheet's drag to dismiss is `dialog-drag.ts`. `wireDialog` loads it when a bottom, left or right sheet first takes focus, which it does as it opens.
+  - `FOXHOUND_MARKS` moves to the admin shell's states page, the only place it was drawn, so it no longer ships in every admin shell. It is no longer exported from `capsomer/react/admin-shell`.
+  - No class, token or HTML contract changes.
 - **Collab editor: `Room.doc` and `Room.provider` are `null` before the page is in the browser.** `useRoom`'s first render returned an object cast `as unknown as Room` that lacked both; the type now says so (`Y.Doc | null`, `YProvider | null`) and the cast is gone. `useRoomEditing` is unchanged (it reads them once `synced`). An app that reads `room.doc` or `room.provider` from `useRoom` directly must handle null.
 - **`MediaPicker`: a library chunk that fails to load shows "The library did not load"** (the failed `Empty`) instead of breaking the dialog.
 - **Command host: a failed menu load is no longer kept.** `load()` clears itself on failure so the next `open` or `load` fetches the chunk again; the idle warm-up and `runWhenReady` share one fire-and-forget `warm`, and `open` still rejects.
