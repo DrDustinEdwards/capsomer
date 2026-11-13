@@ -54,6 +54,18 @@ export function listOwnsKeys(list: HTMLElement): boolean {
   return !list.closest("[inert]");
 }
 
+// The keys a queue's rows share (approval queue, mentions list, moderation queue): j and k move
+// through `list` as attachRowList does, and nothing acts on a held key, a key typed into a field,
+// or while single keys are off. Returns true when the key is the caller's to act on (a, r, d, x).
+export function queueKey(e: KeyboardEvent, list: HTMLElement | null | undefined): boolean {
+  if (!list || e.defaultPrevented || e.repeat || isTypingKey(e) || singleKeysOff()) return false;
+  if (e.key !== "j" && e.key !== "k") return true;
+  if (!listOwnsKeys(list)) return false;
+  if (moveRowFocus(list, e.key === "j" ? 1 : -1) || list.contains(document.activeElement))
+    e.preventDefault();
+  return false;
+}
+
 // Attaches j and k to one list. Returns a function that detaches them. A list already
 // attached (by enhance or by the React wrapper) is left alone, so keys never act twice.
 export function attachRowList(list: HTMLElement): () => void {

@@ -70,7 +70,7 @@ An action's own `key` replaces the default (`a` for `approve`, `r` for `reject`)
 - Every decision names its item ("Approve for Example Co on Bluesky"), so a column of Approve buttons is not a column of the same name, and carries `aria-keyshortcuts` with a `kbd` hint hidden from screen readers.
 - The edit box has a label ("Text for X", or the app's `textLabel`), hidden but read.
 - Status is a shape, a word and a color.
-- A decision in flight sets `aria-busy` and `aria-disabled` on every decision; they stay focusable.
+- A decision in flight makes every decision a pending `Button` (`aria-busy`, a spinner over the label, clicks ignored); they stay focusable.
 - The confirm dialog is an alert dialog: focus starts on Cancel, Esc closes it, and focus returns to the button that opened it.
 
 Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the automated browser checks and a front-end review stand in. Automated: see the site's Tests page.
