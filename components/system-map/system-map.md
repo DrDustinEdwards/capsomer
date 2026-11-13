@@ -44,6 +44,14 @@ A network of systems at two levels, drawn as a connections map. Level 1 is the n
 - **Private is a dashed edge and the word "private"**, and nothing else differs: a private system is shown in full (2026-10-23 ruling).
 - **Rendered by `systemMapHtml`**, a pure function, so a server or a static build delivers the whole map; the script adds the wires, lighting and stepping. With no script every card is a link and every tie words. No text is under 12 px.
 
+
+## The model itself
+
+`capsomer/behavior/system-model` (server and build only; it needs `zod`, an optional peer) is the one reader of Capsid's public model:
+
+- **`parsePublicModel(raw)`** checks it against `PublicModelSchema`, then what the shape cannot say: ids are unique, every container and line names something that exists, every flow rides lines the model has, toward one of their ends, lighting parts of the systems it runs in, and the counts match. It answers `{ ok: true, model }` or `{ ok: false, problems }`, every problem with its path. Ids are kebab case with no leading, trailing or doubled hyphen, the producer's own rule.
+- **`modelMarkdown(model, { origin, pageHref, title, intro, rings })`** and **`systemMarkdown(model, id, ...)`** write a site's `/systems.md` and `/systems/<id>.md`: each ring's systems with their addresses, parts, how the parts connect and the systems each ties to. The site gives its own words for the title, the intro and the rings.
+- **`explorerHref(id, { sub })`** and **`explorerLabel(id)`** are a system's page in the Capsid explorer; `connectionsOf`, `partsOf`, `outsideOf` and `wiresOf` are the readings underneath; `sameModel(a, b)` ignores the day a model was read; `VERB_INWARD` reads a line from its other end ("is written to by").
 ## Keyboard
 
 | Key | Does |
