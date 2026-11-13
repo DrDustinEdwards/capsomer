@@ -1,7 +1,7 @@
 ---
 name: price-card
 title: Price card and plan choice
-summary: A plan's name, price, what it is for, what it includes and its call to action; and the same offers as a radio group for choosing a plan in a form.
+summary: A plan's name, price, purpose, inclusions and call to action, or the offers as a radio group.
 group: pattern
 parts: [css, react]
 tool: native

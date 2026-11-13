@@ -1,7 +1,7 @@
 ---
 name: stat-tile
 title: Stat tile
-summary: One figure, its label and a word for where it stands against its threshold on one line, a detail line beneath and a sparkline, in a row that wraps onto more rows instead of cutting a word; and a static variant for a figure that leads nowhere.
+summary: One figure with its label, threshold status, detail line and sparkline, wrapping in a row.
 parts: [css, react]
 tool: native
 states: [ok, warning, critical, no data, hover, pressed, keyboard focus, a row of every tone, phone width wrapping onto more rows, static, static with a delta, static large in the accent, static no data, static in a grid]

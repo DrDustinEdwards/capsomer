@@ -1,7 +1,7 @@
 ---
 name: record-facts
 title: Record facts
-summary: A record's labeled facts (year, venue, identifier, kind) as a narrow rail beside its page, each value over its label.
+summary: A record's labeled facts as a narrow rail beside its page, each value over its label.
 group: pattern
 parts: [css, react]
 tool: native

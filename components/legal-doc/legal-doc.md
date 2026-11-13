@@ -1,7 +1,7 @@
 ---
 name: legal-doc
 title: Legal page
-summary: A policy or terms page - the title, the date it last changed, a numbered contents list and the numbered sections it links to, from one list so they never drift.
+summary: A policy or terms page with a title, change date, numbered contents and numbered sections.
 group: pattern
 parts: [css, react]
 tool: native

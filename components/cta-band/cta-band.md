@@ -1,7 +1,7 @@
 ---
 name: cta-band
 title: Call to action band
-summary: A page's closing call to action - a heading, one sentence and the actions in a band set apart from the page.
+summary: A page's closing call to action, with a heading, one sentence and actions in a band.
 group: pattern
 parts: [css, react]
 tool: native

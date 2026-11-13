@@ -1,7 +1,7 @@
 ---
 name: panel
 title: Panel
-summary: A bordered surface with a header on the raised tone, an optional count, source line and link to the full view, and a padded body.
+summary: A bordered surface with a raised header, optional count and source, and a padded body.
 parts: [css, react]
 tool: native
 states: [card parts (description, action, footer), flush body with a padded block, small size, comfortable density, with a header and a source, with a count and a link to the full view, body only, holding a list with no body padding, a panel that is a link, figures beside the heading, a View all link from its address, reading again, bare]

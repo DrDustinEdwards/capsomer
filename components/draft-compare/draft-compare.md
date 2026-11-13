@@ -1,7 +1,7 @@
 ---
 name: draft-compare
 title: Draft compare
-summary: Two versions of a text compared by sentence and by word, side by side, inline or as changes only, with marks that never rely on color, a legend, jump keys and folded unchanged passages; a patch mode by line; a merge mode for two texts that both moved on.
+summary: Two versions of a text compared by sentence and word, with marks that never rely on color.
 group: pattern
 parts: [css, behavior, react]
 tool: native + own JavaScript

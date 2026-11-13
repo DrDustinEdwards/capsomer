@@ -1,7 +1,7 @@
 ---
 name: status-mark
 title: Status mark and result page
-summary: The round mark by tone, and the one-purpose page it sits on (unsubscribe, a card update, a connect result), one card centered in the window.
+summary: The round mark by tone, and the one-purpose page it sits on, centered in the window.
 group: pattern
 parts: [css, react]
 tool: native

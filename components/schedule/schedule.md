@@ -1,7 +1,7 @@
 ---
 name: schedule
 title: Schedule
-summary: A program by day and time slot, with overlapping sessions as named parallel tracks and a day nav of links.
+summary: A program by day and time slot, with overlapping sessions as named parallel tracks.
 group: pattern
 parts: [css, behavior, react]
 tool: native

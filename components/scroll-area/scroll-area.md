@@ -1,7 +1,7 @@
 ---
 name: scroll-area
 title: Scroll area
-summary: A box of fixed height whose content scrolls inside it, with a thin scrollbar that keeps 3:1 against its track and goes to full contrast when more is asked for.
+summary: A box of fixed height whose content scrolls inside it, with a thin scrollbar that keeps contrast.
 parts: [css]
 tool: native
 states: [rest, keyboard focus, more contrast, no frame]

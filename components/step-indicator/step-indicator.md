@@ -1,7 +1,7 @@
 ---
 name: step-indicator
 title: Step indicator
-summary: Where a person is in a flow of a few steps, one per page; a bar for each step with its name, and a heading that says "Step 2 of 4" and the step.
+summary: Where a person is in a flow of a few steps, with a bar per step and a Step N of M heading.
 parts: [css]
 tool: native
 states: [current step in the middle, the first step, the last step with the rest done, five steps in a narrow column, stations, inline, ordered]

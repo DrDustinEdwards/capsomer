@@ -1,5 +1,4 @@
-// Capsomer's color generator without the file system, so a browser can run it too (the site's
-// theme builder at /make/): the families, the color math, each family's tokens in both themes,
+// Capsomer's color generator without the file system, so a browser can run it too: the families, the color math, each family's tokens in both themes,
 // the pairs every theme must pass, and the CSS and modules tokens/palette.mjs writes from them.
 // tokens/palette.mjs re-exports all of it and adds the command line and the files.
 import { companionColors, labelOn, rampColors } from "./chart.mjs";

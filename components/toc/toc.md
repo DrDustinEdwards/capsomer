@@ -1,7 +1,7 @@
 ---
 name: toc
 title: Table of contents
-summary: A post's headings as links, a sticky column on a wide screen or a closed disclosure on a narrow one, the section being read marked.
+summary: A post's headings as links, a sticky column when wide or a disclosure when narrow.
 parts: [css, behavior, react]
 tool: own JavaScript
 states: [sidebar, sidebar with the current section, inline closed, inline open, an h3 under an h2, fewer than three headings (none)]

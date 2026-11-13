@@ -1,7 +1,7 @@
 ---
 name: collab-editor
 title: Collab editor
-summary: "Several people in one file at once, around the rich editor: a shared Yjs copy, each person's caret in their color, Editing or Suggesting with tracked changes, comment threads on passages, and the bar and panels that show them."
+summary: "Several people in one file around the rich editor, with carets, tracked changes and comments."
 group: pattern
 parts: [css, behavior, react]
 tool: own JavaScript (Yjs, y-partyserver, prosemirror-suggest-changes; all MIT)

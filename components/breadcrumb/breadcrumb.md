@@ -1,7 +1,7 @@
 ---
 name: breadcrumb
 title: Breadcrumb
-summary: "Where this page sits: links back up the trail, the current page as text, a long trail folded into a popover of links."
+summary: "Links back up the trail to where this page sits, with a long trail folded into a popover."
 parts: [css, behavior, react]
 tool: native + own JavaScript
 states: [default, two levels, long names wrap, folded in the HTML, folded by script, short trail stays whole, wraps in a narrow space, folded levels open, comfortable density]

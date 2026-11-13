@@ -1,7 +1,7 @@
 ---
 name: card
 title: Card
-summary: One piece of content or one choice, its picture, heading, text and actions as direct children in source order.
+summary: One piece of content or one choice, with its picture, heading, text and actions in source order.
 parts: [css]
 tool: native
 states: [content, one destination, hover, stretched link with actions, focus, lead, side layout, aligned grid, choice, choice checked, choice disabled, book cover ratio]

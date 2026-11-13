@@ -1,7 +1,7 @@
 ---
 name: marquee
 title: Marquee
-summary: A row of marks drifting sideways in a seamless loop, with a visible Pause control that works without script.
+summary: A row of marks drifting sideways in a seamless loop, with a visible Pause control.
 parts: [css, react]
 tool: native
 states: [moving, paused by the control, paused under the pointer, reverse, reduced motion]

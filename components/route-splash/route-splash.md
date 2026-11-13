@@ -1,7 +1,7 @@
 ---
 name: route-splash
 title: Route splash
-summary: The app's mark over "Loading...", in place of a page while a navigation to one of its slow pages loads.
+summary: The app's mark over Loading, shown in place of a page while a slow navigation loads.
 group: pattern
 parts: [css, behavior, react]
 tool: native

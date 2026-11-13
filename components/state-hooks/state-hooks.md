@@ -1,7 +1,7 @@
 ---
 name: state-hooks
 title: State hooks
-summary: Small state hooks - useSelection for bulk bars and useSinceLastVisit - with newId and versionedStore without React.
+summary: Small state hooks, useSelection and useSinceLastVisit, with newId and versionedStore.
 group: primitive
 parts: [behavior, react]
 tool: own JavaScript

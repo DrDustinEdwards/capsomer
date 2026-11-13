@@ -1,7 +1,7 @@
 ---
 name: chart-builder
 title: Chart builder
-summary: A dialog that builds a chart block from pasted or chosen CSV, a type, the columns, a title, a finding and a caption, shows what the chart check flags and the chart itself, and inserts the block only when asked.
+summary: A dialog that builds a chart block from CSV, shows what the check flags, and inserts on request.
 group: pattern
 parts: [css, behavior, react]
 tool: native + own JavaScript

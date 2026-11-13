@@ -1,7 +1,7 @@
 ---
 name: system-map
 title: System map
-summary: A network of systems as a connections map, cards wired by their ties, and one system with what uses it, its parts and what it uses, wired the same way.
+summary: A network of systems as a connections map, plus one system with what uses it and what it uses.
 group: pattern
 parts: [css, behavior]
 tool: own JavaScript

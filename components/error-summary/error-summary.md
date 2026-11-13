@@ -1,7 +1,7 @@
 ---
 name: error-summary
 title: Error summary
-summary: After a failed submit, a titled list of links to every field in error at the top of the form; it takes focus and the page title starts "Error:".
+summary: After a failed submit, a titled list of links to every field in error at the top of the form.
 group: pattern
 parts: [css, behavior, react]
 tool: own JavaScript

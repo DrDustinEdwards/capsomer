@@ -1,7 +1,7 @@
 ---
 name: admin-shell
 title: Admin shell
-summary: "The one structure every admin area and dashboard shares, under the site header: in your admin a strip of the family's apps and a 232px menu, in a user's dashboard a 288px menu, then the content."
+summary: "The shared structure of every admin area and dashboard, with a side menu and the content."
 group: pattern
 parts: [css, behavior, react]
 tool: native + own JavaScript

@@ -1,7 +1,7 @@
 ---
 name: settings-row
 title: Settings row
-summary: One setting per line, its name and line at the start and its control at the end, and the settings page around the rows.
+summary: One setting per line, with its name at the start and its control at the end, plus the page.
 group: pattern
 parts: [css, react]
 tool: native

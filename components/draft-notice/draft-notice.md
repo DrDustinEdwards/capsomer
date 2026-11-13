@@ -1,7 +1,7 @@
 ---
 name: draft-notice
 title: Draft notice
-summary: "The line at the top of a page only its author can see yet, \"Draft: only you can see this page.\", as a word in a dashed box and a sentence."
+summary: "The line at the top of a page that only its author can see yet, in a dashed box."
 group: pattern
 parts: [css, react]
 tool: native

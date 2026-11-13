@@ -1,7 +1,7 @@
 ---
 name: player
 title: Player
-summary: Video, audio and embeds from a video or audio service, the same on a JSX page and in a post; the persistent audio player that keeps playing across pages, with its dock, surface, waveform, chapters and synced transcript; and the inline audio button for a short clip in running text.
+summary: Video, audio and embeds, a persistent audio player across pages, and an inline audio button.
 parts: [css, behavior, react]
 tool: native + own JavaScript + React
 states: [embed with a poster, embed with no poster, audio embed, embed after a click, video, audio, dock loaded and paused, dock on a phone with its sheet, dock hidden while the surface is on screen, surface, surface with no stored peaks, chapter playing, key moments, hosts, transcript following, transcript searched, editor waveform, editor waveform empty, inline audio button, inline audio button playing]

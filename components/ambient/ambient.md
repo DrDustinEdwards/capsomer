@@ -1,7 +1,7 @@
 ---
 name: ambient
 title: Ambient layer
-summary: "Decoration behind a hero that carries no information: drifting hexagons, blurred color fields, or a row of rising bars."
+summary: "Decoration behind a hero that carries no information, such as drifting hexagons or color fields."
 parts: [css, behavior, react]
 tool: own JavaScript
 states: [hex field, blobs, equalizer, reduced motion, paused off screen]

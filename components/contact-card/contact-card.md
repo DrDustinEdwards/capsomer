@@ -1,7 +1,7 @@
 ---
 name: contact-card
 title: Contact card
-summary: "How to reach someone, by kind: links (email, profiles, a map) or labeled phone numbers, in cards or plain on the page."
+summary: "How to reach someone by kind, as links or labeled phone numbers, in cards or plain."
 group: pattern
 parts: [css, react]
 tool: native

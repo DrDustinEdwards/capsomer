@@ -1,7 +1,7 @@
 ---
 name: save-toggle
 title: Save toggle
-summary: "Save for later, kept in this browser only: a toggle button whose bookmark fills when the item is saved."
+summary: "Save for later, kept in this browser only, as a toggle whose bookmark fills when saved."
 parts: [css, behavior, react]
 tool: own JavaScript
 states: [not saved, saved, hover, storage blocked]

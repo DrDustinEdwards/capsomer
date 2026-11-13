@@ -118,8 +118,9 @@ export function table(label: string, head: string[], rows: string[][]): string {
 }
 
 /** A section of a page, with its heading as the target of the page's "On this page" link. */
+// Not a named region: its heading is the structure, and a token table inside already carries the same name.
 export const part = (id: string, title: string, body: string) =>
-  `<section aria-labelledby="${esc(id)}">
+  `<section>
     <h2 id="${esc(id)}">${esc(title)}</h2>
     ${body}
   </section>`;

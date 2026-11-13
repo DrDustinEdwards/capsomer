@@ -1,7 +1,7 @@
 ---
 name: toolbar
 title: Toolbar
-summary: A row of buttons and toggle buttons that is one tab stop, with arrow keys between them, groups set apart by a separator.
+summary: A row of buttons and toggles that is one tab stop, with arrow keys and grouped separators.
 parts: [css, behavior]
 tool: own JavaScript
 states: [default with a disabled button, a separator, toggle buttons pressed and not, a link in the bar, right to left, vertical, hover, comfortable density]

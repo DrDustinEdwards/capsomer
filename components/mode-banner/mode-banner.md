@@ -1,7 +1,7 @@
 ---
 name: mode-banner
 title: Mode banner
-summary: The band at the top of an app's content while it is a demo with sample data, or an admin is viewing a customer's account read-only, in the network's one set of words.
+summary: The band atop an app's content while it shows demo data or an admin views an account read-only.
 group: pattern
 parts: [css, react]
 tool: native

@@ -1,7 +1,7 @@
 ---
 name: step-player
 title: Step player
-summary: A Play button that walks a set of steps on its own, stops at the end, on a hidden tab and when the person moves, and waits longer under reduced motion.
+summary: A Play button that walks a set of steps on its own and stops at the end or on interruption.
 parts: [behavior]
 tool: own JavaScript
 states: [playing a flow, at the end, taken over by a step link]

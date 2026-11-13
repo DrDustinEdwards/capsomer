@@ -1,7 +1,7 @@
 ---
 name: range-slider
 title: Range slider
-summary: A two-handle range on one track, the span filled between the handles, for a filter like an amount from and to.
+summary: A two-handle range on one track with the span filled, for a filter like amount from and to.
 parts: [css, behavior, react]
 tool: own JavaScript
 states: [full range, a chosen span, a handle under the pointer, open top (and more)]

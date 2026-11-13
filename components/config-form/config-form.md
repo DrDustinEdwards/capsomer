@@ -1,7 +1,7 @@
 ---
 name: config-form
 title: Config form
-summary: An operator's add and edit form for a list of settings, with the editor state that opens and closes it.
+summary: An operator's add and edit form for a list of settings, with the editor state that opens it.
 group: pattern
 parts: [css, react]
 tool: native

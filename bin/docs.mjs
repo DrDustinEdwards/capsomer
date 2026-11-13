@@ -16,6 +16,8 @@ const SECTIONS = ["Usage", "Accessibility"];
 const GROUPS = ["pattern", "primitive"];
 /** A summary longer than one sentence: a sentence end followed by the start of another. */
 const MORE_THAN_ONE = /[.!?]\s+["'`(]?[A-Z]/;
+/** The page's lead is one line under the title: about what a line of it holds on a wide screen. */
+const LONGEST = 100;
 
 /** The problems in one doc file's source, each a line naming what breaks the pattern; none for a file that keeps it. */
 export function docProblems(name, source) {
@@ -28,6 +30,8 @@ export function docProblems(name, source) {
   const summary = str("summary");
   if (!summary) out.push("no summary in the frontmatter");
   else if (MORE_THAN_ONE.test(summary)) out.push("the summary is more than one sentence");
+  else if (summary.length > LONGEST)
+    out.push(`the summary is ${summary.length} characters, over ${LONGEST}: say it in one line`);
   if (data.group !== undefined && !GROUPS.includes(str("group")))
     out.push(`group "${String(data.group)}" is not one of ${GROUPS.join(", ")}`);
 

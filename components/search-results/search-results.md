@@ -1,7 +1,7 @@
 ---
 name: search-results
 title: Search results
-summary: A site search's results page, with the count in a live region, the kind of each result, its snippet with the matches marked safely, why it matched, the sort, the facets and what to try when nothing matched.
+summary: A site search's results page, with a live count, snippets, facets, sorting and a no-match help.
 parts: [css, behavior, react]
 tool: native + own JavaScript
 states: [results with a facet and the sort, nothing matched]

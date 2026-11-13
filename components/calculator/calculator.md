@@ -1,7 +1,7 @@
 ---
 name: calculator
 title: Calculator
-summary: A form drawn from a list of fields beside a result drawn from a plain view tree, computed on the server so it reads complete with script off, and again on every input with the same function.
+summary: A form drawn from a list of fields beside a result computed on the server, working with script off.
 group: pattern
 parts: [css, behavior, react]
 tool: native + own JavaScript

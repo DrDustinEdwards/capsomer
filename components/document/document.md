@@ -1,7 +1,7 @@
 ---
 name: document
 title: Document
-summary: "The page's root: its family and site layer from the first byte, which routes hydrate, and the start of a page that sends no React."
+summary: "The page's root, giving its family and site layer from the first byte and routing hydration."
 group: pattern
 parts: [behavior, react]
 tool: own JavaScript

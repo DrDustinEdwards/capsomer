@@ -1,7 +1,7 @@
 ---
 name: carousel
 title: Carousel
-summary: A finite set of related slides on a native scroll-snap track, with Previous and Next, one marker per slide and a polite "Slide N of M" once a scroll settles.
+summary: A finite set of related slides on a scroll-snap track, with Previous and Next and slide markers.
 parts: [css, behavior, react]
 tool: native + own JavaScript
 states: [first slide, middle slide, last slide, looping, finite (two slides), two per view, peek, vertical, keyboard focus on the track, no script]

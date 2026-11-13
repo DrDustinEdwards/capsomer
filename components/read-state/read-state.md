@@ -1,7 +1,7 @@
 ---
 name: read-state
 title: Read state
-summary: A read's states said one way in every app (reading, failed, nothing read yet, a source not read, a reread that failed over the last answer), the source line's Read again, and an admin table in its panel.
+summary: A read's states said one way in every app, plus the source line's Read again and an admin table.
 parts: [css, react]
 tool: native
 states: [reading, failed, nothing yet, stale answer, one source of several, read again, reading again, admin table, admin table empty]

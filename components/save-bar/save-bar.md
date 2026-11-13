@@ -1,7 +1,7 @@
 ---
 name: save-bar
 title: Save bar
-summary: "The foot of a settings form: the result of the last save, then the Save button, with the result announced when it arrives."
+summary: "The foot of a settings form, with the last save's result and the Save button."
 group: pattern
 parts: [css, react]
 tool: native

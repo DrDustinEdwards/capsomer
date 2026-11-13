@@ -1,7 +1,7 @@
 ---
 name: label-color-list
 title: Label color list
-summary: A person's own short list of labels, each a word with one of the eight series colors as a dot beside it, to mark and filter things (a scene's status, a task's stage).
+summary: A person's own short list of labels, each a word with one of eight series colors as a dot.
 parts: [css, behavior, react]
 tool: native
 states: [every color, a value matched ignoring case, a value not on the list, editor with empty rows]

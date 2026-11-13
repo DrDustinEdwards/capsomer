@@ -1,7 +1,7 @@
 ---
 name: schedule-dialog
 title: Schedule dialog
-summary: A dialog that asks when to publish, with a date and time field named by the browser's own time zone, the chosen time said back in words, a past time refused beside the field, and nothing sent until the confirm.
+summary: A dialog that asks when to publish, names the time zone, and sends nothing until confirmed.
 group: pattern
 parts: [css, behavior, react]
 tool: native + own JavaScript

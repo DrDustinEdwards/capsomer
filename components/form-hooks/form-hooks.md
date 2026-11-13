@@ -1,7 +1,7 @@
 ---
 name: form-hooks
 title: Form and async hooks
-summary: The React hooks behind forms that save and previews - useSaveQueue, useDraftDirty, useDebounced, useDebouncedPreview.
+summary: The React hooks behind forms that save and previews, such as useSaveQueue and useDraftDirty.
 group: primitive
 parts: [behavior, react]
 tool: own JavaScript

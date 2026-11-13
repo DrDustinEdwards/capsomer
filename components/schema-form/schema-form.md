@@ -1,7 +1,7 @@
 ---
 name: schema-form
 title: Schema form
-summary: A form described as data, one spec per field, drawn in Capsomer's fields and read back from a post by the same specs.
+summary: A form described as data, one spec per field, drawn in Capsomer's fields and read back from a post.
 group: pattern
 parts: [css, behavior, react]
 tool: native + own JavaScript (React)

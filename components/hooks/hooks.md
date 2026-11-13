@@ -1,7 +1,7 @@
 ---
 name: hooks
 title: Hooks
-summary: The small React hooks every app wrote its own copy of, each hydration-safe - useHydrated, ClientOnly, useMedia, usePrefersReducedMotion, useBrowserZone, useRemembered, useNow, useShownFor - and cn for class names.
+summary: The small hydration-safe React hooks every app wrote its own copy of, plus cn for class names.
 group: primitive
 parts: [behavior, react]
 tool: own JavaScript

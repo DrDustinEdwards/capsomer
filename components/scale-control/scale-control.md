@@ -1,7 +1,7 @@
 ---
 name: scale-control
 title: Scale control
-summary: A quantity with steppers, an optional unit select and the button that sends them, as a plain GET that rescales the page it sits on, so every state is an address and works with script off.
+summary: A quantity with steppers and a unit select that rescales the page as a plain GET with no script.
 parts: [css, react]
 tool: native + own JavaScript (Field's steppers, Select's popup)
 states: [a quantity and a unit system, a count alone at its least, keyboard focus, stepped up and down]

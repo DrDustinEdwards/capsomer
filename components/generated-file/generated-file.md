@@ -1,7 +1,7 @@
 ---
 name: generated-file
 title: Generated file
-summary: A panel for a file the server makes, saying whether it is made, running, ready, out of date or failed, with its download and the Generate button.
+summary: A panel for a file the server makes, showing its state, its download and a Generate button.
 group: pattern
 parts: [css, behavior, react]
 tool: native

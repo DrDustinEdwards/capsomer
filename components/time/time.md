@@ -1,7 +1,7 @@
 ---
 name: time
 title: Time
-summary: A time in words, relative in rows and exact (your zone and UTC) in the detail; a long date; and how long, as a timecode or in words.
+summary: A time in words, relative in rows and exact in detail, plus long dates and durations.
 parts: [css, behavior, react]
 tool: native + own JavaScript
 states: [less than a minute ago, minutes ago, hours ago, yesterday, a date, in the future, exact time shown, unreadable time, live refresh, hydrated from a server, a long date in UTC, a duration as a timecode and in words, with its exact time in a tooltip, no time at all]

@@ -1,7 +1,7 @@
 ---
 name: qr
 title: QR code
-summary: A QR code for one absolute address, drawn as an SVG from the matrix the site's encoder returns, black on white in every theme, named for what it opens and with the address in text under it.
+summary: A QR code for one absolute address, drawn as an SVG, named for what it opens.
 parts: [css, react]
 tool: native
 states: [default with what it is for and its address, large with the address alone, dark theme keeps black on white, forced colors]

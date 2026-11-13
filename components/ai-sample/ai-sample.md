@@ -1,7 +1,7 @@
 ---
 name: ai-sample
 title: AI sample
-summary: A live AI call the reader runs on a marketing page, the output shown as labeled fields and marked as AI-written for a fictional person.
+summary: A live AI call the reader runs on a marketing page, shown as labeled fields marked as AI-written.
 group: pattern
 parts: [css, behavior, react]
 tool: own JavaScript

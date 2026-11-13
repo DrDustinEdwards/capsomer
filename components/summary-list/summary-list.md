@@ -1,7 +1,7 @@
 ---
 name: summary-list
 title: Summary list
-summary: Labels and their values in a description list, each row with an optional Change link that says what it changes; the detail panel's record is its form without rows.
+summary: Labels and values in a description list, each row with an optional Change link.
 parts: [css]
 tool: native
 states: [rows with Change links, a missing value, a row without actions, two actions on a row, narrow column stacked, the record form without rows]

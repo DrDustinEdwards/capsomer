@@ -1,7 +1,7 @@
 ---
 name: faq
 title: FAQ
-summary: Questions and answers, as an accordion that keeps one answer open with no script, as cards, or as a list with every answer shown.
+summary: Questions and answers as an accordion that keeps one open, as cards, or as a full list.
 group: pattern
 parts: [css, react]
 tool: native

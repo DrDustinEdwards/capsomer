@@ -1,7 +1,7 @@
 ---
 name: link
 title: Link
-summary: "The link system: four cues on every link (color, semibold, a tint under the pointer, the focus ring), and one more per kind, named by data-link."
+summary: "The link system with four cues on every link and one more per kind, named by data-link."
 parts: [css, ts, react]
 tool: own JavaScript
 states: [rest, hover, pressed, visited, focus, away, family, file, jump, email, phone, lang, footnote, xref, address, next, title, tag]

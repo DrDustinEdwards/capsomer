@@ -1,7 +1,7 @@
 ---
 name: series-nav
 title: Series nav
-summary: Where a post sits in its series, as a ruled box with "Part 2 of 3", the series link and every part with this one marked.
+summary: Where a post sits in its series, as a ruled box with its part number and every part listed.
 group: pattern
 parts: [css, behavior, react]
 tool: native

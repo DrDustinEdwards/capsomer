@@ -1,7 +1,7 @@
 ---
 name: manual
 title: Manual theme
-summary: The public pages of the dustinedwards.info sites set after the 1975 NASA Graphics Standards Manual, in the page's own family color.
+summary: The public pages of the dustinedwards.info sites, set after the 1975 NASA Graphics Standards Manual.
 group: pattern
 parts: [css, behavior, react]
 tool: native + own JavaScript

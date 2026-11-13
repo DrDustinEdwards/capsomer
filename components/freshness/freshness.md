@@ -1,7 +1,7 @@
 ---
 name: freshness
 title: Freshness
-summary: How old the data on screen is, with a ring counting down to the next read, turning to warning when stale.
+summary: How old the data on screen is, with a ring counting down to the next read.
 parts: [css, behavior, react]
 tool: native
 states: [fresh with ring, stale, without the second clause, reading]

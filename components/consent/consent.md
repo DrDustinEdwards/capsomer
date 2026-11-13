@@ -1,7 +1,7 @@
 ---
 name: consent
 title: Consent screen
-summary: The OAuth consent screen every site shows an app asking for access, and the permission list of what an app may or may not do.
+summary: The OAuth consent screen every site shows an app asking for access, and its permission list.
 group: pattern
 parts: [css, react]
 tool: native

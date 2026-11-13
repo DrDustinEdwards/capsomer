@@ -1,7 +1,7 @@
 ---
 name: timeline
 title: Timeline
-summary: A process as numbered steps down a line that fills from the first to the last once it scrolls into view.
+summary: A process as numbered steps down a line that fills as it scrolls into view.
 parts: [css, behavior, react]
 tool: own JavaScript
 states: [filled (seen, or no script), empty before it is seen, reduced motion, a site's own look, narrow]

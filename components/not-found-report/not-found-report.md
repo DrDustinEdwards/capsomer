@@ -1,7 +1,7 @@
 ---
 name: not-found-report
 title: 404 report
-summary: The paths a site was asked for and does not have, most hits first, each with its hits, the hosts that linked to it, when it was last asked for and the app's own actions, over a window the reader chooses.
+summary: The paths a site was asked for and lacks, most hits first, with referring hosts and last request.
 group: pattern
 parts: [css, behavior, react]
 tool: native + React (composes panel, row list, segmented, status, empty and time)

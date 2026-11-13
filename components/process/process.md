@@ -1,7 +1,7 @@
 ---
 name: process
 title: Process steps
-summary: Numbered steps that say how something works, in order, side by side where there is room or as a list of rows.
+summary: Numbered steps that say how something works, side by side or as a list of rows.
 group: pattern
 parts: [css, react]
 tool: native

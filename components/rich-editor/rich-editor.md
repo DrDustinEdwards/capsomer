@@ -1,7 +1,7 @@
 ---
 name: rich-editor
 title: Rich editor
-summary: "Formatted text over Markdown that stays byte for byte: the markdown editor's toolbar, link palette, block menu and image step on a Tiptap surface, with the Markdown it does not format kept as source blocks."
+summary: "Formatted text over Markdown that stays byte for byte, on a Tiptap surface."
 parts: [css, behavior, react]
 tool: own JavaScript (Tiptap 3, MIT, over ProseMirror)
 states: [default, with blocks and a link palette, image waiting for alt text, Markdown kept as source blocks, read-only, before the script, in a shared room (collab editor)]

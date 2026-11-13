@@ -1,7 +1,7 @@
 ---
 name: email
 title: Email templates
-summary: Magic link, verification, reset, email change, alert, notice and security notice mails from one definition, with the HTML and the text made from the same blocks, in the family's colors.
+summary: Magic link, reset, alert and notice mails from one definition, in matching HTML and text.
 group: pattern
 parts: [ts]
 tool: own JavaScript

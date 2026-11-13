@@ -1,7 +1,7 @@
 ---
 name: secret-reveal
 title: Secret reveal
-summary: A secret shown once (an API key, a recovery code) that takes focus, with the warning and the copy button beside it.
+summary: A secret shown once, such as an API key, that takes focus and has a warning and copy button.
 parts: [css, react]
 tool: native
 states: [shown]

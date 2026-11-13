@@ -1,7 +1,7 @@
 ---
 name: picture
 title: Picture
-summary: What a stored image shows while it loads (its placeholder and main color), and the pause control an animated image needs, for site-runtime's pictureProps and Prelum's images alike.
+summary: What a stored image shows while it loads, plus the pause control an animated image needs.
 parts: [css, react]
 tool: native
 states: [placeholder while loading, loaded, main color only, animated and playing, animated and paused, reduced motion]

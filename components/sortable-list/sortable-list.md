@@ -1,7 +1,7 @@
 ---
 name: sortable-list
 title: Sortable list
-summary: Rows or cards a person puts in order, by dragging a grip, by the keyboard or by Move up and Move down, announcing each move and handing the new order to the host.
+summary: Rows or cards a person puts in order by drag, keyboard or Move buttons, announcing each move.
 parts: [css, behavior, react]
 tool: own JavaScript
 states: [rows, cards, groups of lists, repeatable rows, stack, board of lanes, read-only, Alt keys, an item up by keyboard, an item under the pointer, a grip under the pointer, the ends' buttons disabled, as delivered with no script inside a form, in React inside a form]

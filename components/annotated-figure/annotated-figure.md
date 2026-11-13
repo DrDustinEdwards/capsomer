@@ -1,7 +1,7 @@
 ---
 name: annotated-figure
 title: Annotated figure
-summary: A drawing with numbered callouts on leader lines, in a wide and a narrow layout, and a key of ruled boxes that pairs each number with its name; a callout and its entry light together under the pointer.
+summary: A drawing with numbered callouts on leader lines and a key that pairs each number with its name.
 parts: [css, behavior, react]
 tool: own JavaScript
 states: [default with two layouts, the key outside the figure, a narrow container shows the narrow drawing, a callout and its entry lit, leaders drawing in, reduced motion]

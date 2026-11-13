@@ -1,7 +1,7 @@
 ---
 name: family-footer
 title: Family footer
-summary: "The one footer of every dustinedwards.info site: the site's own part under a thin stripe, the strip of the family's sites, then the double stripe over the name, the profiles, the workspace logins, the site links and the legal links."
+summary: "The one footer of every dustinedwards.info site, with the family strip, profiles and legal links."
 group: pattern
 parts: [css, behavior]
 tool: native + own JavaScript

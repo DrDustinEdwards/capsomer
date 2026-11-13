@@ -1,7 +1,7 @@
 ---
 name: publish-gate
 title: Publish gate
-summary: One region beside the publish button that lists what stops a post going out, required apart from advisory, each cause linked to where it is, with a state for every destination site.
+summary: One region beside the publish button listing what stops a post going out, with a state per site.
 group: pattern
 parts: [css, behavior, react]
 tool: native + own JavaScript

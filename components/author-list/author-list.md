@@ -1,7 +1,7 @@
 ---
 name: author-list
 title: Author list
-summary: A byline of names with the site owner's marked, folded into "A, B, ..., Owner and 9 more" when it is long, and names that can link.
+summary: A byline of names with the site owner's marked, folded when long, and names that can link.
 parts: [css, react]
 tool: native
 states: [short list, names that link, folded with the owner in the lead, folded with the owner further down, folded and opened]

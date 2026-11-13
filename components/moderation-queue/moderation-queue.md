@@ -1,7 +1,7 @@
 ---
 name: moderation-queue
 title: Moderation queue
-summary: "Mentions from strangers waiting for a decision, on the site-api contract's states (Waiting, Approved, Rejected, Not yet checked, Source not found): j and k to move, a and r to approve or reject at once with Undo where the site can reverse it, d to delete after a confirm, x to select for a bulk action."
+summary: "Mentions from strangers waiting for a decision, with keys to move, approve, reject and delete."
 group: pattern
 parts: [css, behavior]
 tool: native + own JavaScript

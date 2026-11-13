@@ -12,8 +12,9 @@ test("a doc file in the pattern passes", () => {
   assert.deepEqual(docProblems("sample", doc(GOOD)), []);
 });
 
-test("a heading outside the pattern, prose in Usage and a two-sentence summary each fail", () => {
+test("a heading outside the pattern, prose in Usage and a summary of two sentences or over a line each fail", () => {
   assert.ok(docProblems("sample", doc(`${GOOD}\n## When to use\n\nOften.\n`)).length);
   assert.ok(docProblems("sample", doc(GOOD.replace("```html", "Write this.\n\n```html"))).length);
   assert.ok(docProblems("sample", doc(GOOD, "A control. It does things.")).length);
+  assert.ok(docProblems("sample", doc(GOOD, `A control ${"that does things ".repeat(8)}.`)).length);
 });

@@ -1,7 +1,7 @@
 ---
 name: inline-confirm
 title: Inline confirm
-summary: A row's risky action in two steps, in place, that works with no script and never lets a second Enter act.
+summary: A row's risky action in two steps, in place, that works with no script.
 parts: [css, react]
 tool: native + own JavaScript (React)
 states: [first step, question open, running]

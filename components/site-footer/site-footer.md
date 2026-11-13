@@ -1,7 +1,7 @@
 ---
 name: site-footer
 title: Site footer
-summary: "A site's own plain footer, for a site outside the family footer: a hairline over a row of links, a mark and a line of small print, in the page's column."
+summary: "A site's own plain footer for a site outside the family footer, with links, a mark and small print."
 group: pattern
 parts: [css]
 tool: native

@@ -1,7 +1,7 @@
 ---
 name: filter-bar
 title: Filter bar
-summary: A list's filters kept in the address - a GET form named as a search landmark, Apply and Clear, and the count of what is shown - working with no script, or applying as you type.
+summary: A list's filters kept in the address as a GET form, working with no script or as you type.
 parts: [css, ts, react]
 tool: own JavaScript
 states: [apply and clear, applies as you type, nothing filtered]

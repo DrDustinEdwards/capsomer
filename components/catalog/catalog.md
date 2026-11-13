@@ -1,7 +1,7 @@
 ---
 name: catalog
 title: Catalog
-summary: A searchable, filterable, sortable collection with counts, removable filter chips, a table that becomes cards on a phone, and a filter tray; its state is in the address and it works with no script.
+summary: A searchable, filterable, sortable collection that keeps its state in the address with no script.
 group: pattern
 parts: [css, behavior, react]
 tool: native + own JavaScript

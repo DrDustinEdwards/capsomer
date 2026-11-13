@@ -1,7 +1,7 @@
 ---
 name: chart-frame
 title: Chart frame
-summary: The layout every chart sits in, around Enarratio's own figure (its title, the sentence that says what it shows, its toolbar, the chart, its summary and source, and its numbers as a table for screen readers and AI agents), redrawn to its width in React.
+summary: The layout every chart sits in, with its title, finding, toolbar, summary, source and data table.
 parts: [css, react]
 tool: native
 states: [bar with its toolbar, line, area, sparkline, uptime strip, heat strip with a gap, progress ring, timeline, notes, source and byline, no data, redrawn to its width, refused, comfortable density, narrow column, every family]

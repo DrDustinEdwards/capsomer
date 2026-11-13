@@ -1,7 +1,7 @@
 ---
 name: field
 title: Field
-summary: A labeled input, textarea, file input, checkbox, radio or input group, with help outside it and an error beside it, checked on leave and on submit; with a password, character count, one-time code, number, search and date input built on it.
+summary: A labeled input, textarea, checkbox, radio or group, with help and an error, checked on leave.
 parts: [css, behavior, react]
 tool: native + own JavaScript
 states: [default, keyboard focus, hover, filled, help text, required, invalid with its message, disabled, read-only, file input, input group, checkbox checked, unchecked, mixed and invalid, radio checked and unchecked, choice card, slider, password shown and hidden, one-time code, character count under and over, number with steppers, search with Clear, date input with a part in error, two or more errors in the error summary, a field with its action, help under the control, slider with its readout and ends, money, date and time]

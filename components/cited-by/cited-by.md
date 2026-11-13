@@ -1,7 +1,7 @@
 ---
 name: cited-by
 title: Cited by
-summary: How many works cite a record and which, each with the index it came from and when that was read; nothing drawn below 1.
+summary: How many works cite a record and which, each with its index and when that was read.
 group: pattern
 parts: [css, react]
 tool: native

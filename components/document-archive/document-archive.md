@@ -1,7 +1,7 @@
 ---
 name: document-archive
 title: Document archive
-summary: Past documents by category as lists of links, and a document's page with its download, the app's viewer and Previous and Next in its category.
+summary: Past documents by category as lists of links, and a document page with download and viewer.
 group: pattern
 parts: [css, behavior, react]
 tool: native

@@ -1,7 +1,7 @@
 ---
 name: pdf-viewer
 title: PDF viewer
-summary: A PDF's current page drawn in the page by PDF.js, with page-through, zoom and the keyboard, and a link to the file.
+summary: A PDF's current page drawn in the page by PDF.js, with paging, zoom, keyboard and a file link.
 parts: [css, behavior, react]
 tool: own JavaScript (PDF.js, hosted by the site)
 states: [loading, a page shown, last page, failed to load]

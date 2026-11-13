@@ -1,7 +1,7 @@
 ---
 name: rich-text-field
 title: Rich text field
-summary: A short text with a few inline tags (italic, superscript, subscript and the like) and nothing else, edited with a toolbar and shortcuts, with a sanitizer the server runs on every save.
+summary: A short text with a few inline tags, edited with a toolbar and sanitized by the server on save.
 parts: [css, behavior, react]
 tool: own JavaScript
 states: [title with italic only, body with superscript and subscript, word count, help and required, invalid, every tag a field may allow, a pressed toggle where the caret is]

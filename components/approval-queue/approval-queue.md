@@ -1,7 +1,7 @@
 ---
 name: approval-queue
 title: Approval queue
-summary: Things your own side drafted, waiting for a person to approve them one by one, on the moderation queue's markup.
+summary: Things your own side drafted, waiting for a person to approve them one by one.
 group: pattern
 parts: [css, react]
 tool: native + React (composes the moderation queue, status, empty, time and confirm dialog)

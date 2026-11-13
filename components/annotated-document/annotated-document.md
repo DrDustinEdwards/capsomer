@@ -1,7 +1,7 @@
 ---
 name: annotated-document
 title: Annotated document
-summary: An edited text shown as the original, the edit, or every change, beside a rail of notes that each light the passages they are about.
+summary: An edited text shown as original, edit or every change, beside a rail of notes that light passages.
 group: pattern
 parts: [css, behavior, react]
 tool: own JavaScript

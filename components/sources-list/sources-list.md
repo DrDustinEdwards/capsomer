@@ -1,7 +1,7 @@
 ---
 name: sources-list
 title: Sources list
-summary: The works a page draws on and the credits it owes, each with its kind, title, authors, publisher, license and note.
+summary: The works a page draws on and the credits it owes, each with kind, title, authors and license.
 group: pattern
 parts: [css, react]
 tool: native

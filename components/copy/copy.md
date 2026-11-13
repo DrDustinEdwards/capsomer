@@ -1,7 +1,7 @@
 ---
 name: copy
 title: Copy
-summary: A button that copies another element's text, or shares a link, and says Copied or Copy failed in a bubble beside it.
+summary: A button that copies another element's text or shares a link, and says Copied or Copy failed.
 parts: [css, behavior, react]
 tool: native + own JavaScript
 states: [rest, copied, failed, icon only, with a label, share, repeated block]

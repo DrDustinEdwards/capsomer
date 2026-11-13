@@ -1,7 +1,7 @@
 ---
 name: feed
 title: Feed
-summary: A timeline of what shipped, deploys and merges broken by day, with routine runs condensed and a marker where an incident began.
+summary: A timeline of what shipped, with deploys and merges broken by day and a marker for incidents.
 group: pattern
 parts: [css, react]
 tool: native

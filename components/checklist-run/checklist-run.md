@@ -1,7 +1,7 @@
 ---
 name: checklist-run
 title: Checklist run
-summary: A page of steps worked through once, at the bench or the counter, with Done checks, notes, timers, one step at a time and a record to download.
+summary: A page of steps worked through once, with Done checks, notes, timers and a record to download.
 group: pattern
 parts: [css, behavior]
 tool: native

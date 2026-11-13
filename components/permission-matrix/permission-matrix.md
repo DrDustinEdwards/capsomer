@@ -1,7 +1,7 @@
 ---
 name: permission-matrix
 title: Permission matrix
-summary: "Who can do what: agents against permissions, as a table, as cards on a narrow screen, or by permission."
+summary: "Who can do what, with agents against permissions as a table, as cards, or by permission."
 group: pattern
 parts: [css, behavior, react]
 tool: native + own JavaScript

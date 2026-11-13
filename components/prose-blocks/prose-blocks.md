@@ -1,7 +1,7 @@
 ---
 name: prose-blocks
 title: Prose blocks
-summary: "Every element Prelum's renderer writes into a post, styled in the reading context: headings with their own links, lists, tables, code, callouts, figures, galleries, video, audio, embeds, buttons, bookmarks, details, FAQs, footnotes and the editorial pack."
+summary: "Every element Prelum's renderer writes into a post, styled for reading."
 parts: [css]
 tool: native
 states: [text lists quotes and footnotes, table, callouts, images figures and a gallery, video audio and embeds, button bookmark details and FAQ, details plus and ruled, manual parts and tables, diagram in the page, site look by tokens, code, editorial pack]

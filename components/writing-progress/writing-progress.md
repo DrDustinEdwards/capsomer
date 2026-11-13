@@ -1,7 +1,7 @@
 ---
 name: writing-progress
 title: Writing progress
-summary: "Today's writing in one panel: words against today's target, the streak, the pace a deadline asks for and the last seven days."
+summary: "Today's writing in one panel, with words against target, streak, deadline pace and seven days."
 group: pattern
 parts: [css, behavior, react]
 tool: native + React (composes panel, meter, status, chart frame, disclosure and field)

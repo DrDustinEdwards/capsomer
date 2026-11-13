@@ -1,7 +1,7 @@
 ---
 name: data
 title: Data hooks
-summary: The data layer every React app wrote its own copy of - server-seeded queries, optimistic writes that roll back, route answers as queries with a page-wide signed-out flag, a live room that reconnects, and lazy parts the page loads before it hydrates.
+summary: The React data layer with seeded queries, optimistic writes, a live room and lazy parts.
 group: primitive
 parts: [behavior, react]
 tool: own JavaScript, TanStack Query

@@ -1,7 +1,7 @@
 ---
 name: attention-list
 title: Attention list
-summary: The overview's one list of what is wrong, worst first, with like rows folded into one that opens in place, a cap on warnings, and the notices closed at the foot.
+summary: The overview's one list of what is wrong, worst first, with like rows folded into one.
 group: pattern
 parts: [css, behavior, react]
 tool: native + own JavaScript

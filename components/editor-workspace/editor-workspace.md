@@ -1,7 +1,7 @@
 ---
 name: editor-workspace
 title: Editor workspace
-summary: The page around a writing surface, with a Write, Split and Preview layout remembered in this browser, the site's own render in a sandboxed frame refreshed once typing pauses, Ctrl or Cmd+S as a save in place, and chrome that steps back while someone types.
+summary: The page around a writing surface, with Write, Split and Preview layouts and a sandboxed preview.
 group: pattern
 parts: [css, behavior, react]
 tool: native + own JavaScript

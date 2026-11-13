@@ -1,7 +1,7 @@
 ---
 name: tag-group
 title: Tag group
-summary: A labeled list of tags a person can remove, one tab stop with arrow keys, Delete or Backspace to remove, focus kept, and Undo.
+summary: A labeled list of removable tags with one tab stop, arrow keys, Delete to remove and Undo.
 parts: [css, behavior]
 tool: own JavaScript
 states: [removable tags, hover on remove, empty, comfortable density, after a removal with Undo]

@@ -1,7 +1,7 @@
 ---
 name: avatar
 title: Avatar
-summary: A person, an agent or a source as a round picture or its initials, with a corner badge, and a group that overlaps.
+summary: A person, agent or source as a round picture or initials, with a corner badge and a group.
 parts: [css, behavior, react]
 tool: native + own JavaScript
 states: [initials, picture, picture that fails to load, sizes, square, agent, badge, group with a count, comfortable density]

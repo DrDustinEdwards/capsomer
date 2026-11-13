@@ -1,7 +1,7 @@
 ---
 name: offline-keep
 title: Keep on this device
-summary: A toggle that stores a page and its files in this browser, so it opens with no connection; removing the last one leaves nothing behind.
+summary: A toggle that stores a page and its files in this browser so it opens with no connection.
 parts: [css, behavior]
 tool: own JavaScript (a service worker)
 states: [not kept, kept, removed, could not keep, a browser with no service worker (nothing shown)]

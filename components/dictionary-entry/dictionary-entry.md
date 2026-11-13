@@ -1,7 +1,7 @@
 ---
 name: dictionary-entry
 title: Dictionary entry
-summary: A word set as a dictionary sets it, between two rules, with its pronunciation and a speaker that plays the clip in place, its part of speech, numbered senses and its origin.
+summary: A word set as a dictionary sets it, with pronunciation, part of speech, senses and origin.
 group: pattern
 parts: [css, behavior, react]
 tool: native + own JavaScript

@@ -1,7 +1,7 @@
 ---
 name: json-ld
 title: JSON-LD
-summary: A page's structured data as one script type="application/ld+json" from a value, escaped so the data cannot end the element, and set through the Trusted Types policy.
+summary: A page's structured data as one ld+json script from a value, escaped and set through Trusted Types.
 parts: [react]
 tool: own JavaScript
 states: [one node, a list whose strings hold markup and line separators]

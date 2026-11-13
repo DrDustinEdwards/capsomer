@@ -1,7 +1,7 @@
 ---
 name: trusted-html
 title: Trusted HTML and rich text
-summary: The one Trusted Types policy Capsomer's scripts use, and RichText, which renders stored, already sanitized HTML through it, with the reading measure as an option.
+summary: The one Trusted Types policy Capsomer's scripts use, and RichText for stored sanitized HTML.
 group: primitive
 parts: [css, behavior, react]
 tool: own JavaScript

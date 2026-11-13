@@ -1,7 +1,7 @@
 ---
 name: web-push
 title: Phone alerts
-summary: Turn Web Push on for this browser, see the devices that have it and turn one off, and send a test alert.
+summary: Turn Web Push on for this browser, see devices that have it, turn one off and send a test.
 group: pattern
 parts: [css, behavior, react]
 tool: own JavaScript

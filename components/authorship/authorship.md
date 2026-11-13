@@ -1,7 +1,7 @@
 ---
 name: authorship
 title: Authorship marks
-summary: Who wrote each passage of a text (you, AI or quoted), marked by a patterned rule and a word in the margin, shown or hidden by one switch, with a summary by words.
+summary: Who wrote each passage of a text, marked by a patterned rule and a word, shown by one switch.
 group: pattern
 parts: [css, behavior, react]
 tool: native + own JavaScript

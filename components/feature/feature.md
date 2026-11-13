@@ -1,7 +1,7 @@
 ---
 name: feature
 title: Feature blocks and cards
-summary: A feature told at length (eyebrow, title, paragraph and a picture of it working) or in a card in a grid (icon, title, line).
+summary: A feature told at length with a picture, or in a card in a grid with an icon, title and line.
 group: pattern
 parts: [css, react]
 tool: native

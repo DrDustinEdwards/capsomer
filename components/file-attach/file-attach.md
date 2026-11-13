@@ -1,7 +1,7 @@
 ---
 name: file-attach
 title: File attach
-summary: Attach files to a record from a button, checked before anything is sent, with the attached files listed.
+summary: Attach files to a record from a button, checked before anything is sent, and listed after.
 parts: [css, react]
 tool: native + own JavaScript (React)
 states: [files attached, none yet, uploading, full, read only with its reason, refused]

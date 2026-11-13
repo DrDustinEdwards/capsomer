@@ -1,7 +1,7 @@
 ---
 name: uptime-strip
 title: Uptime strip
-summary: "Enarratio's uptime strip in a chart frame: the title with the uptime and its window, the finding, the strip, a legend of the slots, and the numbers as a table for screen readers."
+summary: "Enarratio's uptime strip in a chart frame, with the uptime, finding, legend and data table."
 parts: [css, behavior, react]
 tool: native
 states: [all up, an outage, slots with no data, inline in a table cell, comfortable density]

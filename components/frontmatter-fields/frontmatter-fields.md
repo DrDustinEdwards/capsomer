@@ -1,7 +1,7 @@
 ---
 name: frontmatter-fields
 title: Frontmatter fields
-summary: A file's frontmatter as one labeled box per key (a line, a longer text, a list "separated by commas", one item per line, or a checkbox), with the raw text one disclosure away for the keys no box can say.
+summary: A file's frontmatter as one labeled box per key, with the raw text one disclosure away.
 parts: [css, behavior, react]
 tool: native + own JavaScript
 states: [typed from the values, with the app's labels and help, a flag with its own word, a list and its hint, one item per line, read-only with empty boxes hidden, keys left to the raw text, raw text open when no box shows, no frontmatter]

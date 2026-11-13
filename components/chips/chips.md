@@ -1,7 +1,7 @@
 ---
 name: chips
 title: Filter chips
-summary: Filter a list by up to six values with toggle chips; the filter lives in the address and a live count says what is left.
+summary: Toggle chips that filter a list by up to six values, kept in the address with a live count.
 parts: [css, behavior, react]
 tool: native + own JavaScript
 states: [link chips with the current one, checkbox chips in a form, none pressed, some pressed with the count, hover, pressed and hovered, keyboard focus, disabled, small and large, with a count or an icon, an empty result, solid]

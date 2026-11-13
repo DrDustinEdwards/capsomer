@@ -1,7 +1,7 @@
 ---
 name: date-picker
 title: Date picker
-summary: A text input that takes a date as 2026-11-14, with a button that opens a calendar in a dialog; with no script the input alone does the job.
+summary: A text input that takes a date, with a button that opens a calendar and works without script.
 parts: [css, behavior, react]
 tool: native + own JavaScript
 states: [filled, calendar open with the chosen day, today and days that cannot be chosen, in error]

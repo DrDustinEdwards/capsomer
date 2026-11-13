@@ -1,7 +1,7 @@
 ---
 name: format
 title: Number words
-summary: A figure, a noun for a count, a file size, a short count, a median and a percent, written the same way on every site.
+summary: Figures, counts, file sizes, medians and percents written the same way on every site.
 group: primitive
 parts: [behavior]
 tool: own JavaScript

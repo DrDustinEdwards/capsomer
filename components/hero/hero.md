@@ -1,7 +1,7 @@
 ---
 name: hero
 title: Hero
-summary: A landing page's first section - eyebrow, the page's h1, a lead, the actions and a note, with an aside beside them and an optional decorative layer.
+summary: A landing page's first section, with eyebrow, h1, lead, actions, a note and an aside.
 group: pattern
 parts: [css, react]
 tool: native

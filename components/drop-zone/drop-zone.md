@@ -1,7 +1,7 @@
 ---
 name: drop-zone
 title: Drop zone
-summary: Choose files by browsing or dropping them, checked against type, size and count, with each refusal named in words.
+summary: Choose files by browsing or dropping them, checked against type, size and count in words.
 parts: [css, behavior, react]
 tool: native + own JavaScript
 states: [idle, file over, files refused with their reasons, several files taken, one file only, the app lists the files itself, disabled, drop anywhere on the page]

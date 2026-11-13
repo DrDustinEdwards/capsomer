@@ -1,7 +1,7 @@
 ---
 name: route-hooks
 title: Route hooks
-summary: The hooks that read the address, a fetcher or loader data - useFetcherPromise, useUrlDialog, useUrlFilters, usePagePending, useScrollToHash, useParamChoice, createSnippetHook.
+summary: The hooks that read the address, a fetcher or loader data, such as useUrlFilters and usePagePending.
 group: primitive
 parts: [react]
 tool: own JavaScript, React Router

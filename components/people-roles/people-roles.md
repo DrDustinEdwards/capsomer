@@ -1,7 +1,7 @@
 ---
 name: people-roles
 title: People and roles
-summary: "An app's members page: who has access, their title, when it ends and whether Cloudflare matches, with add, change, renew and remove."
+summary: "An app's members page showing who has access, their title and end date, with add and remove."
 group: pattern
 parts: [css, behavior, react]
 tool: native + own JavaScript

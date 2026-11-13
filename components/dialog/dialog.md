@@ -1,7 +1,7 @@
 ---
 name: dialog
 title: Dialog
-summary: "The one modal surface under every overlay: a dialog, an alert dialog, a side sheet, a bottom sheet, a palette."
+summary: "The one modal surface under every overlay, such as a dialog, side sheet, bottom sheet or palette."
 group: primitive
 parts: [css, behavior, react]
 tool: native + own JavaScript

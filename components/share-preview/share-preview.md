@@ -1,7 +1,7 @@
 ---
 name: share-preview
 title: Share preview
-summary: How a page appears where it is shared, as a search result and as a social card, before it goes out, with a meter for how wide its title and description are against the width a result cuts at.
+summary: How a page appears when shared, as a search result and social card, with a width meter.
 group: pattern
 parts: [css, behavior, react]
 tool: native

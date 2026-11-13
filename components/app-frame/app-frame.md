@@ -1,7 +1,7 @@
 ---
 name: app-frame
 title: App frame
-summary: A window around a preview of the product, with dots and an address bar or a title bar, so the preview reads as a picture of the app.
+summary: A window with dots and an address bar around a product preview, so it reads as a picture of the app.
 group: pattern
 parts: [css, react]
 tool: native

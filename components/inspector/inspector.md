@@ -1,7 +1,7 @@
 ---
 name: inspector
 title: Inspector
-summary: Everything about a text that is not the text, in tabs beside the writing on a wide screen and in a sheet from the bottom on a phone.
+summary: Everything about a text that is not the text, in tabs beside it or in a bottom sheet on a phone.
 group: pattern
 parts: [css, react]
 tool: Capsomer tabs and dialog

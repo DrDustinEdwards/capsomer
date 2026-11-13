@@ -1,7 +1,7 @@
 ---
 name: delta
 title: Delta
-summary: The move beside a figure against its last value, an arrow and a whole percent, better or worse by which way is better, and no change under a threshold.
+summary: The move beside a figure against its last value, as an arrow and percent, better or worse.
 parts: [css, behavior, react]
 tool: native
 states: [better, worse, down and better, no change]

@@ -1,7 +1,7 @@
 ---
 name: site-header
 title: Site header
-summary: One header across the top of every public, app and admin page in the family, 56px and sticky, with the logo, the switcher and the section links on the left and the extras, the theme and the account on the right.
+summary: One sticky header across every public, app and admin page in the family, with logo and links.
 group: pattern
 parts: [css, behavior, react]
 tool: native + own JavaScript

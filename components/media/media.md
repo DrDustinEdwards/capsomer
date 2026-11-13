@@ -1,7 +1,7 @@
 ---
 name: media
 title: Media library
-summary: A grid of file tiles with roving focus, and an inspector, a pane or a side sheet, that saves alt text, caption and tags by itself.
+summary: A grid of file tiles with roving focus and an inspector that saves alt text, caption and tags.
 parts: [css, behavior, react]
 tool: native + own JavaScript (the shared dialog, meter, chips, bulk bar, drop zone and message region)
 states: [alt text written, selected, list layout and sort, no alt text, decorative, unattached, document, uploading, failed with Retry, in Trash with Restore, inspector as a pane, inspector as a sheet, saving, saved, could not save with Retry, not used anywhere, empty library, nothing matches, empty bin]

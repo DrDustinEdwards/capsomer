@@ -1,7 +1,7 @@
 ---
 name: setup-checklist
 title: Setup checklist
-summary: A new account's first steps, each Done or To do with its one way to do it, and how many are done beside the heading.
+summary: A new account's first steps, each Done or To do, with how many are done beside the heading.
 group: pattern
 parts: [react]
 tool: native

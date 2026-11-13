@@ -1,7 +1,7 @@
 ---
 name: graph
 title: Graph
-summary: A directed graph of boxes and wires drawn once at build time or on a server, each box linked to its page with status lines, laid out in layers so wires run one way.
+summary: A directed graph of linked boxes and wires, drawn once at build time and laid out in layers.
 parts: [css, behavior]
 tool: dagre (@dagrejs/dagre, an optional peer)
 states: []

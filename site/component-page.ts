@@ -36,7 +36,8 @@ function exampleBlock(c: Component, e: Example, heading: boolean): string {
   // Long code starts closed under its View code button, written here rather than by the page's script, so the box is
   // its final height from the first paint. Without scripts the closed rules do not apply (site.css).
   const closed = e.code.split("\n").length > 4;
-  return `<section class="comp-ex"${heading ? ` aria-labelledby="${label}"` : ` aria-label="${esc(c.title)}, ${esc(e.title)}"`}>
+  // A plain block, not a named region: the frame inside holds the states page's own landmarks, of the same names.
+  return `<div class="comp-ex">
   ${heading ? `<h3 id="${label}">${esc(e.title)}</h3>` : ""}
   <div class="comp-ex-box">
     <iframe class="comp-ex-frame" src="${src}" title="${esc(c.title)}: ${esc(e.title)}" loading="lazy" data-kind="${e.kind}" data-height="${e.height}" data-fk="${esc(frameKey)}"${frameSizes(frameKey)}></iframe>
@@ -46,7 +47,7 @@ function exampleBlock(c: Component, e: Example, heading: boolean): string {
       ${closed ? `<button type="button" class="cap-btn" data-size="sm" data-cap-part="show-code" aria-expanded="false">View code</button>` : ""}
     </div>
   </div>
-</section>`;
+</div>`;
 }
 
 const ARROW = {

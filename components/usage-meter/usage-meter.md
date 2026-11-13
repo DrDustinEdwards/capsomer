@@ -1,7 +1,7 @@
 ---
 name: usage-meter
 title: Usage meter
-summary: Usage against a free limit, with where the period ends at the current rate and what happens at the limit.
+summary: Usage against a free limit, with where the period ends at the current rate and the limit's effect.
 group: pattern
 parts: [css, behavior, react]
 tool: native + own JavaScript

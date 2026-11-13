@@ -1,7 +1,7 @@
 ---
 name: listbox
 title: Listbox
-summary: One list of options a person picks from, with groups, an active option, filtering, typeahead and selection.
+summary: One list of options a person picks from, with groups, filtering, typeahead and selection.
 group: primitive
 parts: [css, behavior, react]
 tool: own JavaScript

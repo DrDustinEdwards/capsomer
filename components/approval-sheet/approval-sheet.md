@@ -1,7 +1,7 @@
 ---
 name: approval-sheet
 title: Approval sheet
-summary: Several waiting gates approved together in one modal sheet, each with its exact command and an optional comment.
+summary: Several waiting gates approved together in one modal sheet, each with its command and a comment.
 group: pattern
 parts: [css, behavior, react]
 tool: native + own JavaScript

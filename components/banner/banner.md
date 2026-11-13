@@ -1,7 +1,7 @@
 ---
 name: banner
 title: Banner and alert
-summary: "A page-level notice that keeps the last good data on screen, and an alert beside its source: glyph, title, words and an action, in five tones."
+summary: "A page-level notice that keeps the last good data on screen, and an alert beside its source."
 parts: [css, behavior, react]
 tool: native + own JavaScript
 states: [neutral, notice, ok, warning banner with an action, critical banner, banner with a title, inline alert, alert with a title, warning alert, neutral alert, banner with Dismiss, comfortable]

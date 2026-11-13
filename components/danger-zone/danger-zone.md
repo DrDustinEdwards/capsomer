@@ -1,7 +1,7 @@
 ---
 name: danger-zone
 title: Danger zone
-summary: The risky controls of a form or a detail, set apart from the safe ones under a "Danger" label at the end.
+summary: The risky controls of a form or detail, set apart from the safe ones under a Danger label.
 group: pattern
 parts: [css, react]
 tool: native

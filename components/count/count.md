@@ -1,7 +1,7 @@
 ---
 name: count
 title: Count
-summary: A count in a small round bubble, neutral or toned by what the number means, for a tab, a menu row or an icon's corner.
+summary: A count in a small round bubble, toned by what the number means, for a tab, row or icon.
 parts: [css]
 tool: native
 states: [a count and its tones]

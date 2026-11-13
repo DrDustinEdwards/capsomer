@@ -1,7 +1,7 @@
 ---
 name: newsletter-signup
 title: Newsletter sign-up
-summary: An email field and its button, a consent line, and the answer in its place once sent; the site's action does double opt-in.
+summary: An email field and button, a consent line, and the answer in place once sent.
 group: pattern
 parts: [css, react]
 tool: native

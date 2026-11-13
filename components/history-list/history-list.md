@@ -1,7 +1,7 @@
 ---
 name: history-list
 title: History list
-summary: One line per change to a draft or post, with who, when, the signed size change in words and a one-line summary; autosaves folded, any two versions picked to compare, and restoring that makes a new version.
+summary: One line per change to a draft or post, with who, when and size, and a way to compare or restore.
 group: pattern
 parts: [css, behavior, react]
 tool: native + own JavaScript

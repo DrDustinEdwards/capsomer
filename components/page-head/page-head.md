@@ -1,7 +1,7 @@
 ---
 name: page-head
 title: Page head
-summary: "The top of a page inside the shell: where you are, the title, one line saying what the page is for, and the page's actions at the right."
+summary: "The top of a page inside the shell, with location, title, one line of purpose and actions."
 parts: [css, react]
 tool: native
 states: [trail, title and lead and actions, title and lead, title only, long title in a narrow space]

@@ -1,7 +1,7 @@
 ---
 name: entry-list
 title: Entry list
-summary: Dated entries under a heavy rule, the date in its own column beside a title, kicker, summary and tags.
+summary: Dated entries under a heavy rule, with the date in its own column beside title, kicker and tags.
 group: pattern
 parts: [css]
 tool: native

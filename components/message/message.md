@@ -1,7 +1,7 @@
 ---
 name: message
 title: Message
-summary: The page's one status region; the result of an action, with Undo, and every warning or failure that must not be missed, never taking focus.
+summary: The page's one status region for action results and warnings, never taking focus.
 parts: [css, behavior, react]
 tool: native + own JavaScript
 states: [empty, plain message, message with Undo, after Undo, warning that stays, warning through the next result, failure, Undo that could not run, clears itself, a form action's error, a form action's success, an action answer with no words]

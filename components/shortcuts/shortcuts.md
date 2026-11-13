@@ -1,7 +1,7 @@
 ---
 name: shortcuts
 title: Shortcuts
-summary: One registry for every keyboard shortcut, the "?" sheet that lists them, and the switch that turns single keys off.
+summary: One registry for every keyboard shortcut, the sheet that lists them and a switch for single keys.
 parts: [css, behavior, react]
 tool: own JavaScript (the shared dialog)
 states: [key caps, the sheet open, single-key shortcuts off, comfortable density]

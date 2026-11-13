@@ -1,7 +1,7 @@
 ---
 name: rating
 title: Rating
-summary: A star rating out of five in halves - shown as an image whose name says the value, or asked for with a native select beside the stars.
+summary: A star rating out of five in halves, shown as an image or asked for with a native select.
 parts: [css, react]
 tool: native
 states: [shown, sizes, asked for]

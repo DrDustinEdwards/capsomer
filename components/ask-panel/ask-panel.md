@@ -1,7 +1,7 @@
 ---
 name: ask-panel
 title: Ask panel
-summary: An AI answer streamed into the page, labeled as AI and as possibly wrong, with its sources, a follow-up and a note when it was cut off.
+summary: An AI answer streamed into the page, labeled as AI and possibly wrong, with sources and a follow-up.
 group: pattern
 parts: [css, behavior]
 tool: own JavaScript

@@ -1,7 +1,7 @@
 ---
 name: section-band
 title: Section band
-summary: A full-width band of its own color that sets one section apart, straight or with slanted edges over its neighbors.
+summary: A full-width band of its own color that sets one section apart, straight or slanted.
 group: pattern
 parts: [css, react]
 tool: native

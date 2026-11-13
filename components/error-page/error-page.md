@@ -1,7 +1,7 @@
 ---
 name: error-page
 title: Error page
-summary: The page a site's root ErrorBoundary shows for 404, 410 and 500, in plain words, under the site's own header.
+summary: The page a site's root ErrorBoundary shows for 404, 410 and 500, in plain words.
 group: pattern
 parts: [css, react]
 tool: native

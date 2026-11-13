@@ -1,7 +1,7 @@
 ---
 name: row-list
 title: Row list
-summary: Rows that each open a detail, the title stretched over the row as its one link, with j and k to move between rows.
+summary: Rows that each open a detail, the title stretched as the row's one link, with j and k to move.
 parts: [css, behavior, react]
 tool: native + own JavaScript
 states: [mixed worst first, outline and muted variants, sizes, media, comfortable density, critical row, hover, keyboard focus, row with actions, long title cut with an ellipsis, a row that opens in place, phone width with a wrapping title, a row that is read, not opened, a reply opened in a row]

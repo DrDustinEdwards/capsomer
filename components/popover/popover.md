@@ -1,7 +1,7 @@
 ---
 name: popover
 title: Popover
-summary: "The one floating surface, on the Popover API: click popovers, tooltips, and the look every popup shares."
+summary: "The one floating surface on the Popover API, covering click popovers and tooltips."
 group: primitive
 parts: [css, behavior, react]
 tool: native + own JavaScript

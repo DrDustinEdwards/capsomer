@@ -1,7 +1,7 @@
 ---
 name: router
 title: React Router bindings
-summary: "The router glue every Capsomer React part needs, in one place: Form for renderForm, the confirm dialog on the router, a row's own fetcher form, and a shouldRevalidate that skips the loader when only a display parameter changed."
+summary: "The router glue every Capsomer React part needs, in one place."
 group: primitive
 parts: [behavior, react]
 tool: react-router

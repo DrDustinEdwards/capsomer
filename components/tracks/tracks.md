@@ -1,7 +1,7 @@
 ---
 name: tracks
 title: Tracks
-summary: The columns inside a page column, a reading line, a rail beside it and a wide track, plus the rail's facts.
+summary: The columns inside a page column, with a reading line, a rail, a wide track and the rail's facts.
 parts: [css]
 tool: native
 states: [no rail, note rail, contents rail, wide block, rail facts]

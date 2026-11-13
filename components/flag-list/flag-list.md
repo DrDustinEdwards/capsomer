@@ -1,7 +1,7 @@
 ---
 name: flag-list
 title: Flag list
-summary: Problems raised against a draft by a check, a reviewer or an AI, blocking before advisory, open and resolved, each pointing at its passage and some carrying a suggestion only the owner can apply.
+summary: Problems raised against a draft by a check, reviewer or AI, each pointing at its passage.
 group: pattern
 parts: [css, behavior, react]
 tool: native + own JavaScript
