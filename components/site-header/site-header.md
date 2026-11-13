@@ -223,7 +223,7 @@ A public plane that sends no React (a static page, a server-rendered page with n
 
 `attributes` puts the site's `data-*` attributes on the `<header>` (a command palette's hooks, for instance); the header's own attributes are set after them and win. `toolsEnd` places the site's markup in the tools after the theme control and the account, and `end` at the very end of the `<header>`: an island's `<template>`, say.
 
-Load `site-header.css` with `dialog.css`, `popover.css`, `theme-switch.css` and `count.css`. The family letterhead (`variant="letterhead"`) is in `site-header-letterhead.css` and the header's search in `site-header-search.css`: a site loads each after `site-header.css` only when its header has it, so a header without them does not download them (about 5.4 and 1.6 KB gzip).
+Load `site-header.css` with `dialog.css`, `popover.css`, `theme-switch.css` and `count.css`. It is three parts, which a site may load on their own to skip what its header does not draw: `site-header-frame.css` (everything a header has), then `site-header-letterhead.css` (the family letterhead, about 5.4 KB gzip) and `site-header-search.css` (the header's search, about 1.6 KB gzip). A header that is not the letterhead and has no `search` needs only the frame.
 
 ## Deliberately different
 

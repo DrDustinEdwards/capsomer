@@ -39,6 +39,4 @@
 @import "../components/shortcuts/shortcuts.css";
 @import "../components/theme-switch/theme-switch.css";
 @import "../components/site-header/site-header.css";
-@import "../components/site-header-letterhead/site-header-letterhead.css";
-@import "../components/site-header-search/site-header-search.css";
 @import "../components/admin-shell/admin-shell.css";

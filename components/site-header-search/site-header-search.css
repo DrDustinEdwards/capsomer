@@ -1,9 +1,8 @@
 /* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
-/* The site header's search (the magnifier, its panel and the matches), apart from site-header.css so
-   a site with no header search does not download it. Load it after site-header.css (and after
-   site-header-letterhead.css where a site has both). */
+/* The site header's search (the magnifier, its panel and the matches), a part of site-header.css. A site
+   that loads the parts instead loads it after site-header-frame.css and site-header-letterhead.css. */
 @layer cap.components {
   /* Search: a magnifier icon beside the theme, on the sites that have search (Dustin, 2026-10-28;
      a box on half the sites made the header differ from tab to tab). The icon is a link to the

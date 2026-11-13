@@ -1,9 +1,8 @@
 /* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
-/* The site header's family letterhead (data-variant="letterhead"), apart from site-header.css so a
-   site whose header is not the letterhead does not download it. Load it after site-header.css:
-   `@import "capsomer/site-header.css"; @import "capsomer/site-header-letterhead.css";`. */
+/* The site header's family letterhead (data-variant="letterhead"), a part of site-header.css. A site that
+   loads the parts instead loads it after site-header-frame.css. */
 @layer cap.components {
   /* The family letterhead (data-variant="letterhead"): the header of dustinedwards.info and its
      *.dustinedwards.info sites, public pages and admins alike (Dustin, 2026-10-27). The names follow

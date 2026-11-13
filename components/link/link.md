@@ -90,7 +90,7 @@ What a site or Prelum writes. A meta is a sibling after the link, a space betwee
 
 ```
 
-Load `capsomer/link.css` after `capsomer/base.css`. It imports `capsomer/link-file.css` (`components/link-file/link-file.css`): the `file` kind's mark, the rule that draws an after mark and `.cap-link-meta`. A site that wants only those, for a component's own file link (generated file, document archive), loads `capsomer/link-file.css` alone, and no other link gets a mark. A family link's site icon (`data-link="family" data-site="<id>"`, which Prelum writes in prose) is in `capsomer/link-family.css`: a site that shows family links loads it after `link.css`, and an app that shows none (an admin) leaves it out and saves its icons, about 2.5 KB gzip. `data-force="hover|pressed|visited|focus"` shows a state on a states page (`:visited` cannot be read by script).
+Load `capsomer/link.css` after `capsomer/base.css`. It imports `capsomer/link-file.css` (`components/link-file/link-file.css`): the `file` kind's mark, the rule that draws an after mark and `.cap-link-meta`. A site that wants only those, for a component's own file link (generated file, document archive), loads `capsomer/link-file.css` alone, and no other link gets a mark. `data-force="hover|pressed|visited|focus"` shows a state on a states page (`:visited` cannot be read by script).
 
 ## Keyboard
 

@@ -46,13 +46,10 @@ test("/admin prefetches only from inside /admin; the app's own exclusions hold e
   );
 });
 
-// One list of family sites: every site a family link can name has its icon in link-family.css (or
-// is marked as having none), and link-family.css draws no site the list does not name.
-test("every family link site has its icon in link-family.css, and it draws no other", () => {
-  const css = readFileSync(
-    new URL("../../components/link-family/link-family.css", import.meta.url),
-    "utf8",
-  );
+// One list of family sites: every site a family link can name has its icon in link.css (or is
+// marked as having none), and link.css draws no site the list does not name.
+test("every family link site has its icon in link.css, and link.css draws no other", () => {
+  const css = readFileSync(new URL("../../components/link/link.css", import.meta.url), "utf8");
   const drawn = [
     ...css.matchAll(
       /\[data-site="([\w-]+)"\]::before \{\s*mask-image: url\("data:image\/svg\+xml,/g,
