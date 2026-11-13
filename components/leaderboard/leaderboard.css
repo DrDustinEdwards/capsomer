@@ -1,0 +1,72 @@
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* A leaderboard: ranked names and their scores, highest first, the reader's own entry marked.
+   Extracted from germomics' game leaderboard (app/routes/games.$slug.tsx). */
+@layer cap.components {
+  .cap-leaderboard {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-l);
+    background: var(--surface);
+    counter-reset: cap-rank;
+  }
+
+  .cap-leaderboard-row {
+    counter-increment: cap-rank;
+    display: grid;
+    grid-template-columns: 3ch minmax(0, 1fr) auto;
+    align-items: center;
+    gap: var(--space-3);
+    min-block-size: var(--row-h);
+    padding: var(--space-2) var(--pad-x);
+
+    & + .cap-leaderboard-row {
+      border-block-start: 1px solid var(--line);
+    }
+
+    &::before {
+      content: counter(cap-rank);
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: var(--fs-detail);
+      font-variant-numeric: tabular-nums;
+      text-align: end;
+    }
+
+    &[aria-current="true"] {
+      background: var(--accent-soft);
+
+      .cap-leaderboard-name {
+        font-weight: 700;
+      }
+    }
+  }
+
+  .cap-leaderboard-name {
+    min-inline-size: 0;
+    overflow: hidden;
+    color: var(--text);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .cap-leaderboard-score {
+    color: var(--accent-text);
+    font-family: var(--figures, var(--mono));
+    font-variant-numeric: tabular-nums;
+  }
+
+  .cap-leaderboard-empty {
+    margin: 0;
+    color: var(--muted);
+  }
+}
+
+@media (forced-colors: active) {
+  .cap-leaderboard-row[aria-current="true"] {
+    outline: 2px solid Highlight;
+    outline-offset: -2px;
+  }
+}

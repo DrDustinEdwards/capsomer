@@ -1,0 +1,29 @@
+<section class="cap-specimen" aria-labelledby="s-open">
+  <h2 id="s-open">Voted</h2>
+  <ul class="cap-poll" data-cap="poll" aria-label="Next book" id="pl-open">
+    <li><button type="button" class="cap-poll-option" data-votes="3" aria-pressed="true"><span class="cap-poll-label">Field notes</span><span class="cap-poll-count">3<span class="cap-sr-only"> votes</span></span></button></li>
+    <li><button type="button" class="cap-poll-option" data-votes="1" aria-pressed="false"><span class="cap-poll-label">Annual report</span><span class="cap-poll-count">1<span class="cap-sr-only"> vote</span></span></button></li>
+    <li><button type="button" class="cap-poll-option" data-votes="0" aria-pressed="false" data-force="hover"><span class="cap-poll-label">Release notes</span><span class="cap-poll-count">0<span class="cap-sr-only"> votes</span></span></button></li>
+  </ul>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-closed">
+  <h2 id="s-closed">Closed</h2>
+  <ul class="cap-poll" data-cap="poll" aria-label="Meeting day" id="pl-closed">
+    <li><button type="button" class="cap-poll-option" data-votes="5" aria-pressed="false" disabled><span class="cap-poll-label">Tuesday</span><span class="cap-poll-count">5<span class="cap-sr-only"> votes</span></span></button></li>
+    <li><button type="button" class="cap-poll-option" data-votes="5" aria-pressed="true" disabled><span class="cap-poll-label">Thursday</span><span class="cap-poll-count">5<span class="cap-sr-only"> votes</span></span></button></li>
+  </ul>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-none">
+  <h2 id="s-none">No votes yet</h2>
+  <ul class="cap-poll" data-cap="poll" aria-label="Snack" id="pl-none">
+    <li><button type="button" class="cap-poll-option" data-votes="0" aria-pressed="false"><span class="cap-poll-label">Tea</span><span class="cap-poll-count">0<span class="cap-sr-only"> votes</span></span></button></li>
+    <li><button type="button" class="cap-poll-option" data-votes="0" aria-pressed="false"><span class="cap-poll-label">Coffee</span><span class="cap-poll-count">0<span class="cap-sr-only"> votes</span></span></button></li>
+  </ul>
+</section>
+
+<script type="module">
+  import { enhance } from "./poll.ts";
+  enhance();
+</script>

@@ -4,10 +4,24 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
-## [0.132.0]
+## [0.133.0]
 
 - **New layout: panes** (`css/utilities.css`). `.cap-panes` sets two panels side by side, the first the wider (3:2); `data-flip` makes the second the wider (2:3) and `data-even` halves the row. The gap is `data-gap` like the other layouts (default `--space-6`). The panes stack when the row is narrower than `--panes-break` (50rem), measured on the row itself rather than the window, so they also stack inside a narrow shell or a drawer, with no media query. Tops line up and a short pane does not stretch; a third panel takes a row of its own. It replaces the Portal's `.grid2` and Carrel's `.app-split`.
 - **Stacks take `data-align`** (`start`, `center`, `end`): every item keeps its own width, lined up on that side, as clusters already could. It replaces the Portal's `.mt4` and `.mt8` notes under a status and its stacked button cells. Removed or renamed: no token or class.
+
+- Showcase site: every page carries `<meta name="color-scheme" content="light dark">`, so `theme.js` and the theme switch have a meta to set before paint, and `<meta name="text-scale" content="scale">`, so the site follows the reader's system text size (Modern Web Guidance, respect-os-text-scale). They come from `siteHead()` (site/seo.ts); the states pages already had both. Nothing in the package changes.
+
+## [0.132.0]
+
+**Content and marketing blocks** (the shared-code audit's batch 5, clusters C39-C53). Nineteen new components, a stream reader and three additions, each built once from the sites that had it, so every site gets the same block and the same behavior. New classes, exports and HTML contracts only; no token, class or contract is removed or renamed.
+
+- **New components:** `process` (numbered steps, side by side when there is room; from Foxhound, bsw and germomics), `feature` (a text and media block, alternating, and a grid of cards; Foxhound), `eyebrow` (the small label over a title, and `.cap-label[data-variant="mono"]`; Foxhound, dei, Foxing), `price-card` (plan cards and a plan choice of native radios; Foxhound, bsw, Foxing), `contact-card` (ways to reach a person or office, `telHref`; bsw, julieedwards-info), `section-band` (a full-width band, straight or slanted; bsw), `prose-page` (a page title band over a prose column; bsw), `faq` (an accordion of questions on native `details name=`, in Prelum's `{ question, answer }` shape; bsw, germomics), `app-frame` (a browser or app window around a screenshot or a live demo; Foxhound), `ambient` (a hex field, drifting blobs and an equalizer behind a hero, drawn through the CSSOM with no style attributes, still under reduced motion and paused off screen; bsw, germomics), `newsletter-signup` (germomics), `leaderboard` (germomics), `like-button` (Foxing), `poll` (Foxing), `sources-list` (germomics), `ask-panel` (an AI answer streamed into the page with its sources and a cut-off note, textContent only; dei), `ai-sample` (a live AI call on a marketing page, shown as labeled fields; Foxhound), `annotated-document` (an edit shown as the original, the edit or every change, beside notes that light their passages; bsw) and `document` (`Document`, `SiteScope`, `documentAttrs`, `startSite`, and site-runtime's `routeHydrates` re-exported, for a site's root and its no-React script; bsw, julieedwards-info, germomics, txasm, Foxhound).
+- **New behavior modules:** `capsomer/behavior/sse` (a WHATWG event-stream reader: `readSse`, `takeEvents`, `parseEvent`, `jsonData`; dei and Foxing; the frame's text and finish reason are site-runtime's `./ai-ask` `answerDelta` and `finishReason`), `ask-panel`, `ai-sample`, `annotated-document`, `ambient`, `poll` and `document`.
+- **Email: `htmlToBlocks`** turns a body written as HTML into the email's blocks (from Foxhound's templates), exported from `capsomer/email`.
+- **Anchor bar: `data-orientation="vertical"`** lists the links down the side of the sections and takes no room above them (`orientation` on the React `AnchorBar`).
+- **Breadcrumb: `minItems`** (default 2) leaves the trail out when it has fewer items (germomics' SectionTrail).
+- **The peer `@dustinedwards/site-runtime` is `>=0.131.0`**: the ask panel reads frames with its `./ai-ask` and `Document` re-exports its `./deferred-scripts` `routeHydrates`.
+- **Hydrating on intent is site-runtime's** (`./deferred-scripts` and `./hydrate-on-intent`), not part of `Document`.
 
 ## [0.131.0]
 

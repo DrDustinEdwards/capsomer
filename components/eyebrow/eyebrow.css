@@ -1,0 +1,41 @@
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* The eyebrow: the small uppercase label over a block, a section or a field group ("How it works",
+   "Recovery", "Subject"). `data-variant="mono"` sets it in the mono face, Recova's and dei's mono
+   caps label; `data-tone="accent"` in the accent's text color. One rule for what was 31 hand-set
+   `font-mono text-micro uppercase` groups in Foxhound, 25 mono-caps label rules on dei and
+   Foxing's repeated three-property font groups. */
+@layer cap.components {
+  .cap-eyebrow {
+    margin: 0;
+    color: var(--muted);
+    font-family: var(--ui);
+    font-size: var(--fs-label);
+    font-weight: 600;
+    line-height: 1.4;
+    letter-spacing: var(--cap-eyebrow-tracking, 0.1em);
+    text-transform: uppercase;
+    overflow-wrap: anywhere;
+
+    &[data-variant="mono"] {
+      font-family: var(--mono);
+      font-weight: 500;
+      letter-spacing: var(--cap-eyebrow-tracking, 0.06em);
+    }
+
+    &[data-tone="accent"] {
+      color: var(--accent-text);
+    }
+
+    &[data-tone="text"] {
+      color: var(--text);
+    }
+  }
+
+  /* The utility label in the mono face, for a label inside a row (a column name, a meta line). */
+  .cap-label[data-variant="mono"] {
+    font-family: var(--mono);
+    font-weight: 500;
+    letter-spacing: 0.06em;
+  }
+}

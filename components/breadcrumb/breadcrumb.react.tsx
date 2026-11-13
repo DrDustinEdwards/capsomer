@@ -14,6 +14,9 @@ export interface BreadcrumbProps {
   items: BreadcrumbItem[];
   // Keep the first level and the last (maxItems - 1); the rest fold into a popover of links.
   maxItems?: number;
+  // The fewest levels that draw a trail (2 by default). A site whose trail leaves out the home page, which its header
+  // already links, passes its structured data's minimum less one, so the page and its BreadcrumbList agree.
+  minItems?: number;
   label?: string;
   // Draw a level's link with the app's router link: receives the class and the content.
   renderLink?: (props: { href: string; className: string; children: ReactNode }) => ReactNode;
@@ -29,8 +32,14 @@ const Dots = () => (
 
 // The HTML contract in breadcrumb.md. A long trail renders its folded item at once, popover
 // included, so the server's HTML already has the links.
-export function Breadcrumb({ items, maxItems, label = "Breadcrumb", renderLink }: BreadcrumbProps) {
-  if (items.length < 2) return null;
+export function Breadcrumb({
+  items,
+  maxItems,
+  minItems = 2,
+  label = "Breadcrumb",
+  renderLink,
+}: BreadcrumbProps) {
+  if (items.length < Math.max(2, minItems)) return null;
   const folded = new Set(maxItems ? foldedLevels(items.length, maxItems) : []);
   const link = (item: BreadcrumbItem, className: string) =>
     renderLink ? (
