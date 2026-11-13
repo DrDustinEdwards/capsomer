@@ -4,6 +4,11 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+## [0.117.0]
+
+- **Site header: a letterhead with section links writes no menu button and no sheet.** Its links row is the phone's too (it swipes), so the React header leaves `.cap-site-header-menu` and `dialog.cap-site-header-sheet` out of the markup there, where CSS used to hide them; an admin's letterhead (no section links) keeps both. Removed: the CSS rule that hid the menu button in a letterhead with links. With this, dustinedwards.info renders `SiteHeader` (`hydrate={false}`, its structured panels as each section's `panel`) instead of a hand-written copy of the letterhead.
+- **Site header: the no-script theme form takes the theme's place in the letterhead.** With `themeAction` the form (`.cap-theme-form`) is the tools' item, so the letterhead's order (search, theme, extras, account, menu) now reaches it; sites no longer set its `order` themselves. Removed or renamed: no token or class.
+
 ## [0.116.0]
 
 - **New: `capsomer/links.css`, the link system's base alone.** Every link's base cues (the link color, semibold with no line, the hover and pressed tints, the visited color) move from `css/base.css` into `css/links.css`, which base.css imports, so a site that loads base.css gets the same rules as before. A Tailwind site that keeps its own reset and body styles (Foxhound) imports `capsomer/links.css` alone, as it imports `capsomer/utilities.css`, and its links are the network's links instead of hand-written underline classes. The focus ring stays in base.css. Removed or renamed: no token or class.
