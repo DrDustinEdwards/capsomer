@@ -62,7 +62,7 @@ Showing what an edit does to a real text: an editing service's sample, a changel
 </div>
 ```
 
-`enhance()` from `capsomer/behavior/annotated-document` adds the linking. React: `AnnotatedDocument` from `capsomer/react/annotated-document` takes the document as children and `notes`, `name`, `view` and the labels. `--cap-annotated-h` sets the height of the two scroll boxes (32rem).
+`enhance()` from `capsomer/behavior/annotated-document` adds the linking. React: `AnnotatedDocument` from `capsomer/react/annotated-document` takes the document as children and `notes`, `name` (default a made-up id), `view` and the labels; it keeps the view and the lit note in its own state and needs no `enhance()`. `--cap-annotated-h` sets the height of the two scroll boxes (32rem).
 
 ## Keyboard
 
