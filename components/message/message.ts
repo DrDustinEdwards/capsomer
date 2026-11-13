@@ -118,30 +118,6 @@ export function currentUndo(all: Message[]): Message | undefined {
   return all.find((m) => m.undo && !m.busy);
 }
 
-// What a form action answered, read for the page's result line: the shape a React Router action
-// returns, `{ error: "..." }` for a refusal and `{ ok: "..." }` for success. An `error` wins; an
-// `ok` that is not a sentence (`ok: true`, a move with nothing to say) has no message, so there
-// is nothing to announce or focus. Anything else (no data yet, a redirect's null) is no result.
-export interface ActionResultView {
-  // The words to show and say, or "" when there are none.
-  message: string;
-  error: string | null;
-  ok: string | null;
-  // "crit" for an error, "ok" for a sentence of success, undefined with no message.
-  tone: "crit" | "ok" | undefined;
-}
-
-export function actionResultView(data: unknown): ActionResultView {
-  const none: ActionResultView = { message: "", error: null, ok: null, tone: undefined };
-  if (typeof data !== "object" || data === null) return none;
-  const { error, ok } = data as { error?: unknown; ok?: unknown };
-  if (typeof error === "string" && error.trim() !== "")
-    return { message: error, error, ok: null, tone: "crit" };
-  if (typeof ok === "string" && ok.trim() !== "")
-    return { message: ok, error: null, ok, tone: "ok" };
-  return none;
-}
-
 // The leading glyph per kind, drawn in currentColor with the mark cut out (the same shapes
 // as Status: a tick in a circle, a triangle, an octagon). Hidden from screen readers.
 export type MessageKind = "ok" | "warning" | "failure";

@@ -1,5 +1,6 @@
 import { useRevalidator, Form, type FormProps } from "react-router";
-import type { FormComponent, IntentResult } from "../media-library/media-library.react.tsx";
+import type { FormComponent } from "../plain-form/plain-form.react.tsx";
+import type { IntentResult } from "../media-library/media-library.react.tsx";
 
 // The form and the submit React Router apps hand the content-kit lists (posts, media, mentions).
 // Moving between views (a tab, the filters, a page) is the router's GET; a post is a plain form, which

@@ -3,7 +3,7 @@
 // the zone is the viewer's.
 
 import { dayKey } from "@dustinedwards/site-runtime/time";
-import { plural } from "../hooks/hooks.ts";
+import { plural } from "@drdustinedwards/site-helpers/text";
 
 export const SEC = 1000;
 export const MIN = 60 * SEC;

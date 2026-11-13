@@ -1,5 +1,6 @@
-// Schedule dialog's pure part: what a chosen datetime-local value means (a time in the future, or why it cannot be scheduled). A datetime-local input holds
-// a wall-clock time with no zone; the browser reads it in its own zone, which the dialog names.
+// Schedule dialog's pure part: what a chosen datetime-local value means (a time in the future,
+// or why it cannot be scheduled). A datetime-local input holds a wall-clock time with no zone; the
+// browser reads it in its own zone, which the dialog names.
 
 export interface ScheduleCheck {
   // The instant the value names, in the browser's zone; null when there is none yet.

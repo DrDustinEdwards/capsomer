@@ -1,7 +1,7 @@
 // The pill and the list, which a page that shows labels loads; the editor, with its fields and
 // select, is its own module (capsomer/react/label-color-editor), so showing a label loads none of it.
 import { Pill } from "../status/status.react.tsx";
-import { labelFor, type ColorLabel } from "./label-color-list.ts";
+import { labelFor, seriesOf, type ColorLabel } from "./label-color-list.ts";
 
 export type { ColorLabel };
 
@@ -30,12 +30,7 @@ export function ColorLabelPill({
       </Pill>
     );
   }
-  return (
-    <span className="cap-color-label" data-color={label.color}>
-      <span className="cap-color-label-dot" aria-hidden="true" />
-      {label.label}
-    </span>
-  );
+  return <Pill series={seriesOf(label.color)}>{label.label}</Pill>;
 }
 
 // The list as it reads: every label in order.

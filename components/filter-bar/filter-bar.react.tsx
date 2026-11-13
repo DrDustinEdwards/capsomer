@@ -91,10 +91,12 @@ export function FilterBar(props: FilterBarProps) {
     <>
       <div className="cap-filter-bar-fields">{children}</div>
       <div className="cap-filter-bar-actions">
-        {/* Kept for no script and for Enter; hidden from sight when live, still a submit. */}
+        {/* Kept for no script and for Enter; hidden from sight when live, still a submit, and
+            out of the tab order then, since a focused control nobody can see fails 2.4.7. */}
         <button
           type="submit"
           className={live ? "cap-sr-only" : "cap-btn"}
+          tabIndex={live ? -1 : undefined}
           data-variant={live || applyVariant === "default" ? undefined : applyVariant}
         >
           {applyLabel}

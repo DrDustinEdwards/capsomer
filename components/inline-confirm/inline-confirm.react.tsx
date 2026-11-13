@@ -1,4 +1,5 @@
 import { useEffect, useId, useRef, useState, type ReactNode } from "react";
+import { Button } from "../button/button.react.tsx";
 import { useHydrated } from "../hooks/hooks.react.tsx";
 import type { FormComponent } from "../plain-form/plain-form.react.tsx";
 
@@ -101,19 +102,15 @@ export function InlineConfirm({
         {question}
       </span>
       <span className="cap-inline-confirm-actions">
-        <button
+        <Button
           type="submit"
-          {...btn}
-          data-variant={tone === "danger" ? "danger" : "primary"}
+          size={size === "sm" ? "sm" : "default"}
+          variant={tone === "danger" ? "danger" : "primary"}
           aria-describedby={qid}
-          aria-busy={pending || undefined}
-          aria-disabled={pending || undefined}
-          onClick={(e) => {
-            if (pending) e.preventDefault();
-          }}
+          pending={pending}
         >
           {pending ? (pendingLabel ?? confirmLabel) : confirmLabel}
-        </button>
+        </Button>
         {pending ? null : ready ? (
           <button
             type="button"

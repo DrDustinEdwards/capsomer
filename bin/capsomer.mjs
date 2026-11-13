@@ -4,7 +4,8 @@
 // checks the app's CSS against the tokens.
 //
 //   capsomer report [--out capsomer-report.json] [--a11y <playwright json>] [--app <name>]
-//   capsomer token-check [paths...] [--fix] warns, always exits 0 (rulings.md, rule 1); --fix writes the exact tokens
+//   capsomer token-check [paths...] [--fix] warns on raw values (rulings.md, rule 1); --fix writes the exact tokens.
+//                                          Exits 1 on a declaration the browser drops (invalidValues), a bug, not a warning
 //   capsomer size [--dist <dir>]           reports and warns, always exits 0 (decision 12)
 //   capsomer states                        writes components/<name>/states.html from examples.html (capsomer repo only)
 //   capsomer site-data                     the site's data files (capsomer repo only)
@@ -21,7 +22,7 @@ import { stripVTControlCharacters } from "node:util";
 import { gzipSync } from "node:zlib";
 import { frontmatter } from "@drdustinedwards/site-helpers/frontmatter";
 import { walkFiles } from "@dustinedwards/devkit/node";
-import { fixCss, rawValues, tokenScale } from "../tokens/token-check.mjs";
+import { fixCss, invalidValues, rawValues, tokenScale } from "../tokens/token-check.mjs";
 
 const PKG = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const args = process.argv.slice(2);
@@ -120,7 +121,13 @@ export function tokenCheck(root, paths, { fix = false } = {}) {
       ...it,
     })),
   );
-  return { count: items.length, items };
+  const invalid = files.flatMap((file) =>
+    invalidValues(readFileSync(file, "utf8")).map((it) => ({
+      file: relative(root, file).replace(/\\/g, "/"),
+      ...it,
+    })),
+  );
+  return { count: items.length, items, invalid };
 }
 
 // ---- report --------------------------------------------------------------------------------
@@ -726,6 +733,11 @@ if (cmd === "report") {
       ? `token-check: ${r.count} warning(s). Warnings never fail a build; adding a token is the normal fix.`
       : "token-check: no raw design values found",
   );
+  for (const it of r.invalid)
+    console.error(
+      `${it.file}:${it.line}: ${it.property}: ${it.keyword} is only valid as the whole value, so the browser drops this declaration. Split the shorthand into longhands.`,
+    );
+  if (r.invalid.length) process.exitCode = 1;
 } else if (cmd === "size") {
   await size();
 } else if (cmd === "weight") {

@@ -5,7 +5,7 @@ import {
   expectNoAxeViolations,
   visitStates,
 } from "../../test/helpers.ts";
-import { acceptLabel, formatBytes, matchesAccept, validateFiles } from "./drop-zone.ts";
+import { acceptLabel, matchesAccept, validateFiles } from "./drop-zone.ts";
 
 interface Sample {
   name: string;
@@ -66,8 +66,6 @@ test("behavior: accept matches an extension, a wildcard and an exact type", () =
   expect(matchesAccept({ name: "a.png", type: "image/png" }, "image/jpeg")).toBe(false);
   expect(matchesAccept({ name: "a.bin", type: "" }, "")).toBe(true);
   expect(acceptLabel("image/jpeg,image/png,image/webp")).toBe("JPEG, PNG, and WebP");
-  expect(formatBytes(512)).toBe("512 B");
-  expect(formatBytes(2048)).toBe("2 kB");
 });
 
 eachTheme((theme) => {

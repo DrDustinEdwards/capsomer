@@ -2,6 +2,8 @@
 // when it was last asked for. The counting is site-runtime's (not-found.mjs, notFoundReport); this is
 // how a report reads. Paths and hosts are what strangers sent, so they are drawn as text, never links.
 
+import { plural } from "@drdustinedwards/site-helpers/text";
+
 export interface NotFoundRow {
   path: string;
   hits: number;
@@ -17,7 +19,7 @@ export function referrerLine(referrers: NotFoundRow["referrers"]): string {
   return referrers.map((r) => `${r.host || "no referrer"} ${r.hits}`).join(", ");
 }
 
-export const hitsWord = (n: number) => `${n.toLocaleString("en-US")} ${n === 1 ? "hit" : "hits"}`;
+export const hitsWord = (n: number) => plural(n, "hit", "hits", { grouped: true });
 
 // The window asked for, if it is one the report offers; else the default (the last one offered).
 export function windowOf(asked: unknown, windows: readonly number[], fallback?: number): number {
@@ -29,5 +31,5 @@ export function windowOf(asked: unknown, windows: readonly number[], fallback?: 
 // What the source line says about scanner probes, counted and not listed.
 export function probesLine(probes: number | null | undefined): string | null {
   if (!probes) return null;
-  return `${probes.toLocaleString("en-US")} scanner ${probes === 1 ? "probe" : "probes"} not listed`;
+  return `${plural(probes, "scanner probe", "scanner probes", { grouped: true })} not listed`;
 }

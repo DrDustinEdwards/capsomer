@@ -10,7 +10,6 @@ import {
   applyBulkTag,
   altStateOf,
   bands,
-  byteSize,
   copySnippets,
   createAutosave,
   flagsFor,
@@ -94,10 +93,7 @@ test("behavior: alt text has three states, and decorative is a choice that missi
   ).toEqual(["Unattached"]);
 });
 
-test("behavior: sizes, tags and the copy snippets", () => {
-  expect(byteSize(512)).toBe("512 B");
-  expect(byteSize(421888)).toBe("412 kB");
-  expect(byteSize(2516582)).toBe("2.4 MB");
+test("behavior: tags and the copy snippets", () => {
   expect(parseTags(" Release, dashboard,release,, ")).toEqual(["release", "dashboard"]);
   const img = copySnippets({
     url: "https://x.test/a.png",
@@ -888,14 +884,14 @@ eachTheme((theme) => {
     await expect(chip).toHaveAttribute("aria-pressed", "true");
     await expect(page.locator(".cap-media-tile:not([hidden])")).toHaveCount(3); // the unattached one, plus the upload in progress and the failed one
     await expect(tile(page, "fieldnotes-migration.jpg")).toBeVisible();
-    await expect(page.locator(".cap-media-count")).toHaveText("1 of 6 files");
+    await expect(page.locator(".cap-media-count")).toHaveText("Showing 1 of 6 files");
     await page.getByRole("button", { name: "Clear", exact: true }).click();
     await expect(page.locator(".cap-media-count")).toHaveText("6 files");
     await link(page, "fieldnotes-migration.jpg").focus();
     await page.keyboard.press("Enter");
     await inspector(page).getByRole("button", { name: "Show unattached files" }).click();
     await expect(chip).toHaveAttribute("aria-pressed", "true");
-    await expect(page.locator(".cap-media-count")).toHaveText("1 of 6 files");
+    await expect(page.locator(".cap-media-count")).toHaveText("Showing 1 of 6 files");
   });
 
   test("behavior: the no alt text filter lists what still needs a description", async ({
@@ -921,7 +917,7 @@ eachTheme((theme) => {
     await q.fill("zzzz");
     await expect(page.locator(".cap-media-empty")).toBeVisible();
     await expect(page.getByText("No files match your search")).toBeVisible();
-    await expect(page.locator(".cap-media-count")).toHaveText("0 of 6 files");
+    await expect(page.locator(".cap-media-count")).toHaveText("Showing 0 of 6 files");
     await page.getByRole("button", { name: "Clear the search" }).click();
     await expect(q).toHaveValue("");
     await expect(page.locator(".cap-media-empty")).toBeHidden();

@@ -1,4 +1,9 @@
-import { compareFigures, type CompareOptions, type Delta as DeltaValue } from "./delta.ts";
+import {
+  compareFigures,
+  deltaText,
+  type CompareOptions,
+  type Delta as DeltaValue,
+} from "./delta.ts";
 
 export { compareFigures, deltaText, UNCHANGED_BELOW_PCT, type CompareOptions } from "./delta.ts";
 export type { DeltaValue };
@@ -16,16 +21,18 @@ export function Delta(props: DeltaProps) {
   if (d.kind === "unchanged")
     return (
       <span className="cap-delta" data-kind="unchanged">
-        no change
+        {deltaText(d)}
       </span>
     );
+  // deltaText's words, the direction read out and the figure shown beside the arrow.
+  const [direction, figure] = deltaText(d).split(" ");
   return (
     <span className="cap-delta" data-kind="moved" data-tone={d.tone} data-direction={d.direction}>
       <span className="cap-delta-arrow" aria-hidden="true">
         {d.direction === "up" ? "▲" : "▼"}
       </span>
-      <span className="cap-sr-only">{d.direction} </span>
-      {d.pct}%
+      <span className="cap-sr-only">{direction} </span>
+      {figure}
     </span>
   );
 }

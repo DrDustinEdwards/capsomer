@@ -15,6 +15,8 @@ import {
   shareLink,
   type ShareOutcome,
 } from "./copy.ts";
+import { Icon } from "../icons/icons.react.tsx";
+import { iconCheck, iconCopy } from "../icons/icons.ts";
 
 type Outcome = "copied" | "failed" | ShareOutcome;
 
@@ -85,19 +87,6 @@ export interface CopyButtonProps extends Omit<
   onCopied?: (ok: boolean) => void;
 }
 
-export const COPY_ICON = (
-  <svg viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.5">
-    <rect x="5.5" y="5.5" width="8" height="8" rx="1.5" />
-    <path d="M10.5 5.5V3.5a1 1 0 0 0-1-1h-6a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2" />
-  </svg>
-);
-
-export const DONE_ICON = (
-  <svg viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.75">
-    <path d="M3 8.5l3 3 7-7" />
-  </svg>
-);
-
 // A copy (or share) button with its status bubble beside it: the HTML contract in copy.md.
 export function CopyButton(props: CopyButtonProps) {
   const {
@@ -141,8 +130,12 @@ export function CopyButton(props: CopyButtonProps) {
         data-state={state}
         onClick={() => void onClick()}
       >
-        <span className="cap-copy-icon">{COPY_ICON}</span>
-        <span className="cap-copy-done">{DONE_ICON}</span>
+        <span className="cap-copy-icon">
+          <Icon d={iconCopy} />
+        </span>
+        <span className="cap-copy-done">
+          <Icon d={iconCheck} />
+        </span>
         {children}
       </button>
       <span className="cap-copy-tip" role="status">

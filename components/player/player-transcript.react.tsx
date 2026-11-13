@@ -9,8 +9,8 @@ import { toParagraphs, type Cue } from "@drdustinedwards/site-helpers/vtt";
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { markQuery } from "../command-menu/command-menu.ts";
 import { useCopy } from "../copy/copy.react.tsx";
-import { plural } from "../hooks/hooks.ts";
-import { reducedMotion } from "../count-up/count-up.ts";
+import { plural } from "@drdustinedwards/site-helpers/text";
+import { reducedMotion } from "../hooks/hooks.ts";
 import { SearchField } from "../field/field.react.tsx";
 import {
   TRANSCRIPT_TRACK_LABEL,

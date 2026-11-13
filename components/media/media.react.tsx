@@ -22,13 +22,13 @@ import {
   type MediaFields,
   type MediaRecord,
   type SaveState,
-  byteSize,
   copySnippets,
   createAutosave,
   parseTags,
 } from "./media.ts";
 import { COPIED_MS, COPY_FAILED_MS, copyText } from "../copy/copy.ts";
 import { MediaFocus, focusWords } from "./media-focus.react.tsx";
+import { formatBytes } from "../format/format.ts";
 
 // The crop editor, loaded the first time Crop is pressed, so a library page does not carry it.
 const MediaCrop = lazy(() => import("./media-crop.react.tsx"));
@@ -353,7 +353,7 @@ function InspectorBody({
   };
   const sub = [
     item.type.split("/").pop()?.toUpperCase(),
-    byteSize(item.bytes),
+    formatBytes(item.bytes),
     item.width && item.height ? `${item.width} by ${item.height}` : "",
   ]
     .filter(Boolean)
@@ -658,7 +658,7 @@ function InspectorBody({
           <dt>Type</dt>
           <dd>{item.type || "unknown"}</dd>
           <dt>Size</dt>
-          <dd>{byteSize(item.bytes)}</dd>
+          <dd>{formatBytes(item.bytes)}</dd>
           <dt>Dimensions</dt>
           <dd>{item.width && item.height ? `${item.width} by ${item.height}` : "not measured"}</dd>
           <dt>Uploaded</dt>

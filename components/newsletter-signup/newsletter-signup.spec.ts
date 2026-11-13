@@ -14,8 +14,8 @@ eachTheme((theme) => {
     await expectNoAxeViolations(page);
     await expectContrast(page, [
       { sel: "#nl-card .cap-newsletter-consent span", what: "the consent line" },
-      { sel: "#nl-error .cap-newsletter-error", what: "the error" },
-      { sel: "#nl-done .cap-newsletter-done", what: "the sent line" },
+      { sel: "#nl-error .cap-field-error", what: "the error" },
+      { sel: "#nl-done .cap-form-status .cap-alert-body", what: "the sent line" },
     ]);
   });
 });

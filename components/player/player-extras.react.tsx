@@ -2,7 +2,7 @@
 // inline audio button that plays a short clip inside running text.
 import { useEffect, useId, useRef, useState, type ReactNode } from "react";
 import { Avatar } from "../avatar/avatar.react.tsx";
-import { reducedMotion } from "../count-up/count-up.ts";
+import { reducedMotion } from "../hooks/hooks.ts";
 import {
   activeChapterIndex,
   enhance,

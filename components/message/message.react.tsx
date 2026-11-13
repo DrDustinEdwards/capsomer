@@ -12,7 +12,6 @@ import {
 import {
   CLEARS_AFTER_MS,
   GLYPHS,
-  actionResultView,
   currentUndo,
   isUndoKey,
   messageKind,
@@ -22,7 +21,6 @@ import {
   undoErrorText,
   undoneText,
   withMessage,
-  type ActionResultView,
   type Message,
   type SayOptions,
 } from "./message.ts";
@@ -310,76 +308,4 @@ export function MessageRegion() {
       ))}
     </div>
   );
-}
-
-// ---------------------------------------------------------------------------------------
-// The result of a form action, at the place of the form.
-
-// When the result line takes focus: "always" after every answer that has words (the default, so a
-// person who submitted with the keyboard lands on what happened, where the button may be gone or
-// disabled); "errors" for a refusal only; "never" to leave focus where it is and let the live
-// region speak.
-export type ActionResultFocus = "always" | "errors" | "never";
-
-export interface UseActionResultOptions {
-  focus?: ActionResultFocus;
-}
-
-export interface ActionResultState extends ActionResultView {
-  // On the line that shows the result.
-  ref: RefObject<HTMLParagraphElement | null>;
-  // The props of that line, for a host that draws it itself: a role of alert for an error and
-  // status otherwise, focusable by script, an alert box when there are words and visually hidden
-  // (but present, so a screen reader hears the next one) when there are none.
-  regionProps: {
-    ref: RefObject<HTMLParagraphElement | null>;
-    tabIndex: -1;
-    role: "alert" | "status";
-    className: string;
-    "data-tone": "crit" | "ok";
-  };
-}
-
-// The result of a React Router action (`useActionData()`, or a fetcher's `data`), read as `{ error }`
-// or `{ ok }`, with focus moved to the line that says it each time a new answer arrives. It
-// answers with the line's props; `<ActionResult data={actionData} />` is the same, drawn. The
-// effect runs when `data` is a new object, which every answer is, so the same sentence twice is
-// said twice. It does nothing for no answer yet, an `ok: true` with no sentence, or an answer
-// with no words. A message that is not about a form (a copied link, an undo) goes in the page's
-// region through useMessage, which never takes focus.
-export function useActionResult(
-  data: unknown,
-  options: UseActionResultOptions = {},
-): ActionResultState {
-  const { focus = "always" } = options;
-  const ref = useRef<HTMLParagraphElement | null>(null);
-  const view = useMemo(() => actionResultView(data), [data]);
-  useEffect(() => {
-    if (!data || view.message === "" || focus === "never") return;
-    if (focus === "errors" && view.error === null) return;
-    ref.current?.focus();
-  }, [data, view, focus]);
-  return {
-    ...view,
-    ref,
-    regionProps: {
-      ref,
-      tabIndex: -1,
-      role: view.error ? "alert" : "status",
-      className: view.message ? "cap-alert" : "cap-sr-only",
-      "data-tone": view.error ? "crit" : "ok",
-    },
-  };
-}
-
-export interface ActionResultProps extends UseActionResultOptions {
-  // `useActionData()` or a fetcher's `data`.
-  data: unknown;
-}
-
-// The line that says what a form action answered. Put it where the person is looking, above or
-// below the form, always rendered: an empty live region is present before it speaks.
-export function ActionResult({ data, focus }: ActionResultProps) {
-  const { message, regionProps } = useActionResult(data, { focus });
-  return <p {...regionProps}>{message}</p>;
 }

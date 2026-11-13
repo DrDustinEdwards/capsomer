@@ -477,11 +477,8 @@
   .cap-expand-region {
     margin-block-start: var(--space-3);
   }
-  /* A table's detail row spans every column. A reflowed table draws rows as grids, which would
-     beat [hidden], so a closed detail row is put away outright. */
-  .cap-expand-detail[hidden] {
-    display: none !important;
-  }
+  /* A table's detail row spans every column. A closed one is put away by the reset's [hidden],
+     which a reflowed table's grid rows cannot beat. */
   .cap-expand-detail > td {
     padding-block-start: 0;
   }

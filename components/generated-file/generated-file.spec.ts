@@ -44,7 +44,10 @@ eachTheme((theme) => {
       "Download the PDF",
     );
     for (const id of ["generating", "busy"])
-      await expect(page.locator(`#s-${id} ~ *`).getByRole("button")).toBeDisabled();
+      await expect(page.locator(`#s-${id} ~ *`).getByRole("button")).toHaveAttribute(
+        "aria-busy",
+        "true",
+      );
     await expect(page.locator("#s-stalled ~ *").getByRole("button")).toBeEnabled();
     await expect(page.locator("#s-ready ~ * .cap-link-meta")).toHaveText("PDF, 2.4 MB");
   });

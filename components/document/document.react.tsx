@@ -4,7 +4,6 @@ import { Links, Meta, Scripts, ScrollRestoration } from "react-router";
 import { documentAttrs, type DocumentScope } from "./document.ts";
 
 // Which routes hydrate is site-runtime's (./deferred-scripts, with hydrate-on-intent), re-exported for the Layout.
-export { routeHydrates } from "@dustinedwards/site-runtime/deferred-scripts";
 export { documentAttrs, startSite, type DocumentScope, type Starter } from "./document.ts";
 
 export interface DocumentProps extends DocumentScope {
@@ -12,7 +11,7 @@ export interface DocumentProps extends DocumentScope {
   lang?: string;
   // More of the head: ThemeColor, the theme script, preloads.
   head?: ReactNode;
-  // True on a page whose routes hydrate (routeHydrates(useMatches())): React Router's scripts. Otherwise `script`.
+  // True on a page whose routes hydrate (site-runtime's routeHydrates(useMatches())): React Router's scripts. Otherwise `script`.
   hydrate?: boolean;
   // The script a page that does not hydrate loads ("/site.js"): same-origin, deferred, so it needs no nonce.
   script?: string;

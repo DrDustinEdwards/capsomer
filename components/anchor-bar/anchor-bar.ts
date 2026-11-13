@@ -10,7 +10,7 @@
 // (dashboard/src/ui/anchors.tsx), which learned that mounting the bar could otherwise tip the
 // rule it was mounted by.
 
-import { reducedMotion } from "../count-up/count-up.ts";
+import { reducedMotion } from "../hooks/hooks.ts";
 
 // The nearest ancestor that scrolls, or null for the window.
 export function scrollParent(el: Element | null | undefined): HTMLElement | null {

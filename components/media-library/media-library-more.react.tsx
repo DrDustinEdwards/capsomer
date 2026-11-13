@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import type { MediaData, MediaRevision } from "../content/content.ts";
 import type { FormComponent } from "../plain-form/plain-form.react.tsx";
-import { byteSize, type MediaRecord } from "../media/media.ts";
+import { type MediaRecord } from "../media/media.ts";
 import { Glyph } from "../status/status.react.tsx";
 import {
   dayWords,
@@ -11,6 +11,7 @@ import {
   oversized,
   turnMakesCopy,
 } from "./media-library.ts";
+import { formatBytes } from "../format/format.ts";
 
 // The inspector's sections for site-api v0.13.0's media ideas, each shown only where the kit offers it
 // and the person may run it: the files holding the same bytes, what the file itself said at upload,
@@ -472,7 +473,7 @@ export function MediaMore({
                   <span className="cap-media-lib-history-facts">
                     {[
                       r.width && r.height ? `${r.width} by ${r.height}` : null,
-                      byteSize(r.bytes),
+                      formatBytes(r.bytes),
                       r.current ? "now" : null,
                     ]
                       .filter(Boolean)

@@ -6,7 +6,7 @@
 // Without a base, every difference starts on mine. Pure, so a server can plan and the browser can apply the picks.
 
 import { splitSource } from "@drdustinedwards/site-helpers/frontmatter";
-import { commonSubsequence, diffWords, type WordPart } from "./draft-compare-diff.ts";
+import { diffWords, editScript, type WordPart } from "./draft-compare-diff.ts";
 
 /** One block. `gap` is the blank lines written after it in its source, kept so an untouched text comes back byte for byte. */
 export type MergeBlock = { front: boolean; text: string; gap: string };
@@ -115,22 +115,12 @@ type Part = { kind: "same" | "del" | "ins"; blocks: MergeBlock[] };
 
 /** `a` against `b`, block by block, in order: runs both hold, and runs only one holds (removed first). */
 function align(a: MergeBlock[], b: MergeBlock[]): Part[] {
-  const pairs = commonSubsequence(a.map(keyOf), b.map(keyOf), NO_LIMIT) ?? [];
   const out: Part[] = [];
-  const add = (kind: Part["kind"], blocks: MergeBlock[]) => {
-    if (blocks.length === 0) return;
+  for (const { op, i, j } of editScript(a.map(keyOf), b.map(keyOf), NO_LIMIT)) {
+    const block = op === "ins" ? b[j]! : a[i]!;
     const last = out[out.length - 1];
-    if (last?.kind === kind) last.blocks.push(...blocks);
-    else out.push({ kind, blocks: [...blocks] });
-  };
-  let i = 0;
-  let j = 0;
-  for (const [x, y] of [...pairs, [a.length, b.length] as [number, number]]) {
-    add("del", a.slice(i, x));
-    add("ins", b.slice(j, y));
-    if (x < a.length) add("same", [a[x]!]);
-    i = x + 1;
-    j = y + 1;
+    if (last?.kind === op) last.blocks.push(block);
+    else out.push({ kind: op, blocks: [block] });
   }
   return out;
 }

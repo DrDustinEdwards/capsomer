@@ -1,6 +1,6 @@
 // Drag to dismiss a sheet, in its own module: wireDialog (dialog.ts) loads it when a sheet first
 // takes focus, so a page whose sheets stay shut never downloads it.
-import { reducedMotion } from "../count-up/count-up.ts";
+import { reducedMotion } from "../hooks/hooks.ts";
 import { isLocked } from "./dialog.ts";
 
 // Drag to dismiss a sheet (Vaul). The header of a bottom, right or left sheet is its handle:

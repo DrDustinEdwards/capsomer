@@ -35,7 +35,7 @@
       stroke-width: 1.8;
     }
 
-    &:hover:not(:disabled),
+    &:hover:not(:disabled, [aria-disabled="true"]),
     &[data-force="hover"] {
       border-color: var(--line-strong);
       color: var(--text);
@@ -50,7 +50,8 @@
       }
     }
 
-    &:disabled {
+    &:disabled,
+    &[aria-disabled="true"] {
       cursor: default;
       opacity: var(--opacity-muted);
     }
