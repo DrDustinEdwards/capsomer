@@ -4,6 +4,15 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+## [0.131.0]
+
+- **Form and async hooks: `capsomer/react/form-hooks`** (shared-code audit pass 2, cluster C21). `useSaveQueue` (save on change without racing saves), `useDraftDirty`, `useDebounced` and `useDebouncedPreview` (an overtaken request is aborted), with no router or DOM; the pure parts (`createSaveQueue`, `draftAfter`, `draftDirty`, `filterParams`, `withParam`, `pagePending`) from `capsomer/behavior/form-hooks`. From Foxhound, Foxing, dustinedwards.info, Carrel and the Capsid Portal.
+- **Confirm dialog: `useConfirmAction` and `useTwoStep`** in `capsomer/react/confirm-dialog`: the subject and opener a page's confirm dialogs share, and preview-then-perform with the server's words on every failure and an expired preview dropped. From Carrel and the Capsid Portal.
+- **Route hooks: `capsomer/react/route-hooks`** (clusters C21 and C22), the ones that read the address, a fetcher or loader data: `useFetcherPromise`, `useUrlDialog`, `useUrlFilters`, `usePagePending`, `useScrollToHash`, `useParamChoice` and `createSnippetHook`.
+- **State hooks: `capsomer/react/state-hooks`** (cluster C22). `useSelection` and `indeterminate` for bulk bars and `useSinceLastVisit`; `newId` and `versionedStore` from `capsomer/behavior/state-hooks`, with no router or DOM. A media query and the browser's zone are `useMedia` and `useBrowserZone` in `capsomer/react/hooks`.
+- **Data hooks: `capsomer/react/data`** (cluster C23). `createQueryClient`, `useSeededQuery`, `useWrite` with `patch` and `patchAll`, `Answer` with `getAnswer`, `postAnswer`, `answerOf`, `ask` and `SignedOut`, `useAnswer`, `createFlag` and `useFlag`, `useLiveRoom` (reconnects with backoff and jitter; Foxing's club room did not reconnect) and `preloadedLazy`. `@tanstack/react-query` is a new optional peer (`^5.104.0`). Nothing in it touches the DOM, so Foxing's shared web and mobile client uses it.
+- No token or class was removed or renamed.
+
 ## [0.130.0]
 
 - **The theme switch keeps `<meta name="color-scheme">` in step.** A choice made on the page now sets the meta's content as well as `data-theme` (`colorSchemeContent`: the choice, or `light dark`). Before, a site that wrote the meta on the server (dustinedwards.info) kept the old value until the next page, so the browser's own controls and the canvas painted before the CSS showed the other scheme (Modern Web Guidance, dark-mode-toggle). No HTML contract changes; a page without the meta is unchanged.
