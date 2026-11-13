@@ -4,6 +4,10 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+## [0.123.0]
+
+- **A progressive tab set prints every panel.** The print rule set `display: block` in `cap.components`, and the reset's `[hidden] { display: none !important }` in `cap.reset` beats every later layer, so the inactive panels stayed off the page. The rule is now `!important` in `cap.reset`, where its specificity wins. No token or class changed.
+
 ## [0.122.0]
 
 - **germomics' palette is its site entry.** `site-germomics.css` now carries germomics' own colors in both themes (crystal violet buttons, cyan links and focus, violet-tinted neutrals), its Space Grotesk UI face, JetBrains Mono, its 60px header and its 2px ring, and goes on `<html>` on the public pages, so the site can drop its hand-made map onto Capsomer's roles and its Tailwind palette. It also sets `--surface`, `--muted` and `--accent`, the names germomics' own palette shared with Capsomer's. The cyan link, the control borders, dark muted and dim text and the dark primary hover are lifted to Capsomer's APCA floors, and prefers-contrast: more has its own values. A site entry may now set brand roles when `ownBrand` says why (two hues no family has), and may give its own `more` values. Removed: the admin's mono-only use of the entry; germomics' admin takes Capsomer's own look, mono included, and drops `data-cap-site` from its element.
