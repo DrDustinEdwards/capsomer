@@ -6,7 +6,7 @@ parts: [react]
 tool: native
 states: []
 added: 0.147.0
-updated: 0.147.0
+updated: 0.148.0
 source: txasm (more than 200 `cap-stack` containers in its server bundle)
 replaces:
   - 'className="cap-stack"'

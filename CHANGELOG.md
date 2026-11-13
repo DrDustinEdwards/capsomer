@@ -3,6 +3,29 @@
 Each release names every removed or renamed token or class, and every changed HTML contract. A pull request adds its entry as a
 changeset (`npx changeset`, `.changeset/README.md`); the release pull request writes them here.
 
+## 0.148.0
+
+### Minor Changes
+
+- - **Breaking: the compatibility aliases are gone** (pre-launch: no aliases). **Removed:** `summarise` (authorship; use `summarize`), `analyse` (draft-compare; use `analyze`), `renderEmailColours` (palette; use `renderEmailColors`), the token `--control-h` (use `--control`; also dropped from `tokens.json`, the showcase's density presets and Foxhound's site layer; `--control-h-coarse` stays), the custom properties `--cap-run-colour` and `--cap-meter-colour` (set `--cap-run-color` and `--cap-meter-color`), the dialog placement `"centre"` (use `"center"`), the `Skeleton`, `Spinner` and `SkeletonBlock` re-exports from `capsomer/react/empty` (import them from `capsomer/react/skeleton`), the `intentForm` and `outcomesOf` re-exports from `posts-list` (import them from `capsomer/content`), the `errorText`, `isBackdropClick`, `isBusy`, `rememberOpener`, `returnFocus` and `wordMatches` re-exports from `capsomer/behavior/confirm-dialog` (the first five from `capsomer/behavior/dialog`, `wordMatches` from `capsomer/confirm-server`), and the showcase's `#/colour` address. <!-- codespell:ignore -->
+  - **Command menu: the React menu has the answer under the list.** `CommandMenu` takes `answer: { label, offer, run(query, region) }`, as `createCommandMenu` does, and renders the same `.cap-cmd-answer` (button, status, region); `offer` is read on each render (the React form of `offerAnswer`). The two share `startAnswer` and `focusAnswer` (new exports of `capsomer/behavior/command-menu`), so the load, the failed-load words, the late-answer cancel and the focus move are one code.
+  - **Frontmatter fields: `typedProps(box, locked, write)`**, from `capsomer/react/frontmatter-fields`: an `input` or `textarea`'s props from a `useTyped` box (the value, `cap-input`, read-only when locked, `done` on blur, each change kept and written). The fields' own boxes use it; Carrel's post and search fields can import it in place of their copy (`app/components/editor/post-fields.tsx`).
+  - **Chevrons come from the icon set.** The carousel, combobox, menu (trigger and submenu), tree, date picker and settings back link drew their own chevron SVGs (16- and 20-unit copies); they now draw `iconChevronLeft`, `iconChevronRight` and `iconChevronDown` (`Icon` in React, `iconSvg` in the behavior modules), each component setting `--icon-size` and `--icon-stroke` so the line keeps its weight. New icons `iconChevronsLeft` and `iconChevronsRight` (the date picker's year buttons). HTML contract: the chevron is now `<svg class="cap-icon" viewBox="0 0 24 24">` with the set's path, in the carousel's buttons, the combobox trigger, `.cap-menu-trigger`, `.cap-menu-chevron`, `.cap-tree-toggle` and `.cap-settings-back`. The showcase's previous and next arrows draw them too. The chevrons are a little narrower (the set's 12-unit span), otherwise unchanged.
+- **New scale steps the sites share, so their values become tokens without a visible change.** The network sweep onto 0.143.0's tokens found about 1,600 values with no exact token, most of them the same few sizes on Foxhound, germomics, bsw and Foxing. Dustin's ruling (2026-11-13): a value two or more sites use becomes a step; a one-off snaps to the nearest step.
+  - Spaces: `--space-4-5` (14px), `--space-5-5` (20px), `--space-6-5` (28px), `--space-7-5` (40px), `--space-8-5` (56px), `--space-9-5` (80px), `--space-10` (96px).
+  - Radii: `--radius-hair` (1px), `--radius-s-5` (4px), `--radius-m-5` (8px), `--radius-l-5` (12px), `--radius-xl-5` (16px).
+  - Type: `--display-1` to `--display-5` (4.5, 3.75, 3, 2.75 and 2.5rem) for marketing headlines; `--title-1-5` (2rem) and `--title-2-5` (1.75rem).
+  - Line heights: `--leading-tight-5` (1.25), `--leading-snug-5` (1.375), `--leading-relaxed-5` (1.625), `--leading-airy` (1.75); and a new group of line boxes as lengths, `--line-box-4` to `--line-box-10` (1rem to 2.5rem), which inherit as a length, the way a site's `line-height: 1.25rem` does.
+  - Tracking: `--tracking-spaced` (0.12em), `--tracking-spread` (0.18em). Motion: `--dur-quick` (150ms).
+  - **token-check reads a line height in rem or px correctly.** It compared a length such as `1.25rem` with the unitless leadings and suggested `1.7px`. Now a length that is a line-box step is that token (and `--fix` swaps it); any other length is reported as its ratio to the rule's own font size with the nearest leading, and is never swapped, since a ratio inherits differently from a length.
+  - **`--fix` stays pixel-exact on a site.** It no longer swaps in a step that grows under `data-density="comfortable"` (`--fs-label`, `--fs-lead`, `--gap`, `--pad-card` and the rest), or a token the stylesheet sets itself; both are still reported, marked "(grows under comfortable density)" or "(this stylesheet sets it)". Foxhound's sweep found 15 such swaps that changed its comfortable pages.
+  - No token or class is removed or renamed; no HTML contract changes.
+
+### Patch Changes
+
+- **Click-only modules stay out of server bundles.** The sheet drag (`dialog-drag`), the shortcut sheet, the header search and the React markdown editor's behavior module skip their `import()` when Vite's `import.meta.env.SSR` is set, as the CodeMirror view did in 0.145.1, so a server build drops chunks it could never run (dustinedwards.info's Worker: about 13 KiB raw, 6 KiB gzip). Outside Vite nothing changes. No token, class or HTML contract changes.
+- **`Title`, `Text` and `Stack` take any element and its own props.** `as` is any intrinsic element (a `td`, a `label`, an `h1`) and the props of that element, `ref` and `htmlFor` among them, reach it. No CSS change.
+
 ## 0.147.0
 
 ### Minor Changes
