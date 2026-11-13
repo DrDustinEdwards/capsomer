@@ -1,9 +1,9 @@
 /* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
-/* The save bar: the foot of a settings form, its result and its Save button on one line at the
-   end of the form, wrapping onto two when the column is narrow. Extracted from Foxhound's six
-   settings pages (app/routes/app/settings/*.tsx), each a copy of Recova's SaveBar. */
+/* The save bar: the foot of a settings form, its result, any other action and its Save button on
+   one line at the end of the form, wrapping when the column is narrow. Extracted from Foxhound's
+   six settings pages (app/routes/app/settings/*.tsx), each a copy of Recova's SaveBar. */
 @layer cap.components {
   .cap-save-bar {
     display: flex;
@@ -16,6 +16,16 @@
     & > .cap-btn {
       flex: none;
     }
+  }
+
+  /* Sticky: on the window's bottom edge over the form, on the page's ground, a rule above. */
+  .cap-save-bar[data-sticky] {
+    position: sticky;
+    bottom: env(safe-area-inset-bottom, 0px);
+    z-index: var(--z-sticky);
+    padding-block: var(--space-4);
+    border-block-start: 1px solid var(--line);
+    background: var(--ground);
   }
 
   /* The live region is always on the page, empty until a result arrives, so the result is

@@ -2,11 +2,11 @@
 name: table
 title: Table
 summary: A native data table in a labeled, focusable scroll region, with rules between rows, tabular numbers, sortable columns and an opt-in card reflow.
-parts: [css, behavior]
+parts: [css, behavior, react]
 tool: native + own JavaScript
 states: [default, row hover, selected row, footer, caption underneath, sticky header, empty, comfortable density, sorted ascending, sorted descending, sort button hover, row hover, row focused, region focused, narrow and scrolling, reflowed to cards, columns that drop as the region narrows, a row checkbox above the row link]
 added: 0.1.0
-updated: 0.2.0
+updated: 0.125.0
 source: Capsid Portal, dashboard/src/styles.css (table.list, table.fleet, .scroll-x, .reflow) and dashboard/src/views/shared.tsx (FleetTable)
 replaces:
   - '<table class="(list|fleet)'
@@ -107,7 +107,23 @@ Dropping columns, a note and a foot link:
 <div class="cap-table-foot"><a href="/sites">All 12 sites in Sites</a></div>
 ```
 
-`import { enhance, sortByHeader } from "capsomer/behavior/table"` wires the sort buttons. A table whose rows are rendered by React sorts its data in React instead and sets `aria-sort` itself; there is no React wrapper.
+`import { enhance, sortByHeader } from "capsomer/behavior/table"` wires the sort buttons.
+
+## React
+
+`capsomer/react/table` has two parts:
+
+- `Table`: the region, the table and its caption, for rows an app writes itself. Props: `caption` (names the region; `captionHidden` keeps it for screen readers only), `labelledBy` (name it from a heading outside instead), `captionBottom`, `reflow` (`true`, `"medium"`, `"wide"`), `sticky`, `density`. Its children are the `thead`, `tbody` and `tfoot`.
+- `DataTable`: the rows from `columns` and `rows`. A column has `key`, `header`, `cell(row)`, and optionally `num`, `sortBy(row)` (makes it sortable, in React state, `aria-sort` on one header), `drop`, `note` and `label` (the reflow card's label when `header` is not text). The first column is the row header (`th scope="row"`). `empty` is the sentence when there are no rows; `sorted` says how the rows arrive; `selected(row)` marks a row; `foot` is a totals row.
+
+```tsx
+import { DataTable } from "capsomer/react/table";
+<DataTable caption="Payments" captionHidden rowKey={(p) => p.id} rows={payments} empty="No payments yet."
+  columns={[{ key: "who", header: "Customer", cell: (p) => p.name },
+            { key: "amount", header: "Amount", num: true, sortBy: (p) => p.cents, cell: (p) => p.amount }]} />
+```
+
+The React parts mark the region `data-cap-ready`, so `enhance()` leaves a React table alone.
 
 **Provenance.** MIXED, against capsid `master` as of 2026-10-01 (`dashboard/src/styles.css` `table.list`, `table.fleet`, `table.brief`, `.sites-brief`, `.cards-below-*`, `.reflow`, `.th-note`; `dashboard/src/views/Overview.tsx` `SitesTable`). EXTRACTED: the header (11 px, 600, 0.06em, upper case, muted, nowrap), the cell padding (7 by 12 px in the Portal, 8 by 12 px from the space tokens), the rules between rows and none after the last, the card reflow (a grid of auto-fill 150 px columns, the first cell across the top, each value under its `data-label`, in `--dim`; thresholds and gaps adapted to tokens and to Capsomer's 640 and 1100 px), and, new in v0.1.1, the compact Sites table's responsive columns (container-query thresholds of 820 and 620 px, reduced cell padding), the header note (`.th-note`) and the foot link (`.grouplink`). Adapted: the Portal's dropped columns are named in the markup (`data-drop`) rather than by a class on the table, and its hidden header row is kept. REWROTE: everything that makes the table keyboard and screen reader operable, none of which the Portal's tables have (it has no sorting, no `aria-sort`, no labeled scroll region; its rows are `tr` with `tabIndex` and `data-row`): the region, the sort buttons, `table.ts`, the stretched row link. The default on a phone differs from the Portal's: its wide tables reflow to cards (`.reflow`), and Capsomer scrolls (DEFAULTS.md: "Tables scroll on a phone by default"; the audit wins).
 

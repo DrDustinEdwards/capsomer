@@ -4,9 +4,9 @@ title: Save bar
 summary: The foot of a settings form. The result of the last save, then the Save button, at the end of the form, with the result announced when it arrives.
 parts: [css, react]
 tool: native
-states: [nothing saved yet, saving, saved, failed, no button]
+states: [nothing saved yet, saving, saved, failed, no button, saves as it changes, sticky]
 added: 0.113.0
-updated: 0.113.0
+updated: 0.125.0
 source: Foxhound, app/routes/app/settings/ (notifications, email twice, account, brand-voice, disputes, audit), each a copy of Recova's SaveBar.
 ---
 
@@ -32,6 +32,14 @@ A form of settings that saves as a whole: notifications, a sender address, an ac
 - **One status region, always present.** A region added with its text is often not read; one that is there from the start is.
 - **A failure says what to do** ("Failed to save. Please try again."), or the server's own words when it gave a reason.
 - **"Saved" clears itself** after a few seconds; a failure stays. Pair it with `useShownFor` from `capsomer/react/hooks`.
+
+## Options
+
+- **No button** (`button={false}`): a form that saves as each control changes (Foxhound's audit settings). The bar only says what happened, and "Saving…" while a save is in flight.
+- **Another action** as children, before Save (dustinedwards.info's knowledge base editor puts Check there).
+- **`disabledReason`** keeps Save visible but unusable and says why (a feature that is off), as Button's does.
+- **`sticky`** keeps the bar on the window's bottom edge while a long form scrolls.
+- **`form`, `name`, `value`** go to the button: a bar outside its form, or a form with several actions posting to one route.
 
 ## Keyboard
 
@@ -63,7 +71,7 @@ import { SaveBar } from "capsomer/react/save-bar";
 <SaveBar pending={busy} saved={result?.ok === true} error={result?.ok === false ? "Failed to save. Please try again." : null} />
 ```
 
-Props: `pending`, `saved`, `error` (words; shown in place of "Saved"), `submit` (the button's words, "Save changes"), `button` (false leaves it out).
+Props: `pending`, `saved` (true, or the words to say in place of "Saved"), `error` (words; shown in place of "Saved"), `submit` (the button's words, "Save changes"), `button` (false leaves it out), `children`, `disabledReason`, `sticky`, `form`, `name`, `value`, `className`.
 
 ## Exceptions in production
 

@@ -6,7 +6,7 @@ parts: [css, behavior, react]
 tool: native
 states: [default, hover, keyboard focus, pressed, open, disabled with its reason, invalid, pending, a label that changes, primary, secondary, danger, quiet, link, xs sm lg sizes, icon only, button group, link styled as a button, button styled as a link, a site's sweep]
 added: 0.1.0
-updated: 0.2.0
+updated: 0.125.0
 source: Capsid Portal, dashboard/src/styles.css (.btn, .iconbtn, .linkbtn)
 replaces:
   - 'class="(?:[^"]*\s)?(btn|iconbtn|linkbtn)[\s"]'
@@ -28,6 +28,10 @@ A `<button class="cap-btn">` runs an action on this page. An `<a class="cap-btn"
 - `data-size="xs" | "sm" | "lg"`: dense rows, compact toolbars, hero actions. Never under the 24 px target; on a touch screen every size is 44 px.
 - `.cap-btn-group`: related buttons that share an edge (Previous, Next).
 - `data-icon-only`: only where there is no room for a word, with `aria-label`.
+- `data-wrap`: a long label wraps onto more lines, balanced, instead of running past a narrow column (a call to action on a phone). React: `wrap`.
+- `data-block`: the button fills its row (the one action of a narrow card or a phone form). React: `block`.
+- `pendingLabel` (React): words said once to a screen reader when `pending` turns on ("Connecting to Stripe"), from a polite live region beside the button that is in the page from the start. Without it, pending is silent and the result is said by the message region.
+- `ButtonLink` (`capsomer/react/link`): a link drawn as a button, with the same `variant`, `size`, `iconOnly`, `wrap` and `block`; `to` is a route (React Router's Link, prefetching as Link does), `href` a plain document link (an export, a download). `away` marks a link to another site: ↗ after the words and "(opens another site)" for a screen reader; `newTab` opens it in a new tab and says so (on this site: "(opens in a new tab)").
 
 ## When not to
 
