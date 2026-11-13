@@ -173,10 +173,6 @@
       "types": "./dist/components/command-menu/command-host.react.d.ts",
       "default": "./dist/components/command-menu/command-host.react.js"
     },
-    "./react/icon-path": {
-      "types": "./dist/components/icons/icon-path.react.d.ts",
-      "default": "./dist/components/icons/icon-path.react.js"
-    },
     "./react/*": {
       "types": "./dist/components/*/*.react.d.ts",
       "default": "./dist/components/*/*.react.js"
