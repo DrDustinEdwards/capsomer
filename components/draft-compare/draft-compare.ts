@@ -13,10 +13,10 @@
 import { isImeEnter } from "../shortcuts/shortcuts.ts";
 import { singleKeysOff } from "../row-list/row-list.ts";
 import { type CompareView, STORAGE_KEY, VIEWS } from "./draft-compare-render.ts";
+import { readStored, writeStored } from "../hooks/hooks.ts";
 
 export {
   tokenize,
-  countWords,
   commonSubsequence,
   diffWords,
   splitSentences,
@@ -35,7 +35,7 @@ export type {
   Counts,
   Analysis,
 } from "./draft-compare-diff.ts";
-export { VIEWS, STORAGE_KEY, esc, renderCompare } from "./draft-compare-render.ts";
+export { VIEWS, STORAGE_KEY, renderCompare } from "./draft-compare-render.ts";
 export type {
   CompareView,
   CompareSide,
@@ -44,12 +44,22 @@ export type {
   CompareLabels,
   CompareOptions,
 } from "./draft-compare-render.ts";
+export { choicesOf, merged, mergePlan, startPicks } from "./draft-compare-merge.ts";
+export type {
+  MergeBlock,
+  MergeChoice,
+  MergePick,
+  MergePlan,
+  MergeSegment,
+} from "./draft-compare-merge.ts";
 export {
   parsePatch,
   patchCounts,
   patchCountsText,
   revisionPair,
   renderPatch,
+  unifiedPatch,
+  hasChanges,
 } from "./draft-compare-patch.ts";
 export type {
   PatchOp,
@@ -58,6 +68,8 @@ export type {
   PatchFile,
   PatchOptions,
   PatchCounts,
+  UnifiedSide,
+  UnifiedOptions,
 } from "./draft-compare-patch.ts";
 
 // ---------------------------------------------------------------------------------------
@@ -67,20 +79,12 @@ export type {
 const READY = "data-cap-ready";
 
 function readView(): CompareView | null {
-  try {
-    const v = localStorage.getItem(STORAGE_KEY);
-    return v && (VIEWS as readonly string[]).includes(v) ? (v as CompareView) : null;
-  } catch {
-    return null;
-  }
+  const v = readStored(STORAGE_KEY);
+  return v && (VIEWS as readonly string[]).includes(v) ? (v as CompareView) : null;
 }
 
 function writeView(v: CompareView): void {
-  try {
-    localStorage.setItem(STORAGE_KEY, v);
-  } catch {
-    // Private windows and blocked storage: the choice simply is not remembered.
-  }
+  writeStored(STORAGE_KEY, v);
 }
 
 // The view the radios show now.
@@ -223,7 +227,9 @@ export function toggleAll(root: Element): void {
 
 // Attaches to every [data-cap="draft-compare"] under root (or root itself) not yet attached.
 // Returns a function that detaches them all.
-export function enhance(root: ParentNode = document): () => void {
+// The root is Element | Document | DocumentFragment, not ParentNode: under @cloudflare/workers-types
+// an HTMLFormElement does not type as a ParentNode, so a site could not pass its form.
+export function enhance(root: Element | Document | DocumentFragment = document): () => void {
   const found = [
     ...root.querySelectorAll<HTMLElement>("[data-cap='draft-compare']:not([data-cap-ready])"),
   ];

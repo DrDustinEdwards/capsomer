@@ -382,3 +382,60 @@ test.describe("arrange()", () => {
     expect(problemCount(out)).toBe("No problems");
   });
 });
+
+test.describe("needs list", () => {
+  test("behavior: Blocking comes first, Later takes the row away, says so and moves focus on", async ({
+    page,
+  }) => {
+    await visitStates(page, "attention-list", "light");
+    const list = page.locator("[data-mount='needs']");
+    await expect(list.locator(".cap-need-head")).toHaveText(["Blocking1", "Waiting for you2"]);
+    // A need set aside is not in the list.
+    await expect(
+      list.locator(".cap-need-row", { hasText: "AI draft of the reading list" }),
+    ).toHaveCount(0);
+    const first = list.locator(".cap-need-row").first();
+    await expect(first.locator(".cap-row-title")).toHaveText("A broken link in Spring update");
+    await expect(first.getByRole("button", { name: "Later" })).toHaveAccessibleDescription(
+      "Later hides a row until 8 am tomorrow, or sooner if it changes.",
+    );
+    await first.getByRole("button", { name: "Later" }).click();
+    await expect(
+      list.locator(".cap-need-row", { hasText: "A broken link in Spring update" }),
+    ).toHaveCount(0);
+    await expect(
+      page.getByText("Set for later, until tomorrow morning: A broken link in Spring update"),
+    ).toBeVisible();
+    await expect(list.getByRole("link", { name: "AI draft of the October letter" })).toBeFocused();
+  });
+
+  test("keyboard: l on a row sets it aside, and not while single keys are off", async ({
+    page,
+  }) => {
+    await visitStates(page, "attention-list", "light");
+    const list = page.locator("[data-mount='needs']");
+    await page.evaluate(() => (document.documentElement.dataset.capSingleKeys = "off"));
+    await list.getByRole("link", { name: "AI draft of the October letter" }).focus();
+    await page.keyboard.press("l");
+    await expect(
+      list.locator(".cap-need-row", { hasText: "AI draft of the October letter" }),
+    ).toHaveCount(1);
+    await page.evaluate(() => delete document.documentElement.dataset.capSingleKeys);
+    await page.keyboard.press("l");
+    await expect(
+      list.locator(".cap-need-row", { hasText: "AI draft of the October letter" }),
+    ).toHaveCount(0);
+    await expect(list.getByRole("link", { name: "Field notes, due today" })).toBeFocused();
+  });
+
+  test("behavior: Later lists what is set aside with when it comes back and Bring back", async ({
+    page,
+  }) => {
+    await visitStates(page, "attention-list", "light");
+    const later = page.locator("[data-mount='later']");
+    await expect(later.locator(".cap-need-row")).toHaveCount(1);
+    await expect(later.locator(".cap-need-row")).toContainText("Back");
+    await expect(later.getByRole("button", { name: "Bring back" })).toBeVisible();
+    await expect(page.locator("[data-mount='empty']")).toContainText("Nothing needs you");
+  });
+});

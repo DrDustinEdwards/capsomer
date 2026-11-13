@@ -1,0 +1,57 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* Freshness: how old the data on screen is, and a ring counting down to the next read. Stale
+   turns it to warning. Extracted from the Capsid Portal's Freshness and FreshRing
+   (dashboard/src/app/App.tsx, .fresh in styles.css). */
+@layer cap.components {
+  .cap-fresh {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-inline-size: 0;
+    font-size: var(--fs-detail);
+    color: var(--muted);
+    white-space: nowrap;
+    & b {
+      color: var(--text);
+      font-weight: 500;
+    }
+    &[data-stale] {
+      color: var(--warn);
+      & b {
+        color: var(--warn);
+      }
+    }
+  }
+  .cap-fresh-ring {
+    flex: none;
+    inline-size: 16px;
+    block-size: 16px;
+    & .cap-fresh-ring-track {
+      stroke: var(--line-strong);
+    }
+    & .cap-fresh-ring-left {
+      stroke: var(--accent);
+    }
+  }
+  .cap-fresh[data-stale] .cap-fresh-ring-left {
+    stroke: var(--warn);
+  }
+  /* The line sizes to its words (a header's flex row gives it no width of its own). When it is
+     short, the second clause (which pass the data came from) gives way first, cut with an
+     ellipsis; the title keeps the full times. */
+  .cap-fresh-text {
+    flex: none;
+  }
+  .cap-fresh-more {
+    min-inline-size: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  @media (forced-colors: active) {
+    .cap-fresh-ring .cap-fresh-ring-left {
+      stroke: CanvasText;
+    }
+  }
+}

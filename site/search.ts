@@ -3,14 +3,9 @@
 // site/search-main.ts ranks it in the browser with staticSearch. The form is a plain GET, so the
 // header's search box and a ?q= link both land here.
 import { staticSearchIndex } from "@drdustinedwards/site-helpers/search";
+import { slugify } from "@drdustinedwards/site-helpers/slug";
 import { FOOTER, header, runningHead, type Data } from "./home.ts";
 import { MAKE_DESCRIPTION } from "./seo.ts";
-
-const slug = (text: string) =>
-  text
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-|-$/g, "");
 
 /** Markdown as plain words: no code fences, table rules, link targets or markup. */
 const plain = (md: string) =>
@@ -28,7 +23,7 @@ export function searchIndexJson(d: Data): string {
     summary: c.lead,
     headings: [...c.body.matchAll(/^#{2,3} (.+)$/gm)].map((m) => {
       const text = (m[1] ?? "").trim();
-      return { id: `doc-${slug(text)}`, text: text.replace(/`/g, "") };
+      return { id: `doc-${slugify(text)}`, text: text.replace(/`/g, "") };
     }),
     text: plain(c.body),
   }));

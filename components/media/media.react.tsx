@@ -1,6 +1,4 @@
 import {
-  type ComponentType,
-  type FormHTMLAttributes,
   type KeyboardEvent,
   type MouseEvent,
   type ReactNode,
@@ -14,6 +12,7 @@ import {
   useRef,
   useState,
 } from "react";
+import type { FormComponent } from "../plain-form/plain-form.react.tsx";
 import { openDialog, wireDialog } from "../dialog/dialog.ts";
 import { isImeEnter } from "../shortcuts/shortcuts.ts";
 import { Disclosure } from "../disclosure/disclosure.react.tsx";
@@ -25,11 +24,10 @@ import {
   type SaveState,
   byteSize,
   copySnippets,
-  copyText,
   createAutosave,
   parseTags,
 } from "./media.ts";
-import { COPIED_MS, COPY_FAILED_MS } from "./media-actions.ts";
+import { COPIED_MS, COPY_FAILED_MS, copyText } from "../copy/copy.ts";
 import { MediaFocus, focusWords } from "./media-focus.react.tsx";
 
 // The crop editor, loaded the first time Crop is pressed, so a library page does not carry it.
@@ -98,7 +96,7 @@ export interface MediaInspectorProps {
   // either mode (each a form with `intent`, `ids` and `version`). Without it those are buttons.
   action?: string;
   // The host router's form component, for those forms.
-  Form?: ComponentType<FormHTMLAttributes<HTMLFormElement> & { method?: "get" | "post" }>;
+  Form?: FormComponent;
   // Close as a link to this address (the list without ?inspect=), so it works with no script.
   closeHref?: string;
   // What the footer offers. Trash and Restore by default; Delete only when given.

@@ -71,8 +71,8 @@ A collection of dozens to thousands of items that share fields, where a person n
 
 ```html
 <form class="cap-catalog" data-cap="catalog" data-catalog="articles" method="get" action="/library/articles" aria-labelledby="h">
-  <div class="cap-catalog-bar">
-    <div class="cap-field cap-catalog-search">
+  <div class="cap-field-row">
+    <div class="cap-field cap-field-wide">
       <label class="cap-field-label" for="articles-q">Search articles</label>
       <input class="cap-input" id="articles-q" type="search" name="q" />
     </div>

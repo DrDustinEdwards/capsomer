@@ -548,7 +548,7 @@
     }
 
     &:focus-visible {
-      outline: 2px solid var(--ring);
+      outline: var(--focus-width) solid var(--ring);
       outline-offset: 2px;
     }
   }
@@ -786,7 +786,7 @@
         background: color-mix(in srgb, var(--on-sign) 18%, transparent);
       }
       &:focus-visible {
-        outline: 2px solid var(--ring);
+        outline: var(--focus-width) solid var(--ring);
         outline-offset: 2px;
       }
     }

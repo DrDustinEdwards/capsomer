@@ -1,15 +1,8 @@
-import { useId, useRef, useSyncExternalStore, type ReactNode } from "react";
+import { useId, useRef, type ReactNode } from "react";
+import { useHydrated } from "../hooks/hooks.react.tsx";
 import type { BreadcrumbItem, BreadcrumbProps } from "../breadcrumb/breadcrumb.react.tsx";
 import { PageHead } from "../page-head/page-head.react.tsx";
 import { Switch } from "../switch/switch.react.tsx";
-
-const noSubscribe = () => () => {};
-const useMounted = () =>
-  useSyncExternalStore(
-    noSubscribe,
-    () => true,
-    () => false,
-  );
 
 // One setting on its own line: its name and one line on what it does at the start, its control
 // at the end, a rule between rows. `children` is given the ids to name and describe the control
@@ -76,7 +69,7 @@ export function SwitchRow({
   saveLabel = "Save",
   disabledReason,
 }: SwitchRowProps) {
-  const ready = useMounted();
+  const ready = useHydrated();
   const reasonId = useId();
   const input = useRef<HTMLInputElement>(null);
   const off = disabledReason != null && disabledReason !== false && disabledReason !== "";

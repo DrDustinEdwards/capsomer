@@ -1,0 +1,60 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* A scroll area: a box of fixed height whose content scrolls inside it (a long excerpt, a log, a
+   terms box), with a thin scrollbar whose thumb keeps 3:1 against its track (WCAG 1.4.11) and goes
+   to text on surface when more contrast is asked for (Chrome's Modern Web Guidance,
+   adapt-scrollbar-to-contrast-preferences). It takes keyboard focus, so arrow keys scroll it. */
+@layer cap.components {
+  .cap-scroll-area {
+    --scrollbar-thumb: var(--muted);
+    --scrollbar-track: var(--sunken);
+    max-block-size: var(--scroll-area-max, 24rem);
+    overflow: auto;
+    overscroll-behavior: contain;
+    scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+    scrollbar-width: thin;
+    /* macOS draws the track only with a stable gutter. */
+    scrollbar-gutter: stable;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-m);
+    padding: var(--pad-card);
+
+    &:focus-visible {
+      outline: var(--focus-width) solid var(--ring);
+      outline-offset: 2px;
+    }
+    &[data-frame="none"] {
+      border: 0;
+      padding: 0;
+    }
+  }
+
+  @media (prefers-contrast: more) {
+    .cap-scroll-area {
+      --scrollbar-thumb: var(--text);
+      --scrollbar-track: var(--surface);
+    }
+  }
+
+  /* Only browsers with no scrollbar-color read the old pseudo-elements; both at once conflict. */
+  @supports not (scrollbar-color: auto) {
+    .cap-scroll-area::-webkit-scrollbar {
+      inline-size: 8px;
+      block-size: 8px;
+    }
+    .cap-scroll-area::-webkit-scrollbar-thumb {
+      background: var(--scrollbar-thumb);
+      border-radius: var(--radius-full);
+    }
+    .cap-scroll-area::-webkit-scrollbar-track {
+      background: var(--scrollbar-track);
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .cap-scroll-area {
+      scroll-behavior: smooth;
+    }
+  }
+}

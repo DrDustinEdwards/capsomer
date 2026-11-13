@@ -5,7 +5,7 @@ summary: A form a read-only visitor can press but not send, with the reason show
 parts: [css, react]
 tool: native
 states: [refused]
-added: 0.91.0
+added: 0.117.0
 source: Foxhound, app/components/demo-guarded-form.tsx (DemoGuardedForm)
 replaces:
   - 'DemoGuardedForm'

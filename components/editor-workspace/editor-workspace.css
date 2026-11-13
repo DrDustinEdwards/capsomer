@@ -1,0 +1,96 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* Editor workspace: the writing pane and the site's preview, one column or side by side in Split
+   once the workspace has the width; and the chrome that steps back while someone types. */
+@layer cap.components {
+  .cap-workspace {
+    container-type: inline-size;
+    min-inline-size: 0;
+  }
+
+  .cap-workspace-body {
+    display: grid;
+    gap: var(--gap);
+    grid-template-columns: minmax(0, 1fr);
+    min-inline-size: 0;
+  }
+
+  @container (min-width: 48rem) {
+    .cap-workspace-body[data-layout="split"] {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    }
+  }
+
+  .cap-workspace-pane,
+  .cap-preview-pane {
+    min-inline-size: 0;
+
+    &[hidden] {
+      display: none;
+    }
+  }
+
+  /* The site's own page: it paints in its own colors, light whatever the app's theme, so the frame
+     is the light canvas under it and an edge marks where the app ends. */
+  .cap-preview-pane {
+    display: flex;
+    overflow: hidden;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-m);
+
+    & iframe {
+      flex: 1;
+      inline-size: 100%;
+      min-block-size: 28rem;
+      block-size: calc(100dvh - 14rem);
+      border: 0;
+      color-scheme: light;
+      background: Canvas;
+    }
+  }
+
+  /* While someone types, the chrome falls quiet; a mouse move or focus brings it back. An app
+     marks its own chrome with data-cap-recede. Text being read never moves: only the chrome fades. */
+  html[data-cap-typing]
+    :is(
+      .cap-site-header,
+      .cap-admin-strip,
+      .cap-admin-menu,
+      .cap-site-tabs,
+      .cap-admin-bar,
+      .cap-page-head,
+      .cap-md-toolbar,
+      .cap-inspector,
+      [data-cap-layout],
+      [data-cap-recede]
+    ):not(:focus-within) {
+    opacity: 0.08;
+  }
+
+  /* Only the fade out is animated, and only while typing, so this never takes over the transitions
+     the header, the shell or the toolbar set on themselves; the chrome comes back at once. */
+  @media (prefers-reduced-motion: no-preference) {
+    html[data-cap-typing] :is(
+      .cap-site-header,
+      .cap-admin-strip,
+      .cap-admin-menu,
+      .cap-site-tabs,
+      .cap-admin-bar,
+      .cap-page-head,
+      .cap-md-toolbar,
+      .cap-inspector,
+      [data-cap-layout],
+      [data-cap-recede]
+    ) {
+      transition: opacity var(--dur-base) var(--ease-out);
+    }
+  }
+
+  /* Forced colors keep the chrome readable: the step back is for a person who can see it. */
+  @media (forced-colors: active) {
+    html[data-cap-typing] :is(.cap-site-header, .cap-admin-strip, .cap-admin-menu, .cap-site-tabs, .cap-admin-bar, .cap-page-head, .cap-md-toolbar, .cap-inspector, [data-cap-layout], [data-cap-recede]) {
+      opacity: 1;
+    }
+  }
+}

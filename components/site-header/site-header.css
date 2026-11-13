@@ -26,6 +26,36 @@
     --header-avatar-fg: var(--ground);
     --header-fs: 14px;
     --header-side: var(--space-6);
+    /* A site that keeps the bar's contents in its content column (bsw's 72rem) sets
+       --header-max-inline-size; the band still runs the full width. 100% is no column. */
+    --header-max-inline-size: 100%;
+    --header-inset: max(var(--header-side), (100% - var(--header-max-inline-size)) / 2 + var(--header-side));
+    /* The section links' weight, and the current one's; their padding, the gap between them, and
+       their chevron's size and gap. */
+    --header-link-weight: 400;
+    --header-link-current-weight: 500;
+    --header-link-pad: 0;
+    --header-links-gap: 20px;
+    --header-chev-size: 12px;
+    --header-link-gap: var(--space-2);
+    /* The phone sheet's group labels and rows. */
+    --header-sheet-label-ink: var(--muted);
+    --header-sheet-label-fs: var(--fs-detail);
+    --header-sheet-label-weight: 500;
+    --header-sheet-label-case: none;
+    --header-sheet-label-tracking: normal;
+    --header-sheet-row-fs: var(--fs-body);
+    --header-sheet-row-h: max(var(--control), var(--target));
+    /* The bottom edge, and once the page has scrolled (data-scrolled, set by the behavior) its
+       edge and shadow. A site whose edge shows only after a scroll sets --header-edge: transparent. */
+    --header-edge: var(--header-line);
+    --header-scrolled-edge: var(--header-edge);
+    --header-scrolled-shadow: none;
+    /* data-translucent: how much of the band shows (the rest is the page under it), before and
+       after a scroll, and the blur. */
+    --header-translucent-mix: 85%;
+    --header-scrolled-mix: var(--header-translucent-mix);
+    --header-blur: 12px;
     position: sticky;
     top: 0;
     z-index: calc(var(--z-sticky) + 3);
@@ -33,11 +63,13 @@
     align-items: center;
     box-sizing: border-box;
     inline-size: 100%;
+    /* --header-h is the page's token (tokens/scale.css), so scroll-padding-top reads the same height:
+       a taller header sets it on :root (bsw: 4rem). */
     block-size: var(--header-h);
-    padding-inline: var(--header-side);
+    padding-inline: var(--header-inset);
     background: var(--header-bg);
     color: var(--header-fg);
-    border-block-end: 1px solid var(--header-line);
+    border-block-end: 1px solid var(--header-edge);
     font-family: var(--font-ui, var(--ui));
     font-size: var(--header-fs);
     line-height: 1.3;
@@ -47,8 +79,15 @@
     }
     /* The page's ground at 85%, blurred: the content shows through as it scrolls under. */
     &[data-translucent] {
-      background: color-mix(in srgb, var(--header-bg) 85%, transparent);
-      backdrop-filter: blur(12px);
+      background: color-mix(in srgb, var(--header-bg) var(--header-translucent-mix), transparent);
+      backdrop-filter: blur(var(--header-blur));
+    }
+    &[data-scrolled] {
+      border-block-end-color: var(--header-scrolled-edge);
+      box-shadow: var(--header-scrolled-shadow);
+    }
+    &[data-translucent][data-scrolled] {
+      background: color-mix(in srgb, var(--header-bg) var(--header-scrolled-mix), transparent);
     }
     & :focus-visible {
       outline: var(--focus-width) solid var(--ring);
@@ -82,6 +121,53 @@
     }
   }
 
+  /* Clear at rest (data-rest="clear"): at the top of the page the band shows the page under it, with
+     no line; once it is stuck it takes its ground and its line. A scroll-state query on the header,
+     with no scroll listener (Chrome's Modern Web Guidance, state-aware-sticky-headers). A container's
+     queries style only what is inside it, so the ground and the line are its first child,
+     .cap-site-header-ground, and only that child's opacity changes, so nothing moves. Where
+     scroll-state queries are missing the ground is drawn all the time, as an ordinary header:
+     content never scrolls under a clear band. */
+  .cap-site-header-ground {
+    display: none;
+  }
+  @supports (container-type: scroll-state) {
+    .cap-site-header[data-rest="clear"]:not([data-sticky="false"]) {
+      container: cap-site-header / scroll-state;
+      background: transparent;
+      border-block-end-color: transparent;
+      backdrop-filter: none;
+
+      & > .cap-site-header-ground {
+        display: block;
+        position: absolute;
+        inset: 0 0 -1px;
+        z-index: -1;
+        background: var(--header-bg);
+        border-block-end: 1px solid var(--header-line);
+        pointer-events: none;
+      }
+      &[data-translucent] > .cap-site-header-ground {
+        background: color-mix(in srgb, var(--header-bg) 85%, transparent);
+        backdrop-filter: blur(12px);
+      }
+    }
+    /* At rest the ground is hidden; stuck, it shows. Same weight in both, so the query wins. */
+    .cap-site-header-ground {
+      opacity: 0;
+    }
+    @container cap-site-header scroll-state(stuck: top) {
+      .cap-site-header-ground {
+        opacity: 1;
+      }
+    }
+    @media (prefers-reduced-motion: no-preference) {
+      .cap-site-header-ground {
+        transition: opacity var(--dur-base) var(--ease-out);
+      }
+    }
+  }
+
   /* A focused control or an anchor never lands under the header (WCAG 2.4.11). */
   :root:has(.cap-site-header:not([data-sticky="false"])) {
     scroll-padding-top: calc(var(--header-h) + var(--space-3));
@@ -109,6 +195,11 @@
       block-size: 24px;
       inline-size: auto;
       max-inline-size: 160px;
+    }
+    /* A mark in a <picture display: contents> would put its <source>s in the row (the UA stylesheet
+       does not hide them), each taking a gap before the image. */
+    & source {
+      display: none;
     }
   }
 
@@ -171,8 +262,8 @@
   }
   .cap-site-header-chev {
     flex: none;
-    inline-size: 12px;
-    block-size: 12px;
+    inline-size: var(--header-chev-size);
+    block-size: var(--header-chev-size);
     fill: none;
     stroke: currentColor;
     stroke-width: 2;
@@ -195,7 +286,7 @@
     & > ul {
       display: flex;
       align-items: center;
-      gap: 20px;
+      gap: var(--header-links-gap);
       margin: 0;
       padding: 0;
       list-style: none;
@@ -214,15 +305,15 @@
     position: relative;
     display: inline-flex;
     align-items: center;
-    gap: var(--space-2);
+    gap: var(--header-link-gap);
     min-block-size: max(36px, var(--target));
-    padding: 0;
+    padding: var(--header-link-pad);
     border: 0;
     border-radius: var(--radius-s);
     background: none;
     color: var(--header-fg-muted);
     font: inherit;
-    font-weight: 400;
+    font-weight: var(--header-link-weight);
     text-decoration: none;
     white-space: nowrap;
     cursor: pointer;
@@ -253,7 +344,7 @@
     &[aria-current="page"],
     &[data-current] {
       color: var(--header-fg);
-      font-weight: 500;
+      font-weight: var(--header-link-current-weight);
 
       &::after {
         content: "";
@@ -271,7 +362,7 @@
   .cap-site-header-tools {
     display: flex;
     align-items: center;
-    gap: var(--space-3);
+    gap: var(--header-tools-gap, var(--space-3));
     margin-inline-start: auto;
   }
   .cap-site-header[data-links="right"] .cap-site-header-sections + .cap-site-header-tools {
@@ -279,6 +370,8 @@
 
     &::before {
       content: "";
+      /* A site without the divider sets --header-sep: none. */
+      display: var(--header-sep, block);
       inline-size: 1px;
       block-size: 16px;
       margin-inline-end: var(--space-2);
@@ -288,22 +381,38 @@
   .cap-site-header-extras {
     display: flex;
     align-items: center;
-    gap: var(--space-3);
+    gap: var(--header-tools-gap, var(--space-3));
+  }
+  /* The order of the tools: the icon extras, then the button extra, then the theme, by default. A site
+     may put its button first among the extras (--header-cta-order: -1) or the theme first among the
+     tools (--header-theme-order: -1), on a phone or everywhere. */
+  .cap-site-header-extras > .cap-site-header-cta {
+    order: var(--header-cta-order, 0);
+  }
+  .cap-site-header-tools > .cap-site-header-theme {
+    order: var(--header-theme-order, 0);
+  }
+  .cap-site-header .cap-site-header-icon.cap-site-header-theme .cap-theme-icon {
+    width: var(--header-icon-glyph, 18px);
+    height: var(--header-icon-glyph, 18px);
+    stroke-width: var(--header-icon-stroke, 1.6);
   }
 
   /* Every icon control: a 36px target, an 18px glyph from the family's icon set (24 box, 1.6
-     stroke), a name and a tip naming it and its key. The theme button wears this too. */
+     stroke), a name and a tip naming it and its key. The theme button wears this too. A site sets
+     its own size, glyph, stroke and fill with --header-icon-size, --header-icon-glyph, --header-icon-stroke
+     and --header-icon-bg. */
   .cap-site-header .cap-site-header-icon {
     position: relative;
     display: inline-grid;
     place-items: center;
     flex: none;
-    inline-size: 36px;
-    block-size: 36px;
+    inline-size: var(--header-icon-size, 36px);
+    block-size: var(--header-icon-size, 36px);
     padding: 0;
     border: var(--icon-border) solid var(--header-line);
     border-radius: var(--icon-radius);
-    background: none;
+    background: var(--header-icon-bg, none);
     color: var(--header-fg-muted);
     font: inherit;
     text-decoration: none;
@@ -316,38 +425,24 @@
       color: var(--header-fg);
     }
     & > svg {
-      inline-size: 18px;
-      block-size: 18px;
+      inline-size: var(--header-icon-glyph, 18px);
+      block-size: var(--header-icon-glyph, 18px);
       fill: none;
       stroke: currentColor;
-      stroke-width: 1.6;
+      stroke-width: var(--header-icon-stroke, 1.6);
       stroke-linecap: round;
       stroke-linejoin: round;
     }
   }
 
-  /* A count on an icon: one bubble, as in the admin shell (16px, 10px figures, 99+ past 99), its
-     left edge 2px past the glyph and its middle on the glyph's top edge, ringed in the band. */
+  /* A count on an icon: a count (count.css, 99+ past 99), its left edge 2px past the glyph and its
+     middle on the glyph's top edge, ringed in the band. */
   .cap-site-header-badge {
-    --_bubble: 16px;
+    --_bubble: var(--space-5);
     position: absolute;
     top: calc(50% - 9px - var(--_bubble) / 2);
     inset-inline-start: calc(50% + 9px + 2px);
-    display: inline-grid;
-    place-items: center;
-    box-sizing: border-box;
-    min-inline-size: var(--_bubble);
-    block-size: var(--_bubble);
-    padding-inline: 3px;
-    border-radius: var(--radius-full);
-    background: var(--primary);
-    color: var(--primary-fg);
     box-shadow: 0 0 0 2px var(--header-bg);
-    font-size: 0.625rem;
-    font-weight: 700;
-    line-height: 1;
-    font-variant-numeric: var(--figures);
-    white-space: nowrap;
   }
 
   /* The one button extra (Free audit, Join free). */
@@ -376,6 +471,10 @@
   .cap-site-header-account {
     display: flex;
     align-items: center;
+  }
+  /* A page with no sign-in at all (a personal site): the empty slot takes no room. */
+  .cap-site-header-account:empty {
+    display: none;
   }
   .cap-site-header .cap-site-header-avatar {
     border-radius: var(--radius-full);
@@ -464,6 +563,26 @@
     font-size: var(--header-fs, 14px);
     line-height: 1.35;
   }
+  /* A mega-menu's room (data-size="wide"): the site's own layout inside (a band, tiles, grouped rows),
+     40rem unless the site sets --header-panel-w, and never wider than the window. */
+  .cap-site-header-panel[data-size="wide"] {
+    inline-size: min(var(--header-panel-w, 40rem), 100vw - 2 * var(--space-3));
+  }
+  /* Opened with no script (popovertarget), nothing has placed it: under the header, at the band's
+     inset on the side it lines up with. */
+  .cap-site-header-panel:not([data-placed-by]) {
+    top: var(--header-h);
+    left: var(--header-inset, var(--space-6));
+
+    &[data-align="end"] {
+      right: var(--header-inset, var(--space-6));
+      left: auto;
+    }
+  }
+  /* A row that posts (Sign out, an account switch): the form adds no box, its button is the row. */
+  .cap-site-header-form {
+    display: contents;
+  }
   /* The default contents: who you are, labeled groups of links, Sign out last. */
   .cap-site-header-panel-list {
     display: grid;
@@ -539,17 +658,6 @@
   }
   .cap-site-header-count {
     margin-inline-start: auto;
-    min-inline-size: 16px;
-    block-size: 16px;
-    padding-inline: 3px;
-    border-radius: var(--radius-full);
-    background: var(--primary);
-    color: var(--primary-fg);
-    font-size: 0.625rem;
-    font-weight: 700;
-    line-height: 16px;
-    text-align: center;
-    font-variant-numeric: var(--figures);
   }
 
   /* The phone's sheet: the shared dialog from the bottom, holding everything the top row does not:
@@ -571,9 +679,11 @@
   }
   .cap-site-header-sheet-label {
     padding: var(--space-4) var(--space-4) var(--space-2);
-    color: var(--muted);
-    font-size: var(--fs-detail);
-    font-weight: 500;
+    color: var(--header-sheet-label-ink);
+    font-size: var(--header-sheet-label-fs);
+    font-weight: var(--header-sheet-label-weight);
+    letter-spacing: var(--header-sheet-label-tracking);
+    text-transform: var(--header-sheet-label-case);
   }
   .cap-site-header-sheet .cap-site-header-sheet-list {
     display: grid;
@@ -587,14 +697,14 @@
       align-items: center;
       gap: var(--space-4);
       inline-size: 100%;
-      min-block-size: max(var(--control), var(--target));
+      min-block-size: var(--header-sheet-row-h);
       padding: 0 var(--space-4);
       border: 0;
       border-radius: var(--radius-m);
       background: none;
       color: var(--text);
       font: inherit;
-      font-size: var(--fs-body);
+      font-size: var(--header-sheet-row-fs);
       text-align: start;
       text-decoration: none;
 
@@ -633,6 +743,11 @@
   [aria-current] > .cap-site-header-sheet-icon {
     color: inherit;
   }
+  /* data-sheet-icons="auto": a sheet in which no row has an icon has no icon column, so its labels
+     start at the row's edge. By default every sheet keeps the column. */
+  .cap-site-header[data-sheet-icons="auto"] .cap-site-header-sheet:not(:has(.cap-site-header-sheet-icon:not(:empty))) .cap-site-header-sheet-icon {
+    display: none;
+  }
   /* Two classes, so the dialog's own link color (.cap-dialog-body nav a) does not win. */
   .cap-dialog-body .cap-site-header-sheet-cta {
     display: flex;
@@ -669,22 +784,73 @@
     .cap-site-header {
       --header-side: var(--space-5);
     }
+  }
+
+  /* The phone's one row: the links, the switcher and the button extra go to the sheet behind the
+     menu button. Under 768px; a site whose bar holds more (bsw) collapses it under 1024px with
+     data-collapse="lg". A media query cannot read a custom property, so each width names the header
+     the row's container, and the row's rules are written once, for that container. */
+  @media (max-width: 767.98px) {
+    .cap-site-header {
+      container: cap-site-header-row / inline-size;
+    }
+  }
+  @media (max-width: 1023.98px) {
+    .cap-site-header[data-collapse="lg"] {
+      container: cap-site-header-row / inline-size;
+    }
+  }
+  /* A header clear at rest is already the cap-site-header scroll-state container, and that later,
+     narrower rule would drop the row's name: it keeps both. A browser without scroll-state queries
+     drops this declaration and keeps the row's alone. */
+  @media (max-width: 767.98px) {
+    .cap-site-header[data-rest="clear"]:not([data-sticky="false"]) {
+      container: cap-site-header cap-site-header-row / scroll-state inline-size;
+    }
+  }
+  @media (max-width: 1023.98px) {
+    .cap-site-header[data-collapse="lg"][data-rest="clear"]:not([data-sticky="false"]) {
+      container: cap-site-header cap-site-header-row / scroll-state inline-size;
+    }
+  }
+  @container cap-site-header-row (width >= 0) {
     .cap-site-header :is(.cap-site-header-switcher, .cap-site-header-sections, .cap-site-header-cta) {
       display: none;
     }
+    /* A button extra the site keeps in the top row (data-phone="bar"): compact, not in the sheet. */
+    .cap-site-header .cap-site-header-extras[data-phone="bar"] .cap-site-header-cta {
+      display: inline-flex;
+      padding-inline: var(--space-4);
+    }
     .cap-site-header .cap-site-header-tools {
-      gap: var(--space-2);
+      gap: var(--header-tools-gap, var(--space-2));
 
       &::before {
         display: none;
       }
     }
-    /* The links on the right are hidden here, so the tools keep to the window's edge. */
+    /* The links on the right are hidden here, so the tools keep to the window's edge and lose
+       the divider that stood between them and the links. */
     .cap-site-header[data-links="right"] .cap-site-header-sections + .cap-site-header-tools {
       margin-inline-start: auto;
+
+      &::before {
+        display: none;
+      }
     }
+    /* The menu button can stand bare (--header-menu-line: transparent; --header-menu-bg: none) and
+       take its own size and glyph (--header-menu-size, --header-menu-glyph). */
     .cap-site-header .cap-site-header-menu {
       display: inline-grid;
+      inline-size: var(--header-menu-size, var(--header-icon-size, 36px));
+      block-size: var(--header-menu-size, var(--header-icon-size, 36px));
+      border-color: var(--header-menu-line, var(--header-line));
+      background: var(--header-menu-bg, var(--header-icon-bg, none));
+
+      & > svg {
+        inline-size: var(--header-menu-glyph, var(--header-icon-glyph, 18px));
+        block-size: var(--header-menu-glyph, var(--header-icon-glyph, 18px));
+      }
     }
     .cap-site-header-signin {
       inline-size: 36px;
@@ -703,6 +869,9 @@
         white-space: nowrap;
       }
     }
+  }
+
+  @media (max-width: 767.98px) {
     /* A focused control never lands under the tab bar (WCAG 2.4.11): the bar is 61 to 79px. */
     :root:has(.cap-site-tabs) {
       scroll-padding-bottom: calc(5.5rem + env(safe-area-inset-bottom, 0px));
@@ -1026,7 +1195,12 @@
         block-size: 56px;
         pointer-events: none;
         border-image: linear-gradient(var(--ground) 20%, color-mix(in srgb, var(--ground) 60%, transparent) 55%, transparent) fill 0 / 0 / 0 100vmax;
-        animation: cap-header-fade linear both;
+        /* Longhands, with duration auto, so a minifier cannot fold them into a 0s shorthand
+           (css/utilities.css, the scroll fades). */
+        animation-name: cap-header-fade;
+        animation-duration: auto;
+        animation-timing-function: linear;
+        animation-fill-mode: both;
         animation-timeline: scroll(root);
         animation-range: 0 48px;
       }

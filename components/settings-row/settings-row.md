@@ -5,7 +5,7 @@ summary: One setting per line, its name and line at the start and its control at
 parts: [css, react]
 tool: native
 states: [a switch row, a switch that sends its form at once, owner only with its reason, another control, the page with its back link]
-added: 0.91.0
+added: 0.117.0
 source: Foxhound, app/components/settings-toggle-row.tsx, routes/app/settings/disputes.tsx (the switch's own form) and settings-back-link.tsx with the eight settings pages' page head
 replaces:
   - 'function ToggleRow'

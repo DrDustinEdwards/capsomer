@@ -2,3 +2,9 @@
 .tabs-narrow-box {
   max-inline-size: 18rem;
 }
+
+/* A site's own pill look, by token: tabs of one width, the chosen label in its tone. */
+.tabs-own-look {
+  --cap-tab-min-inline-size: 160px;
+  --cap-tab-ink: var(--accent-text);
+}

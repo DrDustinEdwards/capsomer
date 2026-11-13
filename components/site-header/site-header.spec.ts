@@ -2,11 +2,14 @@ import { expect, test, type Page } from "@playwright/test";
 import {
   eachTheme,
   expectContrast,
+  countCssRules,
   expectNoAxeViolations,
   visitStates,
   settled,
 } from "../../test/helpers.ts";
 
+// Floor for the CSS rules a site-header specimen page holds: 3,581 measured 2026-11-11, with the 5% under it.
+const FLOOR = 3400;
 const PHONE = { width: 390, height: 760 };
 
 // Where each named control sits, left to right, in the header's one row.
@@ -27,6 +30,16 @@ const rowOrder = (page: Page) =>
       })),
   );
 
+// The Foxing specimen with its Books panel opened from the keyboard: Enter on the focused button.
+async function openBooksByKey(page: Page, theme: "light" | "dark") {
+  await visitStates(page, "site-header", theme, "fx-public");
+  const books = page.getByRole("button", { name: "Books" });
+  const panel = page.locator("#" + (await books.getAttribute("aria-controls")));
+  await books.focus();
+  await page.keyboard.press("Enter");
+  return { books, panel };
+}
+
 eachTheme((theme) => {
   // The theme button says what it does: the other theme.
   const themeName = theme === "light" ? "Switch to dark theme" : "Switch to light theme";
@@ -41,6 +54,8 @@ eachTheme((theme) => {
       "fx-reader",
       "fx-admin",
       "markup",
+      "static",
+      "own-look",
     ]) {
       await visitStates(page, "site-header", theme, only);
       await expectNoAxeViolations(page);
@@ -55,6 +70,9 @@ eachTheme((theme) => {
       "fh-dashboard-account",
       "fx-books",
       "fx-reader-account",
+      "static-topics",
+      "static-switcher",
+      "static-account",
     ]) {
       await visitStates(page, "site-header", theme, only);
       await expect(page.locator(".cap-site-header-panel:popover-open")).toHaveCount(1);
@@ -275,11 +293,7 @@ eachTheme((theme) => {
   test("keyboard: Enter opens a panel and focuses its first item; Up, Down, Home and End move; Esc closes and returns focus", async ({
     page,
   }) => {
-    await visitStates(page, "site-header", theme, "fx-public");
-    const books = page.getByRole("button", { name: "Books" });
-    const panel = page.locator("#" + (await books.getAttribute("aria-controls")));
-    await books.focus();
-    await page.keyboard.press("Enter");
+    const { books, panel } = await openBooksByKey(page, theme);
     await expect(panel).toBeVisible();
     const items = panel.locator("a, button");
     const n = await items.count();
@@ -305,14 +319,62 @@ eachTheme((theme) => {
     await page.keyboard.press("Escape");
   });
 
-  test("keyboard: Tab past a panel's last item closes it and goes on to the next control", async ({
+  test("behavior: a click on a section button opens its panel and a second click closes it, aria-expanded following", async ({
     page,
   }) => {
     await visitStates(page, "site-header", theme, "fx-public");
     const books = page.getByRole("button", { name: "Books" });
     const panel = page.locator("#" + (await books.getAttribute("aria-controls")));
-    await books.focus();
-    await page.keyboard.press("Enter");
+    await expect(books).toHaveAttribute("aria-expanded", "false");
+    await books.click();
+    await expect(panel).toBeVisible();
+    await expect(books).toHaveAttribute("aria-expanded", "true");
+    // Park the pointer off the button so the second click is not a hover's.
+    await books.click();
+    await expect(panel).toBeHidden();
+    await expect(books).toHaveAttribute("aria-expanded", "false");
+  });
+
+  test('accessibility: aria-current is only ever "page", never on a section button, and marks one section link at most in the links row', async ({
+    page,
+  }) => {
+    for (const only of [
+      "lh-public",
+      "lh-admin",
+      "fh-public",
+      "fh-dashboard",
+      "fx-public",
+      "fx-reader",
+    ]) {
+      await visitStates(page, "site-header", theme, only);
+      const header = page.locator(".cap-site-header");
+      const sections = header.locator(".cap-site-header-sections");
+      const values = await sections
+        .locator("[aria-current]")
+        .evaluateAll((els) => els.map((el) => el.getAttribute("aria-current")));
+      expect(
+        values.every((v) => v === "page"),
+        `${only}: ${values}`,
+      ).toBe(true);
+      await expect(sections.locator("button[aria-current]"), `${only}: a button`).toHaveCount(0);
+      expect(
+        await sections.locator("a[aria-current]").count(),
+        `${only}: section links marked current`,
+      ).toBeLessThanOrEqual(1);
+    }
+  });
+
+  test("accessibility: the states page's stylesheets arrived: a missing one leaves every measure below about browser defaults", async ({
+    page,
+  }) => {
+    await visitStates(page, "site-header", theme, "fh-public");
+    expect(await countCssRules(page), "CSS rules reachable").toBeGreaterThanOrEqual(FLOOR);
+  });
+
+  test("keyboard: Tab past a panel's last item closes it and goes on to the next control", async ({
+    page,
+  }) => {
+    const { panel } = await openBooksByKey(page, theme);
     await page.keyboard.press("End");
     await page.keyboard.press("Tab");
     await expect(panel).toBeHidden();
@@ -638,5 +700,133 @@ eachTheme((theme) => {
     await expect(page.locator("#markup-sheet-title")).toBeFocused();
     await page.keyboard.press("Escape");
     await expect(menu).toBeFocused();
+  });
+  test("behavior: a header that does not hydrate works through the behavior module: Down opens a panel, its rows post, Sign out posts, the theme key keeps the cookie", async ({
+    page,
+  }) => {
+    await visitStates(page, "site-header", theme, "static");
+    // Down on a section's button opens its panel on the first item (the APG menu button's key).
+    const guides = page.getByRole("button", { name: "Guides" });
+    await guides.focus();
+    await page.keyboard.press("ArrowDown");
+    const guidesPanel = page.locator("#" + (await guides.getAttribute("aria-controls")));
+    await expect(guidesPanel).toBeVisible();
+    await expect(guidesPanel.getByRole("link", { name: "Install" })).toBeFocused();
+    await page.keyboard.press("Escape");
+    await expect(guides).toBeFocused();
+    // The workspace switcher: each other workspace is a form that posts; the current one posts nothing.
+    await page.getByRole("button", { name: "Switch workspace: Example Press" }).click();
+    const field = page.locator(".cap-site-header-switcher .cap-site-header-panel");
+    await expect(
+      field.locator("form[method='post'][action='#switch'] button[type='submit']"),
+    ).toContainText("Field Office");
+    await expect(field.locator("button[aria-current='true']")).toHaveAttribute("type", "button");
+    await expect(field.locator("input[type='hidden'][name='workspace'][value='w2']")).toHaveCount(
+      1,
+    );
+    await page.keyboard.press("Escape");
+    // Sign out is a form post carrying the site's fields.
+    await page.getByRole("button", { name: "Your account" }).click();
+    const signOut = page.locator(
+      ".cap-site-header-account form[method='post'][action='#sign-out']",
+    );
+    await expect(signOut.getByRole("button", { name: "Sign out" })).toBeVisible();
+    await expect(signOut.locator("input[name='token']")).toHaveValue("sample-token");
+    await page.keyboard.press("Escape");
+    // The theme key presses the header's theme button: the page switches and the cookie keeps it.
+    const other = theme === "dark" ? "light" : "dark";
+    await page.locator("main").click();
+    await page.keyboard.press("t");
+    await expect(page.locator("html")).toHaveAttribute("data-theme", other);
+    expect(await page.evaluate(() => document.cookie)).toContain(`sample_theme=${other}`);
+  });
+
+  test("behavior: a panel opened by hover closes as the pointer leaves without putting focus on its button", async ({
+    page,
+  }) => {
+    await visitStates(page, "site-header", theme, "fx-public");
+    const books = page.getByRole("button", { name: "Books" });
+    const panel = page.locator("#" + (await books.getAttribute("aria-controls")));
+    await books.hover();
+    await expect(panel).toBeVisible();
+    await page.mouse.move(5, 600);
+    await expect(panel).toBeHidden();
+    await expect(books).not.toBeFocused();
+  });
+
+  test("behavior: a wide panel (a mega-menu) is 40rem, under the header, inside the window", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await visitStates(page, "site-header", theme, "static-topics");
+    const panel = page.locator(".cap-site-header-panel[data-size='wide']");
+    await expect(panel).toBeVisible();
+    const p = (await panel.boundingBox())!;
+    const h = (await page.locator(".cap-site-header").boundingBox())!;
+    expect(Math.round(p.width)).toBe(640);
+    expect(p.y).toBeGreaterThanOrEqual(h.y + h.height);
+    expect(p.x + p.width).toBeLessThanOrEqual(1280);
+  });
+
+  test("behavior: on a phone a button extra the site keeps in the bar stays in the top row and is not repeated in the sheet", async ({
+    page,
+  }) => {
+    await page.setViewportSize(PHONE);
+    await visitStates(page, "site-header", theme, "static-phone");
+    const cta = page.locator(".cap-site-header-tools .cap-site-header-cta");
+    await expect(cta).toBeVisible();
+    const box = (await cta.boundingBox())!;
+    expect(box.x + box.width).toBeLessThanOrEqual(PHONE.width);
+    await page.getByRole("button", { name: "Menu" }).click();
+    await expect(page.getByRole("dialog", { name: "Example Press menu" })).toBeVisible();
+    await expect(page.locator(".cap-site-header-sheet-cta")).toHaveCount(0);
+    await expect(
+      page.locator(".cap-site-header-sheet-account form[action='#sign-out'] button"),
+    ).toBeVisible();
+    await expectNoAxeViolations(page);
+  });
+  test("behavior: a site's own look by tokens: a 64px band whose bar keeps to its column, data-scrolled once the page scrolls, and the phone's row under 1024px with data-collapse=lg, its sheet without an icon column", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 1400, height: 800 });
+    await visitStates(page, "site-header", theme, "own-look");
+    const header = page.locator(".cap-site-header");
+    const h = (await header.boundingBox())!;
+    expect(Math.round(h.height)).toBe(64);
+    // 72rem centered in the window, then the side: the logo starts at (1400 - 1152) / 2 + 24.
+    const logo = (await page.getByRole("link", { name: "Example Writers home" }).boundingBox())!;
+    expect(Math.round(logo.x)).toBe(Math.round((h.width - 1152) / 2 + 24));
+    await expect(header).not.toHaveAttribute("data-scrolled");
+    await page.mouse.wheel(0, 400);
+    await expect(header).toHaveAttribute("data-scrolled", "");
+    await page.mouse.wheel(0, -2000);
+    await expect(header).not.toHaveAttribute("data-scrolled");
+    await expect(page.locator(".cap-site-header-account")).toHaveCount(0);
+
+    await page.setViewportSize({ width: 900, height: 800 });
+    await expect(page.getByRole("button", { name: "Menu" })).toBeVisible();
+    await expect(page.locator(".cap-site-header-sections")).toBeHidden();
+    await page.getByRole("button", { name: "Menu" }).click();
+    const sheet = page.getByRole("dialog", { name: "Example Writers menu" });
+    await expect(sheet).toBeVisible();
+    await expect(sheet.locator(".cap-site-header-sheet-icon").first()).toBeHidden();
+    const row = (await sheet.getByRole("link", { name: "Editing" }).boundingBox())!;
+    const name = (await sheet.getByText("Editing", { exact: true }).boundingBox())!;
+    expect(Math.round(name.x - row.x)).toBeLessThanOrEqual(16);
+  });
+});
+
+eachTheme((theme) => {
+  test("behavior: clear at rest, the band shows only once the header is stuck, with no scroll listener", async ({
+    page,
+  }) => {
+    await visitStates(page, "site-header", theme, "fx-rest-clear");
+    const band = () =>
+      page.locator(".cap-site-header-ground").evaluate((el) => getComputedStyle(el).opacity);
+    await expect.poll(band).toBe("0");
+    await page.evaluate(() => scrollTo({ top: 400, behavior: "instant" }));
+    await expect.poll(band).toBe("1");
+    await page.evaluate(() => scrollTo({ top: 0, behavior: "instant" }));
+    await expect.poll(band).toBe("0");
   });
 });

@@ -1,6 +1,6 @@
 import type { EnhanceOptions } from "enarratio/enhance";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from "react";
-import type { Gridlines } from "./chart-frame.ts";
+import { chartViewBox, type Gridlines } from "./chart-frame.ts";
 import { Glyph } from "../status/status.react.tsx";
 import { markup } from "../trusted-html/trusted-html.ts";
 
@@ -35,10 +35,9 @@ const WIDE_REM = 30;
 // `height`, and under 30rem it shows its list, not the SVG. enarratio/redraw redraws charts only.
 export function shownHeight(first: string, width: number, rem = 16): number | undefined {
   if (/<figure\b[^>]*\sdata-enarratio-static\b/.test(first)) return undefined;
-  const box = /<svg\b[^>]*?\sviewBox="[\d.]+ [\d.]+ ([\d.]+) ([\d.]+)"/.exec(first);
-  const w = Number(box?.[1]);
-  const h = Number(box?.[2]);
-  if (!(w > 0 && h > 0)) return undefined;
+  const box = chartViewBox(first);
+  if (!box || !(box.w > 0 && box.h > 0)) return undefined;
+  const { w, h } = box;
   const shown = first.includes("enarratio-frame-wide") ? Math.max(width, WIDE_REM * rem) : width;
   return Math.round(((h * Math.min(shown, w)) / w) * 100) / 100;
 }

@@ -5,6 +5,13 @@
 // in this browser from then on, as the Portal's top bar button does. applyStoredTheme() is
 // what an app runs before first paint; toggleTheme() is for a "t" shortcut. No framework;
 // the React wrapper uses the same functions.
+//
+// One behavior on every site (0.92.0): a person's choice (chooseTheme) is painted, remembered in
+// this browser, written to the site's cookie where it keeps one (data-cap-cookie), so its server
+// renders the next page in that theme with no flash, and handed to the site's onSave hook, which
+// saves it to the signed-in account. Where the cookie is the memory, the server's answer (the
+// data-theme it wrote) is copied into this browser's memory first (syncServedTheme), so an older
+// choice here never overrules it. The pre-paint script is themeScript (theme-server.ts).
 import { readPref, writePref } from "../shell/shell.ts";
 import { attach as attachTip } from "../tooltip/tooltip.ts";
 import {
@@ -15,7 +22,19 @@ import {
   type ThemeChoice,
 } from "./theme-server.ts";
 
-export { THEME_PREF, type ThemeChoice };
+export { THEME_COOKIE, THEME_PREF, type ThemeChoice };
+
+/** Saves a person's choice where the site keeps it (the signed-in account). Fire and forget: the
+ *  page has already switched, so a failed save never switches it back; the next page reconciles. */
+export type ThemeSave = (choice: ThemeChoice) => void | Promise<unknown>;
+
+/** Where a person's choice is kept. `key`: this browser's localStorage key (null: none). `cookie`:
+ *  the site's cookie, for its server. `onSave`: the site's own save. */
+export interface ThemeMemory {
+  key?: string | null;
+  cookie?: string;
+  onSave?: ThemeSave;
+}
 
 // What the person chose and the browser remembers, or null if they never did. A "system"
 // remembered by 0.1.0 reads as no choice: the system's setting applies, as it did.
@@ -34,6 +53,13 @@ export function applyTheme(
   choice: ThemeChoice,
   opts: { key?: string; remember?: boolean } = {},
 ): void {
+  paintTheme(choice, opts.remember !== false, opts.remember !== false);
+  if (opts.remember !== false) writePref(opts.key ?? THEME_PREF, choice);
+}
+
+// Paints a choice (crossfading when `animate`, motion allowed and the browser has view
+// transitions) and tells every switch on the page; `chosen` says a person made it just now.
+function paintTheme(choice: ThemeChoice, animate: boolean, chosen: boolean): void {
   const paint = () => {
     pending = null;
     document.documentElement.setAttribute("data-theme", choice);
@@ -45,13 +71,49 @@ export function applyTheme(
     }
   };
   const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  if (opts.remember === false || reduce || !document.startViewTransition) paint();
+  if (!animate || reduce || !document.startViewTransition) paint();
   else {
     pending = choice;
     document.startViewTransition(paint);
   }
-  if (opts.remember !== false) writePref(opts.key ?? THEME_PREF, choice);
-  document.dispatchEvent(new CustomEvent("cap-theme", { detail: { choice } }));
+  document.dispatchEvent(new CustomEvent("cap-theme", { detail: { choice, chosen } }));
+}
+
+// Writes the site's theme cookie from the browser, Secure on https.
+export function writeThemeCookie(choice: ThemeChoice, name = THEME_COOKIE): void {
+  document.cookie = themeCookie(choice, { name, secure: location.protocol === "https:" });
+}
+
+// A person's choice, kept everywhere the site keeps it: painted (crossfading unless `animate` is
+// false), this browser's memory, the site's cookie, then the site's onSave. A save that throws or
+// rejects is let go; the page has switched and stays switched.
+export function chooseTheme(
+  choice: ThemeChoice,
+  { key = THEME_PREF, cookie, onSave }: ThemeMemory = {},
+  { animate = true }: { animate?: boolean } = {},
+): void {
+  paintTheme(choice, animate, true);
+  if (key) writePref(key, choice);
+  if (cookie) writeThemeCookie(choice, cookie);
+  if (!onSave) return;
+  try {
+    void Promise.resolve(onSave(choice)).catch(() => undefined);
+  } catch {
+    // The site's save failed at once; the choice stands in this browser and the cookie.
+  }
+}
+
+// Where the server keeps the choice (a cookie, an account): copies the server's answer (the
+// data-theme it wrote into the page, or none) into this browser's memory, before any switch reads
+// it, so the two agree. With no answer the memory is cleared and the page follows the system.
+export function syncServedTheme(key = THEME_PREF): void {
+  const served = document.documentElement.getAttribute("data-theme");
+  try {
+    if (isChoice(served)) localStorage.setItem(key, served);
+    else localStorage.removeItem(key);
+  } catch {
+    // Storage blocked: the switches read <html data-theme>.
+  }
 }
 
 // Applies the remembered choice, if there is one. Run it before first paint, or the page
@@ -72,10 +134,11 @@ export function effectiveTheme(): ThemeChoice {
   return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
 }
 
-// Switches between light and dark, from whatever is showing, and remembers it. For a "t" shortcut.
-export function toggleTheme(key = THEME_PREF): ThemeChoice {
+// Switches between light and dark, from whatever is showing, and keeps it as chooseTheme does
+// (this browser, and the site's cookie and onSave when given). For a "t" shortcut.
+export function toggleTheme(key = THEME_PREF, memory: Omit<ThemeMemory, "key"> = {}): ThemeChoice {
   const next = effectiveTheme() === "dark" ? "light" : "dark";
-  applyTheme(next, { key });
+  chooseTheme(next, { ...memory, key });
   return next;
 }
 
@@ -104,14 +167,14 @@ export function syncThemeButton(
 // One theme button: a press switches to the other theme and remembers it; its name follows the
 // theme from any source (a switch, the T key, another tab, the system). Its tip repeats its name,
 // so it adds no description.
-function wireButton(el: HTMLElement, key: string): () => void {
+function wireButton(el: HTMLElement, key: string, memory: ThemeMemory): () => void {
   const start = readTheme(key);
   if (start) applyTheme(start, { key, remember: false });
   syncThemeButton(el);
   const tip = el.querySelector<HTMLElement>(".cap-theme-tip");
   const detachTip = tip ? attachTip(el, tip) : null;
   el.removeAttribute("aria-describedby");
-  const onClick = () => toggleTheme(key);
+  const onClick = () => toggleTheme(key, memory);
   const onTheme = (e: Event) =>
     syncThemeButton(
       el,
@@ -141,7 +204,7 @@ function wireButton(el: HTMLElement, key: string): () => void {
 // once and writes the cookie (data-cap-cookie names it), and the server writes the same data-theme
 // into the next page's first byte. The cookie is the memory; data-cap-pref also writes the choice
 // to that localStorage key, for a part of the site (an admin) whose shell reads it from there.
-function wireForm(form: HTMLFormElement): () => void {
+function wireForm(form: HTMLFormElement, onSave?: ThemeSave): () => void {
   const detachTips = [...form.querySelectorAll<HTMLElement>(".cap-theme-tip")].map((tip) => {
     const button = tip.parentElement;
     if (!button) return () => undefined;
@@ -155,12 +218,12 @@ function wireForm(form: HTMLFormElement): () => void {
     e.preventDefault();
     // Held before the page changes: the pressed button is about to be hidden, which drops focus.
     const had = form.contains(document.activeElement);
-    applyTheme(choice, { remember: false });
-    if (form.dataset.capPref) writePref(form.dataset.capPref, choice);
-    document.cookie = themeCookie(choice, {
-      name: form.dataset.capCookie ?? THEME_COOKIE,
-      secure: location.protocol === "https:",
-    });
+    // Painted at once, not crossfaded: the button to focus next is the one shown after the paint.
+    chooseTheme(
+      choice,
+      { key: form.dataset.capPref ?? null, cookie: form.dataset.capCookie ?? THEME_COOKIE, onSave },
+      { animate: false },
+    );
     // preventScroll: Chrome scrolls a focused sticky-header control toward where it would sit unstuck.
     if (had)
       [...form.querySelectorAll<HTMLElement>("button[value]")]
@@ -179,16 +242,26 @@ function wireForm(form: HTMLFormElement): () => void {
 // cookie), that one is applied. With neither, the radio for the operating system's theme is
 // checked and nothing is applied or remembered until the person chooses, so the page keeps
 // following the system. A change applies and remembers; the radios follow toggleTheme(),
-// other tabs and the system.
-export function enhance(root: ParentNode = document): () => void {
+// other tabs and the system. A switch with data-cap-cookie keeps the choice in that cookie too;
+// with a cookie or an onSave it starts from the server's answer (syncServedTheme). `onSave` is the site's save, handed every
+// person's choice from every switch this attaches to.
+export function enhance(
+  root: ParentNode = document,
+  { onSave }: { onSave?: ThemeSave } = {},
+): () => void {
   const undo: Array<() => void> = [];
   for (const el of root.querySelectorAll<HTMLElement>(
     "[data-cap='theme-switch']:not([data-cap-ready])",
   )) {
     el.dataset.capReady = "";
     const key = el.dataset.capPref ?? THEME_PREF;
+    const cookie = el.dataset.capCookie;
+    // The server answers for a switch whose choice it keeps (a cookie, or the site's save).
+    if ((cookie || onSave) && (el.dataset.variant !== "form" || el.dataset.capPref))
+      syncServedTheme(key);
+    const memory: ThemeMemory = { key, cookie, onSave };
     if (el.dataset.variant === "form" && el instanceof HTMLFormElement) {
-      const unwire = wireForm(el);
+      const unwire = wireForm(el, onSave);
       undo.push(() => {
         unwire();
         delete el.dataset.capReady;
@@ -196,7 +269,7 @@ export function enhance(root: ParentNode = document): () => void {
       continue;
     }
     if (el.dataset.variant === "button") {
-      const unwire = wireButton(el, key);
+      const unwire = wireButton(el, key, memory);
       undo.push(() => {
         unwire();
         delete el.dataset.capReady;
@@ -210,7 +283,7 @@ export function enhance(root: ParentNode = document): () => void {
 
     const onChange = (e: Event) => {
       const r = e.target as HTMLInputElement;
-      if (r.type === "radio" && isChoice(r.value)) applyTheme(r.value, { key });
+      if (r.type === "radio" && isChoice(r.value)) chooseTheme(r.value, memory);
     };
     const onTheme = (e: Event) => {
       const choice = (e as CustomEvent<{ choice: ThemeChoice }>).detail?.choice;

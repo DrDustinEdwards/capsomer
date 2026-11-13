@@ -1,17 +1,19 @@
 ---
 name: stat-tile
 title: Stat tile
-summary: One figure, its label and a word for where it stands against its threshold on one line, a detail line beneath and a sparkline, in a row that wraps onto more rows instead of cutting a word.
+summary: One figure, its label and a word for where it stands against its threshold on one line, a detail line beneath and a sparkline, in a row that wraps onto more rows instead of cutting a word; and a static variant for a figure that leads nowhere.
 parts: [css, react]
 tool: native
-states: [ok, warning, critical, no data, hover, pressed, keyboard focus, a row of every tone, phone width wrapping onto more rows]
+states: [ok, warning, critical, no data, hover, pressed, keyboard focus, a row of every tone, phone width wrapping onto more rows, static, static with a delta, static large in the accent, static no data, static in a grid]
 added: 0.1.0
-updated: 0.56.0
+updated: 0.96.0
 source: Capsid Portal, dashboard/src/views/Overview.tsx (tiles) and styles.css ("stat tiles")
 replaces:
   - 'class="tiles?( |")'
   - 'className="tiles?( |")'
   - 'className=\{`tile '
+  - 'function (Stat|Preview)?Stat(Card|Panel)\b'
+  - 'text-(display|title)[^"]*tabular-nums'
 ---
 
 # Stat tile
@@ -24,7 +26,7 @@ For a handful of headline figures at the top of an overview, each with a place t
 
 ## When not to
 
-A value against a hard limit with a projection is a usage meter. A list of what is wrong is the attention list. A figure that leads nowhere is plain text in a panel, not a tile: a tile is always a link or a button.
+A value against a hard limit with a projection is a usage meter. A list of what is wrong is the attention list. A figure that leads somewhere but is not a tile (a link inside a card of prose) is a link in the card. A figure that leads nowhere is the static variant below, never a link or button tile with nothing behind it: a tile that is a link or a button always goes somewhere.
 
 ## The default and its reason
 
@@ -36,6 +38,17 @@ A value against a hard limit with a projection is a usage meter. A list of what 
 - **The sparkline comes from Enarratio and is an inline primitive.** Render it with `sparkline({ values, label, alt, inline: true, width: 96, height: 22 })` and put its SVG in `.cap-tile-chart`; the slot sets its height and makes Enarratio's series color the tile's tone (`--enarratio-series-1: currentColor`). The SVG is `role="img"` named by a sentence with its numbers (its `alt`, or Enarratio's own from the values), so it is read with the tile and needs no frame ("Inline primitives", components/README.md); to name it with your own sentence instead, put `role="img"` and `aria-label` on `.cap-tile-chart` (React: `chartSummary`). **With the numbers too**, wrap the tile in `<div class="cap-data">` and add Enarratio's table (`dataTableBlock(table, label)`, or `sparklineTable(options).markup`), visually hidden for screen readers and AI agents, under the tile, outside the link. React `StatTile` takes `chartTable` and `chartTableLabel` and draws it with `dataTableBlock`.
 - **A tile is never narrower than its text** (`flex: 1 0 auto`), so the row wraps to more rows instead of cutting a word: no breakpoints, and a phone gets one or two across by what fits. Only a tile wider than the whole row wraps its detail, and its line wraps whole.
 - **Hover** darkens the border to `--line-strong` and tints the tile `--raised`; pressed tints it `--sunken`; keyboard focus draws the shared 2 px `--ring` outline; the color changes ease over 100 ms; with a mouse, hover also lifts it on `--shadow-s`, and a press gives it to 98.5% and springs it back (no movement under reduced motion). The tile is shadcn's Item look: hairline edge, `--radius-l`, padding from `--pad-y` and `--pad-x` so comfortable density roomies it.
+
+## The static variant
+
+A figure that leads nowhere: a count on a report, a rate beside its trend, the headline numbers of a dashboard that is not a door to anything (Foxhound's stat cards, four copies before). `data-variant="static"` on a `<div class="cap-tile">`: it is text, so it takes no pointer, no focus, no hover and no tab stop.
+
+- **Label above, figure, note.** The label (`.cap-tile-label`, muted, with an optional `.cap-tile-icon` before it) comes first in the markup, so it reads "Open rate 41% +3 points Against the 30 days before". The figure and its optional delta share a line; the note (`.cap-tile-detail`) sits under it. No chart: a figure with a trend is a link or button tile, which holds the sparkline.
+- **A delta is a glyph, a signed amount and a tone** (`.cap-tile-delta`): an arrow whose shape says up, down or flat, an amount that carries its own sign ("+3 points", "No change"), and the tone's color. The tone is the host's, not the direction's: churn going up is `crit` (`data-tone="crit"` on the delta). Never "--" for flat: say "No change", or use the no-data tile when nothing was measured.
+- **The figure's tone** is the tile's `data-tone`: `ok`, `warn`, `crit`, `nodata`, and `accent` (`--accent-text`) for the one figure a row is about. No data keeps its rule: the dashed glyph, "No data" and a reason in the note.
+- **Size and look follow tokens**, set on the tile or any ancestor, so a site with its own look (Foxhound's mono figures and small upper-case labels) keeps it. The figure is `--fs-h3`; `data-size="lg"` makes it `--fs-h2`; `--tile-figure-size`, `--tile-figure-face` and `--tile-figure-weight` set it. `--tile-label-face`, `--tile-label-size`, `--tile-label-weight`, `--tile-label-case` and `--tile-label-tracking` set the label; `--tile-icon-flow: column` with `--tile-icon-align: start` puts the icon above the label and `--tile-icon-size` sizes it; `--tile-gap` is the space between the parts and `--tile-detail-space` the space above the note; `--tile-pad`, `--tile-radius` and `--tile-shadow` the padding, corners and shadow (`--pad-card` and `--radius-l` by default). Colors stay the family's tokens (`--muted`, `--ok`, `--warn`, `--crit`), which a site may set on the tile.
+- **`ok` colors the figure**, as `warn` and `crit` do: a static tile has no word beside the figure, so its label and note say what the color means.
+- **A row of static tiles is `data-layout="grid"` on `.cap-tiles`**: equal columns, two across on a phone, as many as fit from there (`repeat(auto-fit, minmax(11rem, 1fr))`), where a link tile row sizes each tile to its text. `--tiles-columns` sets the columns instead (a site's fixed grid, set per breakpoint) and `--tiles-gap` the space between tiles.
 
 ## Keyboard
 
@@ -87,7 +100,26 @@ Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the a
 </div>
 ```
 
-`data-tone` is `ok`, `warn`, `crit` or `nodata`. In React, `import { StatTile, StatTiles } from "capsomer/react/stat-tile"`: `<StatTiles label="Overview figures"><StatTile label="Actions minutes" figure="2,140" unit="of 2,000" tone="crit" word="Over limit" href="/agents" chart={sparkline({ values, label, inline: true })} chartSummary="..." /></StatTiles>`. A `tone="nodata"` tile takes a `reason` and no figure. Pass `onClick` instead of `href` for a button, and `renderLink` for a router's link.
+A static tile, in the same list:
+
+```html
+<div class="cap-tiles" data-layout="grid">
+  <ul class="cap-tiles-list" aria-label="Sequence figures">
+    <li>
+      <div class="cap-tile" data-variant="static" data-tone="ok">
+        <p class="cap-tile-label"><span class="cap-tile-icon" aria-hidden="true">[svg]</span>Open rate</p>
+        <p class="cap-tile-line">
+          <span class="cap-tile-figure">41%</span>
+          <span class="cap-tile-delta" data-tone="ok">[up arrow svg]+3 points</span>
+        </p>
+        <p class="cap-tile-detail">Against the 30 days before</p>
+      </div>
+    </li>
+  </ul>
+</div>
+```
+
+`data-tone` is `ok`, `warn`, `crit` or `nodata` (`accent` too on a static tile). In React, `import { StatTile, StatTiles } from "capsomer/react/stat-tile"`: `<StatTiles label="Overview figures"><StatTile label="Actions minutes" figure="2,140" unit="of 2,000" tone="crit" word="Over limit" href="/agents" chart={sparkline({ values, label, inline: true })} chartSummary="..." /></StatTiles>`. A `tone="nodata"` tile takes a `reason` and no figure. Pass `onClick` instead of `href` for a button, and `renderLink` for a router's link. The static variant is its own export: `<StatTiles label="Sequence figures" layout="grid"><StaticStatTile label="Open rate" figure="41%" tone="ok" delta={{ text: "+3 points", direction: "up" }} detail="Against the 30 days before" icon={<MailIcon />} /></StatTiles>`; `size="lg"`, `tone="accent"`, and a `tone="nodata"` tile takes a `reason`. `delta.tone` overrides the direction's default tone (up ok, down crit, flat none).
 
 **Provenance.** MIXED, against capsid `master` as of 2026-10-01 (`dashboard/src/styles.css` `.tiles`, `.tile`, `.t1`, `.v`, `.l`, `.d`; `dashboard/src/views/Overview.tsx` `tiles`). At 0.1.0 the CSS values were EXTRACTED from `366b902` (the surface, the 1 px `--line` border, the 22 px figure (tabular figures: Capsomer's at 0.1.0, the Portal's since), the muted detail, the tone on the figure) while the layout was REWROTE: the Portal's base `.tiles` was a six, five, three, two-column grid (`repeat(6, minmax(0, 1fr))` with media queries) of `button`s with the label above the figure, which 0.1.0 followed as a container-query grid. Since then the Portal changed to a compact tile, and v0.1.1 EXTRACTED that: a flex row that wraps (`flex: 1 0 auto`, `max-width: 100%`, 8 px gap), a 1 px gap between the figure line and the detail, 7 by 12 px padding (here 6 by 12 px, from the space tokens), the figure and label on one line, the label in 12 px muted instead of upper case, the hover border `--line-strong`, the tile as a link (`Link`, not a `button` with `go()`). Adapted: the figure is 15 px (`--fs-lead`, the nearest token to the Portal's 16 px) and the corner radius is `--radius-m` (6 px, the nearest token to 8 px). Capsomer's own, kept: the word and its glyph beside the label (the Portal colors the figure alone for `ok`, `warn` and `crit`; DEFAULTS.md: shape, word and color together), the no-data state with its reason, the sparkline slot and its text summary, and `li` wrappers in a named list.
 

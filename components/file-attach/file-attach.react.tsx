@@ -1,13 +1,6 @@
-import { useEffect, useId, useRef, useState, useSyncExternalStore, type ReactNode } from "react";
+import { useEffect, useId, useRef, useState, type ReactNode } from "react";
+import { useHydrated } from "../hooks/hooks.react.tsx";
 import { acceptLabel, formatBytes, validateFiles } from "../drop-zone/drop-zone.ts";
-
-const noSubscribe = () => () => {};
-const useMounted = () =>
-  useSyncExternalStore(
-    noSubscribe,
-    () => true,
-    () => false,
-  );
 
 export interface AttachedFile {
   id: string;
@@ -68,7 +61,7 @@ export function FileAttach({
   emptyText = "No files uploaded.",
   newTabText = "(opens in a new tab)",
 }: FileAttachProps) {
-  const ready = useMounted();
+  const ready = useHydrated();
   const inputId = useId();
   const hintId = useId();
   const input = useRef<HTMLInputElement>(null);

@@ -25,17 +25,48 @@ export function rovingIndex(
 // keeps its own arrows, so it does not belong in a toolbar (APG).
 const TOOLBAR_ITEMS = ":is(button, a[href]):not(:disabled, [hidden])";
 
+export interface ToolbarOptions {
+  // An editor's formatting bar: a press with a pointer does not take focus from the editor (its
+  // caret and selection stay), and a control used from the keyboard (Enter or Space) hands focus
+  // back to the editor once it has run. Returns the editor.
+  keepFocus?: () => HTMLElement | null;
+}
+
 // Gives one bar its single tab stop and arrow keys. `items` picks its controls. Returns a function
 // that detaches. Controls added later join it: the bar is read on every key.
 //
 // Where the browser has focusgroup (Chrome 150, Edge 150), a plain toolbar takes `focusgroup="toolbar wrap"` and the
 // browser gives the single stop, the arrows (reversed right to left), Home, End and the wrap; this script then adds
-// nothing, since two roving systems would fight (Modern Web Guidance, toolbar). A bar with its own item set (the
-// markdown editor's tools, a tag group's remove buttons) keeps the script, which picks only those items.
+// no roving of its own, since two roving systems would fight (Modern Web Guidance, toolbar). A bar with its own item
+// set (the markdown editor's tools, a tag group's remove buttons) keeps the script, which picks only those items.
+// `keepFocus` works either way.
 export const NATIVE_FOCUSGROUP =
   typeof HTMLElement !== "undefined" && "focusGroup" in HTMLElement.prototype;
 
-export function attachToolbar(bar: HTMLElement, items = TOOLBAR_ITEMS): () => void {
+function attachKeepFocus(bar: HTMLElement, items: string, keepFocus: ToolbarOptions["keepFocus"]) {
+  if (!keepFocus) return () => {};
+  const onDown = (e: PointerEvent) => {
+    if ((e.target as Element).closest(items)) e.preventDefault();
+  };
+  // After the control's own click handler has run (the editor has its command), focus goes back.
+  const onUsed = (e: MouseEvent) => {
+    if (e.detail !== 0 || !(e.target as Element).closest(items)) return;
+    queueMicrotask(() => keepFocus()?.focus({ preventScroll: true }));
+  };
+  bar.addEventListener("pointerdown", onDown);
+  bar.addEventListener("click", onUsed);
+  return () => {
+    bar.removeEventListener("pointerdown", onDown);
+    bar.removeEventListener("click", onUsed);
+  };
+}
+
+export function attachToolbar(
+  bar: HTMLElement,
+  items = TOOLBAR_ITEMS,
+  options: ToolbarOptions = {},
+): () => void {
+  const detachKeep = attachKeepFocus(bar, items, options.keepFocus);
   if (NATIVE_FOCUSGROUP && items === TOOLBAR_ITEMS) {
     const had = bar.getAttribute("focusgroup");
     if (had === null) {
@@ -43,6 +74,7 @@ export function attachToolbar(bar: HTMLElement, items = TOOLBAR_ITEMS): () => vo
       bar.setAttribute("focusgroup", vertical ? "toolbar wrap block" : "toolbar wrap");
     }
     return () => {
+      detachKeep();
       if (had === null) bar.removeAttribute("focusgroup");
     };
   }
@@ -78,6 +110,7 @@ export function attachToolbar(bar: HTMLElement, items = TOOLBAR_ITEMS): () => vo
   return () => {
     bar.removeEventListener("focusin", onFocus);
     bar.removeEventListener("keydown", onKey);
+    detachKeep();
   };
 }
 

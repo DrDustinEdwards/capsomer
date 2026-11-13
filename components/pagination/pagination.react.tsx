@@ -1,5 +1,34 @@
-import type { ReactElement } from "react";
+import type { ReactElement, ReactNode } from "react";
 import { pageItems, statusText } from "./pagination.ts";
+
+export {
+  countText,
+  pageCountOf,
+  pageEnvelope,
+  pageHref,
+  pageRelLinks,
+  parsePage,
+  showingRange,
+  statusText,
+  type PageEnvelope,
+} from "./pagination.ts";
+
+// What a page link needs, for an app's router link: `renderLink={({ href, ...p }) => <Link to={href} {...p} />}`.
+export interface PageLinkProps {
+  href: string;
+  className: string;
+  rel?: string;
+  "data-kind"?: "prev" | "next";
+  "aria-label"?: string;
+  "aria-current"?: "page";
+  children: ReactNode;
+}
+
+const plainPageLink = ({ href, children, ...rest }: PageLinkProps) => (
+  <a href={href} {...rest}>
+    {children}
+  </a>
+);
 
 export interface PaginationProps {
   page: number;
@@ -17,12 +46,19 @@ export interface PaginationProps {
   prevLabel?: string;
   nextLabel?: string;
   label?: string;
+  // The links form through the app's router link, so a page change is a client navigation.
+  renderLink?: (props: PageLinkProps) => ReactNode;
+  // "steps": Previous and Next with "Page 3 of 16" between at every width, no numbers (a journal
+  // read newest first). With a total that moves, pass pageCount 0 and `hasNext`, and it reads
+  // "Page 3".
+  form?: "numbers" | "steps";
+  hasNext?: boolean;
 }
 
 // The HTML contract in pagination.md. One page or none renders nothing: there is nowhere to go.
 export function Pagination({
   page,
-  pageCount,
+  pageCount: known,
   hrefFor,
   onPageChange,
   total,
@@ -31,7 +67,13 @@ export function Pagination({
   prevLabel = "Previous",
   nextLabel = "Next",
   label = "Pagination",
+  renderLink = plainPageLink,
+  form = "numbers",
+  hasNext,
 }: PaginationProps): ReactElement | null {
+  // A total that moves: the count is not known, only whether there is a next page.
+  const open = hasNext !== undefined && form === "steps" && !(known > 0);
+  const pageCount = open ? (hasNext ? page + 1 : page) : known;
   if (pageCount <= 1) return null;
   const links = typeof hrefFor === "function";
   const control = (
@@ -54,9 +96,15 @@ export function Pagination({
           {content}
         </a>
       ) : (
-        <a {...common} href={hrefFor(to)} rel={extra.rel}>
-          {content}
-        </a>
+        renderLink({
+          className: common.className,
+          "data-kind": common["data-kind"],
+          "aria-label": common["aria-label"],
+          "aria-current": common["aria-current"],
+          href: hrefFor(to),
+          rel: extra.rel,
+          children: content,
+        })
       );
     }
     return (
@@ -71,7 +119,11 @@ export function Pagination({
     );
   };
   return (
-    <nav className="cap-pagination" aria-label={label}>
+    <nav
+      className="cap-pagination"
+      aria-label={label}
+      data-form={form === "steps" ? "steps" : undefined}
+    >
       {perPage && total != null ? (
         <p className="cap-pagination-status" role={links ? undefined : "status"}>
           {statusText(page, perPage, total, noun)}
@@ -81,7 +133,7 @@ export function Pagination({
         <li key="prev">
           {control(page - 1, "cap-page", prevLabel, { kind: "prev", rel: "prev" })}
         </li>
-        {pageItems(page, pageCount).map((it) =>
+        {(form === "steps" ? [] : pageItems(page, pageCount)).map((it) =>
           typeof it === "number" ? (
             <li className="cap-pagination-num" key={it}>
               {control(it, "cap-page", String(it), { current: it === page, name: `Page ${it}` })}
@@ -96,7 +148,7 @@ export function Pagination({
           ),
         )}
         <li className="cap-pagination-where" key="where">
-          Page {page} of {pageCount}
+          {open ? `Page ${page}` : `Page ${page} of ${pageCount}`}
         </li>
         <li key="next">
           {control(page + 1, "cap-page", nextLabel, { kind: "next", rel: "next" })}

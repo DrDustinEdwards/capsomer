@@ -20,26 +20,88 @@
     & > :last-child {
       margin-block-end: 0;
     }
+
+    /* A site's reading look, by token. Each one defaults to the family's look, so a site that shares
+       it sets none; a site with its own (bsw, foxhound, foxing, germomics) sets them where it puts
+       data-context="prose". The size, leading and face are the context's own: --fs-prose, --leading
+       and --prose. Links are the link system's (--accent-text, --link-weight, --link-decoration).
+         --prose-ink           body text (a muted body: var(--muted))
+         --prose-strong-ink    bold text, for a muted body
+         --prose-heading-face, --prose-heading-ink, --prose-heading-weight, --prose-heading-space (above),
+         --prose-heading-gap (below), --prose-heading-measure (css/prose.css: h1 to h3's line, 30ch)
+         --prose-link-ink, --prose-link-hover-ink, --prose-link-hover-decoration (css/prose.css)
+         --prose-h2-size, --prose-h3-size
+         --prose-flow          the space after each block
+         --prose-marker        list bullets and numbers (their color)
+         --prose-bullets, --prose-numbers   the list-style of a plain list and a numbered one (none
+                               for a site whose lists have always been bare; a numbered step then
+                               needs its number in the words)
+         --prose-item-space    the space after each list item
+         --prose-list-indent, --prose-item-indent   a list's indent (1.5em) and an item's own, after
+                               its marker (0)
+         --prose-quote-line, --prose-quote-ink, --prose-quote-style
+         --prose-code-bg, --prose-code-ink, --prose-code-radius   inline code
+         --prose-pre-bg, --prose-pre-pad (one length), --prose-block-radius    code blocks, callouts, details
+         --prose-image-radius
+         --prose-table-rule    the rule under a table's head
+       A color token left unset leaves the color to inherit, as it does today (an unset custom property
+       makes the declaration unset). */
+    color: var(--prose-ink);
+    & :where(p, ul, ol, blockquote, figure, pre, table) {
+      margin-block-end: var(--prose-flow, 1em);
+    }
+    & :where(h1, h2, h3) {
+      margin-block-start: var(--prose-heading-space, 1.4em);
+      color: var(--prose-heading-ink);
+      font-family: var(--prose-heading-face, var(--prose));
+      font-weight: var(--prose-heading-weight, 700);
+    }
+    & :where(h2) {
+      font-size: var(--prose-h2-size, var(--fs-prose-h2));
+    }
+    & :where(h3) {
+      font-size: var(--prose-h3-size, calc(var(--fs-prose) * 1.2));
+    }
+    & :where(strong, b) {
+      color: var(--prose-strong-ink);
+    }
     & :where(h4, h5, h6) {
       margin-block: 1.4em 0.5em;
+      color: var(--prose-heading-ink);
       font-family: var(--ui);
       font-size: 1em;
       line-height: 1.3;
     }
     & :where(ul, ol) {
-      padding-inline-start: 1.5em;
+      padding-inline-start: var(--prose-list-indent, 1.5em);
+    }
+    /* Markers held here, since a site's reset may strip them and a step read as "repeat steps 1 to 4"
+       needs its number. A classed list is a block's own (a task list, a gallery) and keeps its look. */
+    & :where(ul:not([class])) {
+      list-style: var(--prose-bullets, disc);
+    }
+    & :where(ul:not([class]) ul:not([class])) {
+      list-style: var(--prose-bullets, circle);
+    }
+    & :where(ol:not([class])) {
+      list-style: var(--prose-numbers, decimal);
+    }
+    & :where(li)::marker {
+      color: var(--prose-marker);
     }
     & :where(li) {
-      margin-block-end: 0.3em;
+      margin-block-end: var(--prose-item-space, 0.3em);
+      padding-inline-start: var(--prose-item-indent, 0);
     }
     & :where(li > ul, li > ol) {
-      margin-block: 0.3em 0;
+      margin-block: var(--prose-item-space, 0.3em) 0;
     }
     & :where(blockquote) {
       margin-inline: 0;
       padding-inline-start: var(--space-4);
-      border-inline-start: 3px solid var(--line-strong);
-      color: var(--muted);
+      border-inline-start: 3px solid var(--prose-quote-line, var(--line-strong));
+      color: var(--prose-quote-ink, var(--muted));
+      font-style: var(--prose-quote-style);
     }
     & :where(hr) {
       margin-block: 2em;
@@ -50,6 +112,15 @@
       display: block;
       max-inline-size: 100%;
       block-size: auto;
+    }
+    & :where(img) {
+      border-radius: var(--prose-image-radius, 0);
+    }
+    /* Prelum's blurred placeholder, an inline background under the image until it paints over it. */
+    & :where(img.has-lqip) {
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: cover;
     }
     & :where(figure) {
       margin-inline: 0;
@@ -63,8 +134,9 @@
     }
     & :where(:not(pre) > code) {
       padding: 0.1em 0.35em;
-      border-radius: var(--radius-s);
-      background: var(--sunken);
+      border-radius: var(--prose-code-radius, var(--radius-s));
+      background: var(--prose-code-bg, var(--sunken));
+      color: var(--prose-code-ink);
       overflow-wrap: anywhere;
     }
     & :where(kbd) {
@@ -124,7 +196,7 @@
     /* Tables scroll inside their own box (focusable, so a keyboard can scroll it), never the page. */
     & :where(.table-scroll) {
       max-inline-size: var(--measure);
-      margin-block: 0 1em;
+      margin-block: 0 var(--prose-flow, 1em);
       overflow-x: auto;
       &:focus-visible {
         outline: var(--focus-width) solid var(--ring);
@@ -148,8 +220,66 @@
       text-align: start;
     }
     & :where(th) {
-      border-block-end: 2px solid var(--text);
       font-weight: 600;
+    }
+    /* The head's rule only: a row header (th in tbody) keeps the rows' hairline. */
+    & :where(thead th) {
+      border-block-end: 2px solid var(--prose-table-rule, var(--text));
+    }
+    /* A link in a header cell is bold already, so weight cannot tell it from the text beside it: italic
+       is its cue (WCAG 1.4.1, G183). */
+    & :where(th a) {
+      font-style: italic;
+    }
+    /* data-tables="manual" on the article: the manual's tables, a heavy rule over the head, mono labels in
+       capitals, hairlines between rows and no verticals. */
+    &:where([data-tables="manual"]) {
+      & :where(table) {
+        border-block-start: 2px solid var(--text);
+      }
+      & :where(th, td) {
+        padding-inline: 0 var(--space-3);
+        vertical-align: top;
+      }
+      /* With no cell padding, a link in a cell is as short as its text: inline padding takes its hit
+         area to the 24 px minimum (WCAG 2.5.8) and leaves the row's height alone. */
+      & :where(th, td) > :where(a[href]) {
+        padding-block: calc((24px - 1em) / 2);
+      }
+      & :where(thead th) {
+        border-block-end: 1px solid var(--text);
+        color: var(--muted);
+        font: 500 var(--fs-label) / 1.5 var(--mono);
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+    }
+    /* data-headings="parts" on the article: each h2 a numbered part of the page, as the manual heads its
+       parts (.cap-part), its number and title over a rule in the ink. The number is drawn, so the
+       heading's text and its link stay its own; the footnotes' hidden heading counts as no part. */
+    &:where([data-headings="parts"]) {
+      counter-reset: cap-part;
+      & :where(h2) {
+        display: flex;
+        align-items: baseline;
+        gap: var(--space-4);
+        max-inline-size: var(--measure);
+        margin-block-start: 2.5em;
+        padding-block-start: var(--space-2);
+        border-block-start: 1px solid var(--text);
+        counter-increment: cap-part;
+      }
+      & :where(h2.sr-only) {
+        counter-increment: none;
+      }
+      & :where(h2)::before {
+        content: counter(cap-part) / "";
+        flex: none;
+        min-inline-size: 2ch;
+        font-size: 0.5em;
+        font-weight: 400;
+        letter-spacing: 0;
+      }
     }
     & :where(th, td)[align="right"] {
       text-align: end;
@@ -161,11 +291,11 @@
     /* Code: a sunken block; shiki's two themes picked by the page's color-scheme. */
     & :where(pre) {
       position: relative;
-      padding: var(--space-4);
+      padding: var(--prose-pre-pad, var(--space-4));
       overflow-x: auto;
       border: 1px solid var(--line);
-      border-radius: var(--radius-m);
-      background: var(--sunken);
+      border-radius: var(--prose-block-radius, var(--radius-m));
+      background: var(--prose-pre-bg, var(--sunken));
       font-size: var(--fs-detail);
       line-height: 1.6;
       & code {
@@ -177,10 +307,18 @@
       }
     }
     & :where(pre.shiki) {
-      background: light-dark(var(--shiki-light-bg), var(--shiki-dark-bg));
+      background: var(--prose-pre-bg, light-dark(var(--shiki-light-bg), var(--shiki-dark-bg)));
     }
     & :where(.shiki, .shiki span) {
       color: light-dark(var(--shiki-light), var(--shiki-dark));
+    }
+    /* A diff's scopes pair a color with their own background and are legible only on it. Only on a span
+       that carries one: the custom properties inherit. */
+    & :where(.shiki span:is([style*="--shiki-light-bg"], [style*="--shiki-dark-bg"])) {
+      background-color: light-dark(
+        var(--shiki-light-bg, transparent),
+        var(--shiki-dark-bg, transparent)
+      );
     }
     /* A marked line: a neutral band and a rule at its start, so it is told by more than a tint. */
     & :where(.shiki .line.highlighted) {
@@ -191,7 +329,7 @@
     }
     & :where(.code-frame) {
       max-inline-size: var(--measure);
-      margin-block: 0 1em;
+      margin-block: 0 var(--prose-flow, 1em);
       & pre {
         max-inline-size: none;
         margin: 0;
@@ -204,8 +342,8 @@
       padding: var(--space-1) var(--space-4);
       border: 1px solid var(--line);
       border-block-end: 0;
-      border-start-start-radius: var(--radius-m);
-      border-start-end-radius: var(--radius-m);
+      border-start-start-radius: var(--prose-block-radius, var(--radius-m));
+      border-start-end-radius: var(--prose-block-radius, var(--radius-m));
       background: var(--raised);
       color: var(--text);
       font-family: var(--mono);
@@ -218,11 +356,11 @@
       --_tone: var(--info);
       --_soft: var(--info-soft);
       max-inline-size: var(--measure);
-      margin-block: 0 1em;
+      margin-block: 0 var(--prose-flow, 1em);
       padding: var(--space-3) var(--space-4);
       border: 1px solid var(--_tone);
       border-inline-start-width: 4px;
-      border-radius: var(--radius-m);
+      border-radius: var(--prose-block-radius, var(--radius-m));
       background: var(--_soft);
       & > :last-child {
         margin-block-end: 0;
@@ -264,6 +402,7 @@
     & :where(.image-link) {
       display: block;
       inline-size: fit-content;
+      text-decoration: none;
     }
     & :where(.width-wide, .width-full) {
       max-inline-size: none;
@@ -517,29 +656,88 @@
       font-size: var(--fs-detail);
     }
 
-    /* Details and the FAQ: a bordered disclosure; each question a heading-weight term. */
+    /* Details and the FAQ: a bordered disclosure; each question a heading-weight term. The marker is
+       drawn, not the browser's triangle, which differs in every engine: a chevron that turns, or with
+       data-details="plus" on the article a mono plus and minus (the same width, so the summary does not
+       shift when it opens). data-details="ruled" draws them without a box, a rule above and below,
+       details that follow each other sharing one, the summary in the link color. */
     & :where(.post-details) {
       max-inline-size: var(--measure);
-      margin-block: 0 1em;
+      margin-block: 0 var(--prose-flow, 1em);
       border: 1px solid var(--line-strong);
-      border-radius: var(--radius-m);
+      border-radius: var(--prose-block-radius, var(--radius-m));
       & > summary {
         display: flex;
         align-items: center;
+        gap: var(--space-3);
         min-block-size: var(--target);
         padding: var(--space-2) var(--space-4);
         font-family: var(--ui);
         font-weight: 600;
+        list-style: none;
         cursor: pointer;
+        &::-webkit-details-marker {
+          display: none;
+        }
+        &::before {
+          content: "";
+          flex: none;
+          inline-size: 7px;
+          block-size: 7px;
+          margin-inline: 2px 3px;
+          border-inline-end: 1.5px solid currentColor;
+          border-block-end: 1.5px solid currentColor;
+          transform: rotate(-45deg);
+        }
+      }
+      &[open] > summary::before {
+        transform: rotate(45deg);
       }
       & > :not(summary) {
         margin: 0;
         padding: 0 var(--space-4) var(--space-3);
       }
     }
+    &:where([data-details~="plus"]) :where(.post-details) > summary {
+      align-items: baseline;
+      &::before {
+        content: "+";
+        inline-size: auto;
+        block-size: auto;
+        margin: 0;
+        border: 0;
+        font-family: var(--mono);
+        font-size: 0.875em;
+        font-weight: 400;
+        transform: none;
+      }
+    }
+    &:where([data-details~="plus"]) :where(.post-details[open]) > summary::before {
+      content: "\2212";
+    }
+    &:where([data-details~="ruled"]) :where(.post-details) {
+      border: 0;
+      border-block: 1px solid var(--line-strong);
+      border-radius: 0;
+      & + .post-details {
+        margin-block-start: calc(-1 * var(--prose-flow, 1em));
+        border-block-start: 0;
+      }
+      & > summary {
+        padding-inline: 0;
+        color: var(--accent-text);
+        font-weight: 400;
+        &:hover {
+          color: var(--accent-hover);
+        }
+      }
+      & > :not(summary) {
+        padding-inline: 0;
+      }
+    }
     & :where(.faq) {
       max-inline-size: var(--measure);
-      margin-block: 0 1em;
+      margin-block: 0 var(--prose-flow, 1em);
     }
     & :where(.faq-item) {
       padding-block: var(--space-3);
@@ -568,7 +766,7 @@
     /* The editorial pack: a side note, a pull quote, a color swatch, a diagram. */
     & :where(.post-note) {
       max-inline-size: var(--measure);
-      margin-block: 0 1em;
+      margin-block: 0 var(--prose-flow, 1em);
       padding: var(--space-3) var(--space-4);
       border-inline-start: 3px solid var(--accent-line);
       background: var(--raised);
@@ -607,8 +805,292 @@
     }
     & :where(.diagram-title) {
       margin: 0 0 var(--space-2);
-      font-family: var(--ui);
+      color: var(--text);
+      font-family: var(--diagram-title-face, var(--ui));
+      font-size: var(--diagram-title-size, 1em);
       font-weight: 600;
+      text-align: var(--diagram-title-align, start);
+    }
+    /* A :::diagram's drawings (Prelum's .diagram-figure, two <img>s, one per theme): each keeps the size
+       its width and height attributes give, shrinks to the column and is never stretched (no width:
+       even auto drops the attribute's size until the image loads). */
+    & :where(.diagram-figure) {
+      margin-inline: 0;
+    }
+    & :where(.diagram-image) {
+      max-inline-size: 100%;
+      block-size: auto;
+      margin-inline: auto;
+      border-radius: 0;
+    }
+
+    /* A diagram drawn in the page: one inline SVG, <figure class="blog-diagram" role="img">, whose parts read
+       the page's colors, so one drawing serves both themes. The SVG keeps its own width and only shrinks.
+       A site sets its drawing's look with the --diagram-* tokens; a part is drawn by its class (below),
+       or the SVG reads the tokens itself (fill="var(--diagram-accent)"). Each tone has a fill, a line and
+       an ink: neutral, accent, success, warning, info, critical. Also --diagram-arrow, --diagram-rule,
+       --diagram-ink, --diagram-ink-muted, --diagram-ground, --diagram-face, --diagram-stroke (a node's and
+       a line's width) and --diagram-label-weight. A corner's radius stays the drawing's own rx. */
+    & :where(.blog-diagram) {
+      --diagram-neutral: var(--surface);
+      --diagram-neutral-line: var(--line-strong);
+      --diagram-neutral-ink: var(--text);
+      --diagram-accent: var(--accent-soft);
+      --diagram-accent-line: var(--accent);
+      --diagram-accent-ink: var(--text);
+      --diagram-success: var(--ok-soft);
+      --diagram-success-line: var(--ok);
+      --diagram-success-ink: var(--text);
+      --diagram-warning: var(--warn-soft);
+      --diagram-warning-line: var(--warn);
+      --diagram-warning-ink: var(--text);
+      --diagram-info: var(--info-soft);
+      --diagram-info-line: var(--info);
+      --diagram-info-ink: var(--text);
+      --diagram-critical: var(--crit-soft);
+      --diagram-critical-line: var(--crit);
+      --diagram-critical-ink: var(--text);
+      --diagram-arrow: var(--line-strong);
+      --diagram-rule: var(--line);
+      --diagram-ink: var(--text);
+      --diagram-ink-muted: var(--muted);
+      --diagram-face: var(--ui);
+      --diagram-ground: var(--surface);
+      --diagram-stroke: 1px;
+      --diagram-label-weight: 500;
+      margin-inline: 0;
+      overflow: visible;
+      & svg {
+        display: block;
+        max-inline-size: 100%;
+        block-size: auto;
+        margin-inline: auto;
+        font-family: var(--diagram-face);
+      }
+    }
+    /* A diagram with its credit under it, held to a drawing's width and centered. */
+    & :where(.blog-diagram-block) {
+      max-inline-size: min(100%, 42.5rem);
+      margin: 0 auto var(--prose-flow, 1em);
+      & > .blog-diagram {
+        margin: 0;
+      }
+    }
+    & :where(.blog-diagram-credit) {
+      margin: var(--space-3) 0 0;
+      color: var(--muted);
+      font-family: var(--ui);
+      font-size: var(--fs-label);
+      line-height: 1.5;
+      text-align: center;
+    }
+
+    /* The parts. A node (a rect, or a <g> whose shapes inherit its fill and stroke) takes its tone; its
+       color is the tone's line too, for a glyph inside it drawn in currentColor. */
+    & :where(.blog-diagram) {
+      & :where(.node, .node-neutral, .node-accent, .node-success, .node-warning, .node-info, .node-critical) {
+        stroke-width: var(--diagram-stroke);
+        vector-effect: non-scaling-stroke;
+      }
+      & :where(.node, .node-neutral) {
+        color: var(--diagram-neutral-line);
+        fill: var(--diagram-neutral);
+        stroke: var(--diagram-neutral-line);
+      }
+      & :where(.node-accent) {
+        color: var(--diagram-accent-line);
+        fill: var(--diagram-accent);
+        stroke: var(--diagram-accent-line);
+      }
+      & :where(.node-success) {
+        color: var(--diagram-success-line);
+        fill: var(--diagram-success);
+        stroke: var(--diagram-success-line);
+      }
+      & :where(.node-warning) {
+        color: var(--diagram-warning-line);
+        fill: var(--diagram-warning);
+        stroke: var(--diagram-warning-line);
+      }
+      & :where(.node-info) {
+        color: var(--diagram-info-line);
+        fill: var(--diagram-info);
+        stroke: var(--diagram-info-line);
+      }
+      & :where(.node-critical) {
+        color: var(--diagram-critical-line);
+        fill: var(--diagram-critical);
+        stroke: var(--diagram-critical-line);
+      }
+      /* Lines, rings and dots in the ink, or a tone's line with .accent, .success, .warning, .info, .critical. */
+      & :where(.ln, .ring, .dot, .connector, .glyph) {
+        fill: none;
+        stroke: var(--diagram-ink-muted);
+        stroke-width: var(--diagram-stroke);
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        vector-effect: non-scaling-stroke;
+      }
+      & :where(.ln *) {
+        vector-effect: non-scaling-stroke;
+      }
+      & :where(.dot) {
+        fill: var(--diagram-ink-muted);
+      }
+      /* A glyph is drawn in its node's color, at its own weight (it scales with the drawing); .glyph-bold
+         and .glyph-heavy are thicker strokes. */
+      & :where(.glyph) {
+        stroke: currentColor;
+        stroke-width: 1.75px;
+        vector-effect: none;
+      }
+      & :where(.glyph.glyph-bold) {
+        stroke-width: 3px;
+      }
+      & :where(.glyph.glyph-heavy) {
+        stroke-width: 4px;
+      }
+      /* A solid mark in its node's color; a hollow bead; a shape on the ground; a wide band. */
+      & :where(.mark) {
+        fill: currentColor;
+        stroke: none;
+      }
+      & :where(.bead) {
+        fill: var(--diagram-ground);
+        stroke: currentColor;
+        stroke-width: 1.5px;
+      }
+      & :where(.shape) {
+        fill: var(--diagram-neutral);
+        stroke: currentColor;
+        stroke-width: 1.5px;
+        stroke-linecap: round;
+      }
+      & :where(.band) {
+        fill: none;
+        stroke: var(--diagram-accent-line);
+        stroke-width: 6px;
+      }
+      & :where(:is(.ln, .ring, .dot, .connector).accent) {
+        stroke: var(--diagram-accent-line);
+      }
+      & :where(:is(.ln, .ring, .dot, .connector).success) {
+        stroke: var(--diagram-success-line);
+      }
+      & :where(:is(.ln, .ring, .dot, .connector).warning) {
+        stroke: var(--diagram-warning-line);
+      }
+      & :where(:is(.ln, .ring, .dot, .connector).info) {
+        stroke: var(--diagram-info-line);
+      }
+      & :where(:is(.ln, .ring, .dot, .connector).critical) {
+        stroke: var(--diagram-critical-line);
+      }
+      & :where(.dot.accent) {
+        fill: var(--diagram-accent-line);
+      }
+      & :where(.dot.success) {
+        fill: var(--diagram-success-line);
+      }
+      & :where(.dot.warning) {
+        fill: var(--diagram-warning-line);
+      }
+      & :where(.dot.info) {
+        fill: var(--diagram-info-line);
+      }
+      & :where(.dot.critical) {
+        fill: var(--diagram-critical-line);
+      }
+      & :where(.connector.quiet) {
+        stroke: var(--diagram-rule);
+      }
+      & :where(.arrow-head) {
+        fill: var(--diagram-arrow);
+      }
+      & :where(.arrow-head.accent) {
+        fill: var(--diagram-accent-line);
+      }
+      & :where(.connector.accent) {
+        stroke-width: calc(var(--diagram-stroke) * 1.5);
+      }
+      /* Rules, lanes, axes and baselines. */
+      & :where(.rule, .divider) {
+        fill: none;
+        stroke: var(--diagram-rule);
+        stroke-width: var(--diagram-stroke);
+        vector-effect: non-scaling-stroke;
+      }
+      & :where(.lane) {
+        fill: none;
+        stroke: var(--diagram-rule);
+        stroke-width: var(--diagram-stroke);
+        stroke-dasharray: 2 4;
+      }
+      & :where(.axis, .axis-tick, .axis-line) {
+        fill: none;
+        stroke: var(--diagram-neutral-line);
+        stroke-width: var(--diagram-stroke);
+      }
+      & :where(.baseline) {
+        fill: none;
+        stroke: var(--diagram-ink-muted);
+        stroke-width: var(--diagram-stroke);
+        stroke-dasharray: 3 3;
+      }
+      /* Text: a label, a quieter one, a small one, a figure, a header; a tone on a label or header with
+         .accent, .success, .warning, .info, .critical (each tone's line, which is its strongest color). */
+      & :where(text) {
+        font-family: var(--diagram-face);
+      }
+      & :where(.label, .label-primary, .header) {
+        fill: var(--diagram-ink);
+        font-size: 0.8125rem;
+        font-weight: var(--diagram-label-weight);
+      }
+      & :where(.header) {
+        letter-spacing: 0.04em;
+      }
+      & :where(.label-secondary, .label-small) {
+        fill: var(--diagram-ink-muted);
+        font-size: 0.6875rem;
+        font-weight: 400;
+      }
+      & :where(.label-small) {
+        fill: var(--diagram-ink);
+        font-weight: 600;
+      }
+      & :where(.label-mono) {
+        fill: var(--diagram-ink);
+        font-family: var(--mono);
+        font-size: 0.6875rem;
+        font-weight: 500;
+      }
+      & :where(.label-figure) {
+        fill: var(--accent-text);
+        font-size: 1.375rem;
+        font-weight: 700;
+        font-variant-numeric: var(--figures-column);
+      }
+      & :where(:is(.label, .label-primary, .label-secondary, .label-small, .header).accent) {
+        fill: var(--accent-text);
+        font-weight: 600;
+      }
+      & :where(:is(.label, .label-primary, .label-secondary, .label-small, .header).success) {
+        fill: var(--diagram-success-ink);
+        font-weight: 600;
+      }
+      & :where(:is(.label, .label-primary, .label-secondary, .label-small, .header).warning) {
+        fill: var(--diagram-warning-ink);
+        font-weight: 600;
+      }
+      & :where(:is(.label, .label-primary, .label-secondary, .label-small, .header).info) {
+        fill: var(--diagram-info-ink);
+        font-weight: 600;
+      }
+      & :where(:is(.label, .label-primary, .label-secondary, .label-small, .header).critical) {
+        fill: var(--diagram-critical-ink);
+        font-weight: 600;
+      }
     }
     /* Half an em above and below: under WCAG 1.4.12's text spacing KaTeX's struts no longer hold the glyphs, and a
        quarter em clipped a displayed formula's bottom edge (3 px of 80 on Prelum's specimen). */
@@ -650,7 +1132,8 @@
   }
 
   /* render/enhance's furniture: reading progress, the code block's language and Copy, the footnote
-     preview, the image viewer and the selection link. Room for Copy is kept only where script runs. */
+     preview, the image viewer and the selection link. The reading progress bar and Copy move to
+     the reading-progress and copy parts once Prelum's enhance renders them; they stay here until then. */
   .reading-progress {
     position: fixed;
     inset: 0 0 auto;
@@ -659,11 +1142,19 @@
     background: var(--accent);
     transform: scaleX(0);
     transform-origin: 0 50%;
+    /* It sits over a pinned header: without this the 3 px strip takes the header's clicks. */
+    pointer-events: none;
   }
+  /* Room for the language and Copy is kept only on the blocks that get them (render/enhance decorates
+     pre[data-lang] and marks it data-enhanced), and only where script runs, so the room is there before
+     the furniture arrives and nothing shifts. */
   @media (scripting: enabled) {
-    :where([data-context="prose"]) :where(pre) {
-      padding-block-start: calc(var(--space-4) + 1.5rem);
+    :where([data-context="prose"]) :where(pre[data-lang]) {
+      padding-block-start: calc(var(--prose-pre-pad, var(--space-4)) + 1.5rem);
     }
+  }
+  :where([data-context="prose"]) :where(pre[data-enhanced]) {
+    padding-block-start: calc(var(--prose-pre-pad, var(--space-4)) + 1.5rem);
   }
   .code-lang {
     position: absolute;
@@ -784,6 +1275,9 @@
     :where([data-context="prose"]) :where(.heading-anchor) {
       transition: opacity var(--dur-fast) var(--ease-out);
     }
+    :where([data-context="prose"]) :where(.heading-anchor[data-copied])::after {
+      animation: cap-lightbox-in var(--dur-fast) var(--ease-out) both;
+    }
   }
   @keyframes cap-lightbox-in {
     from {
@@ -799,9 +1293,35 @@
     :where([data-context="prose"]) :where(.heading-anchor) {
       display: none;
     }
-    :where([data-context="prose"]) :where(pre) {
-      padding-block-start: var(--space-4);
-      white-space: pre-wrap;
+    :where([data-context="prose"]) {
+      & :where(pre, pre[data-lang], pre[data-enhanced]) {
+        padding-block-start: var(--prose-pre-pad, var(--space-4));
+        border-color: currentColor;
+        white-space: pre-wrap;
+        word-break: break-word;
+      }
+      /* Paper cannot follow a link: an outside link prints its address after it, in place of the link
+         system's mark (one class of specificity, so it wins over the mark's rule of none). */
+      & a[href^="http"]:where(:not(.heading-anchor, .image-link, .embed-link, .bookmark-link))::after {
+        content: " (" attr(href) ")";
+        font-size: 0.85em;
+        font-weight: 400;
+        word-break: break-all;
+      }
+      & :where(h2, h3) {
+        break-after: avoid;
+      }
+      & :where(figure, pre, table, .callout, .blog-diagram) {
+        break-inside: avoid;
+      }
+      /* Every disclosure is open on paper: ::details-content in current engines, the sibling rule before it. */
+      & :where(.post-details)::details-content {
+        content-visibility: visible;
+        block-size: auto;
+      }
+      & :where(.post-details:not([open])) > :not(summary) {
+        display: block;
+      }
     }
   }
 }

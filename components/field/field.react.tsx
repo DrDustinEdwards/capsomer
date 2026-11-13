@@ -9,7 +9,6 @@ import {
   type ReactElement,
   type ReactNode,
   type TextareaHTMLAttributes,
-  useSyncExternalStore,
 } from "react";
 import { useOptionalMessage } from "../message/message.react.tsx";
 import { SLUG_PATTERN, slugify } from "@drdustinedwards/site-helpers/slug";
@@ -21,9 +20,7 @@ import {
   stepValue,
   toDateTimeLocal,
 } from "./field.ts";
-
-// For useSyncExternalStore's hydration flag: nothing to subscribe to.
-const noSubscribe = () => () => {};
+import { useHydrated } from "../hooks/hooks.react.tsx";
 
 // The props Field passes to its control. Any input, textarea or select (or a component
 // that forwards these to one) will do.
@@ -38,6 +35,9 @@ export interface FieldProps {
   label: ReactNode;
   // The control's id, for a control drawn by a function (an element child keeps its own).
   id?: string;
+  // The label is read but not shown, for a field whose purpose the page already makes plain (a
+  // site's search box with its icon). Every other field shows its label.
+  labelHidden?: boolean;
   // Help, shown between the label and the control and read as its description.
   help?: ReactNode;
   // The message for a wrong value: what is wrong and what to do. Shown beside the control.
@@ -63,10 +63,14 @@ export interface FieldProps {
   // false keeps the control required but leaves the word "Required" off the label, for a form
   // whose every field is required and says so once at the top.
   showRequired?: boolean;
+  // "short": a field that needs only its control's room (a kind, a color) beside a long one, as
+  // data-size="short", which a layout reads (inline-add-form.css).
+  size?: "short";
 }
 
 export function Field({
   label,
+  labelHidden = false,
   help,
   error,
   announce = false,
@@ -78,6 +82,7 @@ export function Field({
   helpPlacement = "before",
   showRequired = true,
   id,
+  size,
 }: FieldProps) {
   const base = useId();
   const own = typeof children === "function" ? {} : children.props;
@@ -116,8 +121,12 @@ export function Field({
       className="cap-field"
       data-orientation={orientation === "vertical" ? undefined : orientation}
       data-invalid={hasError ? "true" : undefined}
+      data-size={size}
     >
-      <label className="cap-field-label" htmlFor={controlId}>
+      <label
+        className={labelHidden ? "cap-field-label cap-sr-only" : "cap-field-label"}
+        htmlFor={controlId}
+      >
         {label}
         {isRequired && showRequired ? (
           <span className="cap-field-required" aria-hidden="true">
@@ -245,16 +254,6 @@ function splitField<T extends Partial<FieldText>>(props: T): [FieldText, Omit<T,
   return [field as unknown as FieldText, rest as Omit<T, keyof FieldText>];
 }
 
-// False on the server and in the first render, so a button that needs script is `hidden` in
-// the HTML a page with no script shows, as in the markup on the doc page.
-function useMounted(): boolean {
-  return useSyncExternalStore(
-    noSubscribe,
-    () => true,
-    () => false,
-  );
-}
-
 // A password with Show and Hide (GOV.UK Password input). The change is said in the status
 // region when the app has a MessageProvider, and a form that is sent hides it again.
 export function PasswordInput(
@@ -266,7 +265,7 @@ export function PasswordInput(
   const [field, own] = splitField(props);
   const { autoComplete = "current-password", className: _c, ...rest } = own;
   const [shown, setShown] = useState(false);
-  const ready = useMounted();
+  const ready = useHydrated();
   const message = useOptionalMessage();
   const input = useRef<HTMLInputElement>(null);
   useEffect(() => {
@@ -375,7 +374,9 @@ export function NumberField(
       onChange: (value: number | null) => void;
       min?: number;
       max?: number;
-      step?: number;
+      // "any" takes any value (1.5 servings passes the browser's step check); the steppers and
+      // Page Up and Page Down then step by 1.
+      step?: number | "any";
       // The steppers' names. Default: "Decrease" and "Increase" with the label, when it is text.
       decrease?: string;
       increase?: string;
@@ -384,11 +385,12 @@ export function NumberField(
   const [field, own] = splitField(props);
   const { label } = field;
   const { value, onChange, min, max, step = 1, decrease, increase, className: _c, ...rest } = own;
-  const ready = useMounted();
+  const ready = useHydrated();
   const named = typeof label === "string" ? ` ${label.toLowerCase()}` : "";
   const v = value ?? Number.NaN;
+  const unit = step === "any" ? 1 : step;
   const onKey = (e: KeyboardEvent<HTMLInputElement>) => {
-    const to = keyValue(e.key, v, step, min, max);
+    const to = keyValue(e.key, v, unit, min, max);
     if (to === null) return;
     e.preventDefault();
     onChange(to);
@@ -413,7 +415,7 @@ export function NumberField(
         hidden={!ready}
         disabled={off}
         onMouseDown={(e) => e.preventDefault()}
-        onClick={() => onChange(stepValue(v, step, by, min, max))}
+        onClick={() => onChange(stepValue(v, unit, by, min, max))}
       >
         {glyph}
       </button>
@@ -466,7 +468,7 @@ const SEARCH_ICON = (
 // there is text, and Esc to clear. A form when `action` is given, so it works with no script;
 // otherwise a div for a filter that answers as it is typed in.
 export function SearchField(
-  props: Pick<FieldProps, "label" | "help"> &
+  props: Pick<FieldProps, "label" | "labelHidden" | "help"> &
     Omit<InputHTMLAttributes<HTMLInputElement>, "type" | "style" | "value" | "onChange"> & {
       value: string;
       onChange: (value: string) => void;
@@ -474,8 +476,18 @@ export function SearchField(
       landmark?: string;
     },
 ) {
-  const { label, help, value, onChange, action, landmark, className: _c, ...rest } = props;
-  const ready = useMounted();
+  const {
+    label,
+    labelHidden,
+    help,
+    value,
+    onChange,
+    action,
+    landmark,
+    className: _c,
+    ...rest
+  } = props;
+  const ready = useHydrated();
   const input = useRef<HTMLInputElement>(null);
   const Wrap = action ? "form" : "div";
   // The landmark is named, as in the HTML contract: `landmark`, or else the field's own label.
@@ -487,7 +499,7 @@ export function SearchField(
       action={action}
       data-cap-ready={ready ? "" : undefined}
     >
-      <Field label={label} help={help}>
+      <Field label={label} labelHidden={labelHidden} help={help}>
         {(p) => (
           <div className="cap-input-group">
             <InputGroupAddon align="inline-start">{SEARCH_ICON}</InputGroupAddon>

@@ -1,13 +1,6 @@
-import { useEffect, useId, useRef, useState, useSyncExternalStore, type ReactNode } from "react";
+import { useEffect, useId, useRef, useState, type ReactNode } from "react";
+import { useHydrated } from "../hooks/hooks.react.tsx";
 import type { FormComponent } from "../read-only-form/read-only-form.react.tsx";
-
-const noSubscribe = () => () => {};
-const useMounted = () =>
-  useSyncExternalStore(
-    noSubscribe,
-    () => true,
-    () => false,
-  );
 
 export type { FormComponent };
 
@@ -64,7 +57,7 @@ export function InlineConfirm({
   action,
   children,
 }: InlineConfirmProps) {
-  const ready = useMounted();
+  const ready = useHydrated();
   const [open, setOpen] = useState(defaultOpen);
   // Opened by the page's address: Cancel takes focus when it first shows.
   const [byAddress] = useState(defaultOpen);

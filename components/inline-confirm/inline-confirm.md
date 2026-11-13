@@ -5,7 +5,7 @@ summary: A row's risky action in two steps, in place, that works with no script 
 parts: [css, react]
 tool: native + own JavaScript (React)
 states: [first step, question open, running]
-added: 0.91.0
+added: 0.117.0
 source: Foxhound, routes/app/settings/team.tsx (remove member), components/dispute-detail-parts.tsx (AcceptControl) and routes/app/settings/account.tsx (DangerZone's two steps)
 replaces:
   - '\?confirm='

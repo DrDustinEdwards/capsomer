@@ -1,0 +1,61 @@
+<link rel="stylesheet" href="./specimen/examples.css" />
+
+<section class="cap-specimen" aria-labelledby="s-default">
+  <h2 id="s-default">Default: two layouts and the key outside the figure</h2>
+  <figure class="cap-annotated-figure" id="af-default" data-cap="annotated-figure">
+    <svg class="cap-annotated-figure-drawing" data-layout="wide" viewBox="-240 -96 480 192" role="group" aria-labelledby="fig-wide-title fig-wide-desc">
+      <title id="fig-wide-title">Figure 1. The parts of a page.</title>
+      <desc id="fig-wide-desc">A page drawn as a window with four numbered parts, each on a leader to its label: 1, header; 2, sidebar; 3, content; 4, search.</desc>
+      <rect class="sample-window" x="-120" y="-80" width="240" height="160" rx="6" />
+      <g class="cap-annotated-figure-target" data-callout="1" role="img" aria-label="Part 1, header"><rect class="sample-part" x="-120" y="-80" width="240" height="24" /></g>
+      <g class="cap-annotated-figure-target" data-callout="2" role="img" aria-label="Part 2, sidebar"><rect class="sample-part" x="-120" y="-56" width="60" height="136" /></g>
+      <g class="cap-annotated-figure-target" data-callout="3" role="img" aria-label="Part 3, content"><rect class="sample-part" x="-60" y="-56" width="180" height="136" /></g>
+      <g class="cap-annotated-figure-target" data-callout="4" role="img" aria-label="Part 4, search"><rect class="sample-part" x="60" y="-76" width="52" height="16" /></g>
+      <g class="cap-annotated-figure-leader" data-callout="1"><line x1="-60" y1="-68" x2="-128" y2="-68" /><line x1="-128" y1="-68" x2="-146" y2="-68" /><text class="cap-annotated-figure-label" x="-151" y="-64" text-anchor="end" aria-hidden="true">1 · Header</text></g>
+      <g class="cap-annotated-figure-leader" data-callout="2"><line x1="-90" y1="20" x2="-128" y2="40" /><line x1="-128" y1="40" x2="-146" y2="40" /><text class="cap-annotated-figure-label" x="-151" y="44" text-anchor="end" aria-hidden="true">2 · Sidebar</text></g>
+      <g class="cap-annotated-figure-leader" data-callout="3"><line x1="40" y1="10" x2="128" y2="10" /><line x1="128" y1="10" x2="146" y2="10" /><text class="cap-annotated-figure-label" x="151" y="14" text-anchor="start" aria-hidden="true">3 · Content</text></g>
+      <g class="cap-annotated-figure-leader" data-callout="4"><line x1="86" y1="-68" x2="128" y2="-68" /><line x1="128" y1="-68" x2="146" y2="-68" /><text class="cap-annotated-figure-label" x="151" y="-64" text-anchor="start" aria-hidden="true">4 · Search</text></g>
+    </svg>
+    <svg class="cap-annotated-figure-drawing" data-layout="narrow" viewBox="-180 -70 360 140" role="group" aria-labelledby="fig-narrow-title fig-narrow-desc">
+      <title id="fig-narrow-title">Figure 1. The parts of a page.</title>
+      <desc id="fig-narrow-desc">A page drawn as a window with four numbered parts, each on a leader to its label: 1, header; 2, sidebar; 3, content; 4, search.</desc>
+      <rect class="sample-window" x="-80" y="-53.3" width="160" height="106.7" rx="6" />
+      <g class="cap-annotated-figure-target" data-callout="1" role="img" aria-label="Part 1, header"><rect class="sample-part" x="-80" y="-53.3" width="160" height="16" /></g>
+      <g class="cap-annotated-figure-target" data-callout="2" role="img" aria-label="Part 2, sidebar"><rect class="sample-part" x="-80" y="-37.3" width="40" height="90.7" /></g>
+      <g class="cap-annotated-figure-target" data-callout="3" role="img" aria-label="Part 3, content"><rect class="sample-part" x="-40" y="-37.3" width="120" height="90.7" /></g>
+      <g class="cap-annotated-figure-target" data-callout="4" role="img" aria-label="Part 4, search"><rect class="sample-part" x="40" y="-50.7" width="34.7" height="10.7" /></g>
+      <g class="cap-annotated-figure-leader" data-callout="1"><line x1="-40" y1="-45.3" x2="-88" y2="-45" /><line x1="-88" y1="-45" x2="-106" y2="-45" /><text class="cap-annotated-figure-label" x="-111" y="-41" text-anchor="end" aria-hidden="true">1 · Header</text></g>
+      <g class="cap-annotated-figure-leader" data-callout="2"><line x1="-60" y1="13.3" x2="-88" y2="27" /><line x1="-88" y1="27" x2="-106" y2="27" /><text class="cap-annotated-figure-label" x="-111" y="31" text-anchor="end" aria-hidden="true">2 · Sidebar</text></g>
+      <g class="cap-annotated-figure-leader" data-callout="3"><line x1="26.7" y1="6.7" x2="88" y2="7" /><line x1="88" y1="7" x2="106" y2="7" /><text class="cap-annotated-figure-label" x="111" y="11" text-anchor="start" aria-hidden="true">3 · Content</text></g>
+      <g class="cap-annotated-figure-leader" data-callout="4"><line x1="57.3" y1="-45.3" x2="88" y2="-45" /><line x1="88" y1="-45" x2="106" y2="-45" /><text class="cap-annotated-figure-label" x="111" y="-41" text-anchor="start" aria-hidden="true">4 · Search</text></g>
+    </svg>
+    <figcaption class="cap-annotated-figure-caption">Figure 1. The parts of a page, from the Example Co style guide.</figcaption>
+  </figure>
+  <section class="cap-annotated-key" id="af-key" aria-label="Figure 1 key" data-for="af-default">
+    <div class="cap-annotated-key-entries">
+      <figure class="cap-annotated-key-entry" data-callout="1"><svg class="cap-annotated-key-art" viewBox="0 0 76 76" role="img" aria-label="Header, drawn."><rect class="sample-key-icon" x="8" y="18" width="60" height="40" rx="2" /><rect class="sample-key-icon" data-on x="8" y="18" width="60" height="6" /></svg><figcaption><span class="cap-annotated-key-num">1</span><b class="cap-annotated-key-name">Header</b><span class="cap-annotated-key-note">The site's name and its menu.</span></figcaption></figure>
+      <figure class="cap-annotated-key-entry" data-callout="2"><svg class="cap-annotated-key-art" viewBox="0 0 76 76" role="img" aria-label="Sidebar, drawn."><rect class="sample-key-icon" x="8" y="18" width="60" height="40" rx="2" /><rect class="sample-key-icon" data-on x="8" y="24" width="15" height="34" /></svg><figcaption><span class="cap-annotated-key-num">2</span><b class="cap-annotated-key-name">Sidebar</b><span class="cap-annotated-key-note">Links to every section.</span></figcaption></figure>
+      <figure class="cap-annotated-key-entry" data-callout="3"><svg class="cap-annotated-key-art" viewBox="0 0 76 76" role="img" aria-label="Content, drawn."><rect class="sample-key-icon" x="8" y="18" width="60" height="40" rx="2" /><rect class="sample-key-icon" data-on x="23" y="24" width="45" height="34" /></svg><figcaption><span class="cap-annotated-key-num">3</span><b class="cap-annotated-key-name">Content</b><span class="cap-annotated-key-note">The page's own words.</span></figcaption></figure>
+      <figure class="cap-annotated-key-entry" data-callout="4"><svg class="cap-annotated-key-art" viewBox="0 0 76 76" role="img" aria-label="Search, drawn."><rect class="sample-key-icon" x="8" y="18" width="60" height="40" rx="2" /><rect class="sample-key-icon" data-on x="53" y="19" width="13" height="4" /></svg><figcaption><span class="cap-annotated-key-num">4</span><b class="cap-annotated-key-name">Search</b><span class="cap-annotated-key-note">Finds a post by its words.</span></figcaption></figure>
+    </div>
+  </section>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-narrow">
+  <h2 id="s-narrow">A narrow container shows the narrow drawing, whose leaders draw in</h2>
+  <!-- The same figure as the default, copied in by the script below with its ids renamed. -->
+  <div class="sample-narrow" id="af-narrow-host"></div>
+</section>
+
+<script type="module">
+  import { enhance } from "./annotated-figure.ts";
+  const copy = document.getElementById("af-default").cloneNode(true);
+  copy.id = "af-narrow";
+  copy.setAttribute("data-draw", "");
+  copy.querySelector("figcaption")?.remove();
+  for (const el of copy.querySelectorAll("[id]")) el.id = el.id.replace(/^fig-/, "fign-");
+  for (const el of copy.querySelectorAll("[aria-labelledby]"))
+    el.setAttribute("aria-labelledby", el.getAttribute("aria-labelledby").replaceAll("fig-", "fign-"));
+  document.getElementById("af-narrow-host").append(copy);
+  enhance();
+</script>

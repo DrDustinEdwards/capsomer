@@ -1,28 +1,23 @@
 import {
   useEffect,
-  useId,
   useMemo,
   useRef,
   useState,
   type FocusEvent,
   type FormEvent,
   type KeyboardEvent,
-  useSyncExternalStore,
 } from "react";
-import type {
-  ContentLabels,
-  IntentResult,
-  PostRow,
-  PostsData,
-  ScheduledUpdateView,
-  SubmitIntent,
-} from "../content/content.ts";
 import {
-  ContentBulkBar,
-  PlainForm,
-  useIntents,
-  type FormComponent,
-} from "../content/content.react.tsx";
+  nounsOf,
+  type ContentLabels,
+  type IntentResult,
+  type PostRow,
+  type PostsData,
+  type ScheduledUpdateView,
+  type SubmitIntent,
+} from "../content/content.ts";
+import { ContentBulkBar, useIntents } from "../content/content.react.tsx";
+import { PlainForm, type FormComponent } from "../plain-form/plain-form.react.tsx";
 import { Empty } from "../empty/empty.react.tsx";
 import { FormMenu } from "../menu/menu.react.tsx";
 import { Pill, Status } from "../status/status.react.tsx";
@@ -39,7 +34,7 @@ import {
 } from "../dialog/dialog.react.tsx";
 import { DraftCompare, DraftPatch } from "../draft-compare/draft-compare.react.tsx";
 import { PageHead } from "../page-head/page-head.react.tsx";
-import { copyText } from "../media/media-actions.ts";
+import { copyText } from "../copy/copy.ts";
 import {
   NO_FILTERS,
   SORTS,
@@ -52,7 +47,6 @@ import {
   inDays,
   isoFromLocal,
   localInputValue,
-  nounsOf,
   postActions,
   postsHref,
   rowActions,
@@ -62,9 +56,7 @@ import {
   type RowAction,
 } from "./posts-list.ts";
 import type { ConfirmRequest } from "../content/content.ts";
-
-// For useSyncExternalStore's hydration flag: nothing to subscribe to.
-const noSubscribe = () => () => {};
+import { useCleanId, useHydrated } from "../hooks/hooks.react.tsx";
 
 export { contentStatus };
 export type { ContentLabels, IntentResult, PostRow, PostsData, ScheduledUpdateView, SubmitIntent };
@@ -188,7 +180,7 @@ function RescheduleDialog({
   Form: FormComponent;
   onClose: () => void;
 }) {
-  const uid = useId().replace(/[^a-zA-Z0-9]/g, "");
+  const uid = useCleanId();
   return (
     <Dialog
       open={!!moving}
@@ -254,7 +246,7 @@ function RenameDialog({
   Form: FormComponent;
   onClose: () => void;
 }) {
-  const uid = useId().replace(/[^a-zA-Z0-9]/g, "");
+  const uid = useCleanId();
   return (
     <Dialog
       open={!!renaming}
@@ -332,7 +324,7 @@ function PreviewLinkBox({
   noun: string;
   scripted: boolean;
 }) {
-  const uid = useId().replace(/[^a-zA-Z0-9]/g, "");
+  const uid = useCleanId();
   const [copied, setCopied] = useState("");
   const [copiedFor, setCopiedFor] = useState(link?.url);
   if (link?.url !== copiedFor) {
@@ -408,16 +400,12 @@ export function PostsList({
   labels,
   now,
 }: PostsListProps) {
-  const uid = useId().replace(/[^a-zA-Z0-9]/g, "");
+  const uid = useCleanId();
   const formId = `${uid}-bulk`;
-  const { noun, plural } = nounsOf(labels);
+  const { noun, plural } = nounsOf(labels, "post");
   const title = plural.charAt(0).toUpperCase() + plural.slice(1);
   // False on the server and while hydrating, true once hydrated.
-  const mounted = useSyncExternalStore(
-    noSubscribe,
-    () => true,
-    () => false,
-  );
+  const mounted = useHydrated();
   // The time the list was drawn, when the page does not pass one.
   const [drawnAt] = useState(() => Date.now());
   const clock = now ?? drawnAt;
@@ -571,7 +559,7 @@ export function PostsList({
       <Form
         method="get"
         action={action.split("?")[0]}
-        className="cap-posts-filters"
+        className="cap-field-row"
         role="search"
         aria-label={`Find ${plural}`}
       >
@@ -579,7 +567,7 @@ export function PostsList({
           <input type="hidden" name="status" value={query.status} />
         ) : null}
         {query.trashed ? <input type="hidden" name="trashed" value="1" /> : null}
-        <div className="cap-field cap-posts-search">
+        <div className="cap-field cap-field-wide">
           <label className="cap-field-label" htmlFor={`${uid}-q`}>
             Search
           </label>
@@ -1004,17 +992,13 @@ export function PostScheduledUpdate({
   labels,
   now,
 }: PostScheduledUpdateProps) {
-  const uid = useId().replace(/[^a-zA-Z0-9]/g, "");
-  const { noun } = nounsOf(labels);
+  const uid = useCleanId();
+  const { noun } = nounsOf(labels, "post");
   const name = data.title || "Untitled";
   const names = useMemo(() => new Map([[data.id, name]]), [data.id, name]);
   const intents = useIntents({ action, Form, submit, result, names, cancelHref: action });
   // False on the server and while hydrating, true once hydrated.
-  const mounted = useSyncExternalStore(
-    noSubscribe,
-    () => true,
-    () => false,
-  );
+  const mounted = useHydrated();
   const [moving, setMoving] = useState<Moving | null>(null);
   // The time the list was drawn, when the page does not pass one.
   const [drawnAt] = useState(() => Date.now());
@@ -1085,7 +1069,7 @@ export function PostScheduledUpdate({
       {intents.resultBox}
 
       {may && !scripted ? (
-        <Form method="post" action={action} className="cap-posts-update-form">
+        <Form method="post" action={action} className="cap-field-row">
           <input type="hidden" name="ids" value={data.id} />
           <input type="hidden" name="versions" value={data.live.version} />
           <RescheduleField id={`${uid}-at`} at={data.publishAt} />

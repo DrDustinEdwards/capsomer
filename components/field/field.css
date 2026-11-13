@@ -161,6 +161,37 @@
     gap: var(--space-3);
     font-weight: 500;
   }
+  /* Fields side by side (.cap-fields): as many columns of at least --fields-min (16rem) as fit, --fields-gap apart (--space-5),
+     one column on a phone. They line up on their controls, whatever help one carries above its
+     own, and a checkbox among them sits level with the inputs. */
+  .cap-fields {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--fields-min, 16rem)), 1fr));
+    gap: var(--fields-gap, var(--space-5));
+    align-items: end;
+
+    & > .cap-check {
+      align-self: end;
+      min-height: var(--control);
+    }
+  }
+
+  /* Fields in a row (.cap-field-row): a filter or action bar, the fields at their own widths, then
+     its buttons, lined up on their controls and wrapping on a narrow space. .cap-field-wide on one
+     field (the search) takes the room the others leave. Unlike .cap-fields, no column is stretched
+     to match another, so a button keeps its own width. */
+  .cap-field-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    gap: var(--space-3) var(--space-4);
+
+    & > .cap-field-wide {
+      flex: 1 1 16rem;
+      min-inline-size: 0;
+    }
+  }
+
   /* A line between groups of fields, with an optional word in it. */
   .cap-field-separator {
     position: relative;
@@ -292,7 +323,7 @@
       height: 16px;
       margin: 0;
       border: 1px solid var(--cap-check-edge);
-      border-radius: 4px;
+      border-radius: var(--radius-s);
       background: var(--surface);
       color: var(--primary-fg);
       cursor: inherit;
@@ -451,11 +482,14 @@
       background: var(--primary);
       box-shadow: 0 0 0 2px var(--ground);
     }
-    &:is(:hover, [data-force="hover"])::-webkit-slider-thumb {
-      box-shadow: 0 0 0 2px var(--ground), 0 0 0 6px color-mix(in srgb, var(--primary) 25%, transparent);
-    }
-    &:is(:hover, [data-force="hover"])::-moz-range-thumb {
-      box-shadow: 0 0 0 2px var(--ground), 0 0 0 6px color-mix(in srgb, var(--primary) 25%, transparent);
+    /* Only where a pointer hovers: on touch the thumb's box is the 44px target, not the dot. */
+    @media (hover: hover) {
+      &:is(:hover, [data-force="hover"])::-webkit-slider-thumb {
+        box-shadow: 0 0 0 2px var(--ground), 0 0 0 6px color-mix(in srgb, var(--primary) 25%, transparent);
+      }
+      &:is(:hover, [data-force="hover"])::-moz-range-thumb {
+        box-shadow: 0 0 0 2px var(--ground), 0 0 0 6px color-mix(in srgb, var(--primary) 25%, transparent);
+      }
     }
     &:focus-visible {
       outline: none;
@@ -483,6 +517,27 @@
     }
     .cap-range::-moz-range-thumb {
       transition: box-shadow var(--dur-fast) var(--ease-out), scale var(--dur-fast) var(--ease-out);
+    }
+  }
+  /* On touch the thumb takes a --target (44px) square; the drawn dot stays 20px inside a
+     transparent border, so a finger can take it without the look changing (WCAG 2.5.8). */
+  @media (pointer: coarse) {
+    .cap-range::-webkit-slider-thumb {
+      box-sizing: border-box;
+      inline-size: var(--target);
+      block-size: var(--target);
+      margin-block-start: calc(2px - var(--target) / 2);
+      border: calc((var(--target) - 20px) / 2) solid transparent;
+      background-clip: padding-box;
+      box-shadow: none;
+    }
+    .cap-range::-moz-range-thumb {
+      box-sizing: border-box;
+      inline-size: var(--target);
+      block-size: var(--target);
+      border: calc((var(--target) - 20px) / 2) solid transparent;
+      background-clip: padding-box;
+      box-shadow: none;
     }
   }
   /* Forced colors drop the drawn track: the browser's own slider comes back. */

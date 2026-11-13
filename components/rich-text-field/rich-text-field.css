@@ -1,0 +1,27 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* A short text with a few inline tags: the field's label and help, a formatting toolbar, and an
+   editable box drawn as the family's input. The box grows with its text; a multi-line field starts
+   taller. Built from field, toolbar and button. */
+@layer cap.components {
+  .cap-rich-text-bar {
+    justify-self: start;
+  }
+  .cap-rich-text-box {
+    display: block;
+    block-size: auto;
+    min-block-size: var(--control);
+    padding-block: var(--pad-y);
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    cursor: text;
+
+    &[data-lines="multi"] {
+      min-block-size: calc(var(--control) * 3);
+    }
+    & :is(sup, sub) {
+      line-height: 0;
+    }
+  }
+}

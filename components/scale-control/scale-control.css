@@ -1,0 +1,31 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* The scale control: a quantity with steppers, an optional unit or system select and the button that
+   sends them, on one line that wraps, as a plain GET so the page it rescales works with script off.
+   From dustinedwards.info (app/styles/procedure.css, .procedure-scale), which re-drew the input, the
+   select and the button by hand; here they are Field's number, Select's native select and a Button. */
+@layer cap.components {
+  /* A .cap-field-row. */
+  .cap-scale-control {
+    margin: 0 0 var(--space-5);
+    /* A control: the UI face, so it looks the same inside a page's prose (whose --face is the serif). */
+    font-family: var(--ui);
+
+    /* The quantity is a few digits: the group keeps its steppers and about five figures. */
+    & .cap-input-group:has(> input[type="number"]) {
+      inline-size: 10rem;
+    }
+    & input[type="number"] {
+      font-family: var(--mono);
+      font-variant-numeric: tabular-nums;
+    }
+  }
+
+  /* A screen control: a printed page is already scaled to the quantity in its address. */
+  @media print {
+    .cap-scale-control {
+      display: none;
+    }
+  }
+}

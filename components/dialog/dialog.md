@@ -122,7 +122,7 @@ setDialogBusy(dialogEl, true); // hold Esc, Close, Cancel and the backdrop
 closeDialog(dialogEl);
 ```
 
-The helpers every overlay shares are exported from here: `rememberOpener`, `returnFocus`, `isBackdropClick`, `errorText`, `uid`, `isBusy`, `isLocked`, `focusInitial`, `syncScroll`, `historyHash`, `wireDialog`.
+The helpers every overlay shares are exported from here: `rememberOpener`, `returnFocus`, `isBackdropClick`, `errorText`, `isBusy`, `isLocked`, `focusInitial`, `syncScroll`, `historyHash`, `wireDialog`.
 
 ```tsx
 import { Dialog, DialogHeader, DialogTitle, DialogDescription, DialogBody, DialogFooter, DialogClose, useDialog } from "capsomer/react/dialog";

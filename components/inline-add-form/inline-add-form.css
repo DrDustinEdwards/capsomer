@@ -1,0 +1,29 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* The inline add form: one line that starts a new thing by name, at the foot of the list it adds
+   to ("New chapter", "First scene", Start it). Its fields share the line and wrap onto more lines
+   when the line is narrow; the button sits at the foot of the fields, level with the inputs.
+   Extracted from Carrel (app/app.css .app-inline-form, used in book.tsx, book.bible.tsx and
+   book.chapter.tsx). */
+@layer cap.components {
+  .cap-inline-add {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: var(--space-3) var(--space-4);
+    width: 100%;
+    margin: 0;
+
+    & > .cap-field {
+      flex: 1 1 11rem;
+    }
+    /* A short field (a kind, a color) takes the room its control needs. */
+    & > .cap-field[data-size="short"] {
+      flex: 0 1 9rem;
+    }
+    & > .cap-btn {
+      flex: none;
+    }
+  }
+}

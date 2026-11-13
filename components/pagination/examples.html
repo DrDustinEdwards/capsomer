@@ -140,25 +140,22 @@
     </nav>
   </div>
 </section>
-<section class="cap-specimen" aria-labelledby="s-comfortable">
-  <h2 id="s-comfortable">Comfortable density</h2>
-  <div data-density="comfortable">
-    <nav class="cap-pagination" aria-label="Density sample" id="pg-comfortable">
-      <p class="cap-pagination-status">Showing 41 to 60 of 312 posts</p>
-      <ul class="cap-pagination-list">
-        <li><a class="cap-page" data-kind="prev" href="#page-2" rel="prev">Previous</a></li>
-        <li class="cap-pagination-num"><a class="cap-page" aria-label="Page 1" href="#page-1">1</a></li>
-        <li class="cap-pagination-num"><a class="cap-page" aria-label="Page 2" href="#page-2">2</a></li>
-        <li class="cap-pagination-num"><a class="cap-page" aria-label="Page 3" aria-current="page" href="#page-3">3</a></li>
-        <li class="cap-pagination-num"><a class="cap-page" aria-label="Page 4" href="#page-4">4</a></li>
-        <li class="cap-pagination-num"><a class="cap-page" aria-label="Page 5" href="#page-5">5</a></li>
-        <li class="cap-pagination-num"><span class="cap-page-gap"><span aria-hidden="true">&hellip;</span><span class="cap-sr-only">More pages</span></span></li>
-        <li class="cap-pagination-num"><a class="cap-page" aria-label="Page 16" href="#page-16">16</a></li>
-        <li class="cap-pagination-where">Page 3 of 16</li>
-        <li><a class="cap-page" data-kind="next" href="#page-4" rel="next">Next</a></li>
-      </ul>
-    </nav>
-  </div>
+<section class="cap-specimen" aria-labelledby="s-steps">
+  <h2 id="s-steps">Steps form: a journal, newest first, and results whose total moves</h2>
+  <nav class="cap-pagination" aria-label="Journal pages" data-form="steps" id="pg-steps">
+    <ul class="cap-pagination-list">
+      <li><a class="cap-page" data-kind="prev" href="?page=2" rel="prev">Newer</a></li>
+      <li class="cap-pagination-where">Page 3 of 9</li>
+      <li><a class="cap-page" data-kind="next" href="?page=4" rel="next">Older</a></li>
+    </ul>
+  </nav>
+  <nav class="cap-pagination" aria-label="Result pages" data-form="steps" id="pg-steps-open">
+    <ul class="cap-pagination-list">
+      <li><a class="cap-page" data-kind="prev" role="link" aria-disabled="true">Previous</a></li>
+      <li class="cap-pagination-where">Page 1</li>
+      <li><a class="cap-page" data-kind="next" href="?q=dickens&amp;page=2" rel="next">Next</a></li>
+    </ul>
+  </nav>
 </section>
 <script type="module">
   import { enhance } from "./pagination.ts";

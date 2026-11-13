@@ -210,6 +210,33 @@
     color: var(--text);
   }
 
+  /* An item your own side drafted (the approval queue, capsomer/react/approval-queue): what a
+     check held it for, its text in an edit box, and its decisions under the text, one form. */
+  .cap-mq-findings {
+    display: grid;
+    gap: var(--space-2);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .cap-mq-edit {
+    display: grid;
+    gap: var(--space-3);
+    margin: 0;
+    min-width: 0;
+
+    & textarea {
+      width: 100%;
+      max-width: 70ch;
+    }
+  }
+  .cap-mq-decide {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
   .cap-mq-empty[hidden] {
     display: none;
   }

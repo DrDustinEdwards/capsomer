@@ -20,6 +20,7 @@ import {
   visibleRows,
   zoneAt,
 } from "./tree-model.ts";
+import { uid } from "../hooks/hooks.ts";
 import { setStaticHtml } from "../trusted-html/trusted-html.ts";
 
 export {
@@ -75,9 +76,6 @@ export interface Tree {
   refresh(): void;
   detach(): void;
 }
-
-let counter = 0;
-const uid = (p: string) => `${p}-${++counter}`;
 
 interface Parts {
   li: HTMLElement;

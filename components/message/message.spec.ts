@@ -29,6 +29,32 @@ eachTheme((theme) => {
     },
   );
 
+  test("keyboard: a form action's answer takes focus, an error as an alert and a success as a status", async ({
+    page,
+  }) => {
+    await visitStates(page, "message", theme);
+    const section = page.locator("section[aria-labelledby='s-action']");
+    const save = section.getByRole("button", { name: "Save session", exact: true });
+    await expect(section.locator("p[tabindex='-1']")).toHaveClass(/cap-sr-only/);
+    await save.focus();
+    await page.keyboard.press("Enter");
+    const line = section.getByRole("status");
+    await expect(line).toHaveText("Session saved.");
+    await expect(line).toBeFocused();
+    await expect(line).toHaveClass(/cap-alert/);
+    await section.getByRole("button", { name: "Save without a room" }).click();
+    const alert = section.getByRole("alert");
+    await expect(alert).toHaveText("Choose a room for the session.");
+    await expect(alert).toBeFocused();
+    await expectContrast(page, [
+      { sel: "section[aria-labelledby='s-action'] .cap-alert", what: "the action's error" },
+    ]);
+    // An answer with no sentence has nothing to show or say, and takes no focus.
+    await section.getByRole("button", { name: "Move session up" }).click();
+    await expect(section.locator("p[tabindex='-1']")).toHaveClass(/cap-sr-only/);
+    await expect(section.locator("p[tabindex='-1']")).not.toBeFocused();
+  });
+
   test("accessibility: no axe violations, states page", async ({ page }) => {
     await visitStates(page, "message", theme);
     await expectNoAxeViolations(page);

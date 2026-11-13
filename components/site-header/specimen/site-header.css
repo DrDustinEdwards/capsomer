@@ -248,3 +248,67 @@
     }
   }
 }
+
+/* The sample site's own wide panel (a mega-menu): three topics side by side, each a title and a
+   line, the look being the site's. */
+.sh-ex-mega {
+  padding: var(--space-3);
+}
+.sh-ex-mega-tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  & a {
+    display: grid;
+    gap: var(--space-1);
+    padding: var(--space-4);
+    border-radius: var(--radius-m);
+    color: var(--text);
+    text-decoration: none;
+
+    &:hover,
+    &:focus-visible {
+      background: var(--sunken);
+    }
+  }
+  & span {
+    color: var(--muted);
+    font-size: var(--fs-detail);
+  }
+}
+.sh-ex-tile {
+  display: grid;
+  place-items: center;
+  inline-size: 18px;
+  block-size: 18px;
+  border-radius: var(--radius-s);
+  background: var(--accent-12);
+  color: var(--ground);
+  font-size: 0.625rem;
+  font-weight: 700;
+}
+
+/* A site with its own look (examples.tsx, ownHeader): bsw's header values, by token only. */
+.sh-own {
+  --header-h: 4rem;
+
+  & .cap-site-header {
+    --header-max-inline-size: 72rem;
+    --header-link-weight: 600;
+    --header-link-current-weight: 600;
+    --header-edge: transparent;
+    --header-scrolled-edge: var(--line);
+    --header-translucent-mix: 70%;
+    --header-scrolled-mix: 90%;
+  }
+  /* The site's own button, drawn by its own class. */
+  & .sh-own-cta {
+    border: 1px solid var(--accent);
+    background: var(--surface);
+    color: var(--accent-text);
+  }
+}

@@ -2,6 +2,7 @@
 // Capsomer's own generator (tokens/palette-core.mjs, the code that writes Capsomer's color files),
 // paints both previews through the CSSOM (the CSP allows no inline style), checks every pair, and
 // rewrites the CSS, the tokens file and the address, so a link opens the same theme.
+import { plural } from "../components/hooks/hooks.ts";
 import "@fontsource/dm-sans/400.css";
 import "@fontsource/dm-sans/600.css";
 import "@fontsource/dm-sans/700.css";
@@ -13,6 +14,7 @@ import "@fontsource/montserrat/600.css";
 import "@fontsource/montserrat/700.css";
 import "@fontsource/fraunces/600.css";
 import "@fontsource/fraunces/700.css";
+import { copyText } from "../components/copy/copy.ts";
 import { enhance as enhanceMeters } from "../components/meter/meter.ts";
 import { enhance as enhanceHeader } from "../components/site-header/site-header.ts";
 import { enhance as enhanceTabs } from "../components/tabs/tabs.ts";
@@ -305,7 +307,7 @@ function check(b: Built) {
   const verdict = part("verdict");
   if (verdict) {
     verdict.textContent = b.failing
-      ? `${total - b.failing} of ${total} pairs pass WCAG 2.2 and APCA. ${b.failing} ${b.failing === 1 ? "does" : "do"} not:`
+      ? `${total - b.failing} of ${total} pairs pass WCAG 2.2 and APCA. ${plural(b.failing, "does", "do")} not:`
       : `All ${total} pairs pass WCAG 2.2 and APCA in both themes: text at 4.5:1 and Lc 60 (links Lc 75, body Lc 90), focus rings at 3:1 and Lc 45, control borders at 3:1 and Lc 30.`;
     verdict.dataset.tone = b.failing ? "crit" : "ok";
   }
@@ -586,12 +588,7 @@ const say = (text: string) => {
   }, 2500);
 };
 const clip = async (text: string, done: string) => {
-  try {
-    await navigator.clipboard.writeText(text);
-    say(done);
-  } catch {
-    say("Copy failed. Select the text and copy it yourself.");
-  }
+  say((await copyText(text)) ? done : "Copy failed. Select the text and copy it yourself.");
 };
 part("copy")?.addEventListener("click", () => {
   if (current)

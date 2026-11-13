@@ -3,6 +3,7 @@
 // placed and handed back, and the history entry that Back takes away; this module adds the
 // Copy buttons and the status line. No framework; the React wrapper calls the same functions.
 import { closeDialog, openDialog, wireDialog } from "../dialog/dialog.ts";
+import { copyText, distinct, textOf } from "../copy/copy.ts";
 
 export interface DetailOptions {
   // Pushes "#detail-<id>" so Back closes the panel. Default: the dialog's data-cap-history.
@@ -136,21 +137,20 @@ export async function copyFrom(
   const status = (button.closest("dialog") ?? scope).querySelector("[data-cap-part='status']");
   const what = button.dataset.capCopyWhat ?? "Text";
   if (!source) return false;
-  const text = source.textContent?.trim() ?? "";
-  try {
-    await navigator.clipboard.writeText(text);
-    if (status) status.textContent = `${what} copied.`;
+  if (await copyText(textOf(source))) {
+    if (status) status.textContent = distinct(`${what} copied.`);
     return true;
-  } catch {
-    const range = document.createRange();
-    range.selectNodeContents(source);
-    const sel = window.getSelection();
-    sel?.removeAllRanges();
-    sel?.addRange(range);
-    if (status)
-      status.textContent = `Could not reach the clipboard. ${what} is selected: copy it with Ctrl C or ⌘ C.`;
-    return false;
   }
+  const range = document.createRange();
+  range.selectNodeContents(source);
+  const sel = window.getSelection();
+  sel?.removeAllRanges();
+  sel?.addRange(range);
+  if (status)
+    status.textContent = distinct(
+      `Could not reach the clipboard. ${what} is selected: copy it with Ctrl C or ⌘ C.`,
+    );
+  return false;
 }
 
 // Wires every panel under root and every trigger [data-cap-detail-open="<dialog id>"].

@@ -1,8 +1,8 @@
-import { useEffect, useId, useRef, useState, useSyncExternalStore, type ReactNode } from "react";
+import { useEffect, useId, useRef, useState, type ReactNode } from "react";
+import { useHydrated } from "../hooks/hooks.react.tsx";
 import { useOptionalMessage } from "../message/message.react.tsx";
 import { changeText, moveRow, rowFieldName } from "./repeater-field.ts";
 
-const noSubscribe = () => () => {};
 const FOCUSABLE = "input:not([type='hidden']), select, textarea, button, [tabindex]";
 
 export interface RepeaterRowApi<T> {
@@ -43,14 +43,6 @@ export interface RepeaterFieldProps<T> {
   spare?: number;
 }
 
-function useMounted(): boolean {
-  return useSyncExternalStore(
-    noSubscribe,
-    () => true,
-    () => false,
-  );
-}
-
 // A list of rows of fields a person adds to, removes from and reorders: links, authors,
 // materials. Each row is a group named by its place; the buttons name the row they act on;
 // focus goes to the new row, the row after a removed one, or follows a moved row; and each
@@ -73,7 +65,7 @@ export function RepeaterField<T>({
   spare,
 }: RepeaterFieldProps<T>) {
   const base = useId();
-  const ready = useMounted();
+  const ready = useHydrated();
   const message = useOptionalMessage();
   const list = useRef<HTMLOListElement>(null);
   const add = useRef<HTMLButtonElement>(null);

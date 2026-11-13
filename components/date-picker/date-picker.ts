@@ -4,7 +4,8 @@
 // the button; the calendar is built the first time it opens. The dialog supplies the modal,
 // Tab staying inside, Esc and focus going back to the button.
 
-import { openDialog, uid, wireDialog } from "../dialog/dialog.ts";
+import { openDialog, wireDialog } from "../dialog/dialog.ts";
+import { uid } from "../hooks/hooks.ts";
 import { dateFrom, setValue } from "../field/field.ts";
 import { setStaticHtml } from "../trusted-html/trusted-html.ts";
 

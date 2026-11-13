@@ -7,13 +7,27 @@ import {
   emptyText,
   filterCommands,
   groupCommands,
+  markQuery,
+  readRecent,
+  rememberRecent,
   SEARCHING,
   step,
   type Command,
 } from "./command-menu.ts";
 
 export type { Command } from "./command-menu.ts";
-export { SEARCHING, STOP_GROUP, STOP_HINTS, stopCommand } from "./command-menu.ts";
+export {
+  markQuery,
+  navCommands,
+  SEARCHING,
+  STOP_GROUP,
+  STOP_HINTS,
+  stopCommand,
+} from "./command-menu.ts";
+
+// The idle host lives in its own light module (capsomer/react/command-host), so an app that
+// loads the menu lazily does not pull it into every route; exported here as well.
+export { useCommandHost } from "./command-host.react.tsx";
 
 export interface CommandMenuProps {
   open: boolean;
@@ -31,6 +45,21 @@ export interface CommandMenuProps {
   // repeat a command's. The last results stay until new ones arrive; a failed search keeps them.
   search?: (query: string, signal: AbortSignal) => Promise<Command[]>;
   searchDelay?: number;
+  // Remember the commands run, per site, under this localStorage key, and list the last five as
+  // "Recent" while nothing is typed.
+  recentKey?: string;
+  // The way past the commands: with words typed, a last option "Ask about “…”" hands them on
+  // (to an assistant, a site search).
+  ask?: { label?: string; run: (query: string) => void };
+}
+
+// A search result's line under its label, with the typed words marked.
+function Snippet({ text, query }: { text: string; query: string }) {
+  return (
+    <span className="cap-cmd-snippet">
+      {markQuery(text, query).map((p, i) => (p.mark ? <mark key={i}>{p.text}</mark> : p.text))}
+    </span>
+  );
 }
 
 // The shortcut caps of a command, after the words that say it is a shortcut.
@@ -60,6 +89,8 @@ export function CommandMenu({
   bindKeys = true,
   search,
   searchDelay = 180,
+  recentKey,
+  ask,
 }: CommandMenuProps) {
   const id = useId();
   const dlg = useRef<HTMLDialogElement | null>(null);
@@ -68,10 +99,29 @@ export function CommandMenu({
   const [active, setActive] = useState(0);
   const [found, setFound] = useState<Command[]>([]);
   const [busy, setBusy] = useState(false);
-  const shown = useMemo(
-    () => [...filterCommands(commands, query), ...found],
-    [commands, query, found],
-  );
+  const [recent, setRecent] = useState<string[]>([]);
+  useEffect(() => setRecent(recentKey && open ? readRecent(recentKey) : []), [recentKey, open]);
+  const shown = useMemo(() => {
+    const typed = query.trim();
+    const recents = typed
+      ? []
+      : recent.flatMap((rid) => {
+          const c = commands.find((x) => x.id === rid);
+          return c ? [{ ...c, id: `recent-${c.id}`, group: "Recent", run: c.run, of: c.id }] : [];
+        });
+    const asking: Command[] =
+      ask && typed
+        ? [
+            {
+              id: "ask",
+              label: `${ask.label ?? "Ask about"} “${typed}”`,
+              group: "Ask",
+              run: () => ask.run(typed),
+            },
+          ]
+        : [];
+    return [...recents, ...filterCommands(commands, query), ...found, ...asking];
+  }, [commands, query, found, recent, ask]);
   const groups = useMemo(() => groupCommands(shown), [shown]);
   const cur = shown.length ? Math.min(active, shown.length - 1) : -1;
   const optionId = (c: Command) => `${id}-o-${c.id}`;
@@ -142,6 +192,8 @@ export function CommandMenu({
   const choose = (c: Command | undefined) => {
     if (!c) return;
     dlg.current?.close();
+    if (recentKey && c.id !== "ask")
+      setRecent(rememberRecent(recentKey, (c as Command & { of?: string }).of ?? c.id));
     c.run();
   };
 
@@ -226,6 +278,7 @@ export function CommandMenu({
                 onClick={() => choose(c)}
               >
                 {c.label}
+                {c.snippet ? <Snippet text={c.snippet} query={query} /> : null}
               </Option>
             ))}
           </OptionGroup>

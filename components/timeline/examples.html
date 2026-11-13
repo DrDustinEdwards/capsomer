@@ -1,0 +1,52 @@
+<link rel="stylesheet" href="./specimen/timeline.css" />
+<section class="cap-specimen" aria-labelledby="s-default">
+  <h2 id="s-default">Default: the line fills once the timeline is seen</h2>
+  <ol class="cap-timeline" id="tl-default" data-cap="timeline">
+    <li class="cap-timeline-step">
+      <span class="cap-timeline-node" aria-hidden="true">01</span>
+      <div class="cap-timeline-body">
+        <h3 class="cap-timeline-title">Send the draft</h3>
+        <div class="cap-timeline-text"><p>Upload the document and pick a turnaround.</p></div>
+      </div>
+    </li>
+    <li class="cap-timeline-step">
+      <span class="cap-timeline-node" aria-hidden="true">02</span>
+      <div class="cap-timeline-body">
+        <h3 class="cap-timeline-title">Matched with an editor</h3>
+        <div class="cap-timeline-text"><p>An editor in your field confirms a finish date.</p></div>
+      </div>
+    </li>
+    <li class="cap-timeline-step">
+      <span class="cap-timeline-node" aria-hidden="true">03</span>
+      <div class="cap-timeline-body">
+        <h3 class="cap-timeline-title">Two copies back</h3>
+        <div class="cap-timeline-text"><p>One with every change shown, one clean.</p></div>
+      </div>
+    </li>
+  </ol>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-site">
+  <h2 id="s-site">A site's own look: larger nodes and a gradient fill</h2>
+  <ol class="cap-timeline timeline-specimen-site" data-cap="timeline">
+    <li class="cap-timeline-step">
+      <span class="cap-timeline-node" aria-hidden="true">01</span>
+      <div class="cap-timeline-body">
+        <h3 class="cap-timeline-title">Field notes</h3>
+        <div class="cap-timeline-text"><p>Gather what the team saw.</p></div>
+      </div>
+    </li>
+    <li class="cap-timeline-step">
+      <span class="cap-timeline-node" aria-hidden="true">02</span>
+      <div class="cap-timeline-body">
+        <h3 class="cap-timeline-title">Annual report</h3>
+        <div class="cap-timeline-text"><p>Write it up once a year.</p></div>
+      </div>
+    </li>
+  </ol>
+</section>
+
+<script type="module">
+  import { enhance } from "./timeline.ts";
+  enhance();
+</script>
