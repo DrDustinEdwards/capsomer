@@ -1,0 +1,64 @@
+/* Text roles: the size, tone, weight and face of a run of text, on any element, for the places
+   no component sets them. One class, .cap-text, and an attribute per axis, as the layouts take
+   data-gap: data-size="tiny|small|lead", data-tone="muted|dim|ink|accent|ok|crit",
+   data-weight="strong", data-face="ui|mono|prose|display", data-align="center|end". A site sets
+   its own sizes and strong weight in its SITES entry: --text-tiny (default --fs-label),
+   --text-small (--fs-detail), --text-lead (--fs-lead) and --text-strong (600). The sizes fall
+   back to the density tokens at use, so a comfortable subtree gets its own. The tones are
+   Capsomer's text roles, so each keeps its contrast on every surface. They replace Foxing's
+   .meta/.fine/.small/.lead/.error and the Portal's .faint/.small/.note. */
+/* A part of text.css, with text-title.css and text-clamp.css: a site that uses only the roles imports this. */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+@layer cap.utilities {
+  .cap-text {
+    &[data-size="tiny"] {
+      font-size: var(--text-tiny, var(--fs-label));
+    }
+    &[data-size="small"] {
+      font-size: var(--text-small, var(--fs-detail));
+    }
+    &[data-size="lead"] {
+      font-size: var(--text-lead, var(--fs-lead));
+    }
+    &[data-tone="muted"] {
+      color: var(--muted);
+    }
+    &[data-tone="dim"] {
+      color: var(--dim);
+    }
+    &[data-tone="ink"] {
+      color: var(--text);
+    }
+    &[data-tone="accent"] {
+      color: var(--accent-text);
+    }
+    &[data-tone="ok"] {
+      color: var(--ok);
+    }
+    &[data-tone="crit"] {
+      color: var(--crit);
+    }
+    &[data-weight="strong"] {
+      font-weight: var(--text-strong);
+    }
+    &[data-face="ui"] {
+      font-family: var(--ui);
+    }
+    &[data-face="mono"] {
+      font-family: var(--mono);
+    }
+    &[data-face="prose"] {
+      font-family: var(--prose);
+    }
+    &[data-face="display"] {
+      font-family: var(--display);
+    }
+    &[data-align="center"] {
+      text-align: center;
+    }
+    &[data-align="end"] {
+      text-align: end;
+    }
+  }
+}

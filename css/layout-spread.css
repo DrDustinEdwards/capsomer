@@ -1,0 +1,14 @@
+/* The spread, a part of layout.css: two ends pushed apart. */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+@import "./layout-gap.css";
+
+@layer cap.utilities {
+  .cap-spread {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    --layout-gap: var(--space-4);
+    gap: var(--layout-gap);
+  }
+}

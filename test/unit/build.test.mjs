@@ -11,12 +11,14 @@ test("an import is read in place, a layered one inside its layer, a bare specifi
   writeFileSync(join(dir, "part.css"), ".a { color: red; }");
   writeFileSync(
     join(dir, "main.css"),
-    '@import "./part.css" layer(cap.components);\n@import "capsomer/layers.css";\n.b {}',
+    '@import "./part.css" layer(cap.components);\n@import "capsomer/layers.css";\n@import "./part.css";\n.b {}',
   );
   const css = inlineCss(join(dir, "main.css"));
   assert.match(css, /@layer cap\.components \{\n\.a \{ color: red; \}\n\}/);
   assert.match(css, /@layer cap\.reset, cap\.tokens/);
   assert.doesNotMatch(css, /@import/);
+  // A file imported twice comes once, where it is first imported.
+  assert.equal(css.split(".a { color: red; }").length, 2);
 });
 
 test("the stylesheet puts the family inside cap.tokens and the site's CSS last", () => {

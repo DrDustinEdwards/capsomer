@@ -1,0 +1,24 @@
+/* The cluster, a part of layout.css: a wrapping row of items, and .cap-push, which pushes an item
+   to the far end of its row. */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+@import "./layout-gap.css";
+
+@layer cap.utilities {
+  .cap-cluster {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    --layout-gap: var(--space-3) var(--space-5);
+    gap: var(--layout-gap);
+    &[data-justify="end"] {
+      justify-content: flex-end;
+    }
+    &[data-justify="center"] {
+      justify-content: center;
+    }
+  }
+  /* Pushes an item to the far end of its row. */
+  .cap-push {
+    margin-inline-start: auto;
+  }
+}

@@ -2,7 +2,7 @@
 /** The package's own root. */
 export const CAPSOMER_ROOT: string;
 /** A stylesheet with every @import read in place, a layered import inside its layer. */
-export function inlineCss(file: string): string;
+export function inlineCss(file: string, seen?: Set<string>): string;
 export interface StylesheetOptions {
   /** The color family, inside cap.tokens ("teal" reads tokens/family-teal.css). */
   family?: string;

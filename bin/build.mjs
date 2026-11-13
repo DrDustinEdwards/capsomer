@@ -14,14 +14,20 @@ const IMPORT = /@import\s+(?:url\()?"([^"]+)"\)?(?:\s+layer\(([^)]+)\))?\s*;/g;
 /**
  * A stylesheet with every @import read in place, a layered import inside its layer. A relative path resolves beside
  * the file; a bare specifier ("enarratio/base.css", "capsomer/button.css") resolves as a bundler would, from the file.
+ * A file imported twice is read in once, where it is first imported, as a bundler does (each layout part imports
+ * layout-gap.css).
  *
  * @param {string} file
+ * @param {Set<string>} [seen] the files already read in
  * @returns {string}
  */
-export function inlineCss(file) {
+export function inlineCss(file, seen = new Set()) {
   const require = createRequire(resolve(file));
+  seen.add(resolve(file));
   return readFileSync(file, "utf8").replace(IMPORT, (_, path, layer) => {
-    const inner = inlineCss(/^[./]/.test(path) ? join(dirname(file), path) : require.resolve(path));
+    const target = resolve(/^[./]/.test(path) ? join(dirname(file), path) : require.resolve(path));
+    if (seen.has(target)) return "";
+    const inner = inlineCss(target, seen);
     return layer ? `@layer ${layer} {\n${inner}\n}` : inner;
   });
 }
@@ -60,6 +66,8 @@ export function capsomerStylesheet({
   after = [],
 } = {}) {
   const css = [];
+  // One record of the files read in, so a file two parts import (layout-gap.css) comes once.
+  const seen = new Set();
   if (fonts)
     css.push(inlineCss(join(CAPSOMER_ROOT, "css", "fonts.css")).replaceAll("../fonts/", fontsUrl));
   css.push(...before);
@@ -72,7 +80,7 @@ export function capsomerStylesheet({
   // The link system's kinds after the base, as components/link/link.md asks.
   css.push(inlineCss(partFile("link")));
   if (prose) css.push(inlineCss(join(CAPSOMER_ROOT, "css", "prose.css")));
-  for (const part of parts) if (part !== "link") css.push(inlineCss(partFile(part)));
+  for (const part of parts) if (part !== "link") css.push(inlineCss(partFile(part), seen));
   if (site) css.push(inlineCss(join(CAPSOMER_ROOT, "tokens", `site-${site}.css`)));
   css.push(...after);
   return css.join("\n\n");
