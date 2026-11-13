@@ -48,18 +48,27 @@ export function createCommandHost(
   let detached = false;
   const undo: Array<() => void> = [];
   const load = () =>
-    (loading ??= import("./command-menu.ts").then((m) => {
-      if (detached) throw new Error("The command host was detached.");
-      menu = m.createCommandMenu(commands, opts);
-      // The menu binds Ctrl K itself from here on (and Ctrl K in it closes it).
-      unbindKey();
-      return menu;
-    }));
+    (loading ??= import("./command-menu.ts")
+      .then((m) => {
+        if (detached) throw new Error("The command host was detached.");
+        menu = m.createCommandMenu(commands, opts);
+        // The menu binds Ctrl K itself from here on (and Ctrl K in it closes it).
+        unbindKey();
+        return menu;
+      })
+      // A failed load is not kept, so the next ask tries the chunk again.
+      .catch((error: unknown) => {
+        loading = null;
+        throw error;
+      }));
+  // A warm-up nobody waits on (idle time, a command that runs without the menu): a failure
+  // surfaces where the menu is asked for, as `open` rejecting.
+  const warm = () => void load().catch(() => {});
   const open = async (query = "", opener: Element | null = document.activeElement) => {
     (await load()).open(query, opener);
   };
   const unbindKey = onModK(() => void open());
-  undo.push(whenIdle(() => void load().catch(() => {})));
+  undo.push(whenIdle(warm));
   for (const btn of root.querySelectorAll<HTMLElement>(
     "[data-cap-command-open]:not([data-cap-ready])",
   )) {
@@ -78,7 +87,7 @@ export function createCommandHost(
     load,
     open,
     runWhenReady(id) {
-      void load().catch(() => {});
+      warm();
       commands.find((c) => c.id === id)?.run();
     },
     detach() {
