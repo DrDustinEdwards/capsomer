@@ -4,10 +4,12 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
-## [0.126.0]
+## [0.128.0]
 
 - **New: AI answer (`capsomer/behavior/ai-answer`, `capsomer/ai-answer.css`).** `buildAnswer(words)` builds a generated answer's panel, a `section` named "AI answer": the AI generated badge (`.cap-badge`) and "May be wrong. Check the sources.", "Looking it up." while nothing has come, the answer as it streams (`write`, a four-line well so nothing under it moves), a cut-off note (`markCut`), same-origin sources as a named `ol` (`setSources`, `isSitePath`), a follow-up link (`setFollowUp`), and a polite live region that speaks the start and then the whole answer (`finish`) or the failure (`fail`). Text nodes only; it fetches nothing. Extracted from dustinedwards.info's Ask.
 - **Command menu: an answer under the list.** `answer: { label, offer, run(query, region) }` on `createCommandMenu`, `buildMenu` and `attach` adds `.cap-cmd-answer` (a quiet button, a status, `.cap-cmd-answer-region`) between the list and the key hints: the button shows while words are typed, `run` fills the region and returns `{ cancel }` (or a promise of it, so its code loads only when pressed), focus moves into the answer before the button hides, and typing again or closing cancels it. `offer: false` with `Attached.offerAnswer(on)` lets a search say whether answers are on. New export `ANSWER_LABEL`, type `AnswerRun`. The React menu has no answer area yet. Removed or renamed: no token or class; the menu's HTML contract only gains the answer area when `answer` is passed.
+
+## [0.126.0]
 
 - **Layout: item helpers.** `.cap-grow` (takes the room its row leaves and may shrink below its content), `.cap-shrink` (a flex or grid item that may shrink below its content: `min-inline-size: 0`), `.cap-keep` (never shrinks), `.cap-full` (a whole row: every grid column, the full line of a cluster, the full width of a block) and `.cap-column`, a centered column for a form (42rem), with `data-width="narrow"` (28rem, a sign-in) or `"reading"` (48rem). They replace txasm's `.grow`, `.shrink`, `.span-2`, `.narrow`, `.form-page` and `.reading`, and Foxing's `.grow`, `.shrink-0`, `.min-0` and `.full`.
 - **New: site footer** (`capsomer/site-footer.css`, `.cap-site-footer`, `.cap-site-footer-links`, `.cap-site-footer-note`): a site's own plain footer for a site outside the family footer, a hairline over a links row, a mark and the small print, in the page's column; `data-tone="raised"` on the raised surface, `data-links="quiet"` for muted links. Slots `--site-footer-gap`, `--site-footer-pad`, `--site-footer-bg`, `--site-footer-fs`. From txasm's and julieedwards.info's footers.
