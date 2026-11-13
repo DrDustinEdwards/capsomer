@@ -12,8 +12,8 @@ import {
 } from "react";
 import { useOptionalMessage } from "../message/message.react.tsx";
 import { SLUG_PATTERN, slugify } from "@drdustinedwards/site-helpers/slug";
+import { moneyInputValue } from "@dustinedwards/site-runtime/money";
 import {
-  centsToDollars,
   countText,
   keyValue,
   revealedText,
@@ -780,7 +780,8 @@ export function SlugField(
 
 // Money in dollars: a text box (inputMode decimal, never type="number", which drops what it
 // cannot read) with the currency sign inside its edge. The app keeps integer cents:
-// `defaultCents` fills it, and the server reads the posted text with dollarsToCents.
+// `defaultCents` fills it (site-runtime's moneyInputValue), and the server reads the posted text
+// with site-runtime's parseMoneyInput.
 export function MoneyField(
   props: FieldText &
     Omit<InputHTMLAttributes<HTMLInputElement>, "type" | "style" | "defaultValue"> & {
@@ -807,8 +808,8 @@ export function MoneyField(
             type="text"
             inputMode="decimal"
             autoComplete={rest.autoComplete ?? "off"}
-            pattern={rest.pattern ?? "\\$?[0-9,]*(\\.[0-9]{1,2})?"}
-            defaultValue={rest.value === undefined ? centsToDollars(defaultCents) : undefined}
+            pattern={rest.pattern ?? "[0-9,]*(\\.[0-9]{1,2})?"}
+            defaultValue={rest.value === undefined ? moneyInputValue(defaultCents, "usd") : undefined}
           />
         </div>
       )}

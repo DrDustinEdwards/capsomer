@@ -15,7 +15,8 @@ import {
 } from "../dialog/dialog.react.tsx";
 import { Field } from "../field/field.react.tsx";
 import { Time } from "../time/time.react.tsx";
-import { PAST_TIME, checkSchedule, localValue } from "./schedule-dialog.ts";
+import { toDateTimeLocal } from "../field/field.ts";
+import { PAST_TIME, checkSchedule } from "./schedule-dialog.ts";
 import { useBrowserZone } from "../hooks/hooks.react.tsx";
 
 export interface ScheduleDialogProps {
@@ -50,7 +51,11 @@ export function ScheduleDialog({
   lead = "Goes live",
 }: ScheduleDialogProps) {
   const titleId = `${useId()}-title`;
-  const [value, setValue] = useState(() => (current ? localValue(current) : ""));
+  const [value, setValue] = useState(() =>
+    current
+      ? toDateTimeLocal(new Date(current), Intl.DateTimeFormat().resolvedOptions().timeZone)
+      : "",
+  );
   // "Past" is measured when the time is chosen, not on every render.
   const [chosenAt, setChosenAt] = useState(() => Date.now());
   const [busy, setBusy] = useState(false);

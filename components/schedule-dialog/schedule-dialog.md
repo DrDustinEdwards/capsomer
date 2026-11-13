@@ -17,7 +17,7 @@ replaces:
 
 Choosing when something goes live: a post, an update to a live page, a newsletter. A `datetime-local` field in the Dialog, its help naming the browser's own time zone ("In your time zone, America/Chicago."), a line under it that says the chosen time in the family's words ("Goes live Thursday, November 12, 2026, 9:30 AM CST (15:30 UTC)."), and a confirm that sends the time as an ISO string.
 
-**Provenance.** EXTRACTED from Carrel's `ScheduleDialog`: the field and its zone line, the past check measured when the time was chosen (so a time that passes while the dialog is open is not refused under the person's eyes), the "Choose a time first." and "Choose a time in the future." refusals, the exact Time line, and an existing time as the field's start (`localValue`). REWROTE: the words are the app's (`title`, `description`, `confirm`, `lead`, `label`), where Carrel built them from a post's state; `localValue` takes a zone, for a server or a test; the confirm shows its pending state and closes the dialog when `onSchedule` resolves, and keeps the time for another try when it throws; the zone hook is part of the component.
+**Provenance.** EXTRACTED from Carrel's `ScheduleDialog`: the field and its zone line, the past check measured when the time was chosen (so a time that passes while the dialog is open is not refused under the person's eyes), the "Choose a time first." and "Choose a time in the future." refusals, the exact Time line, and an existing time as the field's start (field's `toDateTimeLocal`, in the browser's zone). REWROTE: the words are the app's (`title`, `description`, `confirm`, `lead`, `label`), where Carrel built them from a post's state; the confirm shows its pending state and closes the dialog when `onSchedule` resolves, and keeps the time for another try when it throws; the zone hook is part of the component.
 
 ## When to use it
 
@@ -76,7 +76,7 @@ import { ScheduleDialog } from "capsomer/react/schedule-dialog";
 />;
 ```
 
-Props: `open`, `onClose`, `returnTo`, `onSchedule(iso)`, `title`, `description`, `current` (an ISO time the field starts at), `label` (default "Publish at"), `confirm` (default "Schedule") and `lead` (default "Goes live"). The zone comes from `useBrowserZone` in `capsomer/react/hooks`. `capsomer/behavior/schedule-dialog` holds the pure part: `localValue(at, zone?)`, `checkSchedule(value, now)`, `NO_TIME` and `PAST_TIME`.
+Props: `open`, `onClose`, `returnTo`, `onSchedule(iso)`, `title`, `description`, `current` (an ISO time the field starts at), `label` (default "Publish at"), `confirm` (default "Schedule") and `lead` (default "Goes live"). The zone comes from `useBrowserZone` in `capsomer/react/hooks`. `capsomer/behavior/schedule-dialog` holds the pure part: `checkSchedule(value, now)`, `NO_TIME` and `PAST_TIME`.
 
 ## Exceptions in production
 

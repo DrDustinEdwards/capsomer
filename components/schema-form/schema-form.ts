@@ -1,6 +1,7 @@
 // A form described as data: one FieldSpec per field, which the React part draws and readSpecs
 // reads back from a post, checked against the same spec. Safe on the server: no DOM.
-import { dollarsToCents, fromDateTimeLocal } from "../field/field.ts";
+import { parseMoneyInput } from "@dustinedwards/site-runtime/money";
+import { fromDateTimeLocal } from "../field/field.ts";
 
 export type FieldKind =
   | "text"
@@ -112,7 +113,7 @@ export function readSpec(form: FormData, spec: FieldSpec): { value: unknown; err
     }
     case "money": {
       if (!text) return need(undefined, true);
-      const cents = dollarsToCents(text);
+      const cents = parseMoneyInput(text, "usd");
       return cents === null
         ? {
             value: undefined,
