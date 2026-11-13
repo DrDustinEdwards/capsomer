@@ -1,21 +1,13 @@
 import {
   useState,
-  type ComponentType,
   type FormHTMLAttributes,
   type ReactNode,
   type Ref,
 } from "react";
 import { Banner } from "../banner/banner.react.tsx";
+import type { FormComponent } from "../plain-form/plain-form.react.tsx";
 
-// The app's form component, such as React Router's Form: any component whose action, method and
-// encType take these values fits.
-export type FormComponent = ComponentType<
-  Omit<FormHTMLAttributes<HTMLFormElement>, "action" | "method" | "encType"> & {
-    action?: string;
-    method?: "get" | "post";
-    encType?: "application/x-www-form-urlencoded" | "multipart/form-data" | "text/plain";
-  }
->;
+export type { FormComponent };
 
 // A form that a read-only visitor (a demo, a viewer without the right) can press but not send:
 // the submit stays in the browser and the reason shows under the form, in place, where an
