@@ -24,7 +24,7 @@
     margin: 0;
     padding: 0 0 var(--space-3);
     border: 0;
-    border-bottom: 1px solid var(--line);
+    border-bottom: var(--line-w) solid var(--line);
   }
   .cap-repeater-row:last-child > .cap-repeater-group {
     padding-bottom: 0;

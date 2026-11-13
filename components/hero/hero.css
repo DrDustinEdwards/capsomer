@@ -39,7 +39,7 @@
     &[data-card] {
       max-inline-size: var(--hero-card-max, 48rem);
       padding: var(--hero-card-pad, var(--space-7));
-      border: 1px solid var(--line);
+      border: var(--line-w) solid var(--line);
       border-radius: var(--hero-card-radius, var(--radius-xl));
       background: var(--hero-card-bg, color-mix(in srgb, var(--surface) 82%, transparent));
       box-shadow: var(--hero-card-shadow, none);
@@ -55,8 +55,8 @@
     font-family: var(--hero-face, inherit);
     font-size: var(--_title);
     font-weight: var(--hero-title-weight, var(--weight-title));
-    line-height: var(--hero-title-leading, 1.05);
-    letter-spacing: var(--hero-title-tracking, -0.02em);
+    line-height: var(--hero-title-leading, var(--leading-none));
+    letter-spacing: var(--hero-title-tracking, calc(-1 * var(--tracking-wide)));
     text-wrap: balance;
   }
   .cap-hero-lead {
@@ -66,9 +66,9 @@
     /* Longhands: an `inherit` fallback inside the `font` shorthand makes the whole declaration
        invalid, and the lead fell back to the body size whenever --hero-lead-face was unset. */
     font-family: var(--hero-lead-face, inherit);
-    font-size: var(--hero-lead-size, 1.25rem);
-    font-weight: var(--hero-lead-weight, 400);
-    line-height: var(--hero-lead-leading, 1.5);
+    font-size: var(--hero-lead-size, var(--title-4));
+    font-weight: var(--hero-lead-weight, var(--weight-regular));
+    line-height: var(--hero-lead-leading, var(--leading-normal));
     text-wrap: pretty;
   }
   /* More words between the lead and the actions, in body type. */

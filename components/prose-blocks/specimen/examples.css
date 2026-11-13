@@ -9,7 +9,7 @@
   --prose-strong-ink: var(--text);
   --prose-heading-ink: var(--text);
   --prose-heading-face: var(--ui);
-  --prose-heading-weight: 600;
+  --prose-heading-weight: var(--weight-semibold);
   --prose-flow: 1.25em;
   --prose-marker: var(--accent-text);
   --prose-quote-line: var(--accent);

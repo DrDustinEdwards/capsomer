@@ -33,18 +33,18 @@
     align-items: baseline;
     gap: var(--space-1) var(--space-3);
     padding-block-end: var(--space-2);
-    border-bottom: 1px solid var(--line);
+    border-bottom: var(--line-w) solid var(--line);
     min-width: 0;
   }
   .cap-compare-side-role {
     color: var(--muted);
     font-size: var(--fs-label);
-    font-weight: 600;
-    letter-spacing: 0.04em;
+    font-weight: var(--weight-semibold);
+    letter-spacing: var(--tracking-wider);
     text-transform: uppercase;
   }
   .cap-compare-side-title {
-    font-weight: 600;
+    font-weight: var(--weight-semibold);
     overflow-wrap: anywhere;
   }
   .cap-compare-side-meta {
@@ -92,7 +92,7 @@
   }
   .cap-patch .cap-compare-counts {
     color: var(--text);
-    font-weight: 600;
+    font-weight: var(--weight-semibold);
   }
 
   /* The marks. An insertion and a deletion differ by line (under, through), by the glyph that
@@ -104,14 +104,14 @@
     border-radius: var(--radius-s);
     box-decoration-break: clone;
     color: var(--text);
-    text-decoration-thickness: 2px;
+    text-decoration-thickness: var(--line-w-thick);
     text-underline-offset: 0.18em;
 
     &::before {
       margin-inline-end: 0.25em;
       font-family: var(--ui);
       font-size: 0.85em;
-      font-weight: 700;
+      font-weight: var(--weight-bold);
     }
   }
   .cap-ins,
@@ -135,7 +135,7 @@
     }
   }
   .cap-compare-key-mark {
-    font-weight: 600;
+    font-weight: var(--weight-semibold);
   }
 
   /* The jump list and Expand all, at the end of the bar. */
@@ -172,12 +172,12 @@
     min-width: var(--target);
     min-height: var(--target);
     padding-inline: var(--space-3);
-    border: 1px solid var(--line-strong);
+    border: var(--line-w) solid var(--line-strong);
     border-radius: var(--radius-m);
     background: var(--surface);
     color: var(--accent-text);
     font-variant-numeric: var(--figures);
-    font-weight: 600;
+    font-weight: var(--weight-semibold);
     text-decoration: none;
 
     &:hover {
@@ -195,7 +195,7 @@
     max-block-size: min(70vh, 40rem);
     padding: var(--pad-card);
     overflow: auto;
-    border: 1px solid var(--line);
+    border: var(--line-w) solid var(--line);
     border-radius: var(--radius-m);
     background: var(--surface);
     font-family: var(--face);
@@ -229,7 +229,7 @@
       margin-block-start: var(--space-3);
     }
     &[data-op]:not([data-op="same"]) {
-      border-inline-start: 3px solid var(--accent-line);
+      border-inline-start: var(--line-w-bar) solid var(--accent-line);
       padding-inline-start: var(--space-3);
     }
     &[data-current] {
@@ -254,13 +254,13 @@
     color: var(--muted);
     font-family: var(--ui);
     font-size: var(--fs-label);
-    font-weight: 600;
-    letter-spacing: 0.04em;
+    font-weight: var(--weight-semibold);
+    letter-spacing: var(--tracking-wider);
     text-transform: uppercase;
   }
   .cap-compare-text {
     margin: 0;
-    line-height: 1.55;
+    line-height: var(--leading-normal);
     overflow-wrap: anywhere;
   }
 
@@ -273,7 +273,7 @@
     color: var(--accent-text);
     font-family: var(--ui);
     font-size: var(--fs-label);
-    font-weight: 600;
+    font-weight: var(--weight-semibold);
   }
 
   /* Folded unchanged sentences. */
@@ -286,7 +286,7 @@
 
     & > summary {
       color: var(--muted);
-      font-weight: 500;
+      font-weight: var(--weight-medium);
     }
     & > .cap-compare-gap-rows {
       padding: var(--space-3);
@@ -305,13 +305,13 @@
 
     &[data-current] {
       background: var(--accent-soft);
-      box-shadow: 0 0 0 3px var(--accent-soft);
+      box-shadow: 0 0 0 var(--line-w-bar) var(--accent-soft);
     }
   }
   .cap-compare-card {
     padding: var(--space-3) var(--pad-x);
-    border: 1px solid var(--line);
-    border-inline-start: 3px solid var(--accent-line);
+    border: var(--line-w) solid var(--line);
+    border-inline-start: var(--line-w-bar) solid var(--accent-line);
     border-radius: var(--radius-m);
 
     &:has([data-current]) {
@@ -331,7 +331,7 @@
     &::after {
       content: "";
       flex: 1;
-      border-block-start: 1px dashed var(--line-strong);
+      border-block-start: var(--line-w) dashed var(--line-strong);
     }
   }
 
@@ -339,7 +339,7 @@
   .cap-compare-none {
     margin: 0;
     padding: var(--space-3) var(--pad-x);
-    border: 1px solid var(--line);
+    border: var(--line-w) solid var(--line);
     border-radius: var(--radius-m);
     background: var(--surface);
   }
@@ -389,7 +389,7 @@
     gap: var(--space-1) var(--space-3);
     margin: 0;
     font-size: var(--fs-body);
-    font-weight: 600;
+    font-weight: var(--weight-semibold);
     overflow-wrap: anywhere;
 
     & code {
@@ -400,7 +400,7 @@
   .cap-patch-file-counts {
     color: var(--muted);
     font-size: var(--fs-detail);
-    font-weight: 400;
+    font-weight: var(--weight-regular);
   }
   .cap-patch-note {
     margin: 0;
@@ -410,7 +410,7 @@
     box-sizing: border-box;
     max-block-size: min(70vh, 40rem);
     overflow: auto;
-    border: 1px solid var(--line);
+    border: var(--line-w) solid var(--line);
     border-radius: var(--radius-m);
     background: var(--surface);
   }
@@ -425,9 +425,9 @@
   .cap-patch-hunk-head th {
     padding: var(--space-1) var(--pad-x);
     background: var(--sunken);
-    border-block: 1px solid var(--line);
+    border-block: var(--line-w) solid var(--line);
     color: var(--muted);
-    font-weight: 400;
+    font-weight: var(--weight-regular);
     text-align: start;
   }
   .cap-patch-no {
@@ -442,7 +442,7 @@
   .cap-patch-sign {
     inline-size: 2ch;
     padding-inline: var(--space-1);
-    font-weight: 700;
+    font-weight: var(--weight-bold);
     text-align: center;
     vertical-align: top;
   }
@@ -461,23 +461,23 @@
   }
   .cap-patch-line[data-op="ins"] {
     background: var(--ok-soft);
-    box-shadow: inset 3px 0 0 var(--ok);
+    box-shadow: inset var(--line-w-bar) 0 0 var(--ok);
   }
   .cap-patch-line[data-op="del"] {
     background: var(--crit-soft);
-    box-shadow: inset 3px 0 0 var(--crit);
+    box-shadow: inset var(--line-w-bar) 0 0 var(--crit);
   }
   .cap-patch-line[data-op="del"] .cap-patch-code code {
     text-decoration: line-through;
     text-decoration-color: var(--crit);
-    text-decoration-thickness: 1px;
+    text-decoration-thickness: var(--line-w);
   }
 
   @media (forced-colors: active) {
     .cap-ins,
     .cap-del,
     .cap-compare-key-mark {
-      border: 1px solid transparent;
+      border: var(--line-w) solid transparent;
       text-decoration-color: currentColor;
     }
     .cap-compare-row[data-op]:not([data-op="same"]),
@@ -487,19 +487,19 @@
     .cap-compare-row[data-current],
     .cap-compare-card:has([data-current]) {
       border-inline-start-color: Highlight;
-      border-inline-start-width: 6px;
+      border-inline-start-width: var(--line-w-band);
     }
     .cap-compare-hunk[data-current] {
-      outline: 2px solid Highlight;
+      outline: var(--focus-width) solid Highlight;
     }
     .cap-patch-line[data-op="ins"],
     .cap-patch-line[data-op="del"] {
       box-shadow: none;
-      border-inline-start: 3px solid CanvasText;
+      border-inline-start: var(--line-w-bar) solid CanvasText;
     }
     .cap-compare-jump-link[aria-current="true"] {
       border-color: Highlight;
-      border-width: 3px;
+      border-width: var(--line-w-bar);
     }
   }
 
@@ -533,7 +533,7 @@
     display: grid;
     gap: var(--space-3);
     padding: var(--space-3);
-    border: 1px solid var(--line);
+    border: var(--line-w) solid var(--line);
     border-radius: var(--radius-m);
   }
   .cap-merge-sides {
@@ -544,7 +544,7 @@
     & > section {
       min-width: 0;
       padding: var(--space-2);
-      border: 1px solid transparent;
+      border: var(--line-w) solid transparent;
       border-radius: var(--radius-s);
     }
     & > section:not([data-kept]) {
@@ -561,7 +561,7 @@
   .cap-merge-side {
     margin: 0 0 var(--space-2);
     font-size: var(--fs-detail);
-    font-weight: 600;
+    font-weight: var(--weight-semibold);
   }
   .cap-merge-text {
     margin: 0;
@@ -595,7 +595,7 @@
       border-color: GrayText;
     }
     .cap-merge-mark {
-      outline: 1px solid CanvasText;
+      outline: var(--line-w) solid CanvasText;
     }
   }
 }

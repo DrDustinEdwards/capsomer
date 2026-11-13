@@ -10,7 +10,7 @@
     min-width: 0;
     background: var(--surface);
     color: var(--text);
-    border: 1px solid var(--line);
+    border: var(--line-w) solid var(--line);
     border-radius: var(--radius-l);
     /* A list's hover tint stays inside the rounded corners. Rings inside a panel are
        drawn inset (row-list, table) so nothing focusable is clipped. */
@@ -20,7 +20,7 @@
 
     /* shadcn's Card size="sm", and its comfortable (vega) shadow. */
     &[data-size="sm"] {
-      --pad-card: 12px;
+      --pad-card: var(--space-4);
     }
     &[data-density="comfortable"],
     [data-density="comfortable"] & {
@@ -60,14 +60,14 @@
     flex-wrap: wrap;
     align-items: center;
     gap: var(--space-3);
-    padding: calc(var(--pad-y) + 3px) var(--pad-card);
+    padding: calc(var(--pad-y) + var(--space-1-5)) var(--pad-card);
     background: var(--raised);
 
     & :is(h2, h3) {
       margin: 0;
       font-size: var(--fs-body);
       font-weight: var(--weight-heading);
-      letter-spacing: -0.01em;
+      letter-spacing: var(--tracking-snug);
       line-height: var(--leading);
     }
   }
@@ -115,7 +115,7 @@
     margin-block: calc(var(--space-1) * -1);
     margin-inline: auto 0;
     font-size: var(--fs-detail);
-    font-weight: 500;
+    font-weight: var(--weight-medium);
 
     /* The link's own box is at least the target size. */
     & a {
@@ -159,7 +159,7 @@
     align-items: center;
     gap: var(--space-3);
     padding: var(--pad-y) var(--pad-card);
-    border-top: 1px solid var(--line);
+    border-top: var(--line-w) solid var(--line);
     background: color-mix(in srgb, var(--sunken) 50%, transparent);
     font-size: var(--fs-detail);
   }
@@ -182,7 +182,7 @@
   /* Forced colors remove the header's tint: a rule keeps the header apart. */
   @media (forced-colors: active) {
     .cap-panel-head {
-      border-bottom: 1px solid CanvasText;
+      border-bottom: var(--line-w) solid CanvasText;
     }
     .cap-panel-foot {
       border-top-color: CanvasText;

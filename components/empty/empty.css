@@ -16,7 +16,7 @@
     inline-size: 100%;
     min-inline-size: 0;
     padding: var(--pad-card);
-    border: 1px dashed var(--line-strong);
+    border: var(--line-w) dashed var(--line-strong);
     border-radius: var(--radius-l);
     color: var(--text);
     font-size: var(--text-size);
@@ -91,8 +91,8 @@
     justify-content: center;
     gap: var(--space-3);
     margin: 0;
-    font-weight: 600;
-    letter-spacing: -0.01em;
+    font-weight: var(--weight-semibold);
+    letter-spacing: var(--tracking-snug);
     /* Balanced, as the whole state is: set here, since base.css gives a p "pretty". */
     text-wrap: balance;
   }
@@ -101,7 +101,7 @@
     margin: 0;
     max-inline-size: var(--measure);
     color: var(--muted);
-    line-height: 1.5;
+    line-height: var(--leading-normal);
     /* Balanced like the title: base.css gives a p "pretty", which left a centered sentence ragged. */
     text-wrap: balance;
     /* Its links are text links, drawn by css/base.css. */
@@ -138,7 +138,7 @@
       border-color: CanvasText;
     }
     .cap-empty-media[data-variant="icon"] {
-      border: 1px solid CanvasText;
+      border: var(--line-w) solid CanvasText;
     }
   }
 

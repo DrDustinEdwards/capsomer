@@ -22,7 +22,7 @@
       /* A site that wants a line (--link-decoration) draws it on text links only, never a menu's. */
       text-decoration: var(--link-decoration);
       text-underline-offset: var(--link-offset);
-      border-radius: 3px;
+      border-radius: var(--radius-s);
       -webkit-box-decoration-break: clone;
       box-decoration-break: clone;
       /* :visited may set colors only, and getComputedStyle hides it, so a specimen forces it. */

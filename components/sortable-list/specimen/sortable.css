@@ -35,10 +35,10 @@
   --sortable-item-align: start;
   --sortable-remove-ink: var(--crit);
   --sortable-remove-hover-ink: var(--crit);
-  --sortable-remove-weight: 600;
+  --sortable-remove-weight: var(--weight-semibold);
 }
 .sortable-own-out {
-  border: 1px dashed var(--line-strong);
+  border: var(--line-w) dashed var(--line-strong);
   background: var(--sunken);
 }
 .sortable-own-in {

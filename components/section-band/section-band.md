@@ -6,6 +6,7 @@ parts: [css, react]
 tool: native
 states: [straight, slanted, slanted over its neighbors, phone]
 added: 0.132.0
+updated: 0.142.0
 source: BioScience Writers' impact band (.band-cut, .band-slab, .band-ghost in app/app.css; app/routes/home.tsx)
 replaces:
   - 'band-cut'
@@ -30,7 +31,7 @@ One section on a marketing page that should read as apart: numbers, a quote, the
 ## The default and its reason
 
 - **One pseudo-element, no extra markup.** The band's ground, clipped to the outer outline, is the wedges; `::before` is the solid slab. BioScience Writers drew the same with three empty spans.
-- **The depths are tokens** (`--cap-band-rise` 6rem, `--cap-band-step` 2.5rem, `--cap-band-fall` 5.5rem), halved under 48rem so a phone keeps its height for the words.
+- **The depths are tokens** (`--cap-band-rise` 6rem, `--cap-band-step` 2.5rem, `--cap-band-fall` 5.5rem), halved under 48rem so a phone keeps its height for the words. A slanted band's padding is the depth and `--space-6` at each edge; a site sets its own with `--cap-band-pad-top` and `--cap-band-pad-bottom`.
 - **The padding clears the slant**, so no word sits in a cut corner.
 - **Nothing in the band is clipped that matters**: the content sits between the slants, and the layers take no pointer events.
 

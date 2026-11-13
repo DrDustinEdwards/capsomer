@@ -1,7 +1,17 @@
-import { useId, useMemo, type FormHTMLAttributes, type ReactNode } from "react";
+import { useId, useMemo, type ReactNode } from "react";
 import { Button } from "../button/button.react.tsx";
 import { Check, TextField } from "../field/field.react.tsx";
 import { FormStatus } from "../form-status/form-status.react.tsx";
+
+// Only the props the sign-up passes to `renderForm`, so React Router's Form (whose method and
+// encType are unions, not strings) takes them spread without a cast.
+export interface NewsletterFormProps {
+  className: string;
+  method: "post";
+  action?: string;
+  "aria-labelledby": string;
+  children: ReactNode;
+}
 
 export type NewsletterState = { ok: true } | { ok: false; error: string } | undefined;
 
@@ -21,7 +31,7 @@ export interface NewsletterSignupProps {
   plain?: boolean;
   headingLevel?: "h2" | "h3";
   // Draw the form with the app's router form (React Router's Form), so the post needs no reload.
-  renderForm?: (props: FormHTMLAttributes<HTMLFormElement> & { children: ReactNode }) => ReactNode;
+  renderForm?: (props: NewsletterFormProps) => ReactNode;
 }
 
 // The HTML contract in newsletter-signup.md: the field's TextField with its button as the row's
@@ -77,7 +87,7 @@ export function NewsletterSignup({
       ) : null}
     </>
   );
-  const formProps = {
+  const formProps: Omit<NewsletterFormProps, "children"> = {
     className: "cap-newsletter-form",
     method: "post",
     action,

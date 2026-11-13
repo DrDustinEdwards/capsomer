@@ -10,13 +10,13 @@
     gap: var(--space-4);
     margin-block: var(--space-9) 0;
     padding: var(--cta-band-pad, var(--space-7) var(--space-6));
-    border: var(--cta-band-border, 1px solid var(--accent-line));
+    border: var(--cta-band-border, var(--line-w) solid var(--accent-line));
     border-radius: var(--radius-xl);
     background: var(--cta-band-bg, var(--accent-soft));
     text-align: var(--cta-band-align, center);
 
     &[data-quiet] {
-      border-width: 1px 0 0;
+      border-width: var(--line-w) 0 0;
       border-color: var(--line);
       border-radius: 0;
       background: none;
