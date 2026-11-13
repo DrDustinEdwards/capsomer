@@ -1,0 +1,26 @@
+/* The grid, a part of layout.css: equal columns, as many as fit, at most data-cols. */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+@layer cap.utilities {
+  /* As many columns of at least --grid-min (14rem) as fit, never more than data-cols: the column's
+     floor is also the width that data-cols columns would have, so no query is needed. */
+  .cap-grid {
+    --grid-cols: 3;
+    --layout-gap: var(--space-5);
+    display: grid;
+    gap: var(--layout-gap);
+    grid-template-columns: repeat(
+      auto-fill,
+      minmax(
+        min(100%, max(var(--grid-min, 14rem), (100% - (var(--grid-cols) - 1) * var(--layout-gap)) / var(--grid-cols))),
+        1fr
+      )
+    );
+    &[data-cols="2"] {
+      --grid-cols: 2;
+    }
+    &[data-cols="4"] {
+      --grid-cols: 4;
+    }
+  }
+}
