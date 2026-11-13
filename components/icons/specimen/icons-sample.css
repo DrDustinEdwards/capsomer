@@ -1,0 +1,14 @@
+/* The states page's grid of icons. */
+.ic-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr));
+  gap: var(--space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  & > li {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+  }
+}

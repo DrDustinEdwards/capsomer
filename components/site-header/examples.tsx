@@ -4,6 +4,10 @@
 // specimens mount the same surfaces in a 390px frame. Names, numbers and accounts are samples.
 import { StrictMode, useEffect, type ReactNode } from "react";
 import { createRoot } from "react-dom/client";
+import { renderToStaticMarkup } from "react-dom/server";
+import { enhance as enhanceTheme } from "../theme-switch/theme-switch.ts";
+import { setStaticHtml } from "../trusted-html/trusted-html.ts";
+import { enhance } from "./site-header.ts";
 import {
   AdminShell,
   FAMILY_APPS,
@@ -12,6 +16,7 @@ import {
   type AdminShellProps,
 } from "../admin-shell/admin-shell.react.tsx";
 import {
+  initialsOf,
   SiteHeader,
   SiteTabs,
   type HeaderAccount,
@@ -638,6 +643,17 @@ const SURFACES: Record<string, () => ReactNode> = {
       />
     </Site>
   ),
+  "fx-rest-clear": () => (
+    <Site family="fox">
+      <SiteHeader {...fxPublic} rest="clear" />
+      <Hero
+        eyebrow="Book of the month"
+        title="Find the next book you cannot put down."
+        lead="Picks from readers you trust, clubs that actually meet, and a diary that remembers every page."
+      />
+      <div className="sh-filler" aria-hidden="true" />
+    </Site>
+  ),
   "fx-books": () => (
     <Site family="fox">
       <Hold press=".cap-site-header-sections .cap-site-header-link">
@@ -708,4 +724,166 @@ const SURFACES: Record<string, () => ReactNode> = {
 for (const el of Array.from(document.querySelectorAll<HTMLElement>("[data-mount]"))) {
   const render = SURFACES[el.dataset.mount ?? ""];
   if (render) createRoot(el).render(<StrictMode>{render()}</StrictMode>);
+}
+
+// A page that does not hydrate: the React header rendered once to HTML, as a server would send
+// it, then wired by the behavior modules alone (hydrate={false}). Sample data throughout.
+const tile = (letter: string) => (
+  <span className="sh-ex-tile" aria-hidden="true">
+    {letter}
+  </span>
+);
+const TOPICS: Array<[string, string]> = [
+  ["Getting started", "Set up in an afternoon, with the three steps that matter."],
+  ["Field notes", "What we learned on the way, written up each week."],
+  ["Release notes", "Every change, in the order it shipped."],
+];
+const staticHeader: SiteHeaderProps = {
+  hydrate: false,
+  logo: { href: "#home", label: "Example Press" },
+  links: "center",
+  switchers: [
+    {
+      id: "workspace",
+      label: "Example Press",
+      name: "Switch workspace: Example Press",
+      tile: "E",
+      sheetLabel: "Workspaces",
+      groups: [
+        {
+          label: "Workspaces",
+          links: [
+            {
+              id: "w1",
+              label: "Example Press",
+              action: "#switch",
+              fields: { workspace: "w1" },
+              current: true,
+              icon: tile("E"),
+            },
+            {
+              id: "w2",
+              label: "Field Office",
+              action: "#switch",
+              fields: { workspace: "w2" },
+              icon: tile("F"),
+            },
+            { id: "add", label: "+ Add workspace", href: "#add-workspace" },
+          ],
+        },
+      ],
+    },
+  ],
+  sections: [
+    {
+      id: "guides",
+      label: "Guides",
+      groups: [
+        {
+          label: "Getting started",
+          links: [
+            { label: "Install", href: "#install" },
+            { label: "First page", href: "#first-page" },
+          ],
+        },
+        { label: "Field notes", links: [{ label: "This week", href: "#this-week" }] },
+      ],
+    },
+    {
+      id: "topics",
+      label: "Topics",
+      panelSize: "wide",
+      panelClassName: "sh-ex-mega",
+      panel: (
+        <ul className="sh-ex-mega-tiles" aria-label="Topics">
+          {TOPICS.map(([title, line]) => (
+            <li key={title}>
+              <a href={`#${title.toLowerCase().replace(" ", "-")}`}>
+                <b>{title}</b>
+                <span>{line}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      ),
+    },
+    { id: "pricing", label: "Pricing", href: "#pricing", current: true },
+    { id: "about", label: "About", href: "#about" },
+  ],
+  extras: [{ id: "quote", label: "Get a quote", kind: "button", href: "#quote", phone: "bar" }],
+  themePrefKey: "cap-theme-specimen-static",
+  themeCookie: "sample_theme",
+  themeKey: "T",
+  account: {
+    name: "Alex Rivera",
+    initials: initialsOf("Alex Rivera", "alex@example.com"),
+    detail: "alex@example.com",
+    groups: [
+      {
+        links: [
+          { label: "Settings", href: "#settings" },
+          { label: "Help", href: "#help" },
+        ],
+      },
+    ],
+    signOutAction: "#sign-out",
+    signOutFields: { token: "sample-token" },
+  },
+  skipTo: "#main",
+};
+// A site with its own look on the same header (bsw's shape), set by tokens and slots only: a 64px
+// band whose bar keeps to a 72rem column, semibold links, its own class on Get a quote, no theme and
+// no account, a hairline once the page scrolls, and the phone's row under 1024px (specimen CSS).
+const ownHeader: SiteHeaderProps = {
+  hydrate: false,
+  theme: false,
+  translucent: true,
+  links: "center",
+  collapse: "lg",
+  sheetIcons: "auto",
+  logo: { href: "#home", label: "Example Writers", name: "Example Writers home" },
+  sections: [
+    {
+      id: "services",
+      label: "Services",
+      groups: [
+        {
+          links: [
+            { label: "Editing", href: "#editing" },
+            { label: "Writing", href: "#writing" },
+          ],
+        },
+      ],
+    },
+    { id: "pricing", label: "Pricing", href: "#pricing", current: true },
+    { id: "about", label: "About", href: "#about" },
+  ],
+  extras: [
+    { id: "quote", label: "Get a quote", kind: "button", href: "#quote", className: "sh-own-cta" },
+  ],
+  skipTo: "#main",
+};
+for (const el of Array.from(document.querySelectorAll<HTMLElement>("[data-static]"))) {
+  const own = el.hasAttribute("data-own");
+  setStaticHtml(
+    el,
+    renderToStaticMarkup(
+      <div className={own ? "sh-site sh-own" : "sh-site"} data-family="teal">
+        <SiteHeader {...(own ? ownHeader : staticHeader)} />
+        <Hero
+          eyebrow="Written by the server"
+          title="No React in the browser, the same header."
+          lead="Rendered once to HTML; the behavior module wires the panels, the sheet, the theme and its key."
+        />
+      </div>,
+      { identifierPrefix: "static" },
+    ),
+  );
+  enhance(el);
+  enhanceTheme(el);
+  const press = el.dataset.static ? el.querySelector<HTMLElement>(el.dataset.static) : null;
+  if (press)
+    requestAnimationFrame(() =>
+      press.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true, detail: 1 })),
+    );
 }

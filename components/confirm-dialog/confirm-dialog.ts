@@ -9,14 +9,14 @@
 // The generic overlay helpers moved to the shared dialog (components/dialog/dialog.ts). They
 // are re-exported here, so what imported them from this module keeps working.
 import { isImeEnter } from "../shortcuts/shortcuts.ts";
-import { errorText, isBusy, openDialog, setDialogBusy, uid, wireDialog } from "../dialog/dialog.ts";
+import { errorText, isBusy, openDialog, setDialogBusy, wireDialog } from "../dialog/dialog.ts";
+import { uid } from "../hooks/hooks.ts";
 export {
   errorText,
   isBackdropClick,
   isBusy,
   rememberOpener,
   returnFocus,
-  uid,
 } from "../dialog/dialog.ts";
 
 // The typed-word guard: case-insensitive, surrounding spaces ignored. No word, no guard.

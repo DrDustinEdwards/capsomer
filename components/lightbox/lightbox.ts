@@ -8,13 +8,10 @@
 // layer, the inert page and Esc; the dialog block supplies focus placement, the backdrop click,
 // Tab wrapping and focus return. The grow from the picture to the viewer is a same-document
 // View Transition, skipped under reduced motion and where the API is missing.
+import { reducedMotion } from "../count-up/count-up.ts";
 import { closeDialog, openDialog, wireDialog } from "../dialog/dialog.ts";
 
 const GROW_NAME = "cap-lightbox-figure";
-
-function reducedMotion(): boolean {
-  return typeof matchMedia === "function" && matchMedia("(prefers-reduced-motion: reduce)").matches;
-}
 
 // The figure grows into the viewer and shrinks back. It carries no transition type, so a site's
 // page-to-page fade does not restyle it. A skipped transition rejects `ready` with an

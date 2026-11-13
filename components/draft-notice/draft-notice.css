@@ -1,0 +1,33 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* Draft notice: the line at the top of a page that only its author can see yet. A word ("Draft") in a
+   dashed box, the shape that means "not yet" across the family, on the warning tint, then the sentence.
+   Shape, word and color together; in forced colors the dashed edge stays. */
+@layer cap.components {
+  .cap-draft-notice {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--space-2);
+    margin: 0 0 var(--space-4);
+    color: var(--text);
+    font-size: var(--fs-body);
+    line-height: var(--leading);
+  }
+
+  .cap-draft-notice-tag {
+    padding: 0 var(--space-2);
+    border: 1px dashed var(--warn);
+    border-radius: var(--radius-s);
+    background: var(--warn-soft);
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  @media (forced-colors: active) {
+    .cap-draft-notice-tag {
+      border-color: CanvasText;
+    }
+  }
+}

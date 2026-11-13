@@ -1,0 +1,40 @@
+<section class="cap-specimen" aria-labelledby="s-idle">
+  <h2 id="s-idle">Nothing saved yet</h2>
+  <form method="post" action="#" aria-label="Notification settings">
+    <div class="cap-save-bar">
+      <p role="status" class="cap-save-bar-status"></p>
+      <button type="submit" class="cap-btn" data-variant="primary">Save changes</button>
+    </div>
+  </form>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-saving">
+  <h2 id="s-saving">Saving</h2>
+  <div class="cap-save-bar">
+    <p role="status" class="cap-save-bar-status"></p>
+    <button type="button" class="cap-btn" data-variant="primary" aria-busy="true"><span class="cap-btn-spinner" aria-hidden="true"></span><span class="cap-btn-label">Save changes</span></button>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-saved">
+  <h2 id="s-saved">Saved</h2>
+  <div class="cap-save-bar">
+    <p role="status" class="cap-save-bar-status"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Saved</span></p>
+    <button type="button" class="cap-btn" data-variant="primary">Save changes</button>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-failed">
+  <h2 id="s-failed">Failed</h2>
+  <div class="cap-save-bar">
+    <p role="status" class="cap-save-bar-status"><span class="cap-status" data-tone="crit"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M5 1h6l4 4v6l-4 4H5l-4-4V5zM7.2 4h1.6v5H7.2zM7.2 10.4h1.6V12H7.2z"/></svg>Failed to save. Please try again.</span></p>
+    <button type="button" class="cap-btn" data-variant="primary">Save changes</button>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-no-button">
+  <h2 id="s-no-button">No button (nothing to save yet)</h2>
+  <div class="cap-save-bar">
+    <p role="status" class="cap-save-bar-status"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Saved</span></p>
+  </div>
+</section>

@@ -93,6 +93,8 @@
     margin: 0;
     font-weight: 600;
     letter-spacing: -0.01em;
+    /* Balanced, as the whole state is: set here, since base.css gives a p "pretty". */
+    text-wrap: balance;
   }
 
   .cap-empty-text {
@@ -100,6 +102,8 @@
     max-inline-size: var(--measure);
     color: var(--muted);
     line-height: 1.5;
+    /* Balanced like the title: base.css gives a p "pretty", which left a centered sentence ragged. */
+    text-wrap: balance;
     /* Its links are text links, drawn by css/base.css. */
   }
 
@@ -136,5 +140,11 @@
     .cap-empty-media[data-variant="icon"] {
       border: 1px solid CanvasText;
     }
+  }
+
+  /* No value in a cell or a fact line: a muted word. */
+  .cap-missing {
+    color: var(--muted);
+    font-style: normal;
   }
 }

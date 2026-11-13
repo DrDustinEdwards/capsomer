@@ -1,0 +1,57 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* Repeater field: rows of fields a person adds, removes and reorders. Each row is a group with
+   its fields, then its buttons at the end (under the fields when the row is narrow). */
+@layer cap.components {
+  .cap-repeater-list {
+    display: grid;
+    gap: var(--space-3);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .cap-repeater-row {
+    container-type: inline-size;
+    min-width: 0;
+  }
+  .cap-repeater-group {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    gap: var(--space-2) var(--space-3);
+    min-width: 0;
+    margin: 0;
+    padding: 0 0 var(--space-3);
+    border: 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .cap-repeater-row:last-child > .cap-repeater-group {
+    padding-bottom: 0;
+    border-bottom: 0;
+  }
+  .cap-repeater-fields {
+    display: flex;
+    flex: 1 1 18rem;
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-3);
+    min-width: 0;
+
+    & > * {
+      flex: 1 1 10rem;
+      min-width: 0;
+    }
+  }
+  .cap-repeater-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-1);
+
+    &[hidden] {
+      display: none;
+    }
+  }
+  .cap-repeater-add[hidden] {
+    display: none;
+  }
+}

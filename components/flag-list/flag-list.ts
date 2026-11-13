@@ -8,6 +8,7 @@
 // A result is said in a polite region, a refusal in an alert. A flag is a question for the
 // owner, never a decision; an open flag holds publish until it is fixed or dismissed.
 
+import { plural } from "../hooks/hooks.ts";
 import { confirm } from "../confirm-dialog/confirm-dialog.ts";
 import { type SayOptions, fail, say } from "../message/message.ts";
 import { attachRowList } from "../row-list/row-list.ts";
@@ -386,7 +387,7 @@ export function attachFlagList(root: HTMLElement, io?: FlagTextIO): FlagListHand
     const n = appliable(flags, text).length;
     const batch = part<HTMLButtonElement>(root, "apply-all");
     if (batch) {
-      batch.replaceChildren(`Apply ${n} suggestion${n === 1 ? "" : "s"}`);
+      batch.replaceChildren(`Apply ${plural(n, "suggestion")}`);
       batch.hidden = n === 0 || !owner;
     }
     const note = part(root, "owner-note");
@@ -575,13 +576,13 @@ export function attachFlagList(root: HTMLElement, io?: FlagTextIO): FlagListHand
     const quoted = (s: string) => `“${s}”`;
     const opener = part<HTMLElement>(root, "apply-all");
     await confirm({
-      title: `Apply ${todo.length} suggestion${todo.length === 1 ? "" : "s"}?`,
+      title: `Apply ${plural(todo.length, "suggestion")}?`,
       lead: "This rewrites the draft. Each replacement is listed; nothing else changes.",
       body: flags.map(
         (f) =>
           `${quoted(f.anchor?.quote ?? "")} becomes ${quoted(f.suggestion?.replacement ?? "")}`,
       ),
-      action: `Apply ${todo.length} suggestion${todo.length === 1 ? "" : "s"}`,
+      action: `Apply ${plural(todo.length, "suggestion")}`,
       returnTo:
         part<HTMLElement>(root, "filter")?.querySelector<HTMLElement>("input:checked") ?? null,
       perform: async () => {
@@ -607,7 +608,7 @@ export function attachFlagList(root: HTMLElement, io?: FlagTextIO): FlagListHand
         for (const i of done) emit(todo[i] as HTMLElement);
         const skipped = flags.length - done.length;
         announce(
-          `Applied ${done.length} suggestion${done.length === 1 ? "" : "s"} to the draft.${skipped ? ` ${skipped} skipped: the passage changed.` : ""}`,
+          `Applied ${plural(done.length, "suggestion")} to the draft.${skipped ? ` ${skipped} skipped: the passage changed.` : ""}`,
           {
             undo: () => {
               let back = io.getText();

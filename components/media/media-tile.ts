@@ -1,12 +1,13 @@
 // The media library's tiles: the status glyphs and the markup a tile is drawn from. A tile's facts are
 // its data attributes, so the page, the filters and the inspector read one thing.
 
-import { enhance as enhanceMeters } from "../meter/meter.ts";
+import { enhance as enhanceMeters, percent } from "../meter/meter.ts";
 import {
   byteSize,
   describeRecord,
   flagsFor,
   parseTags,
+  tileId,
   type AltState,
   type Flag,
   type MediaRecord,
@@ -247,7 +248,7 @@ export function syncTile(tile: HTMLElement): void {
   if (r.state === "uploading") {
     const block = document.createElement("div");
     block.className = "cap-media-state";
-    const pct = Math.max(0, Math.min(100, Math.round(r.progress ?? 0)));
+    const pct = percent(r.progress ?? 0);
     const meter = document.createElement("div");
     meter.className = "cap-meter";
     meter.dataset.cap = "meter";
@@ -299,7 +300,7 @@ export function syncTile(tile: HTMLElement): void {
 export function buildTile(r: MediaRecord): HTMLLIElement {
   const li = document.createElement("li");
   li.className = "cap-media-tile";
-  li.id = `tile-${r.key.replace(/[^a-z0-9]+/gi, "-").toLowerCase()}`;
+  li.id = tileId(r.key);
   writeRecord(li, r);
   li.dataset.used = String(r.used.length);
   const selectable = r.state === "ready" || r.state === "binned";

@@ -6,7 +6,7 @@ parts: [css, ts, react]
 tool: own JavaScript
 states: [rest, hover, pressed, visited, focus, away, family, file, jump, email, phone, lang, footnote, xref, address, next, title, tag]
 added: 0.45.0
-updated: 0.56.0
+updated: 0.99.0
 source: site-runtime's ./prefetch (NEVER_PREFETCH, FILE_EXTENSIONS), which this rule follows for client navigation
 replaces:
   - '\{[^}]*\b(Nav)?Link\b[^}]*\} from "react-router(-dom)?"'
@@ -14,7 +14,7 @@ replaces:
 
 # Link
 
-How a link looks and what it says it does. `css/base.css` gives every link its base; `capsomer/link.css` (`components/link/link.css`) gives each kind its one cue. `capsomer/react/link` is React Router's `Link` and `NavLink`, prefetching on intent (below).
+How a link looks and what it says it does. `css/base.css` gives every link its base (through `css/links.css`, which a site that does not load base.css, such as a Tailwind site, imports alone as `capsomer/links.css`); `capsomer/link.css` (`components/link/link.css`) gives each kind its one cue. `capsomer/react/link` is React Router's `Link` and `NavLink`, prefetching on intent (below).
 
 ## The base: four cues and two states
 
@@ -35,7 +35,7 @@ A link that is a control (a menu, a tab, a button) is drawn by its component. Me
 
 ## A site's own links
 
-The base look is five tokens (`tokens/scale.mjs`, group `link`): `--link-weight` (600), `--link-decoration` (none), `--link-hover-bg` (`--accent-soft`), `--link-pressed-bg` (`--accent-5`) and `--link-tint-pad` (2px). A site outside the network that wants its own links sets them in its `SITES` entry (`tokens/sites.mjs`) as literal values, for example `"link-weight": "inherit"`, `"link-decoration": "underline"`, `"link-hover-bg": "transparent"`, `"link-tint-pad": "0px"`, instead of writing CSS over the base. It leaves out `capsomer/link.css` to drop the kind marks. The network's sites set none of them.
+The base look is seven tokens (`tokens/scale.mjs`, group `link`): `--link-weight` (600), `--link-decoration` (none), `--link-hover-decoration` (none), `--link-offset` (auto), `--link-hover-bg` (`--accent-soft`), `--link-pressed-bg` (`--accent-5`) and `--link-tint-pad` (2px). A site that wants its own links sets them in its `SITES` entry (`tokens/sites.mjs`) as literal values, for example `"link-hover-decoration": "underline"`, `"link-offset": "2px"`, `"link-hover-bg": "transparent"`, `"link-tint-pad": "0px"`, instead of writing CSS over the base. A line is drawn on text links only, never on a menu's links or a component's; a site with a line at rest sets both decorations. A line only under the pointer is not a cue on its own (WCAG F73), so a site that drops the weight needs a line at rest. Foxhound keeps the weight and shows a line on hover in place of the tint (Dustin, 2026-11-13); the other sites set none.
 
 ## The kinds
 
@@ -90,7 +90,7 @@ What a site or Prelum writes. A meta is a sibling after the link, a space betwee
 
 ```
 
-Load `capsomer/link.css` after `capsomer/base.css`. `data-force="hover|pressed|visited|focus"` shows a state on a states page (`:visited` cannot be read by script).
+Load `capsomer/link.css` after `capsomer/base.css`. It imports `capsomer/link-file.css` (`components/link-file/link-file.css`): the `file` kind's mark, the rule that draws an after mark and `.cap-link-meta`. A site that wants only those, for a component's own file link (generated file, document archive), loads `capsomer/link-file.css` alone, and no other link gets a mark. `data-force="hover|pressed|visited|focus"` shows a state on a states page (`:visited` cannot be read by script).
 
 ## Keyboard
 
@@ -124,6 +124,8 @@ import { Link, LinkPrefetch, NavLink } from "capsomer/react/link";
   <Link to="/admin/export" reloadDocument>Download the export</Link>
 </LinkPrefetch>
 ```
+
+Every Capsomer part that draws links (the shell, the site header, the admin shell, the row and attention lists) takes a `renderLink`. `routerRenderLink` is that adapter, React Router's `Link` with this prefetch, so no site writes its own: `<SiteHeader renderLink={routerRenderLink} />`.
 
 Without React: `mayPrefetch({ href, from, exclude, reloadDocument, target, download })` from `capsomer/behavior/link` gives the same answer.
 

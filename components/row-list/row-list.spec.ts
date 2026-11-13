@@ -384,3 +384,22 @@ eachTheme((theme) => {
     await expect(link).toHaveCSS("white-space", "normal");
   });
 });
+
+test("keyboard: a reply opens in its row with focus in the box, says why an empty one is not sent, sends on Ctrl+Enter and cancels on Esc", async ({
+  page,
+}) => {
+  await visitStates(page, "row-list", "light");
+  const row = page.locator("#rl-reply");
+  await row.getByRole("button", { name: "Answer Release sample/api 2.4.0" }).click();
+  const box = row.getByLabel("Your answer, sent to its driver");
+  await expect(box).toBeFocused();
+  await row.getByRole("button", { name: "Send" }).click();
+  await expect(row.getByRole("alert")).toHaveText("Write your answer first.");
+  await expectNoAxeViolations(page);
+  await box.press("Escape");
+  await expect(box).toHaveCount(0);
+  await row.getByRole("button", { name: "Answer Release sample/api 2.4.0" }).click();
+  await row.getByLabel("Your answer, sent to its driver").fill("Yes, publish it.");
+  await row.getByLabel("Your answer, sent to its driver").press("Control+Enter");
+  await expect(row).toContainText("Sent: Yes, publish it.");
+});

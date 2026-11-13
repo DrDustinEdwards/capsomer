@@ -1,0 +1,10 @@
+<section class="cap-specimen" aria-labelledby="s-live">
+  <h2 id="s-live">Counts up when seen; the final figure is in the HTML</h2>
+  <p class="cap-specimen-row">Recoverable estimate: <b><span class="cap-count-up" id="cu-money" data-cap="count-up" data-value="12480" data-currency="USD">$12,480</span></b></p>
+  <p class="cap-specimen-row">Payments retried: <b><span class="cap-count-up" id="cu-count" data-cap="count-up" data-value="312">312</span></b></p>
+</section>
+
+<script type="module">
+  import { enhance } from "./count-up.ts";
+  enhance();
+</script>

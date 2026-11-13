@@ -1,0 +1,8 @@
+/* Sample layout only: a day nav over its schedule, and a phone-width column so the tracks stack. */
+.schedule-col {
+  display: grid;
+  gap: var(--space-5);
+}
+.schedule-narrow {
+  max-width: 22rem;
+}

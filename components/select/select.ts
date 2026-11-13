@@ -386,7 +386,9 @@ export function createSelect(wrap: HTMLElement, select: HTMLSelectElement): Sele
 
 // Attaches to every [data-cap="select"] under root not yet attached (and not data-native).
 // Returns a function that detaches them all.
-export function enhance(root: ParentNode = document): () => void {
+// The root is Element | Document | DocumentFragment, not ParentNode: under @cloudflare/workers-types
+// an HTMLFormElement does not type as a ParentNode, so a site could not pass its form.
+export function enhance(root: Element | Document | DocumentFragment = document): () => void {
   const undo: Array<() => void> = [];
   for (const wrap of root.querySelectorAll<HTMLElement>(
     "[data-cap='select']:not([data-cap-ready])",

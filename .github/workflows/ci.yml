@@ -76,7 +76,14 @@ jobs:
       # pulls slower than this step's 17 s download.
       - name: Install Chromium
         if: steps.pick.outputs.mode != 'none'
-        run: npx playwright install --with-deps --only-shell chromium
+        # --with-deps installs Chromium's system packages through apt. When the Ubuntu mirror is unreachable
+        # (2026-11-11: security.ubuntu.com did not resolve for hours), the browser alone is installed: the
+        # ubuntu-latest image already carries Chrome's libraries and its own fonts.
+        run: |
+          npx playwright install --with-deps --only-shell chromium || {
+            echo "::warning::apt could not install Chromium's system packages; installing the browser alone"
+            npx playwright install --only-shell chromium
+          }
       # One worker per vCPU, with tests, not files, shared out (fullyParallel, playwright.config.ts).
       # Not sharded (playwright.dev/docs/test-sharding): each shard would repeat about a minute of
       # setup (install, build, browser) and a merge job, for a full run now estimated at 10 to 13 minutes.
@@ -170,14 +177,11 @@ jobs:
     concurrency:
       group: deploy
       cancel-in-progress: false
-    uses: DrDustinEdwards/devkit/.github/workflows/worker-deploy.yml@250d737c13b6f4c74987652818d262cb1d1c9cf7 # v0.27.0
+    uses: DrDustinEdwards/devkit/.github/workflows/worker-deploy.yml@33c4651984133498e49380b1cfea0894fe7f1bae # v0.43.0
     with:
       worker-name: capsomer
       health-url: https://capsomer.dustinedwards.info/health
-      verify-command: >-
-        code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 20 https://capsomer.dustinedwards.info/ || true);
-        echo "home page answered $code";
-        if [ "$code" = 200 ]; then exit 0; elif [ "$code" = 000 ]; then exit 3; else exit 1; fi
+      verify-command: node "$DEVKIT_DIR/bin/verify-deploy.mjs" https://capsomer.dustinedwards.info
       node-version-file: .node-version
       install: npm ci --ignore-scripts
       pre-deploy: npm run site

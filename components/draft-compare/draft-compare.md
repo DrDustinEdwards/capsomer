@@ -1,16 +1,19 @@
 ---
 name: draft-compare
 title: Draft compare
-summary: Two versions of a text compared by sentence and by word, side by side, inline or as changes only, with marks that never rely on color, a legend, jump keys and folded unchanged passages.
+summary: Two versions of a text compared by sentence and by word, side by side, inline or as changes only, with marks that never rely on color, a legend, jump keys and folded unchanged passages; a patch mode by line; a merge mode for two texts that both moved on.
 parts: [css, behavior, react]
 tool: native + own JavaScript
-states: [patch of two revisions, patch by line, patch with nothing to show, side by side, inline, changes only, unchanged passages folded, one change, no differences, with authorship runs, narrow container stacked, remembered view, comfortable density, React with the view held by the app]
+states: [merge with a base, merge without a base, a pick that leaves a side out, keep both disabled with one side empty, patch of two revisions, patch by line, patch with nothing to show, side by side, inline, changes only, unchanged passages folded, one change, no differences, with authorship runs, narrow container stacked, remembered view, comfortable density, React with the view held by the app]
 added: 0.3.0
-source: the site admin's revision-list.tsx (DiffBlock, RevisionMeta), admin.posts.$slug.history.tsx and admin-history.css
+updated: 0.98.0
+source: the site admin's revision-list.tsx (DiffBlock, RevisionMeta), admin.posts.$slug.history.tsx and admin-history.css; the merge mode from Carrel's editor/merge-view.tsx, lib/merge.ts and lib/merge.server.ts; Carrel's app/lib/patch.ts (unifiedPatch, hasChanges)
 replaces:
   - 'class="(?:[^"]*\s)?(history-diff|diff-block|diff-view)[\s"]'
+  - 'import \{ createTwoFilesPatch \} from "diff"'
   - 'data-diff="(add|del)"'
   - 'className="(?:[^"]*\s)?(history-diff|diff-block)[\s"]'
+  - 'className="(?:[^"]*\s)?app-merge[\s"-]'
 ---
 
 # Draft compare
@@ -52,6 +55,14 @@ import { DraftPatch } from "capsomer/react/draft-compare";
 <DraftPatch patch={patchText} title="Show the newest mention first" />
 ```
 
+**Two texts the app holds make their own patch.** `unifiedPatch(name, before, after, { context })` writes the unified patch from `before` to `after` (each `{ text, label? }`), in the shape jsdiff's `createTwoFilesPatch` writes and site-api's revision diffs come in: the `Index` and `===` lines, `--- name<TAB>label`, `+++ name<TAB>label`, hunks with three lines of context merged when two changes are within six lines, and `\ No newline at end of file`. Both sides carry one name, so DraftPatch shows one file changed, not a rename. The line diff is this component's own (`commonSubsequence`, Myers), the one the word compare uses, so no diff library is needed; where two alignments are equally short it may pick another than jsdiff, and both apply to the same text. `hasChanges(patch)` is true when a patch has a hunk. Both are pure, so a server builds the patch.
+
+```ts
+import { hasChanges, unifiedPatch } from "capsomer/behavior/draft-compare";
+
+const patch = unifiedPatch("post.md", { text: siteText, label: "The site's text" }, { text: draft, label: "Your draft" });
+```
+
 ```html
 <section class="cap-compare cap-patch" data-mode="patch" id="commit-4f2a9c1" aria-label="Patch: …">
   <div class="cap-compare-bar">…the key and the counts…</div>
@@ -66,6 +77,35 @@ import { DraftPatch } from "capsomer/react/draft-compare";
   </section>
 </section>
 ```
+
+## The merge mode
+
+Two texts that both moved on from one version: a person's unsaved text ("yours") and a newer copy saved elsewhere (another session saved the post, the site's copy changed). Nothing is discarded. The two sit side by side, block by block, and for each difference the person keeps theirs, the saved copy's, or both.
+
+- **A block is a unit a writer edits:** one top-level key of the frontmatter (with its indented lines), or one run of the body between blank lines.
+- **With the version both started from (the base),** a block only one side changed starts on that side ("changed here", "changed there"), a block both changed the same way is not a choice at all, and a block both changed differently starts on yours. Without a base, every difference starts on yours, and the intro says why.
+- **One block against one** marks the words only that side has, with "only here:" for a screen reader.
+- **The side a pick leaves out** is set back on the sunken ground with a dashed edge, and its heading says "left out", so the merged text reads down the kept sides without relying on the tint.
+- **Keep both** needs a passage on each side; it is disabled otherwise. Both keeps yours first.
+- **An untouched text comes back byte for byte,** blank lines and fences included.
+- The pick is a segmented control per difference, so arrow keys choose and one Tab stop holds each.
+
+```ts
+import { mergePlan, merged } from "capsomer/behavior/draft-compare";
+
+const plan = mergePlan(yours, saved, base); // base: string | null
+const text = merged(plan, picks); // one pick per difference, in order
+```
+
+```tsx
+import { DraftMerge, mergeCountsText } from "capsomer/react/draft-compare";
+
+<Panel title="Merge your text with the saved copy" src={mergeCountsText(plan)}>
+  <DraftMerge key={planId} plan={plan} pending={busy} onApply={(picks) => send(picks)} labels={{ mine: "In the editor", theirs: "On the site" }} />
+</Panel>
+```
+
+The plan is plain data, so a server can build it and send it to the page; apply the picks to the plan the server reads again, never to text the browser sends. `labels` names the sides and the picks in the app's own words. Key `DraftMerge` by the plan, so a new plan starts on its own picks.
 
 ## The default and its reason
 
@@ -144,7 +184,7 @@ enhance(); // the jump keys, the remembered view, Expand all
 </section>
 ```
 
-`parsePatch(patch)`, `patchCounts(files)` and `patchCountsText(counts)` belong to the patch mode. `diffWords(a, b)`, `diffSentences(a, b)`, `analyze(a, b)`, `splitSentences(text)`, `countWords(text)`, `countsText(counts)` and `commonSubsequence(a, b)` are pure and exported, with their types (`WordPart`, `Entry`, `Analysis`, `Counts`, `CompareSide`, `CompareOptions`). `setView(root, view)` and `toggleAll(root)` drive a compare from code.
+`parsePatch(patch)`, `patchCounts(files)`, `patchCountsText(counts)`, `unifiedPatch(name, before, after, options)` and `hasChanges(patch)` belong to the patch mode; `mergePlan(mine, theirs, base)`, `merged(plan, picks)`, `choicesOf(plan)` and `startPicks(plan)` (with `MergePlan`, `MergeSegment`, `MergeChoice`, `MergeBlock`, `MergePick`) to the merge mode. `diffWords(a, b)`, `diffSentences(a, b)`, `analyze(a, b)`, `splitSentences(text)`, `countsText(counts)` and `commonSubsequence(a, b)` are pure and exported, with their types (`WordPart`, `Entry`, `Analysis`, `Counts`, `CompareSide`, `CompareOptions`). `setView(root, view)` and `toggleAll(root)` drive a compare from code.
 
 In React, `import { DraftCompare } from "capsomer/react/draft-compare"`:
 

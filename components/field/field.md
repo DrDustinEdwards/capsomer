@@ -4,9 +4,9 @@ title: Field
 summary: A labeled input, textarea, file input, checkbox, radio or input group, with help outside it and an error beside it, checked on leave and on submit; with a password, character count, one-time code, number, search and date input built on it.
 parts: [css, behavior, react]
 tool: native + own JavaScript
-states: [default, keyboard focus, hover, filled, help text, required, invalid with its message, disabled, read-only, file input, input group, checkbox checked, unchecked, mixed and invalid, radio checked and unchecked, choice card, slider, password shown and hidden, one-time code, character count under and over, number with steppers, search with Clear, date input with a part in error, two or more errors in the error summary]
+states: [default, keyboard focus, hover, filled, help text, required, invalid with its message, disabled, read-only, file input, input group, checkbox checked, unchecked, mixed and invalid, radio checked and unchecked, choice card, slider, password shown and hidden, one-time code, character count under and over, number with steppers, search with Clear, date input with a part in error, two or more errors in the error summary, a field with its action, help under the control, slider with its readout and ends, money, date and time]
 added: 0.1.0
-updated: 0.56.0
+updated: 0.118.0
 source: Capsid Portal, dashboard/src/styles.css (.field, .siteform .f, .siteform .check, .err)
 replaces:
   - 'class="(?:[^"]*\s)?field[\s"]'
@@ -36,7 +36,7 @@ Any form: a site's settings, a new job, a post's metadata, the one-line reason o
 ## The default and its reason
 
 - **The label is visible and above the control.** A placeholder is an example only ("For example: capsid-driver"), never the label: it disappears as soon as someone types.
-- **A slider** (`input.cap-range`, React `Range`) is a native range input on a 4 px track that fills with the primary color up to the thumb, from `--cap-range-fill` (React sets it from the value). The 20 px thumb grows a soft ring under the pointer, takes the focus ring on a keyboard and shrinks a little while held; forced colors bring the browser's own slider back.
+- **A slider** (`input.cap-range`, React `Range`) is a native range input on a 4 px track that fills with the primary color up to the thumb, from `--cap-range-fill` (React sets it from the value). The 20 px thumb grows a soft ring under the pointer, takes the focus ring on a keyboard and shrinks a little while held. On a touch screen the thumb takes a 44 px target with the 20 px dot drawn inside it. Forced colors bring the browser's own slider back.
 - **Help sits outside the control**, between the label and the control, and is the control's description.
 - **Required is marked with the word "Required"** beside the label (hidden from screen readers, which already hear the `required` attribute). Optional fields are not marked.
 - **A field is checked when it is left, once it has been changed, and every field on submit.** Tabbing through an empty form does not fill it with errors. A field showing an error is checked again as it is typed in, so the message goes as soon as it is fixed.
@@ -53,6 +53,16 @@ Any form: a site's settings, a new job, a post's metadata, the one-line reason o
 - **Number** (APG Spinbutton, on a native `type="number"`). An input group with a Decrease button (`data-cap-part="step-down"`) before the input and an Increase button (`"step-up"`) after it, each named for the field ("Decrease retries"), out of the Tab order (`tabindex="-1"`, since the arrow keys in the field do the same) and `hidden` until script shows them, when the browser's own spinner goes. A stepper keeps focus in the field and is disabled at `min` or `max`.
 - **Search** (React Aria SearchField). `.cap-search` with `role="search"` around one field: a `form` that sends `q` with no script, or a `div` for a filter that answers as it is typed in. `type="search"` in an input group, with a Clear button (`data-cap-part="clear"`, "Clear search") that shows while there is text. Esc in the field clears it; an Esc in an empty field goes on to whatever is around it, such as a dialog. With no script the browser's own clear is left.
 - **Date input** (GOV.UK Date input). A `fieldset.cap-field` with the question as its `legend`, then `.cap-date-input` holding a `.cap-date-input-part` for the day, the month and the year, each a label and an input with `data-cap-part="day|month|year"`, `inputmode="numeric"` and a pattern. A date of birth takes `autocomplete="bday-day"`, `"bday-month"`, `"bday-year"`. Each part has its own words for what is wrong ("Start date must include a month."); only the part in error takes the invalid edge, and the one message is the field's. Three parts that are each right but make no real date (31 2 2026) are wrong on the day, in the group's `data-error-date`. The order follows the site's language: American English puts the month first. For a date near today that is easier to pick from a calendar, use the Date picker.
+
+- **A field with its action** (Field's `action`). One button that acts on this field only (Add, Check, Apply) after the control in `.cap-field-row`, wrapping under it when the row is narrow.
+- **Help under the control** (`helpPlacement="after"`), for a layout whose help reads as a footnote. Before the control is the default (GOV.UK: read before typing).
+- **No "Required" word** (`showRequired={false}`) keeps the control required for a form that says once at the top that every field is.
+- **Text field** (`TextField`): Field and its input in one element, for the common case.
+- **Slider with its readout** (`RangeField`). The value at the end of the label's line (hidden from a screen reader, which hears the same words from the slider's `aria-valuetext`), and the words at the two ends under the track. `format` writes it as the page shows it ("$12,000").
+- **Slug** (`SlugField`). Prelum's one rule (`SLUG_PATTERN`, `slugify`): the input's `pattern`, tidied on leaving the field. Given `from` (the title), it follows the title until the person types in it, and again once they empty it. The server checks with Prelum's `isSlug`.
+- **Money** (`MoneyField`). Dollars in a text box (`inputmode="decimal"`, never `type="number"`, which drops what it cannot read) with the sign inside its edge. The app keeps integer cents: `centsToDollars` fills it, `dollarsToCents` reads the post as a string (never through a float, so 1.005 cannot round the wrong way) and answers null for anything that is not an amount.
+- **Date and time** (`DateTimeField`). `datetime-local` on the wall clock of a named time zone (default UTC, the Worker's), which the help names. `toDateTimeLocal(date, zone)` fills it and `fromDateTimeLocal(value, zone)` reads it back.
+- **Keep focus after a search** (`keepFocus()`). A plain GET form marked `data-keep-focus`, on a page with no client router, reloads the results; this puts focus back on the control it was sent from (the field with the caret at the end, or the button). `skip` returns true where the router submits in place.
 
 ## Autocomplete for personal data
 
@@ -199,7 +209,13 @@ The parts in React render the markup above, with their state in React (the butto
 <DateInput legend="Date of birth" name="dob" autoComplete="bday" value={dob} onChange={setDob} error={errors.dob} invalid={["month"]} />
 ```
 
-`Field` also takes a function as its child, given the control's props, for a control inside a group, and `after` for what goes between the control and its error.
+`Field` also takes a function as its child, given the control's props, for a control inside a group, and `after` for what goes between the control and its error. `NumberField` takes `step` as a number or `"any"`: any value passes the browser's step check, and the steppers and Page Up and Page Down step by 1. `size="short"` writes `data-size="short"` on the `.cap-field`, for a field that needs only its control's room beside a long one; a layout that sets field widths reads it (the inline add form).
+
+Fields side by side: `<div class="cap-fields">` around `.cap-field`s (and `.cap-check`s) puts as many in a row as fit at `--fields-min` (16rem) each, one column on a phone, lined up on their controls whatever help one carries.
+
+Fields in a row: `<div class="cap-field-row">` (or a `form`) around `.cap-field`s and then the buttons lays them out at their own widths, lined up on their controls, wrapping on a narrow space (gap `--space-3` by `--space-4`). `.cap-field-wide` on one field, the search, gives it the room the others leave (at least 16rem before it wraps). It is the filter bar of the catalog, the media library and the posts list, the posts list's update form, the people change form, the transcript bar and the scale control. Use `.cap-fields` instead for a form whose fields should share equal columns.
+
+`labelHidden` on `Field` or `SearchField` reads the label and does not show it, for a site's search box only.
 
 Fields in an input group, a choice card and horizontal fields:
 

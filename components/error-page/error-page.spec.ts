@@ -8,7 +8,7 @@ import {
 
 eachTheme((theme) => {
   test("accessibility: no axe violations, the stack included", async ({ page }) => {
-    for (const only of ["not-found", "server", "database", "dev"]) {
+    for (const only of ["not-found", "server", "database", "dev", "hero", "signed-out"]) {
       await visitStates(page, "error-page", theme, only);
       await expectNoAxeViolations(page);
     }
@@ -47,6 +47,24 @@ eachTheme((theme) => {
     }
     // A thrown error's message never reaches the page outside development.
     await expect(page.getByText("D1 timed out")).toHaveCount(0);
+  });
+
+  test("behavior: a page gone on purpose is no alert and has one way out; signed out is a status", async ({
+    page,
+  }) => {
+    await visitStates(page, "error-page", theme, "gone-to");
+    await expect(page.getByRole("alert")).toHaveCount(0);
+    await expect(page.getByRole("link", { name: "Read the notes" })).toHaveAttribute(
+      "href",
+      "#notes",
+    );
+    await expect(page.getByRole("link", { name: /Try again|home page/ })).toHaveCount(0);
+    await visitStates(page, "error-page", theme, "signed-out");
+    await expect(page.getByRole("status")).toContainText("Signed out");
+    await expect(page.getByRole("link", { name: "Sign in again" })).toHaveAttribute(
+      "href",
+      "#home",
+    );
   });
 
   test("keyboard: the site header's skip link comes first and moves to main", async ({ page }) => {

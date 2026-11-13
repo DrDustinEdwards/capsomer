@@ -6,6 +6,7 @@
     "components/*/examples.html",
     "components/*/examples.tsx",
     "components/*/specimen/*.ts",
+    "components/*/specimen/runtime/*.mjs",
     "components/*/*.spec.ts",
     "site/main.tsx",
     "site/home-main.ts",
@@ -17,6 +18,5 @@
     "tokens/*.mjs",
     "test/**/*.{ts,mjs}"
   ],
-  "project": ["**/*.{ts,tsx,mjs}"],
-  "ignoreDependencies": ["@dustinedwards/devkit"]
+  "project": ["**/*.{ts,tsx,mjs}"]
 }

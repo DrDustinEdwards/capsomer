@@ -6,7 +6,8 @@
 // status that never loses typed text. No framework; the React wrapper uses the same pure
 // functions.
 
-import { enhance as enhanceMeters } from "../meter/meter.ts";
+import { plural } from "../hooks/hooks.ts";
+import { enhance as enhanceMeters, percent } from "../meter/meter.ts";
 import { openDialog, wireDialog } from "../dialog/dialog.ts";
 import { fail } from "../message/message.ts";
 import { isImeEnter, singleKeysOff } from "../shortcuts/shortcuts.ts";
@@ -22,7 +23,8 @@ import {
 } from "./media-record.ts";
 import { bands, nextTile, type Direction } from "./media-grid.ts";
 import { createAutosave, type Autosave, type SaveState } from "./media-autosave.ts";
-import { applyBulkTag, COPIED_MS, COPY_FAILED_MS, copyText } from "./media-actions.ts";
+import { applyBulkTag } from "./media-actions.ts";
+import { COPIED_MS, COPY_FAILED_MS, copyText } from "../copy/copy.ts";
 import { buildTile, glyph, part, recordOf, syncTile, writeRecord } from "./media-tile.ts";
 import {
   fillInspector,
@@ -423,7 +425,7 @@ export function attachMedia(root: HTMLElement, options: MediaOptions = {}): Medi
         v === "bin"
           ? `${matchable} in Trash`
           : matchable === total
-            ? `${matchable} ${matchable === 1 ? "file" : "files"}`
+            ? plural(matchable, "file", "files")
             : `${matchable} of ${total} files`;
     }
     if (active && (active.hidden || active.closest("[hidden]"))) {
@@ -900,7 +902,7 @@ export function attachMedia(root: HTMLElement, options: MediaOptions = {}): Medi
       if (wasKey !== t.dataset.key) t.dataset.key = patch.key ?? wasKey ?? "";
       if (patch.progress !== undefined && t.dataset.state === "uploading") {
         const bar = t.querySelector<HTMLProgressElement>("progress.cap-meter-bar");
-        const pct = Math.max(0, Math.min(100, Math.round(patch.progress)));
+        const pct = percent(patch.progress);
         if (bar) {
           bar.value = pct;
           bar.setAttribute(

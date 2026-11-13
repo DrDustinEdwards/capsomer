@@ -1,0 +1,17 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* The approval queue: things your own side drafted, waiting for a person. It is the moderation
+   queue (.cap-mq, whose stylesheet draws the rows, the open row, the findings, the edit box and
+   the decisions, and hides the key hints when single keys are off) on a list of items the app
+   describes. This file only adds the visible heading and room under an open item. */
+@layer cap.components {
+  .cap-approvals-title {
+    margin: 0;
+    font-size: var(--fs-lead);
+  }
+  /* An open item's text is what is decided on: it starts under the title, not under the status. */
+  .cap-approvals .cap-mq-list .cap-mq-more {
+    padding-block-end: var(--space-3);
+  }
+}

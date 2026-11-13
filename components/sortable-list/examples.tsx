@@ -2,7 +2,7 @@
 // The page holds the items and saves each new order, as an app would.
 import { StrictMode, useState, type JSX } from "react";
 import { createRoot } from "react-dom/client";
-import { SortableList } from "./sortable-list.react.tsx";
+import { SortableBoard, SortableList, useRows, type Lists } from "./sortable-list.react.tsx";
 
 interface Card {
   id: string;
@@ -96,7 +96,204 @@ function Rows() {
   );
 }
 
-const mounts: Record<string, () => JSX.Element> = { cards: Corkboard, rows: Rows };
+// Repeatable rows: a form's rows with fields of their own, added, removed and put in order. The
+// host keeps a plain array; useRows gives each row an id that follows it.
+interface Person {
+  name: string;
+  role: string;
+}
+
+function Hosts() {
+  const [people, setPeople] = useState<Person[]>([
+    { name: "Alex Rivera", role: "Host" },
+    { name: "Sam Lee", role: "Producer" },
+  ]);
+  const rows = useRows(people, setPeople);
+  const update = (index: number, patch: Partial<Person>) =>
+    setPeople(people.map((p, i) => (i === index ? { ...p, ...patch } : p)));
+  return (
+    <>
+      <SortableList
+        aria-label="Hosts"
+        layout="stack"
+        items={rows.items}
+        getId={rows.getId}
+        getLabel={(r) => r.value.name || `Host ${r.index + 1}`}
+        renderItem={(r) => (
+          <div className="sortable-sample-fields">
+            <input
+              className="cap-input"
+              aria-label={`Host ${r.index + 1} name`}
+              placeholder="Name"
+              value={r.value.name}
+              onChange={(e) => update(r.index, { name: e.target.value })}
+            />
+            <input
+              className="cap-input"
+              aria-label={`Host ${r.index + 1} role`}
+              placeholder="Role"
+              value={r.value.role}
+              onChange={(e) => update(r.index, { role: e.target.value })}
+            />
+          </div>
+        )}
+        onReorder={rows.onReorder}
+        onRemove={rows.onRemove}
+        onAdd={() => setPeople([...people, { name: "", role: "" }])}
+        addLabel="Add host"
+        max={3}
+        empty="No hosts yet."
+      />
+      <output className="sortable-sample-out" id="hosts-out">
+        {people.map((p) => p.name || "(blank)").join(", ")}
+      </output>
+    </>
+  );
+}
+
+// Steps whose number is their place: a head line, Alt and an arrow anywhere in the card, and the
+// list's own words for a move.
+function Steps() {
+  const [steps, setSteps] = useState([
+    { id: "s1", text: "Rinse the tube twice." },
+    { id: "s2", text: "Add the buffer." },
+    { id: "s3", text: "Mix by inverting." },
+  ]);
+  return (
+    <SortableList
+      aria-label="Steps"
+      layout="stack"
+      altKeys
+      items={steps}
+      getId={(s) => s.id}
+      getLabel={(s) => s.text}
+      messages={{
+        step: (_label, pos, count) => `Moved to step ${pos} of ${count}.`,
+        over: (_label, pos, count) => `Step ${pos} of ${count}.`,
+      }}
+      renderHead={(_s, { index }) => <span>Step {index + 1}</span>}
+      renderItem={(s) => (
+        <textarea
+          className="cap-textarea"
+          aria-label="Step text"
+          value={s.text}
+          rows={2}
+          onChange={(e) =>
+            setSteps(steps.map((x) => (x.id === s.id ? { ...x, text: e.target.value } : x)))
+          }
+        />
+      )}
+      onReorder={(order) => setSteps(order.map((id) => steps.find((s) => s.id === id)!))}
+    />
+  );
+}
+
+// Items between lists: a book's sections. Dragging into another section, the arrow keys at the end
+// of a section, or the select in each item; locked once the book is published.
+interface Entry {
+  id: string;
+  title: string;
+  author: string;
+}
+
+function Sections() {
+  const [lists, setLists] = useState<Lists>({
+    talks: ["a1", "a2"],
+    posters: ["a3"],
+    late: [],
+  });
+  const [locked, setLocked] = useState(false);
+  const entries: Entry[] = [
+    { id: "a1", title: "Getting started with field samples", author: "Alex Rivera" },
+    { id: "a2", title: "Release notes for the new protocol", author: "Sam Lee" },
+    { id: "a3", title: "Field notes on slow growth", author: "Jordan Park" },
+  ];
+  const byId = new Map(entries.map((e) => [e.id, e]));
+  const lanes = [
+    { id: "talks", label: "Talks" },
+    { id: "posters", label: "Posters" },
+    { id: "late", label: "Late additions" },
+  ].map((l) => ({
+    ...l,
+    items: (lists[l.id] ?? []).map((id) => byId.get(id)!),
+    empty: "Empty. Drag an abstract here.",
+  }));
+  return (
+    <>
+      <label className="cap-check">
+        <input type="checkbox" checked={locked} onChange={(e) => setLocked(e.target.checked)} />{" "}
+        Published (locked)
+      </label>
+      <SortableBoard
+        lanes={lanes}
+        readOnly={locked}
+        getId={(e) => e.id}
+        getLabel={(e) => e.title}
+        renderLaneHead={(lane) => <h3 className="sortable-sample-lane">{lane.label}</h3>}
+        renderItem={(e) => (
+          <>
+            <span className="cap-sortable-label">
+              <span>{e.title}</span>
+            </span>
+            <span className="cap-sortable-detail">{e.author}</span>
+          </>
+        )}
+        onMove={(next) => setLists(next)}
+      />
+      <output className="sortable-sample-out" id="sections-out">
+        {Object.entries(lists)
+          .map(([l, ids]) => `${l}: ${ids.join(", ") || "none"}`)
+          .join("; ")}
+      </output>
+    </>
+  );
+}
+
+// A site's own look, by props and tokens (txasm's affiliations): no grip, Up and Down in words, no
+// box per row, a red Remove, an excluded row drawn by the site's class, and its own checkbox.
+function OwnLook() {
+  const [rows, setRows] = useState([
+    { id: "a1", name: "Example University", included: true },
+    { id: "a2", name: "Sample Health Center", included: false },
+    { id: "a3", name: "Field Station", included: true },
+  ]);
+  return (
+    <SortableList
+      aria-label="Affiliations"
+      className="sortable-own"
+      items={rows}
+      getId={(r) => r.id}
+      getLabel={(r) => r.name}
+      grip={false}
+      steps="labeled"
+      itemClassName={(r) => (r.included ? undefined : "sortable-own-out")}
+      renderItem={(r) => <span className="cap-sortable-label">{r.name}</span>}
+      renderControls={(r) => (
+        <label className="cap-check sortable-own-in">
+          <input
+            type="checkbox"
+            checked={r.included}
+            onChange={(e) =>
+              setRows(rows.map((x) => (x.id === r.id ? { ...x, included: e.target.checked } : x)))
+            }
+          />
+          In<span className="cap-sr-only"> {r.name}</span>
+        </label>
+      )}
+      onReorder={(order) => setRows(order.map((id) => rows.find((r) => r.id === id)!))}
+      onRemove={(id) => setRows(rows.filter((r) => r.id !== id))}
+    />
+  );
+}
+
+const mounts: Record<string, () => JSX.Element> = {
+  own: OwnLook,
+  cards: Corkboard,
+  rows: Rows,
+  hosts: Hosts,
+  steps: Steps,
+  sections: Sections,
+};
 for (const el of document.querySelectorAll<HTMLElement>("[data-mount]")) {
   const C = mounts[el.dataset.mount ?? ""];
   if (C)
