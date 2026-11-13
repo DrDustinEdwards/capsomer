@@ -10,7 +10,6 @@ import { htmlToText } from "@drdustinedwards/site-helpers/text";
 import { escapeHtml as esc } from "@dustinedwards/site-runtime/html";
 import { readFileSync, readdirSync, existsSync } from "node:fs";
 import { resolve } from "node:path";
-import { iconChevronLeft, iconChevronRight } from "../components/icons/icons.ts";
 import { familyFooterHtml } from "../components/family-footer/family-footer.ts";
 import { letterheadHtml } from "../components/site-header/site-header.ts";
 import { frontmatter } from "@drdustinedwards/site-helpers/frontmatter";
@@ -483,9 +482,10 @@ function exampleBlock(c: Component, e: Example, heading: boolean): string {
 </section>`;
 }
 
-const chevron = (d: string) =>
-  `<svg class="cap-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="${d}"/></svg>`;
-const ARROW = { prev: chevron(iconChevronLeft), next: chevron(iconChevronRight) };
+const ARROW = {
+  prev: `<svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M10 3 5 8l5 5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+  next: `<svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="m6 3 5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+};
 
 /**
  * A component's own public page at /components/<name>/, laid out as shadcn/ui's docs are: every

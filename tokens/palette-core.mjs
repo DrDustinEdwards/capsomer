@@ -1069,6 +1069,9 @@ const EMAIL_KEYS = [
   "info-soft",
 ];
 
+/** @deprecated The British spelling, kept so existing imports work; use `renderEmailColors`. */
+export const renderEmailColours = () => renderEmailColors(); // codespell:ignore
+
 export function renderEmailColors() {
   const out = {};
   for (const [name, f] of Object.entries(FAMILIES)) {

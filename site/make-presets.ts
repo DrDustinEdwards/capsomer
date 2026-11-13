@@ -149,6 +149,7 @@ export function corners(m: number): Record<string, string> {
 export const DENSITY: Record<Density, Record<string, string>> = {
   compact: {
     control: "34px",
+    "control-h": "34px",
     target: "24px",
     "pad-x": "12px",
     "pad-y": "7px",
@@ -158,6 +159,7 @@ export const DENSITY: Record<Density, Record<string, string>> = {
   },
   comfortable: {
     control: "36px",
+    "control-h": "36px",
     target: "28px",
     "pad-x": "12px",
     "pad-y": "8px",
