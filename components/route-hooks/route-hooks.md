@@ -15,7 +15,7 @@ replaces:
 
 # Route hooks
 
-`capsomer/react/route-hooks` (React Router 8). The pure parts, `filterParams`, `withParam` and `pagePending`, are also in `capsomer/behavior/form-hooks`.
+`capsomer/react/route-hooks` (React Router 8). The pure parts, `filterParams`, `withParam` and `pagePending`, are `capsomer/behavior/form-hooks`'s.
 
 | Export | Gives |
 | --- | --- |
