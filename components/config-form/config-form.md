@@ -24,7 +24,7 @@ A one-off setting is a field with its own save. A long multi-step setup is the s
 
 ## The default and its reason
 
-- **Focus goes to the first field** and the panel scrolls into view when it opens, so a keyboard user lands where the work is.
+- **Focus goes to the first field** and the panel scrolls into view when it opens, so a keyboard user lands where the work is. When it closes (Cancel, Esc, a save), focus goes back to the control that opened it, if focus went with the form.
 - **Preview, not Save.** The submit opens the app's confirm dialog with what the server will do and changes nothing itself (`submitLabel` if an app's flow differs).
 - **A hint, not a disabled button.** While the draft cannot be sent, the submit stays enabled and pressing it shows why in a hint that is announced (`role="alert"`); a disabled button would not say why.
 - **Esc cancels**, as Cancel does.
@@ -34,13 +34,13 @@ A one-off setting is a field with its own save. A long multi-step setup is the s
 
 ## Accessibility
 
-The panel is a named region (its heading). Fields are Capsomer `Field`s, labeled and described. The hint is announced when it appears.
+The panel is a named region (its heading). Fields are Capsomer `Field`s, labeled and described. The hint is a warning `Alert`, announced when it appears.
 
 Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the automated browser checks and a front-end review stand in.
 
 ## Markup
 
-Needs `panel.css`, `field.css` and `button.css`.
+Needs `panel.css`, `field.css`, `button.css` and `banner.css` (the hint is a warning `Alert`).
 
 ```tsx
 import { ConfigForm, useConfigForm, useEditor } from "capsomer/react/config-form";
