@@ -9,8 +9,8 @@ import { Check, Field } from "../field/field.react.tsx";
 import { Meter } from "../meter/meter.react.tsx";
 import { Panel } from "../panel/panel.react.tsx";
 import { Status } from "../status/status.react.tsx";
+import { dayKey } from "@dustinedwards/site-runtime/time";
 import {
-  dayKey,
   dayTotals,
   pace,
   paceLine,

@@ -12,7 +12,7 @@
 @layer cap.components {
   /* The surface, shared with the confirm dialog's page (a card, not an overlay). */
   :is(.cap-dialog, .cap-confirm-page) {
-    border: 1px solid var(--line);
+    border: var(--line-w) solid var(--line);
     border-radius: var(--radius-l);
     background: var(--raised);
     color: var(--text);
@@ -51,7 +51,7 @@
     }
     &:focus-visible {
       outline: var(--focus-width) solid var(--ring);
-      outline-offset: -2px;
+      outline-offset: calc(-1 * var(--focus-offset));
     }
 
     /* An in-page dialog is a form that wraps the parts: it takes no box of its own, so the header,
@@ -114,14 +114,14 @@
     &[data-placement="right"] {
       inset-inline: auto 0;
       border-width: 0;
-      border-inline-start-width: 1px;
+      border-inline-start-width: var(--line-w);
       --cap-dialog-from: translateX(calc(2.5rem * var(--cap-dialog-dir)));
       --cap-dialog-to: translateX(calc(1.25rem * var(--cap-dialog-dir)));
     }
     &[data-placement="left"] {
       inset-inline: 0 auto;
       border-width: 0;
-      border-inline-end-width: 1px;
+      border-inline-end-width: var(--line-w);
       --cap-dialog-from: translateX(calc(-2.5rem * var(--cap-dialog-dir)));
       --cap-dialog-to: translateX(calc(-1.25rem * var(--cap-dialog-dir)));
     }
@@ -133,7 +133,7 @@
       width: 100%;
       margin: 0;
       padding-block-end: env(safe-area-inset-bottom, 0px);
-      border-width: 1px 0 0;
+      border-width: var(--line-w) 0 0;
       border-radius: var(--radius-l) var(--radius-l) 0 0;
       --cap-dialog-from: translateY(2.5rem);
       --cap-dialog-to: translateY(1.25rem);
@@ -161,7 +161,7 @@
     }
     &[data-divider] {
       padding-block-end: var(--pad-card);
-      border-block-end: 1px solid var(--line);
+      border-block-end: var(--line-w) solid var(--line);
     }
     /* The Close button sits in the corner; the title keeps clear of it. */
     .cap-dialog:has(> .cap-dialog-close) > & {
@@ -211,8 +211,8 @@
     margin: 0;
     font-size: var(--fs-lead);
     font-weight: var(--weight-heading);
-    line-height: 1.25;
-    letter-spacing: -0.02em;
+    line-height: var(--leading-tight);
+    letter-spacing: calc(-1 * var(--tracking-wide));
     text-wrap: balance;
     overflow-wrap: anywhere;
   }
@@ -225,7 +225,7 @@
 
     & a {
       color: inherit;
-      font-weight: 600;
+      font-weight: var(--weight-semibold);
 
       &:hover {
         color: var(--text);
@@ -256,7 +256,7 @@
     /* A scrolling body is a keyboard stop (dialog.ts gives it tabindex); it shows where it is. */
     &:focus-visible {
       outline: var(--focus-width) solid var(--ring);
-      outline-offset: -2px;
+      outline-offset: calc(-1 * var(--focus-offset));
     }
   }
 
@@ -280,7 +280,7 @@
     flex-direction: column;
     gap: var(--space-3);
     padding: var(--pad-card);
-    border-block-start: 1px solid var(--line);
+    border-block-start: var(--line-w) solid var(--line);
     background: var(--sunken);
 
     .cap-dialog:is([data-placement="right"], [data-placement="left"], [data-placement="bottom"]) > & {

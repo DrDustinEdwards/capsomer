@@ -48,7 +48,7 @@
   :where(a[data-link], a:not([class*="cap-"]))::before {
     content: var(--link-before) / "";
     margin-inline-end: 0.25em;
-    font-weight: 400;
+    font-weight: var(--weight-regular);
     font-variant-emoji: text;
   }
 
@@ -105,7 +105,7 @@
   }
   a[data-footnote-backref] {
     padding-inline: 0.15em;
-    font: 600 1.1em / 1 var(--ui);
+    font: var(--weight-semibold) 1.1em / var(--leading-none) var(--ui);
     font-variant-emoji: text;
   }
 
@@ -125,7 +125,7 @@
     text-box: trim-both cap alphabetic;
     position: relative;
     font-family: var(--wayfinding);
-    font-weight: 700;
+    font-weight: var(--weight-bold);
 
     /* The panel lamp hover (css/utilities.css): the words in the accent, no tint. */
     &:is(:hover, :focus-visible) {
@@ -147,11 +147,11 @@
     gap: var(--space-2);
     min-block-size: max(var(--target), 26px);
     padding: 0 var(--pad-x);
-    border: 1px solid var(--ring);
+    border: var(--line-w) solid var(--ring);
     border-radius: var(--radius-full);
     background: var(--accent-soft);
     color: var(--accent-text);
-    font: 600 var(--fs-detail) / 1.2 var(--ui);
+    font: var(--weight-semibold) var(--fs-detail) / var(--leading-tight) var(--ui);
     white-space: nowrap;
     vertical-align: middle;
     &:visited,

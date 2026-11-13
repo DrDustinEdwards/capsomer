@@ -1,6 +1,6 @@
 /* Specimen only: the sample checklist's own page styles. */
 .run-demo ol {
-  padding-inline-start: 1.75rem;
+  padding-inline-start: calc(var(--space-6) + var(--space-2));
 }
 .run-demo [data-run-flag] {
   font-weight: var(--weight-heading);

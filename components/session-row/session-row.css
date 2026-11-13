@@ -22,7 +22,7 @@
     display: grid;
     gap: var(--space-3);
     padding: var(--gap) var(--pad-card);
-    border-top: 1px solid var(--line);
+    border-top: var(--line-w) solid var(--line);
     min-width: 0;
     position: relative;
 
@@ -55,7 +55,7 @@
   .cap-session-agent {
     font-family: var(--mono);
     font-size: var(--fs-detail);
-    font-weight: 500;
+    font-weight: var(--weight-medium);
     color: var(--text);
     overflow-wrap: anywhere;
   }
@@ -99,7 +99,7 @@
     display: grid;
     gap: var(--space-3);
     padding: var(--pad-y) var(--pad-x);
-    border: 1px solid var(--warn);
+    border: var(--line-w) solid var(--warn);
     border-radius: var(--radius-l);
     background: var(--warn-soft);
     min-width: 0;
@@ -107,19 +107,19 @@
   .cap-session-question {
     margin: 0;
     color: var(--text);
-    font-weight: 500;
+    font-weight: var(--weight-medium);
   }
   /* The exact command or question, as the agent sent it: mono, sunken, wrapping. */
   .cap-session-cmd {
     margin: 0;
     padding: var(--space-3) var(--space-4);
-    border: 1px solid var(--line);
+    border: var(--line-w) solid var(--line);
     border-radius: var(--radius-m);
     background: var(--sunken);
     color: var(--text);
     font-family: var(--mono);
     font-size: var(--fs-detail);
-    line-height: 1.55;
+    line-height: var(--leading-normal);
     white-space: pre-wrap;
     overflow-wrap: anywhere;
 

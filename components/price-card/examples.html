@@ -15,6 +15,7 @@
       <p class="cap-price-card-price"><span class="cap-price-card-amount">$0.10</span> <span class="cap-price-card-unit">/ word</span></p>
       <p class="cap-price-card-label">3 to 5 business days</p>
       <p class="cap-price-card-text">For a resubmission on a deadline, with a second read by Sam Lee before it goes back.</p>
+      <p class="cap-price-card-text">Files are deleted after 30 days.</p>
       <ul class="cap-price-card-points" aria-label="Included"><li>Two full edits</li><li>Comments in the margin</li><li>A cover letter read</li></ul>
       <div class="cap-price-card-action"><a class="cap-btn" data-variant="primary" href="#standard">Choose Standard</a></div>
     </li>
@@ -34,8 +35,21 @@
       <legend>Plan</legend>
       <div class="cap-plan-choice-options">
         <label class="cap-check" data-variant="card"><input type="radio" name="plan" value="monthly" checked /><span class="cap-plan-option-text"><span class="cap-plan-option-name">Monthly</span><span class="cap-plan-option-price">$5 a month</span></span></label>
-        <label class="cap-check" data-variant="card"><input type="radio" name="plan" value="yearly" /><span class="cap-plan-option-text"><span class="cap-plan-option-name">Yearly</span><span class="cap-plan-option-price">$50 a year</span></span></label>
+        <label class="cap-check" data-variant="card"><input type="radio" name="plan" value="yearly" /><span class="cap-plan-option-text"><span class="cap-plan-option-name">Yearly</span><span class="cap-plan-option-price">$50 a year</span><span class="cap-plan-option-note">Save $10</span></span></label>
         <label class="cap-check" data-variant="card"><input type="radio" name="plan" value="team" disabled /><span class="cap-plan-option-text"><span class="cap-plan-option-name">Team</span><span class="cap-plan-option-price">Coming later</span></span></label>
+      </div>
+    </fieldset>
+  </form>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-plan-hidden">
+  <h2 id="s-plan-hidden">Plan choice, legend hidden</h2>
+  <form id="pc-plan-hidden">
+    <fieldset class="cap-plan-choice">
+      <legend class="cap-sr-only">Billing period</legend>
+      <div class="cap-plan-choice-options">
+        <label class="cap-check" data-variant="card"><input type="radio" name="period" value="quarter" checked /><span class="cap-plan-option-text"><span class="cap-plan-option-name">Each quarter</span><span class="cap-plan-option-price">$14 a quarter</span></span></label>
+        <label class="cap-check" data-variant="card"><input type="radio" name="period" value="two-years" /><span class="cap-plan-option-text"><span class="cap-plan-option-name">Two years</span><span class="cap-plan-option-price">$90 for two years</span></span></label>
       </div>
     </fieldset>
   </form>

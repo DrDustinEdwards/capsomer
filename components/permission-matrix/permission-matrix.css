@@ -36,7 +36,7 @@
     text-align: start;
     text-transform: none;
     letter-spacing: 0;
-    font-weight: 400;
+    font-weight: var(--weight-regular);
     color: var(--text);
     white-space: nowrap;
   }
@@ -54,7 +54,7 @@
     inline-size: 16px;
     block-size: 16px;
     vertical-align: middle;
-    border: 1px solid var(--line-strong);
+    border: var(--line-w) solid var(--line-strong);
     border-radius: var(--radius-s);
     background: transparent;
     color: var(--primary-fg);
@@ -87,19 +87,19 @@
     gap: var(--space-1);
     min-width: 0;
     padding: var(--pad-y) var(--pad-x);
-    border: 1px solid var(--line);
+    border: var(--line-w) solid var(--line);
     border-radius: var(--radius-l);
   }
 
   .cap-perms-name {
     font-size: var(--fs-body);
-    font-weight: 600;
-    line-height: 1.375;
+    font-weight: var(--weight-semibold);
+    line-height: var(--leading-compact);
     color: var(--text);
     overflow-wrap: anywhere;
 
     &.cap-mono {
-      font-weight: 400;
+      font-weight: var(--weight-regular);
     }
   }
 

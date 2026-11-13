@@ -4,8 +4,9 @@
 // The subject (what a session is, where it is stored) stays in the app; it hands over each
 // item's times through an accessor.
 
-import { DAY, dayKey, formatDate, toMsOrNull, zoneName } from "../time/time.ts";
-import { plural } from "../hooks/hooks.ts";
+import { dayKey } from "@dustinedwards/site-runtime/time";
+import { plural } from "@drdustinedwards/site-helpers/text";
+import { DAY, formatDate, toMsOrNull, zoneName } from "../time/time.ts";
 
 // The day key of items that have no date yet. Sorts after every real day.
 export const NO_DATE = "no-date";

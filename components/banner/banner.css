@@ -20,7 +20,7 @@
     inline-size: 100%;
     margin: 0;
     padding: var(--space-3) var(--pad-x);
-    border: 1px solid var(--_tone);
+    border: var(--line-w) solid var(--_tone);
     border-radius: var(--radius-l);
     background: var(--_soft);
     color: var(--text);
@@ -67,7 +67,7 @@
     /* Links in the words are semibold and keep their own color. */
     & a:not(.cap-btn) {
       color: inherit;
-      font-weight: 600;
+      font-weight: var(--weight-semibold);
     }
   }
 
@@ -87,7 +87,7 @@
     margin: 0;
 
     & b {
-      font-weight: 600;
+      font-weight: var(--weight-semibold);
     }
   }
 
@@ -112,7 +112,7 @@
   .cap-banner-title,
   .cap-alert-title {
     margin: 0;
-    font-weight: 600;
+    font-weight: var(--weight-semibold);
     min-inline-size: 0;
   }
 

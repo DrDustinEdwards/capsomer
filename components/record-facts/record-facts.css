@@ -27,7 +27,7 @@
   .cap-record-facts-item > dd {
     margin: 0;
     color: var(--text);
-    font-weight: 500;
+    font-weight: var(--weight-medium);
     overflow-wrap: anywhere;
 
     /* An identifier (a DOI, an accession, a version) is in the family's mono face. */

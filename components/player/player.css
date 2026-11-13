@@ -57,7 +57,7 @@
     grid-template: 1fr auto / 1fr;
     aspect-ratio: 16 / 9;
     overflow: hidden;
-    border: 1px solid var(--line-strong);
+    border: var(--line-w) solid var(--line-strong);
     border-radius: var(--radius-m);
     background: var(--sunken);
     color: var(--text);
@@ -76,7 +76,7 @@
       place-self: center;
       inline-size: calc(var(--target) * 1.5);
       block-size: calc(var(--target) * 1.5);
-      border: 2px solid var(--primary-fg);
+      border: var(--line-w-thick) solid var(--primary-fg);
       border-radius: var(--radius-full);
       background: var(--primary);
       box-shadow: var(--shadow-m);
@@ -92,11 +92,11 @@
       position: relative;
       grid-area: 2 / 1;
       padding: var(--space-3) var(--space-4);
-      border-block-start: 1px solid var(--line);
+      border-block-start: var(--line-w) solid var(--line);
       background: var(--surface);
       font-size: var(--fs-body);
-      font-weight: 600;
-      line-height: 1.35;
+      font-weight: var(--weight-semibold);
+      line-height: var(--leading-snug);
       text-wrap: balance;
     }
     &:hover > :where(.cap-player-play, .embed-play) {
@@ -152,7 +152,7 @@
     min-inline-size: var(--cap-player-btn, max(var(--control), var(--target)));
     block-size: var(--cap-player-btn, max(var(--control), var(--target)));
     padding: 0 var(--space-3);
-    border: 1px solid var(--line);
+    border: var(--line-w) solid var(--line);
     border-radius: var(--radius-full);
     background: var(--raised);
     color: var(--text);
@@ -229,22 +229,22 @@
   :where(.cap-player-transcript-link) {
     inline-size: auto;
     padding: 0 var(--space-4);
-    font-weight: 400;
+    font-weight: var(--weight-regular);
   }
   /* The shared icons at the player's sizes and its 2-unit stroke. */
   :where(.cap-player-icon) {
     flex: none;
-    --icon-size: 18px;
+    --icon-size: var(--fs-h3);
     --icon-stroke: 2;
   }
   :where([data-part="play"], .cap-player-more) > :where(.cap-player-icon) {
-    --icon-size: 20px;
+    --icon-size: var(--title-4);
   }
   :where(.cap-player-transcript-link) > :where(.cap-player-icon) {
-    --icon-size: 16px;
+    --icon-size: var(--title-6);
   }
   :where(.cap-player-meta) > :where(.cap-player-icon) {
-    --icon-size: 12px;
+    --icon-size: var(--fs-small);
   }
   :where(.cap-player-rate, .cap-player-time, .cap-player-meta, .cap-player-at, .cap-player-legend, .cap-player-speaker, .cap-player-wave-tip, .cap-player-wave-note) {
     font-family: var(--cap-player-meta-face, var(--mono));
@@ -302,7 +302,7 @@
     inset-block-end: 0;
     z-index: var(--z-tabbar);
     padding-block-end: env(safe-area-inset-bottom);
-    border-block-start: 1px solid var(--line);
+    border-block-start: var(--line-w) solid var(--line);
     background: color-mix(in oklab, var(--surface) 95%, transparent);
     backdrop-filter: blur(8px);
     color: var(--text);
@@ -322,7 +322,7 @@
       transition: background-color var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
     }
     :where(.cap-player-spin) {
-      animation: cap-spin 1s linear infinite;
+      animation: cap-spin var(--dur-wait) linear infinite;
     }
   }
   :where(.cap-player-dock-inner) {
@@ -346,14 +346,14 @@
     color: var(--text);
     font-family: var(--cap-player-face, var(--ui));
     font-size: var(--fs-body);
-    font-weight: 500;
+    font-weight: var(--weight-medium);
     text-decoration: none;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
   /* A link's hit area reaches the 24 px minimum (WCAG 2.5.8) without changing the line it sits on. */
   :where(a.cap-player-title, a.cap-player-host-name) {
-    padding-block: max(0px, (24px - 1lh) / 2);
+    padding-block: max(0px, (var(--space-6) - 1lh) / 2);
   }
   :where(a.cap-player-title:hover) {
     color: var(--accent-text);
@@ -365,7 +365,7 @@
     min-inline-size: 0;
     color: var(--accent-text);
     font-size: var(--fs-label);
-    letter-spacing: 0.05em;
+    letter-spacing: var(--tracking-widest);
     text-transform: uppercase;
     &[data-tone="crit"] {
       color: var(--crit);
@@ -418,7 +418,7 @@
     display: grid;
     gap: var(--space-3);
     padding: var(--space-5);
-    border: 1px solid var(--line);
+    border: var(--line-w) solid var(--line);
     border-radius: var(--radius-xl);
     background: var(--surface);
     color: var(--text);
@@ -467,7 +467,7 @@
     padding: 0;
     color: var(--muted);
     font-size: var(--fs-label);
-    letter-spacing: 0.05em;
+    letter-spacing: var(--tracking-widest);
     text-transform: uppercase;
   }
   :where(.cap-player-fine) {
@@ -500,7 +500,7 @@
     min-block-size: max(var(--target), var(--control));
     padding: var(--space-2) var(--space-3);
     border: 0;
-    border-inline-start: 3px solid transparent;
+    border-inline-start: var(--line-w-bar) solid transparent;
     border-radius: var(--radius-m);
     background: transparent;
     color: var(--text);
@@ -514,7 +514,7 @@
     &[aria-current="true"] {
       border-inline-start-color: var(--accent);
       color: var(--accent-text);
-      font-weight: 600;
+      font-weight: var(--weight-semibold);
     }
   }
   :where(.cap-player-chapter-title) {
@@ -532,7 +532,7 @@
     margin: 0 0 var(--space-4);
     font-family: var(--cap-player-face, var(--ui));
     font-size: var(--fs-h3);
-    font-weight: 600;
+    font-weight: var(--weight-semibold);
   }
 
   /* Key moments: a grid of time and label. */
@@ -552,7 +552,7 @@
     inline-size: 100%;
     min-block-size: max(var(--target), var(--control));
     padding: var(--space-4);
-    border: 1px solid var(--line);
+    border: var(--line-w) solid var(--line);
     border-radius: var(--radius-l);
     background: var(--raised);
     color: var(--text);
@@ -566,7 +566,7 @@
     &[aria-current="true"] {
       border-color: var(--accent);
       background: var(--accent-soft);
-      font-weight: 600;
+      font-weight: var(--weight-semibold);
     }
   }
   :where(.cap-player-said) {
@@ -585,7 +585,7 @@
     align-items: center;
     gap: var(--space-4);
     padding: var(--space-5);
-    border: 1px solid var(--line);
+    border: var(--line-w) solid var(--line);
     border-radius: var(--radius-l);
     background: var(--raised);
   }
@@ -596,7 +596,7 @@
   :where(.cap-player-host-name) {
     color: var(--text);
     font-family: var(--cap-player-face, var(--ui));
-    font-weight: 500;
+    font-weight: var(--weight-medium);
   }
   :where(a.cap-player-host-name:hover) {
     color: var(--accent-text);
@@ -658,7 +658,7 @@
     margin: 0;
     color: var(--muted);
     font-size: var(--fs-label);
-    letter-spacing: 0.05em;
+    letter-spacing: var(--tracking-widest);
     text-transform: uppercase;
   }
   /* The editor's still waveform, bars from the bottom, chapters marked. */
@@ -668,7 +668,7 @@
     inline-size: 100%;
     block-size: 3.5rem;
     padding-inline: var(--space-2);
-    border: 1px solid var(--line);
+    border: var(--line-w) solid var(--line);
     border-radius: var(--radius-l);
     background: var(--surface);
     & .cap-player-wave-bar {
@@ -684,7 +684,7 @@
     display: grid;
     place-items: center;
     block-size: 3.5rem;
-    border: 1px dashed var(--line-strong);
+    border: var(--line-w) dashed var(--line-strong);
     border-radius: var(--radius-l);
     background: var(--surface);
     color: var(--muted);
@@ -710,7 +710,7 @@
     padding: var(--space-5);
     overflow-y: auto;
     overscroll-behavior: contain;
-    border: 1px solid var(--line);
+    border: var(--line-w) solid var(--line);
     border-radius: var(--radius-xl);
   }
   :where(.cap-player-para) {
@@ -722,18 +722,18 @@
     color: var(--accent-text);
     font-family: var(--cap-player-face, var(--ui));
     font-size: var(--fs-body);
-    font-weight: 600;
+    font-weight: var(--weight-semibold);
   }
   :where(.cap-player-speaker) {
     margin: 0;
     color: var(--accent-text);
     font-size: var(--fs-label);
-    letter-spacing: 0.05em;
+    letter-spacing: var(--tracking-widest);
     text-transform: uppercase;
   }
   :where(.cap-player-para-text) {
     margin: 0;
-    line-height: 1.7;
+    line-height: var(--leading-loose);
   }
   /* A whole target (WCAG 2.5.8), though it sits in a line of text. */
   :where(button.cap-player-at) {
@@ -806,7 +806,7 @@
     inline-size: max(var(--target), var(--control));
     block-size: max(var(--target), var(--control));
     padding: 0;
-    border: 1px solid var(--line-strong);
+    border: var(--line-w) solid var(--line-strong);
     border-radius: var(--radius-full);
     background: transparent;
     color: var(--accent-text);
@@ -876,12 +876,12 @@
       stroke: CanvasText;
     }
     :where(.cap-player-moment[aria-current="true"]) {
-      outline: 2px solid Highlight;
+      outline: var(--focus-width) solid Highlight;
     }
     /* A setting away from its default keeps a heavier edge in the system's highlight. */
     :where(.cap-player-btn[data-active]),
     .cap-player-menu[data-active] .cap-btn.cap-menu-trigger {
-      border: 2px solid Highlight;
+      border: var(--line-w-thick) solid Highlight;
     }
   }
 }
