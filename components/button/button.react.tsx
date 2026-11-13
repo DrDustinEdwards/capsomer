@@ -9,12 +9,10 @@ import {
 } from "react";
 import { morphFrom } from "./button.ts";
 
-export interface ButtonProps extends Omit<
-  ButtonHTMLAttributes<HTMLButtonElement>,
-  "disabled" | "style"
-> {
-  variant?: "default" | "primary" | "secondary" | "danger" | "quiet" | "link";
-  size?: "xs" | "sm" | "default" | "lg";
+export interface ButtonProps
+  extends
+    Omit<ButtonHTMLAttributes<HTMLButtonElement>, "disabled" | "style">,
+    Pick<ButtonLook, "variant" | "size"> {
   // In flight: the label stays (so the width and the name stay) and a spinner covers it.
   // Clicks are ignored until it settles.
   pending?: boolean;
@@ -39,6 +37,36 @@ export interface ButtonProps extends Omit<
   children?: ReactNode;
 }
 
+// The look Button and ButtonLink share (`.cap-btn`, button.md): variant, size, an icon alone,
+// wrapping and filling the row.
+export interface ButtonLook {
+  variant?: "default" | "primary" | "secondary" | "danger" | "quiet" | "link";
+  size?: "xs" | "sm" | "default" | "lg";
+  iconOnly?: boolean;
+  wrap?: boolean;
+  block?: boolean;
+}
+
+// The class and data attributes for a look, and the accessible name an icon alone takes (its
+// `label`, else the given aria-label), warning when an icon-only control has neither.
+export function buttonAttrs(
+  look: ButtonLook & { label?: string; "aria-label"?: string },
+  className: string | undefined,
+) {
+  const { variant = "default", size = "default", iconOnly = false, wrap = false } = look;
+  const name = iconOnly ? (look.label ?? look["aria-label"]) : look["aria-label"];
+  if (iconOnly && !name) console.warn("Capsomer: an icon-only button or link needs a label.");
+  return {
+    className: className ? `cap-btn ${className}` : "cap-btn",
+    "data-variant": variant === "default" ? undefined : variant,
+    "data-size": size === "default" ? undefined : size,
+    "data-icon-only": iconOnly ? "" : undefined,
+    "data-wrap": wrap ? "" : undefined,
+    "data-block": look.block ? "" : undefined,
+    "aria-label": name,
+  };
+}
+
 export function Button(props: ButtonProps) {
   const {
     variant = "default",
@@ -61,8 +89,6 @@ export function Button(props: ButtonProps) {
   const disabled = disabledReason != null && disabledReason !== false;
   const describedBy =
     [rest["aria-describedby"], disabled ? reasonId : null].filter(Boolean).join(" ") || undefined;
-  if (iconOnly && !label && !rest["aria-label"])
-    console.warn("Button: an icon-only button needs a label.");
 
   // The morph: after React writes a new label, animate from the last width and a copy of the
   // last label (button.ts).
@@ -91,13 +117,10 @@ export function Button(props: ButtonProps) {
     <button
       {...rest}
       type={type}
-      className={className ? `cap-btn ${className}` : "cap-btn"}
-      data-variant={variant === "default" ? undefined : variant}
-      data-size={size === "default" ? undefined : size}
-      data-icon-only={iconOnly ? "" : undefined}
-      data-wrap={wrap ? "" : undefined}
-      data-block={block ? "" : undefined}
-      aria-label={iconOnly ? (label ?? rest["aria-label"]) : rest["aria-label"]}
+      {...buttonAttrs(
+        { variant, size, iconOnly, wrap, block, label, "aria-label": rest["aria-label"] },
+        className,
+      )}
       aria-disabled={disabled ? true : undefined}
       aria-describedby={describedBy}
       aria-busy={pending ? true : undefined}

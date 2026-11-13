@@ -13,6 +13,7 @@ import {
   type PrefetchBehavior,
   type To,
 } from "react-router";
+import { buttonAttrs, type ButtonLook } from "../button/button.react.tsx";
 import { ABSOLUTE, mayPrefetch } from "./link.ts";
 
 // React Router's Link and NavLink, the same props, prefetching on hover and focus by default
@@ -119,41 +120,18 @@ export function AwayLink({ newTab = false, sponsored = false, children, ...rest 
 // block, for moving to another view. `to` is a route (React Router's Link, prefetching as Link
 // does); `href` is a plain document link (a download, an export, another site). `away` marks a
 // link to another site, as AwayLink does, with ↗ after the words.
-type ButtonLook = {
-  variant?: "default" | "primary" | "secondary" | "danger" | "quiet" | "link";
-  size?: "xs" | "sm" | "default" | "lg";
-  iconOnly?: boolean;
+type ButtonLinkLook = ButtonLook & {
   label?: string;
-  wrap?: boolean;
-  block?: boolean;
   away?: boolean;
   newTab?: boolean;
   sponsored?: boolean;
 };
 
-export type ButtonLinkProps = ButtonLook &
+export type ButtonLinkProps = ButtonLinkLook &
   (
     | (Omit<ComponentProps<typeof RouterLink>, "style"> & { href?: never })
     | (Omit<AnchorHTMLAttributes<HTMLAnchorElement>, "style"> & { href: string; to?: never })
   );
-
-function buttonAttrs(look: ButtonLook, className: string | undefined) {
-  const {
-    variant = "default",
-    size = "default",
-    iconOnly = false,
-    wrap = false,
-    block = false,
-  } = look;
-  return {
-    className: className ? `cap-btn ${className}` : "cap-btn",
-    "data-variant": variant === "default" ? undefined : variant,
-    "data-size": size === "default" ? undefined : size,
-    "data-icon-only": iconOnly ? "" : undefined,
-    "data-wrap": wrap ? "" : undefined,
-    "data-block": block ? "" : undefined,
-  };
-}
 
 export function ButtonLink(props: ButtonLinkProps) {
   const {
@@ -170,10 +148,10 @@ export function ButtonLink(props: ButtonLinkProps) {
     children,
     ...rest
   } = props;
-  const attrs = buttonAttrs({ variant, size, iconOnly, wrap, block }, className);
-  if (iconOnly && !label && !rest["aria-label"])
-    console.warn("ButtonLink: an icon-only link needs a label.");
-  const name = iconOnly ? (label ?? rest["aria-label"]) : rest["aria-label"];
+  const attrs = buttonAttrs(
+    { variant, size, iconOnly, wrap, block, label, "aria-label": rest["aria-label"] },
+    className,
+  );
   const body = (
     <>
       {children}
@@ -197,7 +175,6 @@ export function ButtonLink(props: ButtonLinkProps) {
       <a
         {...anchor}
         {...attrs}
-        aria-label={name}
         target={target ?? anchor.target}
         rel={rel ?? anchor.rel}
       >
@@ -210,7 +187,6 @@ export function ButtonLink(props: ButtonLinkProps) {
     <Link
       {...link}
       {...attrs}
-      aria-label={name}
       target={target ?? link.target}
       rel={rel ?? link.rel}
     >
