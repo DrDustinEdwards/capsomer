@@ -46,6 +46,7 @@
     "./base.css": "./css/base.css",
     "./utilities.css": "./css/utilities.css",
     "./links.css": "./css/links.css",
+    "./reset.css": "./css/reset.css",
     "./fonts.css": "./css/fonts.css",
     "./fallback-fonts.css": "./css/fallback-fonts.css",
     "./fonts/*": "./fonts/*",
