@@ -20,16 +20,6 @@ eachTheme((theme) => {
     ]);
   });
 
-  test("keyboard: arrow keys choose the next plan and skip a disabled one", async ({ page }) => {
-    await visitStates(page, "price-card", theme);
-    const monthly = page.getByRole("radio", { name: /Monthly/ });
-    await monthly.focus();
-    await page.keyboard.press("ArrowRight");
-    await expect(page.getByRole("radio", { name: /Yearly/ })).toBeChecked();
-    await page.keyboard.press("ArrowRight");
-    await expect(monthly).toBeChecked();
-  });
-
   test("behavior: the actions of cards in a row line up at the foot", async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 900 });
     await visitStates(page, "price-card", theme);

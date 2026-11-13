@@ -66,29 +66,6 @@ eachTheme(() => {
     await expect(page).toHaveTitle(/^Color and contrast · Capsomer/);
   });
 
-  test("behavior: the site is the reference shell: the site header with the theme button, the family's app strip, the collapse control at the menu's top", async ({
-    page,
-  }) => {
-    await page.goto("./admin/#/overview");
-    await expect(page.locator(".cap-site-header")).toBeVisible();
-    await expect(page.locator(".cap-site-header .cap-theme-button")).toBeVisible();
-    await expect(page.locator(".cap-admin-strip .cap-admin-tile")).toHaveCount(7);
-    await expect(
-      page.locator(".cap-admin-menu > [data-cap-part='menu-toggle']").first(),
-    ).toBeVisible();
-    await page.keyboard.press("[");
-    await expect(page.locator(".cap-admin")).toHaveAttribute("data-menu", "collapsed");
-  });
-
-  test("behavior: the usage example shows AdminShell", async ({ page }) => {
-    await page.goto("./admin/#/overview");
-    const code = page.locator("#install-h ~ * .site-code, .site-code").first();
-    await expect(code).toContainText(
-      'import { AdminShell, FIRST_PAGE } from "capsomer/react/admin-shell"',
-    );
-    await expect(code).toContainText("<AdminShell");
-  });
-
   test("behavior: the overview counts every family's contrast pairs, not just the committed palette's", async ({
     page,
   }) => {

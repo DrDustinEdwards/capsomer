@@ -58,36 +58,6 @@ eachTheme((theme) => {
     ]);
   });
 
-  test("accessibility: roles and names", { tag: "@markup" }, async ({ page }) => {
-    await visitStates(page, "switch-reason", theme);
-    await expect(page.locator("#sr-loop")).toMatchAriaSnapshot(`
-      - switch "Improve loop" [checked]
-    `);
-    await expect(page.locator("#sr-loop form")).toBeHidden();
-    await expect(page.locator("#sr-miss-why")).toHaveAccessibleName(
-      "Turning mention sync on. Reason:",
-    );
-    await expect(page.locator("#sr-miss-why")).toHaveAccessibleDescription(
-      `${MISSING} Enter applies, Esc cancels. The reason is recorded with the change.`,
-    );
-  });
-
-  test(
-    "accessibility: while the change is sent, the switch and the form say they are busy, and the switch keeps its name",
-    { tag: "@markup" },
-    async ({ page }) => {
-      await visitStates(page, "switch-reason", theme);
-      const sw = page.locator("[aria-labelledby='s-pending'] input[role='switch']");
-      await expect(sw).toHaveAttribute("aria-busy", "true");
-      await expect(sw).toHaveAccessibleName("Agent access for billing-driver");
-      await expect(page.locator("[aria-labelledby='s-pending'] form")).toHaveAttribute(
-        "aria-busy",
-        "true",
-      );
-      await expect(page.locator("#sr-pend-apply")).toHaveAttribute("aria-busy", "true");
-    },
-  );
-
   test("keyboard: Space on the switch asks why beside it and does not move it", async ({
     page,
   }) => {

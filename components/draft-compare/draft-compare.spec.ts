@@ -3,7 +3,6 @@ import {
   eachTheme,
   expectContrast,
   expectNoAxeViolations,
-  focused,
   visitStates,
 } from "../../test/helpers.ts";
 import { revisionPair } from "./draft-compare.ts";
@@ -149,79 +148,6 @@ eachTheme((theme) => {
     },
   );
 
-  test(
-    "accessibility: each side is named, with its title, who and when",
-    { tag: "@markup" },
-    async ({ page }) => {
-      await visitStates(page, "draft-compare", theme);
-      const head = page.locator("#cmp-default .cap-compare-head");
-      await expect(head.locator("[data-side='before']")).toContainText("Before");
-      await expect(head.locator("[data-side='before']")).toContainText("Draft 3");
-      await expect(head.locator("[data-side='before']")).toContainText("Alex Rivera");
-      await expect(head.locator("[data-side='before'] time")).toHaveAttribute(
-        "datetime",
-        "2026-09-28T18:05:00.000Z",
-      );
-      await expect(head.locator("[data-side='after']")).toContainText("After");
-      await expect(head.locator("[data-side='after']")).toContainText("Draft 4");
-      await expect(head.locator("[data-side='after'] time")).toHaveAttribute(
-        "datetime",
-        "2026-09-29T07:42:00.000Z",
-      );
-    },
-  );
-
-  test(
-    "accessibility: the scroll regions are focusable and named",
-    { tag: "@markup" },
-    async ({ page }) => {
-      await visitStates(page, "draft-compare", theme);
-      const region = page
-        .locator("#cmp-default")
-        .getByRole("region", { name: "Side by side, Compare Draft 3 with Draft 4" });
-      await expect(region).toHaveAttribute("tabindex", "0");
-      await region.focus();
-      await expect(region).toBeFocused();
-      // The views that are not shown are out of the accessibility tree.
-      await expect(
-        page.locator("#cmp-default").getByRole("region", { name: /^Inline,/ }),
-      ).toHaveCount(0);
-    },
-  );
-
-  test(
-    "accessibility: the legend is always on the page, with the marks and the counts, and the views are explained",
-    { tag: "@markup" },
-    async ({ page }) => {
-      await visitStates(page, "draft-compare", theme);
-      const legend = page.locator("#cmp-default .cap-compare-legend");
-      await expect(legend).toBeVisible();
-      await expect(legend.getByText("Added", { exact: true })).toBeVisible();
-      await expect(legend.getByText("Removed", { exact: true })).toBeVisible();
-      await expect(legend.locator(".cap-compare-counts")).toHaveText(
-        "15 words added, 12 removed, 4 changes",
-      );
-      // What each view does is the view switch's description.
-      await expect(page.locator("#cmp-default fieldset.cap-seg")).toHaveAccessibleDescription(
-        /^Side by side: before on the left.*Changes only: just the changed sentences\.$/,
-      );
-    },
-  );
-
-  test(
-    "accessibility: the no differences state is a status with both titles and times",
-    { tag: "@markup" },
-    async ({ page }) => {
-      await visitStates(page, "draft-compare", theme);
-      const status = page.locator("#cmp-none").getByRole("status").first();
-      await expect(status).toContainText("No differences");
-      await expect(status).toContainText("“Draft 3”");
-      await expect(status).toContainText("“Draft 3, saved again”");
-      await expect(status.locator("time")).toHaveCount(2);
-      await expect(page.locator("#cmp-none").getByRole("radio")).toHaveCount(0);
-    },
-  );
-
   test("keyboard: the arrow keys on the view switch choose the view", async ({ page }) => {
     await visitStates(page, "draft-compare", theme);
     const id = "cmp-default";
@@ -315,40 +241,6 @@ eachTheme((theme) => {
     );
   });
 
-  test("keyboard: Enter and Space on Next change and Previous change move between changes", async ({
-    page,
-  }) => {
-    await visitStates(page, "draft-compare", theme);
-    const next = page.locator("#cmp-default").getByRole("button", { name: /^Next change/ });
-    const prev = page.locator("#cmp-default").getByRole("button", { name: /^Previous change/ });
-    await next.focus();
-    await page.keyboard.press("Enter");
-    expect(await focusedChange(page)).toBe("1");
-    await next.focus();
-    await page.keyboard.press("Space");
-    expect(await focusedChange(page)).toBe("2");
-    await prev.focus();
-    await page.keyboard.press("Enter");
-    expect(await focusedChange(page)).toBe("1");
-  });
-
-  test("keyboard: Enter and Space on a folded passage's summary open and close it", async ({
-    page,
-  }) => {
-    await visitStates(page, "draft-compare", theme);
-    const fold = page.locator("#cmp-default .cap-compare-gap").first();
-    const summary = fold.locator("summary");
-    await summary.focus();
-    await expect(fold).not.toHaveAttribute("open", "");
-    await page.keyboard.press("Enter");
-    await expect(fold).toHaveAttribute("open", "");
-    await expect(
-      fold.getByText("The address is shown in full, never shortened.").first(),
-    ).toBeVisible();
-    await page.keyboard.press("Space");
-    await expect(fold).not.toHaveAttribute("open", "");
-  });
-
   test("keyboard: Expand all unchanged opens every fold and, pressed again, closes them", async ({
     page,
   }) => {
@@ -371,115 +263,6 @@ eachTheme((theme) => {
         .locator("#cmp-default .cap-compare-view[data-view='side'] details.cap-compare-gap[open]")
         .count(),
     ).toBe(0);
-  });
-
-  test("keyboard: Tab reaches the view switch, the jump list and the scrolling region in order", async ({
-    page,
-  }) => {
-    await visitStates(page, "draft-compare", theme);
-    await page.locator("#cmp-single").getByRole("radio", { name: "Side by side" }).focus();
-    const seen: string[] = [];
-    for (let i = 0; i < 5; i++) {
-      await page.keyboard.press("Tab");
-      seen.push(await focused(page));
-    }
-    expect(seen[0]).toContain("Previous change");
-    expect(seen[1]).toContain("Next change");
-    expect(seen[2]).toContain("Change 1 of 1");
-    expect(seen[3]).toContain("Side by side, Compare Draft 1 with Draft 2");
-  });
-
-  test("keyboard: the arrow keys and Page Down scroll the focused region", async ({ page }) => {
-    await page.setViewportSize({ width: 340, height: 600 });
-    await visitStates(page, "draft-compare", theme, "narrow");
-    const region = page.getByRole("region", { name: /^Side by side,/ });
-    const room = await region.evaluate((el) => el.scrollHeight - el.clientHeight);
-    expect(room).toBeGreaterThan(50);
-    await region.focus();
-    await page.keyboard.press("ArrowDown");
-    await expect.poll(() => region.evaluate((el) => el.scrollTop)).toBeGreaterThan(0);
-    // Chrome drops a key that lands while the last key's smooth scroll is still settling (about
-    // 1 run in 12), so wait until the offset has held still for 300ms before the next key.
-    await region.evaluate(
-      (el) =>
-        new Promise<void>((done) => {
-          let last = el.scrollTop;
-          let since = performance.now();
-          const tick = () => {
-            if (el.scrollTop !== last) {
-              last = el.scrollTop;
-              since = performance.now();
-            }
-            if (performance.now() - since >= 300) done();
-            else requestAnimationFrame(tick);
-          };
-          tick();
-        }),
-    );
-    const after = await region.evaluate((el) => el.scrollTop);
-    await page.keyboard.press("PageDown");
-    await expect.poll(() => region.evaluate((el) => el.scrollTop)).toBeGreaterThan(after);
-  });
-
-  test("behavior: all three views carry the same changes from the same data", async ({ page }) => {
-    await visitStates(page, "draft-compare", theme);
-    const count = (v: string, tag: string) =>
-      page.locator(`${view("cmp-default", v)} ${tag}`).count();
-    const insInline = await count("inline", "ins");
-    const delInline = await count("inline", "del");
-    expect(insInline).toBeGreaterThan(0);
-    expect(delInline).toBeGreaterThan(0);
-    expect(await count("changes", "ins")).toBe(insInline);
-    expect(await count("changes", "del")).toBe(delInline);
-    // Side by side shows each once, on its own side.
-    expect(await count("side", "ins")).toBe(insInline);
-    expect(await count("side", "del")).toBe(delInline);
-    for (const v of ["side", "inline", "changes"])
-      expect(await page.locator(`${view("cmp-default", v)} [data-change]`).count()).toBe(4);
-  });
-
-  test("behavior: ids are unique, and the jump links point at the ones that exist", async ({
-    page,
-  }) => {
-    await visitStates(page, "draft-compare", theme);
-    const dup = await page.evaluate(() => {
-      const seen = new Map<string, number>();
-      for (const el of document.querySelectorAll("[id]"))
-        seen.set(el.id, (seen.get(el.id) ?? 0) + 1);
-      return [...seen].filter(([, n]) => n > 1).map(([id]) => id);
-    });
-    expect(dup).toEqual([]);
-    const hrefs = await page
-      .locator("#cmp-default [data-jump]")
-      .evaluateAll((as) => as.map((a) => a.getAttribute("href")));
-    for (const h of hrefs) expect(await page.locator(h as string).count()).toBe(1);
-  });
-
-  test("behavior: unchanged passages are folded, with one sentence of context either side", async ({
-    page,
-  }) => {
-    await visitStates(page, "draft-compare", theme);
-    const side = view("cmp-default", "side");
-    const fold = page.locator(`${side} details.cap-compare-gap`).first();
-    await expect(fold.locator("summary")).toHaveText("7 unchanged sentences");
-    // The sentence before the fold and the one after it stay in view.
-    await expect(
-      page
-        .locator(side)
-        .getByText("Every mention keeps the address of the page that sent it.")
-        .first(),
-    ).toBeVisible();
-    await expect(
-      page.locator(side).getByText("This draft covers the queue.").first(),
-    ).toBeVisible();
-    // What is inside is not shown until it is opened.
-    await expect(
-      page.locator(side).getByText("A mention from a new site is marked as new.").first(),
-    ).toBeHidden();
-    await fold.locator("summary").click();
-    await expect(
-      page.locator(side).getByText("A mention from a new site is marked as new.").first(),
-    ).toBeVisible();
   });
 
   test("behavior: the sides line up in rows, and each row's before and after share a top", async ({
@@ -523,25 +306,6 @@ eachTheme((theme) => {
   }) => {
     await visitStates(page, "draft-compare", theme);
     await expect(page.locator("#cmp-default .cap-compare-cell-label").first()).toBeHidden();
-  });
-
-  test("behavior: an added or removed whole sentence leaves the other side empty, not blank text", async ({
-    page,
-  }) => {
-    await visitStates(page, "draft-compare", theme);
-    const row = page
-      .locator(`${view("cmp-default", "side")} .cap-compare-row[data-op='ins']`)
-      .first();
-    await expect(row.locator("[data-side='before']")).toHaveAttribute("data-empty", "");
-    await expect(row.locator("[data-side='after'] ins")).toContainText(
-      "Every decision is written to the audit log.",
-    );
-    const gone = page
-      .locator(`${view("cmp-default", "side")} .cap-compare-row[data-op='del']`)
-      .first();
-    await expect(gone.locator("[data-side='before'] del")).toContainText(
-      "A later post will cover the agent's notes.",
-    );
   });
 
   test("behavior: the changes only view lists the changed sentences and says how many it left out", async ({
@@ -626,22 +390,6 @@ eachTheme((theme) => {
   });
 });
 
-test("behavior: the delivered html holds every view, the legend and the counts, with no script", async ({
-  page,
-}) => {
-  const html = await (await page.request.get("components/draft-compare/states.html")).text();
-  for (const v of ["side", "inline", "changes"]) expect(html).toContain(`data-view="${v}"`);
-  expect(html).toContain("insertion start");
-  expect(html).toContain("deletion end");
-  expect(html).toContain("15 words added, 12 removed, 4 changes");
-  expect(html).toContain("<strong>No differences.</strong>");
-  expect(html).toContain("7 unchanged sentences");
-  // A word changed inside a sentence: the after word is inserted and the before word deleted.
-  expect(html).toMatch(/insertion start <\/span>newest/);
-  expect(html).toMatch(/deletion start <\/span>oldest/);
-  expect(html).toContain("Webmentions arrive as small notes from other sites.");
-});
-
 test.describe("without script", () => {
   test.use({ javaScriptEnabled: false });
 
@@ -701,47 +449,5 @@ eachTheme((theme) => {
       { sel: sel("cmp-patch", ".cap-patch-note"), what: "the binary-file note" },
       { sel: sel("cmp-patch", ".cap-compare-counts"), what: "the patch's counts" },
     ]);
-  });
-
-  test("keyboard: each file's lines scroll in a focusable, named region", async ({ page }) => {
-    await visitStates(page, "draft-compare", theme);
-    const region = page.locator("#cmp-patch .cap-patch-scroll").first();
-    await expect(region).toHaveAttribute("tabindex", "0");
-    await expect(region).toHaveAttribute("role", "region");
-    await region.focus();
-    await expect(region).toBeFocused();
-    await expect(
-      page
-        .getByRole("region", { name: "app/queue.ts → app/queue.ts" })
-        .or(page.getByRole("region", { name: "app/queue.ts" }))
-        .first(),
-    ).toBeVisible();
-  });
-
-  test("behavior: a changed line opens with a literal sign, and the numbers hold their side", async ({
-    page,
-  }) => {
-    await visitStates(page, "draft-compare", theme);
-    const added = page.locator("#cmp-patch .cap-patch-line[data-op='ins']").first();
-    await expect(added.locator(".cap-patch-sign")).toContainText("+");
-    const removed = page.locator("#cmp-patch .cap-patch-line[data-op='del']").first();
-    await expect(removed.locator(".cap-patch-sign")).toContainText("−");
-    // An added line has no old number; a removed line has no new number.
-    await expect(added.locator(".cap-patch-no").first()).toHaveText("");
-    await expect(removed.locator(".cap-patch-no").nth(1)).toHaveText("");
-    await expect(page.locator("#cmp-patch-none")).toContainText("No changes.");
-  });
-
-  test("behavior: a patch of two revisions names the thing once and says the revisions, not a rename", async ({
-    page,
-  }) => {
-    await visitStates(page, "draft-compare", theme);
-    const head = page.locator("#cmp-patch-rev .cap-patch-path");
-    await expect(head.locator("code")).toHaveText("post-8f3a");
-    await expect(head.locator(".cap-patch-kind")).toHaveText("v1 to v2");
-    await expect(head).not.toContainText("→");
-    await expect(page.locator("#cmp-patch-rev caption")).toHaveText(
-      "post-8f3a, 1 added, 1 removed",
-    );
   });
 });

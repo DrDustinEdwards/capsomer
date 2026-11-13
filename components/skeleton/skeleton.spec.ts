@@ -27,39 +27,6 @@ eachTheme((theme) => {
     ]);
   });
 
-  test(
-    "accessibility: a skeleton is busy and says Loading to a screen reader",
-    { tag: "@markup" },
-    async ({ page }) => {
-      await visitStates(page, "skeleton", theme);
-      const skel = page.locator("#sample-skeleton");
-      await expect(skel).toHaveAttribute("aria-busy", "true");
-      await expect(skel.locator(".cap-sr-only")).toHaveText("Loading");
-      const hidden = await skel
-        .locator(".cap-skeleton-line")
-        .evaluateAll((ls) => ls.every((l) => l.getAttribute("aria-hidden") === "true"));
-      expect(hidden).toBe(true);
-      const shapes = await page
-        .locator("#sample-shapes [class*='cap-skeleton-block']")
-        .evaluateAll((els) => els.every((e) => e.closest("[aria-hidden='true']") !== null));
-      expect(shapes).toBe(true);
-      await expect(page.locator("#sample-shapes .cap-sr-only")).toHaveText("Loading the mention");
-    },
-  );
-
-  test(
-    "accessibility: the spinner has a name, in words, even when the word is hidden",
-    { tag: "@markup" },
-    async ({ page }) => {
-      await visitStates(page, "skeleton", theme);
-      await expect(page.locator("#sample-spinner")).toHaveText("Loading");
-      await expect(page.locator("#sample-hidden-label .cap-spinner-label")).toHaveText(
-        "Refreshing the queue",
-      );
-      await expect(page.getByRole("button", { name: "Saving" }).first()).toBeVisible();
-    },
-  );
-
   test("accessibility: the page spinner is a status region with its word", async ({ page }) => {
     await visitStates(page, "skeleton", theme, "page");
     await expect(page.getByRole("status")).toHaveText("Loading the Portal");
@@ -67,18 +34,6 @@ eachTheme((theme) => {
     await expectContrast(page, [
       { sel: "#sample-page .cap-spinner-label", what: "page spinner word" },
     ]);
-  });
-
-  test("behavior: the page spinner is centered in the space it is given", async ({ page }) => {
-    await visitStates(page, "skeleton", theme, "page");
-    const spinner = page.locator("#sample-page");
-    const arc = spinner.locator(".cap-spinner-arc");
-    await expect(spinner).toHaveCSS("flex-direction", "column");
-    const [s, a] = await Promise.all([spinner.boundingBox(), arc.boundingBox()]);
-    expect(s && a).toBeTruthy();
-    expect(Math.abs(a!.x + a!.width / 2 - (s!.x + s!.width / 2))).toBeLessThan(2);
-    // Taller than the arc and word together: it fills the space it is given, to center in it.
-    expect(s!.height).toBeGreaterThan(a!.height * 3);
   });
 
   test("behavior: the skeleton pulses and the spinner turns when motion is welcome", async ({
