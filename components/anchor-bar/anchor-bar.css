@@ -107,8 +107,52 @@
     }
   }
 
-  @media (max-width: 560px) {
+  /* Vertical: a list down a side column, sticky below the site header, each link with a rule at its
+     start that turns accent on the current section. Foxhound's features page drew this by hand
+     ("a vertical anchor bar is a Capsomer gap"). */
+  .cap-anchors[data-orientation="vertical"] {
+    top: calc(var(--header-h, 0px) + var(--space-4));
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-2);
+    padding-block: 0;
+    background: none;
+
     .cap-anchors-label {
+      display: block;
+    }
+
+    .cap-anchors-list {
+      flex-direction: column;
+      gap: 0;
+      overflow: visible;
+
+      & a {
+        min-height: var(--target);
+        padding: var(--space-1) var(--pad-x);
+        border-radius: 0;
+        border-inline-start: 1px solid var(--line);
+        white-space: normal;
+        overflow-wrap: anywhere;
+
+        &::after {
+          inset-inline: -1px auto;
+          inset-block: 0;
+          block-size: auto;
+          inline-size: 2px;
+        }
+
+        &:hover,
+        &[data-force="hover"] {
+          background: none;
+          border-inline-start-color: var(--accent-line);
+        }
+      }
+    }
+  }
+
+  @media (max-width: 560px) {
+    .cap-anchors:not([data-orientation="vertical"]) .cap-anchors-label {
       display: none;
     }
   }

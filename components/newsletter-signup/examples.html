@@ -1,0 +1,55 @@
+<section class="cap-specimen" aria-labelledby="s-card">
+  <h2 id="s-card">Card</h2>
+  <section class="cap-newsletter" aria-labelledby="nl-card-title" id="nl-card">
+    <h3 class="cap-newsletter-title" id="nl-card-title">Newsletter</h3>
+    <p class="cap-newsletter-text">Field notes and new posts, once a month.</p>
+    <form class="cap-newsletter-form" method="post" action="#" aria-labelledby="nl-card-title">
+      <div class="cap-newsletter-row">
+        <label class="cap-sr-only" for="nl-card-email">Email address</label>
+        <input id="nl-card-email" class="cap-input" type="email" name="email" required autocomplete="email" inputmode="email" spellcheck="false" placeholder="you@example.com" />
+        <button type="submit" class="cap-btn" data-variant="primary">Subscribe</button>
+      </div>
+      <label class="cap-check cap-newsletter-consent"><input type="checkbox" name="consent" required /><span>I agree to receive the newsletter by email and accept the <a href="#privacy">privacy policy</a>. Unsubscribe with the link in any email.</span></label>
+    </form>
+  </section>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-error">
+  <h2 id="s-error">With an error</h2>
+  <section class="cap-newsletter" aria-labelledby="nl-error-title" id="nl-error">
+    <h3 class="cap-newsletter-title" id="nl-error-title">Newsletter</h3>
+    <p class="cap-newsletter-text">Field notes and new posts, once a month.</p>
+    <form class="cap-newsletter-form" method="post" action="#" aria-labelledby="nl-error-title">
+      <div class="cap-newsletter-row">
+        <label class="cap-sr-only" for="nl-error-email">Email address</label>
+        <input id="nl-error-email" class="cap-input" type="email" name="email" required autocomplete="email" inputmode="email" spellcheck="false" placeholder="you@example.com" aria-invalid="true" aria-describedby="nl-error-error" />
+        <button type="submit" class="cap-btn" data-variant="primary">Subscribe</button>
+      </div>
+      <label class="cap-check cap-newsletter-consent"><input type="checkbox" name="consent" required /><span>I agree to receive the newsletter by email and accept the <a href="#privacy">privacy policy</a>. Unsubscribe with the link in any email.</span></label>
+    </form>
+    <p class="cap-newsletter-error" id="nl-error-error" role="alert">Please enter a valid email address.</p>
+  </section>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-plain">
+  <h2 id="s-plain">Plain, at the end of a post</h2>
+  <section class="cap-newsletter" data-variant="plain" aria-labelledby="nl-plain-title" id="nl-plain">
+    <h3 class="cap-newsletter-title" id="nl-plain-title">Get the next episode</h3>
+    <form class="cap-newsletter-form" method="post" action="#" aria-labelledby="nl-plain-title">
+      <div class="cap-newsletter-row">
+        <label class="cap-sr-only" for="nl-plain-email">Your email</label>
+        <input id="nl-plain-email" class="cap-input" type="email" name="address" required autocomplete="email" />
+        <button type="submit" class="cap-btn">Sign up</button>
+      </div>
+      <label class="cap-check cap-newsletter-consent"><input type="checkbox" name="agree" required /><span>Send me new episodes by email (<a href="#privacy">privacy</a>).</span></label>
+    </form>
+  </section>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-done">
+  <h2 id="s-done">Sent</h2>
+  <section class="cap-newsletter" aria-labelledby="nl-done-title" id="nl-done">
+    <h3 class="cap-newsletter-title" id="nl-done-title">Newsletter</h3>
+    <p class="cap-newsletter-done" role="status">Almost done: check your inbox for a link to confirm your subscription.</p>
+  </section>
+</section>

@@ -1,0 +1,53 @@
+<section class="cap-specimen" aria-labelledby="s-result">
+  <h2 id="s-result">A sample</h2>
+  <form class="cap-ai-sample" data-cap="ai-sample" id="as-result">
+    <div class="cap-ai-sample-head">
+      <p class="cap-ai-sample-title">Live email writer</p>
+      <span class="cap-ai-sample-live">Calls real AI</span>
+    </div>
+    <div class="cap-ai-sample-controls">
+      <fieldset class="cap-seg">
+        <legend>Reminder type</legend>
+        <div class="cap-seg-options">
+          <label><input type="radio" name="kind" value="due" checked /> Due soon</label>
+          <label><input type="radio" name="kind" value="late" /> Overdue</label>
+          <label><input type="radio" name="kind" value="thanks" /> Thank you</label>
+        </div>
+      </fieldset>
+      <div class="cap-ai-sample-action">
+        <button type="submit" class="cap-btn" data-variant="primary" data-ai-sample-generate data-busy-label="Writing..."><span class="cap-btn-label">Write a sample email</span></button>
+        <p class="cap-ai-sample-hint">A live AI call for a fictional customer.</p>
+      </div>
+    </div>
+    <div class="cap-ai-sample-out" aria-live="polite"></div>
+  </form>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-failed">
+  <h2 id="s-failed">Failed, without a live badge</h2>
+  <form class="cap-ai-sample" data-cap="ai-sample" id="as-failed">
+    <div class="cap-ai-sample-head"><p class="cap-ai-sample-title">Sample reply</p></div>
+    <div class="cap-ai-sample-controls">
+      <label class="cap-check"><input type="checkbox" name="formal" /><span>Formal</span></label>
+      <div class="cap-ai-sample-action"><button type="submit" class="cap-btn" data-variant="primary" data-ai-sample-generate><span class="cap-btn-label">Write a reply</span></button></div>
+    </div>
+    <div class="cap-ai-sample-out" aria-live="polite"><p class="cap-ai-sample-error">Generation failed. Try again.</p></div>
+  </form>
+</section>
+
+<script type="module">
+  import { drawSample, enhance } from "./ai-sample.ts";
+
+  const sample = (kind) => ({
+    fields: [
+      { label: "Subject", value: kind === "late" ? "Your invoice from Example Co is past due" : "Your invoice from Example Co is due Friday" },
+      { label: "Body", mono: true, value: "Hi Alex,\n\nA quick note that invoice 1042 is due on Friday.\nYou can pay it at https://example.com/pay.\n\nThanks,\nSam Lee" },
+    ],
+    note: "Written by AI just now, for a fictional customer.",
+  });
+  // A model answer made here, so the specimen needs no server; a short wait shows the busy label.
+  enhance(document, {
+    generate: (data) => new Promise((done) => setTimeout(() => done(sample(data.get("kind"))), 150)),
+  });
+  drawSample(document.querySelector("#as-result .cap-ai-sample-out"), sample("due"));
+</script>

@@ -1,0 +1,74 @@
+<section class="cap-specimen" aria-labelledby="s-answer">
+  <h2 id="s-answer">Answered, with sources and a follow-up</h2>
+  <div id="ak-answer"></div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-cut">
+  <h2 id="s-cut">Cut off</h2>
+  <div id="ak-cut"></div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-failed">
+  <h2 id="s-failed">Unavailable</h2>
+  <div id="ak-failed"></div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-trigger">
+  <h2 id="s-trigger">Before the reader asks</h2>
+  <div data-cap="ask" data-ask-question="How long are the logs kept?" id="ak-mount">
+    <button type="button" class="cap-btn cap-ask-trigger" data-ask-trigger hidden>Ask AI</button>
+    <div data-ask-container hidden></div>
+  </div>
+</section>
+
+<script type="module">
+  import { ask, enhance } from "./ask-panel.ts";
+
+  // A stream made here, so the specimens need no server: each frame is one server-sent event.
+  const enc = new TextEncoder();
+  const stream = (frames) =>
+    new Response(
+      new ReadableStream({
+        start(c) {
+          for (const f of frames) c.enqueue(enc.encode(f));
+          c.close();
+        },
+      }),
+      { headers: { "content-type": "text/event-stream" } },
+    );
+  const delta = (text) => `data: ${JSON.stringify({ choices: [{ delta: { content: text } }] })}\n\n`;
+  const sources = (list) => `event: sources\ndata: ${JSON.stringify(list)}\n\n`;
+  const read = (e) => {
+    if (e.event === "sources") return { sources: JSON.parse(e.data) };
+    if (e.event === "cut") return { cut: true };
+    const data = e.data === "[DONE]" ? undefined : JSON.parse(e.data);
+    return { delta: data?.choices?.[0]?.delta?.content };
+  };
+  // The sample model ends with "Next: <question>" on a line of its own.
+  const split = (answer) => {
+    const at = answer.lastIndexOf("\nNext: ");
+    return at < 0 ? { answer } : { answer: answer.slice(0, at), followUp: answer.slice(at + 7).trim() };
+  };
+  const followUpHref = (q) => `/search?q=${encodeURIComponent(q)}`;
+
+  const answered = [
+    sources([
+      { url: "/docs/retention", title: "Retention", kind: "section" },
+      { url: "/docs/alerts", title: "Alerts" },
+      { url: "https://example.com/elsewhere", title: "Not from this site" },
+    ]),
+    delta("Logs are kept for 30 days, then deleted. "),
+    delta("Exports you saved stay until you delete them."),
+    delta("\nNext: How do I export the logs?"),
+    "data: [DONE]\n\n",
+  ];
+
+  ask(document.getElementById("ak-answer"), { request: async () => stream(answered), read, split, followUpHref });
+  ask(document.getElementById("ak-cut"), {
+    request: async () =>
+      stream([sources([{ url: "/docs/alerts", title: "Alerts" }]), delta("Alerts go to the address on the account"), "event: cut\ndata: \n\n"]),
+    read,
+  });
+  ask(document.getElementById("ak-failed"), { request: async () => new Response("", { status: 503 }), read });
+  enhance(document, { request: async () => stream(answered), read, split, followUpHref });
+</script>

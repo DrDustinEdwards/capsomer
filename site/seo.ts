@@ -52,13 +52,25 @@ const head = defineHead({
 });
 
 /**
- * A page's head: title (`title` and the " · Capsomer" suffix), description, canonical, Open Graph and Twitter with the card,
+ * A page's head: the color-scheme and text-scale metas, title (`title` and the " · Capsomer" suffix), description, canonical, Open Graph and Twitter with the card,
  * and on an indexed page its WebPage and breadcrumb; the front page also carries the site's JSON-LD, and the admin says
  * noindex so search shows the public page.
  */
-export function siteHead(
-  page: "home" | "admin" | { path: string; title: string; description: string; noindex?: boolean },
-): string {
+export function siteHead(page: Page): string {
+  return `${PAGE_META}\n${seoHead(page)}`;
+}
+
+type Page =
+  | "home"
+  | "admin"
+  | { path: string; title: string; description: string; noindex?: boolean };
+
+// Every page's color-scheme hint (theme.js and the theme switch set it to the choice; "light dark" follows the system)
+// and its opt-in to the reader's system text size (Modern Web Guidance, respect-os-text-scale).
+const PAGE_META =
+  '<meta name="color-scheme" content="light dark" />\n<meta name="text-scale" content="scale" />';
+
+function seoHead(page: Page): string {
   // Pages are served at their slash (a bare path redirects to it), so the canonical and the trail keep it.
   // Only a component page sits inside a section, so only it carries a trail (the visible "Components > Name" one, from the
   // home page down); Make, Accessibility and Search are top level and carry none.
