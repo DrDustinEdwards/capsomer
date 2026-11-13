@@ -73,6 +73,10 @@ export interface SignTarget {
   href: string;
   title: string;
   label: string;
+  // Next's look on a first step that is not "next" (`data-variant="forward"`), as signsHtml's way.
+  forward?: boolean;
+  // rel values beside the way (external, nofollow).
+  rel?: string;
 }
 
 type Ways = SignTarget | readonly SignTarget[] | null | undefined;
@@ -96,7 +100,13 @@ export function Signs({ label, prev, next, className }: SignsProps) {
   const on = list(next);
   if (back.length === 0 && on.length === 0) return null;
   const sign = (target: SignTarget, rel: "prev" | "next") => (
-    <Link key={`${rel}:${target.href}`} className="cap-sign" rel={rel} to={target.href}>
+    <Link
+      key={`${rel}:${target.href}`}
+      className="cap-sign"
+      data-variant={target.forward ? "forward" : undefined}
+      rel={target.rel ? `${rel} ${target.rel}` : rel}
+      to={target.href}
+    >
       <span className="cap-sr-only">{target.label}: </span>
       {target.title}
     </Link>
