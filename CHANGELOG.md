@@ -4,6 +4,12 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+## [0.119.0]
+
+- **New: `capsomer/reset.css`, an opt-in element reset.** Tailwind's preflight (MIT, notice in the file) in the `cap.reset` layer, its faces read from `--face` and `--mono`: margins, padding and borders to zero, headings and lists unstyled, media as blocks, form controls inheriting the text. For a site leaving Tailwind (bsw, germomics, Foxhound) so its pages keep the same spacing, and for dustinedwards.info, which vendored the same file (`app/styles/reset.css`). `base.css` does not import it. Removed or renamed: no token or class.
+
+- **Icons: the pictograms the Tailwind sites drew with lucide-react.** 73 new names in `ICONS` (account, activity, alert, antenna, arrow-up-right, banknote, brake, bug, building, calendar-clock, captions, card, circle, cloud-upload, cut, database, disc, dna, edit, file-audio, file-check, file-up, gamepad, globe, graduation, headphones, idea, image-up, info, inspect, key, library, link, list-checks, list-ordered, list-tree, lock, megaphone, mic, music, music-note, paste, percent, phone, play, plug, podcast, quote, radio, receipt, refresh, repeat, reset, save, scale, scroll, send, share, shield, shield-check, sliders, spinner, store, trash, trending-down, trending-up, trophy, undo, upload, user, user-check, user-plus, warning, webhook), each Lucide's drawing joined into one path (pixel-identical at Lucide's stroke), so Foxhound, germomics and bsw can drop lucide-react; graduation and file-check are julieedwards.info's own drawings from its priorities. Lucide's ISC notice (and Feather's MIT one) ships as `components/icons/LICENSE-lucide.txt`. Where the set already had the meaning, a site takes the set's drawing (icons.md lists the pairs). Removed or renamed: no token or class.
+
 ## [0.118.0]
 
 Forms and inputs (shared-code audit pass 2, batch 2: C14 to C20). Nothing removed or renamed; no HTML contract changed.
