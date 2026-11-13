@@ -4,7 +4,7 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
-## [0.127.0]
+## [0.128.0]
 
 - **Form and async hooks: `capsomer/react/form-hooks`** (shared-code audit pass 2, cluster C21). `useSaveQueue` (save on change without racing saves), `useDraftDirty`, `useDebounced` and `useDebouncedPreview` (an overtaken request is aborted), with no router or DOM; the pure parts (`createSaveQueue`, `draftAfter`, `draftDirty`, `filterParams`, `withParam`, `pagePending`) from `capsomer/behavior/form-hooks`. From Foxhound, Foxing, dustinedwards.info, Carrel and the Capsid Portal.
 - **Confirm dialog: `useConfirmAction` and `useTwoStep`** in `capsomer/react/confirm-dialog`: the subject and opener a page's confirm dialogs share, and preview-then-perform with the server's words on every failure and an expired preview dropped. From Carrel and the Capsid Portal.
@@ -12,6 +12,12 @@ Each release names every removed or renamed token or class, and every changed HT
 - **State hooks: `capsomer/react/state-hooks`** (cluster C22). `useSelection` and `indeterminate` for bulk bars and `useSinceLastVisit`; `newId` and `versionedStore` from `capsomer/behavior/state-hooks`, with no router or DOM. A media query and the browser's zone are `useMedia` and `useBrowserZone` in `capsomer/react/hooks`.
 - **Data hooks: `capsomer/react/data`** (cluster C23). `createQueryClient`, `useSeededQuery`, `useWrite` with `patch` and `patchAll`, `Answer` with `getAnswer`, `postAnswer`, `answerOf`, `ask` and `SignedOut`, `useAnswer`, `createFlag` and `useFlag`, `useLiveRoom` (reconnects with backoff and jitter; Foxing's club room did not reconnect) and `preloadedLazy`. `@tanstack/react-query` is a new optional peer (`^5.104.0`). Nothing in it touches the DOM, so Foxing's shared web and mobile client uses it.
 - No token or class was removed or renamed.
+
+## [0.127.0]
+
+- **New: text roles, titles and line clamps** (`css/utilities.css`). `.cap-text` sets a run of text's role with one attribute per axis: `data-size="tiny|small|lead"`, `data-tone="muted|dim|ink|accent|ok|crit"`, `data-weight="strong"`, `data-face="ui|mono|prose|display"`, `data-align="center|end"`. `.cap-title` is a title outside a component, `data-size="1"` to `"6"` (2.25rem to 1rem, the display face at `--title-weight`). `.cap-clamp` cuts text at `data-lines="1"`, `"2"` (default) or `"3"` with an ellipsis. They replace the text-role and clamp classes Foxing, the Portal and txasm each wrote. New tokens a SITES entry may set: `--text-tiny`, `--text-small`, `--text-lead` (unset by default, so they fall back at use to `--fs-label`, `--fs-detail` and `--fs-lead`), `--text-strong` (600), `--title-weight` (the heading weight), `--title-1` to `--title-6`, and `--mono-size` (0.75rem), which `.cap-mono` now reads. Foxing's entry sets its text sizes (12, 14 and 18px), its strong weight (500) and its title weight (600); the Portal's sets 13px identifiers. Removed or renamed: no token or class.
+- **Anchor bar: React finds its own sections.** `<AnchorBar />` without `sections` renders an empty, hidden bar and lets the behavior module fill, show and spy on it, as the module does for plain HTML. A `[data-section][id]` block inside another is no longer an entry: the bar names the outer sections only (from the Portal's own bar, which it replaces).
+- **Sites: txasm's entry sets `--title-weight: 600`**, its page titles' weight before they moved onto `.cap-title`.
 
 ## [0.126.0]
 

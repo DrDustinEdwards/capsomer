@@ -10,6 +10,7 @@
     --page-gutter: 24px;
     --fs-page: 1rem;
     --page-leading: 1.5;
+    --title-weight: 600;
   }
   @media (max-width: 767.98px) {
     [data-cap-site="txasm"][data-cap-site],
