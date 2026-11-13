@@ -279,7 +279,7 @@ if (iconTools && iconGrid) {
     const q = find.value.trim().toLowerCase();
     let shown = 0;
     for (const li of tiles) {
-      li.hidden = Boolean(q) && !(li.dataset.name ?? "").includes(q);
+      li.hidden = Boolean(q) && !(li.dataset.name ?? "").toLowerCase().includes(q);
       if (!li.hidden) shown++;
     }
     if (copied) copied.textContent = q ? `${shown} of ${tiles.length} icons` : "";

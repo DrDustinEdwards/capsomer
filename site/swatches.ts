@@ -1,7 +1,7 @@
 // The two one-page sections. Icons: a search box over the grid of every icon, a size control, and a click copies the
 // name. Colors: every family as its 12 steps, light beside dark, each step's job above it, and a click copies the value.
 // Both are whole HTML; site/page.ts adds the search, the size and the copying.
-import { ICONS, SOCIAL } from "../components/icons/icons.ts";
+import * as icons from "../components/icons/icons.ts";
 import { FOOTER, esc, header, titleBlock } from "./chrome.ts";
 import { firsts, type Data } from "./content.ts";
 
@@ -11,17 +11,21 @@ ${main}
 </main></div>`;
 
 export function renderIcons(d: Data): string {
-  const all = [
-    ...Object.entries(ICONS).map(([n, p]) => [n, p, false] as const),
-    ...Object.entries(SOCIAL).map(([n, p]) => [n, p, true] as const),
-  ];
+  // Each icon is its own export: iconX is a stroked path, markX a filled mark's { d, fill }.
+  const all = Object.entries(icons).flatMap(([n, v]): Array<[string, string, boolean]> =>
+    typeof v === "string" && n.startsWith("icon")
+      ? [[n, v, false]]
+      : typeof v === "object" && n.startsWith("mark")
+        ? [[n, v.d, true]]
+        : [],
+  );
   const tiles = all
     .map(
       ([n, p, fill]) =>
         `<li data-name="${esc(n)}"><button type="button" class="sw-icon" data-copy="${esc(n)}"><svg class="cap-icon" viewBox="0 0 24 24"${fill ? " data-fill" : ""} aria-hidden="true" focusable="false"><path d="${esc(p)}"/></svg><span>${esc(n)}</span></button></li>`,
     )
     .join("");
-  const main = `${titleBlock("Icons", `${all.length} icons on one 24-unit grid; a click copies the name.`)}
+  const main = `${titleBlock("Icons", `${all.length} icons on one 24-unit grid; a click copies the export's name.`)}
   <div class="sw-tools" data-cap-part="icon-tools" hidden>
     <div class="cap-field"><label class="cap-field-label" for="icon-find">Find an icon</label><input class="cap-input" id="icon-find" type="search" autocomplete="off" aria-describedby="icon-n" /></div>
     <fieldset class="cap-seg"><legend>Size</legend><div class="cap-seg-options">${[16, 20, 24, 32]
