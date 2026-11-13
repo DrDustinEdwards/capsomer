@@ -97,6 +97,9 @@ const SITES = {
       "card-lift": "-4px",
       "card-edge": "1",
       "btn-sweep": "1",
+      // Recova drew its icons with lucide-react at Lucide's own stroke, 2 (0.123.0: Foxhound moves onto
+      // Capsomer's set, which draws at 1.6).
+      "icon-stroke": "2",
       // Foxhound's links (Dustin, 2026-11-13: "the links should not be underlined ... underline on
       // hover"): the network's semibold amber link, which is the cue that is not color (WCAG F73), and
       // a line 2px under it on hover in place of the tint.

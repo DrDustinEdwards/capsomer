@@ -6,7 +6,7 @@ parts: [css, behavior, react]
 tool: own JavaScript
 states: [ui icons, social marks, labeled, inside a button, own drawing, right to left]
 added: 0.99.0
-updated: 0.119.0
+updated: 0.131.0
 source: the sites' own inline SVGs, gathered: txasm's admin menu (admin.layout.tsx), Foxing's account panel and header (account-panel.tsx, page-shell.tsx), julieedwards.info's header (Chrome.tsx) and priorities (Sections.tsx), the germomics and bsw footers' social marks; and Lucide's drawings of the pictograms Foxhound, germomics and bsw imported from lucide-react (ISC, components/icons/LICENSE-lucide.txt)
 replaces:
   - 'from "lucide-react"'
@@ -22,12 +22,13 @@ replaces:
 <button type="button" className="cap-btn" aria-label="Search"><Icon name="search" /></button>
 <a href="https://example.com/team"><Icon name="facebook" /> Example Co on Facebook</a>
 <Icon name="external" label="Opens another site" />
+<button type="submit" className="cap-btn">Continue<Icon name="arrow-right" data-icon="end" /></button>
 <Icon d="M3 13h2l7-7-2-2-7 7z" box={16} />
 ```
 
 | Set | Names |
 | --- | --- |
-| UI (stroked) | account, activity, add, alert, antenna, arrow-left, arrow-right, arrow-up-right, assign, award, banknote, bell, book, brake, bug, building, calendar, calendar-clock, captions, card, check, chevron-down, chevron-left, chevron-right, chevron-up, circle, clock, close, cloud-upload, copy, cut, database, decide, disc, dna, document, download, edit, external, file-audio, file-check, file-up, folder, gamepad, globe, goals, graduation, headphones, heart, home, idea, image-up, info, inspect, key, library, link, list-checks, list-ordered, list-tree, lock, mail, megaphone, menu, mic, moon, music, music-note, overview, paste, people, percent, phone, play, plug, podcast, queue, quote, radio, receipt, refresh, repeat, reset, roles, rss, save, scale, scroll, search, send, settings, share, shield, shield-check, sliders, spinner, star, stats, store, sun, tag, ticket, trash, trending-down, trending-up, trophy, undo, upload, user, user-check, user-plus, warning, webhook |
+| UI (stroked) | account, activity, add, alert, antenna, arrow-left, arrow-right, arrow-up-right, assign, award, banknote, bell, book, brake, bug, building, calendar, calendar-clock, captions, card, check, chevron-down, chevron-left, chevron-right, chevron-up, circle, clock, close, cloud-upload, copy, cut, database, decide, disc, dna, document, download, edit, external, file-audio, file-check, file-up, folder, gamepad, globe, goals, graduation, headphones, heart, home, idea, image-up, info, inspect, key, library, link, list-checks, list-ordered, list-tree, lock, mail, megaphone, menu, mic, moon, music, music-note, overview, paste, people, percent, phone, play, plug, podcast, queue, quote, radio, receipt, refresh, repeat, reset, roles, rss, save, scale, scan-search, scroll, search, send, settings, share, shield, shield-check, sliders, spinner, star, stats, store, sun, tag, ticket, trash, trending-down, trending-up, trophy, undo, upload, user, user-check, user-plus, warning, webhook |
 | Social (filled) | facebook, instagram, linkedin, x |
 
 ## The default and its reason

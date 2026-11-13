@@ -4,6 +4,10 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+## [0.131.0]
+
+- **Icons: `scan-search` and a button's icon side.** New name `scan-search` (Lucide's ScanSearch, joined into one path), the one pictogram Foxhound drew that the set lacked. `Icon` takes `data-icon="start"` or `"end"`, so an icon inside a `cap-btn` pulls the button's padding in on its side, as an inline SVG with that attribute already did. Foxhound's entry sets `--icon-stroke: 2`, Lucide's stroke, which its icons were drawn at. Removed or renamed: no token or class.
+
 ## [0.130.0]
 
 - **The theme switch keeps `<meta name="color-scheme">` in step.** A choice made on the page now sets the meta's content as well as `data-theme` (`colorSchemeContent`: the choice, or `light dark`). Before, a site that wrote the meta on the server (dustinedwards.info) kept the old value until the next page, so the browser's own controls and the canvas painted before the CSS showed the other scheme (Modern Web Guidance, dark-mode-toggle). No HTML contract changes; a page without the meta is unchanged.
