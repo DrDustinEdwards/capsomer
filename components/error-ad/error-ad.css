@@ -47,14 +47,14 @@
   }
   .cap-ad-f-display {
     font-family: "Cap Ad Display", Impact, "Arial Narrow", sans-serif;
-    letter-spacing: 0.02em;
+    letter-spacing: var(--tracking-wide);
   }
   .cap-ad-f-slab {
     font-family: "Cap Ad Slab", Rockwell, "Arial Black", serif;
   }
   .cap-ad-f-serif {
     font-family: var(--prose), Georgia, serif;
-    font-weight: 700;
+    font-weight: var(--weight-bold);
   }
   .cap-ad-ink {
     fill: var(--cap-ad-ink);

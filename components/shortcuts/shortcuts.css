@@ -22,7 +22,7 @@
     border-radius: var(--radius-s);
     background: var(--sunken);
     color: var(--muted);
-    font: 500 var(--fs-detail) / 1 var(--ui);
+    font: var(--weight-medium) var(--fs-detail) / var(--leading-none) var(--ui);
     white-space: nowrap;
     user-select: none;
   }
@@ -46,8 +46,8 @@
   .cap-keys-group-title {
     margin: 0;
     font-size: var(--fs-label);
-    font-weight: 600;
-    letter-spacing: 0.07em;
+    font-weight: var(--weight-semibold);
+    letter-spacing: var(--tracking-caps);
     text-transform: uppercase;
     color: var(--muted);
   }
@@ -103,8 +103,8 @@
   @media (forced-colors: active) {
     kbd,
     .cap-kbd {
-      outline: 1px solid CanvasText;
-      outline-offset: -1px;
+      outline: var(--line-w) solid CanvasText;
+      outline-offset: calc(-1 * var(--focus-offset-tight));
     }
   }
 }

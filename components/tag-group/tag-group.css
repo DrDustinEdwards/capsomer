@@ -14,7 +14,7 @@
   .cap-tags-label {
     color: var(--muted);
     font-size: var(--fs-detail);
-    font-weight: 500;
+    font-weight: var(--weight-medium);
   }
   .cap-tags-list {
     display: flex;
@@ -37,12 +37,12 @@
     gap: var(--space-1);
     min-height: var(--target);
     padding-inline-start: var(--space-3);
-    border: 1px solid var(--line);
+    border: var(--line-w) solid var(--line);
     border-radius: var(--radius-s);
     background: var(--sunken);
     color: var(--text);
     font-size: var(--fs-detail);
-    font-weight: 500;
+    font-weight: var(--weight-medium);
     white-space: nowrap;
   }
   .cap-tag-remove {

@@ -17,7 +17,7 @@
   .cap-md-source {
     min-height: var(--cap-md-min, 16rem);
     font-family: var(--mono);
-    line-height: 1.65;
+    line-height: var(--leading-relaxed);
     resize: vertical;
   }
 
@@ -26,7 +26,7 @@
     flex-direction: column;
     min-width: 0;
     overflow: hidden;
-    border: 1px solid var(--line-strong);
+    border: var(--line-w) solid var(--line-strong);
     border-radius: var(--radius-m);
     background: var(--surface);
     color: var(--text);
@@ -44,7 +44,7 @@
     &:has(.cm-content[aria-invalid="true"]) {
       border-color: var(--crit);
       box-shadow:
-        inset 0 0 0 1px var(--crit),
+        inset 0 0 0 var(--line-w) var(--crit),
         0 0 0 var(--ring-width) color-mix(in srgb, var(--crit) 20%, transparent);
     }
     /* Read-only keeps its text readable and selectable, on the sunken ground the field uses. */
@@ -72,7 +72,7 @@
     align-items: center;
     gap: var(--space-2);
     padding: var(--space-2) var(--pad-x);
-    border-bottom: 1px solid var(--line);
+    border-bottom: var(--line-w) solid var(--line);
     background: var(--raised);
   }
   .cap-md-tool {
@@ -81,14 +81,14 @@
     min-width: max(var(--target), calc(var(--control) - var(--space-3)));
     min-height: max(var(--target), calc(var(--control) - var(--space-3)));
     padding: 0 var(--pad-x);
-    border: 1px solid transparent;
+    border: var(--line-w) solid transparent;
     border-radius: var(--radius-m);
     background: transparent;
     color: var(--muted);
     font-family: var(--ui);
     font-size: var(--fs-detail);
-    font-weight: 600;
-    line-height: 1;
+    font-weight: var(--weight-semibold);
+    line-height: var(--leading-none);
 
     &:hover {
       border-color: var(--line-strong);
@@ -99,7 +99,7 @@
       background: var(--sunken);
     }
     &:disabled {
-      opacity: 0.55;
+      opacity: var(--opacity-half);
       cursor: not-allowed;
     }
   }
@@ -122,7 +122,7 @@
     align-items: center;
     gap: var(--space-2) var(--space-4);
     padding: var(--space-2) var(--pad-x);
-    border-top: 1px solid var(--line);
+    border-top: var(--line-w) solid var(--line);
     background: var(--raised);
     color: var(--muted);
     font-size: var(--fs-detail);
@@ -141,7 +141,7 @@
   }
   .cap-md-limit[data-over] {
     color: var(--crit);
-    font-weight: 600;
+    font-weight: var(--weight-semibold);
   }
 
   /* The link palette and the slash menu are the shared popover (.cap-popover, popover.css) in
@@ -154,8 +154,8 @@
   .cap-md-palette-label {
     color: var(--muted);
     font-size: var(--fs-label);
-    font-weight: 600;
-    letter-spacing: 0.07em;
+    font-weight: var(--weight-semibold);
+    letter-spacing: var(--tracking-caps);
     text-transform: uppercase;
   }
   .cap-md-palette-note {
@@ -210,7 +210,7 @@
     &:hover,
     &:focus-visible {
       background: var(--accent-soft);
-      box-shadow: inset 3px 0 0 var(--accent);
+      box-shadow: inset var(--line-w-bar) 0 0 var(--accent);
     }
     &:focus-visible {
       outline: var(--focus-width) solid var(--ring);
@@ -234,7 +234,7 @@
     gap: var(--space-4);
     margin-top: var(--space-3);
     padding: var(--space-4);
-    border: 1px solid var(--line-strong);
+    border: var(--line-w) solid var(--line-strong);
     border-radius: var(--radius-m);
     background: var(--raised);
   }
@@ -245,7 +245,7 @@
   .cap-md-upload-thumb {
     width: 5rem;
     height: 3.25rem;
-    border: 1px solid var(--line);
+    border: var(--line-w) solid var(--line);
     border-radius: var(--radius-m);
     object-fit: cover;
   }
@@ -280,15 +280,15 @@
       border-color: CanvasText;
     }
     .cap-md-frame:has(.cm-content[aria-invalid="true"]) {
-      border-width: 3px;
+      border-width: var(--line-w-bar);
     }
     .cap-md-tool:disabled {
       opacity: 1;
       color: GrayText;
     }
     .cap-md-slash-item:is(:hover, :focus-visible) {
-      outline: 2px solid Highlight;
-      outline-offset: -2px;
+      outline: var(--focus-width) solid Highlight;
+      outline-offset: calc(-1 * var(--focus-offset));
     }
     .cap-md-limit[data-over] {
       text-decoration: underline;

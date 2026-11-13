@@ -67,16 +67,16 @@
   .cap-collab-person {
     display: inline-flex;
     border-radius: 50%;
-    box-shadow: 0 0 0 2px var(--who);
+    box-shadow: 0 0 0 var(--line-w-thick) var(--who);
   }
   .cap-collab-person + .cap-collab-person {
-    margin-inline-start: -4px;
+    margin-inline-start: calc(-1 * var(--space-2));
   }
 
   .cap-collab-caret {
     position: relative;
     margin-inline: -1px;
-    border-inline-start: 2px solid var(--who);
+    border-inline-start: var(--line-w-thick) solid var(--who);
     pointer-events: none;
     word-break: normal;
   }
@@ -84,7 +84,7 @@
   .cap-collab-caret-name {
     position: absolute;
     inset-block-end: 100%;
-    inset-inline-start: -2px;
+    inset-inline-start: calc(-1 * var(--space-1));
     padding: 0 0.35em;
     border-radius: var(--radius-s) var(--radius-s) var(--radius-s) 0;
     background: var(--who);
@@ -92,8 +92,8 @@
     font-family: var(--ui, inherit);
     font-size: var(--fs-label);
     font-style: normal;
-    font-weight: 600;
-    line-height: 1.5;
+    font-weight: var(--weight-semibold);
+    line-height: var(--leading-normal);
     white-space: nowrap;
     user-select: none;
   }
@@ -119,13 +119,13 @@
   }
 
   .cap-rich-editor-surface [data-suggestion="modification"] {
-    outline: 1px dashed var(--info);
-    outline-offset: 2px;
+    outline: var(--line-w) dashed var(--info);
+    outline-offset: var(--focus-offset);
   }
 
   .cap-collab-mark {
     background: color-mix(in srgb, var(--warn) 22%, transparent);
-    border-block-end: 2px solid var(--warn);
+    border-block-end: var(--line-w-thick) solid var(--warn);
     cursor: pointer;
 
     &[data-active] {
@@ -137,23 +137,23 @@
     display: grid;
     gap: var(--space-2);
     padding: var(--space-3);
-    border: 1px solid var(--line);
+    border: var(--line-w) solid var(--line);
     border-radius: var(--radius-m);
 
     &[data-active] {
       border-color: var(--warn);
-      box-shadow: 0 0 0 1px var(--warn);
+      box-shadow: 0 0 0 var(--line-w) var(--warn);
     }
     &:focus-visible {
-      outline: var(--ring-width, 2px) solid var(--ring);
-      outline-offset: 2px;
+      outline: var(--ring-width, var(--focus-width)) solid var(--ring);
+      outline-offset: var(--focus-offset);
     }
   }
 
   .cap-collab-thread-quote {
     margin: 0;
     padding-inline-start: var(--space-3);
-    border-inline-start: 3px solid var(--warn);
+    border-inline-start: var(--line-w-bar) solid var(--warn);
     color: var(--muted);
     font-style: italic;
   }

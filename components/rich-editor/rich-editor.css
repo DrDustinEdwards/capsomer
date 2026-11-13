@@ -17,7 +17,7 @@
     padding: var(--space-6) var(--space-5) 40vh;
     font-family: var(--prose);
     font-size: var(--fs-prose);
-    line-height: 1.75;
+    line-height: var(--leading-loose);
     color: var(--text);
     white-space: pre-wrap;
     overflow-wrap: break-word;
@@ -26,15 +26,15 @@
 
     /* An outline, not a shadow: forced colors keeps outlines and drops shadows. */
     &:focus-visible {
-      outline: var(--ring-width, 2px) solid var(--ring);
-      outline-offset: calc(var(--ring-width, 2px) * -1);
+      outline: var(--ring-width, var(--focus-width)) solid var(--ring);
+      outline-offset: calc(var(--ring-width, var(--focus-offset)) * -1);
     }
     & :is(p, ul, ol, blockquote, h1, h2, h3, h4, h5, h6, hr, .cap-rich-editor-src) {
       margin-block: 0 var(--space-6);
     }
     & :is(h1, h2, h3, h4, h5, h6) {
       font-family: var(--prose);
-      line-height: 1.3;
+      line-height: var(--leading-snug);
     }
     & h1 {
       font-size: 1.9em;
@@ -51,7 +51,7 @@
     & blockquote {
       margin-inline: 0;
       padding-inline-start: var(--space-5);
-      border-inline-start: 3px solid var(--line-strong);
+      border-inline-start: var(--line-w-bar) solid var(--line-strong);
       font-style: italic;
     }
     & :is(ul, ol) {
@@ -63,7 +63,7 @@
     }
     & hr {
       border: 0;
-      border-block-start: 1px solid var(--line-strong);
+      border-block-start: var(--line-w) solid var(--line-strong);
     }
     & ::selection {
       background: color-mix(in srgb, var(--accent) 36%, var(--surface));
@@ -87,7 +87,7 @@
     display: grid;
     gap: var(--space-2);
     padding: var(--space-3) var(--space-4);
-    border: 1px solid var(--line);
+    border: var(--line-w) solid var(--line);
     border-radius: var(--radius-m);
     background: var(--sunken);
     white-space: normal;
@@ -96,7 +96,7 @@
   .cap-rich-editor-src-kind {
     font-family: var(--ui, inherit);
     font-size: var(--fs-label);
-    font-weight: 600;
+    font-weight: var(--weight-semibold);
     color: var(--muted);
   }
 
@@ -111,13 +111,13 @@
     color: var(--text);
     font-family: var(--mono);
     font-size: 0.82em;
-    line-height: 1.6;
+    line-height: var(--leading-relaxed);
     white-space: pre;
     overflow-x: auto;
 
     &:focus-visible {
-      outline: var(--ring-width, 2px) solid var(--ring);
-      outline-offset: 2px;
+      outline: var(--ring-width, var(--focus-width)) solid var(--ring);
+      outline-offset: var(--focus-offset);
     }
   }
 
@@ -170,13 +170,13 @@
     content: "";
     display: block;
     position: absolute;
-    top: -2px;
+    top: calc(-1 * var(--space-1));
     width: 20px;
-    border-top: 1px solid var(--text);
+    border-top: var(--line-w) solid var(--text);
   }
   @media (prefers-reduced-motion: no-preference) {
     .ProseMirror-gapcursor::after {
-      animation: cap-rich-editor-gapcursor-blink 1.1s steps(2, start) infinite;
+      animation: cap-rich-editor-gapcursor-blink var(--dur-wait) steps(2, start) infinite;
     }
   }
   @keyframes cap-rich-editor-gapcursor-blink {
@@ -195,8 +195,8 @@
   }
   .ProseMirror-focused .ProseMirror-selectednode.cap-rich-editor-src,
   .ProseMirror-focused .ProseMirror-selectednode.cap-rich-editor-src-inline {
-    outline: var(--ring-width, 3px) solid var(--ring);
-    outline-offset: 2px;
+    outline: var(--ring-width, var(--line-w-bar)) solid var(--ring);
+    outline-offset: var(--focus-offset);
   }
 
   /* Front matter edited in its own fields is not shown a second time in the text. */

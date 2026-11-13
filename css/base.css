@@ -49,7 +49,7 @@
     margin: 0;
     background: var(--ground);
     color: var(--text);
-    font: 400 var(--text-size) / var(--leading) var(--face);
+    font: var(--weight-regular) var(--text-size) / var(--leading) var(--face);
     -webkit-font-smoothing: antialiased;
     /* A word longer than its line (an address written out as a link, a tool's name) breaks
        rather than pushing a phone's page sideways (WCAG 1.4.10 Reflow). break-word, not

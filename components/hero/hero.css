@@ -38,7 +38,7 @@
 
     &[data-card] {
       padding: var(--space-7);
-      border: 1px solid var(--line);
+      border: var(--line-w) solid var(--line);
       border-radius: var(--radius-xl);
       background: var(--hero-card-bg, color-mix(in srgb, var(--surface) 82%, transparent));
       backdrop-filter: blur(12px);
@@ -47,23 +47,23 @@
   .cap-hero-eyebrow {
     margin: 0 0 var(--space-4);
     color: var(--accent-text);
-    font: 600 var(--fs-detail) / 1.3 var(--ui);
-    letter-spacing: 0.06em;
+    font: var(--weight-semibold) var(--fs-detail) / var(--leading-snug) var(--ui);
+    letter-spacing: var(--tracking-widest);
     text-transform: uppercase;
   }
   .cap-hero-title {
     margin: 0 0 var(--space-5);
     font-family: var(--hero-face, inherit);
     font-size: var(--_title);
-    line-height: 1.05;
-    letter-spacing: -0.02em;
+    line-height: var(--leading-none);
+    letter-spacing: calc(-1 * var(--tracking-wide));
     text-wrap: balance;
   }
   .cap-hero-lead {
     max-inline-size: var(--measure);
     margin: 0 0 var(--space-6);
     color: var(--muted);
-    font: 400 var(--hero-lead-size, 1.25rem) / 1.5 var(--hero-lead-face, inherit);
+    font: var(--weight-regular) var(--hero-lead-size, var(--title-4)) / var(--leading-normal) var(--hero-lead-face, inherit);
     text-wrap: pretty;
   }
   /* More words between the lead and the actions, in body type. */

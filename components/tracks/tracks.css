@@ -62,17 +62,17 @@
   .cap-rail-facts {
     margin: 0;
     color: var(--muted);
-    font: 400 0.75rem / 1.7 var(--ui);
+    font: var(--weight-regular) var(--fs-small) / var(--leading-loose) var(--ui);
 
     :is(b, dt) {
       display: block;
       color: var(--text);
       font-family: var(--mono);
-      font-weight: 500;
+      font-weight: var(--weight-medium);
     }
     b + b,
     dd + dt {
-      margin-block-start: 0.875rem;
+      margin-block-start: calc(var(--space-4) + var(--space-1));
     }
     dd {
       margin: 0;
