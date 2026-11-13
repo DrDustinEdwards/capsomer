@@ -4,11 +4,17 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
-## [0.129.0]
+## [0.131.0]
 
 - **`capsomer/react/icon-path`: `IconPath`, an icon from its own path without the set** (`d`, `box`, `fill`, `label`, `className`; the same `<svg class="cap-icon">` as `Icon`). `Icon` from `capsomer/react/icons` looks its `name` up in `ICONS`, so every app that imported it shipped the whole set, even one that only passes `d`: 0.119.0's 73 icons put about 3.6 KB gzip on every Desk route and 11 KiB in Carrel's Worker. `Icon` now draws through `IconPath`; an app that draws only its own paths (Carrel's menu) imports `IconPath` instead. No class, token or HTML contract changes.
 - **`capsomer/token-check` no longer exports `normalizeHex`.** Prelum owns it now (one copy): import `normalizeHex` from `@drdustinedwards/site-helpers/text` (Prelum 0.55.0). The behavior is the same (`#abc` or `#aabbcc` as lowercase `#aabbcc`, space and a missing `#` tolerated); `token-check` itself imports it from there. No token or class was removed or renamed, and no HTML contract changed.
 - `@drdustinedwards/site-helpers` is now at least 0.55.0 (dev v0.55.0, peer `>=0.55.0`), and `token-check` needs it installed. The dev `@dustinedwards/site-runtime` moves to v0.143.0, which Prelum 0.55.0 requires as a peer; Capsomer's own site-runtime peer range is unchanged.
+
+## [0.130.0]
+
+- **The theme switch keeps `<meta name="color-scheme">` in step.** A choice made on the page now sets the meta's content as well as `data-theme` (`colorSchemeContent`: the choice, or `light dark`). Before, a site that wrote the meta on the server (dustinedwards.info) kept the old value until the next page, so the browser's own controls and the canvas painted before the CSS showed the other scheme (Modern Web Guidance, dark-mode-toggle). No HTML contract changes; a page without the meta is unchanged.
+- Showcase site: `theme.js` sets the meta from the stored choice before paint, and the home band's word stagger is one `sibling-index()` rule in place of seven `:nth-child` delays (a browser without it raises the words together).
+- The five Enter handlers Chrome's legacy scanner flags (confirm-dialog, markdown-editor twice, media, rich-editor) carry `legacy-scan:keep` with the reason: `isImeEnter` (shortcuts.ts) already checks `isComposing` and keyCode 229, and the scanner cannot follow a helper (devkit 0.45.0). The legacy scan's count is 0.
 
 ## [0.127.0]
 
