@@ -10,6 +10,11 @@
     --mono: "DM Mono", "DM Mono Fallback", ui-monospace, monospace;
     --radius-l: 0.75rem;
     --display: "Fraunces Variable", "Fraunces", "Fraunces Fallback", Georgia, serif;
+    --text-tiny: 0.75rem;
+    --text-small: 0.875rem;
+    --text-lead: 1.125rem;
+    --text-strong: 500;
+    --title-weight: 600;
     --ground: #faf6ee;
     --surface: #ffffff;
     --raised: #ffffff;

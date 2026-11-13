@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import {
+  enhance,
   goToSection,
   markSections,
   measureBar,
@@ -9,14 +10,51 @@ import {
 } from "./anchor-bar.ts";
 
 export interface AnchorBarProps {
-  // The view's sections, in order; each id is the id of the block or h2 it links to.
-  sections: Array<{ id: string; label: string }>;
+  // The view's sections, in order; each id is the id of the block or h2 it links to. Left out,
+  // the bar finds them itself, as the behavior module does: the [data-section][id] blocks of its
+  // main (else its h2[id] headings), kept in step as they come and go.
+  sections?: Array<{ id: string; label: string }>;
   // Show the bar even when the view is short or has fewer than three sections.
   always?: boolean;
   label?: string;
 }
 
 export function AnchorBar({ sections, always = false, label = "On this page" }: AnchorBarProps) {
+  if (!sections) return <FoundAnchorBar always={always} label={label} />;
+  return <ListedAnchorBar sections={sections} always={always} label={label} />;
+}
+
+// The list is the behavior module's: React renders it empty and never touches it. The bar starts
+// hidden (no empty bar before the script runs) and the module shows it; React sets `hidden` once
+// and, as the value never changes, never sets it again.
+function FoundAnchorBar({ always, label }: { always: boolean; label: string }) {
+  const nav = useRef<HTMLElement>(null);
+  useEffect(() => {
+    const parent = nav.current?.parentElement;
+    return parent ? enhance(parent) : undefined;
+  }, []);
+  return (
+    <nav
+      ref={nav}
+      className="cap-anchors"
+      aria-label={label}
+      data-cap="anchor-bar"
+      data-always={always || undefined}
+      hidden={!always}
+    >
+      <span className="cap-anchors-label" aria-hidden="true">
+        {label}
+      </span>
+      <ul className="cap-anchors-list" />
+    </nav>
+  );
+}
+
+function ListedAnchorBar({
+  sections,
+  always,
+  label,
+}: Required<Pick<AnchorBarProps, "sections">> & { always: boolean; label: string }) {
   const nav = useRef<HTMLElement>(null);
   const [shown, setShown] = useState(always);
   const [current, setCurrent] = useState<string | null>(null);

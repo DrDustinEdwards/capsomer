@@ -79,6 +79,23 @@ export const SCALE = {
       "a heading inside a page: Inter Medium, the manual's Helvetica Medium",
     ],
     [
+      "mono-size",
+      "0.75rem",
+      "an identifier's size (.cap-mono): a site with a denser body may set its own",
+    ],
+    ["text-strong", "600", 'the strong text role\'s weight (.cap-text data-weight="strong")'],
+    ["title-weight", "var(--weight-heading)", "the title role's weight (.cap-title)"],
+    [
+      "title-1",
+      "2.25rem",
+      'the largest title role (.cap-title data-size="1"): a page\'s one title',
+    ],
+    ["title-2", "1.875rem", "title role 2: a page title on a quieter page"],
+    ["title-3", "1.5rem", "title role 3: a section title"],
+    ["title-4", "1.25rem", "title role 4: a subsection or a card's title"],
+    ["title-5", "1.125rem", "title role 5: a small card or list title"],
+    ["title-6", "1rem", "title role 6, the smallest: a title at the body size"],
+    [
       "wayfinding",
       '"Overpass", "Overpass Fallback", "Segoe UI", Arial, sans-serif',
       "wayfinding links only (breadcrumbs, footer links, next and back): Overpass, the free Highway Gothic of FAA airport signs (AC 150/5345-44L, Appendix A), at 700 (600 in the footer)",
