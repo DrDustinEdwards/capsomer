@@ -8,6 +8,9 @@ import { Panel } from "../panel/panel.react.tsx";
 import { Row, RowList } from "../row-list/row-list.react.tsx";
 import { Select, type SelectOption } from "../select/select.react.tsx";
 import { Status } from "../status/status.react.tsx";
+import { Table } from "../table/table.react.tsx";
+import { Time } from "../time/time.react.tsx";
+import { pluralWord } from "../format/format.ts";
 import {
   ENGINE_OPTIONS,
   dollars,
@@ -61,8 +64,8 @@ export function AiEngineSettings({
 }: AiEngineSettingsProps) {
   const uid = useCleanId();
   const formId = `${uid}-engines`;
-  const until = settings.override?.until.slice(0, 10);
-  const engines = ENGINE_OPTIONS.map((e) => ({ value: e.value, label: e.label }));
+  const until = settings.override?.until;
+  const engines = [...ENGINE_OPTIONS];
   return (
     <div className="cap-ai-engine" data-cap="ai-engine-settings">
       <dl className="cap-ai-engine-status" aria-label="What each engine can do now">
@@ -85,7 +88,13 @@ export function AiEngineSettings({
         <div>
           <dt>Running on</dt>
           <dd>
-            {until ? `The API for everything until ${until}, with no cap` : "The settings below"}
+            {until ? (
+              <>
+                The API for everything until <Time at={until} format="date" />, with no cap
+              </>
+            ) : (
+              "The settings below"
+            )}
           </dd>
         </div>
       </dl>
@@ -103,69 +112,68 @@ export function AiEngineSettings({
             </Button>
           }
         >
-          <div className="cap-table-wrap" role="region" aria-labelledby={`${uid}-cap`} tabIndex={0}>
-            <table className="cap-table cap-ai-engine-table">
-              <caption id={`${uid}-cap`} className="cap-sr-only">
-                The engine and model for each job
-              </caption>
-              <thead>
-                <tr>
-                  <th scope="col">Job</th>
-                  <th scope="col">Engine</th>
-                  <th scope="col">Model when the API does it</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
+          <Table
+            caption="The engine and model for each job"
+            captionHidden
+            tableClassName="cap-ai-engine-table"
+          >
+            <thead>
+              <tr>
+                <th scope="col">Job</th>
+                <th scope="col">Engine</th>
+                <th scope="col">Model when the API does it</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">
+                  Everything
+                  <span className="cap-ai-engine-job-note">
+                    Each job follows this unless it says otherwise.
+                  </span>
+                </th>
+                <td>
+                  <Select
+                    name="master"
+                    aria-label="Engine for everything"
+                    defaultValue={settings.master}
+                    options={engines}
+                  />
+                </td>
+                <td className="cap-muted">Each job's own</td>
+              </tr>
+              {jobs.map((j) => (
+                <tr key={j.key}>
                   <th scope="row">
-                    Everything
-                    <span className="cap-ai-engine-job-note">
-                      Each job follows this unless it says otherwise.
-                    </span>
+                    {j.label}
+                    {j.note ? <span className="cap-ai-engine-job-note">{j.note}</span> : null}
                   </th>
                   <td>
                     <Select
-                      name="master"
-                      aria-label="Engine for everything"
-                      defaultValue={settings.master}
-                      options={engines}
+                      name={`feature-${j.key}`}
+                      aria-label={`${j.label}: engine`}
+                      defaultValue={settings.features[j.key] ?? ""}
+                      options={[
+                        {
+                          value: "",
+                          label: `Follow everything (${engineWord(settings.master)})`,
+                        },
+                        ...engines,
+                      ]}
                     />
                   </td>
-                  <td className="cap-muted">Each job's own</td>
+                  <td>
+                    <Select
+                      name={`model-${j.key}`}
+                      aria-label={`${j.label}: model when the API does it`}
+                      defaultValue={models[j.key] ?? ""}
+                      options={[...modelOptions]}
+                    />
+                  </td>
                 </tr>
-                {jobs.map((j) => (
-                  <tr key={j.key}>
-                    <th scope="row">
-                      {j.label}
-                      {j.note ? <span className="cap-ai-engine-job-note">{j.note}</span> : null}
-                    </th>
-                    <td>
-                      <Select
-                        name={`feature-${j.key}`}
-                        aria-label={`${j.label}: engine`}
-                        defaultValue={settings.features[j.key] ?? ""}
-                        options={[
-                          {
-                            value: "",
-                            label: `Follow everything (${engineWord(settings.master)})`,
-                          },
-                          ...engines,
-                        ]}
-                      />
-                    </td>
-                    <td>
-                      <Select
-                        name={`model-${j.key}`}
-                        aria-label={`${j.label}: model when the API does it`}
-                        defaultValue={models[j.key] ?? ""}
-                        options={[...modelOptions]}
-                      />
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+              ))}
+            </tbody>
+          </Table>
         </Panel>
       </Form>
 
@@ -192,7 +200,7 @@ export function AiEngineSettings({
                 <Row
                   key={u.job}
                   title={jobs.find((j) => j.key === u.job)?.label ?? u.job}
-                  detail={`${u.calls.toLocaleString("en-US")} ${u.calls === 1 ? "call" : "calls"} · ${dollars(u.micros)}`}
+                  detail={`${u.calls.toLocaleString("en-US")} ${pluralWord(u.calls, "call")} · ${dollars(u.micros)}`}
                 />
               ))}
             </RowList>
