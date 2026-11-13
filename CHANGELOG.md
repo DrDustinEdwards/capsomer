@@ -14,6 +14,7 @@ Second-pass shared-code audit, batch 1 (Dustin, 2026-11-11: any UI that is a com
 - **Button:** `data-wrap` (`wrap`) lets a long label wrap, balanced; `data-block` (`block`) fills the row; `pendingLabel` says the pending state once from a polite live region beside the button.
 - **Link:** `ButtonLink` (a link drawn as a button, with `to` or `href`, and `away` and `newTab`; a same-site `newTab` says "(opens in a new tab)") and `AwayLink` (the `away` kind with its words, `newTab` and `sponsored`), with `awayRel()`, `awayWords()` and `NEW_TAB_WORDS`. New class `.cap-btn-away` (the ↗ in a button link).
 - **Chips:** `LinkChips` (link chips in a named nav, each with a count; `showLabel`) and `CheckChips` (React for 0.115.0's checkbox chips: `fieldset.cap-chips`, `input.cap-chip-input`). A pressed or current chip's `.cap-chip-count` now reads in the pressed word's color (it stayed `--dim`; dustinedwards.info's colophon patched it).
+- **Family footer:** `copyright(name, since)` writes "© 2024–2026 Example Co" from the server's UTC year, for sites with their own footer (bsw, Foxhound, julieedwards.info).
 
 No token or class was removed or renamed.
 
