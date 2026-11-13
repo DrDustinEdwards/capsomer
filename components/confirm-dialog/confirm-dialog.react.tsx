@@ -10,7 +10,9 @@ import {
   DialogBody,
 } from "../dialog/dialog.react.tsx";
 import type { Answer } from "../data/data.ts";
-import { errorText, wordMatches, wordPattern } from "./confirm-dialog.ts";
+import { errorText } from "../dialog/dialog.ts";
+import { wordMatches } from "./confirm-server.ts";
+import { wordPattern } from "./confirm-dialog.ts";
 import { CONFIRM_FIELD, REASON_FIELD } from "./confirm-server.ts";
 
 const ERROR_GLYPH = (

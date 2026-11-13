@@ -3,6 +3,7 @@
 //   component: name and one line; live preview with its code; Installation; Usage; Examples; API reference; Accessibility
 //   primitive: name and one line; Anatomy; Data attributes; Keyboard; API
 import { existsSync, readFileSync } from "node:fs";
+import { iconChevronLeft, iconChevronRight } from "../components/icons/icons.ts";
 import { codeRegion, renderMarkdown } from "./markdown.ts";
 import {
   FOOTER,
@@ -50,10 +51,9 @@ function exampleBlock(c: Component, e: Example, heading: boolean): string {
 </div>`;
 }
 
-const ARROW = {
-  prev: `<svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M10 3 5 8l5 5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
-  next: `<svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="m6 3 5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
-};
+const chevron = (d: string) =>
+  `<svg class="cap-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="${d}"/></svg>`;
+const ARROW = { prev: chevron(iconChevronLeft), next: chevron(iconChevronRight) };
 
 const code = (s: string) => `<code>${esc(s)}</code>`;
 

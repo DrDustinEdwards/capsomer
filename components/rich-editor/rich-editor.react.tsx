@@ -765,7 +765,7 @@ export function RichEditor(props: RichEditorProps) {
               readOnly={Boolean(upload.sending)}
               onChange={(e) => setAlt(e.target.value)}
               onKeyDown={(e) => {
-                // legacy-scan:keep isImeEnter (shortcuts.ts) checks isComposing and keyCode 229; the scanner cannot follow it.
+                // legacy-scan:keep ime-safe-enter-submit isImeEnter (shortcuts.ts) checks isComposing and keyCode 229; the scanner cannot follow it.
                 if (e.key === "Enter" && !isImeEnter(e.nativeEvent)) {
                   e.preventDefault();
                   void insertImage(false);

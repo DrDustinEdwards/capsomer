@@ -22,7 +22,7 @@ Every component lives in `components/<name>/` and has the parts it needs, no mor
 - Any transition or animation sits inside `@media (prefers-reduced-motion: no-preference) { ... }`. Animate opacity, color and transform only.
 - Container queries where the layout depends on the space a component has; a media query only for page-level layout.
 - Check `@media (forced-colors: active)`: nothing may be conveyed by a shadow or a background alone.
-- Hit areas at least `var(--target)`; control heights `var(--control)` (`--control-h` is an alias).
+- Hit areas at least `var(--target)`; control heights `var(--control)`.
 - Density: nothing hard-codes a size density should move. Use `--control`, `--target`, `--pad-x`, `--pad-y`, `--pad-card`, `--gap`, `--row-h`, `--fs-*` and the `--radius-*` tokens; `[data-density="compact|comfortable"]` on any element changes them for its subtree.
 
 ## Shared building blocks

@@ -378,7 +378,3 @@ export function isoFromLocal(value: string): string {
   const d = new Date(value);
   return Number.isFinite(d.getTime()) ? d.toISOString().replace(/\.\d{3}Z$/, "Z") : "";
 }
-
-// ---------------------------------------------------------------------------------------
-// The script path's helpers live with the shared types; still exported from here.
-export { intentForm, outcomesOf } from "../content/content.ts";

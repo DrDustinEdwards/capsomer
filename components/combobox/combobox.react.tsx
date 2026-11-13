@@ -12,6 +12,7 @@ import {
   type RefObject,
   useLayoutEffect,
 } from "react";
+import { Icon, iconChevronDown } from "../icons/icons.react.tsx";
 import { Spinner } from "../skeleton/skeleton.react.tsx";
 
 export interface ComboboxOption {
@@ -116,19 +117,6 @@ const Check = () => (
       strokeLinecap="round"
       strokeLinejoin="round"
       d="m3.5 8.5 3 3 6-7"
-    />
-  </svg>
-);
-
-const Chevron = () => (
-  <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
-    <path
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.8"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      d="m3.5 6 4.5 4.5L12.5 6"
     />
   </svg>
 );
@@ -504,7 +492,7 @@ export function Combobox(props: ComboboxProps) {
             </Base.Clear>
           )}
           <Base.Trigger className="cap-combobox-trigger" aria-label={`Show ${label} options`}>
-            <Chevron />
+            <Icon d={iconChevronDown} />
           </Base.Trigger>
         </Base.InputGroup>
         <Popup
