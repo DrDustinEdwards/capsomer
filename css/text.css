@@ -1,5 +1,5 @@
 /* Capsomer's text roles, alone: a site that uses .cap-text and its data attributes imports `capsomer/text.css`. A site that
-   does not use them does not load them (they were part of base.css from 0.126.0 to 0.134.0, about 1.2 KB gzip for every
+   does not use them does not load them (they were part of base.css from 0.126.0 to 0.137.0, about 1.2 KB gzip for every
    site). The layer order is repeated so it is safe in any order. */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 

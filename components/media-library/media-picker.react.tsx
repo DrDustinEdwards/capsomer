@@ -5,6 +5,8 @@
 // feature image): its preview, Choose or Choose another, Remove, and the alt text the host renders
 // under it.
 import {
+  lazy,
+  Suspense,
   useEffect,
   useEffectEvent,
   useId,
@@ -28,8 +30,19 @@ import {
 import { Empty } from "../empty/empty.react.tsx";
 import type { FormComponent } from "../plain-form/plain-form.react.tsx";
 import type { MediaData } from "../content/content.ts";
-import { MediaLibrary } from "./media-library.react.tsx";
 import { libraryOf, loadMediaView } from "./media-picker.ts";
+
+// The library is its own chunk, fetched when the dialog opens, so a page that only draws the button
+// (an editor, a settings form) does not carry it.
+const MediaLibrary = lazy(() =>
+  import("./media-library.react.tsx").then((m) => ({ default: m.MediaLibrary })),
+);
+
+const LOADING = (
+  <p className="cap-muted" role="status">
+    Loading media...
+  </p>
+);
 
 export interface MediaPick {
   url: string;
@@ -160,21 +173,21 @@ export function MediaPicker({
                 {error}
               </Empty>
             ) : data ? (
-              <MediaLibrary
-                data={data}
-                action={library}
-                Form={PickerForm}
-                mode="picker"
-                onPick={({ id, url, alt }) => {
-                  const caption = data.rows.find((r) => r.key === id)?.caption ?? "";
-                  onPick({ url, alt, caption });
-                  close();
-                }}
-              />
+              <Suspense fallback={LOADING}>
+                <MediaLibrary
+                  data={data}
+                  action={library}
+                  Form={PickerForm}
+                  mode="picker"
+                  onPick={({ id, url, alt }) => {
+                    const caption = data.rows.find((r) => r.key === id)?.caption ?? "";
+                    onPick({ url, alt, caption });
+                    close();
+                  }}
+                />
+              </Suspense>
             ) : (
-              <p className="cap-muted" role="status">
-                Loading media...
-              </p>
+              LOADING
             )}
           </div>
         </DialogBody>
