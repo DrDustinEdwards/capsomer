@@ -16,35 +16,7 @@ replaces:
 
 # Count
 
-A number in a bubble: "Queue 12", an icon with a 3 on its corner.
-
-## When to use it
-
-A count of things waiting, beside a word or on an icon: unread, to review, failing.
-
-## When not to
-
-A state is a status pill. A figure with a label is a stat tile. A count that is the whole content of a row is text.
-
-## The default and its reason
-
-- **One size and one shape** (16px, round), so every count in a product reads the same.
-- **Neutral gray by default; the tone says what the number means**: `data-tone="need"` (it needs you: the primary color), `"crit"` and `"warn"` (status colors that keep their meaning).
-- **An empty count is hidden**, so a count that is zero draws nothing.
-- **Where it sits is the host's**: beside a word, or positioned on an icon's corner and ringed in the bar's color.
-
-## Keyboard
-
-Nothing to operate.
-
-## Accessibility
-
-- The count's text is the number. Where a count sits on an icon, the control's name carries the count too ("Inbox, 3 unread"), and the count itself is `aria-hidden`.
-- Every tone reaches 4.5:1 in both themes. Under forced colors the bubble gets an edge.
-
-Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the automated browser checks and a front-end review stand in. Automated: see the site's Tests page.
-
-## Markup
+## Usage
 
 ```html
 <span class="cap-count" data-tone="need">3</span>
@@ -54,6 +26,9 @@ Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the a
 @import "capsomer/count.css";
 ```
 
-## Exceptions in production
+## Accessibility
 
-None.
+Nothing to operate.
+
+- The count's text is the number. Where a count sits on an icon, the control's name carries the count too ("Inbox, 3 unread"), and the count itself is `aria-hidden`.
+- Every tone reaches 4.5:1 in both themes. Under forced colors the bubble gets an edge.

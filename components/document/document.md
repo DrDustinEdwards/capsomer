@@ -1,7 +1,8 @@
 ---
 name: document
 title: Document
-summary: The page's root: its family and site layer from the first byte, which routes hydrate, and the start of a page that sends no React.
+summary: "The page's root: its family and site layer from the first byte, which routes hydrate, and the start of a page that sends no React."
+group: pattern
 parts: [behavior, react]
 tool: own JavaScript
 states: []
@@ -13,16 +14,7 @@ replaces:
 
 # Document
 
-The root every site writes: `<html>` under its family and site layer, the head every page needs, React Router's scripts only on a route that hydrates, and the site's own script on every other page.
-
-## The default and its reason
-
-- **A page sends no React unless a route asks to hydrate** (`handle = { hydrate: true }`, or a function of the loader data). Reading a page needs no app; its menus, theme button and tabs run from the site's script, wiring the markup the server rendered.
-- **The family and site layer are on `<html>`**, so the first paint is in the site's colors and faces, with no flash.
-- **`startSite` runs each part on its own.** One part that throws is reported and the rest still run, so a broken island never takes the header with it.
-- **The site's script is same-origin and deferred**, so `script-src 'self'` allows it with no nonce.
-
-## Use
+## Usage
 
 ```tsx
 // app/root.tsx
@@ -49,10 +41,3 @@ import { enhance as enhanceTabs } from "capsomer/behavior/tabs";
 startPage();
 startSite([enhanceHeader, enhanceTabs, startIslands]);
 ```
-
-- `documentAttrs({ family, site, theme })`: the attributes for any element, for a root that is not React.
-- `SiteScope`: a part of a page under another family or site layer (a sample of another site), in place of hand-set `data-family` and `data-cap-site`.
-
-## Not here
-
-**Hydrating on intent** (React Router's scripts held until the reader presses play) is site-runtime's `./deferred-scripts` and `./hydrate-on-intent`. `routeHydrates` is re-exported from there.

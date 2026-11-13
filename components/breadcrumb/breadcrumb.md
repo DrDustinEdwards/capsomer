@@ -1,7 +1,7 @@
 ---
 name: breadcrumb
 title: Breadcrumb
-summary: Where this page sits: links back up the trail, the current page as text, a long trail folded into a popover of links.
+summary: "Where this page sits: links back up the trail, the current page as text, a long trail folded into a popover of links."
 parts: [css, behavior, react]
 tool: native + own JavaScript
 states: [default, two levels, long names wrap, folded in the HTML, folded by script, short trail stays whole, wraps in a narrow space, folded levels open, comfortable density]
@@ -15,56 +15,7 @@ replaces:
 
 # Breadcrumb
 
-A `nav` named "Breadcrumb" holding an ordered list: a link for each level above this page, then the current page as plain text with `aria-current="page"`. The separators are drawn by CSS, so a screen reader hears the levels and not the slashes.
-
-**Provenance.** EXTRACTED and REWROTE, from the site's `Breadcrumb` (`app/components/breadcrumb.tsx` and `.page-breadcrumb`). Kept as it is: the `nav`/`ol` structure, the last step as `aria-current="page"` text rather than a link, a trail of one level rendering nothing, wrapping when it is long. Changed: the separator was a `" / "` span with `aria-hidden` in each item and is now generated content with no text; the links were 13 px text with no height and are now at least `var(--target)` tall; links use the accent text color (the site used the brand color, which is not text-safe on every ground); long names wrap; and a long trail folds. The data-driven `trail` of `[name, path]` pairs became `items` of `{ label, href }`.
-
-## When to use it
-
-On a page two or more levels below a hub: a post under Posts under Admin; a job run under a site. It tells a person where they are and gets them up a level in one step.
-
-## When not to
-
-- **A hub or a top-level page**: nothing. A one-level trail is the page's own title, so the React `Breadcrumb` renders nothing for it.
-- **Moving between peers** (Open, Resolved): tabs, in their links form.
-- **A path a person built through the app** (history): the browser's Back.
-- **One step back to one fixed parent** (a page with a single way in, a step in a flow): the back link, below.
-- **A file path or an address to copy**: plain text in the mono face.
-
-## The default and its reason
-
-- **The whole trail is in the HTML.** Every level is a real link, so the page is readable and navigable as delivered. A trail with `data-max-items` is folded by script after load; the React wrapper (and any server) can render the folded form directly.
-- **Separators are CSS** (a small chevron that turns in a right-to-left page), not elements. shadcn's separator is an `li` with `role="presentation"`; this one is not in the tree at all, so a list of three levels is a list of three items.
-- **The current page is text,** heavier and in the full text color: it is not a link to itself, and it is told apart from the links by more than color.
-- **A folded trail keeps the first level and the last `max - 1`.** The first level is where the trail starts; the last ones are nearest the current page. Fewer than two levels would fold is not worth a button, so the trail stays whole.
-- **The folded levels are links in a click popover,** not a menu: they are navigation, so they are links (they open in a new tab, they show their address), and the popover is the shared one (Esc, focus return, light dismiss). shadcn uses a dropdown menu of items.
-- **Long names wrap in full**: past 24 characters for a link and 36 for the current page the name takes more lines and is never cut, so nothing is lost under a reader's own text spacing (WCAG 1.4.12).
-- **On a phone it is one line** (up to 40rem wide): the current page leaves the line, since the page's heading names it and it is usually the longest step, and stays in the list for a screen reader; a trail still too long scrolls sideways inside itself, cut at the edge so more is plainly there. Wrapping onto more lines invites mis-taps and clutters the top of the page (Baymard, "Mobile hierarchy breadcrumbs"; GOV.UK Design System, Breadcrumbs; NN/g, "Breadcrumbs: 11 design guidelines"). Replaces 0.3.0's default, which wrapped. In a narrow column on a wider screen the trail still wraps.
-
-## The shadcn component it matches
-
-Breadcrumb (`breadcrumb.tsx`: Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbPage, BreadcrumbSeparator, BreadcrumbEllipsis). Matched: the list, the link that darkens on hover, the page, the separator, the ellipsis that opens a list of the folded levels. Different on purpose: CSS separators; links in the accent text color rather than muted; wrapped names; a popover of links instead of a dropdown menu; the hit area is the target height.
-
-## Keyboard
-
-| Key | Does |
-| --- | --- |
-| Tab, Shift+Tab | Moves through the links and the folded-levels button in order; the current page is not a stop |
-| Enter | Follows the focused link |
-| Enter, Space on the folded-levels button | Opens the popover; focus moves to its first link |
-| Tab, Shift+Tab in the popover | Moves between its links; tabbing past the last closes it |
-| Esc | Closes the popover; focus returns to the button |
-
-## Accessibility
-
-- A `nav` named "Breadcrumb" (use another name if a page has two) holding an `ol`. The current page is `aria-current="page"`.
-- The folded button is named for what it does ("Show 2 more levels"); it has `aria-haspopup="dialog"` and `aria-expanded`. The popover is a dialog named "More levels".
-- Link text 4.5:1 on the page; the current page 4.5:1; the separator is decorative.
-- Each link and the button are at least `var(--target)` tall and wide. Forced colors draw the separator in CanvasText.
-
-Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the automated browser checks and a front-end review stand in. Automated: see the site's Tests page.
-
-## Markup
+## Usage
 
 ```html
 <nav class="cap-breadcrumb" aria-label="Breadcrumb">
@@ -75,8 +26,6 @@ Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the a
   </ol>
 </nav>
 ```
-
-Folded in the HTML: the item that stands for the hidden levels.
 
 ```html
 <li class="cap-breadcrumb-item" data-collapsed>
@@ -91,10 +40,6 @@ Folded in the HTML: the item that stands for the hidden levels.
 </li>
 ```
 
-Or send the whole trail and add `data-cap="breadcrumb" data-max-items="4"` to the `nav`: `enhance()` folds it. `import { enhance, collapse, foldedLevels } from "capsomer/behavior/breadcrumb"`; `enhance()` also attaches the popover of a folded item, so the page needs only this call.
-
-In React, `import { Breadcrumb } from "capsomer/react/breadcrumb"`:
-
 ```tsx
 <Breadcrumb
   items={[{ label: "Admin", href: "/admin" }, { label: "Posts", href: "/admin/posts" }, { label: "Edit" }]}
@@ -103,22 +48,17 @@ In React, `import { Breadcrumb } from "capsomer/react/breadcrumb"`:
 />
 ```
 
-`minItems` (default 2) is the fewest levels that draw a trail. germomics leaves the home page out (its header's wordmark links it) and shows a trail only when the page's BreadcrumbList has Prelum's `BREADCRUMB_MIN_ITEMS`: it passes that less one. Added in 0.132.0.
+## Accessibility
 
-## The back link
+| Key | Does |
+| --- | --- |
+| Tab, Shift+Tab | Moves through the links and the folded-levels button in order; the current page is not a stop |
+| Enter | Follows the focused link |
+| Enter, Space on the folded-levels button | Opens the popover; focus moves to its first link |
+| Tab, Shift+Tab in the popover | Moves between its links; tabbing past the last closes it |
+| Esc | Closes the popover; focus returns to the button |
 
-A page that is one step from a single parent (a form, a step in a flow, a detail opened from one list) gets one link back instead of a trail: `.cap-go[data-go="back"]` (css/utilities.css), the family arrow turned to point back, before the text. Like GOV.UK's back link, it sits at the top of the page, before the `h1` and outside `main`'s heading, and it is a real link to a real address, never `history.back()`: it works with no script, in a new tab, and when the person arrived from somewhere else. It names where it goes ("Sites", not "Back"), so it reads on its own in a list of links. It is a link, so Tab reaches it and Enter follows it; the arrow is drawn, not text, so nothing extra is announced.
-
-```html
-<a class="cap-go" data-go="back" href="/sites">Sites</a>
-```
-
-## Deliberately different
-
-- Separators are generated content, not elements.
-- The folded levels are links in a popover, not a dropdown menu.
-- Link and button hit areas are never under the target size.
-
-## Exceptions in production
-
-None yet.
+- A `nav` named "Breadcrumb" (use another name if a page has two) holding an `ol`. The current page is `aria-current="page"`.
+- The folded button is named for what it does ("Show 2 more levels"); it has `aria-haspopup="dialog"` and `aria-expanded`. The popover is a dialog named "More levels".
+- Link text 4.5:1 on the page; the current page 4.5:1; the separator is decorative.
+- Each link and the button are at least `var(--target)` tall and wide. Forced colors draw the separator in CanvasText.

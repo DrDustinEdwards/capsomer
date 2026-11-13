@@ -1,7 +1,7 @@
-// The public pages' script (site/home.ts writes them; they read whole without it). The header, its
-// search and its theme button are Capsomer's own site header. The front page's: the family preview, the type sample,
-// the component filter, the copy button and the live test count. A component page's: its examples'
-// frames, their code, the component list's filter, the page's sections marked as you read, Copy page.
+// The script of every page (the pages read whole without it; site/chrome.ts and the section modules write them). The
+// header, its search and its theme button are Capsomer's own site header. A Themes page's controls and its live token
+// values; a component page's example frames and their code; the section list's filter and the page's sections marked
+// as you read; the icons' search, size and copy; the colors' chips and copy; the front page's network board.
 import { staticSearch, type StaticSearchIndex } from "@drdustinedwards/site-helpers/search";
 import { copyText } from "../components/copy/copy.ts";
 import { enhance as enhanceHeader } from "../components/site-header/site-header.ts";
@@ -30,99 +30,6 @@ enhanceHeader(document, {
 });
 enhanceTheme();
 enhanceTabs();
-
-// The preview takes the chosen family as a site would, with data-family, crossfading where the browser has view transitions and motion is allowed (site/home.css).
-const stage = document.querySelector<HTMLElement>("[data-cap-part='stage']");
-const still = matchMedia("(prefers-reduced-motion: reduce)");
-for (const input of document.querySelectorAll<HTMLInputElement>("input[name='home-family']")) {
-  input.addEventListener("change", () => {
-    if (!stage) return;
-    const apply = () => {
-      stage.dataset.family = input.value;
-    };
-    if (document.startViewTransition && !still.matches) document.startViewTransition(apply);
-    else apply();
-  });
-}
-// The preview's chips and switch respond, so the panel behaves like the components it shows.
-for (const chip of document.querySelectorAll<HTMLButtonElement>(".home-try .cap-chip")) {
-  chip.addEventListener("click", () =>
-    chip.setAttribute("aria-pressed", String(chip.getAttribute("aria-pressed") !== "true")),
-  );
-}
-for (const sw of document.querySelectorAll<HTMLInputElement>(".home-try .cap-switch input")) {
-  sw.addEventListener("change", () => {
-    const state = sw.parentElement?.querySelector(".cap-switch-state");
-    if (state) state.textContent = sw.checked ? "On" : "Off";
-  });
-}
-
-// Your own words in every size of the type scale.
-const sample = document.querySelector<HTMLElement>("[data-cap-part='sample']");
-if (sample) {
-  sample.hidden = false;
-  const input = sample.querySelector("input");
-  const specimens = document.querySelectorAll<HTMLElement>(".home-scale-sample");
-  input?.addEventListener("input", () => {
-    for (const el of specimens) el.textContent = input.value.trim() || "Field notes";
-  });
-}
-
-// The component filter: by name and summary, with the count said aloud.
-const find = document.querySelector<HTMLElement>("[data-cap-part='find']");
-const parts = [...document.querySelectorAll<HTMLLIElement>(".home-parts > li")];
-if (find) {
-  find.hidden = false;
-  const input = find.querySelector("input");
-  const count = find.querySelector("[role='status']");
-  input?.addEventListener("input", () => {
-    const q = input.value.trim().toLowerCase();
-    let shown = 0;
-    for (const li of parts) {
-      const hit = !q || (li.textContent ?? "").toLowerCase().includes(q);
-      li.hidden = !hit;
-      if (hit) shown++;
-    }
-    if (count)
-      count.textContent = q
-        ? `${shown} of ${parts.length} components`
-        : `${parts.length} components`;
-  });
-}
-
-// Copy the install lines; the button says it worked.
-const copy = document.querySelector<HTMLButtonElement>("[data-cap-part='copy']");
-if (copy && navigator.clipboard) {
-  copy.hidden = false;
-  const copyInstall = async () => {
-    copy.textContent = (await copyText(document.getElementById("home-install")?.textContent ?? ""))
-      ? "Copied"
-      : "Copy failed";
-    setTimeout(() => (copy.textContent = "Copy"), 2000);
-  };
-  copy.addEventListener("click", () => void copyInstall());
-}
-
-// The last run on main, from the results branch CI writes (the admin reads the same file).
-const live = document.querySelector<HTMLElement>("[data-live='tests']");
-if (live) {
-  fetch("https://raw.githubusercontent.com/DrDustinEdwards/capsomer/results/results.json", {
-    cache: "no-cache",
-  })
-    .then((r) => (r.ok ? r.json() : null))
-    .then((j: { totals?: { passed: number; failed: number } } | null) => {
-      if (!j?.totals) return;
-      const { passed, failed } = j.totals;
-      const [n, , note] = live.children;
-      if (n) n.textContent = (passed + failed).toLocaleString("en-US");
-      if (note)
-        note.textContent = failed
-          ? `${failed} failing on the last run`
-          : "all passed on the last run";
-      delete live.dataset.pending;
-    })
-    .catch(() => {});
-}
 
 // ---- a component's page --------------------------------------------------------------------
 
@@ -201,17 +108,7 @@ for (const box of document.querySelectorAll<HTMLElement>(".comp-ex-code")) {
   });
 }
 
-// Copy page: the component's doc as Markdown, for a note or an assistant.
-const copyPage = document.querySelector<HTMLButtonElement>("[data-cap-part='copy-page']");
-const md = document.querySelector<HTMLTemplateElement>("template[data-cap-part='md']");
-// The server writes the button (home.ts), so the title row does not rewrap as the page loads (D5); a browser
-// without the clipboard loses it.
-if (copyPage && !navigator.clipboard) copyPage.hidden = true;
-if (copyPage && md && navigator.clipboard) {
-  copyPage.addEventListener("click", () => void copyCode(copyPage, md.content.textContent ?? ""));
-}
-
-// The component list's filter.
+// The section list's filter.
 const sideFind = document.querySelector<HTMLElement>("[data-cap-part='side-find']");
 if (sideFind) {
   sideFind.hidden = false;
@@ -254,49 +151,6 @@ if (tocLinks.length && "IntersectionObserver" in window) {
   }
 }
 
-// The front page's header links go to its own sections, so the underline follows the section being
-// read (Home above the first), and moves at once on a click. The section counts as read once its
-// top passes a third of the way down the window.
-const headerLinks = [
-  ...document.querySelectorAll<HTMLAnchorElement>(".cap-site-header-sections a"),
-];
-const sectionLinks = headerLinks.filter((a) => a.pathname === location.pathname && a.hash);
-const homeLink = headerLinks.find((a) => a.getAttribute("aria-current") === "page");
-if (sectionLinks.length && homeLink) {
-  const mark = (on: HTMLAnchorElement) => {
-    for (const a of [homeLink, ...sectionLinks]) {
-      if (a === on) {
-        a.setAttribute("aria-current", a === homeLink ? "page" : "location");
-        if (a !== homeLink) a.dataset.current = "";
-      } else {
-        a.removeAttribute("aria-current");
-        delete a.dataset.current;
-      }
-    }
-  };
-  let queued = false;
-  const spy = () => {
-    queued = false;
-    const line = innerHeight / 3;
-    let on = homeLink;
-    for (const a of sectionLinks) {
-      const top = document.getElementById(a.hash.slice(1))?.getBoundingClientRect().top;
-      if (top !== undefined && top <= line) on = a;
-    }
-    mark(on);
-  };
-  addEventListener(
-    "scroll",
-    () => {
-      if (!queued) requestAnimationFrame(spy);
-      queued = true;
-    },
-    { passive: true },
-  );
-  for (const a of sectionLinks) a.addEventListener("click", () => mark(a));
-  spy();
-}
-
 // The network board: built with every site normal, then drawn again from each site's /health as the Worker reads it
 // (/network.json, held a minute at the edge). With no answer the board stays as built.
 const net = document.querySelector<HTMLElement>("[data-cap-part='network']");
@@ -311,4 +165,127 @@ if (net) {
       if (body.sites) relight(net, body.sites);
     })
     .catch(() => {});
+}
+
+// ---- a Themes page -------------------------------------------------------------------------
+
+// The controls set the board's family, theme and density, as a site does with data-family, data-cap-theme and
+// data-density; each token's sample and value are then read back from the board, so the table says what it shows.
+const controls = document.querySelector<HTMLElement>("[data-cap-part='controls']");
+const boards = [...document.querySelectorAll<HTMLElement>("[data-cap-part='board']")];
+const paintTokens = () => {
+  const from = (scheme?: string) =>
+    boards.find((b) => !scheme || b.dataset.scheme === scheme) ?? document.documentElement;
+  for (const val of document.querySelectorAll<HTMLElement>(".th-val[data-token]")) {
+    const value = getComputedStyle(from(val.dataset.scheme))
+      .getPropertyValue(`--${val.dataset.token}`)
+      .trim();
+    const code = val.querySelector("code");
+    if (code && value) code.textContent = value;
+  }
+  for (const demo of document.querySelectorAll<HTMLElement>(".th-demo")) {
+    const token = demo.dataset.token ?? demo.closest<HTMLElement>(".th-val")?.dataset.token;
+    const scheme = demo.closest<HTMLElement>(".th-val")?.dataset.scheme;
+    if (!token) continue;
+    const css = `var(--${token})`;
+    const prop: Record<string, string> = {
+      color: "background",
+      radius: "border-radius",
+      shadow: "box-shadow",
+      space: "inline-size",
+      type: "font-size",
+    };
+    const name = prop[demo.dataset.kind ?? ""];
+    if (!name) continue;
+    // A sample sits in the table, outside the board, so it takes the board's family and theme to read the same.
+    const board = from(scheme);
+    if (board !== document.documentElement) {
+      for (const a of ["family", "capTheme", "density"] as const) {
+        const v = board.dataset[a];
+        if (v) demo.dataset[a] = v;
+        else delete demo.dataset[a];
+      }
+    }
+    demo.style.setProperty(name, css);
+  }
+};
+if (controls && boards.length) {
+  controls.hidden = false;
+  const set = (attr: "family" | "capTheme" | "density", value: string | null) => {
+    for (const b of boards) {
+      if (value === null) delete b.dataset[attr];
+      else b.dataset[attr] = value;
+    }
+    paintTokens();
+  };
+  controls
+    .querySelector<HTMLSelectElement>("#th-family")
+    ?.addEventListener("change", (e) => set("family", (e.target as HTMLSelectElement).value));
+  for (const input of controls.querySelectorAll<HTMLInputElement>("input[name='th-scheme']"))
+    input.addEventListener("change", () =>
+      set("capTheme", input.value === "page" ? null : input.value),
+    );
+  for (const input of controls.querySelectorAll<HTMLInputElement>("input[name='th-density']"))
+    input.addEventListener("change", () =>
+      set("density", input.value === "default" ? null : input.value),
+    );
+  // The board's own chips and switch respond, so it behaves like the components it shows.
+  for (const chip of document.querySelectorAll<HTMLButtonElement>(".th-board .cap-chip"))
+    chip.addEventListener("click", () =>
+      chip.setAttribute("aria-pressed", String(chip.getAttribute("aria-pressed") !== "true")),
+    );
+  for (const sw of document.querySelectorAll<HTMLInputElement>(".th-board .cap-switch input"))
+    sw.addEventListener("change", () => {
+      const state = sw.parentElement?.querySelector(".cap-switch-state");
+      if (state) state.textContent = sw.checked ? "On" : "Off";
+    });
+}
+if (document.querySelector(".th-val, .th-demo")) {
+  paintTokens();
+  // The page's own theme moves the values too.
+  new MutationObserver(paintTokens).observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ["data-theme"],
+  });
+  matchMedia("(prefers-color-scheme: dark)").addEventListener("change", paintTokens);
+}
+
+// ---- Icons and Colors ----------------------------------------------------------------------
+
+// A click copies the icon's name or the step's value, said in the page's status line.
+const copied = document.querySelector<HTMLElement>("#icon-n, #copy-n");
+for (const button of document.querySelectorAll<HTMLButtonElement>("[data-copy]")) {
+  button.addEventListener("click", () => {
+    const text = button.dataset.copy ?? "";
+    void copyText(text).then((ok) => {
+      if (copied) copied.textContent = ok ? `Copied ${text}` : "Copy failed";
+      button.dataset.copied = ok ? "" : "failed";
+      setTimeout(() => delete button.dataset.copied, 1500);
+    });
+  });
+}
+for (const chip of document.querySelectorAll<HTMLElement>(".sw-step[data-hex]"))
+  chip
+    .querySelector<HTMLElement>(".sw-chip")
+    ?.style.setProperty("background", chip.dataset.hex ?? "");
+
+const iconTools = document.querySelector<HTMLElement>("[data-cap-part='icon-tools']");
+const iconGrid = document.querySelector<HTMLElement>("[data-cap-part='icons']");
+if (iconTools && iconGrid) {
+  iconTools.hidden = false;
+  const tiles = [...iconGrid.querySelectorAll<HTMLLIElement>("li[data-name]")];
+  const find = iconTools.querySelector<HTMLInputElement>("#icon-find");
+  find?.addEventListener("input", () => {
+    const q = find.value.trim().toLowerCase();
+    let shown = 0;
+    for (const li of tiles) {
+      li.hidden = Boolean(q) && !(li.dataset.name ?? "").includes(q);
+      if (!li.hidden) shown++;
+    }
+    if (copied) copied.textContent = q ? `${shown} of ${tiles.length} icons` : "";
+  });
+  for (const input of iconTools.querySelectorAll<HTMLInputElement>("input[name='icon-size']"))
+    input.addEventListener("change", () =>
+      iconGrid.style.setProperty("--icon-size", `${input.value}px`),
+    );
 }

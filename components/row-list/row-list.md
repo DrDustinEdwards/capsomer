@@ -16,63 +16,7 @@ replaces:
 
 # Row list
 
-A list of things that each open a detail: the attention list, the job queue, the incident feed, a draft list. Each row is a status, a title, a detail line and a time, and the whole row is one link.
-
-## When to use it
-
-For items a person scans and then opens one at a time, where each item has one place to go.
-
-## When not to
-
-Data compared across columns (versions, counts, several numbers per item) is a table (`.cap-table`). A list of settings is a form. A list with several equal actions per item and no detail to open is a plain list of controls. A worst-first problem list with groups and collapsed notices is the attention list, which is built on this one.
-
-## The default and its reason
-
-- **The title is the row's one link or button, stretched over the whole row with a `::after`.** The row is one tab stop with a real role: a link when the detail has its own address, a button when it opens in place. A clickable `div` with `tabindex` (the Portal's first version) has no role and no name a screen reader can trust (patterns.md, "Row that opens a detail").
-- **`j` and `k` move keyboard focus itself, not a second selection.** Enter then follows the link, the row is scrolled the least distance that shows it, and a screen reader reads the row it lands on. They work when focus is in the list, or on the page's primary list (`data-cap-primary`, one per page) when focus is on nothing else; from nothing, `j` lands on the first row and `k` on the last (the Portal's rule). They never act in a text field, with a modifier, or when single-key shortcuts are off (`data-cap-single-keys="off"` on `<html>`, set by the shortcuts registry).
-- **The focused row shows `--sel` with an inset 2 px ring in `--ring`** (the shared focus color), which is 3:1 against `--sel` in both themes. The link draws no ring of its own, so there is one indicator, on the row.
-- **The row is rounded and its spacing follows density** (`--pad-y`, `--pad-card`, `--row-h`), so `data-density="comfortable"` on the list or any ancestor makes it roomier. Color changes ease in over 100 ms (only when motion is allowed).
-- **Variants and sizes, as shadcn's Item has them**: `data-variant="outline"` draws the row's own edge, `data-variant="muted"` tints it, on the `li`; `data-size="sm"` tightens it (and a picture is 28px), `"xs"` tightens it further and sets the title a size smaller (a picture 20px), so each step is visibly smaller than the one above (row-list.spec.ts, "the sizes step down"). A list of such rows takes `data-gap` (default, `sm`, `xs`) on the `ul` to separate them like shadcn's ItemGroup. The default stays flush with no rules between rows.
-- **Media**: `<span class="cap-row-media" data-variant="icon|image">` takes the first column instead of a status, for an icon or a picture. At every width, a narrow column (under 30rem) included, it stays beside the title, and every row's text starts in one column whether or not it has media, since the rows stay a subgrid of the list; a status moves above the title in a narrow column (row-list.spec.ts, "every row's text starts in one column").
-- **Critical rows only get the red left edge**, always beside the status word and its glyph: shape, word and color. The edge is an inset shadow, flush with the row's edge and clipped to its rounded corners; in forced colors it is a border.
-- **No rules between rows.** Hover and focus carry the structure (Portal: "Lists carry no rules between rows").
-- **Row actions are real buttons, raised above the stretched link** (`z-index`), so they take their own clicks and their own tab stops.
-- **The link is described by the row's status and detail** (`aria-describedby`), so moving by link still says "Critical" and why.
-- **Columns line up from row to row**: the list is a grid and each row a subgrid of it.
-- **On a narrow column the status moves above the title** (a container query on the list, below 30rem), and actions go underneath.
-- **Long titles and details take two lines, then are cut with an ellipsis**, and the full text stays in the link's name. Two lines, not one, so text that fits still fits with a reader's own text spacing (WCAG 1.4.12). **In a narrow column the title wraps instead**: on a phone there is no hover and no wider view to read the rest in (Portal: "titles wrap instead of being cut"). The detail stays cut at two lines (the moderation queue's excerpt wraps instead: it is what a decision is made on).
-- **A row that opens in place** (a group of like rows) uses a `button` title with `aria-expanded` and `aria-controls`, and a `.cap-row-chevron` after the time, which turns when it is open. The attention list's group rows are these.
-
-- **A row that is read, not opened** (0.100.0): a `Row` with no `href` and no `onOpen` has a plain-text title and no hover, and only its actions are controls (a checklist step, a fact). Markup: `<li class="cap-row" data-static>` with `<span class="cap-row-text">` in the title.
-
-## The shadcn component it matches
-
-Item (`item.tsx`): Item, ItemGroup, ItemMedia, ItemContent (the title and detail), ItemActions. Matched: the rounded row, outline and muted variants, three sizes, media, actions, the group gap, the 100 ms color transition, the stretched hit area (shadcn renders the Item itself as the link; Capsomer stretches the title's link instead, so the row has one named link and its actions stay real buttons).
-
-Different on purpose: the default is flush with a `--raised` hover and no border, the Portal's list look; the status and time have their own columns (a subgrid) so they line up between rows, which Item's flex row does not do; `j` and `k` move between rows.
-
-## Keyboard
-
-| Key | Does |
-| --- | --- |
-| Tab | Moves to the next row's title, then into that row's actions, if any |
-| `j` | Moves focus to the next row's title (from outside the primary list, to its first row) |
-| `k` | Moves focus to the previous row's title (from outside the primary list, to its last row) |
-| Enter | Follows the focused row's link, or presses its button |
-| Enter or Space on a group row's button | Shows or hides the rows it holds |
-
-- **A reply opens in its row** (`reply`, with `RowReply`): answering a question or saying what unblocked a job happens where the row is, not on another page. The box is labeled for what the words are for ("Your answer, sent to its driver"), takes focus when it opens, says why an empty or refused reply was not sent (announced), sends on Ctrl or Cmd+Enter (not during an IME composition) and cancels on Esc. It sits under the row's text, across the row and above the stretched link.
-
-## Accessibility
-
-- A `ul` with `role="list"`: Safari drops list semantics from a list with `list-style: none` otherwise.
-- The list is named by the heading above it (`aria-labelledby`).
-- One focus indicator, on the row, as an outline, so it survives forced colors; the critical edge turns CanvasText there.
-- The stretched hit area makes the whole row at least `--target` high.
-
-Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the automated browser checks and a front-end review stand in. Automated: see the site's Tests page.
-
-## Markup
+## Usage
 
 ```html
 <ul class="cap-rows" data-cap="row-list" role="list" aria-labelledby="attention-h" data-cap-primary>
@@ -86,10 +30,6 @@ Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the a
 </ul>
 ```
 
-The title may be a `button` instead of an `a` when the detail opens in place (a side panel). `import { enhance, moveRowFocus } from "capsomer/behavior/row-list"` wires `j` and `k`. In React, `import { RowList, Row } from "capsomer/react/row-list"`: `<RowList labelledBy="attention-h" primary><Row title="..." href="..." status={...} detail="..." meta={...} tone="crit" /></RowList>`; pass `renderLink` to use a router's link.
-
-A group row, whose button opens the rows it holds:
-
 ```html
 <li class="cap-row">
   <span class="cap-row-status" id="g-s"><span class="cap-status" data-tone="warn">[glyph] Warning</span></span>
@@ -99,10 +39,19 @@ A group row, whose button opens the rows it holds:
 </li>
 ```
 
-In React, `<Row expanded={open} controls={id} onOpen={...} />` renders it.
+## Accessibility
 
-**Provenance.** MIXED, against capsid `master` as of 2026-10-01 (`dashboard/src/styles.css` `.att-row`, `.qrow`, `.frow`, `.rowlink`, `.chev`; `dashboard/src/app/App.tsx` `step`). EXTRACTED: the row's values (6 px by 16 px padding, `--raised` hover, `--sel` with a 1 px `--accent-line` ring on the focused row, the 3 px red edge on critical rows only, 12 px muted detail and time, bold title, one-line ellipsis, the stretched `::after`, the chevron's geometry) and, new in v0.1.1, the title that wraps on a phone and the focus-without-browser-scroll then `scrollIntoView({ block: "nearest" })` step with `k` starting at the last row. REWROTE: the markup (a real link or button in a list, not a focusable `div`), the subgrid columns, the container query, the ring as an outline (it survives forced colors; the Portal draws it with `box-shadow`), the red edge as a pseudo-element for the same reason, and the whole of `row-list.ts` (per-list, framework-free, guarded in fields and by the single-key switch; the Portal's `step` is one function in `App.tsx` over every `[data-row]` in `main`). Where the Portal differs and the audit wins: a row is one tab stop with a real role (patterns.md, "Row that opens a detail"), and the phone keeps the status word (the Portal hides the word and keeps the glyph at 820 px; DEFAULTS.md: shape, word and color together).
+| Key | Does |
+| --- | --- |
+| Tab | Moves to the next row's title, then into that row's actions, if any |
+| `j` | Moves focus to the next row's title (from outside the primary list, to its first row) |
+| `k` | Moves focus to the previous row's title (from outside the primary list, to its last row) |
+| Enter | Follows the focused row's link, or presses its button |
+| Enter or Space on a group row's button | Shows or hides the rows it holds |
 
-## Exceptions in production
+- **A reply opens in its row** (`reply`, with `RowReply`): answering a question or saying what unblocked a job happens where the row is, not on another page. The box is labeled for what the words are for ("Your answer, sent to its driver"), takes focus when it opens, says why an empty or refused reply was not sent (announced), sends on Ctrl or Cmd+Enter (not during an IME composition) and cancels on Esc. It sits under the row's text, across the row and above the stretched link.
 
-None yet.
+- A `ul` with `role="list"`: Safari drops list semantics from a list with `list-style: none` otherwise.
+- The list is named by the heading above it (`aria-labelledby`).
+- One focus indicator, on the row, as an outline, so it survives forced colors; the critical edge turns CanvasText there.
+- The stretched hit area makes the whole row at least `--target` high.

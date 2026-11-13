@@ -1,10 +1,10 @@
 // The network board on the front page: the six network sites as one checkerboard after Bridget Riley's Movement in
 // Squares (1961), each site a stretch of seven columns in its family color, with a bar under it carrying its name.
 // A site whose /health says "warn" or "fail" lights its stretch amber (--warn) or red (--crit) and squeezes its
-// columns toward the middle, as Riley's squares compress. The page is built with every site normal; site/home-main.ts
+// columns toward the middle, as Riley's squares compress. The page is built with every site normal; site/page.ts
 // asks /network.json (worker/index.ts) and sets each stretch's state from the answer. The board is decoration, not a
 // chart: it plots no quantity, and the bar says each site's name and any state in words. So it is drawn in CSS
-// (site/home.css), seven columns of alternating squares per stretch, and hidden from assistive technology; the state
+// (site/site.css), seven columns of alternating squares per stretch, and hidden from assistive technology; the state
 // only sets data-state, and the CSS colors and squeezes the columns.
 import { escapeHtml as esc } from "@dustinedwards/site-runtime/html";
 import { FAMILY_SITES, type FamilySite } from "../components/family-footer/family-footer.ts";

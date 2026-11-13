@@ -2,6 +2,7 @@
 name: history-list
 title: History list
 summary: One line per change to a draft or post, with who, when, the signed size change in words and a one-line summary; autosaves folded, any two versions picked to compare, and restoring that makes a new version.
+group: pattern
 parts: [css, behavior, react]
 tool: native + own JavaScript
 states: [read-only with no word counts, load into editor, current version, edit, autosave, run of autosaves collapsed, run of autosaves open, named version, publish with destinations and statuses, restore line, one version picked, two versions picked, a third pick refused, compare before the script runs, size change up, down and none, hover, restored with Undo, empty, load older, comfortable density, phone width]
@@ -16,82 +17,7 @@ replaces:
 
 # History list
 
-What changed, by whom, when, and by how much: one line per change to a draft or a post. Autosaves fold into one line that opens in place. Any two lines can be picked and compared. Restoring a line adds a new version on top; nothing is overwritten.
-
-**Provenance.** MIXED, against the site admin at `app/components/admin/revision-list.tsx`, `app/routes/admin.posts.$slug.history.tsx`, `app/components/post-history.tsx` and `app/styles/admin-history.css`. EXTRACTED: a line per commit with the author, the date shown in UTC so the server render and the browser agree, and the current line marked "current" and given no restore; the diff-on-demand idea (the diff is its own view, here the compare view); the rule "history is never rewritten": restoring there loads a revision into the editor and a save lands a new commit on top. The row actions "Load into editor" and "View diff" carry over as Restore and the line's title link. REWROTE: the markup (a list of lines in a subgrid built on the row list, not bordered cards), the size change, the folding of autosaves, the two-line compare pick, the restore that acts at once and offers Undo (the site's restore loads text into an editor and waits for a save; the draft here has its own save, so the history line is the record), the exact time, the pure helpers, and the whole of the behavior module (the site's is a React state per list). NOT carried: the inline `DiffBlock` (the compare view is a separate component), the short sha as the line's label (a version has a summary and a time; a sha is on the version's page), the site's "Load into editor" copy.
-
-## When to use it
-
-The history of one document that changes over time and where people go back: a post, a draft, a prompt, a policy, a settings file.
-
-## When not to
-
-- A log of events across many things (sessions, deploys, an audit trail) is the feed or the table, not this: those have no versions to compare or restore.
-- A single "last edited by" fact is plain text with a time.
-- A list of the latest drafts is the row list. This one is for the versions of one draft.
-
-## The default and its reason
-
-- **One line per change, in a subgrid of columns:** a pick box, who (an avatar and the name), the one-line summary as the line's link, the signed size change, when, and the action. The columns line up from line to line because every line is a subgrid, and the line is the row list's line, so `j` and `k` move between them.
-- **The size change is signed, in words, with the sign as text and a drawn mark:** "+142 words", "−30 words" (a real minus sign, which a screen reader says as "minus"), "no change in length". A drawn plus, minus or equals mark repeats it. It carries no red or green: a text that got shorter is not a failure, and the sign and mark already say which way. Tabular figures.
-- **The summary is one line, cut with an ellipsis, and its full text is the link's name** (and its `title`). The link opens that version. It is described by the kind line, the size change and the time, so moving by link says all of it.
-- **When is the relative time and, under it, the exact UTC time.** The relative time is the time component; the exact one is plain text in UTC, written by the server, so the HTML delivered and the browser's agree, and two lines on the same day can be told apart. This differs from the time component's default (exact only in a detail) because here the exact time is the point of a history line, and there is no detail to hold it.
-- **Autosaves are condensed:** a run of two or more consecutive autosaves is one line, "12 autosaves", with "2:02 PM to 2:40 PM UTC" under it and the run's total "+58 words". It is a group row of the row list: a button with `aria-expanded` and `aria-controls` and a chevron, and the lines it holds are in the HTML, hidden until opened, so the delivered page still holds every autosave. The newest line is the current version and always stays a line of its own. Named versions, publishes, restores and edits are never folded.
-- **A named version shows its name; a publish shows each destination with a status word and a shape** (Live, Failed, Queued), never color alone.
-- **Pick any two to compare.** Each line has a checkbox named "Compare this version, Oct 2, 2:02 PM UTC, by Rosa Park". At most two. A third is refused, not swapped in: the box is `aria-disabled`, and pressing it says, in the polite status line, "Two versions are picked; untick one first." Swapping the oldest out would change a choice the person did not touch. The status line announces the two picked, **older first, whichever was picked first**, and the "Compare 2 versions" link's address is `?from=<older>&to=<newer>`, so the compare view always reads old to new. Before two are picked the link is `aria-disabled` and says what is missing.
-- **Restoring makes a new version, never an overwrite.** Each line except the current one has Restore. It acts at once (a reversible action): the history gains a line at the top, "Restored the version from Sep 28, 9:15 AM UTC", marked Current, the earlier current line loses its "Current" and gains Restore, and the message region says "Restored version from Sep 28 as a new version." with Undo (`z`). Undo removes the new line and makes the earlier version current again. Every earlier version stays. The list fires `cap:history-restored` and `cap:history-unrestored` so the app saves or removes the version.
-- **The current version says "Current" in words and has no Restore.**
-- **Read-only is the third mode, for a history with nothing to restore or load** (a site's revisions). Set `data-readonly` on the root (React: `readOnly`) and an earlier line has no action at all: its action cell is empty, and the current line still says "Current". Picking two lines to compare works as before. A line may also leave out `words` (a revision has no word count): it then shows no size change, an empty cell that keeps the columns in place, and the line's description leaves it out. A run of autosaves that holds such a line has no size change either. `deltaOf` returns `undefined` for these. Read-only applies to lines the app adds with `appendEntries` as well.
-- **Load into editor is the other action, for a draft with an editor the history is not the record of.** Set `data-load-href` on the root (React: `loadHref`) and each earlier line shows "Load into editor", a link to that address plus the version's id (`/posts/spring-update/edit?load=v-70`), in place of Restore. It works as delivered: the editor's page reads `?load=` and fills the editor. Nothing is added to the history, because the text is only loaded; the editor's own save makes the version, on top, and the history is never rewritten. There is no Undo line, because nothing happened yet. An app that loads the text in place cancels the cancelable `cap:history-load` (detail `{ entry }`; React `onLoad`), which stops the navigation. The two actions are one or the other on a list, never both: Restore acts at once and a loaded text waits for a save, and two buttons that look alike would say neither. The current version has no action in either mode.
-- **Paging:** "Load older versions" is a link (`?before=<id>`), so the page works as delivered. An app that fetches the page itself cancels `cap:history-older` and calls `appendEntries`. The pagination component is not used: it pages by number, and a history is read from the top and extended downward.
-- **Empty is the empty component's nothing-yet kind:** "No versions yet. The first save of this post makes the first version."
-- **Compare works before the script runs.** The pick boxes belong to a GET form in the bar (their `form` attribute), whose submit button says "Compare 2 versions" until the script is live; ticking two and pressing it opens the compare view with `?compare=<id>&compare=<id>`. Then the link above takes its place. The compare view reads either address with `comparePicks(searchParams, at)`, which puts the pair older first, so a server never orders it by hand (from Carrel's revision picker, which was a GET form only). `defaultPicked` keeps the compare view's own pair ticked when the list is drawn beside it.
-- **A revision's commit message is its summary in words.** `messageSummary(message, path)` keeps the first line, drops the file's path and any id every line would repeat, and turns a bare verb into what happened ("Save" is "Saved"), for a history read from a site's revisions (Carrel's `revisionLabel`).
-- **An audit row says what changed in words.** `changeText(before, after, { labels, skip })` writes "amount: 5 to 3; status: in_stock to empty" from the two rows or their JSON, "Added" with no before, "Removed" with no after, "No change" when they agree; `id` is skipped by default (dustinedwards.info's lab inventory).
-- **The pick bar is sticky,** so a second pick far down a long list can be compared without scrolling back.
-- **A narrow list** gathers the title and the kind line, with the size change and the time at the end and the action underneath.
-
-## Deliberately different
-
-- **Autosave groups are a button with `aria-expanded`, not a native `<details>`.** The row list's `j` and `k` move between titles that are links or buttons; a `<summary>` is neither, so `j` would skip every group. The lines inside are still in the HTML.
-- **`j` and `k` are the history list's own,** using the row list's `moveRowFocus`. The row list's own handler stops at any `input`, so `j` would die on a pick box a person has just ticked; here a checkbox, a radio or a button is not typing. The list does not carry `data-cap="row-list"`, so the two handlers never both act.
-- **The size change has no tone.** shadcn's and most diff views color added and removed text; a history line says how much, and a shorter text is as often a good edit as a bad one.
-
-## The shadcn component it matches
-
-Item (rows with media, content, actions) through the row list it is built on, and Checkbox (the pick box, the field component's `.cap-check`). The group line matches Collapsible's trigger. shadcn has no history or timeline component.
-
-## Keyboard
-
-| Key | Does |
-| --- | --- |
-| Tab | Moves through the lines in order: each line's pick box, its title link, its Restore button; then Compare; then Load older |
-| `j` | Moves focus to the next line's title (to the first line from outside the list) |
-| `k` | Moves focus to the previous line's title |
-| Enter on a title | Opens that version |
-| Enter or Space on a run's button | Opens or closes the autosaves it holds; `aria-expanded` follows |
-| Space on a pick box | Picks or unpicks that version; a third pick is refused and said |
-| Enter on Load into editor | Follows the link to the editor, or asks the app to load the text in place (`cap:history-load`) |
-| Enter or Space on Restore | Restores that version as a new line on top, and says so with Undo; focus stays on the button |
-| `z` | Undoes the last restore (the message region's key); focus returns to the Restore button |
-| Enter on Compare 2 versions | Opens the compare view, older first |
-| Enter on Load older versions | Follows the link, or asks the app to add the next page |
-
-`j`, `k` and `z` are single keys: they stay quiet in a text field and when single-key shortcuts are off (the shortcuts switch sets `data-cap-single-keys="off"` on `<html>`; `z` is the message region's and follows it too).
-
-## Accessibility
-
-- A `ul` with `role="list"`, named by the heading above it. The pick bar's status line is `role="status"`, polite: each pick, a refusal and the ordered pair are announced without moving focus.
-- Each pick box and each Restore button names the version by its time and author, so a list of identical controls is not read as identical.
-- The avatar is `aria-hidden` because the name is text beside it.
-- The sign is text, so a screen reader hears "minus 30 words"; the drawn mark is hidden.
-- Every status (Current, Live, Failed, Queued) is a shape, a word and a color.
-- Text 4.5:1 on the surface, the raised group tone and the focused row tone; the pick box's edge 3:1 (the field component's).
-- Forced colors: the marks and the bar's edge use CanvasText.
-
-Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the automated browser checks and a front-end review stand in. Automated: see the site's Tests page.
-
-## Markup
+## Usage
 
 ```html
 <section class="cap-hist" data-cap="history-list" id="history" data-user="Alex Rivera" data-compare-href="/posts/spring-update/compare" aria-labelledby="history-h">
@@ -122,18 +48,34 @@ Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the a
 </section>
 ```
 
-`import { enhance, condense, wordDelta, pickTwo, restoreVersion, appendEntries } from "capsomer/behavior/history-list"`. `enhance()` attaches `j` and `k`, the groups, the picks, Restore and Load older, and needs the message component's region on the page (it adds one after the list if there is none). The pure helpers: `condense(entries)` groups the autosaves, `wordDelta(before, after)` is the signed change from two texts or two counts, `deltaText(n)` writes it, `pickTwo(picked, id)` toggles a pick and says when a third was refused, `orderPair(picked, at)` puts the pair older first, `compareHref(base, older, newer)`, `comparePicks(params, at)`, `messageSummary(message, path)`, `changeText(before, after)`. Events on the root: `cap:history-restored` and `cap:history-unrestored` (detail `{ source, entry }`), and the cancelable `cap:history-older` and `cap:history-load` (detail `{ entry }`, load-into-editor mode).
-
-In React, `import { HistoryList } from "capsomer/react/history-list"` inside a `<MessageProvider>`:
-
 ```tsx
 <HistoryList entries={versions} labelledBy="history-h" user="Alex Rivera" compareBase="/posts/spring-update/compare"
   onRestore={({ entry }) => addVersion(entry)} onUndoRestore={({ entry }) => removeVersion(entry)}
   olderHref="?before=v-15" primary />
 ```
 
-Load into editor, in place of Restore: `<HistoryList ... loadHref={(id) => `/posts/spring-update/edit?load=${id}`} onLoad={(entry) => editor.load(entry.id)} />`. In HTML: `data-load-href="/posts/spring-update/edit?load="` on the root, and on each earlier line `<a class="cap-btn" data-variant="quiet" data-size="sm" data-cap-part="load" data-version="v-70" href="/posts/spring-update/edit?load=v-70">Load into editor<span class="cap-sr-only"> the version from Oct 1, 4:10 PM UTC by Rosa Park</span></a>` where the Restore button was.
+## Accessibility
 
-## Exceptions in production
+| Key | Does |
+| --- | --- |
+| Tab | Moves through the lines in order: each line's pick box, its title link, its Restore button; then Compare; then Load older |
+| `j` | Moves focus to the next line's title (to the first line from outside the list) |
+| `k` | Moves focus to the previous line's title |
+| Enter on a title | Opens that version |
+| Enter or Space on a run's button | Opens or closes the autosaves it holds; `aria-expanded` follows |
+| Space on a pick box | Picks or unpicks that version; a third pick is refused and said |
+| Enter on Load into editor | Follows the link to the editor, or asks the app to load the text in place (`cap:history-load`) |
+| Enter or Space on Restore | Restores that version as a new line on top, and says so with Undo; focus stays on the button |
+| `z` | Undoes the last restore (the message region's key); focus returns to the Restore button |
+| Enter on Compare 2 versions | Opens the compare view, older first |
+| Enter on Load older versions | Follows the link, or asks the app to add the next page |
 
-None yet.
+`j`, `k` and `z` are single keys: they stay quiet in a text field and when single-key shortcuts are off (the shortcuts switch sets `data-cap-single-keys="off"` on `<html>`; `z` is the message region's and follows it too).
+
+- A `ul` with `role="list"`, named by the heading above it. The pick bar's status line is `role="status"`, polite: each pick, a refusal and the ordered pair are announced without moving focus.
+- Each pick box and each Restore button names the version by its time and author, so a list of identical controls is not read as identical.
+- The avatar is `aria-hidden` because the name is text beside it.
+- The sign is text, so a screen reader hears "minus 30 words"; the drawn mark is hidden.
+- Every status (Current, Live, Failed, Queued) is a shape, a word and a color.
+- Text 4.5:1 on the surface, the raised group tone and the focused row tone; the pick box's edge 3:1 (the field component's).
+- Forced colors: the marks and the bar's edge use CanvasText.

@@ -19,10 +19,10 @@ import { join } from "node:path";
 const UNTESTED = [
   /^(docs|design|no-bloat|worker|\.claude)\//,
   /^scripts\/.*\.py$/,
+  // The root Markdown files: the site reads none of them (each component's page is read from its own folder).
+  /^[^/]+\.md$/,
   /^(LICENSE|renovate\.json|knip(\.internal)?\.json|\.jscpd\.json|\.no-bloat\.json|\.gitattributes|tsconfig\.code-map\.json|wrangler\.jsonc|components\/README\.md)$/,
 ];
-// The showcase reads the root Markdown files (site/data.ts, site/home.ts): only the site's spec.
-const SITE_ONLY = /^[^/]+\.md$/;
 const SITE_SPEC = "site/site.spec.ts";
 const SWEEP_SPEC = "test/sweep.spec.ts";
 
@@ -120,15 +120,13 @@ function users() {
 
 function pick(changed) {
   const touched = new Set();
-  let site = false;
   for (const path of changed) {
     const m = /^components\/([^/]+)\/./.exec(path);
     if (m && m[1] !== "README.md") {
       if (!existsSync(join("components", m[1])))
         return { mode: "full", why: `${path}: a removed component` };
       touched.add(m[1]);
-    } else if (SITE_ONLY.test(path)) site = true;
-    else if (!UNTESTED.some((re) => re.test(path)))
+    } else if (!UNTESTED.some((re) => re.test(path)))
       return { mode: "full", why: `${path} is shared` };
   }
   for (const name of touched)
@@ -162,7 +160,7 @@ function pick(changed) {
   const sweep = names.filter((n) => existsSync(join("components", n, "examples.html")));
   if (sweep.length) specs.push(SWEEP_SPEC);
   // The site's spec visits a few components' public pages by name (components/button/).
-  if (site || names.some((n) => read(SITE_SPEC).includes(`components/${n}`))) specs.push(SITE_SPEC);
+  if (names.some((n) => read(SITE_SPEC).includes(`components/${n}`))) specs.push(SITE_SPEC);
   if (!specs.length) return { mode: "none", why: "no browser test reads the change" };
   return {
     mode: "some",

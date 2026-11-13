@@ -16,46 +16,7 @@ replaces:
 
 # Switch
 
-A real checkbox with `role="switch"`, labeled by a fixed noun, with the word On or Off beside it. Flipping it changes the setting at once: there is no Save.
-
-**Provenance.** REWROTE, then brought up to date, against the Capsid Portal at master (as of 2026-10-01). The Portal had no switch at the extraction base (`366b902`); Capsomer's 0.1.0 switch was drawn from the approved mockup. The Portal's `ui/Switch.tsx` and `.switch` rules (#216) came from the same mockup, so the track, thumb, tones, fixed noun and the On or Off word agree, and the geometry is not copied. What is carried over from the Portal's current code is its pending state (`aria-busy`, a dashed outline on the track), with its reason, with the color changed from `--accent-line` to `--accent` (the Portal's is 2.9:1 on the page in the light theme). What stays Capsomer's, and why: a native `<input type="checkbox" role="switch">` in a `<label>` where the Portal uses `<button role="switch" aria-checked>` (native first; the whole label is the hit area; `shortcuts` and the permission matrix already build on it), and a disabled switch drawn dashed and muted with its reason beside it where the Portal uses `opacity: 0.5` (dimming alone does not reach 4.5:1).
-
-## When to use it
-
-A reversible on or off preference that applies immediately: single-key shortcuts, compact rows, a weekly digest.
-
-## When not to
-
-- **A switch that starts or stops automation** (a loop, a schedule, an agent's access): the automation switch (switch-reason), which asks for a one-line reason and is audited.
-- **A choice that is saved with a form**: a checkbox (`.cap-check`) and the form's Save.
-- **More than two states**, or two states that are not on and off (Light and Dark): the segmented control.
-- **Anything one-way**: a danger button and the confirm dialog.
-
-## The default and its reason
-
-- **The label is a fixed noun** ("Single-key shortcuts"), never a state or an instruction ("Turn off shortcuts"), so it reads the same in both states.
-- **The state is a word as well as a position and a color.** The word is `aria-hidden`: the switch's own checked state says it to a screen reader, and the accessible name stays the noun.
-- **It takes effect at once**, so the app acts on `change`, and says the result through the message region when it is not visible on the page.
-- **The track's edge reaches 3:1 on the surface in both states**: line-strong when off, the on color (`--on`, `--on-hover` under the pointer; the primary fill unless the site sets its own) when on. The thumb slides in 100 ms, only when motion is welcome.
-- **Disabled says why**, in text beside it that the switch is described by.
-- **Pending is `aria-busy="true"` on the switch, drawn as a dashed outline, and the switch is not disabled** (the Portal's rule: its change is sent, and the switch moves only when it has applied). A disabled control drops focus; a busy one keeps it. The outline is a shape, so it is not color alone. `setBusy(label, busy)` sets it; React: `busy`.
-
-## Keyboard
-
-| Key | Does |
-| --- | --- |
-| Tab | Moves to the switch |
-| Space | Turns it on or off, at once; the word follows |
-
-## Accessibility
-
-- A native checkbox, so it is in the tab order, labeled by its `<label>`, and toggled by Space and by a click anywhere on the label.
-- The whole label is the hit area, at least `var(--target)` tall.
-- Forced colors: the track and thumb are drawn in CanvasText, and in Highlight when on.
-
-Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the automated browser checks and a front-end review stand in. Automated: see the site's Tests page.
-
-## Markup
+## Usage
 
 ```html
 <label class="cap-switch" data-cap="switch">
@@ -64,26 +25,17 @@ Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the a
 </label>
 ```
 
-`import { enhance, setSwitch, setBusy } from "capsomer/behavior/switch"` keeps the word in step; `setSwitch(label, checked)` moves it from code without firing `change`. `data-on` and `data-off` on `.cap-switch-state` change the words.
-
-In React, `import { Switch } from "capsomer/react/switch"`:
-
 ```tsx
 <Switch label="Single-key shortcuts" checked={keys} onCheckedChange={setKeys} />
 ```
 
-## Matches
+## Accessibility
 
-shadcn/ui `Switch` (Base UI flavor, style nova): the `default` and `sm` sizes are the default and `data-size="sm"` on `.cap-switch` (36 by 20 and 28 by 16, the label is the hit area), the focus ring, `aria-invalid`, disabled and the thumb slide.
+| Key | Does |
+| --- | --- |
+| Tab | Moves to the switch |
+| Space | Turns it on or off, at once; the word follows |
 
-## Deliberate differences
-
-- A native checkbox with `role="switch"` inside a `<label>`, not a `role` button: forms, labels and Space come from the platform.
-- The off track keeps a `--line-strong` edge (3:1); shadcn's transparent edge on a pale track would fail.
-- The focus ring is an opaque 3 px, which reaches 3:1; the soft ring does not.
-- The state word beside the switch and the dashed pending outline are Capsomer's own.
-- Disabled is dashed and muted, not half opacity.
-
-## Exceptions in production
-
-None yet.
+- A native checkbox, so it is in the tab order, labeled by its `<label>`, and toggled by Space and by a click anywhere on the label.
+- The whole label is the hit area, at least `var(--target)` tall.
+- Forced colors: the track and thumb are drawn in CanvasText, and in Highlight when on.

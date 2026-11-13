@@ -1,7 +1,8 @@
 ---
 name: popover
 title: Popover
-summary: The one floating surface, on the Popover API: click popovers, tooltips, and the look every popup shares.
+summary: "The one floating surface, on the Popover API: click popovers, tooltips, and the look every popup shares."
+group: primitive
 parts: [css, behavior, react]
 tool: native + own JavaScript
 states: [closed, open, open with arrow, tooltip, tooltip with a key, flipped, at a virtual anchor]
@@ -15,54 +16,7 @@ replaces:
 
 # Popover
 
-A small surface that floats next to its trigger: a few settings, a note, a form field, a tooltip. It is the one block that owns how floating things look and open, so every popup in Capsomer (tooltip, select, and the Base UI combobox and menu popups) wears the same surface.
-
-Reference: shadcn/ui `Popover`, `Tooltip` and `Hover Card`.
-
-## When to use it
-
-- Content a person opens on purpose, that is small and tied to one control: a width field, a filter, an explanation with a link.
-- A tooltip: detail a person may want and can do without (use the `tooltip` form below).
-
-## When not to
-
-- Anything that needs the whole screen's attention or must be answered: a dialog (`confirm-dialog`).
-- A list of commands: a menu. A list of choices: a select or a combobox.
-- A tooltip is never the only place a label or a needed fact appears. Interactive content in a tooltip is a click popover.
-- Long forms or content that scrolls: a detail panel.
-
-## The default and its reason
-
-- **Native Popover API.** `popover="auto"` for click popovers (light dismiss, Esc, top layer for free), `popover="manual"` for tooltips (they must not close each other or steal focus).
-- **Surface:** the raised surface with a hairline ring and `--shadow-m`, `--radius-l`, `--pad-card` padding, 18rem wide (`data-size` `sm`, `lg`, `auto`). The ring is decorative, so it is a hairline.
-- **Placement:** below the trigger, centered, 4 px away (`data-side`, `data-align`, `data-offset`). CSS anchor positioning flips it when there is no room. After opening, the module checks the popup is inside the window and, if the CSS result is not (a wide popup near an edge), or the browser has no anchor positioning, computes the placement itself (flip and shift from `getBoundingClientRect`), through the CSSOM.
-- **Motion:** opening, a 100 ms fade while it grows from 96% and slides 4 px out of the trigger's side over 200 ms; closing, 100 ms to 98% and half the slide (Radix Themes, Arc: what leaves goes faster than it came). A tooltip takes 100 ms both ways. Transitions, so a close mid-open reverses from where it is. Only when the person has not asked for reduced motion.
-- **Tooltip delay:** 300 ms on hover, at once on keyboard focus, and at once when another tooltip is open or closed less than 400 ms ago (shadcn's provider default is 0; Capsomer keeps the 300 ms the 0.1 tooltip had so a pointer crossing a toolbar does not flash tips).
-- **Focus:** a click popover moves focus to its first control (or to itself when it has none) and returns it to the trigger on close. Tabbing past its last control closes it and leaves focus where the person went.
-
-- **A virtual anchor.** `openAt(popup, anchor, { returnFocus })` opens a popup beside anything with a box (a text selection's range, a point in a canvas) rather than a trigger: placed by script, kept beside it on scroll and resize, closed by Esc or a press outside, and focus goes back to `returnFocus` (the editor the selection is in). A reader's note on selected words uses it.
-
-## Keyboard
-
-| Key | Does |
-| --- | --- |
-| Enter or Space on the trigger | Opens the popover; focus moves into it |
-| Tab, Shift+Tab | Moves through its controls; leaving it closes it |
-| Esc | Closes it; focus returns to the trigger |
-| Tab onto a tooltip's trigger | Shows the tooltip at once |
-| Esc with a tooltip shown | Hides only the tooltip; it stays hidden until focus or the pointer moves on |
-
-## Accessibility
-
-- A click popover is `role="dialog"` with a name (`aria-labelledby` its title, or `aria-label`); the trigger has `aria-haspopup="dialog"` and `aria-expanded`.
-- A tooltip is `role="tooltip"`, linked with `aria-describedby`. The trigger keeps its own name.
-- WCAG 1.4.13: a tooltip is dismissible (Esc), hoverable (the pointer can move onto it) and persistent (it stays until dismissed, or hover and focus leave).
-- Touch: a tooltip never opens on touch hover and its content is never needed. Long press is not required.
-- Forced colors: the surface gets an edge; the arrow is hidden.
-
-Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the automated browser checks and a front-end review stand in. Automated: see the site's Tests page.
-
-## Markup
+## Usage
 
 ```html
 <span data-cap="popover">
@@ -82,10 +36,6 @@ Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the a
 </span>
 ```
 
-Options on the popup: `data-side` (`top`, `bottom`, `left`, `right`, `inline-start`, `inline-end`), `data-align` (`start`, `center`, `end`), `data-offset` (px), `data-size`, `data-delay` (tooltip, ms), `data-engine="js"` (always use the script placement). `.cap-popover-arrow` as a child draws the arrow. `data-flush` removes the padding for list popups.
-
-`import { enhance, place, open, close } from "capsomer/behavior/popover"`: `enhance()` attaches every `[data-cap="popover"]`; `place(anchor, popup, { side, align, offset })` is the placement on its own. In React:
-
 ```tsx
 <Popover>
   <PopoverTrigger>Dimensions</PopoverTrigger>
@@ -100,15 +50,18 @@ Options on the popup: `data-side` (`top`, `bottom`, `left`, `right`, `inline-sta
 </Popover>
 ```
 
-Base UI popups (combobox, menu, select) apply `class="cap-popover"` and read `data-side`, `data-starting-style`, `data-ending-style` from Base UI; they position themselves.
+## Accessibility
 
-## Different from shadcn, and why
+| Key | Does |
+| --- | --- |
+| Enter or Space on the trigger | Opens the popover; focus moves into it |
+| Tab, Shift+Tab | Moves through its controls; leaving it closes it |
+| Esc | Closes it; focus returns to the trigger |
+| Tab onto a tooltip's trigger | Shows the tooltip at once |
+| Esc with a tooltip shown | Hides only the tooltip; it stays hidden until focus or the pointer moves on |
 
-- No portal and no Floating UI: the top layer replaces the portal and CSS anchor positioning replaces the positioner, with a small script fallback.
-- No hover card yet: a hover-opened popover with interactive content is hard to make keyboard-equal; use a click popover.
-- Tooltip delay 300 ms instead of 0 (above).
-- Slide distance 2 px (shadcn: 8 px) so it reads as settling, not traveling.
-
-## Exceptions in production
-
-None yet.
+- A click popover is `role="dialog"` with a name (`aria-labelledby` its title, or `aria-label`); the trigger has `aria-haspopup="dialog"` and `aria-expanded`.
+- A tooltip is `role="tooltip"`, linked with `aria-describedby`. The trigger keeps its own name.
+- WCAG 1.4.13: a tooltip is dismissible (Esc), hoverable (the pointer can move onto it) and persistent (it stays until dismissed, or hover and focus leave).
+- Touch: a tooltip never opens on touch hover and its content is never needed. Long press is not required.
+- Forced colors: the surface gets an edge; the arrow is hidden.

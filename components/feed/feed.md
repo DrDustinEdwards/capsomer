@@ -1,7 +1,8 @@
 ---
 name: feed
 title: Feed
-summary: What shipped. A timeline of deploys and merges, broken by day, with routine runs condensed and a marker where an incident began.
+summary: A timeline of what shipped, deploys and merges broken by day, with routine runs condensed and a marker where an incident began.
+group: pattern
 parts: [css, react]
 tool: native
 states: [a day with deploys, a failed deploy, a condensed run, the incident marker (critical), the incident marker (warning), phone width]
@@ -16,52 +17,7 @@ replaces:
 
 # Feed
 
-A timeline of what happened, newest first: deploys, merges, releases. Each day is a heading over its own list. A run of routine events (dependency updates, a nightly rebuild) is one quiet row. When an incident began soon after a deploy, a marker row says so directly above that deploy and links to the incident.
-
-**Provenance.** MIXED, as of Capsid master (88bf402). EXTRACTED: the row's geometry and values from `dashboard/src/styles.css` (`.frow`: a 14 px glyph column, the title, the time at the end; 6 px by 16 px padding; the 3 px red edge on a critical row; the 12 px muted detail and time), and, from the Portal's current file, the rule that an identifier's monospace face does not stretch the row (`.frow .sub .ns`). REWROTE: the markup and everything else, from the approved mockup's "What shipped": lists per day under headings, the condensed run, the incident marker, the container query. The Portal's feed rows open a drawer (`data-open`, selected and focus look) and its list is `IncidentFeed` in `views/shared.tsx`; those are tied to the Portal's drawer and router, so the rows here carry only their own links. The Portal's feed rules are unchanged since 366b902 apart from the rule above.
-
-## When to use it
-
-For "what changed, and when": the Portal's deploy history, a site's release notes in the admin, a draft's history in the writing hub.
-
-## When not to
-
-For things that need you now, use the `attention-list`. For records you sort and filter, use a `table`. For one site's up and down over time, use the `uptime-strip`.
-
-## The default and its reason
-
-- **Day breaks are headings, and each day's list is named by its heading** (`aria-labelledby`), so a screen reader lists "Today" and "Yesterday" and can jump between them.
-- **Each row is a glyph, what happened, who, and when.** The words carry the status ("deployed", "deploy failed"); the glyph repeats it in shape and color and is hidden from the accessibility tree.
-- **Times are relative in rows, exact in `time`** (patterns.md, time), with the `time` component's class.
-- **A routine run condenses to one row**, smaller and in the muted tone, still 4.5:1, with its time range and a link to the full list. Nothing routine pushes a deploy off the screen.
-- **The incident marker sits directly above the deploy it follows**, on its tone's tint with a left edge. Its link names the incident ("Incident began 4 minutes after this deploy") and is described by the deploy row's text, so "this deploy" is never ambiguous to a screen reader. Critical or warning tone.
-- **A hairline connector joins the glyphs of one day's rows**, so the list reads as a timeline. It is decoration; the order is the list's. Row padding follows `--pad-y` and `--pad-card`, so comfortable density roomies it.
-- **Critical rows carry the red edge**, as in every list (patterns.md, status).
-- **Narrow (under 448 px of its own width): the time drops under the words**, a container query.
-- **Place the feed directly in a panel, after its header**, not inside `.cap-panel-body`: the day breaks run edge to edge. Day headings are `h4` under a panel's `h3`; the React wrapper takes `headingLevel`.
-
-## Matches
-
-shadcn/ui `Item` (a title line, a muted description, the item rhythm) in an item group; shadcn has no timeline, so the connector, the day headings, the condensed run and the incident marker are Capsomer's. Rows are not links as a whole (shadcn's `Item` as an anchor is), because a row holds its own links (Open the job, Roll back); a row-list row is the one to use when the whole row opens something.
-
-## Keyboard
-
-| Key | Does |
-| --- | --- |
-| Tab | Moves through the feed's links in reading order (a marker, then its deploy's links) |
-| Enter on a link | Follows it: the marker opens the incident |
-
-## Accessibility
-
-- Rows are list items in an ordered list per day; the order is the time order.
-- The marker link's accessible description is the deploy it follows ("web deployed a91c4e0").
-- Text on a marker's tint is the text tone or the marker's own tone, each a checked pair.
-- Glyphs reach 3:1 as graphics; every word reaches 4.5:1 in both themes.
-- Forced colors: the critical edge and the marker's edge become borders in CanvasText; day headings gain a rule, because their tinted background is removed.
-
-Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the automated browser checks and a front-end review stand in. Automated: see the site's Tests page.
-
-## Markup
+## Usage
 
 ```html
 <div class="cap-feed" data-cap="feed">
@@ -94,8 +50,15 @@ Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the a
 </div>
 ```
 
-No behavior module: the feed is links and text. In React, `import { Feed } from "capsomer/react/feed"` and pass `days={[{ id, label, events: [{ id, kind, tone, what, detail, when, at, until, href, about }] }]}`; a marker's `about` is the id of the event it follows.
+## Accessibility
 
-## Exceptions in production
+| Key | Does |
+| --- | --- |
+| Tab | Moves through the feed's links in reading order (a marker, then its deploy's links) |
+| Enter on a link | Follows it: the marker opens the incident |
 
-None yet.
+- Rows are list items in an ordered list per day; the order is the time order.
+- The marker link's accessible description is the deploy it follows ("web deployed a91c4e0").
+- Text on a marker's tint is the text tone or the marker's own tone, each a checked pair.
+- Glyphs reach 3:1 as graphics; every word reaches 4.5:1 in both themes.
+- Forced colors: the critical edge and the marker's edge become borders in CanvasText; day headings gain a rule, because their tinted background is removed.

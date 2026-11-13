@@ -2,6 +2,7 @@
 name: entry-list
 title: Entry list
 summary: Dated entries under a heavy rule, the date in its own column beside a title, kicker, summary and tags.
+group: pattern
 parts: [css]
 tool: native
 states: [default, with a mark and a second fact, phone]
@@ -14,9 +15,7 @@ replaces:
 
 # Entry list
 
-A list of dated things a reader picks one of: posts, publications, talks, a CV's positions. Each entry is a date, then a title that links to it, with a kicker above the title (a series, a kind), a summary and tags. For rows of records with actions use the [row list](../row-list/row-list.md); for a table of facts, the [table](../table/table.md).
-
-## Contract
+## Usage
 
 ```html
 <ol class="cap-entry-list">
@@ -31,8 +30,3 @@ A list of dated things a reader picks one of: posts, publications, talks, a CV's
   </li>
 </ol>
 ```
-
-- The date column is the tracks' note rail (`--tracks-rail-w`, `--tracks-gap-w`), so a list on a [tracks](../tracks/tracks.md) page lines up with the rail. Below 48rem the date and its facts sit on one line over the entry.
-- The kicker comes after the title in the source and is drawn above it, so the title stays the entry's heading. Pick the heading level for the page.
-- `.cap-entry-more` is a second fact under the date (a reading time); `.cap-entry-mark` a small inked sign (Featured).
-- Tags are ruled tabs at least `--target` tall.

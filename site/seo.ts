@@ -3,9 +3,9 @@
  * SEO module: the front page's head tags and JSON-LD, and the sitemap, robots.txt (the family bot
  * policy; Cloudflare puts its own lines first), ai.txt (citation welcome, training reserved, as the
  * tdm-reservation header in _headers says), llms.txt (https://llmstxt.org; llms-full.txt and each page's Markdown copy come from prelum-markdown after the build), security.txt and the
- * IndexNow key file. site/vite.config.ts writes them into the build. The public pages are the front page
- * at /, the theme builder at /make/ and each component's page at /components/<name>/; the admin at /admin/ keeps its sections at hash
- * addresses and stays out of search.
+ * IndexNow key file. site/vite.config.ts writes them into the build. The pages are the five sections: Themes (the front
+ * page at / and /themes/<part>/), Components (/components/<name>/, patterns too), Primitives (/primitives/<name>/), Icons
+ * and Colors; search stays out of the index.
  */
 import { defineHead, headHtml } from "@drdustinedwards/site-helpers/head";
 import { iconLinks, webManifest } from "@drdustinedwards/site-helpers/icons";
@@ -31,13 +31,6 @@ const AUTHOR = {
   url: "https://dustinedwards.info",
 };
 
-/** The theme builder's description, for its head tags (site/vite.config.ts). */
-export const MAKE_DESCRIPTION =
-  "Make a light and dark theme from one brand color: 12-step scales, every pair checked against WCAG 2.2, faces, sizes and corners, a live preview, and the CSS and design tokens.";
-
-const ADMIN_DESCRIPTION =
-  "Scaffold, Capsomer's admin: every token, every component in every state, and each component's test results.";
-
 const head = defineHead({
   origin: ORIGIN,
   siteName: "Capsomer",
@@ -53,8 +46,7 @@ const head = defineHead({
 
 /**
  * A page's head: the color-scheme and text-scale metas, title (`title` and the " · Capsomer" suffix), description, canonical, Open Graph and Twitter with the card,
- * and on an indexed page its WebPage and breadcrumb; the front page also carries the site's JSON-LD, and the admin says
- * noindex so search shows the public page.
+ * and on an indexed page its WebPage and breadcrumb; the front page also carries the site's JSON-LD.
  */
 export function siteHead(page: Page): string {
   return `${PAGE_META}\n${seoHead(page)}`;
@@ -62,8 +54,14 @@ export function siteHead(page: Page): string {
 
 type Page =
   | "home"
-  | "admin"
-  | { path: string; title: string; description: string; noindex?: boolean };
+  | {
+      path: string;
+      title: string;
+      description: string;
+      noindex?: boolean;
+      // The section a page sits in, by its name and first page, for the trail.
+      section?: { name: string; path: string };
+    };
 
 // Every page's color-scheme hint (theme.js and the theme switch set it to the choice; "light dark" follows the system)
 // and its opt-in to the reader's system text size (Modern Web Guidance, respect-os-text-scale).
@@ -71,35 +69,20 @@ const PAGE_META =
   '<meta name="color-scheme" content="light dark" />\n<meta name="text-scale" content="scale" />';
 
 function seoHead(page: Page): string {
-  // Pages are served at their slash (a bare path redirects to it), so the canonical and the trail keep it.
-  // Only a component page sits inside a section, so only it carries a trail (the visible "Components > Name" one, from the
-  // home page down); Make, Accessibility and Search are top level and carry none.
+  // Pages are served at their slash (a bare path redirects to it), so the canonical and the trail keep it. A page
+  // inside a section (a theme part, a component, a primitive) carries its trail: Capsomer, the section, the page.
   if (typeof page === "object") {
-    const inComponents = page.path.startsWith("/components/");
+    const { section, ...rest } = page;
     return headHtml(
       head({
-        ...page,
+        ...rest,
         keepTrailingSlash: true,
-        breadcrumbs: inComponents
-          ? [
-              { name: "Capsomer", path: "/" },
-              { name: "Components", path: "/#components" },
-              { name: page.title, path: page.path },
-            ]
+        breadcrumbs: section
+          ? [{ name: "Capsomer", path: "/" }, section, { name: page.title, path: page.path }]
           : false,
       }),
     );
   }
-  if (page === "admin")
-    return headHtml(
-      head({
-        path: "/admin/",
-        title: "Capsomer Scaffold",
-        fullTitle: true,
-        description: ADMIN_DESCRIPTION,
-        noindex: true,
-      }),
-    );
   return headHtml([
     ...head({ path: "/", title: "Capsomer", fullTitle: true, description: DESCRIPTION }),
     jsonLd(
@@ -137,15 +120,10 @@ export const ICON_TAGS = iconLinks()
   )
   .join("\n");
 
-/** The discovery files, by their path in the built site. */
-export function discoveryFiles(components: string[]): Record<string, string> {
+/** The discovery files, by their path in the built site; `paths` are the indexed pages. */
+export function discoveryFiles(paths: string[]): Record<string, string> {
   return {
-    "sitemap.xml": sitemapDocument([
-      { loc: `${ORIGIN}/` },
-      { loc: `${ORIGIN}/make/` },
-      { loc: `${ORIGIN}/accessibility/` },
-      ...components.map((name) => ({ loc: `${ORIGIN}/components/${name}/` })),
-    ]),
+    "sitemap.xml": sitemapDocument(paths.map((path) => ({ loc: `${ORIGIN}${path}` }))),
     ".well-known/security.txt": securityTxt({
       origin: ORIGIN,
       contact: "security@dustinedwards.info",
@@ -172,8 +150,8 @@ export function discoveryFiles(components: string[]): Record<string, string> {
         "Capsomer is Dustin Edwards's open-source (MIT) design system: plain CSS with design tokens, web components and React wrappers, an app shell and patterns, shared by his sites and apps (dustinedwards.info, the Capsid Portal, Carrel and others). No CSS framework; light and dark themes; every component tested for accessibility in every state.",
       intro: [
         [
-          `- Showcase: ${ORIGIN}/ (the color families, type, every component with its own page, the defaults and how to install)`,
-          `- Scaffold: ${ORIGIN}/admin/ (an interactive page: every token, every component in every state, and each component's test results)`,
+          `- Docs: ${ORIGIN}/ (Themes: every token on a live board; Components and patterns, each with live examples and its API; Primitives; Icons; Colors)`,
+          `- Parts: the package's capsomer/parts.json lists every component's classes, parts, data attributes, states and CSS variables`,
           `- Code: ${REPO}`,
           "- Author: Dustin Edwards, https://dustinedwards.info",
         ].join("\n"),
