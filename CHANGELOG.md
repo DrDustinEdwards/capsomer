@@ -11,6 +11,7 @@ Each release names every removed or renamed token or class, and every changed HT
 - **Carousel: `trackLabel`** names the scrolling track (default "Slides"), for a page in another language.
 - **Breaking: offline keep's classes are `.cap-offline-keep-button` and `.cap-offline-keep-status`** (were `.cap-keep` and `.cap-keep-status`; `.cap-keep` also named the layout helper in `layout.css`, so a kept toggle took that helper's rules). The toggle keeps one label, "Keep on this device", and `aria-pressed` alone says it is kept (APG button: a toggle's name does not change); it no longer reads "Kept on this device" when pressed.
 - **Related links: a site path is checked with site-runtime's `isSameOriginPath`, an address with `isHttpUrl`.** The own check let `/\t/host` through, which a browser reads as `//host`, so a stranger's address could render as an internal link without `rel`. **Removed:** `capsomer/behavior/related-links` (`httpHref`, `sitePath`, `longDate`); use `isHttpUrl` and `isSameOriginPath` from `@dustinedwards/site-runtime/url` and `<Time format="date">`. HTML contract: the date is `<span class="cap-related-date">` holding the shared `time.cap-time[data-format="date"]` (date-only `datetime`, the text color).
+- **Removed: `countText` from `capsomer/behavior/pagination` and `capsomer/react/pagination`.** It copied content's; use `countText(shown, total, { noun, plural })` (or `nounsOf(labels, fallback)`) from `capsomer/behavior/content`. A zero total now reads "0 mentions", not "No mentions".
 
 ## [0.139.1]
 

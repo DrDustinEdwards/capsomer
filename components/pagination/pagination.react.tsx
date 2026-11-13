@@ -2,7 +2,6 @@ import type { ReactElement, ReactNode } from "react";
 import { pageItems, statusText } from "./pagination.ts";
 
 export {
-  countText,
   pageCountOf,
   pageEnvelope,
   pageHref,

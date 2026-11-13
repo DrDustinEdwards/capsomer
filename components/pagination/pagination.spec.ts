@@ -6,7 +6,6 @@ import {
   visitStates,
 } from "../../test/helpers.ts";
 import {
-  countText,
   pageCountOf,
   pageEnvelope,
   pageHref,
@@ -74,8 +73,6 @@ test("behavior: an address's page is read strictly, kept in range, and each page
     "/books?sort=year-desc&page=2",
   );
   expect(pageHref("/books", {}, 1)).toBe("/books");
-  expect(countText(20, 312, "mentions")).toBe("Showing 20 of 312 mentions");
-  expect(countText(1, 1, "mentions", "mention")).toBe("1 mention");
 });
 
 eachTheme((theme) => {
