@@ -15,7 +15,7 @@ export const FACES: Record<string, { name: string; stack: string }> = {
   fraunces: { name: "Fraunces", stack: '"Fraunces", Georgia, serif' },
   "source-serif": {
     name: "Source Serif 4",
-    stack: '"Source Serif 4 Variable", "Source Serif 4", Charter, Georgia, serif',
+    stack: '"Source Serif 4", "Source Serif 4 Fallback", Charter, Georgia, serif',
   },
   system: {
     name: "The device's own",
