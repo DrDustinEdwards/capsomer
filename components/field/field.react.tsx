@@ -4,6 +4,7 @@ import {
   useId,
   useRef,
   useState,
+  type FieldsetHTMLAttributes,
   type InputHTMLAttributes,
   type KeyboardEvent,
   type ReactElement,
@@ -724,6 +725,50 @@ export function RangeField(
         />
       )}
     </Field>
+  );
+}
+
+// A span chosen from two menus, From and To (years 2019 to 2024): a fieldset with the question as
+// its legend and a native select for each end, side by side, each with "Any" for an open end.
+// A form sends both with no script. Catalog's range facet is this field.
+export function SpanField(
+  props: Omit<FieldsetHTMLAttributes<HTMLFieldSetElement>, "children"> & {
+    label: ReactNode;
+    // The two ends' parameter names.
+    names: { from: string; to: string };
+    // Every value either end can take, in order, the same list for both.
+    options: readonly { value: string; label: ReactNode }[];
+    // The chosen ends; null or "" for an open end.
+    from?: string | number | null;
+    to?: string | number | null;
+  },
+) {
+  const { label, names, options, from, to, className, ...rest } = props;
+  const menu = (end: "from" | "to", value: string | number | null | undefined) => (
+    <label className="cap-field cap-span-field-end">
+      <span className="cap-field-label">{end === "from" ? "From" : "To"}</span>
+      <select
+        className="cap-select"
+        name={names[end]}
+        defaultValue={value == null ? "" : String(value)}
+      >
+        <option value="">Any</option>
+        {options.map((o) => (
+          <option key={o.value} value={o.value}>
+            {o.label}
+          </option>
+        ))}
+      </select>
+    </label>
+  );
+  return (
+    <fieldset {...rest} className={className ? `cap-field ${className}` : "cap-field"}>
+      <legend className="cap-field-label">{label}</legend>
+      <div className="cap-span-field-ends">
+        {menu("from", from)}
+        {menu("to", to)}
+      </div>
+    </fieldset>
   );
 }
 

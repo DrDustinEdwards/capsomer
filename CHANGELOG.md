@@ -4,6 +4,12 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+## [0.141.0]
+
+- **Field: `SpanField`, a span chosen from two menus (From and To).** It was Catalog's range facet, which only a Catalog could draw, so a page with its own filters (dustinedwards.info's CV) had to keep its own year menus. It is now a part of Field, in `field.css`, and Catalog's range facet renders it. A page that draws it loads `field.css` and `select.css` (its menus are `select.cap-select`), not the catalog's stylesheet.
+- **Removed classes: `.cap-catalog-range`, `.cap-catalog-range-ends`, `.cap-catalog-range-end`.** They are `.cap-span-field-ends` and `.cap-span-field-end` (in `field.css`); the facet's fieldset keeps `.cap-field.cap-catalog-facet`. HTML contract: the range facet's ends are `div.cap-span-field-ends > label.cap-field.cap-span-field-end`. Nothing else in the facet changes.
+- **`catalog-all.css` imports `select.css`.** The range facet's menus are `select.cap-select`, which only `select.css` draws, so on a page that loaded `catalog-all.css` alone they were the browser's plain menus.
+
 ## [0.139.0]
 
 - **Breaking: the layout classes and the text roles are their own stylesheets, no longer part of `base.css`.** `base.css` imported `utilities.css`, which since 0.126.0 carried the layout classes (`.cap-stack`, `.cap-cluster`, `.cap-spread`, `.cap-grid`, the panes and the item helpers, 1.98 KB gzip) and the text roles (`.cap-text`, `.cap-title`, `.cap-clamp`, 1.22 KB gzip), so every site shipped about 3.2 KB gzip it might not use (txasm's public routes grew 2.9 KB gzip, the Portal's CSS went over its budget). They are now `capsomer/layout.css` and `capsomer/text.css` (`css/layout.css`, `css/text.css`). **A site that uses those classes adds `import "capsomer/layout.css";` and `import "capsomer/text.css";` beside `capsomer/base.css`** (Foxing, Carrel and the Portal use both); a site that does not, changes nothing and loses the weight. `capsomer/utilities.css` keeps everything else. No class, token or attribute is renamed or removed, and no HTML contract changes.
