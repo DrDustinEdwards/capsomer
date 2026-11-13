@@ -29,7 +29,8 @@ export interface FrameOptions {
 export function frameHtml(chart: string, o: FrameOptions = {}): string {
   const grid = o.gridlines ? ` data-gridlines="${o.gridlines}"` : "";
   const redraw = o.redraw ? ` ${redrawAttribute(o.redraw)}` : "";
-  const box = o.keepShape && o.redraw && "narrow" in o.redraw ? chartViewBox(o.redraw.narrow) : undefined;
+  const box =
+    o.keepShape && o.redraw && "narrow" in o.redraw ? chartViewBox(o.redraw.narrow) : undefined;
   const shape = box ? ` style="--cap-narrow-height: ${box.h}px"` : "";
   return `<div class="cap-chart"${o.inline ? ' data-head="inline"' : ""}${grid}${redraw}${shape}><div class="cap-chart-figure">${chart}</div>${o.after ?? ""}</div>`;
 }
@@ -138,7 +139,9 @@ export function describeSeries(o: SeriesText): string {
   const latest = `${fmt(totals.at(-1)!)} ${at} ${fx(o.x.at(-1)!)}`;
   // A long flat top (a daily series that held its peak for weeks) names the first two and a count.
   const most =
-    peaks.length > 3 ? `${peaks.slice(0, 2).join(", ")} and ${peaks.length - 2} more` : listText(peaks);
+    peaks.length > 3
+      ? `${peaks.slice(0, 2).join(", ")} and ${peaks.length - 2} more`
+      : listText(peaks);
   return `${span}: ${latest}, from ${fmt(min)} to ${fmt(max)}; most ${at} ${most}.`;
 }
 

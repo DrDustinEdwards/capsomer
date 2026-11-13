@@ -42,7 +42,6 @@ export function snippetParts(
   return parts;
 }
 
-
 // The snippet as HTML: every run escaped, each match in a <mark>. For a page built without React.
 export function snippetHtml(snippet: string, open?: string, close?: string): string {
   return snippetParts(snippet, open, close)

@@ -212,7 +212,6 @@ export const STATUS_GLYPH: Readonly<Record<GlyphName, readonly GlyphPart[]>> = {
   ],
 };
 
-
 // A glyph's inner elements as markup, for a page that draws it inside its own <svg> (a box in a
 // graph at 12 px).
 export function glyphParts(name: GlyphName): string {
