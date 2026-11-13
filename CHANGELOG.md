@@ -10,6 +10,7 @@ Each release names every removed or renamed token or class, and every changed HT
 - **New: site footer** (`capsomer/site-footer.css`, `.cap-site-footer`, `.cap-site-footer-links`, `.cap-site-footer-note`): a site's own plain footer for a site outside the family footer, a hairline over a links row, a mark and the small print, in the page's column; `data-tone="raised"` on the raised surface, `data-links="quiet"` for muted links. Slots `--site-footer-gap`, `--site-footer-pad`, `--site-footer-bg`, `--site-footer-fs`. From txasm's and julieedwards.info's footers.
 - **Sites: page columns in their entries.** txasm's entry sets its 72rem page column (`--page-max`), 24px sides (16px on a phone), and 16px text on a 1.5 line (`--fs-page`, `--page-leading`), so its public pages use `.cap-page` instead of their own frame. julieedwards.info's entry sets its 67.5rem column, 32px sides and 1.65 line. Removed or renamed: no token or class.
 - **Site footer links are at least `--target` tall** (24px by default, WCAG 2.2 2.5.8): the sweep found them 20px on a touch screen.
+- **Sites: dustinedwards.info's entry sets `--radius-control: 0` (its square controls) and `--z-progress: 900` (its reading-progress line over its own 800 overlay)**, which its app.css declared itself.
 - **Fonts: DM Sans declares its file's whole weight axis** (100 to 1000, was 400 to 700), as dustinedwards.info's font gate checks every face it loads.
 
 ## [0.124.0]
