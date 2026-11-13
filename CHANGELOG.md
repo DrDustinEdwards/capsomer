@@ -4,6 +4,10 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+## [0.136.0]
+
+- **Breaking: the layout classes and the text roles are their own stylesheets, no longer part of `base.css`.** `base.css` imported `utilities.css`, which since 0.126.0 carried the layout classes (`.cap-stack`, `.cap-cluster`, `.cap-spread`, `.cap-grid`, the panes and the item helpers, 1.98 KB gzip) and the text roles (`.cap-text`, `.cap-title`, `.cap-clamp`, 1.22 KB gzip), so every site shipped about 3.2 KB gzip it might not use (txasm's public routes grew 2.9 KB gzip, the Portal's CSS went over its budget). They are now `capsomer/layout.css` and `capsomer/text.css` (`css/layout.css`, `css/text.css`). **A site that uses those classes adds `import "capsomer/layout.css";` and `import "capsomer/text.css";` beside `capsomer/base.css`** (Foxing, Carrel and the Portal use both); a site that does not, changes nothing and loses the weight. `capsomer/utilities.css` keeps everything else. No class, token or attribute is renamed or removed, and no HTML contract changes.
+
 ## [0.134.0]
 
 - **Sites: dustinedwards.info's entry no longer sets `--radius-control: 0`.** 0.126.0 carried it over from the site's app.css, but before Capsomer 0.123.0 no control read that token, so the live site's buttons and fields have always been rounded; with it, they turned square. Its controls keep Capsomer's `--radius-m`.
