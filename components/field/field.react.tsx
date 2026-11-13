@@ -591,24 +591,7 @@ export function DateInput(
   const hasError = error != null && error !== false && error !== "";
   const wrong = hasError ? (invalid ?? order) : [];
   return (
-    <fieldset
-      className="cap-field"
-      aria-describedby={help ? `${base}-help` : undefined}
-      data-invalid={hasError ? "true" : undefined}
-    >
-      <legend className="cap-field-label">
-        {legend}
-        {required ? (
-          <span className="cap-field-required" aria-hidden="true">
-            Required
-          </span>
-        ) : null}
-      </legend>
-      {help ? (
-        <p className="cap-field-help" id={`${base}-help`}>
-          {help}
-        </p>
-      ) : null}
+    <FieldSet legend={legend} help={help} error={error} announce={announce} required={required}>
       <div className="cap-date-input">
         {order.map((part) => (
           <div className="cap-date-input-part" key={part}>
@@ -625,11 +608,51 @@ export function DateInput(
               value={value[part]}
               onChange={(e) => onChange({ ...value, [part]: e.target.value })}
               aria-invalid={wrong.includes(part) ? true : undefined}
-              aria-describedby={hasError ? `${base}-error` : undefined}
             />
           </div>
         ))}
       </div>
+    </FieldSet>
+  );
+}
+
+// Controls that answer one question together (a date's parts, a set of radios) in a fieldset:
+// the legend, Required, the help and the error, both read as the group's description (GOV.UK's
+// fieldset).
+export function FieldSet(
+  props: Omit<FieldText, "label" | "helpPlacement" | "showRequired"> & {
+    legend: ReactNode;
+    id?: string;
+    children: ReactNode;
+  },
+) {
+  const { legend, help, error, announce = false, required, id, children } = props;
+  const base = useId();
+  const hasError = error != null && error !== false && error !== "";
+  const describedBy =
+    [help ? `${base}-help` : null, hasError ? `${base}-error` : null].filter(Boolean).join(" ") ||
+    undefined;
+  return (
+    <fieldset
+      className="cap-field"
+      id={id}
+      aria-describedby={describedBy}
+      data-invalid={hasError ? "true" : undefined}
+    >
+      <legend className="cap-field-label">
+        {legend}
+        {required ? (
+          <span className="cap-field-required" aria-hidden="true">
+            Required
+          </span>
+        ) : null}
+      </legend>
+      {help ? (
+        <p className="cap-field-help" id={`${base}-help`}>
+          {help}
+        </p>
+      ) : null}
+      {children}
       <p
         className="cap-field-error"
         id={`${base}-error`}
