@@ -1,0 +1,42 @@
+/* Everything the admin shell and its screens draw with, in one import, so each site's admin loads the same set in the
+   same order: `@import "capsomer/admin-all.css"`. Layers, tokens, base and prose, the overlays, the controls, the
+   status and content parts, the shell itself and the screens' common pieces. A site adds its family and site layer,
+   its fonts, and any part only its admin uses (media library, markdown editor). */
+@import "./layers.css";
+@import "./tokens.css";
+@import "./base.css";
+@import "./prose.css";
+@import "../components/popover/popover.css";
+@import "../components/listbox/listbox.css";
+@import "../components/dialog/dialog.css";
+@import "../components/tooltip/tooltip.css";
+@import "../components/meter/meter.css";
+@import "../components/skeleton/skeleton.css";
+@import "../components/link/link.css";
+@import "../components/button/button.css";
+@import "../components/field/field.css";
+@import "../components/select/select.css";
+@import "../components/segmented/segmented.css";
+@import "../components/switch/switch.css";
+@import "../components/chips/chips.css";
+@import "../components/status/status.css";
+@import "../components/time/time.css";
+@import "../components/banner/banner.css";
+@import "../components/message/message.css";
+@import "../components/empty/empty.css";
+@import "../components/panel/panel.css";
+@import "../components/table/table.css";
+@import "../components/row-list/row-list.css";
+@import "../components/disclosure/disclosure.css";
+@import "../components/breadcrumb/breadcrumb.css";
+@import "../components/page-head/page-head.css";
+@import "../components/tabs/tabs.css";
+@import "../components/pagination/pagination.css";
+@import "../components/stat-tile/stat-tile.css";
+@import "../components/bulk-bar/bulk-bar.css";
+@import "../components/confirm-dialog/confirm-dialog.css";
+@import "../components/command-menu/command-menu.css";
+@import "../components/shortcuts/shortcuts.css";
+@import "../components/theme-switch/theme-switch.css";
+@import "../components/site-header/site-header.css";
+@import "../components/admin-shell/admin-shell.css";
