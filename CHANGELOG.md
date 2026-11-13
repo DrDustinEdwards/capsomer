@@ -7,7 +7,7 @@ Each release names every removed or renamed token or class, and every changed HT
 ## [0.123.0]
 
 - **The theme switch keeps `<meta name="color-scheme">` in step.** A choice made on the page now sets the meta's content as well as `data-theme` (`colorSchemeContent`: the choice, or `light dark`). Before, a site that wrote the meta on the server (dustinedwards.info) kept the old value until the next page, so the browser's own controls and the canvas painted before the CSS showed the other scheme (Modern Web Guidance, dark-mode-toggle). No HTML contract changes; a page without the meta is unchanged.
-- Showcase site: every page has `<meta name="color-scheme" content="light dark">` and `<meta name="text-scale" content="scale">`, `theme.js` sets the meta from the stored choice before paint, and the home band's word stagger is one `sibling-index()` rule in place of seven `:nth-child` delays (a browser without it raises the words together).
+- Showcase site: every page has `<meta name="color-scheme" content="light dark">` and `<meta name="text-scale" content="scale">` (`PAGE_META`, site/seo.ts, in the head the build writes), `theme.js` sets the meta from the stored choice before paint, and the home band's word stagger is one `sibling-index()` rule in place of seven `:nth-child` delays (a browser without it raises the words together).
 - The five Enter handlers Chrome's legacy scanner flags (confirm-dialog, markdown-editor twice, media, rich-editor) carry `legacy-scan:keep` with the reason: `isImeEnter` (shortcuts.ts) already checks `isComposing` and keyCode 229, and the scanner cannot follow a helper (devkit 0.45.0). The legacy scan's count is 0.
 
 ## [0.122.0]

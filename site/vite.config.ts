@@ -10,7 +10,7 @@ import { renderMake } from "./make.ts";
 import { SEARCH_PAGE, renderSearch, searchIndexJson } from "./search.ts";
 import { ACCESSIBILITY_PAGE, renderAccessibility } from "./accessibility.ts";
 import { writePreloadFile } from "../scripts/preload.ts";
-import { ICON_TAGS, MAKE_DESCRIPTION, discoveryFiles, siteHead } from "./seo.ts";
+import { ICON_TAGS, MAKE_DESCRIPTION, PAGE_META, discoveryFiles, siteHead } from "./seo.ts";
 
 // One build for the site and every component's states page. The root is the repo, so a
 // states page sits at /components/<name>/states.html beside its component. The site is
@@ -109,7 +109,7 @@ export default defineConfig({
                     : "admin";
           return html.replace(
             "<!-- The title, description, canonical, social tags and JSON-LD: site/seo.ts, at build. -->",
-            `${siteHead(page)}\n${ICON_TAGS}`,
+            `${PAGE_META}\n${siteHead(page)}\n${ICON_TAGS}`,
           );
         },
       },
