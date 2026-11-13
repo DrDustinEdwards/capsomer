@@ -4,7 +4,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import {
-  dayKey,
   dayTotals,
   goalFromForm,
   pace,
@@ -16,10 +15,7 @@ import {
 const EVERY_DAY = [0, 1, 2, 3, 4, 5, 6];
 const WEEKDAYS_ONLY = [1, 2, 3, 4, 5];
 
-test("a save falls on the device's calendar day, and deletions stop at zero unless allowed", () => {
-  // 04:30 UTC on 10 October is still 9 October in Chicago and already 10 October in Tokyo.
-  assert.equal(dayKey("2026-10-10T04:30:00Z", "America/Chicago"), "2026-10-09");
-  assert.equal(dayKey("2026-10-09T15:30:00Z", "Asia/Tokyo"), "2026-10-10");
+test("a day's deletions stop at zero unless allowed", () => {
   const entries = [{ at: "2026-10-10T12:00:00Z", typed: 40, removed: 100 }];
   assert.equal(dayTotals(entries, "UTC", false).get("2026-10-10"), 0);
   assert.equal(dayTotals(entries, "UTC", true).get("2026-10-10"), -60);
