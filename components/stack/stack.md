@@ -24,7 +24,7 @@ replaces:
 
 ## Props
 
-`gap` (1 to 9; the layout's own gap when omitted), `as` (`div` when omitted; also `section`, `ul`, `ol`, `li`, `form`, `fieldset`, `article`, `header`, `footer`), `className` (for another layout class or the site's own) and `id`. Any other attribute reaches the element.
+`gap` (1 to 9; the layout's own gap when omitted), `as` (any element; `div` when omitted), `className` (for another layout class or the site's own) and `id`. Any other attribute reaches the element.
 
 ## When not to
 

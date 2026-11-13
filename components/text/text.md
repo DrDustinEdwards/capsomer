@@ -28,10 +28,10 @@ replaces:
 
 | Component | Props |
 | --- | --- |
-| `Title` | `size` 1 to 6 (4 when omitted; the look), `as` (`h2` when omitted; the heading level is the outline, set it), `className`, `id` |
-| `Text` | `size` (`tiny`, `small`, `lead`), `tone` (`muted`, `dim`, `ink`, `accent`, `ok`, `crit`), `weight` (`strong`), `face`, `align` (`center`, `end`), `as` (`p` when omitted), `className`, `id` |
+| `Title` | `size` 1 to 6 (4 when omitted; the look), `as` (any element; `h2` when omitted; the heading level is the outline, set it), `className`, `id` |
+| `Text` | `size` (`tiny`, `small`, `lead`), `tone` (`muted`, `dim`, `ink`, `accent`, `ok`, `crit`), `weight` (`strong`), `face`, `align` (`center`, `end`), `as` (any element; `p` when omitted), `className`, `id` |
 
-Any other attribute (a `ref`, `tabIndex`, `htmlFor`, an aria attribute) reaches the element.
+The element's own props (a `ref`, `tabIndex`, `htmlFor`, `scope`, an aria attribute, a handler) reach the element.
 
 ## When not to
 
