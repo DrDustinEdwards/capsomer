@@ -4,7 +4,7 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
-## [0.126.0]
+## [0.127.0]
 
 - **A progressive tab set prints every panel.** The print rule set `display: block` in `cap.components`, and the reset's `[hidden] { display: none !important }` in `cap.reset` beats every later layer, so the inactive panels stayed off the page. The rule is now `!important` in `cap.reset`, where its specificity wins. No token or class changed.
 
