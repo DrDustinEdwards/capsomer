@@ -6,7 +6,7 @@ parts: [css, behavior, react]
 tool: own JavaScript
 states: [a sample, generating, failed]
 added: 0.132.0
-updated: 0.140.0
+updated: 0.142.0
 source: Foxhound's home page email generator (app/components/email-samples.tsx, app/islands/email-generator.ts)
 replaces:
   - 'data-island="email-generator"'

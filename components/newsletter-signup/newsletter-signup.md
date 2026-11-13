@@ -6,7 +6,7 @@ parts: [css, react]
 tool: native
 states: [card, plain, with an error, sent, phone]
 added: 0.132.0
-updated: 0.140.0
+updated: 0.142.0
 source: germomics' subscribe page newsletter (app/routes/subscribe.tsx)
 replaces:
   - 'name="consent"'
