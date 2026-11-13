@@ -39,10 +39,12 @@ export function flattenMix(expr) {
 
 /** The body of the first rule whose selector text is exactly `selector`, or null. Nested blocks are skipped. */
 function ruleBody(css, selector) {
-  const at = css.indexOf(selector);
-  if (at === -1) return null;
-  const open = css.indexOf("{", at + selector.length - 1);
-  if (open === -1) return null;
+  // The whole prelude: at the start or after a block or a declaration, then the brace, so
+  // '[data-theme="dark"]' never matches '[data-theme="dark"] .card'.
+  const quoted = selector.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const head = new RegExp(`(?:^|[{};])\\s*${quoted}\\s*\\{`).exec(css);
+  if (!head) return null;
+  const open = head.index + head[0].length - 1;
   let depth = 0;
   for (let i = open; i < css.length; i += 1) {
     if (css[i] === "{") depth += 1;
