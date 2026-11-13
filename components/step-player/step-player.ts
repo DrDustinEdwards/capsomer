@@ -3,6 +3,7 @@
 // hidden and whenever the person moves themselves (a key, a step link), because motion a person did
 // not start must be easy to stop (WCAG 2.2.2). Under reduced motion it waits half as long again on
 // each step. The page owns the steps; the player only calls go(n).
+import { clamp } from "../hooks/hooks.ts";
 
 export interface StepPlayerOptions {
   // The button. Rendered hidden: with no script there is nothing to play, so it is shown here.
@@ -117,12 +118,15 @@ export function enhance(root: ParentNode = document): () => void {
       go: show,
       interval: Number(host.dataset.stepInterval) || undefined,
     });
-    const onKey = () => player.stop();
+    // The play button's own Enter and Space are its click, which plays or pauses.
+    const onKey = (event: KeyboardEvent) => {
+      if (!(event.target as Element).closest("[data-step-play]")) player.stop();
+    };
     const onGo = (event: Event) => {
       const link = (event.target as Element).closest<HTMLElement>("[data-step-go]");
       if (!link) return;
       event.preventDefault();
-      show(Math.min(steps.length, Math.max(1, Number(link.dataset.stepGo) || 1)));
+      show(clamp(Number(link.dataset.stepGo) || 1, 1, steps.length));
       // After the move, so the button's word fits the step now shown ("Play again" on the last).
       player.stop();
     };
