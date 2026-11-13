@@ -8,6 +8,7 @@
 // the React wrapper uses the same pure functions.
 
 import { readStored, subscribeStored, writeStored } from "../hooks/hooks.ts";
+import { startPointerDrag } from "../sortable-list/sortable-list.ts";
 
 const READY = "data-cap-ready";
 const STOP = "data-cap-tabstop";
@@ -44,11 +45,15 @@ export function onRemembered(key: string, fn: (value: string) => void): () => vo
   });
 }
 
-// A first guess when nothing is remembered: data-remember-guess="platform" picks the tab whose value is the reader's
-// system ("windows", "macos" or "linux"), from the browser's report; null when it says none of those.
+// The reader's system from the browser's report: "ios", "android", "windows", "macos" or "linux",
+// or null when it says none of those. Phones first: an iPhone says "like Mac OS X" and Android
+// says "Linux". data-remember-guess="platform" picks the tab whose value it is; web-push names a
+// device with it.
 export function guessPlatform(
   ua: string = typeof navigator === "undefined" ? "" : navigator.userAgent,
-): string | null {
+): "ios" | "android" | "windows" | "macos" | "linux" | null {
+  if (/iPhone|iPad|iPod/.test(ua)) return "ios";
+  if (/Android/.test(ua)) return "android";
   if (/Windows/.test(ua)) return "windows";
   if (/Mac OS X|Macintosh/.test(ua)) return "macos";
   if (/Linux|X11/.test(ua)) return "linux";
@@ -262,12 +267,8 @@ export function upgrade(root: HTMLElement): boolean {
 // is chosen through `pick`, and the mark settles on it. A press that does not move is a click, as on any tab. The mark's
 // place while dragging goes through the CSSOM (--cap-pill-start, --cap-pill-end); the tab under it carries data-near.
 export function attachPillDrag(list: HTMLElement, pick: (tab: HTMLElement) => void): () => void {
-  let start = 0;
-  let base: HTMLElement | null = null;
   let near: HTMLElement | null = null;
-  let id: number | null = null;
-  let dragging = false;
-  let swallow = false;
+  let live = true;
   const tabs = () =>
     [...list.querySelectorAll<HTMLElement>(":scope > [role='tab']")].filter((t) => !isDisabled(t));
   // A tab's start, in the list's padding box (where its ::before is placed), taking the list's scroll into account.
@@ -277,83 +278,55 @@ export function attachPillDrag(list: HTMLElement, pick: (tab: HTMLElement) => vo
     list.clientLeft +
     list.scrollLeft;
   const clear = () => {
-    dragging = false;
-    id = null;
     list.removeAttribute("data-dragging");
     near?.removeAttribute("data-near");
     near = null;
     list.style.removeProperty("--cap-pill-start");
     list.style.removeProperty("--cap-pill-end");
   };
+  // The drag itself (threshold, one pointer, capture, Escape, the click after a drop) is the
+  // sortable list's, which the tree shares too.
   const down = (e: PointerEvent) => {
     if (list.dataset.variant !== "pill" || list.getAttribute("aria-orientation") === "vertical")
       return;
-    if (!e.isPrimary || e.button !== 0) return;
-    base = tabs().find((t) => t.getAttribute("aria-selected") === "true") ?? null;
+    if (!e.isPrimary) return;
+    const base = tabs().find((t) => t.getAttribute("aria-selected") === "true");
     if (!base) return;
-    start = e.clientX;
-    id = e.pointerId;
-  };
-  const move = (e: PointerEvent) => {
-    if (e.pointerId !== id || !base) return;
-    const dx = e.clientX - start;
-    if (!dragging) {
-      if (Math.abs(dx) <= 4) return;
-      dragging = true;
-      list.setAttribute("data-dragging", "");
-      try {
-        list.setPointerCapture(e.pointerId);
-      } catch {
-        /* the pointer is gone */
-      }
-    }
-    const all = tabs();
-    const first = all[0];
-    const last = all[all.length - 1];
-    if (!first || !last) return;
-    const width = base.getBoundingClientRect().width;
-    const x = Math.min(xOf(last), Math.max(xOf(first), xOf(base) + dx));
-    list.style.setProperty("--cap-pill-start", `${x}px`);
-    list.style.setProperty("--cap-pill-end", `${list.clientWidth - x - width}px`);
-    let best = first;
-    for (const t of all) if (Math.abs(xOf(t) - x) < Math.abs(xOf(best) - x)) best = t;
-    if (best !== near) {
-      near?.removeAttribute("data-near");
-      best.setAttribute("data-near", "");
-      near = best;
-    }
-  };
-  const up = (e: PointerEvent) => {
-    if (e.pointerId !== id) return;
-    const was = dragging ? near : null;
-    clear();
-    if (!was) return;
-    // The click that follows a drag is not a choice of the tab under the pointer.
-    swallow = true;
-    setTimeout(() => (swallow = false), 0);
-    pick(was);
-  };
-  const cancel = (e: PointerEvent) => {
-    if (e.pointerId === id) clear();
-  };
-  const click = (e: MouseEvent) => {
-    if (!swallow || !e.isTrusted) return;
-    swallow = false;
-    e.preventDefault();
-    e.stopPropagation();
+    const start = e.clientX;
+    startPointerDrag(e, {
+      onStart: () => {
+        if (live) list.setAttribute("data-dragging", "");
+      },
+      onMove: (clientX) => {
+        const all = tabs();
+        const first = all[0];
+        const last = all[all.length - 1];
+        if (!live || !first || !last) return;
+        const width = base.getBoundingClientRect().width;
+        const x = Math.min(xOf(last), Math.max(xOf(first), xOf(base) + clientX - start));
+        list.style.setProperty("--cap-pill-start", `${x}px`);
+        list.style.setProperty("--cap-pill-end", `${list.clientWidth - x - width}px`);
+        let best = first;
+        for (const t of all) if (Math.abs(xOf(t) - x) < Math.abs(xOf(best) - x)) best = t;
+        if (best !== near) {
+          near?.removeAttribute("data-near");
+          best.setAttribute("data-near", "");
+          near = best;
+        }
+      },
+      onDrop: () => {
+        const was = near;
+        clear();
+        if (live && was) pick(was);
+      },
+      onCancel: clear,
+    });
   };
   list.addEventListener("pointerdown", down);
-  list.addEventListener("pointermove", move);
-  list.addEventListener("pointerup", up);
-  list.addEventListener("pointercancel", cancel);
-  list.addEventListener("click", click, true);
   return () => {
+    live = false;
     clear();
     list.removeEventListener("pointerdown", down);
-    list.removeEventListener("pointermove", move);
-    list.removeEventListener("pointerup", up);
-    list.removeEventListener("pointercancel", cancel);
-    list.removeEventListener("click", click, true);
   };
 }
 

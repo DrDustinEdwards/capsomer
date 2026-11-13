@@ -206,7 +206,7 @@
     }
     & :is(a:not(.cap-card-link), button, input, select, textarea, summary, label) {
       position: relative;
-      z-index: 1;
+      z-index: var(--z-raise);
     }
     &:has(a.cap-card-link:is(:hover, [data-force="hover"])) {
       border-color: color-mix(in srgb, var(--primary) calc(var(--card-edge) * 100%), var(--line-strong));

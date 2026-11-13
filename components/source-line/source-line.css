@@ -1,7 +1,7 @@
 /* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
-/* A figure's source under it: small mono words in the muted ink, a link with an out arrow. */
+/* A figure's source under it: small mono words in the muted ink, a link to another site, with its arrow (the link system's away mark). */
 @layer cap.components {
   .cap-source-line {
     margin: 0;
@@ -22,26 +22,11 @@
         color: var(--text);
       }
     }
-    & svg {
-      inline-size: 0.75rem;
-      block-size: 0.75rem;
-      fill: none;
-      stroke: currentColor;
-      stroke-width: 1.5;
-      stroke-linecap: round;
-      stroke-linejoin: round;
-    }
   }
 
   @media (prefers-reduced-motion: no-preference) {
     .cap-source-line a {
       transition: color var(--dur-fast) var(--ease-out);
-      & svg {
-        transition: translate var(--dur-fast) var(--ease-out);
-      }
-      &:hover svg {
-        translate: 1px -1px;
-      }
     }
   }
 }

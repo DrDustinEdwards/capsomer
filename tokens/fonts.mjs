@@ -6,7 +6,7 @@
 // Each face has a size-matched fallback (tokens/fallback-fonts.mjs, Astro's Fonts API method),
 // listed second in the font stacks.
 import { createHash } from "node:crypto";
-import { readFileSync, writeFileSync } from "node:fs";
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { fallbackFontFace, MEASURED } from "./fallback-fonts.mjs";
 
@@ -289,11 +289,11 @@ function check() {
     problems.push("css/fonts.css differs from what tokens/fonts.mjs writes; run npm run tokens");
   for (const family of FAMILIES) {
     const file = here(`../css/fonts-${slug(family)}.css`);
-    let stored = "";
-    try {
-      stored = readFileSync(file, "utf8");
-    } catch {}
-    if (stored !== renderFamily(family))
+    if (!existsSync(file)) {
+      problems.push(`css/fonts-${slug(family)}.css is missing; run npm run tokens`);
+      continue;
+    }
+    if (readFileSync(file, "utf8") !== renderFamily(family))
       problems.push(
         `css/fonts-${slug(family)}.css differs from what tokens/fonts.mjs writes; run npm run tokens`,
       );

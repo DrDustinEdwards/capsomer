@@ -588,10 +588,14 @@ export function createSortableList(el: HTMLElement): SortableList {
     const left = itemsOf(list);
     say(list, sortText.removed(text, left.length));
     syncSteps(list);
-    (left[Math.min(index, left.length - 1)]
-      ? handleOf(left[Math.min(index, left.length - 1)] as HTMLElement)
-      : null
-    )?.focus();
+    // Focus to the next item's handle, or the one before it; with none left, to the list, so it
+    // is not lost to the page (React's list moves it to Add).
+    const next = left[Math.min(index, left.length - 1)];
+    if (next) handleOf(next)?.focus();
+    else {
+      if (!list.hasAttribute("tabindex")) list.tabIndex = -1;
+      list.focus();
+    }
   };
 
   // ---- the pointer

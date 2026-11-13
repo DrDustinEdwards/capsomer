@@ -351,7 +351,7 @@ export function MentionsList({
                     onClick={toggle(m.id)}
                   >
                     <span className="cap-avatar" data-size="sm" aria-hidden="true">
-                      <span className="cap-avatar-fallback">{initials(m.author) || "?"}</span>
+                      <span className="cap-avatar-fallback">{initials(m.author)}</span>
                     </span>{" "}
                     <span className="cap-mq-name">{m.author}</span>{" "}
                     <span className="cap-mq-host">{m.host}</span>

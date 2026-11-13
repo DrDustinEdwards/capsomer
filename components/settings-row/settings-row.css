@@ -1,5 +1,7 @@
 /* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+/* The back link's chevron is the icon set's. */
+@import "../icons/icons.css";
 
 /* Settings rows: a setting's name and line at the start, its control at the end, a rule
    between rows. The settings page: a back link to the index on a phone, then the page head. */
@@ -55,17 +57,13 @@
     color: var(--muted);
     font-size: var(--fs-detail);
     text-decoration: none;
+    border-radius: var(--radius-s);
     /* The chevron (components/icons, a 24-unit drawing) at 16px, its line 1.5px. */
     --icon-size: var(--space-5);
     --icon-stroke: 2.25;
 
     &:hover {
       color: var(--text);
-    }
-    &:focus-visible {
-      outline: var(--ring-width) solid var(--ring);
-      outline-offset: var(--focus-offset);
-      border-radius: var(--radius-s);
     }
   }
   /* The settings menu shows beside the page from 48rem; the back link is for narrower. */

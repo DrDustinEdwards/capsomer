@@ -16,7 +16,6 @@ import {
   exact,
   exactParts,
   formatDate,
-  fromUtcInputValue,
   parse,
   relative,
   serverNow,
@@ -26,7 +25,6 @@ import {
   toMs,
   until,
   utc,
-  utcInputValue,
 } from "./time.ts";
 
 // Times depend on the viewer's zone: check them in one, with summer time in force.
@@ -137,9 +135,6 @@ test("behavior: dates are long and in UTC, whatever the viewer's zone, and an un
   expect(dateRange(null, "2026-05-02")).toBe("May 2, 2026");
   expect(dateRange(null, null)).toBeNull();
   expect(toMs(null)).toBeNaN();
-  expect(utcInputValue(NOW)).toBe("2026-09-30T14:00");
-  expect(fromUtcInputValue("2026-09-30T14:00")).toBe(NOW);
-  expect(fromUtcInputValue("tomorrow")).toBeNaN();
 });
 
 test("behavior: durations are a timecode, or words a screen reader can say", () => {

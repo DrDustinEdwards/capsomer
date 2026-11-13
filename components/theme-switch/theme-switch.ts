@@ -116,12 +116,7 @@ export function chooseTheme(
 // it, so the two agree. With no answer the memory is cleared and the page follows the system.
 export function syncServedTheme(key = THEME_PREF): void {
   const served = document.documentElement.getAttribute("data-theme");
-  try {
-    if (isChoice(served)) localStorage.setItem(key, served);
-    else localStorage.removeItem(key);
-  } catch {
-    // Storage blocked: the switches read <html data-theme>.
-  }
+  writeStored(key, isChoice(served) ? served : null);
 }
 
 // Applies the remembered choice, if there is one. Run it before first paint, or the page

@@ -1,10 +1,11 @@
 import type { ReactNode } from "react";
+import { iconCheck, iconClose } from "../icons/icons.ts";
 
 export type MarkTone = "ok" | "crit" | "warn" | "info";
 
 const PATH: Record<MarkTone, string> = {
-  ok: "M5 12.5l4.5 4.5L19 7.5",
-  crit: "M7 7l10 10M17 7L7 17",
+  ok: iconCheck,
+  crit: iconClose,
   warn: "M12 6v7M12 17.5v.5",
   info: "M12 11v7M12 6.5v.5",
 };

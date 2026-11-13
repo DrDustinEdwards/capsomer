@@ -45,8 +45,9 @@
     }
     &[aria-current="location"] {
       color: var(--text);
-      box-shadow: inset var(--line-w-thick) 0 0 var(--accent);
-      padding-inline-start: var(--space-2);
+      /* A logical edge, so it sits at the start in a right-to-left page too, and shows in forced colors. */
+      border-inline-start: var(--line-w-thick) solid var(--accent);
+      padding-inline-start: calc(var(--space-2) - var(--line-w-thick));
     }
   }
   /* Sidebar: sticky beside the post, from 64rem (a page-level layout, so a media query). */

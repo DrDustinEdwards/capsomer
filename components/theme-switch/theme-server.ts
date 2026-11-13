@@ -3,7 +3,10 @@
 // localStorage instead. No DOM and no framework, so it runs in a Worker, in Node and in the browser alike.
 // dustinedwards.info, Foxhound and txasm each wrote this for themselves; it lives here once.
 
-import { textResponse } from "@dustinedwards/site-runtime/http";
+import { mediaType, redirectResponse, textResponse } from "@dustinedwards/site-runtime/http";
+
+const isJson = (request: Request): boolean =>
+  mediaType(request.headers.get("content-type")) === "application/json";
 
 export type ThemeChoice = "light" | "dark";
 
@@ -134,7 +137,7 @@ export async function readThemeChoice(request: Request): Promise<ThemeChoice | n
     return null;
   }
   if (text.length > THEME_BODY_MAX) return null;
-  if ((request.headers.get("content-type") ?? "").includes("json")) {
+  if (isJson(request)) {
     try {
       const body: unknown = JSON.parse(text);
       const value = body && typeof body === "object" ? (body as { theme?: unknown }).theme : null;
@@ -168,10 +171,8 @@ export async function themeAction(
   const choice = await readThemeChoice(request);
   if (!choice) return textResponse("Theme must be light or dark.\n", 400);
   if (save) await save(choice);
-  const headers = new Headers({ "cache-control": "no-store" });
+  const headers = new Headers({ "cache-control": "private, no-store" });
   if (cookie !== false) headers.set("set-cookie", themeCookie(choice, { name: cookie, secure }));
-  if ((request.headers.get("content-type") ?? "").includes("json"))
-    return new Response(null, { status: 204, headers });
-  headers.set("location", themeReturnTo(request));
-  return new Response(null, { status: 303, headers });
+  if (isJson(request)) return new Response(null, { status: 204, headers });
+  return redirectResponse(themeReturnTo(request), 303, headers);
 }

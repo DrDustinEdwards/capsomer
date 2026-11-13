@@ -1,3 +1,4 @@
+import { plural } from "@drdustinedwards/site-helpers/text";
 import type { ReactNode } from "react";
 import { Status, type Tone } from "../status/status.react.tsx";
 
@@ -59,9 +60,7 @@ export function Verdict({
   const rest = problems.length - shown.length;
   return (
     <p className={cls} data-verdict="problems">
-      <Status tone={tone}>
-        {problems.length} {problems.length === 1 ? noun[0] : noun[1]}:
-      </Status>
+      <Status tone={tone}>{plural(problems.length, noun[0], noun[1])}:</Status>
       <span className="cap-verdict-list">
         {shown.map((p, i) => (
           <span key={p.key}>
