@@ -592,7 +592,7 @@ function InspectorBody({
               value={tagText}
               onChange={(e) => setTagText(e.target.value)}
               onKeyDown={(e) => {
-                // legacy-scan:keep isImeEnter (shortcuts.ts) checks isComposing and keyCode 229; the scanner cannot follow it.
+                // legacy-scan:keep ime-safe-enter-submit isImeEnter (shortcuts.ts) checks isComposing and keyCode 229; the scanner cannot follow it.
                 if ((e.key === "Enter" && !isImeEnter(e.nativeEvent)) || e.key === ",") {
                   e.preventDefault();
                   addTag(tagText);
