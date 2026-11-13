@@ -4,6 +4,10 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+## [0.141.1]
+
+- **The `enarratio` peer range adds `^0.15.0`.** Enarratio 0.15.0 adds `enarratio/lite/sparkline`, so a site that wants it could not install it beside Capsomer (npm ERESOLVE). The dev dependency is 0.15.0 and the full check passes unchanged; no token, class, export or HTML contract changes.
+
 ## [0.141.0]
 
 - **Field: `SpanField`, a span chosen from two menus (From and To).** It was Catalog's range facet, which only a Catalog could draw, so a page with its own filters (dustinedwards.info's CV) had to keep its own year menus. It is now a part of Field, in `field.css`, and Catalog's range facet renders it. A page that draws it loads `field.css` and `select.css` (its menus are `select.cap-select`), not the catalog's stylesheet.
