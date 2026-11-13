@@ -4,13 +4,23 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
-## [0.135.0]
+## [0.138.0]
 
 **The docs site, Release 1 of the redesign.** The site at capsomer.dustinedwards.info is rebuilt as five sections, each page in one fixed pattern of live previews: Themes (an overview and color, typography, radius, spacing and density, shadows, motion and dark mode, each a board of real components the family, theme and density controls repaint, beside its token tables), Components and Primitives (a preview, installation, usage, examples, the API reference and accessibility; a primitive shows its anatomy, data attributes and keyboard), Icons (every icon, a search, a size, a click copies the name) and Colors (every family's 12 steps in light and dark, each step's job, a click copies the value). The look is the current one. No token or class is removed or renamed and no HTML contract changes.
 
 - **New export `capsomer/parts.json`:** each component's root class, parts, `data-*` variants, states and CSS variables, read from its own `cap-<name>-<part>` classes (`bin/parts.mjs`, `capsomer parts`); the API tables are made from it.
 - **Doc files are three headings:** every `components/<name>/<name>.md` is `# Title`, `## Usage` (code only) and `## Accessibility` (the keyboard table and short points), with a one-sentence `summary` and a new `group` (`pattern` or `primitive`). `capsomer docs`, part of `npm run check`, fails a file that leaves the pattern (components/README.md, The doc page).
 - **Site only:** the theme builder at `/make/` and the admin views at `/admin/` are removed, and so are the site's test-results panel and the `results` branch job that fed it; each run's summary stays with the run as the `test-results` artifact.
+
+## [0.137.0]
+
+- **`MediaPicker` and `ImageField` load the media library when the dialog opens.** `media-picker.react.tsx` imported `MediaLibrary` statically, so a page that drew only the button (an editor, a settings form) shipped the whole library: 32 KB gzip on Carrel's editor route (capsomer#408). The library is now its own chunk behind `React.lazy` and `Suspense`, showing the same "Loading media..." text while it arrives. No token, class, export or HTML contract changed.
+
+## [0.135.0]
+
+- **Command menu: an answer under the list.** `answer: { label, offer, run(query, region) }` on `createCommandMenu`, `buildMenu` and `attach` adds `.cap-cmd-answer` (a quiet button, a status, `.cap-cmd-answer-region`) between the list and the key hints: the button shows while words are typed, `run` fills the region and returns `{ cancel }` (or a promise of it, so its code loads only when pressed), focus moves into the answer before the button hides, and typing again or closing cancels it. `ask(region, options)` from `capsomer/behavior/ask-panel` is such a `run`. `offer: false` with `Attached.offerAnswer(on)` lets a search say whether answers are on. New export `ANSWER_LABEL`, type `AnswerRun`. The React menu has no answer area yet.
+- **Ask panel: focus moves to the answer when its trigger hides, also while the browser still reports the hidden trigger as focused.** dei's Ask checked for this; the extraction had dropped it.
+- **Ask panel: the sources are an `ol` named by its "Sources" heading.** Before, the heading was the list's first item, so a screen reader counted it as a source, and the numbers were text inside each link. HTML contract: `.cap-ask-sources` is now a `div` holding `p.cap-ask-sources-heading` and an `ol` (numbers from `list-style`); `.cap-ask-source-index` is removed.
 
 ## [0.134.0]
 
@@ -20,16 +30,13 @@ Each release names every removed or renamed token or class, and every changed HT
 - **Icons: `iconScanSearch` and a button's icon side** (from #391). New icon `iconScanSearch` (Lucide's ScanSearch, joined into one path), the one pictogram Foxhound drew that the set lacked. `Icon` takes `data-icon="start"` or `"end"`, so an icon inside a `cap-btn` pulls the button's padding in on its side, as an inline SVG with that attribute already did. Foxhound's entry sets `--icon-stroke: 2`, Lucide's stroke, which its icons were drawn at.
 - **`capsomer/token-check` no longer exports `normalizeHex`.** Prelum owns it now (one copy): import `normalizeHex` from `@drdustinedwards/site-helpers/text` (Prelum 0.55.0). The behavior is the same (`#abc` or `#aabbcc` as lowercase `#aabbcc`, space and a missing `#` tolerated); `token-check` itself imports it from there. No token or class was removed or renamed, and no HTML contract changed.
 - `@drdustinedwards/site-helpers` is now at least 0.55.0 (dev v0.55.0, peer `>=0.55.0`), and `token-check` needs it installed. The dev `@dustinedwards/site-runtime` moves to v0.143.0, which Prelum 0.55.0 requires as a peer; Capsomer's own site-runtime peer range is unchanged.
+- **A progressive tab set prints every panel.** The print rule set `display: block` in `cap.components`, and the reset's `[hidden] { display: none !important }` in `cap.reset` beats every later layer, so the inactive panels stayed off the page. The rule is now `!important` in `cap.reset`, where its specificity wins. No token or class changed.
 
 ## [0.133.0]
 
 - **New layout: panes** (`css/utilities.css`). `.cap-panes` sets two panels side by side, the first the wider (3:2); `data-flip` makes the second the wider (2:3) and `data-even` halves the row. The gap is `data-gap` like the other layouts (default `--space-6`). The panes stack when the row is narrower than `--panes-break` (50rem), measured on the row itself rather than the window, so they also stack inside a narrow shell or a drawer, with no media query. Tops line up and a short pane does not stretch; a third panel takes a row of its own. It replaces the Portal's `.grid2` and Carrel's `.app-split`.
 - **Stacks take `data-align`** (`start`, `center`, `end`): every item keeps its own width, lined up on that side, as clusters already could. It replaces the Portal's `.mt4` and `.mt8` notes under a status and its stacked button cells. Removed or renamed: no token or class.
 - Showcase site: every page carries `<meta name="color-scheme" content="light dark">`, so `theme.js` and the theme switch have a meta to set before paint, and `<meta name="text-scale" content="scale">`, so the site follows the reader's system text size (Modern Web Guidance, respect-os-text-scale). They come from `siteHead()` (site/seo.ts); the states pages already had both. Nothing in the package changes.
-
-## [0.133.0]
-
-- **A progressive tab set prints every panel.** The print rule set `display: block` in `cap.components`, and the reset's `[hidden] { display: none !important }` in `cap.reset` beats every later layer, so the inactive panels stayed off the page. The rule is now `!important` in `cap.reset`, where its specificity wins. No token or class changed.
 
 ## [0.132.0]
 

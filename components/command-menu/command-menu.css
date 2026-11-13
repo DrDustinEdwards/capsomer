@@ -104,6 +104,32 @@
     }
   }
 
+  /* The answer under the list (attach's `answer`): its button, a status for a failed load, and
+     the region, which scrolls on its own so a long answer never pushes the list away. */
+  .cap-cmd-answer {
+    flex: none;
+    padding: 0 var(--space-4);
+  }
+  .cap-cmd-answer-status {
+    margin: var(--space-2) 0 0;
+    color: var(--muted);
+    font-size: var(--fs-detail);
+
+    &:empty {
+      display: none;
+    }
+  }
+  .cap-cmd-answer-region {
+    max-block-size: 40vh;
+    margin-block: var(--space-3);
+    overflow-y: auto;
+
+    &:focus-visible {
+      outline: var(--focus-width) solid var(--ring);
+      outline-offset: 2px;
+    }
+  }
+
   /* A phone: the menu takes the whole screen, so the list has the room the keyboard leaves. */
   @media (max-width: 40rem) {
     .cap-cmd[open] {

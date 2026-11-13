@@ -4,9 +4,9 @@ title: Command menu
 summary: Every view, action and shortcut in one searchable list, opened with Ctrl K.
 parts: [css, behavior, react]
 tool: native + own JavaScript (the shared dialog and listbox)
-states: [closed with its button, open with every group, filtered, stops found by typing stop, no match, an option active, comfortable density, live results, live results without React, mounted when idle with recents, a snippet and Ask, the same extras without React]
+states: [closed with its button, open with every group, filtered, stops found by typing stop, no match, an option active, comfortable density, live results, live results without React, mounted when idle with recents, a snippet and Ask, the same extras without React, an answer under the list]
 added: 0.1.0
-updated: 0.103.0
+updated: 0.135.0
 source: Capsid Portal, dashboard/src/app/CommandMenu.tsx, lib/stops.ts and styles.css (.palette), as of capsid master 2026-10-01
 replaces:
   - 'className="palette"'

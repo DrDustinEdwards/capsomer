@@ -28,7 +28,10 @@ test("behavior: the answer streams in as text, with same-origin sources, the fol
   await expect(panel.locator(".cap-ask-body")).toHaveText(
     "Logs are kept for 30 days, then deleted. Exports you saved stay until you delete them.",
   );
-  await expect(panel.locator(".cap-ask-sources a")).toHaveText(["1. Retention", "2. Alerts"]);
+  await expect(panel.getByRole("list", { name: "Sources" }).getByRole("link")).toHaveText([
+    "Retention",
+    "Alerts",
+  ]);
   await expect(panel.getByRole("link", { name: "How do I export the logs?" })).toHaveAttribute(
     "href",
     "/search?q=How%20do%20I%20export%20the%20logs%3F",
