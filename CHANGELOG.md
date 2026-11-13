@@ -4,9 +4,24 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
-## [0.118.0]
+## [0.119.0]
 
 - **Links: a site's line on text links only, and `--link-offset`.** `--link-decoration` now draws on text links (no component class, or a `data-link` kind) outside a `nav`, as the tints do; every other link has no line. New token `--link-offset` (auto) sets how far the line sits under the text. Foxhound's entry sets Recova's links: underlined 2px under the text at the text's own weight, with no tint (Dustin, 2026-11-13). Its entry now also goes on `<html>` on every page but the admin. Removed or renamed: no token or class.
+
+## [0.118.0]
+
+Forms and inputs (shared-code audit pass 2, batch 2: C14 to C20). Nothing removed or renamed; no HTML contract changed.
+
+- **Field.** `action` puts one button after the control in a new `.cap-field-row`; `helpPlacement="after"` puts the help under the control; `showRequired={false}` keeps the control required without the word. New React parts: `TextField`, `RangeField` (the value read out by the label, through `aria-valuetext` too, and words at the two ends: `.cap-range-field-head`, `.cap-range-field-value`, `.cap-range-field-ends`), `SlugField` (Prelum's `SLUG_PATTERN` and `slugify`, following a title until typed in), `MoneyField` and `DateTimeField`. New behavior functions: `centsToDollars`, `dollarsToCents` (read as a string, never a float), `toDateTimeLocal` and `fromDateTimeLocal` (on a named time zone, default UTC) and `keepFocus()` (a plain GET search form marked `data-keep-focus` keeps the focus across its reload). `Switch` takes `ref`.
+- **Error summary.** A link to a group lands on its control in error, else its first empty one (`focusTarget`).
+- **New: repeater field** (`repeater-field`). Rows a person adds, removes and reorders; each row a named group; focus never lost; each change said in the status region; posts with no script (`name[i][key]`, spare rows) or as one JSON field, read by `rowsFromForm`.
+- **New: schema form** (`schema-form`). `FieldSpec` per field, `FieldFromSpec`, `SchemaFields`, `SettingsForm`, `JsonField`; on the server `readSpecs` and `parseJsonField` (null, never a fallback to empty).
+- **New: settings row** (`settings-row`). `SettingsRow`, `SwitchRow` (`submitOnChange`, `form`, `disabledReason`) and `SettingsLayout` (the page head with a phone-only link back to the settings index).
+- **New: inline confirm** (`inline-confirm`). A two-step action in place that works with no script and opens on Cancel.
+- **New: read-only form** (`read-only-form`). A demo or viewer's submit stays in the page, with the reason in a banner.
+- **New: secret reveal** (`secret-reveal`). A secret shown once, focused, with its warning and the app's copy button.
+- **New: file attach** (`file-attach`). The drop zone's input as a button, its checks before sending, and the attached files listed.
+- `SlugField` uses `@drdustinedwards/site-helpers` `SLUG_PATTERN` (0.45.0 and later).
 
 ## [0.117.0]
 

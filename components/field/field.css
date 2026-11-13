@@ -552,6 +552,48 @@
     }
   }
 
+  /* A control with its one action (Field's `action`): the button after the control in one
+     row, wrapping under it when the row is too narrow for both. */
+  .cap-field-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2);
+    min-width: 0;
+
+    & > .cap-input,
+    & > .cap-input-group {
+      flex: 1 1 12rem;
+      width: auto;
+    }
+    & > :not(.cap-input, .cap-input-group) {
+      flex: none;
+    }
+  }
+
+  /* A slider in its field: the value read out at the end of the label's line, and words at the
+     two ends of the track under it. */
+  .cap-range-field-head {
+    display: flex;
+    flex: 1;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-3);
+  }
+  .cap-range-field-value {
+    color: var(--text);
+    font-variant-numeric: tabular-nums;
+  }
+  .cap-range-field-ends {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-3);
+    color: var(--muted);
+    font-size: var(--fs-detail);
+    font-variant-numeric: tabular-nums;
+  }
+
   /* Radios or checkboxes in a fieldset.cap-field: one per line. */
   .cap-field-options {
     display: grid;
