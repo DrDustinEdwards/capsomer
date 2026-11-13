@@ -1,0 +1,52 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* The role grid (RoleGrid), on its own so an app that draws only the grid (Carrel) skips the members page's rules (people-roles.css). */
+@layer cap.components {
+  /* The role grid (RoleGrid): people as rows, scopes as columns, a role select in each cell. The
+     person stays in view while the scopes scroll sideways. */
+  .cap-role-grid {
+    & th[scope="row"] {
+      position: sticky;
+      inset-inline-start: 0;
+      z-index: 1;
+      min-inline-size: 12rem;
+      background: var(--surface);
+    }
+    & td {
+      white-space: nowrap;
+    }
+    /* A role select keeps its longest word whole; the table scrolls sideways instead. */
+    & td > * {
+      min-inline-size: 8.5rem;
+    }
+  }
+  .cap-role-person {
+    display: block;
+  }
+  .cap-role-email {
+    display: block;
+    color: var(--muted);
+    font-size: var(--fs-detail);
+  }
+  .cap-role-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-1);
+    margin-block-start: var(--space-1);
+
+    &:empty {
+      display: none;
+    }
+  }
+  .cap-role-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin-block-start: var(--space-2);
+
+    & form {
+      display: contents;
+    }
+  }
+}

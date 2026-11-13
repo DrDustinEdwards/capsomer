@@ -11,6 +11,7 @@ export function Carousel({
   status,
   prevLabel = "Previous slide",
   nextLabel = "Next slide",
+  trackLabel = "Slides",
   perView,
   peek,
   loop = true,
@@ -22,6 +23,7 @@ export function Carousel({
   status?: string;
   prevLabel?: string;
   nextLabel?: string;
+  trackLabel?: string;
   perView?: 2 | 3;
   peek?: boolean;
   loop?: boolean;
@@ -55,7 +57,7 @@ export function Carousel({
           </button>
         </div>
         {/* oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- a scrollable region takes focus so the keyboard can scroll it (WCAG 2.1.1). */}
-        <div className="cap-carousel-track" tabIndex={0} role="group" aria-label="Slides">
+        <div className="cap-carousel-track" tabIndex={0} role="group" aria-label={trackLabel}>
           {slides.map((slide, i) => (
             <div
               key={i}

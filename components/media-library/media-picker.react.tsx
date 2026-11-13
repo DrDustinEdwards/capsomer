@@ -5,6 +5,7 @@
 // feature image): its preview, Choose or Choose another, Remove, and the alt text the host renders
 // under it.
 import {
+  Component,
   lazy,
   Suspense,
   useEffect,
@@ -37,6 +38,24 @@ import { libraryOf, loadMediaView } from "./media-picker.ts";
 const MediaLibrary = lazy(() =>
   import("./media-library.react.tsx").then((m) => ({ default: m.MediaLibrary })),
 );
+
+// A chunk that fails to load (offline, a deploy that replaced it) throws when the library renders;
+// the dialog says so instead of breaking.
+class LibraryBoundary extends Component<{ children: ReactNode }, { failed: boolean }> {
+  override state = { failed: false };
+  static getDerivedStateFromError() {
+    return { failed: true };
+  }
+  override render() {
+    return this.state.failed ? (
+      <Empty kind="failed" flush title="The library did not load">
+        Check your connection and open the picker again.
+      </Empty>
+    ) : (
+      this.props.children
+    );
+  }
+}
 
 const LOADING = (
   <p className="cap-muted" role="status">
@@ -173,19 +192,21 @@ export function MediaPicker({
                 {error}
               </Empty>
             ) : data ? (
-              <Suspense fallback={LOADING}>
-                <MediaLibrary
-                  data={data}
-                  action={library}
-                  Form={PickerForm}
-                  mode="picker"
-                  onPick={({ id, url, alt }) => {
-                    const caption = data.rows.find((r) => r.key === id)?.caption ?? "";
-                    onPick({ url, alt, caption });
-                    close();
-                  }}
-                />
-              </Suspense>
+              <LibraryBoundary>
+                <Suspense fallback={LOADING}>
+                  <MediaLibrary
+                    data={data}
+                    action={library}
+                    Form={PickerForm}
+                    mode="picker"
+                    onPick={({ id, url, alt }) => {
+                      const caption = data.rows.find((r) => r.key === id)?.caption ?? "";
+                      onPick({ url, alt, caption });
+                      close();
+                    }}
+                  />
+                </Suspense>
+              </LibraryBoundary>
             ) : (
               LOADING
             )}

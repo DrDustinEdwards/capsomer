@@ -4,9 +4,9 @@ title: Field
 summary: A labeled input, textarea, checkbox, radio or group, with help and an error, checked on leave.
 parts: [css, behavior, react]
 tool: native + own JavaScript
-states: [default, keyboard focus, hover, filled, help text, required, invalid with its message, disabled, read-only, file input, input group, checkbox checked, unchecked, mixed and invalid, radio checked and unchecked, choice card, slider, password shown and hidden, one-time code, character count under and over, number with steppers, search with Clear, date input with a part in error, two or more errors in the error summary, a field with its action, help under the control, slider with its readout and ends, money, date and time]
+states: [default, keyboard focus, hover, filled, help text, required, invalid with its message, disabled, read-only, file input, input group, checkbox checked, unchecked, mixed and invalid, radio checked and unchecked, choice card, slider, password shown and hidden, one-time code, character count under and over, number with steppers, search with Clear, date input with a part in error, two or more errors in the error summary, a field with its action, help under the control, slider with its readout and ends, a span from two menus, money, date and time]
 added: 0.1.0
-updated: 0.118.0
+updated: 0.141.0
 source: Capsid Portal, dashboard/src/styles.css (.field, .siteform .f, .siteform .check, .err)
 replaces:
   - 'class="(?:[^"]*\s)?field[\s"]'

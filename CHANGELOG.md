@@ -4,13 +4,33 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
-## [0.138.0]
+## [0.142.0]
 
 **The docs site, Release 1 of the redesign.** The site at capsomer.dustinedwards.info is rebuilt as five sections, each page in one fixed pattern of live previews: Themes (an overview and color, typography, radius, spacing and density, shadows, motion and dark mode, each a board of real components the family, theme and density controls repaint, beside its token tables), Components and Primitives (a preview, installation, usage, examples, the API reference and accessibility; a primitive shows its anatomy, data attributes and keyboard), Icons (every icon, a search, a size, a click copies the name) and Colors (every family's 12 steps in light and dark, each step's job, a click copies the value). The look is the current one. No token or class is removed or renamed and no HTML contract changes.
 
 - **New export `capsomer/parts.json`:** each component's root class, parts, `data-*` variants, states and CSS variables, read from its own `cap-<name>-<part>` classes (`bin/parts.mjs`, `capsomer parts`); the API tables are made from it.
 - **Doc files are three headings:** every `components/<name>/<name>.md` is `# Title`, `## Usage` (code only) and `## Accessibility` (the keyboard table and short points), with a one-sentence `summary` and a new `group` (`pattern` or `primitive`). `capsomer docs`, part of `npm run check`, fails a file that leaves the pattern (components/README.md, The doc page).
 - **Site only:** the theme builder at `/make/` and the admin views at `/admin/` are removed, and so are the site's test-results panel and the `results` branch job that fed it; each run's summary stays with the run as the `test-results` artifact.
+
+## [0.141.0]
+
+- **Field: `SpanField`, a span chosen from two menus (From and To).** It was Catalog's range facet, which only a Catalog could draw, so a page with its own filters (dustinedwards.info's CV) had to keep its own year menus. It is now a part of Field, in `field.css`, and Catalog's range facet renders it. A page that draws it loads `field.css` and `select.css` (its menus are `select.cap-select`), not the catalog's stylesheet.
+- **Removed classes: `.cap-catalog-range`, `.cap-catalog-range-ends`, `.cap-catalog-range-end`.** They are `.cap-span-field-ends` and `.cap-span-field-end` (in `field.css`); the facet's fieldset keeps `.cap-field.cap-catalog-facet`. HTML contract: the range facet's ends are `div.cap-span-field-ends > div.cap-span-field-end`, each a `label` (for its menu's id) and the `select.cap-select`; the From and To labels take the date input's part-label look (detail size, weight 500) in place of the field label's.
+- **`catalog-all.css` imports `select.css`.** The range facet's menus are `select.cap-select`, which only `select.css` draws, so on a page that loaded `catalog-all.css` alone they were the browser's plain menus.
+- **Collab editor: `Room.doc` and `Room.provider` are `null` before the page is in the browser.** `useRoom`'s first render returned an object cast `as unknown as Room` that lacked both; the type now says so (`Y.Doc | null`, `YProvider | null`) and the cast is gone. `useRoomEditing` is unchanged (it reads them once `synced`). An app that reads `room.doc` or `room.provider` from `useRoom` directly must handle null.
+- **`MediaPicker`: a library chunk that fails to load shows "The library did not load"** (the failed `Empty`) instead of breaking the dialog.
+- **Command host: a failed menu load is no longer kept.** `load()` clears itself on failure so the next `open` or `load` fetches the chunk again; the idle warm-up and `runWhenReady` share one fire-and-forget `warm`, and `open` still rejects.
+- **Theme switch: optional `onError(error)`** on `ThemeSwitch`, `ThemeButton`, `enhance` and `chooseTheme`/`toggleTheme`'s memory, called when `onSave` throws or rejects. Without it the failure is let go as before.
+- **Carousel: `trackLabel`** names the scrolling track (default "Slides"), for a page in another language.
+
+## [0.139.1]
+
+- **Fix: `capsomer/role-grid.css` resolves.** 0.139.0 added the file but the `./*.css` export maps a name to `components/<name>/<name>.css`, so `@import "capsomer/role-grid.css"` failed to resolve; it now has its own export. No class or token changes.
+
+## [0.139.0]
+
+- **Breaking: the layout classes and the text roles are their own stylesheets, no longer part of `base.css`.** `base.css` imported `utilities.css`, which since 0.126.0 carried the layout classes (`.cap-stack`, `.cap-cluster`, `.cap-spread`, `.cap-grid`, the panes and the item helpers, 1.98 KB gzip) and the text roles (`.cap-text`, `.cap-title`, `.cap-clamp`, 1.22 KB gzip), so every site shipped about 3.2 KB gzip it might not use (txasm's public routes grew 2.9 KB gzip, the Portal's CSS went over its budget). They are now `capsomer/layout.css` and `capsomer/text.css` (`css/layout.css`, `css/text.css`). **A site that uses those classes adds `import "capsomer/layout.css";` and `import "capsomer/text.css";` beside `capsomer/base.css`** (Foxing, Carrel and the Portal use both); a site that does not, changes nothing and loses the weight. `capsomer/utilities.css` keeps everything else. No class, token or attribute is renamed or removed, and no HTML contract changes.
+- **Breaking: the role grid's rules are `capsomer/role-grid.css`, no longer part of `people-roles.css`.** `people-roles.css` held two independent sets, the members page (`.cap-people-*`, about 1.4 KB gzip) and the `RoleGrid` rules (`.cap-role-grid`, `.cap-role-person`, `.cap-role-email`, `.cap-role-pills`, `.cap-role-actions`, 0.6 KB gzip), so an app that draws only the grid shipped the members page for nothing. The rules are unchanged. A site that draws `RoleGrid` adds `@import "capsomer/role-grid.css"` (Carrel: beside `people-roles.css`, which it can drop if it draws no members page). No token, class or HTML contract changes.
 
 ## [0.137.0]
 
