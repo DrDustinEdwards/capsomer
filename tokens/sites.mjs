@@ -229,7 +229,10 @@ const SITES = {
   "capsid-portal": {
     family: "teal",
     on: "the Portal's <html>",
-    note: "secondary text is 13px at the least on a phone (the Portal UX audit's m4), at the Portal's own 820px",
+    note: "secondary text is 13px at the least on a phone (the Portal UX audit's m4), at the Portal's own 820px; identifiers are 13px, the detail size",
+    all: {
+      "mono-size": "0.8125rem",
+    },
     phoneMax: "820px",
     phone: {
       "fs-label": "0.8125rem",
@@ -254,6 +257,13 @@ const SITES = {
       mono: '"DM Mono", "DM Mono Fallback", ui-monospace, monospace',
       "radius-l": "0.75rem",
       display: '"Fraunces Variable", "Fraunces", "Fraunces Fallback", Georgia, serif',
+      // design-system.md's text roles on a 1rem body: small 14px, tiny 12px, lead 18px, strong
+      // at DM Sans Medium, titles in Fraunces SemiBold.
+      "text-tiny": "0.75rem",
+      "text-small": "0.875rem",
+      "text-lead": "1.125rem",
+      "text-strong": "500",
+      "title-weight": "600",
     },
     // Rule 05's sky blue #43a1d8 is 2.7:1 on the cream ground, under the 3:1 a checked box needs,
     // so the light theme takes Foxing's own hover blue for the fill and a step darker for hover.
