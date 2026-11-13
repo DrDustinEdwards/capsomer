@@ -6,7 +6,8 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [0.133.0]
 
-- **New layout: panes** (`css/utilities.css`). `.cap-panes` sets two panels side by side, the first the wider (3:2); `data-flip` makes the second the wider (2:3) and `data-even` halves the row. The gap is `data-gap` like the other layouts (default `--space-6`). The panes stack when the row is narrower than `--panes-break` (50rem), measured on the row itself rather than the window, so they also stack inside a narrow shell or a drawer, with no media query. Tops line up and a short pane does not stretch. It replaces the Portal's `.grid2` and Carrel's `.app-split`. Removed or renamed: no token or class.
+- **New layout: panes** (`css/utilities.css`). `.cap-panes` sets two panels side by side, the first the wider (3:2); `data-flip` makes the second the wider (2:3) and `data-even` halves the row. The gap is `data-gap` like the other layouts (default `--space-6`). The panes stack when the row is narrower than `--panes-break` (50rem), measured on the row itself rather than the window, so they also stack inside a narrow shell or a drawer, with no media query. Tops line up and a short pane does not stretch. It replaces the Portal's `.grid2` and Carrel's `.app-split`.
+- **Stacks take `data-align`** (`start`, `center`, `end`): every item keeps its own width, lined up on that side, as clusters already could. It replaces the Portal's `.mt4` and `.mt8` notes under a status and its stacked button cells. Removed or renamed: no token or class.
 
 ## [0.130.0]
 
