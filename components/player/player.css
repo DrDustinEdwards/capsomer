@@ -193,7 +193,7 @@
       /* The triangle's weight sits left of its box; one pixel brings it to the eye's middle. */
       translate: 1px 0;
     }
-    &[aria-label^="Pause"] > svg {
+    &[data-state="playing"] > svg {
       translate: none;
     }
   }
@@ -222,10 +222,6 @@
   .cap-player-menu .cap-btn.cap-menu-trigger {
     inline-size: var(--cap-player-btn, max(var(--control), var(--target)));
     padding: 0;
-    /* The player's buttons say what they open by their icon; the menu's own chevron is left out. */
-    & > svg:last-child:not(:first-child) {
-      display: none;
-    }
     & > svg {
       color: inherit;
     }
@@ -235,8 +231,20 @@
     padding: 0 var(--space-4);
     font-weight: var(--weight-regular);
   }
+  /* The shared icons at the player's sizes and its 2-unit stroke. */
   :where(.cap-player-icon) {
     flex: none;
+    --icon-size: var(--fs-h3);
+    --icon-stroke: 2;
+  }
+  :where([data-part="play"], .cap-player-more) > :where(.cap-player-icon) {
+    --icon-size: var(--title-4);
+  }
+  :where(.cap-player-transcript-link) > :where(.cap-player-icon) {
+    --icon-size: var(--title-6);
+  }
+  :where(.cap-player-meta) > :where(.cap-player-icon) {
+    --icon-size: var(--fs-small);
   }
   :where(.cap-player-rate, .cap-player-time, .cap-player-meta, .cap-player-at, .cap-player-legend, .cap-player-speaker, .cap-player-wave-tip, .cap-player-wave-note) {
     font-family: var(--cap-player-meta-face, var(--mono));
@@ -313,7 +321,7 @@
     :where(.cap-player-btn), .cap-player-menu .cap-btn.cap-menu-trigger {
       transition: background-color var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
     }
-    :where(.cap-player-icon:has(.cap-player-spin)) {
+    :where(.cap-player-spin) {
       animation: cap-spin var(--dur-wait) linear infinite;
     }
   }
@@ -683,8 +691,9 @@
     font-size: var(--fs-detail);
   }
 
-  /* The transcript: search and copy, then the cues in a box of their own that scrolls. */
-  :where(.cap-player-transcript) {
+  /* The read-along transcript: search and copy, then the cues in a box of their own that scrolls.
+     Its own name: .cap-player-transcript is the link line under a player. */
+  :where(.cap-player-readalong) {
     display: grid;
     gap: var(--space-4);
   }
@@ -732,7 +741,6 @@
     align-items: center;
     min-inline-size: var(--target);
     min-block-size: var(--target);
-    vertical-align: middle;
     padding: 0 var(--space-1);
     border: 0;
     border-radius: var(--radius-s);

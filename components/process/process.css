@@ -127,10 +127,10 @@
       border-block-start: var(--line-w) solid var(--line);
     }
   }
-}
 
-@media (forced-colors: active) {
-  .cap-process[data-layout="rows"] .cap-process-step {
-    border-color: CanvasText;
+  @media (forced-colors: active) {
+    .cap-process[data-layout="rows"] .cap-process-step {
+      border-color: CanvasText;
+    }
   }
 }

@@ -197,10 +197,6 @@
       background: var(--raised);
       color: var(--accent-hover);
     }
-    &:focus-visible {
-      outline: var(--ring-width) solid var(--ring);
-      outline-offset: var(--focus-offset-tight);
-    }
     &[aria-current="page"] {
       border-color: var(--accent-text);
       background: var(--sel);

@@ -5,8 +5,8 @@
 // puts the same facts in a table or list beside it, and the links are out of the tab order.
 import dagre from "@dagrejs/dagre";
 import { escapeHtml as esc } from "@dustinedwards/site-runtime/html";
+import { isHttpUrl } from "@dustinedwards/site-runtime/url";
 import { ABSOLUTE } from "../link/link.ts";
-import { httpHref } from "../related-links/related-links.ts";
 import { type Tone, glyphParts } from "../status/status.ts";
 
 export interface GraphLine {
@@ -54,7 +54,8 @@ const LINE = 18;
 function boxHref(href: string): string | null {
   // oxlint-disable-next-line no-control-regex -- matching the control characters is the point: the URL parser drops them.
   const bare = href.replace(/^[\u0000-\u0020]+/, "").replace(/[\t\n\r]/g, "");
-  return ABSOLUTE.test(bare) ? httpHref(bare) : bare;
+  if (!ABSOLUTE.test(bare)) return bare;
+  return isHttpUrl(bare) ? new URL(bare).href : null;
 }
 const f = (n: number) => n.toFixed(1);
 

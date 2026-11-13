@@ -2,7 +2,8 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { InlineConfirm } from "../inline-confirm/inline-confirm.react.tsx";
-import { ReadOnlyForm, type FormComponent } from "./read-only-form.react.tsx";
+import type { FormComponent } from "../plain-form/plain-form.react.tsx";
+import { ReadOnlyForm } from "./read-only-form.react.tsx";
 
 // The read-only form bound once as an inline confirm's form: the confirm opens, and its last
 // step is refused in place.

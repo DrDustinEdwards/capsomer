@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import {
   NO_DATE,
   dayLabel,
-  slotLabel,
+  slotParts,
   tracksLabel,
   zoneLine,
   type ScheduleDay,
@@ -106,23 +106,17 @@ export interface ScheduleProps<T> {
 }
 
 function SlotTime({ slot, zone }: { slot: ScheduleSlot<unknown>; zone: string }) {
-  const label = slotLabel(slot.start, slot.end, zone);
-  if (slot.start === null && slot.end === null) return <>{label}</>;
-  const iso = (t: number) => new Date(t).toISOString();
-  const { start, end } = slot;
-  if (start !== null && end !== null && end > start) {
-    const [a, b] = label.split(" to ");
-    return (
-      <>
-        <time dateTime={iso(start)}>{a}</time> to <time dateTime={iso(end)}>{b}</time>
-      </>
-    );
-  }
-  const at = (start ?? end) as number;
-  const [word, ...rest] = label.split(" ");
   return (
     <>
-      {word} <time dateTime={iso(at)}>{rest.join(" ")}</time>
+      {slotParts(slot.start, slot.end, zone).map((p, i) =>
+        typeof p === "string" ? (
+          p
+        ) : (
+          <time key={i} dateTime={new Date(p.at).toISOString()}>
+            {p.text}
+          </time>
+        ),
+      )}
     </>
   );
 }

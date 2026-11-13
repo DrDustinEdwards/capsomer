@@ -83,6 +83,8 @@ export interface MenuProps {
   container?: HTMLElement | null;
   // For specimens and tests: open on mount.
   defaultOpen?: boolean;
+  // The trigger's down chevron; false for an icon trigger that says what it opens (the player's).
+  chevron?: boolean;
 }
 
 const Check = () => (
@@ -282,6 +284,7 @@ export function Menu({
   disabled = false,
   container,
   defaultOpen,
+  chevron = true,
   ...rest
 }: MenuProps) {
   const id = useId();
@@ -292,7 +295,7 @@ export function Menu({
     <Base.Root modal={false} disabled={disabled} defaultOpen={defaultOpen}>
       <Base.Trigger className="cap-btn cap-menu-trigger" aria-label={rest["aria-label"]}>
         {label}
-        <Icon d={iconChevronDown} />
+        {chevron ? <Icon d={iconChevronDown} /> : null}
       </Base.Trigger>
       <Base.Portal container={container ?? undefined}>
         <Base.Positioner className="cap-menu-positioner" sideOffset={4} align="start">

@@ -12,8 +12,6 @@ import {
 } from "react-router";
 import { filterParams, pagePending, withParam } from "../form-hooks/form-hooks.ts";
 
-export { filterParams, pagePending, withParam } from "../form-hooks/form-hooks.ts";
-
 // The hooks that read the address, a fetcher or loader data (React Router 8). The ones that need
 // no router are capsomer/react/form-hooks and capsomer/react/state-hooks.
 
@@ -156,6 +154,16 @@ export function usePagePending(pathname?: string): boolean {
   return pagePending(navigation, state, pathname ?? here);
 }
 
+// The element id a hash names: percent-decoded, or as written when it is not valid
+// percent-encoding ("#%E0"), where decodeURIComponent throws.
+function hashId(hash: string): string {
+  try {
+    return decodeURIComponent(hash);
+  } catch {
+    return hash;
+  }
+}
+
 /**
  * Scrolls to the address's `#id` once that element is drawn: sections that load after the page do
  * are not there when the browser looks. Tries each frame for about two seconds, then gives up.
@@ -168,7 +176,7 @@ export function useScrollToHash(frames = 120): void {
     let tries = 0;
     let raf = 0;
     const seek = () => {
-      const el = document.getElementById(decodeURIComponent(id));
+      const el = document.getElementById(hashId(id));
       if (el) el.scrollIntoView();
       else if (tries++ < frames) raf = requestAnimationFrame(seek);
     };

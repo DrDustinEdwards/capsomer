@@ -7,7 +7,9 @@
 // "Copy with link" copies the selection with a link to its time.
 import { toParagraphs, type Cue } from "@drdustinedwards/site-helpers/vtt";
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { markQuery } from "../command-menu/command-menu.ts";
 import { useCopy } from "../copy/copy.react.tsx";
+import { plural } from "@drdustinedwards/site-helpers/text";
 import { reducedMotion } from "../hooks/hooks.ts";
 import { SearchField } from "../field/field.react.tsx";
 import {
@@ -20,25 +22,18 @@ import {
 } from "./player.ts";
 import { usePlayer } from "./player-context.react.tsx";
 
+// The query's words marked in a cue's text, as the command menu marks them.
 function highlight(text: string, q: string): ReactNode {
   if (!q) return text;
-  const lower = text.toLowerCase();
-  let at = lower.indexOf(q);
-  if (at === -1) return text;
-  const out: ReactNode[] = [];
-  let from = 0;
-  while (at !== -1) {
-    if (at > from) out.push(text.slice(from, at));
-    out.push(
-      <mark key={at} className="cap-player-mark">
-        {text.slice(at, at + q.length)}
-      </mark>,
-    );
-    from = at + q.length;
-    at = lower.indexOf(q, from);
-  }
-  if (from < text.length) out.push(text.slice(from));
-  return out;
+  return markQuery(text, q).map((p, i) =>
+    p.mark ? (
+      <mark key={i} className="cap-player-mark">
+        {p.text}
+      </mark>
+    ) : (
+      p.text
+    ),
+  );
 }
 
 export interface PlayerTranscriptProps {
@@ -212,16 +207,14 @@ export function PlayerTranscript({
   });
 
   return (
-    <div className="cap-player-transcript">
+    <div className="cap-player-readalong">
       {search || copy ? (
         <div className="cap-player-transcript-bar cap-field-row">
           {search ? (
             <SearchField label="Search transcript" value={query} onChange={setQuery} />
           ) : null}
           {q ? (
-            <span className="cap-player-meta">
-              {matches} match{matches === 1 ? "" : "es"}
-            </span>
+            <span className="cap-player-meta">{plural(matches, "match", "matches")}</span>
           ) : null}
           {copy ? (
             <button
@@ -266,6 +259,8 @@ export function PlayerTranscript({
                     key={c.start}
                     type="button"
                     className="cap-player-cue"
+                    // One tab stop per paragraph (its time button); a cue is pressed with a pointer.
+                    tabIndex={-1}
                     data-cue={c.start}
                     data-kind={c.nonVerbal ? "sound" : undefined}
                     aria-current={c.start === activeStart ? "true" : undefined}

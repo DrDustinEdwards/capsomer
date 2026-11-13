@@ -6,8 +6,21 @@
 // Speed, volume and sleep are the player's own settings and need no track.
 import { useEffect, useId, useRef, type ReactNode, type RefObject } from "react";
 import { clamp } from "../hooks/hooks.ts";
+import {
+  Icon,
+  iconCaptions,
+  iconFastForward,
+  iconList,
+  iconMute,
+  iconPause,
+  iconPlay,
+  iconRewind,
+  iconSkipNext,
+  iconTimer,
+  iconVolume,
+} from "../icons/icons.react.tsx";
 import { Menu } from "../menu/menu.react.tsx";
-import { ratio } from "../meter/meter.ts";
+import { rangeFill } from "../range-slider/range-slider.ts";
 import { Popover, PopoverContent, PopoverTrigger } from "../popover/popover.react.tsx";
 import { plainLink, type LinkProps } from "../shell/shell.react.tsx";
 import {
@@ -29,45 +42,13 @@ import { usePlayer } from "./player-context.react.tsx";
 export type RenderLink = (props: LinkProps) => ReactNode;
 
 // ---------------------------------------------------------------------------------------
-// Icons, drawn here (no icon library). Each is aria-hidden; the control carries the name.
+// Icons, from the shared set. Each is aria-hidden; the control carries the name. player.css sizes
+// them (.cap-player-icon) and draws them at the player's stroke.
 
-const icon = (children: ReactNode, size = 20) => (
-  <svg
-    className="cap-player-icon"
-    viewBox="0 0 24 24"
-    width={size}
-    height={size}
-    aria-hidden="true"
-    focusable="false"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    {children}
-  </svg>
-);
-const PlayIcon = () => icon(<path d="M7 4.5v15l12-7.5z" fill="currentColor" />);
-const PauseIcon = () =>
-  icon(<path d="M7 4h3.5v16H7zM13.5 4H17v16h-3.5z" fill="currentColor" stroke="none" />);
-const RewindIcon = () => icon(<path d="M3 12a9 9 0 1 0 3-6.7L3 8M3 3v5h5" />, 18);
-const ForwardIcon = () => icon(<path d="M21 12a9 9 0 1 1-3-6.7L21 8M21 3v5h-5" />, 18);
-const NextIcon = () => icon(<path d="M5 4.5v15l10-7.5zM19 5v14" />, 18);
-const VolumeIcon = () =>
-  icon(<path d="M11 5 6 9H2v6h4l5 4zM15.5 8.5a5 5 0 0 1 0 7M19 5a10 10 0 0 1 0 14" />, 18);
-const MutedIcon = () => icon(<path d="M11 5 6 9H2v6h4l5 4zM22 9l-6 6M16 9l6 6" />, 18);
-const TimerIcon = () =>
-  icon(<path d="M10 2h4M12 14l3-3M12 22a8 8 0 1 0 0-16 8 8 0 0 0 0 16z" />, 18);
-const ChaptersIcon = () => icon(<path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" />, 18);
-const CaptionsIcon = () =>
-  icon(<path d="M3 5h18v14H3zM10 10.5a2 2 0 1 0 0 3M17 10.5a2 2 0 1 0 0 3" />, 16);
-export const ChevronUpIcon = () => icon(<path d="m6 15 6-6 6 6" />);
-export const CloseIcon = () => icon(<path d="M18 6 6 18M6 6l12 12" />, 18);
-export const AlertIcon = () =>
-  icon(<path d="M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM12 8v4M12 16h.01" />, 12);
-export const SpinnerIcon = () =>
-  icon(<path className="cap-player-spin" d="M21 12a9 9 0 1 1-6.2-8.6" />, 12);
+const PlayIcon = () => <Icon d={iconPlay} fill className="cap-player-icon" />;
+const PauseIcon = () => <Icon d={iconPause} fill className="cap-player-icon" />;
+const VolumeIcon = () => <Icon d={iconVolume} className="cap-player-icon" />;
+const MutedIcon = () => <Icon d={iconMute} className="cap-player-icon" />;
 
 // Sets --cap-range-fill on a range input through the CSSOM (the field's range fills to its thumb).
 function useRangeFill(
@@ -77,8 +58,7 @@ function useRangeFill(
   max: number,
 ) {
   useEffect(() => {
-    const share = max > min ? ((value - min) / (max - min)) * 100 : 0;
-    ref.current?.style.setProperty("--cap-range-fill", `${(ratio(share, 100) * 100).toFixed(2)}%`);
+    ref.current?.style.setProperty("--cap-range-fill", rangeFill(value, min, max));
   }, [ref, value, min, max]);
 }
 
@@ -108,6 +88,7 @@ export function PlayPauseButton({
       type="button"
       className="cap-player-btn"
       data-part="play"
+      data-state={playing ? "playing" : undefined}
       data-size={size === "lg" ? "lg" : undefined}
       aria-label={playing ? "Pause" : "Play"}
       onClick={() => (isThis ? p.toggle() : track && p.playTrack(track))}
@@ -129,7 +110,7 @@ export function SkipButton({ delta, track }: { delta: number; track?: PlayerTrac
       aria-label={back ? `Rewind ${secs} seconds` : `Skip forward ${secs} seconds`}
       onClick={() => (isThis ? p.skip(delta) : track && p.playTrackAt(track, Math.max(0, delta)))}
     >
-      {back ? <RewindIcon /> : <ForwardIcon />}
+      <Icon d={back ? iconRewind : iconFastForward} className="cap-player-icon" />
     </button>
   );
 }
@@ -145,7 +126,7 @@ export function NextButton() {
       disabled={p.index >= p.queue.length - 1}
       onClick={p.next}
     >
-      <NextIcon />
+      <Icon d={iconSkipNext} className="cap-player-icon" />
     </button>
   );
 }
@@ -170,12 +151,12 @@ export function PlayTrackButton({
       type="button"
       className="cap-player-btn"
       data-part="play"
+      data-state={playing ? "playing" : undefined}
       data-size={size === "md" ? undefined : size}
       data-play-intent=""
       data-audio-src={track.src}
       data-track-id={track.id}
       aria-label={`${playing ? "Pause" : "Play"} ${track.title}`}
-      aria-pressed={playing}
       onClick={() => {
         if (isCurrent) return p.toggle();
         if (queue?.length) {
@@ -426,8 +407,9 @@ export function SleepControl({ container }: { container?: HTMLElement | null }) 
   return (
     <span className="cap-player-menu" data-active={p.sleep != null ? "" : undefined}>
       <Menu
-        label={<TimerIcon />}
+        label={<Icon d={iconTimer} className="cap-player-icon" />}
         aria-label={`Sleep timer, ${sleepLabel(p.sleep, p.noun)}`}
+        chevron={false}
         container={container}
         items={[
           {
@@ -452,8 +434,9 @@ export function ChaptersControl({ container }: { container?: HTMLElement | null 
   return (
     <span className="cap-player-menu">
       <Menu
-        label={<ChaptersIcon />}
+        label={<Icon d={iconList} className="cap-player-icon" />}
         aria-label="Chapters"
+        chevron={false}
         container={container}
         items={[
           {
@@ -523,7 +506,7 @@ export function TranscriptLink({
     className: "cap-player-btn cap-player-transcript-link",
     children: (
       <>
-        <CaptionsIcon /> Transcript
+        <Icon d={iconCaptions} className="cap-player-icon" /> Transcript
       </>
     ),
   });

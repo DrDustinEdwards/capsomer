@@ -41,8 +41,13 @@
       inset-block: 0;
       inset-inline-start: 0;
       z-index: -1;
-      inline-size: calc(var(--share, 0) * 100%);
+      inline-size: 100%;
       background: var(--accent-soft);
+      transform: scaleX(var(--share, 0));
+      transform-origin: left;
+    }
+    &:dir(rtl)::before {
+      transform-origin: right;
     }
 
     &:hover:not(:disabled),
@@ -65,7 +70,7 @@
 
     @media (prefers-reduced-motion: no-preference) {
       &::before {
-        transition: inline-size var(--dur-slow) var(--ease-out);
+        transition: transform var(--dur-slow) var(--ease-out);
       }
     }
   }
@@ -80,16 +85,16 @@
     color: var(--muted);
     font-variant-numeric: tabular-nums;
   }
-}
 
-@media (forced-colors: active) {
-  .cap-poll-option::before {
-    forced-color-adjust: none;
-    background: Highlight;
-    opacity: var(--opacity-faint);
-  }
+  @media (forced-colors: active) {
+    .cap-poll-option::before {
+      forced-color-adjust: none;
+      background: Highlight;
+      opacity: var(--opacity-faint);
+    }
 
-  .cap-poll-option[aria-pressed="true"] {
-    outline: var(--focus-width) solid Highlight;
+    .cap-poll-option[aria-pressed="true"] {
+      outline: var(--focus-width) solid Highlight;
+    }
   }
 }

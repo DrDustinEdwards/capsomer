@@ -6,20 +6,15 @@ export interface SaveToggleProps {
   storageKey: string;
   // This item's id (a post's slug).
   id: string;
+  // The one label; aria-pressed and the filled bookmark carry whether it is saved.
   label?: string;
-  savedLabel?: string;
 }
 
 const ICON = <path d="M4 2.5h8v11L8 10.5l-4 3z" />;
 
-// The HTML contract in save-toggle.md. The server and hydration render "Save"; the stored state
-// follows once the page runs, and so does another tab's change.
-export function SaveToggle({
-  storageKey,
-  id,
-  label = "Save",
-  savedLabel = "Saved",
-}: SaveToggleProps) {
+// The HTML contract in save-toggle.md. The server and hydration render it unpressed; the stored
+// state follows once the page runs, and so does another tab's change.
+export function SaveToggle({ storageKey, id, label = "Save" }: SaveToggleProps) {
   const saved = isSaved(
     useSyncExternalStore(
       subscribeSaved,
@@ -46,7 +41,7 @@ export function SaveToggle({
       >
         {ICON}
       </svg>
-      <span className="cap-save-label">{saved ? savedLabel : label}</span>
+      <span className="cap-save-label">{label}</span>
     </button>
   );
 }
