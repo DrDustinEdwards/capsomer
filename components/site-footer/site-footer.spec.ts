@@ -1,5 +1,10 @@
 import { test } from "@playwright/test";
-import { eachTheme, expectContrast, expectNoAxeViolations, visitStates } from "../../test/helpers.ts";
+import {
+  eachTheme,
+  expectContrast,
+  expectNoAxeViolations,
+  visitStates,
+} from "../../test/helpers.ts";
 
 eachTheme((theme) => {
   test("accessibility: no axe violations", async ({ page }) => {
