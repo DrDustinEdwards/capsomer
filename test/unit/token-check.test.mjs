@@ -77,7 +77,7 @@ test("rawValues names each raw design value with its token, and leaves tokens, r
     "4 color #333 a color token from the palette",
     "4 line 1px var(--line-w)",
     "5 weight 600 var(--weight-semibold)",
-    "5 size 0.6875rem var(--fs-label)",
+    "5 size 0.6875rem var(--fs-label) (grows under comfortable density)",
     "5 leading /1.35 var(--leading-snug-5) (1.375, off scale)",
     "6 duration 100ms var(--dur-fast)",
     "6 easing ease var(--ease-out), var(--ease-in-out), var(--ease-spring)",
@@ -107,6 +107,11 @@ test("rawValues names each raw design value with its token, and leaves tokens, r
     "23px false a unitless leading token, at the ratio to the font size (no font-size in this rule)",
     "1.75rem true var(--line-box-7)",
   ]);
+  // A density step or a token the stylesheet sets is reported but not swapped: the page would not draw the same.
+  assert.equal(
+    fixCss(".d { --fs-page: 1rem; font-size: 0.6875rem; padding: 1.0625rem 14px; }", scale),
+    ".d { --fs-page: 1rem; font-size: 0.6875rem; padding: 1.0625rem var(--space-4-5); }",
+  );
   // A line box the scale has is swapped for its length token, which inherits the same way.
   assert.match(fixCss(lh, scale), /line-height: 1\.7rem;[\s\S]*line-height: var\(--line-box-7\)/);
 });

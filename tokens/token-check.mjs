@@ -266,6 +266,11 @@ export function tokenScale(json) {
   out.shadow = Object.keys(json["color-light"] ?? {})
     .filter((n) => /^shadow-(xs|s|m|l)$/.test(n))
     .map((n) => [n, 0]);
+  // The steps whose value changes under data-density="comfortable": the same at rest, larger in a comfortable subtree.
+  const roomy = json["density-comfortable"] ?? {};
+  out.density = Object.entries(json["density-compact"] ?? {})
+    .filter(([n, t]) => JSON.stringify(t.$value) !== JSON.stringify(roomy[n]?.$value))
+    .map(([n]) => n);
   return out;
 }
 
@@ -398,6 +403,8 @@ function ruleFontSize(css, at, scale) {
  */
 export function rawValues(css, scale) {
   const items = [];
+  // Tokens this stylesheet sets itself: there the token may not hold the scale's value, so a swap is not exact.
+  const sets = new Set([...stripCss(css).matchAll(/(--[\w-]+)\s*:/g)].map((m) => m[1].slice(2)));
   for (const [prop, raw, line, start] of declarations(css)) {
     const own = prop.startsWith("--");
     const v = bare(raw);
@@ -527,7 +534,18 @@ export function rawValues(css, scale) {
         const tok = negate ? `calc(-1 * var(--${near[0]}))` : `var(--${near[0]})`;
         suggestion = exact ? tok : `${tok} (${near[1]}${unit}, off scale)`;
       }
-      items.push({ line, text, kind: k, suggestion, exact, start, end: start + raw.length });
+      // An exact step that is not fixed: it grows under comfortable density, or this stylesheet sets it.
+      const moves = !exactStep
+        ? undefined
+        : (scale.density ?? []).includes(exactStep[0])
+          ? "density"
+          : sets.has(exactStep[0])
+            ? "set here"
+            : undefined;
+      if (exact && moves)
+        suggestion +=
+          moves === "density" ? " (grows under comfortable density)" : " (this stylesheet sets it)";
+      items.push({ line, text, kind: k, suggestion, exact, moves, start, end: start + raw.length });
     }
   }
   return items;
@@ -535,7 +553,8 @@ export function rawValues(css, scale) {
 
 /**
  * The stylesheet with every raw value that has an exact token replaced by it (`capsomer token-check --fix`). Values off
- * the scale, colors, easings and shadows need a person's choice, so they are left for the report.
+ * the scale, colors, easings and shadows need a person's choice, so they are left for the report; so is a step that
+ * grows under comfortable density or that the stylesheet sets itself, where the swap would not draw the same.
  */
 export function fixCss(css, scale) {
   const esc = (t) => t.replace(/[.*+?^${}()|[\]\\/]/g, "\\$&");
@@ -543,7 +562,7 @@ export function fixCss(css, scale) {
   const edits = [];
   const cursor = new Map();
   for (const it of rawValues(out, scale)) {
-    if (!it.exact || ["color", "easing", "shadow"].includes(it.kind)) continue;
+    if (!it.exact || it.moves || ["color", "easing", "shadow"].includes(it.kind)) continue;
     const decl = out.slice(it.start, it.end);
     let token = it.suggestion;
     if (it.kind === "size" && token === "var(--fs-small)" && /--mono/.test(decl))
