@@ -5,8 +5,8 @@ summary: Small state hooks - useSelection for bulk bars and useSinceLastVisit - 
 parts: [behavior, react]
 tool: own JavaScript
 states: []
-added: 0.128.0
-updated: 0.128.0
+added: 0.131.0
+updated: 0.131.0
 source: the Capsid Portal (NeedsYou.tsx useTicks, Overnight.tsx SinceLastLooked, App.tsx scroll to the hash), Carrel (history-view.tsx useCompareBy, inspector.tsx useWide), Foxing (packages/client reader.ts newId), dustinedwards.info (kb/procedures/run.mjs parseRun and RUN_VERSION), germomics (lib/content.ts useSnippet)
 replaces:
   - 'function (useTicks|useCompareBy|useWide|SinceLastLooked)\b'

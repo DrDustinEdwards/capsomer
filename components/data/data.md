@@ -5,8 +5,8 @@ summary: The data layer every React app wrote its own copy of - server-seeded qu
 parts: [behavior, react]
 tool: own JavaScript, TanStack Query
 states: []
-added: 0.128.0
-updated: 0.128.0
+added: 0.131.0
+updated: 0.131.0
 source: Foxing (packages/client query.ts, provider.ts, clubs.ts useClubLive), the Capsid Portal (lib/api.ts Answer, get, post, SignedOut, useAnswer; views/charts.ts and entry.client.tsx)
 replaces:
   - 'export function (useSeededQuery|useWrite|useAnswer|patchAll|trendChart)\b'

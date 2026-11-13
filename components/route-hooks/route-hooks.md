@@ -5,8 +5,8 @@ summary: The hooks that read the address, a fetcher or loader data - useFetcherP
 parts: [react]
 tool: own JavaScript, React Router
 states: []
-added: 0.128.0
-updated: 0.128.0
+added: 0.131.0
+updated: 0.131.0
 source: Foxhound (admin-merchants-parts.tsx useUndoPost, lib/admin/page.ts pagePending), Carrel (people.tsx ?add=, writing.tsx ?inspect=, history-view.tsx useCompareBy), the Capsid Portal (Activity, Claims and Library filters; App.tsx scroll to the hash), germomics (lib/content.ts useSnippet)
 replaces:
   - 'function (useUndoPost|useCompareBy)\b'
