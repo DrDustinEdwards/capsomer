@@ -95,24 +95,18 @@ test("rawValues names each raw design value with its token, and leaves tokens, r
     ),
     ".b {\n  padding: var(--space-2) 7px;\n  box-shadow:\n    inset 0 calc(-1 * var(--line-w-thick)) 0 red,\n    0 0 0 var(--line-w-thick) red;\n  font: var(--weight-semibold) var(--mono-size) / var(--leading-normal) var(--mono);\n}",
   );
-});
-
-test("a line height in rem or px matches a line-box step, else is read as a ratio of its rule's font size, never fixed", async () => {
-  const { fixCss, rawValues, tokenScale } = await import("../../tokens/token-check.mjs");
-  const { readFileSync } = await import("node:fs");
-  const scale = tokenScale(
-    JSON.parse(readFileSync(new URL("../../tokens/tokens.json", import.meta.url), "utf8")),
-  );
+  // A line height in rem or px matches a line-box step, else is read as a ratio of its rule's font size, never fixed.
   // A length inherits as a length and a ratio as a ratio, so a child at another size would move: report, never fix.
-  const css = ".a { font-size: 1.25rem; line-height: 1.7rem; }\n.b { line-height: 23px; }\n.c { line-height: 1.75rem; }";
-  const got = rawValues(css, scale)
+  const lh =
+    ".a { font-size: 1.25rem; line-height: 1.7rem; }\n.b { line-height: 23px; }\n.c { line-height: 1.75rem; }";
+  const lines = rawValues(lh, scale)
     .filter((i) => /^(leading|line-box)/.test(i.kind))
     .map((i) => `${i.text} ${i.exact} ${i.suggestion}`);
-  assert.deepEqual(got, [
+  assert.deepEqual(lines, [
     "1.7rem false var(--leading-snug-5) (1.36x the rule's font size, off scale)",
     "23px false a unitless leading token, at the ratio to the font size (no font-size in this rule)",
     "1.75rem true var(--line-box-7)",
   ]);
   // A line box the scale has is swapped for its length token, which inherits the same way.
-  assert.match(fixCss(css, scale), /line-height: 1\.7rem;[\s\S]*line-height: var\(--line-box-7\)/);
+  assert.match(fixCss(lh, scale), /line-height: 1\.7rem;[\s\S]*line-height: var\(--line-box-7\)/);
 });

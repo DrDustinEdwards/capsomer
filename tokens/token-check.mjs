@@ -509,7 +509,8 @@ export function rawValues(css, scale) {
       if ((own || inExpr) && k !== "color" && !exact) continue;
       let suggestion;
       if (k === "leading-length")
-        suggestion = "a unitless leading token, at the ratio to the font size (no font-size in this rule)";
+        suggestion =
+          "a unitless leading token, at the ratio to the font size (no font-size in this rule)";
       else if (ratio) {
         const r = Number(value.toFixed(4));
         suggestion = exactStep

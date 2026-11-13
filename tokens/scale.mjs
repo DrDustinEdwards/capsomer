@@ -116,11 +116,7 @@ export const SCALE = {
       "2.25rem",
       'the largest title role (.cap-title data-size="1"): a page\'s one title',
     ],
-    [
-      "display-1",
-      "4.5rem",
-      "the largest marketing headline: a home page's hero on a wide screen",
-    ],
+    ["display-1", "4.5rem", "the largest marketing headline: a home page's hero on a wide screen"],
     ["display-2", "3.75rem", "a marketing headline on a wide screen"],
     ["display-3", "3rem", "a marketing headline, or a hero on a tablet"],
     ["display-4", "2.75rem", "a marketing section's headline on a wide screen"],
