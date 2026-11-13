@@ -4,6 +4,19 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+## [0.123.0]
+
+Second-pass shared-code audit, batch 1 (Dustin, 2026-11-11: any UI that is a component lives in Capsomer, even if one site uses it).
+
+- **New components:** `form-status` (a post's result, focused when it arrives, `FormStatus` and `useActionStatus`; from txasm's five copies), `filter-bar` (a GET filter form as a named search landmark with Apply, Clear and a live count (`countText` from `capsomer/content`), `withParams`, `clearedHref`, `hasFilters` and `live`, which waits out an IME composition; `onSubmit` for another router, its `Form` typed from the props it passes so React Router's `Form` fits; Foxhound, txasm, the Capsid Portal), `legal-doc` (numbered sections, contents and "Last updated" from one list; Foxhound and Foxing), `rating` (a star rating in halves, shown and asked for; Foxing), `hero` (with `children` between the lead and the actions, and `id`) and `cta-band` (with `eyebrow`, `note` and `quiet`): a landing page's first and last sections, the look from each site's tokens (Carrel, julieedwards.info, the Capsid explorer, Foxing, BioScience Writers, Foxhound).
+- **Save bar: one component for every settings form.** The 0.113.0 bar keeps its props and gains `children` (another action before Save), `disabledReason` (Save stays, unusable, and says why), `sticky` (on the window's bottom edge while a long form scrolls, `[data-sticky]`), `form`, `name` and `value` (to the button) and `className`. `saved` also takes words ("Saved.") in place of "Saved". With `button={false}` the bar is a form that saves as each control changes: it says "Saving…" while `pending`, then the result. No class or prop is removed or renamed.
+- **Table: a React part.** `capsomer/react/table` exports `Table` (the labeled region, table and caption for hand-written rows) and `DataTable` (rows from columns, sorted in React with `aria-sort`, an empty sentence, a totals row), in place of hand-written `div.cap-table-wrap` blocks (Foxhound, Carrel, txasm).
+- **Button:** `data-wrap` (`wrap`) lets a long label wrap, balanced; `data-block` (`block`) fills the row; `pendingLabel` says the pending state once from a polite live region beside the button.
+- **Link:** `ButtonLink` (a link drawn as a button, with `to` or `href`, and `away` and `newTab`; a same-site `newTab` says "(opens in a new tab)") and `AwayLink` (the `away` kind with its words, `newTab` and `sponsored`), with `awayRel()`, `awayWords()` and `NEW_TAB_WORDS`. New class `.cap-btn-away` (the ↗ in a button link).
+- **Chips:** `LinkChips` (link chips in a named nav, each with a count; `showLabel`) and `CheckChips` (React for 0.115.0's checkbox chips: `fieldset.cap-chips`, `input.cap-chip-input`). A pressed or current chip's `.cap-chip-count` now reads in the pressed word's color (it stayed `--dim`; dustinedwards.info's colophon patched it).
+
+No token or class was removed or renamed.
+
 ## [0.122.0]
 
 - **germomics' palette is its site entry.** `site-germomics.css` now carries germomics' own colors in both themes (crystal violet buttons, cyan links and focus, violet-tinted neutrals), its Space Grotesk UI face, JetBrains Mono, its 60px header and its 2px ring, and goes on `<html>` on the public pages, so the site can drop its hand-made map onto Capsomer's roles and its Tailwind palette. It also sets `--surface`, `--muted` and `--accent`, the names germomics' own palette shared with Capsomer's. The cyan link, the control borders, dark muted and dim text and the dark primary hover are lifted to Capsomer's APCA floors, and prefers-contrast: more has its own values. A site entry may now set brand roles when `ownBrand` says why (two hues no family has), and may give its own `more` values. Removed: the admin's mono-only use of the entry; germomics' admin takes Capsomer's own look, mono included, and drops `data-cap-site` from its element.

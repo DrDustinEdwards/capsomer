@@ -80,6 +80,26 @@
       --cap-btn-fs: var(--fs-lead);
     }
 
+    /* A long label wraps onto more lines instead of running past a narrow column (a phone's call
+       to action); the height grows with it and the lines are balanced. */
+    &[data-wrap] {
+      white-space: normal;
+      text-wrap: balance;
+      text-align: center;
+      padding-block: var(--pad-y);
+    }
+    /* Fills its row: the one action of a narrow card or a phone form. */
+    &[data-block] {
+      display: flex;
+      inline-size: 100%;
+    }
+
+    /* A link to another site drawn as a button (ButtonLink away): the away mark after the words. */
+    & .cap-btn-away {
+      font-weight: 400;
+      font-variant-emoji: text;
+    }
+
     /* The main action of a view: one per view. shadcn "default". */
     &[data-variant="primary"] {
       --cap-btn-fg: var(--primary-fg);

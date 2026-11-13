@@ -6,7 +6,7 @@ parts: [css, behavior, react]
 tool: native + own JavaScript
 states: [link chips with the current one, checkbox chips in a form, none pressed, some pressed with the count, hover, pressed and hovered, keyboard focus, disabled, small and large, with a count or an icon, an empty result, solid]
 added: 0.1.0
-updated: 0.115.0
+updated: 0.123.0
 source: Capsid Portal, dashboard/src/styles.css (.chip)
 replaces:
   - 'class="(?:[^"]*\s)?chip[\s"]'
@@ -94,6 +94,10 @@ A filter in a form that must work with no script (a search page's facets, submit
   <label class="cap-chip"><input class="cap-chip-input" type="checkbox" name="type" value="talk"> Invited talks <span class="cap-chip-count">14</span></label>
 </fieldset>
 ```
+
+In React, `CheckChips` writes them: `<CheckChips legend="Type" name="type" options={[{ value: "grant", label: "Grants", count: 43 }]} checked={params.getAll("type")} />`.
+
+`LinkChips` writes link chips (`showLabel` shows the label before them, which then names the `nav`): `<LinkChips label="Topics" chips={[{ href: "?topic=release", label: "Release notes", count: 12, current: true }]} />`, a named `nav` with a list, a count after each label (`.cap-chip-count`), and `renderLink` for a router link.
 
 In React, `import { FilterChips } from "capsomer/react/chips"` (controlled):
 

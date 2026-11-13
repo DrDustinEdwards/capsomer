@@ -1,0 +1,45 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* A list's filters (filter-bar.md): fields in a row that wraps, the actions at the row's end,
+   the count under them. On a phone each field takes the full width. */
+@layer cap.components {
+  .cap-filter-bar {
+    container: cap-filter-bar / inline-size;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    gap: var(--space-3) var(--space-4);
+    margin: 0 0 var(--space-4);
+  }
+  .cap-filter-bar-fields {
+    display: flex;
+    flex: 1 1 auto;
+    flex-wrap: wrap;
+    align-items: end;
+    gap: var(--space-3) var(--space-4);
+    min-inline-size: 0;
+
+    & > * {
+      flex: 0 1 auto;
+      min-inline-size: min(100%, 12rem);
+      margin: 0;
+    }
+  }
+  .cap-filter-bar-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+  .cap-filter-bar-count {
+    flex-basis: 100%;
+    margin: 0;
+    color: var(--muted);
+    font-size: var(--fs-detail);
+  }
+  @container cap-filter-bar (inline-size < 30rem) {
+    .cap-filter-bar-fields > * {
+      flex-basis: 100%;
+    }
+  }
+}

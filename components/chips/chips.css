@@ -93,6 +93,11 @@
       background: var(--accent-soft);
       color: var(--text);
 
+      /* The count reads in the pressed word's color, not the resting --dim (dei colophon). */
+      & > .cap-chip-count {
+        color: inherit;
+      }
+
       &:where(:hover, [data-force="hover"]) {
         border-color: var(--accent);
         background: var(--accent-5);
