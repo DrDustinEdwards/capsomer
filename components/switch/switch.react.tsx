@@ -1,4 +1,4 @@
-import { useState, type InputHTMLAttributes, type ReactNode } from "react";
+import { useState, type InputHTMLAttributes, type ReactNode, type Ref } from "react";
 import { stateWord } from "./switch.ts";
 
 export interface SwitchProps extends Omit<
@@ -16,6 +16,8 @@ export interface SwitchProps extends Omit<
   offWord?: string;
   // A request for the change is running: drawn as a dashed outline, and not disabled.
   busy?: boolean;
+  // The input itself (React 19 passes ref as a prop).
+  ref?: Ref<HTMLInputElement>;
 }
 
 export function Switch(props: SwitchProps) {
