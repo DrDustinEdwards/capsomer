@@ -3,7 +3,8 @@
 // with G and 1 to 9. The header above it (its panels, the account menu and the phone's sheet) is
 // the site header's own behavior, which enhance() attaches too. No framework; the React wrapper
 // uses the same functions. The menu's links and the page are in the HTML without any of this.
-import { DEFAULT_PREF, readPref, writePref } from "../shell/shell.ts";
+import { readStored, writeStored } from "../hooks/hooks.ts";
+import { DEFAULT_PREF } from "../shell/shell.ts";
 import { singleKeysOff } from "../shortcuts/shortcuts.ts";
 import { enhance as enhanceHeader } from "../site-header/site-header.ts";
 import { attach as attachTip, hideTip } from "../tooltip/tooltip.ts";
@@ -62,7 +63,7 @@ export function setMenu(shell: HTMLElement, collapsed: boolean, remember = true)
       text.textContent = name;
   }
   if (remember)
-    writePref(shell.dataset.capPref ?? ADMIN_PREF, collapsed ? "collapsed" : "expanded");
+    writeStored(shell.dataset.capPref ?? ADMIN_PREF, collapsed ? "collapsed" : "expanded");
 }
 
 export function toggleMenu(shell: HTMLElement): void {
@@ -151,7 +152,7 @@ export function enhance(root: ParentNode = document): () => void {
     "[data-cap='admin-shell']:not([data-cap-ready])",
   )) {
     shell.dataset.capReady = "";
-    const pref = readPref(shell.dataset.capPref ?? ADMIN_PREF);
+    const pref = readStored(shell.dataset.capPref ?? ADMIN_PREF);
     if (pref) setMenu(shell, pref === "collapsed", false);
 
     // Each control's name tip, a child of its control. A menu link's tip repeats its name, so it

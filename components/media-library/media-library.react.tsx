@@ -31,7 +31,6 @@ import {
 import { bareType, byteSize, CROPPABLE, type MediaRecord } from "../media/media.ts";
 import { copyText } from "../copy/copy.ts";
 import { acceptLabel, formatBytes } from "../drop-zone/drop-zone.ts";
-import { readPref, writePref } from "../shell/shell.ts";
 import { Keys, useShortcut } from "../shortcuts/shortcuts.react.tsx";
 import { TabLink, TabsNav } from "../tabs/tabs.react.tsx";
 import { MediaMore } from "./media-library-more.react.tsx";
@@ -59,8 +58,9 @@ import {
   type MediaSort,
 } from "./media-library.ts";
 import { useCleanId, useHydrated } from "../hooks/hooks.react.tsx";
+import { readStored, writeStored } from "../hooks/hooks.ts";
 
-// The viewer's last layout and tile size, remembered in this browser (shell.ts readPref).
+// The viewer's last layout and tile size, remembered in this browser (hooks.ts readStored).
 const LAYOUT_PREF = "cap-media-layout";
 const SIZE_PREF = "cap-media-size";
 
@@ -306,8 +306,8 @@ export function MediaLibrary({
   // choice (read after mount, so the server's HTML and the first paint agree).
   const [pref, setPref] = useState<Pick<MediaQuery, "layout" | "size">>({});
   useEffect(() => {
-    const l = readPref(LAYOUT_PREF);
-    const z = readPref(SIZE_PREF);
+    const l = readStored(LAYOUT_PREF);
+    const z = readStored(SIZE_PREF);
     // oxlint-disable-next-line react/set-state-in-effect -- the stored choice is read after mount, so the server's HTML and the first paint agree
     setPref({
       ...(l === "grid" || l === "list" ? { layout: l } : {}),
@@ -315,8 +315,8 @@ export function MediaLibrary({
     });
   }, []);
   const remember = (change: Pick<MediaQuery, "layout" | "size">) => {
-    if (change.layout) writePref(LAYOUT_PREF, change.layout);
-    if (change.size) writePref(SIZE_PREF, change.size);
+    if (change.layout) writeStored(LAYOUT_PREF, change.layout);
+    if (change.size) writeStored(SIZE_PREF, change.size);
     setPref((p) => ({ ...p, ...change }));
   };
 
