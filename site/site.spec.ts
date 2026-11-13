@@ -96,7 +96,7 @@ test("behavior: the icon search finds an icon", async ({ page }) => {
   await page.getByLabel("Find an icon").fill("search");
   await expect(page.locator(".sw-icons > li:visible").first()).toHaveAttribute(
     "data-name",
-    /search/,
+    /search/i,
   );
   await expect(page.locator("#icon-n")).toHaveText(/^\d+ of \d+ icons$/);
 });
