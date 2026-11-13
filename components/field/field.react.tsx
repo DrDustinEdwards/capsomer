@@ -744,11 +744,13 @@ export function SpanField(
   },
 ) {
   const { label, names, options, from, to, className, ...rest } = props;
+  const base = useId();
   const menu = (end: "from" | "to", value: string | number | null | undefined) => (
-    <label className="cap-field cap-span-field-end">
-      <span className="cap-field-label">{end === "from" ? "From" : "To"}</span>
+    <div className="cap-span-field-end">
+      <label htmlFor={`${base}-${end}`}>{end === "from" ? "From" : "To"}</label>
       <select
         className="cap-select"
+        id={`${base}-${end}`}
         name={names[end]}
         defaultValue={value == null ? "" : String(value)}
       >
@@ -759,7 +761,7 @@ export function SpanField(
           </option>
         ))}
       </select>
-    </label>
+    </div>
   );
   return (
     <fieldset {...rest} className={className ? `cap-field ${className}` : "cap-field"}>

@@ -760,7 +760,10 @@
     flex-wrap: wrap;
     gap: var(--space-4);
   }
-  .cap-date-input-part {
+  /* A part with its own small label over its control: a date input's day, month or year, and a span's From
+     or To. */
+  .cap-date-input-part,
+  .cap-span-field-end {
     display: grid;
     gap: var(--space-1);
 
