@@ -4,7 +4,7 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
-## [0.124.0]
+## [0.125.0]
 
 - **Form and async hooks: `capsomer/react/form-hooks`** (shared-code audit pass 2, cluster C21). `useSaveQueue` (save on change without racing saves), `useDraftDirty`, `useDebounced` and `useDebouncedPreview` (an overtaken request is aborted), with no router or DOM; the pure parts (`createSaveQueue`, `draftAfter`, `draftDirty`, `filterParams`, `withParam`, `pagePending`) from `capsomer/behavior/form-hooks`. From Foxhound, Foxing, dustinedwards.info, Carrel and the Capsid Portal.
 - **Confirm dialog: `useConfirmAction` and `useTwoStep`** in `capsomer/react/confirm-dialog`: the subject and opener a page's confirm dialogs share, and preview-then-perform with the server's words on every failure and an expired preview dropped. From Carrel and the Capsid Portal.
@@ -12,6 +12,23 @@ Each release names every removed or renamed token or class, and every changed HT
 - **State hooks: `capsomer/react/state-hooks`** (cluster C22). `useSelection` and `indeterminate` for bulk bars and `useSinceLastVisit`; `newId` and `versionedStore` from `capsomer/behavior/state-hooks`, with no router or DOM. A media query and the browser's zone are `useMedia` and `useBrowserZone` in `capsomer/react/hooks`.
 - **Data hooks: `capsomer/react/data`** (cluster C23). `createQueryClient`, `useSeededQuery`, `useWrite` with `patch` and `patchAll`, `Answer` with `getAnswer`, `postAnswer`, `answerOf`, `ask` and `SignedOut`, `useAnswer`, `createFlag` and `useFlag`, `useLiveRoom` (reconnects with backoff and jitter; Foxing's club room did not reconnect) and `preloadedLazy`. `@tanstack/react-query` is a new optional peer (`^5.104.0`). Nothing in it touches the DOM, so Foxing's shared web and mobile client uses it.
 - No token or class was removed or renamed.
+
+## [0.124.0]
+
+Batch 6 of the shared-code audit, pass 2 (C54 to C63, data display): what the sites wrote by hand for numbers, statuses, steps, charts, search results, graphs, the system map's model, catalogs and media picking, moved into components. New peers: `@dagrejs/dagre ^3.1.3` and `zod ^4.6.7`, both optional (only `capsomer/behavior/graph` and `capsomer/behavior/system-model` import them).
+
+- **Format** (new, `capsomer/behavior/format`): `pluralWord`, `formatBytes` (binary, as before, now up to TB), `shortCount` (exact under 10,000, then "12.3K"; the grouped figure alone is Prelum's `formatCount`), `median`, `percentOf`, `formatPercent` and `formatBps`. Changed: `byteSize` (media) and `formatBytes` (drop-zone) are this `formatBytes`, so a size of exactly 2 MB reads "2 MB", not "2.0 MB". `describeSeries` lists peaks with `listText` (serial comma).
+- **Status:** `capsomer/behavior/status` has `statusHtml`, `glyphHtml`, `glyphParts` and `STATUS_GLYPH`, the one table of glyph shapes React's `Status` now also draws from (its markup is unchanged), and `outcomeStatus(conclusion, labels)`, one reading of a run's conclusion for every site: success and neutral are ok, skipped is no data, canceled, timed out, stale and action required are warnings, queued and in progress are running, anything else failed.
+- **Step player** (new component): Play, Pause and Play again over a set of steps, stopping at the end, on a hidden tab and when the person moves themselves (WCAG 2.2.2); slower under reduced motion. `[data-cap="step-player"]` with `enhance()`, or `stepPlayer()` over a page's own steps.
+- **Step indicator: three variants.** `data-variant="stations"` (dots on a rule, the last a stub, a filled dot when complete), `"inline"` (one wrapping line joined by a connector) and `"ordered"` (numbered rows under a top rule, with `.cap-step-number`, `.cap-step-meta`). New classes: `.cap-step-dot`, `.cap-step-meta`, `.cap-step-number`. The default is unchanged.
+- **Chart frame:** `ChartPanel` (a chart in a panel, with its no-data and "Not refreshed" states), `DataPreview` (a dataset's card beside an article), `drawWith`, `narrowRedraw`, `describeSeries` (the finding's sentence from the numbers), and `capsomer/behavior/chart-presets` with `countsByYearHtml` and `sparkHtml`. `ChartFit` and `shownHeight` move to `capsomer/behavior/chart-frame` (React re-exports them). New classes: `.cap-chart-stale`, `.cap-spark`, `.cap-data-preview` and its parts; `[data-out-of-range]` fades a bar. A server drawing with `data-enarratio-redraw` scales to its column under 30rem until the narrow drawing replaces it.
+- **Search results** (new component): `SearchResults`, `SearchResult` and `Snippet`, with facets beside the results from 52rem, the count in a live region and an empty state with something to try; `snippetHtml` and `markQuery` mark the matched words as text, never as markup.
+- **Graph** (new, `capsomer/behavior/graph`): `graphSvg` lays out boxes and wires with dagre into one SVG with status glyphs and an outside ring, for an architecture or system drawing.
+- **System map: the model.** `capsomer/behavior/system-model` has the public model's schema (`PublicModelSchema`, `parsePublicModel` with its cross-checks), `connectionsOf`, `partsOf`, `outsideOf`, `wiresOf`, `explorerHref` and `modelMarkdown`/`systemMarkdown` for the model's Markdown twin.
+- **Catalog:** a range facet (`kind: "range"`, From and To menus, overlapping spans, `?<key>-from=&<key>-to=`), `group.empty`, `summaryText`, `activeCount`, `facetCounts`, `catalogRecords` options (`id`, `url`, `keys`, `allFields`), `catalogMarkdown` and `markdownCell`, `catalogDownloads`, `catalogParams`, `catalogRedirect(..., { keepUnknown })`, and `oneOf`, `listParam`, `yearParam`. New classes: `.cap-catalog-range`, `.cap-catalog-range-ends`, `.cap-catalog-range-end`.
+- **Media library:** `MediaPicker` ("Insert from library" in a dialog) and `ImageField` (one chosen image with its preview, Choose another and Remove) in `capsomer/react/media-picker`, and `uploadImage`, `loadMediaView` and `libraryOf` in `capsomer/behavior/media-picker`. New classes: `.cap-image-field` and its parts.
+
+No token was removed or renamed.
 
 ## [0.123.0]
 

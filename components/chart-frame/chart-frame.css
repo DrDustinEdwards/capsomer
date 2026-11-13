@@ -69,4 +69,82 @@
     gap: var(--space-2);
     min-width: 0;
   }
+  /* A later read failed: the chart is the last one drawn, and the line above it says so. */
+  .cap-chart-stale {
+    margin: 0 0 var(--space-3);
+    color: var(--muted);
+    font-size: var(--fs-detail);
+  }
+
+  /* A panel whose head names the chart keeps Enarratio's title for screen readers and the table
+     only, so the name is not shown twice. */
+  .cap-chart-panel .cap-panel-head + .cap-panel-body .cap-chart :is(.enarratio-title, .cap-chart-title) {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  /* A chart drawn on a server with a narrow drawing for phones (narrowRedraw): until the script
+     swaps the narrow one in, the wide drawing scales into the column instead of scrolling, at about
+     the height the narrow one will have, so the swap does not move the page. With no script nothing
+     swaps, and the wide drawing keeps its width and scrolls. */
+  @media (scripting: enabled) {
+    @container (width < 30rem) {
+      .cap-chart[data-enarratio-redraw] .enarratio-frame-wide > svg {
+        min-inline-size: 0;
+        inline-size: 100%;
+        block-size: auto;
+      }
+    }
+  }
+
+  /* Bars outside a chosen range (countsByYearHtml) step back; the range is said in words beside. */
+  .cap-chart [data-out-of-range] {
+    opacity: 0.28;
+  }
+
+  /* A sparkline in a line of text or a tile: a box of its own to fill. */
+  .cap-spark {
+    display: block;
+    min-inline-size: 0;
+    max-inline-size: 7.5rem;
+
+    & > svg {
+      display: block;
+      inline-size: 100%;
+      block-size: auto;
+    }
+  }
+
+  /* A dataset previewed beside an article: heading, drawing, the sentence, the link, the source. */
+  .cap-data-preview {
+    display: grid;
+    gap: var(--space-3);
+    padding: var(--pad-card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-l);
+    background: var(--surface);
+  }
+  .cap-data-preview-heading {
+    margin: 0;
+    font-family: var(--display);
+    font-size: var(--fs-lead);
+    line-height: 1.3;
+  }
+  .cap-data-preview-chart > svg {
+    display: block;
+    inline-size: 100%;
+    block-size: auto;
+  }
+  .cap-data-preview :is(.cap-data-preview-summary, .cap-data-preview-link, .cap-data-preview-source) {
+    margin: 0;
+  }
+  .cap-data-preview-source {
+    color: var(--muted);
+    font-size: var(--fs-detail);
+  }
 }
+

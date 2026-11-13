@@ -80,6 +80,18 @@
   .cap-catalog-facet .cap-check {
     width: 100%;
   }
+  /* A range facet: From and To side by side, each a native menu at full width of its half. */
+  .cap-catalog-range-ends {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-2);
+  }
+  .cap-catalog-range-end {
+    min-width: 0;
+  }
+  .cap-catalog-range-end .cap-select {
+    width: 100%;
+  }
   .cap-catalog-more > summary {
     color: var(--muted);
     font-size: var(--fs-detail);

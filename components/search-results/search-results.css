@@ -1,0 +1,130 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* A site search's results: the count, the sort, one row a result (its kind, the title as a link,
+   where it sits, the snippet with its matches marked, why it matched), the facets beside, and
+   what to try when nothing matched. The row is the listbox option's two-line cousin: a command
+   menu jumps to one thing, this lists what matched. */
+@layer cap.components {
+  .cap-search {
+    display: grid;
+    gap: var(--space-6);
+    grid-template-columns: minmax(0, 1fr);
+    container-type: inline-size;
+  }
+  @container (width >= 52rem) {
+    .cap-search[data-facets] {
+      grid-template-columns: minmax(0, 1fr) 13rem;
+    }
+  }
+  .cap-search-main {
+    min-inline-size: 0;
+    max-inline-size: var(--measure, 48rem);
+  }
+  .cap-search-count {
+    margin: 0 0 var(--space-4);
+    color: var(--muted);
+    font-variant-numeric: var(--figures);
+
+    &:empty {
+      margin: 0;
+    }
+  }
+  .cap-search-sort {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2);
+    margin: 0 0 var(--space-4);
+  }
+  .cap-search-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .cap-search-result {
+    display: grid;
+    gap: var(--space-2);
+    padding-block: var(--space-4);
+    border-block-start: 1px solid var(--line);
+    overflow-wrap: anywhere;
+
+    &:first-child {
+      padding-block-start: 0;
+      border-block-start: 0;
+    }
+  }
+  .cap-search-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--space-2);
+  }
+  .cap-search-title {
+    margin: 0;
+    font-size: var(--fs-lead);
+    line-height: 1.35;
+
+    /* The title is the result's target: 44px tall on a touch screen (WCAG 2.5.8). */
+    & > a {
+      display: inline-flex;
+      align-items: center;
+      min-block-size: var(--target);
+    }
+  }
+  .cap-search-context,
+  .cap-search-why {
+    margin: 0;
+    color: var(--muted);
+    font-size: var(--fs-detail);
+  }
+  .cap-search-snippet {
+    margin: 0;
+    line-height: var(--leading);
+  }
+  /* The matched words: the warning tint, not the family color, which would read as a link or the
+     brand. The color is the text's own, so it keeps its contrast. */
+  :is(.cap-search-snippet, .cap-search-title) mark {
+    padding-inline: 0.125em;
+    background: var(--warn-soft);
+    color: inherit;
+  }
+  .cap-search-facets {
+    display: grid;
+    align-content: start;
+    gap: var(--space-5);
+
+    & :is(h2, h3) {
+      margin: 0 0 var(--space-2);
+      color: var(--muted);
+      font-size: var(--fs-detail);
+      font-weight: 600;
+    }
+  }
+  .cap-search-empty {
+    display: grid;
+    gap: var(--space-5);
+
+    & > :is(p, section) {
+      margin: 0;
+    }
+    /* Something to try instead: a short list of links, each a full target (2.5.8). */
+    & :is(ul, ol) {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+    & li > a {
+      display: inline-flex;
+      align-items: center;
+      min-block-size: var(--target);
+    }
+  }
+
+  @media (forced-colors: active) {
+    :is(.cap-search-snippet, .cap-search-title) mark {
+      background: Mark;
+      color: MarkText;
+    }
+  }
+}
