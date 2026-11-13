@@ -4,9 +4,9 @@ title: Field
 summary: A labeled input, textarea, file input, checkbox, radio or input group, with help outside it and an error beside it, checked on leave and on submit; with a password, character count, one-time code, number, search and date input built on it.
 parts: [css, behavior, react]
 tool: native + own JavaScript
-states: [default, keyboard focus, hover, filled, help text, required, invalid with its message, disabled, read-only, file input, input group, checkbox checked, unchecked, mixed and invalid, radio checked and unchecked, choice card, slider, password shown and hidden, one-time code, character count under and over, number with steppers, search with Clear, date input with a part in error, two or more errors in the error summary, a field with its action, help under the control, slider with its readout and ends, money, date and time]
+states: [default, keyboard focus, hover, filled, help text, required, invalid with its message, disabled, read-only, file input, input group, checkbox checked, unchecked, mixed and invalid, radio checked and unchecked, choice card, slider, password shown and hidden, one-time code, character count under and over, number with steppers, search with Clear, date input with a part in error, two or more errors in the error summary, a field with its action, help under the control, slider with its readout and ends, a span from two menus, money, date and time]
 added: 0.1.0
-updated: 0.118.0
+updated: 0.141.0
 source: Capsid Portal, dashboard/src/styles.css (.field, .siteform .f, .siteform .check, .err)
 replaces:
   - 'class="(?:[^"]*\s)?field[\s"]'
@@ -59,6 +59,7 @@ Any form: a site's settings, a new job, a post's metadata, the one-line reason o
 - **No "Required" word** (`showRequired={false}`) keeps the control required for a form that says once at the top that every field is.
 - **Text field** (`TextField`): Field and its input in one element, for the common case.
 - **Slider with its readout** (`RangeField`). The value at the end of the label's line (hidden from a screen reader, which hears the same words from the slider's `aria-valuetext`), and the words at the two ends under the track. `format` writes it as the page shows it ("$12,000").
+- **A span from two menus** (`SpanField`), for a filter on a span of years or other ordered values. A `fieldset.cap-field` with the question as its `legend`, then `.cap-span-field-ends` holding two `.cap-span-field-end`, From and To, each a small label (the date input's part label) over a `select.cap-select` (so the page loads `select.css` too) whose first option is "Any" for an open end. Both menus list the same values in the same order. A form sends both with no script (`names`); the app reads them, and reads an inverted span the way it was meant. Catalog's range facet is this field. Menus, not a two-handle slider, because the reader picks exact years from a short list; for a numeric span whose shape matters more than its ends, use the Range slider.
 - **Slug** (`SlugField`). Prelum's one rule (`SLUG_PATTERN`, `slugify`): the input's `pattern`, tidied on leaving the field. Given `from` (the title), it follows the title until the person types in it, and again once they empty it. The server checks with Prelum's `isSlug`.
 - **Money** (`MoneyField`). Dollars in a text box (`inputmode="decimal"`, never `type="number"`, which drops what it cannot read) with the sign inside its edge. The app keeps integer cents: `centsToDollars` fills it, `dollarsToCents` reads the post as a string (never through a float, so 1.005 cannot round the wrong way) and answers null for anything that is not an amount.
 - **Date and time** (`DateTimeField`). `datetime-local` on the wall clock of a named time zone (default UTC, the Worker's), which the help names. `toDateTimeLocal(date, zone)` fills it and `fromDateTimeLocal(value, zone)` reads it back.
