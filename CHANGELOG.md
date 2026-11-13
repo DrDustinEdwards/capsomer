@@ -3,6 +3,12 @@
 Each release names every removed or renamed token or class, and every changed HTML contract. A pull request adds its entry as a
 changeset (`npx changeset`, `.changeset/README.md`); the release pull request writes them here.
 
+## 0.145.1
+
+### Patch Changes
+
+- **The markdown editor's CodeMirror stays out of server bundles.** `mountMarkdownEditor` refuses before its `import()` when Vite's `import.meta.env.SSR` is set, so a server build drops the CodeMirror chunk it could never run (Carrel's Worker: about 300 KB raw). Outside Vite nothing changes. No token, class or HTML contract changes.
+
 ## 0.145.0
 
 ### Minor Changes
