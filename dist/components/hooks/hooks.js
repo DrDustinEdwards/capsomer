@@ -1,0 +1,69 @@
+// Small helpers every React app in the network wrote its own copy of. No framework here: the React
+// hooks are in hooks.react.tsx.
+/** Joins class names, dropping the empty ones: `cn("cap-btn", busy && "is-busy")`. No merging. */
+export function cn(...parts) {
+    return parts.filter(Boolean).join(" ");
+}
+/** `n` held to `lo` to `hi`; where `hi` is under `lo`, `lo`. */
+export function clamp(n, lo, hi) {
+    return Math.max(lo, Math.min(n, Math.max(lo, hi)));
+}
+/** "A, B, and C" (and "A and B"; "A, B, or C" with "or"): the platform's own list, in American English with its serial comma. */
+export function listText(words, join = "and") {
+    return new Intl.ListFormat("en-US", {
+        type: join === "or" ? "disjunction" : "conjunction",
+    }).format(words);
+}
+/** The reader asks for reduced motion (false where there is no window: a server, a test). */
+export function reducedMotion() {
+    return (typeof window !== "undefined" &&
+        !!window.matchMedia?.("(prefers-reduced-motion: reduce)").matches);
+}
+let ids = 0;
+/** A new id on every call, `prefix-1`, `prefix-2`: for a part a script gives an id to. */
+export function uid(prefix) {
+    ids += 1;
+    return `${prefix}-${ids}`;
+}
+// A value kept in this browser. localStorage where it may be used, a page-long Map only where it is
+// refused (a private window, blocked storage, a full quota), so a choice still switches without
+// being kept. The Map never shadows storage that works, so a value changed or removed in another
+// tab reads as it is now.
+const memory = new Map();
+const listeners = new Set();
+export function readStored(key) {
+    try {
+        return localStorage.getItem(key) ?? memory.get(key) ?? null;
+    }
+    catch {
+        return memory.get(key) ?? null;
+    }
+}
+/** Stores a value (null forgets it) and tells every reader on the page. */
+export function writeStored(key, value) {
+    try {
+        if (value === null)
+            localStorage.removeItem(key);
+        else
+            localStorage.setItem(key, value);
+        memory.delete(key);
+    }
+    catch {
+        // Not kept; still switched, from memory.
+        if (value === null)
+            memory.delete(key);
+        else
+            memory.set(key, value);
+    }
+    for (const listener of listeners)
+        listener();
+}
+/** Calls `listener` when a stored value changes here or in another tab. */
+export function subscribeStored(listener) {
+    listeners.add(listener);
+    window.addEventListener("storage", listener);
+    return () => {
+        listeners.delete(listener);
+        window.removeEventListener("storage", listener);
+    };
+}
