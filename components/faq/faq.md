@@ -6,7 +6,7 @@ parts: [css, react]
 tool: native
 states: [accordion, accordion with the first open, cards, list]
 added: 0.132.0
-updated: 0.135.0
+updated: 0.138.0
 source: BioScience Writers' Faq (app/components/Faq.tsx, FAQS in app/data/content.ts, the FAQPage in config/structured-data.ts); Foxhound's ProductFAQ (app/components/product-sections-cap.tsx) and pricing questions (app/routes/pricing.tsx)
 replaces:
   - 'ProductFAQ'

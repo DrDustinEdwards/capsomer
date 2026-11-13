@@ -6,7 +6,7 @@ parts: [css, react]
 tool: native
 states: [cards with ways, labeled numbers, numbers joined by a word, address, plain with a rule between, one column with trailing icons]
 added: 0.132.0
-updated: 0.135.0
+updated: 0.138.0
 source: BioScience Writers' contact page (app/routes/contact-us.tsx); julieedwards.info's Contact section (app/components/Sections.tsx), whose grid was placed by inline styles
 replaces:
   - 'function Tel\('

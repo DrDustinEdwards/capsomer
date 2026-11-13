@@ -6,7 +6,7 @@ parts: [css, react]
 tool: native
 states: [straight, slanted, slanted over its neighbors, phone]
 added: 0.132.0
-updated: 0.135.0
+updated: 0.138.0
 source: BioScience Writers' impact band (.band-cut, .band-slab, .band-ghost in app/app.css; app/routes/home.tsx)
 replaces:
   - 'band-cut'

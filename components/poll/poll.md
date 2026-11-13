@@ -6,7 +6,7 @@ parts: [css, behavior, react]
 tool: own JavaScript
 states: [open, voted, hover, closed, no votes yet]
 added: 0.132.0
-updated: 0.135.0
+updated: 0.138.0
 source: Foxing's club polls (.fx-poll-option in apps/web/app/styles/clubs.css, components/clubs/club-schedule.tsx)
 replaces:
   - 'fx-poll-option'

@@ -6,7 +6,7 @@ parts: [css, behavior, react]
 tool: own JavaScript
 states: [simple markup, original, all markup, a note lit, hover, kinds in their tones, original without notes, control centered]
 added: 0.132.0
-updated: 0.135.0
+updated: 0.138.0
 source: BioScience Writers' Precision Editing demo (app/components/EditingDemo.tsx, app/islands/editing-demo.ts, .psms-* in app/app.css)
 replaces:
   - 'psms-'
