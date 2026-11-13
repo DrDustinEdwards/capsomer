@@ -2,7 +2,7 @@
 // line that says the chosen time in the family's words, and a confirm that sends it as an ISO
 // time. A past time is refused beside the field; Cancel and Esc send nothing.
 
-import { useId, useState, type ReactNode } from "react";
+import { useEffect, useId, useState, type ReactNode } from "react";
 import { Button } from "../button/button.react.tsx";
 import {
   Dialog,
@@ -14,8 +14,9 @@ import {
   DialogTitle,
 } from "../dialog/dialog.react.tsx";
 import { Field } from "../field/field.react.tsx";
+import { toDateTimeLocal } from "../field/field.ts";
 import { Time } from "../time/time.react.tsx";
-import { PAST_TIME, checkSchedule, localValue } from "./schedule-dialog.ts";
+import { PAST_TIME, checkSchedule } from "./schedule-dialog.ts";
 import { useBrowserZone } from "../hooks/hooks.react.tsx";
 
 export interface ScheduleDialogProps {
@@ -50,9 +51,23 @@ export function ScheduleDialog({
   lead = "Goes live",
 }: ScheduleDialogProps) {
   const titleId = `${useId()}-title`;
-  const [value, setValue] = useState(() => (current ? localValue(current) : ""));
+  // The input's value: `current` on the browser's wall clock (the runtime's zone before hydration).
+  const startValue = () =>
+    current
+      ? toDateTimeLocal(new Date(current), Intl.DateTimeFormat().resolvedOptions().timeZone)
+      : "";
+  const [value, setValue] = useState(startValue);
   // "Past" is measured when the time is chosen, not on every render.
   const [chosenAt, setChosenAt] = useState(() => Date.now());
+  // The dialog stays mounted while closed: each opening starts again from `current`, which may be
+  // another item's, and measures "past" from then.
+  useEffect(() => {
+    if (!open) return;
+    // oxlint-disable-next-line react/set-state-in-effect -- an opening starts the field again from the item it is for
+    setValue(startValue());
+    setChosenAt(Date.now());
+    // oxlint-disable-next-line react/exhaustive-deps -- only an opening resets it; `current` is read as it is then
+  }, [open]);
   const [busy, setBusy] = useState(false);
   // The input reads and writes the browser's own zone, so the field names it.
   const zone = useBrowserZone(null);
@@ -101,11 +116,14 @@ export function ScheduleDialog({
             }}
           />
         </Field>
-        {at && !problem ? (
-          <p className="cap-schedule-dialog-lead" role="status">
-            {lead} <Time at={at} format="exact" />.
-          </p>
-        ) : null}
+        {/* On the page from the start and filled, so a screen reader hears the first time too. */}
+        <p className="cap-schedule-dialog-lead" role="status">
+          {at && !problem ? (
+            <>
+              {lead} <Time at={at} format="exact" />.
+            </>
+          ) : null}
+        </p>
       </DialogBody>
       <DialogFooter align="between">
         <DialogClose part="cancel">Cancel</DialogClose>

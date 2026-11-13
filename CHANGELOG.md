@@ -35,6 +35,7 @@ Each release names every removed or renamed token or class, and every changed HT
 - **Save toggle keeps one label.** The button no longer switches "Save" to "Saved" while it also sets `aria-pressed` (a screen reader heard "Saved, toggle button, pressed"); the pressed chip and filled bookmark show the state. **Removed:** `SaveToggle`'s `savedLabel` prop and the behavior's `data-saved-label` and `data-label`.
 - Scale control: the units select sits in the shared `Field` (its id from `useId`, so two controls on a page no longer share `${name}-${units.name}`), and the submit is the shared `Button`.
 - Schedule: the day links take the shared focus ring (focus.css) in place of their own 3px ring at a 1px offset. The slot's `<time>` markup is built from `slotParts` (new export: the words and the moments they name), which `slotLabel` joins, so a change of wording can no longer break it.
+- **Schedule dialog: each opening starts from `current`.** The dialog stays mounted while closed, so reopening it for another item showed the last item's time. Its status line is on the page from the start and filled, so the first time chosen is announced. **Removed:** `localValue` from `capsomer/behavior/schedule-dialog`, and `localInputValue` and `isoFromLocal` from `capsomer/behavior/posts-list`; use `toDateTimeLocal(date, zone)` and `fromDateTimeLocal(value, zone)` from `capsomer/behavior/field` with the browser's zone.
 
 ## [0.139.1]
 
