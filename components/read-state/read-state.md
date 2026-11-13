@@ -67,9 +67,10 @@ import "capsomer/read-state.css";
   </ReadState>
 </Panel>
 
-<TablePanel title="Operator actions" headingId="audit" reading={pending} isEmpty={rows.length === 0}
-  empty={<Empty kind="nothing-yet" flush title="No audit log entries yet." />}>
-  <table className="cap-table">…</table>
+<TablePanel title="Operator actions" headingId="audit" caption="The audit log, newest first." reading={pending}
+  isEmpty={rows.length === 0} empty={<Empty kind="nothing-yet" flush title="No audit log entries yet." />}>
+  <thead>…</thead>
+  <tbody>…</tbody>
 </TablePanel>
 ```
 
