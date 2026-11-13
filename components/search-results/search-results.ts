@@ -2,6 +2,8 @@
 // for a snippet: it sends text with the matches between two private markers (SQLite FTS5's
 // snippet() takes any pair), and this splits it, so a document's own "<" can never become a tag.
 
+import { escapeHtml as esc } from "@dustinedwards/site-runtime/html";
+
 // The markers a server puts around each match. Control characters that no stored text contains.
 export const MARK_OPEN = "\u0002";
 export const MARK_CLOSE = "\u0003";
@@ -40,9 +42,6 @@ export function snippetParts(
   push();
   return parts;
 }
-
-const ESCAPES: Record<string, string> = { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" };
-const esc = (text: string) => text.replace(/[&<>"]/g, (c) => ESCAPES[c] ?? c);
 
 // The snippet as HTML: every run escaped, each match in a <mark>. For a page built without React.
 export function snippetHtml(snippet: string, open?: string, close?: string): string {

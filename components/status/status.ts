@@ -2,6 +2,8 @@
 // rendered table, an SVG drawing), and the one table of glyphs the React Status draws from too.
 // Escaped here, so a reason or a label can never become markup.
 
+import { escapeHtml as esc } from "@dustinedwards/site-runtime/html";
+
 // "muted" is the quiet gray for a state that is neither good nor bad: queued, unknown.
 export type Tone = "crit" | "warn" | "ok" | "info" | "nodata" | "muted";
 // A glyph is named by its tone, except running, which is an info tone with an arc, and the
@@ -210,15 +212,6 @@ export const STATUS_GLYPH: Readonly<Record<GlyphName, readonly GlyphPart[]>> = {
     },
   ],
 };
-
-const ESCAPES: Record<string, string> = {
-  "&": "&amp;",
-  "<": "&lt;",
-  ">": "&gt;",
-  '"': "&quot;",
-  "'": "&#39;",
-};
-const esc = (text: string): string => text.replace(/[&<>"']/g, (c) => ESCAPES[c] ?? c);
 
 // A glyph's inner elements as markup, for a page that draws it inside its own <svg> (a box in a
 // graph at 12 px).
