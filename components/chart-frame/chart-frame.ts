@@ -127,7 +127,10 @@ export function describeSeries(o: SeriesText): string {
   const peaks = o.x.filter((_, i) => totals[i] === max).map(fx);
   const at = o.at ?? "in";
   const latest = `${fmt(totals.at(-1)!)} ${at} ${fx(o.x.at(-1)!)}`;
-  return `${span}: ${latest}, from ${fmt(min)} to ${fmt(max)}; most ${at} ${listText(peaks)}.`;
+  // A long flat top (a daily series that held its peak for weeks) names the first two and a count.
+  const most =
+    peaks.length > 3 ? `${peaks.slice(0, 2).join(", ")} and ${peaks.length - 2} more` : listText(peaks);
+  return `${span}: ${latest}, from ${fmt(min)} to ${fmt(max)}; most ${at} ${most}.`;
 }
 
 /**
