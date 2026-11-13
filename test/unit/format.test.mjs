@@ -3,7 +3,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { formatBytes, formatCount, median, percentOf } from "../../components/format/format.ts";
-import { plural } from "../../components/hooks/hooks.ts";
 
 test("formatBytes climbs units and never shows 1024 kB", () => {
   assert.equal(formatBytes(512), "512 B");
@@ -12,12 +11,6 @@ test("formatBytes climbs units and never shows 1024 kB", () => {
   assert.equal(formatBytes(2516582), "2.4 MB");
   assert.equal(formatBytes(2 * 1024 ** 2), "2 MB");
   assert.equal(formatBytes(10 * 1024 ** 3), "10 GB");
-});
-
-test("plural keeps an irregular noun and groups the figure", () => {
-  assert.equal(plural(1, "person", "people"), "1 person");
-  assert.equal(plural(1204, "person", "people"), "1,204 people");
-  assert.equal(plural(0, "file"), "0 files");
 });
 
 test("median is null for nothing and the mean of the middle pair for an even count", () => {

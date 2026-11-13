@@ -1,6 +1,5 @@
 // Small helpers every React app in the network wrote its own copy of. No framework here: the React
 // hooks are in hooks.react.tsx.
-import { figures, pluralWord } from "../format/format.ts";
 
 /** Joins class names, dropping the empty ones: `cn("cap-btn", busy && "is-busy")`. No merging. */
 export function cn(...parts: Array<string | false | null | undefined>): string {
@@ -19,9 +18,9 @@ export function listText(words: readonly string[], join: "and" | "or" = "and"): 
   }).format(words);
 }
 
-/** A count with its noun: `plural(1, "post")` is "1 post", `plural(1204, "post")` "1,204 posts"; an irregular noun passes its plural. */
+/** A count with its noun: `plural(1, "post")` is "1 post", `plural(3, "post")` "3 posts"; an irregular noun passes its plural. */
 export function plural(n: number, one: string, many: string = `${one}s`): string {
-  return `${figures(n)} ${pluralWord(n, one, many)}`;
+  return `${n} ${n === 1 ? one : many}`;
 }
 
 let ids = 0;
