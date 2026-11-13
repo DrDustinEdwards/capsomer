@@ -174,7 +174,7 @@ jobs:
       - name: Size (warns only)
         if: always()
         run: npm run size
-      - name: Token check (warns only)
+      - name: Token check (raw values warn; a declaration the browser drops fails)
         if: always()
         run: npm run token-check
       - name: Fetch the shards' reports

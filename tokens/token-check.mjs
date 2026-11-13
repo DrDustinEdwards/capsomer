@@ -376,6 +376,24 @@ function declarations(css) {
   });
 }
 
+// A CSS-wide keyword is only valid as a whole value. Inside a shorthand (`font: 400 1rem / 1.5 var(--face, inherit)`)
+// the browser drops the whole declaration when the var() falls back, so every longhand it set takes the inherited value.
+const WIDE = /(?<![\w-])(inherit|initial|unset|revert-layer|revert)(?![\w-])/;
+
+/** Declarations a browser drops: a CSS-wide keyword, written or reached through a var() fallback, beside other values. */
+export function invalidValues(css) {
+  const items = [];
+  for (const [prop, raw, line] of declarations(css)) {
+    if (prop.startsWith("--")) continue;
+    const v = bare(raw)
+      .replace(/\s*!important\s*$/, "")
+      .trim();
+    const m = WIDE.exec(v);
+    if (m && v !== m[1]) items.push({ line, property: prop, value: raw.trim(), keyword: m[1] });
+  }
+  return items;
+}
+
 /**
  * The raw design values in one stylesheet, each with its line, kind and the token to use: the exact token when one
  * has the value, else the nearest step of the scale and how far off it is. `scale` is tokenScale(tokens.json).

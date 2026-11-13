@@ -96,3 +96,18 @@ test("rawValues names each raw design value with its token, and leaves tokens, r
     ".b {\n  padding: var(--space-2) 7px;\n  box-shadow:\n    inset 0 calc(-1 * var(--line-w-thick)) 0 red,\n    0 0 0 var(--line-w-thick) red;\n  font: var(--weight-semibold) var(--mono-size) / var(--leading-normal) var(--mono);\n}",
   );
 });
+
+test("invalidValues finds a CSS-wide keyword beside other values, the font shorthand's var() fallback included", async () => {
+  const { invalidValues } = await import("../../tokens/token-check.mjs");
+  const css = `.a {
+  font: 400 1rem / 1.5 var(--face, inherit);
+  font-family: var(--face, inherit);
+  color: inherit !important;
+  margin: 0 revert;
+  --x: 1px inherit;
+}`;
+  assert.deepEqual(
+    invalidValues(css).map((i) => `${i.line} ${i.property} ${i.keyword}`),
+    ["2 font inherit", "5 margin revert"],
+  );
+});
