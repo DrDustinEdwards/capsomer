@@ -1065,7 +1065,8 @@
     & .cap-site-header-search-button {
       order: 1;
     }
-    & .cap-site-header-theme {
+    /* The no-script theme form (themeAction) is the tools' item in place of its button. */
+    & :is(.cap-site-header-theme, .cap-theme-form) {
       order: 2;
     }
     /* The current page keeps its 2px underline; hover is a faint tint, so it never looks like
@@ -1474,8 +1475,8 @@
   }
 
   /* On a phone the letterhead keeps its links row, which swipes and fades at an end with more to
-     show; the menu button and its sheet stay only where there is no links row (an admin). The
-     search icon stays. */
+     show; the React header draws the menu button and its sheet only where there is no links row (an
+     admin). The search icon stays. */
   @media (max-width: 767.98px) {
     .cap-site-header[data-variant="letterhead"] {
       /* An admin's name keeps the site's name whole and moves the app's to the next line where the
@@ -1505,9 +1506,6 @@
       & .cap-site-header-tools {
         gap: var(--space-2);
       }
-    }
-    .cap-site-header[data-variant="letterhead"]:has(> .cap-site-header-sections) .cap-site-header-menu {
-      display: none;
     }
   }
 

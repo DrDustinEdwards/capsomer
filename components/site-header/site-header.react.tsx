@@ -235,6 +235,9 @@ export function SiteHeader(props: SiteHeaderProps) {
   const sectionLinks = sections
     .filter((s) => !s.groups && !s.panel && s.href)
     .map((s): HeaderLink => ({ id: s.id, label: s.label, href: s.href!, current: s.current }));
+  // A letterhead with section links keeps them in its own row at every width (they swipe on a phone), so it
+  // has no menu button and no sheet; the sheet is for the default header and the letterhead's admin.
+  const sheet = !(letterhead && sections.length > 0);
   const sheetName = props.sheetTitle ?? `${logo.label} menu`;
   const linksLabel =
     sheetLinksLabel === undefined
@@ -485,21 +488,23 @@ export function SiteHeader(props: SiteHeaderProps) {
             ) : null}
           </AccountSlot>
           {toolsEnd}
-          <button
-            ref={menuButton}
-            type="button"
-            className="cap-site-header-icon cap-site-header-menu"
-            aria-label="Menu"
-            aria-haspopup="dialog"
-            aria-expanded={sheetOpen}
-            aria-controls={`${id}-sheet`}
-            // Without hydration the button opens the sheet with no script (invoker commands, Baseline
-            // newly available); enhance() takes the click over, and where neither runs nothing breaks.
-            {...(hydrate ? {} : { commandfor: `${id}-sheet`, command: "show-modal" })}
-            onClick={() => setSheetOpen(true)}
-          >
-            {menuIcon}
-          </button>
+          {sheet ? (
+            <button
+              ref={menuButton}
+              type="button"
+              className="cap-site-header-icon cap-site-header-menu"
+              aria-label="Menu"
+              aria-haspopup="dialog"
+              aria-expanded={sheetOpen}
+              aria-controls={`${id}-sheet`}
+              // Without hydration the button opens the sheet with no script (invoker commands, Baseline
+              // newly available); enhance() takes the click over, and where neither runs nothing breaks.
+              {...(hydrate ? {} : { commandfor: `${id}-sheet`, command: "show-modal" })}
+              onClick={() => setSheetOpen(true)}
+            >
+              {menuIcon}
+            </button>
+          ) : null}
         </div>
         {letterhead && trail ? (
           <div className="cap-site-header-trail">
@@ -525,122 +530,124 @@ export function SiteHeader(props: SiteHeaderProps) {
               : null}
           </div>
         ) : null}
-        <Dialog
-          open={sheetOpen}
-          onOpenChange={(o) => !o && closeSheet()}
-          placement="bottom"
-          id={`${id}-sheet`}
-          className="cap-site-header-sheet"
-          aria-labelledby={`${id}-sheet-title`}
-          initialFocus={sheetTitle}
-        >
-          <DialogHeader>
-            <h2
-              id={`${id}-sheet-title`}
-              className="cap-dialog-title cap-site-header-sheet-title"
-              ref={sheetTitle}
-              tabIndex={-1}
-            >
-              {sheetName}
-            </h2>
-          </DialogHeader>
-          <DialogBody>
-            <nav aria-labelledby={`${id}-sheet-title`}>
-              {part(props.sheetStart, closeSheet)}
-              {switchers.map((s) =>
-                s.groups.map((g, i) => (
+        {sheet ? (
+          <Dialog
+            open={sheetOpen}
+            onOpenChange={(o) => !o && closeSheet()}
+            placement="bottom"
+            id={`${id}-sheet`}
+            className="cap-site-header-sheet"
+            aria-labelledby={`${id}-sheet-title`}
+            initialFocus={sheetTitle}
+          >
+            <DialogHeader>
+              <h2
+                id={`${id}-sheet-title`}
+                className="cap-dialog-title cap-site-header-sheet-title"
+                ref={sheetTitle}
+                tabIndex={-1}
+              >
+                {sheetName}
+              </h2>
+            </DialogHeader>
+            <DialogBody>
+              <nav aria-labelledby={`${id}-sheet-title`}>
+                {part(props.sheetStart, closeSheet)}
+                {switchers.map((s) =>
+                  s.groups.map((g, i) => (
+                    <SheetGroup
+                      key={`${s.id}-${i}`}
+                      label={g.label ?? s.sheetLabel ?? s.label}
+                      links={g.links}
+                      renderLink={renderLink}
+                      onClose={closeSheet}
+                    />
+                  )),
+                )}
+                {sections
+                  .filter((s) => s.groups)
+                  .map((s) => (
+                    <SheetGroup
+                      key={s.id}
+                      label={s.label}
+                      links={(s.groups ?? []).flatMap((g) => g.links)}
+                      renderLink={renderLink}
+                      onClose={closeSheet}
+                    />
+                  ))}
+                {sectionLinks.length > 0 ? (
                   <SheetGroup
-                    key={`${s.id}-${i}`}
-                    label={g.label ?? s.sheetLabel ?? s.label}
-                    links={g.links}
+                    label={linksLabel}
+                    links={sectionLinks}
                     renderLink={renderLink}
                     onClose={closeSheet}
                   />
-                )),
-              )}
-              {sections
-                .filter((s) => s.groups)
-                .map((s) => (
-                  <SheetGroup
-                    key={s.id}
-                    label={s.label}
-                    links={(s.groups ?? []).flatMap((g) => g.links)}
-                    renderLink={renderLink}
-                    onClose={closeSheet}
-                  />
-                ))}
-              {sectionLinks.length > 0 ? (
-                <SheetGroup
-                  label={linksLabel}
-                  links={sectionLinks}
-                  renderLink={renderLink}
-                  onClose={closeSheet}
-                />
-              ) : null}
-              {part(props.sheetEnd, closeSheet)}
-              {cta?.href && cta.phone !== "bar"
-                ? renderLink({
-                    href: cta.href,
-                    className: cta.className
-                      ? `cap-site-header-sheet-cta ${cta.className}`
-                      : "cap-site-header-sheet-cta",
-                    onClick: closeSheet,
-                    children: cta.label,
-                  })
-                : null}
-            </nav>
-          </DialogBody>
-          {account || signIn ? (
-            <nav className="cap-site-header-sheet-account" aria-label="Account">
-              <ul className="cap-site-header-sheet-list">
-                {account?.groups
-                  ?.flatMap((g) => g.links)
-                  .map((l) => (
-                    <li key={l.label}>
+                ) : null}
+                {part(props.sheetEnd, closeSheet)}
+                {cta?.href && cta.phone !== "bar"
+                  ? renderLink({
+                      href: cta.href,
+                      className: cta.className
+                        ? `cap-site-header-sheet-cta ${cta.className}`
+                        : "cap-site-header-sheet-cta",
+                      onClick: closeSheet,
+                      children: cta.label,
+                    })
+                  : null}
+              </nav>
+            </DialogBody>
+            {account || signIn ? (
+              <nav className="cap-site-header-sheet-account" aria-label="Account">
+                <ul className="cap-site-header-sheet-list">
+                  {account?.groups
+                    ?.flatMap((g) => g.links)
+                    .map((l) => (
+                      <li key={l.label}>
+                        {headerItem(
+                          l,
+                          <>
+                            <span className="cap-site-header-sheet-icon" aria-hidden="true" />
+                            <span className="cap-site-header-sheet-name">{l.label}</span>
+                          </>,
+                          renderLink,
+                          { onClose: closeSheet },
+                        )}
+                      </li>
+                    ))}
+                  {account && signOut ? (
+                    <li>
                       {headerItem(
-                        l,
+                        signOut,
                         <>
                           <span className="cap-site-header-sheet-icon" aria-hidden="true" />
-                          <span className="cap-site-header-sheet-name">{l.label}</span>
+                          <span className="cap-site-header-sheet-name">{signOutLabel}</span>
                         </>,
-                        renderLink,
-                        { onClose: closeSheet },
+                        plainLink,
+                        { onClose: closeSheet, disabled: account.signOutDisabled },
                       )}
                     </li>
-                  ))}
-                {account && signOut ? (
-                  <li>
-                    {headerItem(
-                      signOut,
-                      <>
-                        <span className="cap-site-header-sheet-icon" aria-hidden="true" />
-                        <span className="cap-site-header-sheet-name">{signOutLabel}</span>
-                      </>,
-                      plainLink,
-                      { onClose: closeSheet, disabled: account.signOutDisabled },
-                    )}
-                  </li>
-                ) : null}
-                {!account && signIn ? (
-                  <li>
-                    {renderLink({
-                      href: signIn.href,
-                      onClick: closeSheet,
-                      children: (
-                        <>
-                          <span className="cap-site-header-sheet-icon" aria-hidden="true" />
-                          <span className="cap-site-header-sheet-name">
-                            {signIn.label ?? "Sign in"}
-                          </span>
-                        </>
-                      ),
-                    })}
-                  </li>
-                ) : null}
-              </ul>
-            </nav>
-          ) : null}
-        </Dialog>
+                  ) : null}
+                  {!account && signIn ? (
+                    <li>
+                      {renderLink({
+                        href: signIn.href,
+                        onClick: closeSheet,
+                        children: (
+                          <>
+                            <span className="cap-site-header-sheet-icon" aria-hidden="true" />
+                            <span className="cap-site-header-sheet-name">
+                              {signIn.label ?? "Sign in"}
+                            </span>
+                          </>
+                        ),
+                      })}
+                    </li>
+                  ) : null}
+                </ul>
+              </nav>
+            ) : null}
+          </Dialog>
+        ) : null}
         {end}
       </header>
     </HeaderHydrates.Provider>
