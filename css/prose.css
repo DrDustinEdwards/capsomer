@@ -15,7 +15,8 @@
 
     /* A text link in the prose, for the same site: the link system's color, weight and line by
        default (DEFAULTS.md, links). With base.css its visited and hover tints still apply.
-       --prose-link-ink, --prose-link-hover-ink and --prose-link-hover-decoration are the site's. */
+       --prose-link-ink, --prose-link-hover-ink and --prose-link-hover-decoration are the site's; the
+       hover rule below is for a page without base.css, and links.css reads the same two knobs. */
     & :where(a:is(:not([class*="cap-"]), [data-link], .cap-footnote-ref)) {
       color: var(--prose-link-ink, var(--accent-text));
       font-weight: var(--link-weight);
@@ -61,7 +62,7 @@
     }
     /* --prose-size-adjust: none keeps a site's text at its own size. */
     @supports (font-size-adjust: from-font) {
-      & :where(p, li, td, th, dd, blockquote, figcaption, h2, h3, h4) {
+      & :where(p, li, td, th, dt, dd, caption, summary, blockquote, figcaption, h1, h2, h3, h4) {
         font-size-adjust: var(--prose-size-adjust, from-font);
       }
       & :where(code, kbd, samp) {
@@ -70,20 +71,6 @@
       & :where(pre) :where(code) {
         font-size-adjust: none;
         font-size: 0.85em;
-      }
-    }
-  }
-
-  @media print {
-    [data-context="prose"] {
-      font-size: 11pt;
-      color: #000;
-      background: #fff;
-      & a {
-        color: inherit;
-      }
-      & :where(h2, h3, figure, table) {
-        break-inside: avoid;
       }
     }
   }

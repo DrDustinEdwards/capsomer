@@ -42,6 +42,16 @@
     }
     :where(h2, h3, h4) {
       break-after: avoid;
+      break-inside: avoid;
+    }
+    /* The reading context on paper: black on white at a book's size, links in the text's own ink. */
+    [data-context="prose"] {
+      font-size: 11pt;
+      color: #000;
+      background: #fff;
+      & a {
+        color: inherit;
+      }
     }
     :where(figure, pre, table, img, .cap-form-boxes) {
       break-inside: avoid;

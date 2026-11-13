@@ -22,7 +22,7 @@
       /* A site that wants a line (--link-decoration) draws it on text links only, never a menu's. */
       text-decoration: var(--link-decoration);
       text-underline-offset: var(--link-offset);
-      border-radius: 3px;
+      border-radius: var(--radius-s);
       -webkit-box-decoration-break: clone;
       box-decoration-break: clone;
       /* :visited may set colors only, and getComputedStyle hides it, so a specimen forces it. */
@@ -30,10 +30,12 @@
       &[data-force="visited"] {
         color: var(--accent-visited);
       }
+      /* The prose's knobs (prose.css) are read here too: this rule outranks prose.css's own hover
+         wherever base.css loads, and a site sets them on its prose only. */
       &:hover,
       &[data-force="hover"] {
-        color: var(--accent-hover);
-        text-decoration: var(--link-hover-decoration);
+        color: var(--prose-link-hover-ink, var(--accent-hover));
+        text-decoration: var(--prose-link-hover-decoration, var(--link-hover-decoration));
         text-underline-offset: var(--link-offset);
         background: var(--link-hover-bg);
         box-shadow: 0 0 0 var(--link-tint-pad) var(--link-hover-bg);
