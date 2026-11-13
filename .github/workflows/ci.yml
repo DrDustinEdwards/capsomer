@@ -127,7 +127,8 @@ jobs:
   # shard failed, so this one job stands for the whole run.
   check:
     needs: [pick, browser]
-    if: always()
+    # Runs when a shard failed or was skipped, to report and fail; not when the run was cancelled (a newer push).
+    if: ${{ !cancelled() }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
