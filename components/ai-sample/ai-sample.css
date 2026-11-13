@@ -22,17 +22,7 @@
     border-block-end: 1px solid var(--line);
   }
 
-  .cap-ai-sample-title {
-    margin: 0;
-    color: var(--muted);
-    font-family: var(--mono);
-    font-size: var(--fs-label);
-    font-weight: 500;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-  }
-
-  /* "Calls real AI": a status, with a dot that pulses only for readers who allow motion. */
+  /* "Calls real AI": a status, with a still dot (motion explains a change; this one changes nothing). */
   .cap-ai-sample-live {
     display: inline-flex;
     align-items: center;
@@ -47,18 +37,6 @@
       block-size: 6px;
       border-radius: var(--radius-full);
       background: currentColor;
-    }
-  }
-
-  @media (prefers-reduced-motion: no-preference) {
-    .cap-ai-sample-live::before {
-      animation: cap-ai-sample-pulse 2s var(--ease-out) infinite;
-    }
-  }
-
-  @keyframes cap-ai-sample-pulse {
-    50% {
-      opacity: 0.35;
     }
   }
 
@@ -110,13 +88,9 @@
     font-size: var(--fs-detail);
   }
 
+  /* A field's label is the mono eyebrow (.cap-eyebrow[data-variant="mono"]), spaced from its value. */
   .cap-ai-sample-label {
-    margin: 0 0 var(--space-2);
-    color: var(--muted);
-    font-family: var(--mono);
-    font-size: var(--fs-label);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
+    margin-block-end: var(--space-2);
   }
 
   .cap-ai-sample-field {

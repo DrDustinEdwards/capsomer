@@ -28,18 +28,18 @@ Showing a product's AI on its own marketing page, on a real call, with nothing s
 
 - **A form**, so the inputs are native (a [segmented control](../segmented/segmented.md) or radios) and Generate is its submit button, reached by Enter.
 - **Choosing another input clears the last sample**, so the sample on screen always matches the input that is chosen.
-- **The busy label replaces the button's words** and the button is `aria-busy` and disabled while the call runs; a newer call wins over a slower earlier one.
+- **While the call runs the button is `aria-busy`, never disabled**, so focus stays on it; a second submit is refused. The page's button says the busy label in its place; React's `Button` keeps its words under a spinner and says `busyLabel` to a screen reader. A newer call wins over a slower earlier one.
 - **The output region is polite live**, so the sample or the failure line is announced when it lands.
 - **Every write is `textContent`.** Generated text is never markup.
 - **A failure says so** ("Generation failed. Try again.") rather than showing a stored sample as a generated one.
-- **The live dot pulses** under no-preference motion only.
+- **The live dot is still**: motion explains a change, and this one changes nothing.
 
 ## HTML contract
 
 ```html
 <form class="cap-ai-sample" data-cap="ai-sample">
   <div class="cap-ai-sample-head">
-    <p class="cap-ai-sample-title">Live email writer</p>
+    <p class="cap-eyebrow" data-variant="mono">Live email writer</p>
     <span class="cap-ai-sample-live">Calls real AI</span>
   </div>
   <div class="cap-ai-sample-controls">
@@ -55,7 +55,7 @@ Showing a product's AI on its own marketing page, on a real call, with nothing s
 </form>
 ```
 
-`enhance(root, { generate })` from `capsomer/behavior/ai-sample` wires it on a page that does not hydrate; `generate(formData)` returns `{ fields: [{ label, value, mono? }], note? }` or `{ error: true }`. `drawSample(out, result)` draws one by hand. React: `AiSample` from `capsomer/react/ai-sample` draws the same markup from the page's state (`busy`, `result`, `onGenerate`, `onChange`).
+`enhance(root, { generate })` from `capsomer/behavior/ai-sample` wires it on a page that does not hydrate; `generate(formData)` returns `{ fields: [{ label, value, mono? }], note? }` or `{ error: true }`. `drawSample(out, result)` draws one by hand. React: `AiSample` from `capsomer/react/ai-sample` draws the same markup from the page's state (`busy`, `busyLabel`, `result`, `onGenerate`, `onChange`).
 
 ## Keyboard
 

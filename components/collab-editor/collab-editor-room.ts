@@ -216,12 +216,12 @@ function withoutUnload<T>(run: () => T): T {
   const swap = (type: string) => (type === "unload" ? "pagehide" : type);
   window.addEventListener = (
     type: string,
-    listener: EventListenerOrEventListenerObject | null,
+    listener: EventListenerOrEventListenerObject,
     options?: boolean | AddEventListenerOptions,
   ) => add.call(window, swap(type), listener, options);
   window.removeEventListener = (
     type: string,
-    listener: EventListenerOrEventListenerObject | null,
+    listener: EventListenerOrEventListenerObject,
     options?: boolean | EventListenerOptions,
   ) => remove.call(window, swap(type), listener, options);
   try {
