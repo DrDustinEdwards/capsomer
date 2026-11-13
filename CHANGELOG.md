@@ -4,6 +4,10 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+## [0.128.0]
+
+- **`capsomer/react/icon-path`: `IconPath`, an icon from its own path without the set** (`d`, `box`, `fill`, `label`, `className`; the same `<svg class="cap-icon">` as `Icon`). `Icon` from `capsomer/react/icons` looks its `name` up in `ICONS`, so every app that imported it shipped the whole set, even one that only passes `d`: 0.119.0's 73 icons put about 3.6 KB gzip on every Desk route and 11 KiB in Carrel's Worker. `Icon` now draws through `IconPath`; an app that draws only its own paths (Carrel's menu) imports `IconPath` instead. No class, token or HTML contract changes.
+
 ## [0.126.0]
 
 - **Layout: item helpers.** `.cap-grow` (takes the room its row leaves and may shrink below its content), `.cap-shrink` (a flex or grid item that may shrink below its content: `min-inline-size: 0`), `.cap-keep` (never shrinks), `.cap-full` (a whole row: every grid column, the full line of a cluster, the full width of a block) and `.cap-column`, a centered column for a form (42rem), with `data-width="narrow"` (28rem, a sign-in) or `"reading"` (48rem). They replace txasm's `.grow`, `.shrink`, `.span-2`, `.narrow`, `.form-page` and `.reading`, and Foxing's `.grow`, `.shrink-0`, `.min-0` and `.full`.
