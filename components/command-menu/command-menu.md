@@ -16,67 +16,7 @@ replaces:
 
 # Command menu
 
-**Provenance.** REWROTE the menu itself, EXTRACTED the stops, against the Portal's `app/CommandMenu.tsx`, `lib/stops.ts` and `styles.css` (`.palette`) as of capsid master on 2026-10-01. The Portal's menu is a flat React list scored by a subsequence match, with a group letter and a hint column; Capsomer's was written fresh from the APG combobox pattern (labeled field, grouped listbox, substring match, shortcut caps), so its CSS and logic are not the Portal's. From the Portal's #222 come the Stop group (every way to stop something in one place, found by typing "stop" or "pause", each saying what it will ask, listed only while there is something to stop, no "stop everything"), the group name being searched, and the `hint` note beside a command. The Portal's `stopCommands(feed, actions)` reads its feed, so here `stopCommand()` builds one command and the app decides which stops exist.
-
-The shared dialog (`components/dialog`) as a palette near the top, with a search field and the shared listbox (`components/listbox`) of commands, grouped: the views to go to, the actions on this page, the things to copy, help. Typing narrows the list; Enter runs the active command.
-
-## When to use it
-
-In an app with more than a handful of views or actions, so a keyboard user can reach any of them in a few keys, and anyone can find a command by name.
-
-## When not to
-
-It is never the only way to reach something: every command is also a control on screen (patterns.md, "Command menu"). To pick a value in a form, use a select or the combobox component. To search content (posts, records), use a search page with results that can be linked to; the menu's live results (`search`) may offer the first few as a shortcut, with a command that opens that page.
-
-## The default and its reason
-
-- **A modal dialog holding a combobox and a listbox with `aria-activedescendant`** (APG combobox with listbox popup), the listbox in its `input` mode with `homeEnd` and `filterInput`. Focus stays in the field while the arrows move the active option, so typing never stops working.
-- **The field is named by a visually hidden label** ("Search commands") and shows the same words as its placeholder, with a search icon, as shadcn's Command input does. 0.1 showed the label above the field.
-- **Results are grouped**, each group a `role="group"` named by its heading, in the order the app gives them. No fuzzy ranking: a case-insensitive substring over the group, the label and the keywords, so what matches is predictable, and the name of a group finds all of it.
-- **Every command shows its shortcut** in `<kbd>`, read as ", shortcut g o" by a screen reader. A command can also carry a `hint`, a short note in words ("asks a reason", "preview first"), read as ", asks a reason".
-- **Every way to stop something is in one group, Stop**, so typing "stop" or "pause" finds them all (`stopCommand()` sets the group, the keywords and the hint). A stop opens the control it stands for, a switch's reason field or the confirm dialog, and never performs: nothing is written from the menu. A stop is listed only while there is something to stop (a paused namespace has no Pause), and there is no "stop everything": one wrong command would then end all work.
-- **An empty result says so and names the text**: "No commands match “zebra”", in a status region; the field's `aria-expanded` turns false.
-- **Ctrl K, Cmd K and `/` open it**, through the shortcut registry (`/` is a single key, so it is off when single keys are off). Ctrl K again closes it.
-- **Live results come from the app** (`search(query, signal)`, a store's catalog, in React and in `createCommandMenu` or `attach` alike). It is called 180 ms after the last key (`searchDelay`), never for an empty field, and the call before is aborted; its commands follow the matching ones, in their own groups, unfiltered. While it has not answered the list is `aria-busy` and an empty list says "Searching…"; the last results stay until new ones arrive, so the list does not flash.
-- **Choosing a command closes the menu first, then runs it**, so a command that opens another dialog keeps its focus.
-- Esc, or a click on the backdrop, closes it; focus returns to what opened it.
-
-## The app's menu, the same everywhere (React 0.100.0, without React 0.103.0)
-
-- **Mounted when the page is idle.** `useCommandHost(commands)` gives `ready` (render the menu only then), `open`/`setOpen`, and `runWhenReady(id)`: the menu costs the first load nothing (`requestIdleCallback`, two seconds at most), and a shortcut, a button or a command asked for before then mounts it at once and runs.
-- **The menu's pages are commands.** `navCommands(nav, navigate)` makes "Go to Media" for each entry of the admin shell's `nav`, found by its group too, so the two never list different pages.
-- **Recent.** `recentKey` keeps the last five commands run (ids, per site, in localStorage) and lists them first, as "Recent", while nothing is typed.
-- **A search result's snippet.** A command's `snippet` is a line under its label with the typed words marked (`markQuery`), never through HTML.
-- **Ask.** `ask` adds, while words are typed, a last option "Ask about “…”" that hands them on (an assistant, a site search).
-- **An answer under the list** (`answer` on the React `CommandMenu`, and without React on `createCommandMenu`, `buildMenu` and `attach`; both render the same `.cap-cmd-answer`). While words are typed, a quiet button (`label`, "Answer this" by default) sits under the list; pressing it calls `run(query, region)`, which fills the region (an AI answer: `ask(region, options)` from `capsomer/behavior/ask-panel` returns that `{ cancel }`) and returns `{ cancel }`, or a promise of it, so its code loads only when asked. Focus moves into the answer, then the button hides. Typing again or closing cancels it and empties the region; a failed load says "… could not load. Try again." and keeps the button. With `offer: false` the button waits for `offerAnswer(true)` on each new query (in React, pass `offer: true` once the search says so), for an app whose search says whether answers are on. A deliberate second action, never on each key, because an answer costs a model call. Ask, above, hands the words away instead; the two can sit in one menu.
-- **A phone gets the whole screen**, under 40rem, and the keys line is hidden there.
-- **The host is its own light entry**, so the menu stays out of every route's first load: `capsomer/react/command-host` has `useCommandHost` and `LazyCommandMenu` (`<LazyCommandMenu host={host} commands={…} />`, the menu loaded with `lazy()` once the host is ready), and imports nothing of the menu until then; Ctrl K or Cmd K before then opens it. `capsomer/react/command-menu` still exports `useCommandHost`.
-- **Without React** the same extras: `createCommandHost(commands, opts)` from `capsomer/behavior/command-host` loads and builds the menu when the page is idle and gives `open(query)`, `load()`, `runWhenReady(id)` and `menu`; Ctrl K, Cmd K or a `[data-cap-command-open]` button before then loads it at once. `navCommands` is the same function; `createCommandMenu` and `attach` take `recentKey` and `ask`, and a command's `snippet` is built as below. A menu written in markup takes `data-recent-key` and `data-ask` (its words; "Ask about" when empty) on the dialog: Ask follows `data-ask-href` with the words in `q`, or dispatches `cap-command` with `{ id: "ask", query }`.
-
-## Keyboard
-
-| Key | Does |
-| --- | --- |
-| Ctrl K, Cmd K, `/` | Opens the menu, focus in the field |
-| Typing | Filters the list by group, label and keywords (typing `stop` lists every stop); the first match becomes active |
-| Down arrow, Up arrow | Moves the active option, stopping at the ends |
-| Home, End | First, last command |
-| Page Down, Page Up | About a screenful |
-| Enter | Runs the active command and closes the menu |
-| Esc, or Ctrl K | Closes the menu; focus returns to what opened it |
-
-## Accessibility
-
-- The combobox has `aria-expanded`, `aria-controls` and `aria-activedescendant`. The active option is marked `data-active`, not `aria-selected`: nothing in a command menu is "chosen", so no option carries `aria-selected`.
-- The active option is shown by its tint and a 3 px accent edge at its start, and by an outline in forced colors.
-- The result count ("3 results") is said politely in a visually hidden `role="status"` the listbox adds; "No commands match ..." is in the visible `role="status"` under the list.
-- The key hints under the list are `aria-hidden`; this page's keyboard table and the option names carry them.
-
-Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the automated browser checks and a front-end review stand in. Automated: see the site's Tests page.
-
-## Markup
-
-The behavior module builds this from a list of commands; write it by hand only for a menu rendered on the server.
+## Usage
 
 ```html
 <dialog class="cap-dialog cap-cmd" data-cap="command-menu" data-placement="top" data-size="lg" aria-label="Command menu">
@@ -101,8 +41,6 @@ The behavior module builds this from a list of commands; write it by hand only f
 <button type="button" class="cap-btn" data-cap-command-open>Commands <kbd>Ctrl K</kbd></button>
 ```
 
-The extras, as the behavior module writes them: a snippet sits in the label (the filter reads `data-label`, so the snippet's words do not find it), and the module marks the typed words in it with `<mark>` elements, never through HTML. Recent is a copy of each option, first; Ask is one option, last.
-
 ```html
 <div class="cap-listbox-group" role="group" aria-labelledby="cmd-list-data-recent" data-recent>
   <div class="cap-listbox-label" id="cmd-list-data-recent" role="presentation">Recent</div>
@@ -117,8 +55,6 @@ The extras, as the behavior module writes them: a snippet sits in the label (the
 </div>
 ```
 
-Everything but `.cap-cmd-search`, `.cap-cmd-input`, `.cap-cmd-list` and `.cap-cmd-foot` is the shared dialog's or the shared listbox's.
-
 ```js
 import { createCommandMenu, stopCommand } from "capsomer/behavior/command-menu";
 createCommandMenu([
@@ -129,21 +65,19 @@ createCommandMenu([
 ]);
 ```
 
-`openCommandMenu(query?)` opens it from anywhere. A menu written in markup is wired by `enhance()`: an option with `data-href` navigates, any other dispatches a `cap-command` event with its id. A command's `shortcut` is only shown; register the key itself with the shortcut registry. In React, `<CommandMenu open onOpenChange commands>`, and `` search={(q, signal) => fetch(`/search/suggest?q=${encodeURIComponent(q)}`, { signal }).then(toCommands)} `` for live results. Without React the same `search` and `searchDelay` go in `createCommandMenu(commands, { search })` or `attach(dialog, run, { search })`; `run(option, found)` gets the live result's command as `found`.
+## Accessibility
 
-## Matches shadcn
+| Key | Does |
+| --- | --- |
+| Ctrl K, Cmd K, `/` | Opens the menu, focus in the field |
+| Typing | Filters the list by group, label and keywords (typing `stop` lists every stop); the first match becomes active |
+| Down arrow, Up arrow | Moves the active option, stopping at the ends |
+| Home, End | First, last command |
+| Page Down, Page Up | About a screenful |
+| Enter | Runs the active command and closes the menu |
+| Esc, or Ctrl K | Closes the menu; focus returns to what opened it |
 
-Command (and CommandDialog), Base UI flavor, nova: the palette dialog near the top with no Close button, the Command input (a search icon and a field in a rounded group, ringed on focus), the list with a muted group label, rounded items with the current one tinted, the shortcut at the end of the row, the empty state, 100 ms zoom-in. The dialog and the listbox supply them.
-
-## Deliberately different
-
-- **Home and End move the active command** (`homeEnd`), where in a plain field they would move the caret; the list is the point of this field.
-- **The current command has a 3 px accent edge** as well as the tint (a listbox rule): the tint alone is a faint cue.
-- **A command carries a `hint`** ("asks a reason", "preview first") and a Stop group; shadcn has no such thing.
-- **Key hints under the list** (Up Down, Enter, Esc), `aria-hidden` decoration.
-- **The group name is searched**, and the match is a substring, not cmdk's fuzzy score: what matches stays predictable.
-- **The active option is `data-active`**, not cmdk's `aria-selected`/`data-selected`; `aria-selected` means "chosen" and nothing here is.
-
-## Exceptions in production
-
-None yet.
+- The combobox has `aria-expanded`, `aria-controls` and `aria-activedescendant`. The active option is marked `data-active`, not `aria-selected`: nothing in a command menu is "chosen", so no option carries `aria-selected`.
+- The active option is shown by its tint and a 3 px accent edge at its start, and by an outline in forced colors.
+- The result count ("3 results") is said politely in a visually hidden `role="status"` the listbox adds; "No commands match ..." is in the visible `role="status"` under the list.
+- The key hints under the list are `aria-hidden`; this page's keyboard table and the option names carry them.
