@@ -185,7 +185,6 @@
     "format:check": "oxfmt --check",
     "lint": "oxlint --type-aware --deny-warnings --report-unused-disable-directives-severity=error",
     "build": "tsc -p tsconfig.build.json",
-    "prepare": "npm run build",
     "states": "node bin/capsomer.mjs states",
     "frame-heights": "node scripts/frame-heights.mjs",
     "site": "node bin/capsomer.mjs states && node bin/capsomer.mjs site-data && vite build --config site/vite.config.ts && prelum-markdown --dir site-dist --origin https://capsomer.dustinedwards.info && prelum-lastmod --dir site-dist --origin https://capsomer.dustinedwards.info && site-runtime-headers --site capsomer --out site-dist/_headers --header \"tdm-reservation: 1\"",
