@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { readStoredText, selectionOf, sinceOf, writeStoredText } from "./state-hooks.ts";
+import { readStored, writeStored } from "../hooks/hooks.ts";
+import { selectionOf, sinceOf } from "./state-hooks.ts";
 
 export { newId, parseVersioned, selectionOf, versionedStore } from "./state-hooks.ts";
 export type { VersionedStore } from "./state-hooks.ts";
@@ -59,8 +60,8 @@ export function indeterminate(some: boolean): (el: HTMLInputElement | null) => v
 export function useSinceLastVisit(key: string, now: number, fallbackMs = 86_400_000): string {
   const [since, setSince] = useState(() => sinceOf(null, now, fallbackMs));
   useEffect(() => {
-    setSince(sinceOf(readStoredText(key), now, fallbackMs));
-    writeStoredText(key, new Date(now).toISOString());
+    setSince(sinceOf(readStored(key), now, fallbackMs));
+    writeStored(key, new Date(now).toISOString());
     // oxlint-disable-next-line react-hooks/exhaustive-deps -- once after hydration: a later `now` must not rewrite the visit
   }, [key]);
   return since;

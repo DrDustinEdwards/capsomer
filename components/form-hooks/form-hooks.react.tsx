@@ -34,46 +34,6 @@ export function useSaveQueue(submit: () => void, saving: boolean): () => void {
 }
 
 /**
- * A result shown for `ms` and then dropped: "Saved." under a form, a bulk result line. A new value
- * (by identity) shows again. `clears` says which values go on their own; the rest (a failure) stay
- * until `dismiss()` or the next value, since a failure that vanishes on a timer fails WCAG 2.2.1.
- */
-export function useTransient<T>(
-  value: T,
-  ms: number,
-  clears: (value: NonNullable<T>) => boolean = () => true,
-): [NonNullable<T> | undefined, () => void] {
-  const [dismissed, setDismissed] = useState<unknown>(undefined);
-  const goes = useRef(clears);
-  useEffect(() => {
-    goes.current = clears;
-  });
-  useEffect(() => {
-    if (value === undefined || value === null || !goes.current(value)) return;
-    const timer = setTimeout(() => setDismissed(value), ms);
-    return () => clearTimeout(timer);
-  }, [value, ms]);
-  const dismiss = useCallback(() => setDismissed(value), [value]);
-  const shown = value === undefined || value === null || dismissed === value ? undefined : value;
-  return [shown as NonNullable<T> | undefined, dismiss];
-}
-
-/**
- * A flag that turns itself off `ms` after it was last turned on: "Copied" on a copy button.
- * Turning it on again restarts the wait; the timer is cleared when the part unmounts.
- */
-export function useAutoDismiss(ms: number): [boolean, () => void] {
-  const [shownAt, setShownAt] = useState(0);
-  useEffect(() => {
-    if (!shownAt) return;
-    const timer = setTimeout(() => setShownAt(0), ms);
-    return () => clearTimeout(timer);
-  }, [shownAt, ms]);
-  const show = useCallback(() => setShownAt((n) => n + 1), []);
-  return [shownAt > 0, show];
-}
-
-/**
  * Whether a form holds edits its last successful save did not cover. Call `edit()` from the form's
  * change handler and `submit()` from its submit; pass the save's answer as `saved` when it
  * succeeded (a new object each save), and an edit typed while that save was in flight stays dirty.

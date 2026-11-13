@@ -15,7 +15,7 @@ replaces:
 
 # State hooks
 
-`capsomer/react/state-hooks`, and `newId`, `versionedStore`, `readStoredText`, `writeStoredText`, `parseVersioned`, `selectionOf` and `sinceOf` without React from `capsomer/behavior/state-hooks`. No router and no DOM: a React Native app's shared client uses `newId`. `useScrollToHash`, `useParamChoice` and `createSnippetHook` read the address or loader data and are `capsomer/react/route-hooks`. A media query and the browser's time zone are `useMedia` and `useBrowserZone` in `capsomer/react/hooks`.
+`capsomer/react/state-hooks`, and `newId`, `versionedStore`, `parseVersioned`, `selectionOf` and `sinceOf` without React from `capsomer/behavior/state-hooks`. No router and no DOM: a React Native app's shared client uses `newId`. `useScrollToHash`, `useParamChoice` and `createSnippetHook` read the address or loader data and are `capsomer/react/route-hooks`. A media query and the browser's time zone are `useMedia` and `useBrowserZone` in `capsomer/react/hooks`.
 
 | Export | Gives |
 | --- | --- |

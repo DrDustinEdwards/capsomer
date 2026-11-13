@@ -1,7 +1,7 @@
 ---
 name: form-hooks
 title: Form and async hooks
-summary: The React hooks behind forms that save, results that clear themselves and previews - useSaveQueue, useTransient, useAutoDismiss, useDraftDirty, useDebounced, useDebouncedPreview. No router and no DOM.
+summary: The React hooks behind forms that save and previews - useSaveQueue, useDraftDirty, useDebounced, useDebouncedPreview. No router and no DOM.
 parts: [behavior, react]
 tool: own JavaScript
 states: []
@@ -12,25 +12,21 @@ replaces:
   - 'export function createSaveQueue\b'
   - 'export function (draftAfter|draftDirty|pagePending)\b'
   - 'function (useUndoPost|useEntryPreview|useShownTestResult)\b'
-  - 'setTimeout\(\(\) => set(Term|Dismissed\w*|Cleared\w*|SavedClearedFor)\('
 ---
 
 # Form and async hooks
 
-`capsomer/react/form-hooks`, and `createSaveQueue`, `draftAfter`, `draftDirty`, `filterParams`, `withParam` and `pagePending` without React from `capsomer/behavior/form-hooks`. Nothing here needs a router or the DOM, so a React Native app's shared client uses it too. The hooks that read the address or a fetcher (`useFetcherPromise`, `useUrlDialog`, `useUrlFilters`, `usePagePending`) are `capsomer/react/route-hooks`.
+`capsomer/react/form-hooks`, and `createSaveQueue`, `draftAfter`, `draftDirty`, `filterParams`, `withParam` and `pagePending` without React from `capsomer/behavior/form-hooks`. A result that clears itself ("Saved.", "Copied") is `useShownFor` in `capsomer/react/hooks`. Nothing here needs a router or the DOM, so a React Native app's shared client uses it too. The hooks that read the address or a fetcher (`useFetcherPromise`, `useUrlDialog`, `useUrlFilters`, `usePagePending`) are `capsomer/react/route-hooks`.
 
 | Export | Gives |
 | --- | --- |
 | `useSaveQueue(submit, saving)` | `change()`: saves now, or once the save in flight settles, so two saves never land out of order and the last value wins |
-| `useTransient(value, ms, clears?)` | `[shown, dismiss]`: the value until `ms` after it arrived (by identity); a value `clears` refuses (a failure) stays until dismissed |
-| `useAutoDismiss(ms)` | `[on, show]`: a flag that turns itself off; `show()` again restarts the wait ("Copied") |
 | `useDraftDirty(saved)` | `{ dirty, edit, submit }`: edits since the last successful save; one typed while that save was in flight stays dirty |
 | `useDebounced(value, ms)` | the value once it held still for `ms` |
 | `useDebouncedPreview(request, read, delay?)` | `{ result, error, busy }`: `read` a beat (900 ms) after `request` stops changing; an overtaken request is aborted |
 
 ## The default and its reason
 
-- **A failure does not vanish on a timer.** `useTransient`'s `clears` keeps a failed result until the person dismisses it or acts again (WCAG 2.2.1 Timing Adjustable). A success line goes after its few seconds.
 - **Controls stay enabled during a save.** Disabling the control that has focus throws focus to the page body; the queue holds a mid-save change instead.
 - **The newest request wins.** A preview or a search that was overtaken is aborted, and `busy` is derived from which request settled, never set by hand.
 
@@ -41,4 +37,4 @@ replaces:
 
 ## Accessibility
 
-Each hook keeps the part it serves accessible: results stay until dismissed when they report a failure, and focus is never dropped by disabling a focused control. Screen reader: no manual run, by decision; automated checks and a front-end review stand in.
+Each hook keeps the part it serves accessible: focus is never dropped by disabling a focused control. Screen reader: no manual run, by decision; automated checks and a front-end review stand in.

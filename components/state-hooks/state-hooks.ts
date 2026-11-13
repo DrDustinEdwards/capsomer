@@ -1,5 +1,8 @@
 // The plain parts of the state hooks (state-hooks.react.tsx): ids, a versioned record kept in this
-// browser, and the selection's sums. No framework.
+// browser, and the selection's sums. No framework. Stored strings go through the hooks component's
+// readStored and writeStored, which fall back to memory where storage is refused.
+
+import { readStored, writeStored } from "../hooks/hooks.ts";
 
 /** An id a server accepts as the client's own (a UUID where the platform has one). */
 export function newId(): string {
@@ -8,38 +11,19 @@ export function newId(): string {
   return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 12)}`;
 }
 
-/** A string from localStorage, or null when none is kept or storage is refused. */
-export function readStoredText(key: string): string | null {
-  try {
-    return globalThis.localStorage?.getItem(key) ?? null;
-  } catch {
-    return null;
-  }
-}
-
-/** Keeps a string in localStorage; false when storage refused it. */
-export function writeStoredText(key: string, value: string): boolean {
-  try {
-    globalThis.localStorage?.setItem(key, value);
-    return true;
-  } catch {
-    return false;
-  }
-}
-
 /** A record kept in localStorage under one key, with its format version inside it. */
 export interface VersionedStore<T> {
   /** The record, or null when none is kept, it is another version, it does not parse, or storage is refused. */
   read(): T | null;
-  /** Keeps the record; false when storage refused it (a private window, full or blocked storage). */
-  write(value: T): boolean;
+  /** Keeps the record (in memory for this page when storage is refused). */
+  write(value: T): void;
   clear(): void;
 }
 
 /**
  * A versioned record in this browser: stored as JSON with `v` beside its own fields, so a record
  * written by an older format is dropped instead of misread. `parse` checks the fields and answers
- * the record or null. Every storage call is in try/catch: storage can be refused.
+ * the record or null. Storage can be refused; the record is then kept for this page only.
  */
 export function versionedStore<T extends object>({
   key,
@@ -52,17 +36,13 @@ export function versionedStore<T extends object>({
 }): VersionedStore<T> {
   return {
     read() {
-      return parseVersioned(readStoredText(key), v, parse);
+      return parseVersioned(readStored(key), v, parse);
     },
     write(value) {
-      return writeStoredText(key, JSON.stringify({ ...value, v }));
+      writeStored(key, JSON.stringify({ ...value, v }));
     },
     clear() {
-      try {
-        globalThis.localStorage?.removeItem(key);
-      } catch {
-        // Nothing kept to clear.
-      }
+      writeStored(key, null);
     },
   };
 }
