@@ -339,8 +339,9 @@
 /* Layout: a stack (a column with a gap), a cluster (a wrapping row of items), a spread (two ends
    pushed apart) and a grid (equal columns, as many as fit, at most data-cols). The gap is a space
    token step, data-gap="1".."9" (--space-1 2px to --space-9 64px). Each sets its own --layout-gap,
-   so a layout nested in another never takes its parent's gap. They replace the stack, cluster,
-   spread, row and grid classes Foxing, Carrel, txasm and julieedwards.info each wrote. The item
+   so a layout nested in another never takes its parent's gap. Panes set two panels side by side.
+   They replace the stack, cluster, spread, row and grid classes Foxing, Carrel, txasm and
+   julieedwards.info each wrote, and the Portal's .grid2 and Carrel's .app-split. The item
    helpers after them (.cap-grow, .cap-shrink, .cap-keep, .cap-full, .cap-column) replace txasm's
    and Foxing's .grow, .shrink, .span-2, .narrow and .form-page. */
 @layer cap.utilities {
@@ -386,7 +387,38 @@
       --grid-cols: 4;
     }
   }
-  :is(.cap-stack, .cap-cluster, .cap-spread, .cap-grid) {
+  /* Two panes side by side, the first the wider (3:2): a list and the tools beside it, a record
+     and its history. data-flip makes the second the wider (2:3), data-even halves the row. They
+     stack when the row is narrower than --panes-break (50rem), whatever the window: each pane's
+     floor is its share of that width, so the row wraps exactly there with no media query, and a
+     pane in a narrow shell or a drawer stacks too. Tops line up; a short pane does not stretch; a
+     third panel takes a row of its own. */
+  .cap-panes {
+    --panes-a: 3;
+    --panes-b: 2;
+    --layout-gap: var(--space-6);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: var(--layout-gap);
+    & > * {
+      flex: var(--panes-a) 1 0;
+      min-inline-size: min(100%, var(--panes-break, 50rem) * var(--panes-a) / (var(--panes-a) + var(--panes-b)));
+    }
+    & > * + * {
+      flex-grow: var(--panes-b);
+      min-inline-size: min(100%, var(--panes-break, 50rem) * var(--panes-b) / (var(--panes-a) + var(--panes-b)));
+    }
+    &[data-flip] {
+      --panes-a: 2;
+      --panes-b: 3;
+    }
+    &[data-even] {
+      --panes-a: 1;
+      --panes-b: 1;
+    }
+  }
+  :is(.cap-stack, .cap-cluster, .cap-spread, .cap-grid, .cap-panes) {
     &[data-gap="1"] {
       --layout-gap: var(--space-1);
     }
@@ -438,8 +470,21 @@
     }
   }
   /* A button or a check straight in a stack keeps its own width, as it would in a block. */
-  .cap-stack > :is(.cap-btn, .cap-check) {
+  .cap-stack:not([data-align]) > :is(.cap-btn, .cap-check) {
     align-self: flex-start;
+  }
+  /* A stack whose items all keep their own width, lined up at the start, center or end: a
+     status above its note, a column of buttons in a table's last cell. */
+  .cap-stack {
+    &[data-align="start"] {
+      align-items: flex-start;
+    }
+    &[data-align="center"] {
+      align-items: center;
+    }
+    &[data-align="end"] {
+      align-items: flex-end;
+    }
   }
   /* Pushes an item to the far end of its row. */
   .cap-push {
