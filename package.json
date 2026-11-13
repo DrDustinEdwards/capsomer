@@ -49,6 +49,8 @@
     "./utilities.css": "./css/utilities.css",
     "./layout.css": "./css/layout.css",
     "./role-grid.css": "./components/people-roles/role-grid.css",
+    "./plan-choice.css": "./components/price-card/plan-choice.css",
+    "./feature-grid.css": "./components/feature/feature-grid.css",
     "./text.css": "./css/text.css",
     "./focus.css": "./css/focus.css",
     "./print.css": "./css/print.css",

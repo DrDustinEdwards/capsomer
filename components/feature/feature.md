@@ -67,7 +67,7 @@ A product or landing page; a guide page that names what something covers.
 
 A card item takes `tag` (the head and its tag are drawn for you) and `attributes`, the site's own `data-*` attributes on the `li` (a filter's hooks).
 
-React: `FeatureBlock`, `Features`, `FeatureGrid` and `FeatureCard` from `capsomer/react/feature`. Load `feature.css` and `eyebrow.css`.
+React: `FeatureBlock`, `Features`, `FeatureGrid` and `FeatureCard` from `capsomer/react/feature`. Blocks load `feature.css` and `eyebrow.css`; cards load `feature-grid.css`, which needs nothing else from this component, so a page of blocks never carries the cards and a page of cards never carries the blocks.
 
 ## Keyboard
 
