@@ -43,7 +43,8 @@ A signed-in app that alerts its owner about a few things that cannot wait (a rol
 
 ## Accessibility
 
-- A failure is an alert; a result is a status, so it is read when it changes.
+- A failure is an alert; a result is said in a status region that is there from the start, so it is read when it appears.
+- Each Turn off names its device to a screen reader ("Turn off Chrome on Android").
 - The device list is a named list.
 - Buttons wait (disabled) while a request is in flight.
 
@@ -56,16 +57,19 @@ Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the a
 ## HTML contract
 
 ```html
-<div class="cap-push">
-  <div class="cap-push-note" role="status">Phone alerts are on for this device.</div>   <!-- data-tone="crit" and role="alert" for a failure -->
-  <div class="cap-push-actions">
+<div class="cap-web-push">
+  <div class="cap-web-push-live" role="status">   <!-- always there, so what appears in it is read -->
+    <div class="cap-web-push-note">Phone alerts are on for this device.</div>
+  </div>
+  <!-- a failure, in place of the note: <div class="cap-web-push-note" data-tone="crit" role="alert"> -->
+  <div class="cap-web-push-actions">
     <button type="button" class="cap-btn" data-variant="primary">Turn on for this device</button>
     <button type="button" class="cap-btn">Send a test alert</button>
   </div>
-  <ul class="cap-push-devices" aria-label="Devices with alerts on">
-    <li class="cap-push-device">
-      <span class="cap-push-device-name">Chrome on Android <span class="cap-push-device-detail">turned on 3 days ago</span></span>
-      <button type="button" class="cap-btn">Turn off</button>
+  <ul class="cap-web-push-devices" aria-label="Devices with alerts on">
+    <li class="cap-web-push-device">
+      <span class="cap-web-push-device-name">Chrome on Android <span class="cap-web-push-device-detail">turned on 3 days ago</span></span>
+      <button type="button" class="cap-btn">Turn off<span class="cap-sr-only"> Chrome on Android</span></button>
     </li>
   </ul>
 </div>
