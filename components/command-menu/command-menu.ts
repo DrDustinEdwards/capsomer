@@ -203,7 +203,7 @@ export const ANSWER_LABEL = "Answer this";
 // Starts an answer for the words typed, filling `region`, for the menu without React and the
 // React menu alike. A failed load gives the words the status says (the button stays, so the
 // person can try again). When `wanted()` is false once the code has loaded (the words changed or
-// the menu closed), the answer is for nothing shown: it is cancelled, the region emptied, and
+// the menu closed), the answer is for nothing shown: it is canceled, the region emptied, and
 // null returned.
 export async function startAnswer(
   answer: NonNullable<AttachOptions["answer"]>,
