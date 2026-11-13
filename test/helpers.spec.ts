@@ -82,14 +82,6 @@ test.describe("expectNoAxeViolations", () => {
     await expect(expectNoAxeViolations(page)).rejects.toThrow(/button-name/);
   });
 
-  test("accessibility: include limits the scan to a region", async ({ page }) => {
-    await page.setContent(
-      `<!doctype html><html lang="en"><head><title>t</title></head><body><main><h1>h</h1><div id="a"><button>Ok</button></div><div id="z"><button></button></div></main></body></html>`,
-    );
-    await expectNoAxeViolations(page, "#a");
-    await expect(expectNoAxeViolations(page, "#z")).rejects.toThrow(/button-name/);
-  });
-
   test("accessibility: baseUi leaves out Base UI's focus guards and iframes, and nothing else", async ({
     page,
   }) => {

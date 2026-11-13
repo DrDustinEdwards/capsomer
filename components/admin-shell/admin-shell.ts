@@ -3,7 +3,7 @@
 // with G and 1 to 9. The header above it (its panels, the account menu and the phone's sheet) is
 // the site header's own behavior, which enhance() attaches too. No framework; the React wrapper
 // uses the same functions. The menu's links and the page are in the HTML without any of this.
-import { readStored, writeStored } from "../hooks/hooks.ts";
+import { readStored, reducedMotion, writeStored } from "../hooks/hooks.ts";
 import { DEFAULT_PREF } from "../shell/shell.ts";
 import { singleKeysOff } from "../shortcuts/shortcuts.ts";
 import { enhance as enhanceHeader } from "../site-header/site-header.ts";
@@ -31,7 +31,7 @@ export function pageTransitionsOn(
 ): boolean {
   if (!shell || shell.dataset.transition !== "page") return false;
   if (typeof (document as unknown as Transitioner).startViewTransition !== "function") return false;
-  return !window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+  return !reducedMotion();
 }
 
 export async function startPageTransition(

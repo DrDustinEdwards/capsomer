@@ -3,7 +3,6 @@
 // test/writing.test.ts with the code.
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { dayKey } from "@dustinedwards/site-runtime/time";
 import {
   dayTotals,
   goalFromForm,

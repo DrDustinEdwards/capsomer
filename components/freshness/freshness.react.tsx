@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { Glyph } from "../status/status.react.tsx";
 import { RING_R, ringDash } from "./freshness.ts";
 
 export interface FreshnessProps {
@@ -8,8 +9,10 @@ export interface FreshnessProps {
   more?: ReactNode;
   // The share (0 to 1) of the interval left until the next read; leave out for no ring.
   share?: number;
-  // The data is older than it should be: the line turns to warning.
+  // The data is older than it should be: the line turns to warning, led by the warning glyph and
+  // `staleLabel` ("Stale"), so the state is never color alone.
   stale?: boolean;
+  staleLabel?: ReactNode;
   // The full times, for the title (hover) text.
   title?: string;
   // While there is nothing to show yet ("Reading the feed..."): a polite status line instead.
@@ -17,7 +20,15 @@ export interface FreshnessProps {
 }
 
 // The HTML contract in freshness.md.
-export function Freshness({ updated, more, share, stale, title, pending }: FreshnessProps) {
+export function Freshness({
+  updated,
+  more,
+  share,
+  stale,
+  staleLabel = "Stale",
+  title,
+  pending,
+}: FreshnessProps) {
   if (pending)
     return (
       <div className="cap-fresh" role="status" aria-live="polite">
@@ -27,6 +38,12 @@ export function Freshness({ updated, more, share, stale, title, pending }: Fresh
   return (
     <div className="cap-fresh" data-stale={stale ? "" : undefined} title={title}>
       {share === undefined ? null : <FreshRing share={share} />}
+      {stale ? (
+        <span className="cap-fresh-stale">
+          <Glyph name="warn" />
+          {staleLabel}
+        </span>
+      ) : null}
       <span className="cap-fresh-text">
         Updated <b>{updated}</b>
       </span>

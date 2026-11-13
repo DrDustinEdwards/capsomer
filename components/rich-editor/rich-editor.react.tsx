@@ -14,8 +14,7 @@
 // and works out the Markdown, and `value` only feeds the word count. This file imports no Yjs, so an
 // editor outside a room does not carry it.
 
-import { plural } from "../hooks/hooks.ts";
-import { readingMinutes, wordCount } from "@drdustinedwards/site-helpers/text";
+import { plural, readingMinutes, wordCount } from "@drdustinedwards/site-helpers/text";
 import { Editor, type AnyExtension, type JSONContent } from "@tiptap/core";
 import { Placeholder } from "@tiptap/extensions";
 import { DOMParser as SchemaParser } from "@tiptap/pm/model";
@@ -765,7 +764,7 @@ export function RichEditor(props: RichEditorProps) {
               readOnly={Boolean(upload.sending)}
               onChange={(e) => setAlt(e.target.value)}
               onKeyDown={(e) => {
-                // legacy-scan:keep isImeEnter (shortcuts.ts) checks isComposing and keyCode 229; the scanner cannot follow it.
+                // legacy-scan:keep ime-safe-enter-submit isImeEnter (shortcuts.ts) checks isComposing and keyCode 229; the scanner cannot follow it.
                 if (e.key === "Enter" && !isImeEnter(e.nativeEvent)) {
                   e.preventDefault();
                   void insertImage(false);

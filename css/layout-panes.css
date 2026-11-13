@@ -1,0 +1,36 @@
+/* The panes, a part of layout.css: two panels side by side. */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+@layer cap.utilities {
+  /* Two panes side by side, the first the wider (3:2): a list and the tools beside it, a record
+     and its history. data-flip makes the second the wider (2:3), data-even halves the row. They
+     stack when the row is narrower than --panes-break (50rem), whatever the window: each pane's
+     floor is its share of that width, so the row wraps exactly there with no media query, and a
+     pane in a narrow shell or a drawer stacks too. Tops line up; a short pane does not stretch; a
+     third panel takes a row of its own. */
+  .cap-panes {
+    --panes-a: 3;
+    --panes-b: 2;
+    --layout-gap: var(--space-6);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: var(--layout-gap);
+    & > * {
+      flex: var(--panes-a) 1 0;
+      min-inline-size: min(100%, var(--panes-break, 50rem) * var(--panes-a) / (var(--panes-a) + var(--panes-b)));
+    }
+    & > * + * {
+      flex-grow: var(--panes-b);
+      min-inline-size: min(100%, var(--panes-break, 50rem) * var(--panes-b) / (var(--panes-a) + var(--panes-b)));
+    }
+    &[data-flip] {
+      --panes-a: 2;
+      --panes-b: 3;
+    }
+    &[data-even] {
+      --panes-a: 1;
+      --panes-b: 1;
+    }
+  }
+}

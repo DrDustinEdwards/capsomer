@@ -23,7 +23,7 @@ function Part({ part, adId }: { part: AdPart; adId: string }) {
       >
         {lines.map((line, i) => (
           <tspan
-            key={line}
+            key={i}
             x={(part.x ?? 0) + dx}
             dy={i === 0 ? 0 : (part.leading ?? (part.size ?? 20) * 1.2)}
           >

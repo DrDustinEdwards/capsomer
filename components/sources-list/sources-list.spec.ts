@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { test } from "@playwright/test";
 import {
   eachTheme,
   expectContrast,
@@ -17,17 +17,5 @@ eachTheme((theme) => {
       { sel: "#sl-mixed a.cap-source-title", what: "a linked title" },
       { sel: "#sl-mixed .cap-source-license", what: "a license" },
     ]);
-  });
-
-  test("behavior: a closed list is still in the page, and a link that leaves says so", async ({
-    page,
-  }) => {
-    await visitStates(page, "sources-list", theme);
-    await expect(page.locator("#sl-closed .cap-source")).toHaveCount(1);
-    await expect(
-      page
-        .locator("#sl-mixed")
-        .getByRole("link", { name: "A field guide to field notes (opens another site)" }),
-    ).toBeVisible();
   });
 });

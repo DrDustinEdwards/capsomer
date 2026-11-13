@@ -1,6 +1,6 @@
 // Draft compare's renderer: renderCompare returns the HTML string for every view (draft-compare.ts).
 
-import { plural } from "../hooks/hooks.ts";
+import { plural } from "@drdustinedwards/site-helpers/text";
 import { exact, parse } from "../time/time.ts";
 import {
   type Analysis,
@@ -152,7 +152,7 @@ function hiddenFlags(entries: Entry[], context: number): boolean[] {
   return hidden;
 }
 
-const gapWord = (n: number) => plural(n, "unchanged sentence", "unchanged sentences");
+const gapWord = (n: number) => plural(n, "unchanged sentence");
 
 interface Ctx {
   id: string;
@@ -164,7 +164,7 @@ interface Ctx {
 
 function changeLabel(ctx: Ctx, n: number): string {
   const c = ctx.an.perChange[n - 1] as { added: number; removed: number };
-  return `<span class="cap-compare-change-label">Change ${n} of ${ctx.total}</span><span class="cap-sr-only">, ${plural(c.added, "word", "words")} added, ${c.removed} removed.</span>`;
+  return `<span class="cap-compare-change-label">Change ${n} of ${ctx.total}</span><span class="cap-sr-only">, ${plural(c.added, "word")} added, ${c.removed} removed.</span>`;
 }
 
 // What marks a change's first element, in the one view that carries ids.

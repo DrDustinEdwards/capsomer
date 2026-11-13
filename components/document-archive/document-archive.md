@@ -1,7 +1,8 @@
 ---
 name: document-archive
 title: Document archive
-summary: Past documents by category as lists of links, and a document's page with its download, the app's viewer and Previous and Next in its category.
+summary: Past documents by category as lists of links, and a document page with download and viewer.
+group: pattern
 parts: [css, behavior, react]
 tool: native
 states: [every category with one cut short and one empty, one category's list, a document's page with Previous and Next, the first in its category, the last in its category, phone width]
@@ -16,48 +17,7 @@ replaces:
 
 # Document archive
 
-An archive of past documents, the newsletters, programs and abstract books of earlier meetings: each category a list whose rows link to a document's page, and the page itself, with the document's title and subtitle, its download, the app's viewer and Previous and Next within its category.
-
-**Provenance.** EXTRACTED and REWROTE, from txasm. Extracted: `adjacentSlugs` (as `adjacent`, which returns the neighbors themselves so the pager can name them), the category list (txasm's `card-list` of title links with a "Fall 1991 · Editor" line), the page's order (breadcrumb, title, subtitle, a primary Download button, the viewer, then a `nav` named "More in Programs" with `rel="prev"` and `rel="next"` links). Rewritten: the list is row-list's (`.cap-rows`), so each row is one link with the subtitle as its description; Previous and Next say the neighbor's title as well as the direction, and an end is left out instead of a hidden empty `span`; the download says its format and size; `groupByCategory` is added for a page that shows every category. The PDF viewer (txasm's PDF.js island, `components/pdf-viewer.tsx`) stays the app's and goes in as `children`: Capsomer has no PDF viewer yet.
-
-## When to use it
-
-Documents that come one per meeting, season or year and are read as a set: newsletters, programs, abstract books, annual reports.
-
-## When not to
-
-- **Posts in a blog**: the posts list, and the reading page's own next link (`data-link="next"`).
-- **Files a person manages** (upload, rename, delete): the media library.
-- **Search results**: a list with pagination.
-
-## The default and its reason
-
-- **A category is a named list of links**, a row list with the document's title as the link and the season, year and editor as the line under it. A screen reader user hears the list's name and size and moves link to link; the line is the link's description.
-- **Previous and Next name the neighbor.** "Previous: Annual report 2026", so a person knows where it goes; the word is above the title, muted, with a drawn chevron a reader does not hear.
-- **An end is left out, and Next keeps the right.** The first document has only Next, at the right edge, where it always is. txasm drew an empty `aria-hidden` span to hold the place; a flex margin does it.
-- **The order is the app's.** `adjacent` takes the category's list as the app sorts it (newest first, by year then season), so the list and the pager agree.
-- **A document outside the list has no neighbors.** `adjacent` returns none when the key is not in the list, never a neighbor from elsewhere.
-- **The download is a primary button with the format and size beside it**, since reading it offline is the page's main action.
-- **The page is an `article`**, the title its `h1` by default (`level`), the breadcrumb before it (`before`).
-
-## Keyboard
-
-| Key | Does |
-| --- | --- |
-| Tab, Shift+Tab | Moves through the rows' links, or on a page through the download, the viewer's controls, Previous and Next |
-| Enter | Follows the focused link |
-| `j`, `k` | Move between the rows of a category's list (row-list) |
-
-## Accessibility
-
-- Each category's list is named by its heading (`aria-labelledby`); a lone list takes `label`.
-- The pager is a `nav` named "More in <category>"; its links carry `rel="prev"` and `rel="next"`.
-- Contrast: the subtitle, the empty line, the size and the direction words in `--muted` (4.5:1), the titles in `--accent-text`, the pager links' edge `--line` beside their text.
-- Forced colors: the pager links keep a `LinkText` edge.
-
-Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the automated browser checks and a front-end review stand in. Automated: see the site's Tests page.
-
-## Markup
+## Usage
 
 ```html
 <div class="cap-archive">
@@ -91,12 +51,6 @@ Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the a
 </article>
 ```
 
-Load `capsomer/document-archive.css` with `capsomer/row-list.css`, `capsomer/button.css` and, for the download's format and size (`.cap-link-meta`), `capsomer/link-file.css` (or the whole `capsomer/link.css`, which imports it).
-
-The helpers, with no DOM: `import { adjacent, groupByCategory } from "capsomer/behavior/document-archive"`. `adjacent(list, slug, (d) => d.slug)` gives `{ prev, next }`; `groupByCategory(docs, (d) => d.category, ["newsletter", "program", "abstract_book"])` gives the categories in that order, empty ones kept.
-
-In React, `import { DocumentArchive, DocumentList, DocumentViewer, DocumentPager } from "capsomer/react/document-archive"`:
-
 ```tsx
 <DocumentList docs={docs.map((d) => ({ key: d.slug, title: d.title, href: `${basePath}/${d.slug}`, detail: documentSubtitle(d) }))}
   label="Programs" empty="Documents are being added and will be listed here." renderLink={renderLink} />
@@ -110,8 +64,15 @@ In React, `import { DocumentArchive, DocumentList, DocumentViewer, DocumentPager
 </DocumentViewer>
 ```
 
-`DocumentArchive` takes `groups` (`id`, `title`, `docs`, and `href` and `more` for a category cut short) and `level`. `renderLink` draws every link with the app's router link; it gets `href`, `className`, `rel`, `aria-describedby` and `children`.
+## Accessibility
 
-## Exceptions in production
+| Key | Does |
+| --- | --- |
+| Tab, Shift+Tab | Moves through the rows' links, or on a page through the download, the viewer's controls, Previous and Next |
+| Enter | Follows the focused link |
+| `j`, `k` | Move between the rows of a category's list (row-list) |
 
-None yet.
+- Each category's list is named by its heading (`aria-labelledby`); a lone list takes `label`.
+- The pager is a `nav` named "More in <category>"; its links carry `rel="prev"` and `rel="next"`.
+- Contrast: the subtitle, the empty line, the size and the direction words in `--muted` (4.5:1), the titles in `--accent-text`, the pager links' edge `--line` beside their text.
+- Forced colors: the pager links keep a `LinkText` edge.

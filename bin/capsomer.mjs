@@ -4,10 +4,13 @@
 // checks the app's CSS against the tokens.
 //
 //   capsomer report [--out capsomer-report.json] [--a11y <playwright json>] [--app <name>]
-//   capsomer token-check [paths...] [--fix] warns, always exits 0 (rulings.md, rule 1); --fix writes the exact tokens
+//   capsomer token-check [paths...] [--fix] warns on raw values (rulings.md, rule 1); --fix writes the exact tokens.
+//                                          Exits 1 on a declaration the browser drops (invalidValues), a bug, not a warning
 //   capsomer size [--dist <dir>]           reports and warns, always exits 0 (decision 12)
 //   capsomer states                        writes components/<name>/states.html from examples.html (capsomer repo only)
 //   capsomer site-data                     the site's data files (capsomer repo only)
+//   capsomer docs                          fails a component doc file that leaves the docs site's pattern (bin/docs.mjs; capsomer repo only)
+//   capsomer parts [--out file]            writes parts.json: every component's parts, variants, states and CSS variables (bin/parts.mjs)
 //   capsomer fallback-font <file.woff2> [--family name] [--local Arial|"Courier New"|"Times New Roman"|Georgia] [--weight 700=<file.woff2> ...]
 //                                          measures a font file (needs @capsizecss/unpack) and prints its fallback's @font-face;
 //                                          each --weight adds the face's file at that weight, for the bold fallback rules
@@ -19,7 +22,8 @@ import { stripVTControlCharacters } from "node:util";
 import { gzipSync } from "node:zlib";
 import { frontmatter } from "@drdustinedwards/site-helpers/frontmatter";
 import { walkFiles } from "@dustinedwards/devkit/node";
-import { fixCss, rawValues, tokenScale } from "../tokens/token-check.mjs";
+import { fixCss, invalidValues, rawValues, tokenScale } from "../tokens/token-check.mjs";
+import { inlineCss } from "./build.mjs";
 
 const PKG = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const args = process.argv.slice(2);
@@ -66,7 +70,7 @@ function components(root) {
       const css = join(dir, d.name, `${d.name}.css`);
       // The component's root class is the first cap- class its CSS styles.
       const rootClass = existsSync(css)
-        ? (readFileSync(css, "utf8").match(/\.(cap-[\w-]+)/)?.[1] ?? null)
+        ? (inlineCss(css).match(/\.(cap-[\w-]+)/)?.[1] ?? null)
         : null;
       return {
         name: d.name,
@@ -118,7 +122,13 @@ export function tokenCheck(root, paths, { fix = false } = {}) {
       ...it,
     })),
   );
-  return { count: items.length, items };
+  const invalid = files.flatMap((file) =>
+    invalidValues(readFileSync(file, "utf8")).map((it) => ({
+      file: relative(root, file).replace(/\\/g, "/"),
+      ...it,
+    })),
+  );
+  return { count: items.length, items, invalid };
 }
 
 // ---- report --------------------------------------------------------------------------------
@@ -289,7 +299,7 @@ async function size() {
     for (const c of components(PKG)) {
       const f = join(c.dir, `${c.name}.css`);
       if (!existsSync(f)) continue;
-      const n = gz(readFileSync(f));
+      const n = gz(inlineCss(f));
       all += n;
       rows.push(["css", c.name, n]);
     }
@@ -346,7 +356,7 @@ function writeComponentSizes() {
     const src = join(c.dir, `${c.name}.ts`);
     const js = existsSync(built) ? built : existsSync(src) ? src : null;
     const entry = {
-      css: existsSync(css) ? gz(readFileSync(css)) : 0,
+      css: existsSync(css) ? gz(inlineCss(css)) : 0,
       js: js ? gz(readFileSync(js)) : 0,
       jsFrom: js ? (js === built ? "dist" : "source") : null,
     };
@@ -401,11 +411,7 @@ async function siteData() {
   const dataDir = join(PKG, "site", "data");
   mkdirSync(dataDir, { recursive: true });
   const pal = await import(pathToFileURL(join(PKG, "tokens", "palette.mjs")).href);
-  // The committed colors (the purple family), and every family's pairs for the contrast report.
-  writeFileSync(
-    join(dataDir, "palette.json"),
-    JSON.stringify(pal.themes(pal.FAMILIES.purple), null, 2),
-  );
+  // Every family's seed and its 12 steps in light and dark, for the Colors page (site/content.ts).
   const scales = Object.fromEntries(
     Object.entries(pal.FAMILIES).map(([n, f]) => [
       n,
@@ -414,27 +420,13 @@ async function siteData() {
   );
   writeFileSync(
     join(dataDir, "families.json"),
-    JSON.stringify({ families: pal.FAMILIES, pairs: pal.report(), scales }, null, 2),
+    JSON.stringify({ families: pal.FAMILIES, scales }, null, 2),
   );
-  const pj = JSON.parse(readFileSync(join(PKG, "package.json"), "utf8"));
   const runUrl = process.env.GITHUB_RUN_ID
     ? `${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}`
     : null;
-  writeFileSync(
-    join(dataDir, "meta.json"),
-    JSON.stringify(
-      {
-        version: pj.version,
-        commit: git(["rev-parse", "--short", "HEAD"], PKG),
-        branch: git(["branch", "--show-current"], PKG),
-        built: new Date().toISOString(),
-        runUrl,
-      },
-      null,
-      2,
-    ),
-  );
 
+  // The test run, summarized per component, for --results-out (ci.yml keeps it with the run and on the results branch).
   const src = join(PKG, "test-results", "results.json");
   const results = {
     available: false,
@@ -494,7 +486,6 @@ async function siteData() {
     };
     for (const s of r.suites ?? []) visit(s, s.file, null, null);
   }
-  writeFileSync(join(dataDir, "results.json"), JSON.stringify(results, null, 2));
   const resultsOut = flag("results-out");
   if (resultsOut)
     writeFileSync(
@@ -506,7 +497,7 @@ async function siteData() {
       ),
     );
   console.log(
-    `site-data: wrote site/data (palette, meta, results${results.available ? `: ${results.totals.passed} passed, ${results.totals.failed} failed` : ": no test run found"})`,
+    `site-data: wrote site/data/families.json (test results${results.available ? `: ${results.totals.passed} passed, ${results.totals.failed} failed` : ": no test run found"})`,
   );
 }
 
@@ -743,6 +734,11 @@ if (cmd === "report") {
       ? `token-check: ${r.count} warning(s). Warnings never fail a build; adding a token is the normal fix.`
       : "token-check: no raw design values found",
   );
+  for (const it of r.invalid)
+    console.error(
+      `${it.file}:${it.line}: ${it.property}: ${it.keyword} is only valid as the whole value, so the browser drops this declaration. Split the shorthand into longhands.`,
+    );
+  if (r.invalid.length) process.exitCode = 1;
 } else if (cmd === "size") {
   await size();
 } else if (cmd === "weight") {
@@ -782,6 +778,23 @@ if (cmd === "report") {
   console.log(
     `states: wrote ${written.size} states pages (components/<name>/states.html, generated, gitignored)`,
   );
+} else if (cmd === "parts") {
+  const { partsOf } = await import("./parts.mjs");
+  const out = flag("out", "parts.json");
+  const parts = partsOf(PKG);
+  mkdirSync(dirname(resolve(out)), { recursive: true });
+  writeFileSync(out, JSON.stringify(parts, null, 2) + "\n");
+  console.log(`parts: wrote ${out} (${Object.keys(parts).length} components)`);
+} else if (cmd === "docs") {
+  const { checkDocs } = await import("./docs.mjs");
+  const problems = checkDocs(PKG);
+  for (const p of problems) console.error(p);
+  console.log(
+    problems.length
+      ? `docs: ${problems.length} problem(s). A doc file keeps # Title, ## Usage (code) and ## Accessibility only (components/README.md).`
+      : "docs: every component doc file keeps the pattern",
+  );
+  if (problems.length) process.exit(1);
 } else if (cmd === "site-data") {
   await siteData();
 } else if (cmd === "fallback-font") {

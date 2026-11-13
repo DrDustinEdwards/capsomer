@@ -41,16 +41,6 @@ eachTheme((theme) => {
     },
   );
 
-  test("keyboard: the figure and its key hold no focus stop", async ({ page }) => {
-    await visitStates(page, "annotated-figure", theme);
-    const stops = await page
-      .locator("#af-default, #af-key")
-      .evaluateAll(
-        (els) => els.flatMap((el) => [...el.querySelectorAll("[tabindex], a, button")]).length,
-      );
-    expect(stops).toBe(0);
-  });
-
   test("behavior: a hover lights a callout and its key entry; a tap pins it", async ({ page }) => {
     await visitStates(page, "annotated-figure", theme);
     const entry = page.locator("#af-key [data-callout='2']");

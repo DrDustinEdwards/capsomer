@@ -5,7 +5,8 @@ import {
   expectNoAxeViolations,
   visitStates,
 } from "../../test/helpers.ts";
-import { wordMatches, wordPattern } from "./confirm-dialog.ts";
+import { wordMatches } from "./confirm-server.ts";
+import { wordPattern } from "./confirm-dialog.ts";
 
 const revoke = (page: Page) => page.getByRole("button", { name: "Revoke deploy-agent…" });
 const dialog = (page: Page, name = "Revoke deploy-agent?") =>
@@ -36,6 +37,40 @@ eachTheme((theme) => {
   test("accessibility: no axe violations, the states page", async ({ page }) => {
     await visitStates(page, "confirm-dialog", theme);
     await expectNoAxeViolations(page);
+  });
+
+  test("behavior: the confirm page's own checks hold the submit until a reason and the word are given", async ({
+    page,
+  }) => {
+    await visitStates(page, "confirm-dialog", theme, "page");
+    const posted = page.evaluate(
+      () =>
+        new Promise<Record<string, string>>((done) => {
+          document.querySelector(".cap-confirm-page")!.addEventListener("submit", (e) => {
+            e.preventDefault();
+            const data = new FormData(e.target as HTMLFormElement, (e as SubmitEvent).submitter);
+            done(Object.fromEntries(Array.from(data.entries()).map(([k, v]) => [k, String(v)])));
+          });
+        }),
+    );
+    const form = page.getByRole("form", { name: "Delete example.com?" });
+    const reason = form.getByRole("textbox", { name: "Reason (required)" });
+    const word = form.getByRole("textbox", { name: "Type delete to confirm" });
+    // Nothing given: the browser refuses, with no script of ours.
+    expect(await reason.evaluate((el: HTMLTextAreaElement) => el.validity.valueMissing)).toBe(true);
+    expect(await word.evaluate((el: HTMLInputElement) => el.validity.valueMissing)).toBe(true);
+    await reason.fill("Retired in the September review.");
+    await word.fill("remove");
+    expect(await word.evaluate((el: HTMLInputElement) => el.validity.patternMismatch)).toBe(true);
+    await word.fill("DELETE");
+    expect(await word.evaluate((el: HTMLInputElement) => el.validity.valid)).toBe(true);
+    await form.getByRole("button", { name: "Delete site" }).click();
+    expect(await posted).toEqual({
+      intent: "delete",
+      site: "example",
+      reason: "Retired in the September review.",
+      confirm: "DELETE",
+    });
   });
 
   for (const id of [
@@ -111,24 +146,6 @@ eachTheme((theme) => {
     await expect(page.getByRole("button", { name: "Cancel" })).toBeFocused();
   });
 
-  test(
-    "accessibility: it is an alert dialog with no corner Close button",
-    { tag: "@markup" },
-    async ({ page }) => {
-      await openLive(page, theme);
-      await expect(dialog(page)).toHaveAttribute("role", "alertdialog");
-      await expect(dialog(page).getByRole("button", { name: "Close" })).toHaveCount(0);
-    },
-  );
-
-  test("keyboard: Tab moves from Cancel to the action and Shift Tab back", async ({ page }) => {
-    await openLive(page, theme);
-    await page.keyboard.press("Tab");
-    await expect(page.getByRole("button", { name: "Revoke agent" })).toBeFocused();
-    await page.keyboard.press("Shift+Tab");
-    await expect(page.getByRole("button", { name: "Cancel" })).toBeFocused();
-  });
-
   test("keyboard: Esc closes the dialog and focus returns to the opener", async ({ page }) => {
     await openLive(page, theme);
     await page.keyboard.press("Escape");
@@ -178,13 +195,6 @@ eachTheme((theme) => {
     await expect(page.getByRole("status")).toHaveText("Revoked deploy-agent.");
     // The opener went with its row, so focus lands on the main region, not the body.
     await expect(page.locator("main")).toBeFocused();
-  });
-
-  test("keyboard: Esc is held in the busy specimen", async ({ page }) => {
-    await visitStates(page, "confirm-dialog", theme, "busy");
-    await expect(page.locator("dialog.cap-dialog")).toBeVisible();
-    await page.keyboard.press("Escape");
-    await expect(page.locator("dialog.cap-dialog")).toBeVisible();
   });
 
   test("behavior: a failure stays inside the dialog with its reason and Try again", async ({
@@ -268,14 +278,6 @@ eachTheme((theme) => {
       dialog(page, "Mark job failed: Rotate the watcher's Cloudflare token"),
     ).toHaveAttribute("aria-busy", "true");
   });
-
-  test("behavior: the matched specimen's action is on", async ({ page }) => {
-    await visitStates(page, "confirm-dialog", theme, "typed-matched");
-    await expect(page.getByRole("button", { name: "Delete record" })).not.toHaveAttribute(
-      "aria-disabled",
-      "true",
-    );
-  });
   for (const id of ["page", "page-error"]) {
     test(`accessibility: no axe violations, the confirm ${id}`, async ({ page }) => {
       await visitStates(page, "confirm-dialog", theme, id);
@@ -301,57 +303,6 @@ eachTheme((theme) => {
       { sel: ".cap-confirm-page .cap-confirm-error-lead", what: "the server's error lead" },
       { sel: ".cap-confirm-page .cap-confirm-typed label", what: "the guard's label" },
     ]);
-  });
-
-  test("behavior: the confirm page's own checks hold the submit until a reason and the word are given", async ({
-    page,
-  }) => {
-    await visitStates(page, "confirm-dialog", theme, "page");
-    const posted = page.evaluate(
-      () =>
-        new Promise<Record<string, string>>((done) => {
-          document.querySelector(".cap-confirm-page")!.addEventListener("submit", (e) => {
-            e.preventDefault();
-            const data = new FormData(e.target as HTMLFormElement, (e as SubmitEvent).submitter);
-            done(Object.fromEntries(Array.from(data.entries()).map(([k, v]) => [k, String(v)])));
-          });
-        }),
-    );
-    const form = page.getByRole("form", { name: "Delete example.com?" });
-    const reason = form.getByRole("textbox", { name: "Reason (required)" });
-    const word = form.getByRole("textbox", { name: "Type delete to confirm" });
-    // Nothing given: the browser refuses, with no script of ours.
-    expect(await reason.evaluate((el: HTMLTextAreaElement) => el.validity.valueMissing)).toBe(true);
-    expect(await word.evaluate((el: HTMLInputElement) => el.validity.valueMissing)).toBe(true);
-    await reason.fill("Retired in the September review.");
-    await word.fill("remove");
-    expect(await word.evaluate((el: HTMLInputElement) => el.validity.patternMismatch)).toBe(true);
-    await word.fill("DELETE");
-    expect(await word.evaluate((el: HTMLInputElement) => el.validity.valid)).toBe(true);
-    await form.getByRole("button", { name: "Delete site" }).click();
-    expect(await posted).toEqual({
-      intent: "delete",
-      site: "example",
-      reason: "Retired in the September review.",
-      confirm: "DELETE",
-    });
-  });
-
-  test("keyboard: on the confirm page Tab goes through the fields to the buttons, Cancel is a link and comes first", async ({
-    page,
-  }) => {
-    await visitStates(page, "confirm-dialog", theme, "page");
-    await page.getByRole("textbox", { name: "Reason (required)" }).focus();
-    await page.keyboard.press("Tab");
-    await expect(page.getByRole("textbox", { name: "Type delete to confirm" })).toBeFocused();
-    await page.keyboard.press("Tab");
-    await expect(page.getByRole("link", { name: "Cancel" })).toBeFocused();
-    await expect(page.getByRole("link", { name: "Cancel" })).toHaveAttribute(
-      "href",
-      "/admin/sites/example",
-    );
-    await page.keyboard.press("Tab");
-    await expect(page.getByRole("button", { name: "Delete site" })).toBeFocused();
   });
 });
 

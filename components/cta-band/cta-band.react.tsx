@@ -1,4 +1,5 @@
 import { useId, type ReactNode } from "react";
+import { Eyebrow } from "../eyebrow/eyebrow.react.tsx";
 
 // The closing call to action of a page (cta-band.md): a heading, one sentence and the actions, in
 // a band set apart from the page. Named by its heading, so it is a region a screen reader lists.
@@ -35,7 +36,7 @@ export function CtaBand({
       aria-labelledby={titleId}
       data-quiet={quiet ? "" : undefined}
     >
-      {eyebrow ? <p className="cap-cta-band-eyebrow">{eyebrow}</p> : null}
+      {eyebrow ? <Eyebrow tone="accent">{eyebrow}</Eyebrow> : null}
       <H id={titleId} className="cap-cta-band-title">
         {title}
       </H>

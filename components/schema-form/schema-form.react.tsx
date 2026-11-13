@@ -1,7 +1,8 @@
 import type { ComponentType, FormHTMLAttributes, ReactNode } from "react";
 import { ErrorSummary } from "../error-summary/error-summary.react.tsx";
 import { Check, DateTimeField, Field, FieldSet, MoneyField } from "../field/field.react.tsx";
-import { centsToDollars, toDateTimeLocal } from "../field/field.ts";
+import { toDateTimeLocal } from "../field/field.ts";
+import { moneyInputValue } from "@dustinedwards/site-runtime/money";
 import { specId, type FieldSpec, type SpecError } from "./schema-form.ts";
 
 // What a renderer for one kind is given.
@@ -130,7 +131,7 @@ export function FieldFromSpec({
           {...(controlled
             ? {
                 // The typed dollars while controlled, so "12." survives a keystroke.
-                value: typeof value === "number" ? centsToDollars(value) : str(value),
+                value: typeof value === "number" ? moneyInputValue(value, "usd") : str(value),
                 onChange: (e: { target: { value: string } }) =>
                   onChange(orEmpty(e.target.value, e.target.value === "")),
               }

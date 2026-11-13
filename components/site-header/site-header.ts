@@ -12,7 +12,7 @@
 import { closeDialog, openDialog, wireDialog } from "../dialog/dialog.ts";
 import { escapeHtml } from "@dustinedwards/site-runtime/html";
 import { place } from "../popover/popover.ts";
-import { isImeEnter, register } from "../shortcuts/shortcuts.ts";
+import { register } from "../shortcuts/shortcuts.ts";
 import { attach as attachTip, hideTip } from "../tooltip/tooltip.ts";
 
 // A count is a glance, not a figure: past 99 it says 99+, in the header, the sheet, the bottom bar
@@ -407,9 +407,11 @@ export type Suggest = (query: string, signal: AbortSignal) => Promise<SearchHit[
 export function wireSearchOnDemand(search: HTMLElement, suggest?: Suggest): () => void {
   let unwire: (() => void) | undefined;
   let gone = false;
-  void import("./site-header-search.ts").then((m) => {
-    if (!gone) unwire = m.wireSearch(search, suggest);
-  });
+  // A server build (Vite sets import.meta.env.SSR) leaves the chunk out: search is wired only in a browser.
+  if (!(import.meta as { env?: { SSR?: boolean } }).env?.SSR)
+    void import("./site-header-search.ts").then((m) => {
+      if (!gone) unwire = m.wireSearch(search, suggest);
+    });
   return () => {
     gone = true;
     unwire?.();

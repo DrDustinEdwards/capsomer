@@ -1,7 +1,8 @@
 ---
 name: hero
 title: Hero
-summary: A landing page's first section - eyebrow, the page's h1, a lead, the actions and a note, with an aside beside them and an optional decorative layer. Structure is shared; each site's look is its tokens.
+summary: A landing page's first section, with eyebrow, h1, lead, actions, a note and an aside.
+group: pattern
 parts: [css, react]
 tool: native
 states: [words and an aside, centered, on a card over a backdrop]
@@ -14,42 +15,7 @@ replaces:
 
 # Hero
 
-## What it is for
-
-The first screen of a landing page: what the product is and the one thing to do next.
-
-## When to use it
-
-Once, at the top of a home or product page.
-
-## When not to
-
-Any other page: the page head (`page-head`) names a page; a band of actions at the end is the call to action band.
-
-## The default and its reason
-
-- **A section named by its h1**, with the actions as button links (`ButtonLink`), the first primary.
-- **The aside moves beside the words where the section is 56rem wide** (a container query), under them before, so it works in any column.
-- **The backdrop is decoration**: `aria-hidden`, behind everything, gone in forced colors.
-- **The card** (`card`) is a raised surface with a blur over the backdrop; with `prefers-reduced-transparency` it is solid.
-- **Look comes from tokens**, not classes: `--hero-title`, `--hero-face`, `--hero-lead-face`, `--hero-lead-size`, `--hero-gap`, `--hero-card-bg`, so a site outside dustinedwards.info keeps its own design.
-
-## Options
-
-- `children` sit between the lead and the actions, in body type: further paragraphs (BioScience Writers' home), a price line (Foxhound's product pages). A lead that names the page for voice assistants can carry its own class on a span inside `lead`.
-- `id` names the section for a "back to top" link (julieedwards.info).
-
-## Keyboard
-
-| Key | Does |
-| --- | --- |
-| Tab | Through the actions |
-
-## Accessibility
-
-- Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the automated browser checks and a front-end review stand in. Automated: see the site's Tests page.
-
-## Markup
+## Usage
 
 ```html
 <section class="cap-hero" aria-labelledby="h" data-aside>
@@ -59,6 +25,10 @@ Any other page: the page head (`page-head`) names a page; a band of actions at t
 </section>
 ```
 
-## Exceptions in production
+## Accessibility
 
-None yet.
+| Key | Does |
+| --- | --- |
+| Tab | Through the actions |
+
+- Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the automated browser checks and a front-end review stand in. Automated: see the site's Tests page.

@@ -17,10 +17,10 @@ eachTheme((theme) => {
     await visitStates(page, "label-color-list", theme);
     const checks = [];
     for (let c = 1; c <= 8; c++) {
-      const sel = `.cap-color-label-list .cap-color-label[data-color="${c}"]`;
+      const sel = `.cap-color-label-list .cap-pill[data-series="${c}"]`;
       checks.push({ sel, what: `label word ${c}` });
       const dot = await page.evaluate((s) => {
-        const el = document.querySelector(`${s} .cap-color-label-dot`);
+        const el = document.querySelector(`${s} .cap-pill-dot`);
         return el ? getComputedStyle(el).backgroundColor : null;
       }, sel);
       const ground = await page.evaluate(() => getComputedStyle(document.body).backgroundColor);
@@ -45,7 +45,7 @@ eachTheme((theme) => {
       await page.getByRole("option", { name: "Orchid" }).click();
     });
     await expect(
-      form.locator(".cap-color-label-edit > li").nth(1).locator(".cap-color-label"),
-    ).toHaveAttribute("data-color", "7");
+      form.locator(".cap-color-label-edit > li").nth(1).locator(".cap-pill"),
+    ).toHaveAttribute("data-series", "7");
   });
 });

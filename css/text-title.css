@@ -1,0 +1,37 @@
+/* The titles, a part of text.css. */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+@layer cap.utilities {
+  /* A title that is not a component's: the display face at one of six sizes, 1 the largest
+     (--title-1 to --title-6, 2.25rem to 1rem), at --title-weight (the heading weight). The size is
+     the look, the element is the outline: an h2 may wear size 1. Each step has its own leading,
+     tighter as the size grows. */
+  .cap-title {
+    margin: 0;
+    font-family: var(--display);
+    font-weight: var(--title-weight);
+    font-size: var(--title-4);
+    line-height: var(--leading-snug);
+    color: var(--text);
+    &[data-size="1"] {
+      font-size: var(--title-1);
+      line-height: var(--leading-tight);
+    }
+    &[data-size="2"] {
+      font-size: var(--title-2);
+      line-height: var(--leading-tight);
+    }
+    &[data-size="3"] {
+      font-size: var(--title-3);
+      line-height: var(--leading-tight);
+    }
+    &[data-size="5"] {
+      font-size: var(--title-5);
+      line-height: var(--leading-snug);
+    }
+    &[data-size="6"] {
+      font-size: var(--title-6);
+      line-height: var(--leading-snug);
+    }
+  }
+}

@@ -1,7 +1,6 @@
 // A search's results: the matched words marked in a snippet, safely. The server never sends markup
 // for a snippet: it sends text with the matches between two private markers (SQLite FTS5's
 // snippet() takes any pair), and this splits it, so a document's own "<" can never become a tag.
-
 import { escapeHtml as esc } from "@dustinedwards/site-runtime/html";
 
 // The markers a server puts around each match. Control characters that no stored text contains.

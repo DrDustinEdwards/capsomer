@@ -339,7 +339,14 @@ export function preloadedLazy<M extends Record<string, unknown>>(importer: () =>
   let loaded: M | undefined;
   let loading: Promise<M> | undefined;
   const load = (): Promise<M> => {
-    loading ??= importer().then((m) => (loaded = m));
+    // A failed chunk fetch is forgotten, so the next render tries again instead of failing until a reload.
+    loading ??= importer().then(
+      (m) => (loaded = m),
+      (error: unknown) => {
+        loading = undefined;
+        throw error;
+      },
+    );
     return loading;
   };
   type PartName = { [K in keyof M]: M[K] extends AnyComponent ? K : never }[keyof M];

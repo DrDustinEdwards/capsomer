@@ -18,4 +18,13 @@ export interface RawValue {
 }
 export function tokenScale(json: Record<string, unknown>): TokenScale;
 export function rawValues(css: string, scale: TokenScale): RawValue[];
+export interface InvalidValue {
+  line: number;
+  property: string;
+  value: string;
+  /** The CSS-wide keyword (inherit, initial, unset, revert, revert-layer) that sits beside other values. */
+  keyword: string;
+}
+/** Declarations a browser drops: a CSS-wide keyword, written or reached through a var() fallback, beside other values. */
+export function invalidValues(css: string): InvalidValue[];
 export function fixCss(css: string, scale: TokenScale): string;

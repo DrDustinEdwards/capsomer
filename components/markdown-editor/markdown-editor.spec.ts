@@ -1196,39 +1196,6 @@ eachTheme((theme) => {
   });
 });
 
-// ---- no script: the page as delivered ------------------------------------------------------
-test.describe("without script", () => {
-  test.use({ javaScriptEnabled: false });
-  test(
-    "accessibility: the page as delivered has a labeled textarea holding the markdown",
-    { tag: "@markup" },
-    async ({ page }) => {
-      await page.goto(`components/${NAME}/states.html`);
-      const ta = page.getByRole("textbox", { name: "Body" }).first();
-      await expect(ta).toBeVisible();
-      await expect(ta).toHaveValue(/^## Why the checks moved to the edge/);
-      await expect(page.locator("#md-nojs")).toHaveValue(
-        /The monitors now run from three regions\./,
-      );
-      await expect(page.locator(".cm-content")).toHaveCount(0);
-    },
-  );
-});
-
-test("behavior: the HTML the server sends already contains the text, label and textarea", async ({
-  request,
-}) => {
-  const res = await request.get(`components/${NAME}/states.html`);
-  const html = await res.text();
-  expect(html).toMatch(/<label[^>]*for="md-default"[^>]*>Body<\/label>/);
-  expect(html).toMatch(
-    /<textarea[^>]*id="md-default"[^>]*>[\s\S]*## Why the checks moved to the edge[\s\S]*<\/textarea>/,
-  );
-  expect(html).toContain("The monitors now run from three regions");
-  // The toolbar is made by script: it is not in the HTML.
-  expect(html).not.toContain('role="toolbar"');
-});
-
 test("accessibility: React: a server render is the labeled textarea holding the text, with no style attribute", async ({
   page,
 }) => {

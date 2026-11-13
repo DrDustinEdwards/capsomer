@@ -3,6 +3,152 @@
 Each release names every removed or renamed token or class, and every changed HTML contract. A pull request adds its entry as a
 changeset (`npx changeset`, `.changeset/README.md`); the release pull request writes them here.
 
+## 0.150.0
+
+### Minor Changes
+
+- - **Removed: `plural` from `capsomer/behavior/hooks` and `pluralWord` from `capsomer/behavior/format`.** Both copied Prelum's `plural(n, one, many?, { grouped })` (`@drdustinedwards/site-helpers/text`), which every Capsomer module now imports; an app imports it from there. The not-found report's hits and probes, the markdown editor's word count and the field's character count use it (grouped where a figure can pass 999).
+  - **Media: the count reads "Showing 3 of 24 files"** (content's `countText`) when a search, filter or view hides some, where it said "3 of 24 files".
+  - **Removed: `centsToDollars` and `dollarsToCents` from `capsomer/behavior/field`.** They copied site-runtime's `moneyInputValue` and `parseMoneyInput` (`@dustinedwards/site-runtime/money`), which `MoneyField` and the schema form's `money` kind now use. The box shows two decimals ("5000.00", was "5000") and takes figures only (its `pattern` no longer allows a `$`, which the edge already shows); "12.345" rounds to the cent where it was refused.
+  - **Removed: `localValue` from `capsomer/behavior/schedule-dialog`.** It was field's `toDateTimeLocal(date, zone)`, which `ScheduleDialog` now calls with the browser's zone.
+  - **Graph: a box whose `href` has a scheme other than http(s) (`javascript:`, `data:`) is drawn without a link.** Paths and http(s) addresses are linked as before. Its escaping is site-runtime's `escapeHtml`, not a local copy.
+  - **Manual signs: one contract in both builds.** `signsHtml` signs take `label`, the words read before the title ("Next part: "), as React's `Signs` does; `Signs`' targets take `forward` (`data-variant="forward"`) and `rel` (beside prev or next), as `signsHtml` does.
+  - **Document archive: Previous and Next are the manual's signs.** `DocumentViewer` renders `Signs` (`nav.cap-signs`, load `capsomer/manual.css`) through its `renderLink`, with `prevLabel` and `nextLabel` (default "Previous", "Next") read before each title. Removed: `DocumentPager`, `DocumentPagerProps`, the `.cap-docpager*` classes and `adjacent` from `capsomer/behavior/document-archive`; series nav's `seriesPlace(list, key, keyOf)` now takes a key reader and gives `{ index, previous, next }`. `Signs` takes `renderLink` for an app without React Router.
+  - **Prelum v0.58.0 and site-runtime v0.153.0**, and the peers `>=0.58.0` and `>=0.153.0`. Frontmatter fields imports Prelum's `blocks`, `unquote`, `withoutComment` and `splitFlow` and drops its copies; the email importer reads entities and attributes with site-runtime's `unescapeHtml` and `htmlAttributes` and drops its own decoder.
+  - **Frontmatter fields: the raw text box is a `Field`** (label and help by field's contract), and its height uses hooks' `clamp`. Removed: `LIST_HINT` and `LINES_HINT` from `capsomer/react/frontmatter-fields` (import them from `capsomer/behavior/frontmatter-fields`).
+  - **Removed: `ActionResult`, `useActionResult` and their types from `capsomer/react/message`, and `actionResultView` from `capsomer/behavior/message`.** They duplicated `FormStatus` and `useActionStatus` (`capsomer/react/form-status`), which now take `focus="errors"` as well as `true` and `false`. `FormStatus` renders two paragraphs that never change role, an alert for a failure and a status for a success, the unused one empty and visually hidden (a role switched on a live node is missed by some screen readers). A blank `ok` or `error` is no status.
+  - **Removed: `COPY_ICON` and `DONE_ICON` from `capsomer/react/copy`.** The copy button draws `iconCopy` and `iconCheck` from the icon set, and the like button `iconHeart`, in place of their own drawings (the shapes change slightly).
+  - **Like button: pending keeps focus.** The button is `aria-disabled` and `aria-busy` while the write runs, not `disabled`, and ignores presses; its count is Prelum's `formatCount`, as the leaderboard's default `format` now is.
+  - **Generated file and inline confirm: the busy button is Button's `pending`** (the spinner and `aria-busy`, presses ignored, focus kept), where each hand-wrote one; Generate is no longer `disabled` during a run.
+  - **Fix: the hero's lead takes `--hero-lead-size`.** Its `font` shorthand had `var(--hero-lead-face, inherit)` in it, and an `inherit` fallback inside a shorthand makes the whole declaration invalid, so with no lead face set the lead fell back to the body size; it is now written as longhands, and shows at 1.25rem by default.
+  - **Hero and CTA band: new tokens for what sites overrode by hand**, each defaulting to today's look: `--hero-title-weight`, `--hero-title-leading`, `--hero-title-tracking`, `--hero-lead-weight`, `--hero-lead-leading`, `--hero-card-pad`, `--hero-card-radius`, `--hero-card-blur`, `--hero-card-shadow`, `--hero-card-max`; `--cta-band-align`, `--cta-band-border`, `--cta-band-pad`, `--cta-band-title-face`, `--cta-band-title-size`, `--cta-band-title-weight`, `--cta-band-title-leading`.
+  - **Removed: `.cap-hero-eyebrow` and `.cap-cta-band-eyebrow`.** The hero and the CTA band render the eyebrow component (`.cap-eyebrow[data-tone="accent"]`, load `capsomer/eyebrow.css`), as the feature block does; it is a step smaller and tracked a little wider.
+  - **Label color list: a label is the status pill with a series dot** (`<Pill series>`, `.cap-pill[data-series]`), in the list, `ColorLabelPill` and the editor's preview. Removed: `.cap-color-label`, `.cap-color-label-dot` and their `data-color` rules. New: `seriesOf(color)` in `capsomer/behavior/label-color-list`.
+  - **Log view renders through the table's `DataTable`**; the first cell of each row is now its row header.
+  - **FAQ: the accordion and cards render the `Disclosure` component**; the answer is a `.cap-faq-answer` inside `.cap-disclosure-body`, where the two classes shared one element. Same look.
+  - **Error page: the signed-out page is `Empty`** (which takes a new `role="status"` for an empty area where nothing failed), and every way out is a `ButtonLink`. Same markup.
+  - **Button and ButtonLink share one look mapper**, `buttonAttrs(look, className)` with the `ButtonLook` type in `capsomer/react/button`; the icon-only warning now reads "Capsomer: an icon-only button or link needs a label."
+  - **Newsletter sign-up is built from the family's parts**: the field's `TextField` (hidden label, the button as its row's action, the error as the field's own), `Check` for consent, and `FormStatus` for the sent line, whose region is in the page from the start and takes focus when the form goes (focus dropped to the page before). Removed: `.cap-newsletter-row`, `.cap-newsletter-error` and `.cap-newsletter-done`; the HTML contract in newsletter-signup.md is updated.
+  - **Fix: the field parts (`TextField`, `PasswordInput`, `MoneyField` and the rest) pass `labelHidden` to `Field`**; it reached the input as an unknown attribute and the label stayed visible.
+  - **Data: a refusal whose body is JSON `{ "error": "..." }` says that error**, not the raw JSON; a thrown error's words are dialog's `errorText`. **`loadMediaView(endpoint, query)` is `getAnswer` read with `ask`** (its unused `signal` argument is gone, and a signed-out session rejects with `SignedOut`).
+  - **Removed: the `createSaveQueue`, `draftAfter` and `draftDirty` re-exports from `capsomer/react/form-hooks`** (import them from `capsomer/behavior/form-hooks`, as form-hooks.md says).
+  - **Dictionary entry: the React speaker is `wireListen`**, the behavior module's, in an effect, in place of a second copy of its clip, play, pause and fallback.
+  - **Removed: the `formatBytes` re-export from `capsomer/behavior/drop-zone`, `byteSize` from `capsomer/behavior/media` (an alias of `formatBytes`), and `readPref` and `writePref` from `capsomer/behavior/shell`** (pass-throughs to `readStored` and `writeStored`). Import `formatBytes` from `capsomer/behavior/format` and `readStored`/`writeStored` from `capsomer/behavior/hooks`.
+  - **`reducedMotion()` moved from `capsomer/behavior/count-up` to `capsomer/behavior/hooks`** (removed from count-up), and the step player, theme switch, checklist run and admin shell use it in place of their own `matchMedia` checks.
+  - **One `FormComponent` type**, plain form's: read-only form and inline confirm re-export it rather than declaring a copy.
+  - **File attach and listbox reuse the family's words and checks**: the file link's new-tab words are link's `NEW_TAB_WORDS`, and the listbox's Enter-while-composing test is shortcuts' `isImeEnter`.
+  - **Image field: the frame's ratio is set through the CSSOM** (`style.setProperty`), not a `style` prop, so it holds under `style-src 'self'`.
+  - **Delta: the React figure says its words through `deltaText`**, the behavior module's.
+  - **Fix: a stored value changed or removed in another tab reads as it is now.** `readStored` and `writeStored` keep the page-long memory only where storage is refused; it no longer shadows storage that works.
+  - **`startSite` answers a promise of how many parts failed**, counting a part whose promise rejects as well as one that throws, once every part has settled (it returned the throws alone, at once).
+  - **Fix: `preloadedLazy` tries a failed chunk again** on the next render, where one failed fetch stuck until a reload.
+  - **Disclosure: `ExpandRows` always renders its detail row, `hidden` while closed**, so the button's `aria-controls` names a row that exists, and a printed page shows every detail. The redundant `.cap-expand-detail[hidden]` rule is gone (the reset's `[hidden]` does it).
+  - **Freshness: stale is shape and word as well as color.** A stale line leads with the warning glyph and "Stale" (`staleLabel`, `.cap-fresh-stale`); load `status.css` with `freshness.css`.
+  - **Filter bar: the hidden Apply of a live bar is out of the tab order** (`tabindex="-1"`), so focus never lands on a control nobody can see.
+  - **Editor workspace: Ctrl or Cmd+S goes through the shortcuts registry**, so it is listed in the "?" sheet and quiet while a modal dialog is open; `onSaveKey(save)` no longer takes a `target`. `useWorkspaceLayout` is hooks' `useRemembered`, and `usePausedStamp` form hooks' `useDebounced`.
+  - **Draft compare: the patch, the merge and the word diff walk one edit script** (`editScript` in the diff module) in place of three copies of the walk.
+  - **Error ad: two same lines no longer share a React key**, and the `"ink"` fill is documented as the ad's own navy ink (cream in dark mode), which it always was.
+  - **Sizes to tokens**: the copy tip's padding, the expand chevron's gap and the graph's focus ring use `--space-*` and `--focus-width`; the manual's patch shrinks by its head's own width (a container query), not the window's.
+  - **Removed: the `routeHydrates` re-export from `capsomer/react/document`.** Import it from `@dustinedwards/site-runtime/deferred-scripts`, as germomics does.
+  - **Collab editor: `Room.doc` and `Room.provider` are `null` before the page is in the browser.** `useRoom`'s first render returned an object cast `as unknown as Room` that lacked both; the type now says so (`Y.Doc | null`, `YProvider | null`) and the cast is gone. `useRoomEditing` is unchanged (it reads them once `synced`). An app that reads `room.doc` or `room.provider` from `useRoom` directly must handle null.
+  - **`MediaPicker`: a library chunk that fails to load shows "The library did not load"** (the failed `Empty`) instead of breaking the dialog.
+  - **Command host: a failed menu load is no longer kept.** `load()` clears itself on failure so the next `open` or `load` fetches the chunk again; the idle warm-up and `runWhenReady` share one fire-and-forget `warm`, and `open` still rejects.
+  - **Theme switch: optional `onError(error)`** on `ThemeSwitch`, `ThemeButton`, `enhance` and `chooseTheme`/`toggleTheme`'s memory, called when `onSave` throws or rejects. Without it the failure is let go as before.
+  - **Carousel: `trackLabel`** names the scrolling track (default "Slides"), for a page in another language.
+- **The layout classes and the text roles come in parts, so a site can load only what it uses.** `layout.css` and `text.css` are unchanged for the sites that load them: each now imports its parts. New stylesheets:
+  - `capsomer/layout-stack.css`: `.cap-stack`, its `data-align` and a button or check straight in a stack.
+  - `capsomer/layout-cluster.css`: `.cap-cluster`, its `data-justify`, and `.cap-push`.
+  - `capsomer/layout-spread.css`: `.cap-spread`.
+  - `capsomer/layout-grid.css`: `.cap-grid` and `data-cols`.
+  - `capsomer/layout-panes.css`: `.cap-panes`, `data-flip` and `data-even`.
+  - `capsomer/layout-items.css`: `.cap-measure`, `.cap-grow`, `.cap-shrink`, `.cap-keep`, `.cap-full` and `.cap-column`.
+  - `capsomer/layout-gap.css`: every layout's `data-gap` and a cluster's or spread's `data-align`, which a site loading the layout parts loads with them.
+  - `capsomer/text-role.css`: `.cap-text` and its attributes.
+  - `capsomer/text-title.css`: `.cap-title`.
+  - `capsomer/text-clamp.css`: `.cap-clamp`.
+    A site that uses a few loads those parts in place of `layout.css` or `text.css` (the Capsid Portal: stack, cluster, panes and the text roles). **Removed from `base.css`:** the older copy of `.cap-clamp` that `css/utilities.css` kept beside `text.css`'s since 0.127.0. A page that loads `text.css` (or `text-clamp.css`) clamps as before, and one that uses `.cap-clamp` without it now needs that import. No class is renamed and no HTML contract changes.
+- The site header's stylesheet comes in parts, so a site can skip what its header does not draw. `site-header.css` is unchanged for the sites that load it: it now imports `site-header-frame.css` (everything a header has, 8.4 KB gzip), `site-header-letterhead.css` (the family letterhead, `data-variant="letterhead"`, 5.4 KB) and `site-header-search.css` (the header's search, 1.6 KB). A site whose header is not the letterhead and has no `search` (txasm, germomics, Foxing, bsw, julieedwards.info) loads `site-header-frame.css` in place of `site-header.css` and saves about 7 KB gzip on every page. No class or HTML contract changes.
+
+## 0.149.0
+
+### Minor Changes
+
+- **The docs site, Release 1 of the redesign.** The site at capsomer.dustinedwards.info is rebuilt as five sections, each page in one fixed pattern of live previews: Themes (an overview and color, typography, radius, spacing and density, shadows, motion and dark mode, each a board of real components the family, theme and density controls repaint, beside its token tables), Components and Primitives (a preview, installation, usage, examples, the API reference and accessibility; a primitive shows its anatomy, data attributes and keyboard), Icons (every icon, a search, a size, a click copies the name) and Colors (every family's 12 steps in light and dark, each step's job, a click copies the value). The look is the current one. No token or class is removed or renamed and no HTML contract changes.
+  - **New export `capsomer/parts.json`:** each component's root class, parts, `data-*` variants, states and CSS variables, read from its own `cap-<name>-<part>` classes (`bin/parts.mjs`, `capsomer parts`); the API tables are made from it.
+  - **Doc files are three headings:** every `components/<name>/<name>.md` is `# Title`, `## Usage` (code only) and `## Accessibility` (the keyboard table and short points), with a one-sentence `summary` and a new `group` (`pattern` or `primitive`). `capsomer docs`, part of `npm run check`, fails a file that leaves the pattern (components/README.md, The doc page).
+  - **Site only:** the theme builder at `/make/` and the admin views at `/admin/` are removed, and so are the site's test-results panel and the `results` branch job that fed it; each run's summary stays with the run as the `test-results` artifact.
+
+### Patch Changes
+
+- Hero: the lead's type is set with longhands (`font-family`, `font-size`, `font-weight`, `line-height`). The old `font` shorthand ended in `var(--hero-lead-face, inherit)`; `inherit` is not valid inside a shorthand, so whenever a site left `--hero-lead-face` unset the browser dropped the whole declaration and the lead took the hero's own font size (40px on Foxhound's product pages). No token or class is removed or renamed and the HTML contract is unchanged; a site that worked around it by setting `--hero-lead-face` can drop the workaround or keep it.
+  `capsomer token-check` now also finds declarations the browser drops (a CSS-wide keyword such as `inherit` beside other values, written or reached through a var() fallback) and exits 1 on one. Raw-value warnings still never fail. New export: `invalidValues` from `capsomer/token-check`.
+
+## 0.148.1
+
+### Patch Changes
+
+- **The chart enhancer stays out of server bundles.** The React chart frame skips its `enarratio/enhance` import when Vite's `import.meta.env.SSR` is set, as the click-only modules did, so a server build drops a chunk it could never run. Outside Vite nothing changes. No token, class or HTML contract changes.
+- **Click-only modules stay out of server bundles.** The sheet drag (`dialog-drag`), the shortcut sheet, the header search and the React markdown editor's behavior module skip their `import()` when Vite's `import.meta.env.SSR` is set, as the CodeMirror view did in 0.145.1, so a server build drops chunks it could never run (dustinedwards.info's Worker: about 13 KiB raw, 6 KiB gzip). Outside Vite nothing changes. No token, class or HTML contract changes.
+- **`Title`, `Text` and `Stack` take any element and its own props.** `as` is any intrinsic element (a `td`, a `label`, an `h1`) and the props of that element, `ref` and `htmlFor` among them, reach it. No CSS change.
+
+## 0.148.0
+
+### Minor Changes
+
+- - **Breaking: the compatibility aliases are gone** (pre-launch: no aliases). **Removed:** `summarise` (authorship; use `summarize`), `analyse` (draft-compare; use `analyze`), `renderEmailColours` (palette; use `renderEmailColors`), the token `--control-h` (use `--control`; also dropped from `tokens.json`, the showcase's density presets and Foxhound's site layer; `--control-h-coarse` stays), the custom properties `--cap-run-colour` and `--cap-meter-colour` (set `--cap-run-color` and `--cap-meter-color`), the dialog placement `"centre"` (use `"center"`), the `Skeleton`, `Spinner` and `SkeletonBlock` re-exports from `capsomer/react/empty` (import them from `capsomer/react/skeleton`), the `intentForm` and `outcomesOf` re-exports from `posts-list` (import them from `capsomer/content`), the `errorText`, `isBackdropClick`, `isBusy`, `rememberOpener`, `returnFocus` and `wordMatches` re-exports from `capsomer/behavior/confirm-dialog` (the first five from `capsomer/behavior/dialog`, `wordMatches` from `capsomer/confirm-server`), and the showcase's `#/colour` address. <!-- codespell:ignore -->
+  - **Command menu: the React menu has the answer under the list.** `CommandMenu` takes `answer: { label, offer, run(query, region) }`, as `createCommandMenu` does, and renders the same `.cap-cmd-answer` (button, status, region); `offer` is read on each render (the React form of `offerAnswer`). The two share `startAnswer` and `focusAnswer` (new exports of `capsomer/behavior/command-menu`), so the load, the failed-load words, the late-answer cancel and the focus move are one code.
+  - **Frontmatter fields: `typedProps(box, locked, write)`**, from `capsomer/react/frontmatter-fields`: an `input` or `textarea`'s props from a `useTyped` box (the value, `cap-input`, read-only when locked, `done` on blur, each change kept and written). The fields' own boxes use it; Carrel's post and search fields can import it in place of their copy (`app/components/editor/post-fields.tsx`).
+  - **Chevrons come from the icon set.** The carousel, combobox, menu (trigger and submenu), tree, date picker and settings back link drew their own chevron SVGs (16- and 20-unit copies); they now draw `iconChevronLeft`, `iconChevronRight` and `iconChevronDown` (`Icon` in React, `iconSvg` in the behavior modules), each component setting `--icon-size` and `--icon-stroke` so the line keeps its weight. New icons `iconChevronsLeft` and `iconChevronsRight` (the date picker's year buttons). HTML contract: the chevron is now `<svg class="cap-icon" viewBox="0 0 24 24">` with the set's path, in the carousel's buttons, the combobox trigger, `.cap-menu-trigger`, `.cap-menu-chevron`, `.cap-tree-toggle` and `.cap-settings-back`. The showcase's previous and next arrows draw them too. The chevrons are a little narrower (the set's 12-unit span), otherwise unchanged.
+- **New scale steps the sites share, so their values become tokens without a visible change.** The network sweep onto 0.143.0's tokens found about 1,600 values with no exact token, most of them the same few sizes on Foxhound, germomics, bsw and Foxing. Dustin's ruling (2026-11-13): a value two or more sites use becomes a step; a one-off snaps to the nearest step.
+  - Spaces: `--space-4-5` (14px), `--space-5-5` (20px), `--space-6-5` (28px), `--space-7-5` (40px), `--space-8-5` (56px), `--space-9-5` (80px), `--space-10` (96px).
+  - Radii: `--radius-hair` (1px), `--radius-s-5` (4px), `--radius-m-5` (8px), `--radius-l-5` (12px), `--radius-xl-5` (16px).
+  - Type: `--display-1` to `--display-5` (4.5, 3.75, 3, 2.75 and 2.5rem) for marketing headlines; `--title-1-5` (2rem) and `--title-2-5` (1.75rem).
+  - Line heights: `--leading-tight-5` (1.25), `--leading-snug-5` (1.375), `--leading-relaxed-5` (1.625), `--leading-airy` (1.75); and a new group of line boxes as lengths, `--line-box-4` to `--line-box-10` (1rem to 2.5rem), which inherit as a length, the way a site's `line-height: 1.25rem` does.
+  - Tracking: `--tracking-spaced` (0.12em), `--tracking-spread` (0.18em). Motion: `--dur-quick` (150ms).
+  - **token-check reads a line height in rem or px correctly.** It compared a length such as `1.25rem` with the unitless leadings and suggested `1.7px`. Now a length that is a line-box step is that token (and `--fix` swaps it); any other length is reported as its ratio to the rule's own font size with the nearest leading, and is never swapped, since a ratio inherits differently from a length.
+  - **`--fix` stays pixel-exact on a site.** It no longer swaps in a step that grows under `data-density="comfortable"` (`--fs-label`, `--fs-lead`, `--gap`, `--pad-card` and the rest), or a token the stylesheet sets itself; both are still reported, marked "(grows under comfortable density)" or "(this stylesheet sets it)". Foxhound's sweep found 15 such swaps that changed its comfortable pages.
+  - No token or class is removed or renamed; no HTML contract changes.
+
+## 0.147.0
+
+### Minor Changes
+
+- - **Breaking: the plan choice's rules are `capsomer/plan-choice.css`, no longer part of `price-card.css`; the feature cards' rules are `capsomer/feature-grid.css`, no longer part of `feature.css`.** A page of price cards or feature blocks shipped the plan choice and the card grid for nothing (about 0.9 KB gzip on Foxhound's product pages). The rules are unchanged and each new file stands alone. A site that draws `PlanChoice` (`.cap-plan-choice`, `.cap-plan-choice-options`, `.cap-plan-option`, `.cap-plan-option-name`, `.cap-plan-option-price`, `.cap-plan-option-note`) adds `@import "capsomer/plan-choice.css"` (Foxing's paywall); one that draws `FeatureGrid` or `FeatureCard` (`.cap-feature-grid`, `.cap-feature-card`, `.cap-feature-card-icon`, `-head`, `-tag`, `-title`, `-text`) adds `@import "capsomer/feature-grid.css"`, and can drop `feature.css` if it draws no blocks. No token, class or HTML contract changes.
+- **React `Title`, `Text` and `Stack`.** `capsomer/react/text` exports `Title` (`size` 1 to 6, `as`) and `Text` (`size`, `tone`, `weight`, `face`, `align`, `as`), which render `.cap-title` and `.cap-text` with their data attributes; `capsomer/react/stack` exports `Stack` (`gap` 1 to 9, `as`), which renders `.cap-stack`. A page that repeats the class and data attributes on every line carries that text in its server bundle every time; a component carries it once (txasm's Worker was 5.8 KiB over its size budget from this). No CSS changes and no class or attribute renamed or removed.
+
+## 0.146.0
+
+### Minor Changes
+
+- **AI engine settings: an effort per job.** Each job's row gains an Effort column beside its model (`effort-<key>`, read back by `settingsFromForm` as `efforts`), and the spend by job can split by effort (`usage[].effort`), so a person sees what a higher effort cost. **Changed React contract: `AiEngineSettings` requires `efforts` and `effortOptions`** (the same shape as `models` and `modelOptions`). The table gains one column; no token or class changes.
+- **A chart that keeps its shape (a map) gets a phone drawing at its own height.** `narrowRedraw(wide, drawNarrow, { keepShape: true })` draws the narrow drawing at its own height instead of the wide one's, and `frameHtml(chart, { redraw, keepShape: true })` sets `--cap-narrow-height` on `.cap-chart`, which chart-frame.css uses so the wide drawing scales into a column under 30rem at the narrow drawing's height until the swap. From germomics' Soho map, which did this in its own CSS. No class renamed or removed; `--cap-narrow-height` is a new custom property on `.cap-chart`.
+  **DataPreview keeps its own text size and a heading weight.** `.cap-data-preview` sets `font-size: var(--fs-body)` and `line-height: var(--leading-relaxed)`, so the card's sentence is not drawn at the size of the article beside it, and its heading takes `--weight-heading`.
+  **One HTML escape.** Status glyphs, the graph and search results' `snippetHtml` drop their own escape tables for site-runtime's `escapeHtml`, which the rest of Capsomer already uses, so a site bundles it once. `snippetHtml` now also escapes `'` (as `&#39;`); nothing else changes in the output.
+- **`describeSeries` reads days.** A new `at: "on"` option writes "30% on Oct 3" and "most on Oct 3" for a chart over days; the default stays "in", for years and months. More than three peaks, as a daily series that held its top for weeks has, now name the first two and a count ("most on Oct 2, Oct 3 and 12 more") in place of every date. No class, token or HTML contract changes.
+
+## 0.145.1
+
+### Patch Changes
+
+- **The markdown editor's CodeMirror stays out of server bundles.** `mountMarkdownEditor` refuses before its `import()` when Vite's `import.meta.env.SSR` is set, so a server build drops the CodeMirror chunk it could never run (Carrel's Worker: about 300 KB raw). Outside Vite nothing changes. No token, class or HTML contract changes.
+
+## 0.145.0
+
+### Minor Changes
+
+- **First-load weight: four code paths that run only on a click, or only on some sites, load on demand.** Measured on the Capsid Portal's heaviest first load, 217.8 to 215.6 KB gzip.
+  - The site header's search behavior (`wireSearch`) is `site-header-search.ts`. `enhance` and the React `SiteHeader` load it through the new `wireSearchOnDemand(search, suggest)`, and only on a header that has search. Until it arrives the icon is the link to the search page it always was. `wireSearch` and `SUGGEST_DELAY_MS` are no longer exported from `capsomer/behavior/site-header`; `SearchHit` and `Suggest` still are.
+  - The shortcut sheet (`renderSheetList`, `buildSheet`, `wireSheet`, `openShortcutSheet`) is `shortcuts-sheet.ts`. It loads the first time "?" or a `[data-cap-keys-open]` button asks for it, or when `enhance` finds a sheet in the markup. Those four are no longer exported from `capsomer/behavior/shortcuts`. An app with its own sheet (`setSheetOpener`) never loads it.
+  - A sheet's drag to dismiss is `dialog-drag.ts`. `wireDialog` loads it when a bottom, left or right sheet first takes focus, which it does as it opens.
+  - `FOXHOUND_MARKS` moves to the admin shell's states page, the only place it was drawn, so it no longer ships in every admin shell. It is no longer exported from `capsomer/react/admin-shell`.
+  - No class, token or HTML contract changes.
+
+## 0.144.0
+
+### Minor Changes
+
+- **Manual theme: the catalog.** `capsomer/manual.css` now draws `.cap-catalog` in the manual: beside the results the facets sit in a ruled box under a dark "Filter" strip (`--sign`, `--on-sign`), the facet names, the bar's field labels and the table's head are mono capitals, and each group's heading is `--title-2` bold over a `--line-w-thick` rule. The phone's tray keeps its own head and a group's heading over cards keeps catalog.css's spacing. dustinedwards.info drew this in its own site-catalog.css, which this replaces. No token, class or HTML contract changes.
+
 ## 0.143.0
 
 - **Every design value in Capsomer's CSS is a token.** `capsomer token-check` checked only colors and spacing (83 warnings); it now checks every kind of design value: colors (hex, `rgb()`, `oklch()` and the rest, named colors, and var() fallbacks), spaces, font sizes (and the `font` shorthand), weights, line heights, tracking, radii, line widths, outline widths and offsets, layers, durations, easings, shadows and opacities, and names the exact token or the nearest step. The scanner is `rawValues(css, tokenScale(tokens.json))` in `capsomer/token-check`, pure over CSS text, so a site's gate can run it. `capsomer token-check --fix` (and `fixCss`) writes every value that has an exact token in place, which changes nothing on the page; the report then lists only what needs a choice. Not checked, on purpose: a component's own geometry, relative units, lengths inside `calc()` that are not a step, and print (paper is black on white). It found 1,650 raw values in components/ and css/; all are now tokens, except the error ad's two ink colors (artwork). site/ waits for the docs site rebuild (#405).

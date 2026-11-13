@@ -2,10 +2,6 @@ import type { ReactNode } from "react";
 import { Glyph } from "../status/status.react.tsx";
 import { Spinner } from "../skeleton/skeleton.react.tsx";
 
-// Spinner and Skeleton moved to components/skeleton in 0.2; still exported here so
-// "capsomer/react/empty" imports keep working.
-export { Skeleton, Spinner, SkeletonBlock } from "../skeleton/skeleton.react.tsx";
-
 export type EmptyKind = "nothing-yet" | "no-match" | "all-clear" | "failed";
 
 export interface EmptyProps {
@@ -24,6 +20,9 @@ export interface EmptyProps {
   // The title's element: a paragraph by default, a heading where the empty area is the page's
   // subject (the error page's h1).
   titleAs?: "p" | "h1" | "h2" | "h3";
+  // A polite status, for an empty area that replaces the page's content when nothing failed (the
+  // signed-out page). A failed one is always an alert.
+  role?: "status";
 }
 
 export function Empty({
@@ -34,6 +33,7 @@ export function Empty({
   icon,
   flush,
   titleAs: Title = "p",
+  role,
 }: EmptyProps) {
   let head: ReactNode;
   if (kind === "all-clear") {
@@ -58,7 +58,7 @@ export function Empty({
       className="cap-empty"
       data-kind={kind}
       data-flush={flush ? "" : undefined}
-      role={kind === "failed" ? "alert" : undefined}
+      role={kind === "failed" ? "alert" : role}
     >
       {icon ? (
         <div className="cap-empty-media" data-variant="icon" aria-hidden="true">

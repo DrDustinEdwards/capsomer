@@ -4,14 +4,19 @@ import { Listbox, ListboxEmpty, Option, OptionGroup } from "../listbox/listbox.r
 import { isImeEnter, register } from "../shortcuts/shortcuts.ts";
 import { Keys } from "../shortcuts/shortcuts.react.tsx";
 import {
+  ANSWER_LABEL,
   emptyText,
   filterCommands,
+  focusAnswer,
   groupCommands,
   markQuery,
   readRecent,
   rememberRecent,
   SEARCHING,
+  startAnswer,
   step,
+  type AnswerRun,
+  type AttachOptions,
   type Command,
 } from "./command-menu.ts";
 
@@ -47,6 +52,12 @@ export interface CommandMenuProps {
   // The way past the commands: with words typed, a last option "Ask about “…”" hands them on
   // (to an assistant, a site search).
   ask?: { label?: string; run: (query: string) => void };
+  // An answer under the list, as the menu without React's (AttachOptions): a quiet button
+  // (`label`, "Answer this" when empty) while words are typed; pressing it calls `run(query,
+  // region)`, which fills the region and returns `{ cancel }` or a promise of it. Typing again or
+  // closing cancels it. `offer: false` hides the button; the app passes `offer: true` once its
+  // search says answers are on for the words typed (offerAnswer, in the menu without React).
+  answer?: AttachOptions["answer"];
 }
 
 // A search result's line under its label, with the typed words marked.
@@ -87,6 +98,7 @@ export function CommandMenu({
   searchDelay = 180,
   recentKey,
   ask,
+  answer,
 }: CommandMenuProps) {
   const id = useId();
   const dlg = useRef<HTMLDialogElement | null>(null);
@@ -180,6 +192,45 @@ export function CommandMenu({
       document.getElementById(optionId(activeCommand))?.scrollIntoView({ block: "nearest" });
     // oxlint-disable-next-line react/exhaustive-deps -- optionId only formats ids from this menu's useId
   }, [activeCommand]);
+
+  // The answer under the list. The region is the app's to fill (run writes into it), so React
+  // renders it empty and never touches its children; typing or closing cancels and empties it.
+  const region = useRef<HTMLDivElement | null>(null);
+  const answerRun = useRef<AnswerRun | null>(null);
+  const answerLoading = useRef(false);
+  const [answering, setAnswering] = useState(false);
+  const [answerStatus, setAnswerStatus] = useState("");
+  useEffect(
+    () => () => {
+      answerRun.current?.cancel();
+      answerRun.current = null;
+      region.current?.replaceChildren();
+      setAnswering(false);
+      setAnswerStatus("");
+    },
+    [query, open],
+  );
+  const runAnswer = async () => {
+    const el = region.current;
+    if (!answer || !el || !q || answerLoading.current || answerRun.current) return;
+    answerLoading.current = true;
+    const got = await startAnswer(
+      answer,
+      q,
+      el,
+      () => !!dlg.current?.open && input.current?.value.trim() === q,
+    );
+    answerLoading.current = false;
+    if (!got) return;
+    if ("failed" in got) {
+      setAnswerStatus(got.failed);
+      return;
+    }
+    answerRun.current = got.run;
+    setAnswerStatus("");
+    focusAnswer(el);
+    setAnswering(true);
+  };
 
   const setRef = useCallback((el: HTMLDialogElement | null) => {
     dlg.current = el;
@@ -281,6 +332,24 @@ export function CommandMenu({
         ))}
       </Listbox>
       <ListboxEmpty>{shown.length === 0 ? (busy ? SEARCHING : emptyText(query)) : ""}</ListboxEmpty>
+      {answer ? (
+        <div className="cap-cmd-answer" data-cap-part="answer">
+          <button
+            type="button"
+            className="cap-btn"
+            data-variant="quiet"
+            data-size="sm"
+            hidden={!((answer.offer ?? true) && !answering && q)}
+            onClick={() => void runAnswer()}
+          >
+            {answer.label ?? ANSWER_LABEL}
+          </button>
+          <p className="cap-cmd-answer-status" role="status">
+            {answerStatus}
+          </p>
+          <div ref={region} className="cap-cmd-answer-region" tabIndex={-1} hidden={!answering} />
+        </div>
+      ) : null}
       <div className="cap-cmd-foot" aria-hidden="true">
         <span>
           <kbd>↑</kbd> <kbd>↓</kbd> move

@@ -6,7 +6,7 @@
 // steppers, a search field's Clear and a date input's real-date check. No framework; the
 // React wrapper and switch-reason use the same functions.
 
-import { wordCount } from "@drdustinedwards/site-helpers/text";
+import { plural, wordCount } from "@drdustinedwards/site-helpers/text";
 import {
   hideSummary,
   setTitleError,
@@ -208,10 +208,10 @@ export function countText(
 ): { text: string; over: boolean } {
   const used = words ? wordCount(value) : value.length;
   const n = Math.abs(limit - used);
-  const unit = `${words ? "word" : "character"}${n === 1 ? "" : "s"}`;
+  const counted = plural(n, words ? "word" : "character");
   return used > limit
-    ? { text: `You have ${n} ${unit} too many`, over: true }
-    : { text: `You have ${n} ${unit} remaining`, over: false };
+    ? { text: `You have ${counted} too many`, over: true }
+    : { text: `You have ${counted} remaining`, over: false };
 }
 
 // The limit a control counts against: data-maxlength (characters) or data-maxwords.
@@ -253,36 +253,6 @@ export function keyValue(
   if (key === "End") return max ?? null;
   if (key !== "PageUp" && key !== "PageDown") return null;
   return stepValue(value, step, key === "PageUp" ? 10 : -10, min, max);
-}
-
-// Money in a text field: integer cents in the app, dollars in the box. Whole dollars show with no
-// decimals ("5000"), anything else with two ("12.50"); null or a non-integer is the empty box.
-export function centsToDollars(cents: number | null | undefined): string {
-  if (cents == null || !Number.isInteger(cents)) return "";
-  const sign = cents < 0 ? "-" : "";
-  const abs = Math.abs(cents);
-  const whole = Math.floor(abs / 100);
-  const rest = abs % 100;
-  return `${sign}${whole}${rest ? `.${String(rest).padStart(2, "0")}` : ""}`;
-}
-
-// What a person typed as dollars, back to integer cents: "1,250.5" is 125050, "$3" is 300. Read
-// as a string, never through a float, so 1.005 cannot round the wrong way. Null for anything
-// that is not a non-negative amount with at most two decimals (a negative needs allowNegative).
-export function dollarsToCents(
-  text: FormDataEntryValue | string | null | undefined,
-  { allowNegative = false }: { allowNegative?: boolean } = {},
-): number | null {
-  if (typeof text !== "string") return null;
-  const m = /^(-)?\$?(\d{1,3}(?:,\d{3})+|\d+)?(?:\.(\d{1,2}))?$/.exec(
-    text.trim().replace(/^\$-/, "-$"),
-  );
-  if (!m || (m[2] === undefined && m[3] === undefined)) return null;
-  if (m[1] && !allowNegative) return null;
-  const cents =
-    Number((m[2] ?? "0").replaceAll(",", "")) * 100 + Number((m[3] ?? "0").padEnd(2, "0"));
-  if (!Number.isSafeInteger(cents)) return null;
-  return m[1] && cents !== 0 ? -cents : cents;
 }
 
 // The parts of a moment on the wall clock of a time zone (IANA name), to the minute.

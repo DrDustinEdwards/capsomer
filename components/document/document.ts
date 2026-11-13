@@ -24,21 +24,27 @@ export function documentAttrs({ family, site, theme }: DocumentScope): Record<st
 export type Starter = () => unknown;
 
 // Starts a page that does not hydrate: runs each part (Capsomer's enhance functions, the site's islands) in order,
-// each on its own, so one that throws never stops the rest, and reports what failed. Call it after site-runtime's
-// startPage() (./page-client), which installs the Trusted Types policy every part writes through.
-export function startSite(
+// each on its own, so one that throws never stops the rest, and reports what failed. Answers, once every part that
+// returned a promise has settled, how many failed, thrown or rejected. Call it after site-runtime's startPage()
+// (./page-client), which installs the Trusted Types policy every part writes through.
+export async function startSite(
   parts: readonly Starter[],
   report: (error: unknown) => void = (e) => console.error(e),
-): number {
+): Promise<number> {
   let failed = 0;
+  const fail = (error: unknown) => {
+    failed++;
+    report(error);
+  };
+  const pending: Promise<unknown>[] = [];
   for (const part of parts) {
     try {
       const r = part();
-      if (r instanceof Promise) r.catch(report);
+      if (r instanceof Promise) pending.push(r.catch(fail));
     } catch (error) {
-      failed++;
-      report(error);
+      fail(error);
     }
   }
+  await Promise.all(pending);
   return failed;
 }

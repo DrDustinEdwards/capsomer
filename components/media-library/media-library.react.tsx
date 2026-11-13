@@ -28,9 +28,11 @@ import {
   useMediaMode,
   type MediaFields,
 } from "../media/media.react.tsx";
-import { bareType, byteSize, CROPPABLE, type MediaRecord } from "../media/media.ts";
+import { bareType, CROPPABLE, type MediaRecord } from "../media/media.ts";
 import { copyText } from "../copy/copy.ts";
-import { acceptLabel, formatBytes } from "../drop-zone/drop-zone.ts";
+import { acceptLabel } from "../drop-zone/drop-zone.ts";
+import { formatBytes } from "../format/format.ts";
+import { readStored, writeStored } from "../hooks/hooks.ts";
 import { Keys, useShortcut } from "../shortcuts/shortcuts.react.tsx";
 import { TabLink, TabsNav } from "../tabs/tabs.react.tsx";
 import { MediaMore } from "./media-library-more.react.tsx";
@@ -58,9 +60,8 @@ import {
   type MediaSort,
 } from "./media-library.ts";
 import { useCleanId, useHydrated } from "../hooks/hooks.react.tsx";
-import { readStored, writeStored } from "../hooks/hooks.ts";
 
-// The viewer's last layout and tile size, remembered in this browser (hooks.ts readStored).
+// The viewer's last layout and tile size, remembered in this browser (hooks' readStored).
 const LAYOUT_PREF = "cap-media-layout";
 const SIZE_PREF = "cap-media-size";
 
@@ -356,7 +357,7 @@ export function MediaLibrary({
         label: r.name,
         group: plural.charAt(0).toUpperCase() + plural.slice(1),
         keywords: [r.key],
-        hint: [r.type.split("/").pop()?.toUpperCase(), byteSize(r.bytes)]
+        hint: [r.type.split("/").pop()?.toUpperCase(), formatBytes(r.bytes)]
           .filter(Boolean)
           .join(" · "),
         run: () => {

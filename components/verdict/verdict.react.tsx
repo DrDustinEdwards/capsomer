@@ -1,4 +1,4 @@
-import { plural } from "../hooks/hooks.ts";
+import { plural } from "@drdustinedwards/site-helpers/text";
 import type { ReactNode } from "react";
 import { Status, type Tone } from "../status/status.react.tsx";
 

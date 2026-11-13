@@ -12,7 +12,7 @@
 // saves it to the signed-in account. Where the cookie is the memory, the server's answer (the
 // data-theme it wrote) is copied into this browser's memory first (syncServedTheme), so an older
 // choice here never overrules it. The pre-paint script is themeScript (theme-server.ts).
-import { readStored, writeStored } from "../hooks/hooks.ts";
+import { readStored, reducedMotion, writeStored } from "../hooks/hooks.ts";
 import { attach as attachTip } from "../tooltip/tooltip.ts";
 import {
   colorSchemeContent,
@@ -77,8 +77,7 @@ function paintTheme(choice: ThemeChoice, animate: boolean, chosen: boolean): voi
       if (ground) for (const m of metas) m.content = ground;
     }
   };
-  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  if (!animate || reduce || !document.startViewTransition) paint();
+  if (!animate || reducedMotion() || !document.startViewTransition) paint();
   else {
     pending = choice;
     document.startViewTransition(paint);

@@ -1,7 +1,6 @@
 // The status word as an HTML string, for pages built without React (a static explorer, a server
 // rendered table, an SVG drawing), and the one table of glyphs the React Status draws from too.
 // Escaped here, so a reason or a label can never become markup.
-
 import { escapeHtml as esc } from "@dustinedwards/site-runtime/html";
 
 // "muted" is the quiet gray for a state that is neither good nor bad: queued, unknown.

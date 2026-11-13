@@ -1,7 +1,7 @@
 // The shell's behavior: the rail's collapse button, the remembered choice, the More sheet,
 // the density choice, and Esc to dismiss a collapsed rail's label (WCAG 1.4.13). No framework;
-// the React wrapper uses the same functions. readStored and writeStored are shared with the theme
-// switch and the shortcuts, so they stay exported.
+// the React wrapper uses the same functions. Choices are kept with hooks' readStored and
+// writeStored.
 import { closeDialog, openDialog, wireDialog } from "../dialog/dialog.ts";
 import { readStored, writeStored } from "../hooks/hooks.ts";
 

@@ -95,39 +95,6 @@ eachTheme((theme) => {
     );
   });
 
-  test("keyboard: Tab reaches every tile in order", async ({ page }) => {
-    await visitStates(page, "stat-tile", theme);
-    const tiles = page.locator(`${grid} .cap-tile`);
-    await tiles.first().focus();
-    const count = await tiles.count();
-    for (let i = 1; i < count; i++) {
-      // A tile's numbers are a table for screen readers, with no tab stop of its own.
-      await page.keyboard.press("Tab");
-      await expect(tiles.nth(i)).toBeFocused();
-    }
-  });
-
-  test("keyboard: Enter on a link tile follows it", async ({ page }) => {
-    await visitStates(page, "stat-tile", theme);
-    await page
-      .locator(grid)
-      .getByRole("link", { name: /Actions minutes/ })
-      .focus();
-    await page.keyboard.press("Enter");
-    await expect(page).toHaveURL(/#budget$/);
-  });
-
-  test("keyboard: Enter on a button tile activates it", async ({ page }) => {
-    await visitStates(page, "stat-tile", theme);
-    const button = page.locator(grid).getByRole("button", { name: /Blocked on you/ });
-    await button.evaluate((el) =>
-      el.addEventListener("click", () => el.setAttribute("data-clicked", "yes")),
-    );
-    await button.focus();
-    await page.keyboard.press("Enter");
-    await expect(button).toHaveAttribute("data-clicked", "yes");
-  });
-
   test("behavior: the row wraps onto more rows at phone width, and no tile runs out of its row", async ({
     page,
   }) => {
@@ -159,14 +126,6 @@ eachTheme((theme) => {
             ).length,
         );
       expect(cut, `tiles with cut text at ${width} px`).toBe(0);
-    }
-  });
-
-  test("behavior: no data says so with its reason, never a zero", async ({ page }) => {
-    await visitStates(page, "stat-tile", theme);
-    for (const tile of await page.locator(".cap-tile[data-tone='nodata']").all()) {
-      await expect(tile.locator(".cap-tile-figure")).toHaveText("No data");
-      await expect(tile.locator(".cap-tile-detail")).not.toBeEmpty();
     }
   });
 

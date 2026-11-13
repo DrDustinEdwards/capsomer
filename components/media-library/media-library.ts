@@ -14,7 +14,8 @@ import {
   type MediaSuggestions,
   type MediaUse,
 } from "../content/content.ts";
-import { acceptLabel, formatBytes } from "../drop-zone/drop-zone.ts";
+import { acceptLabel } from "../drop-zone/drop-zone.ts";
+import { formatBytes } from "../format/format.ts";
 import { altStateOf, type MediaRecord, type UsedIn } from "../media/media-record.ts";
 import { formatDate } from "../time/time.ts";
 

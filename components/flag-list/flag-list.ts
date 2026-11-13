@@ -8,7 +8,7 @@
 // A result is said in a polite region, a refusal in an alert. A flag is a question for the
 // owner, never a decision; an open flag holds publish until it is fixed or dismissed.
 
-import { plural } from "../hooks/hooks.ts";
+import { plural } from "@drdustinedwards/site-helpers/text";
 import { confirm } from "../confirm-dialog/confirm-dialog.ts";
 import { type SayOptions, fail, say } from "../message/message.ts";
 import { attachRowList } from "../row-list/row-list.ts";

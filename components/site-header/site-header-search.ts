@@ -1,7 +1,7 @@
 // The header's search behavior (wireSearch), in its own module so only a header with search loads
 // it: site-header.ts and the React header import it on demand. The design note is on SearchHit in
 // site-header.ts.
-import { plural } from "../hooks/hooks.ts";
+import { plural } from "@drdustinedwards/site-helpers/text";
 import { isImeEnter } from "../shortcuts/shortcuts.ts";
 import { hideTip } from "../tooltip/tooltip.ts";
 import {

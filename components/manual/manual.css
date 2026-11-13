@@ -44,8 +44,9 @@
   }
 
   /* A page title with its patch beside it (PageHead's patch): the title takes the room, the patch its own size,
-     smaller on a phone. */
+     smaller where the head itself is narrow (a phone, a side column). */
   .cap-patched {
+    container-type: inline-size;
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
     align-items: center;
@@ -53,7 +54,7 @@
     > :first-child {
       margin: 0;
     }
-    @media (max-width: 40rem) {
+    @container (max-width: 40rem) {
       .cap-patch {
     /* Lettering set along the patch's drawn ring: sizes and tracking in the drawing's own units, not type steps. */
     --cap-patch-tracking: 1.4px;

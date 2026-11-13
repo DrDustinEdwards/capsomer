@@ -3,11 +3,13 @@
 import { useState } from "react";
 import { Field } from "../field/field.react.tsx";
 import { Select } from "../select/select.react.tsx";
+import { Pill } from "../status/status.react.tsx";
 import {
   COLOR_NAMES,
   MAX_LABEL_LENGTH,
   MAX_LABELS,
   editRows,
+  seriesOf,
   type ColorLabel,
 } from "../label-color-list/label-color-list.ts";
 
@@ -56,9 +58,7 @@ export function LabelColorEditor({
               options={COLOR_NAMES.map((name, k) => ({ value: String(k + 1), label: name }))}
             />
           </Field>
-          <span className="cap-color-label" data-color={colors[i] ?? row.color} aria-hidden="true">
-            <span className="cap-color-label-dot" />
-          </span>
+          <Pill series={seriesOf(colors[i] ?? row.color)}>{null}</Pill>
         </li>
       ))}
     </ol>

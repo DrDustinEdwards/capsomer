@@ -1,8 +1,10 @@
-import { readStored, writeStored } from "../hooks/hooks.ts";
 // Editor workspace: the page around a writing surface. The Write, Split and Preview layout,
 // remembered in this browser; the site's own render beside the text in a sandboxed frame,
 // refreshed once the typing pauses; Ctrl or Cmd+S as a save in place; and the chrome that steps
 // back while someone types. The parts work with any surface (the markdown editor, a rich editor).
+
+import { readStored, writeStored } from "../hooks/hooks.ts";
+import { register } from "../shortcuts/shortcuts.ts";
 
 export type Layout = "write" | "split" | "preview";
 export const LAYOUTS: readonly Layout[] = ["write", "split", "preview"];
@@ -33,18 +35,11 @@ export function previewUrl(base: string, stamp: string, param = "at"): string {
   return `${path}${path.includes("?") ? "&" : "?"}${param}=${encodeURIComponent(stamp)}${tail}`;
 }
 
-// Ctrl or Cmd+S calls `save` in place of the browser's own save-page. `save` decides whether a
-// save may run now. Returns the detach.
-export function onSaveKey(save: () => void, target: Window | HTMLElement = window): () => void {
-  const onKey = (event: Event) => {
-    const e = event as KeyboardEvent;
-    if ((e.metaKey || e.ctrlKey) && !e.altKey && e.key.toLowerCase() === "s") {
-      e.preventDefault();
-      save();
-    }
-  };
-  target.addEventListener("keydown", onKey);
-  return () => target.removeEventListener("keydown", onKey);
+// Ctrl or Cmd+S calls `save` in place of the browser's own save-page, through the shortcuts
+// registry, so it is listed in the "?" sheet and steps aside while a modal dialog is open. `save`
+// decides whether a save may run now. Returns the detach.
+export function onSaveKey(save: () => void): () => void {
+  return register({ key: "Mod+s", label: "Save", group: "Editor", run: () => save() });
 }
 
 // The surfaces whose typing counts: the markdown editor's and any element the app marks.

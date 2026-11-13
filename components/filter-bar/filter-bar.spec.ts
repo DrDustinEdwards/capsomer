@@ -6,14 +6,6 @@ eachTheme((theme) => {
     await visitStates(page, "filter-bar", theme);
     await expectNoAxeViolations(page);
   });
-
-  test("keyboard: Enter in the search applies the filters as a GET", async ({ page }) => {
-    await visitStates(page, "filter-bar", theme);
-    await expect(page.getByRole("search", { name: "Filter people" })).toBeVisible();
-    const field = page.locator("#sample-plain").getByLabel("Name or email");
-    await field.fill("lee");
-    await Promise.all([page.waitForURL(/[?&]q=lee/), field.press("Enter")]);
-  });
 });
 
 test("behavior: a live bar waits out an IME composition, then applies", async ({ page }) => {

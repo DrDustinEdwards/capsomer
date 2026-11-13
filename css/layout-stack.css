@@ -1,0 +1,28 @@
+/* The stack, a part of layout.css: a column with a gap. A site that uses only some layouts imports
+   layout-gap.css (every layout's data-gap) and their parts (layout-stack.css, layout-cluster.css,
+   layout-spread.css, layout-grid.css, layout-panes.css, layout-items.css) in place of layout.css. */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+@layer cap.utilities {
+  .cap-stack {
+    display: flex;
+    flex-direction: column;
+    --layout-gap: var(--space-5);
+    gap: var(--layout-gap);
+    /* A stack whose items all keep their own width, lined up at the start, center or end: a
+       status above its note, a column of buttons in a table's last cell. */
+    &[data-align="start"] {
+      align-items: flex-start;
+    }
+    &[data-align="center"] {
+      align-items: center;
+    }
+    &[data-align="end"] {
+      align-items: flex-end;
+    }
+  }
+  /* A button or a check straight in a stack keeps its own width, as it would in a block. */
+  .cap-stack:not([data-align]) > :is(.cap-btn, .cap-check) {
+    align-self: flex-start;
+  }
+}

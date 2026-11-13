@@ -5,6 +5,8 @@
 // each step. The page owns the steps; the player only calls go(n).
 import { clamp } from "../hooks/hooks.ts";
 
+import { reducedMotion } from "../hooks/hooks.ts";
+
 export interface StepPlayerOptions {
   // The button. Rendered hidden: with no script there is nothing to play, so it is shown here.
   button: HTMLButtonElement | null;
@@ -28,9 +30,6 @@ export interface StepPlayer {
 }
 
 export const STEP_MS = 3600;
-
-const reducedMotion = (): boolean =>
-  typeof matchMedia === "function" && matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 // The wait on a step: read at each start, so a preference changed mid-page is honored next play.
 export function stepDelay(

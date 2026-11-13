@@ -26,7 +26,7 @@ eachTheme((theme) => {
     ]);
   });
 
-  test("keyboard: Tab goes through each job's engine and model, and the cap belongs to the table's form", async ({
+  test("keyboard: Tab goes through each job's engine, model and effort, and the cap belongs to the table's form", async ({
     page,
   }) => {
     await visitStates(page, "ai-engine-settings", theme);
@@ -38,6 +38,8 @@ eachTheme((theme) => {
     await expect(
       s.getByRole("combobox", { name: "Social post drafts: model when the API does it" }),
     ).toBeFocused();
+    await page.keyboard.press("Tab");
+    await expect(s.getByRole("combobox", { name: "Social post drafts: effort" })).toBeFocused();
     const cap = s.getByRole("spinbutton", { name: "Cap a month, $" });
     const owner = await cap.evaluate((el) => (el as HTMLInputElement).form?.id ?? "");
     expect(owner).not.toBe("");

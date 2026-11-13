@@ -12,7 +12,7 @@ eachTheme((theme) => {
   }) => {
     await visitStates(page, "schema-form", theme);
     await expect(page.locator("#a-org")).toHaveAccessibleName(/Display name/);
-    await expect(page.locator("#a-fee")).toHaveValue("25");
+    await expect(page.locator("#a-fee")).toHaveValue("25.00");
     await expect(page.locator("#a-opens")).toHaveValue("2026-12-01T09:00");
     await expect(page.getByRole("radio", { name: "Team" }).first()).toBeChecked();
     await expect(page.locator("#b-contact")).toHaveAccessibleDescription(/Enter an email address/);

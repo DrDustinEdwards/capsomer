@@ -3,7 +3,7 @@
 // and `enhance`, which draws each row's bar through the shared meter (components/meter) from
 // its ARIA values through the CSSOM. No framework; the React wrapper uses the same functions.
 //
-import { plural } from "../hooks/hooks.ts";
+import { plural } from "@drdustinedwards/site-helpers/text";
 import { enhance as enhanceMeter, update as drawBar } from "../meter/meter.ts";
 import { DAY, HOUR, toMs } from "../time/time.ts";
 

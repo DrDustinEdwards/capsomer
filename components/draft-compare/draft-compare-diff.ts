@@ -1,7 +1,6 @@
 // Draft compare's diff: by sentence, then by word, and the counts (draft-compare.ts).
 
-import { plural } from "../hooks/hooks.ts";
-import { wordCount } from "@drdustinedwards/site-helpers/text";
+import { plural, wordCount } from "@drdustinedwards/site-helpers/text";
 
 // ---------------------------------------------------------------------------------------
 // The diff
@@ -62,6 +61,35 @@ export function commonSubsequence(
   if (mid === null) return null;
   for (const [x, y] of mid) out.push([x + lo, y + lo]);
   for (let i = 0; i < a.length - ea; i++) out.push([ea + i, eb + i]);
+  return out;
+}
+
+// The steps from `a` to `b`, in order: each item of `a` kept or removed, each of `b` added, the
+// removals of a changed run before its additions. `i` is the place in `a` (kept, removed) and `j`
+// in `b` (kept, added). Past `maxEdits`, all of `a` is removed and all of `b` added.
+export interface Edit {
+  op: Op;
+  i: number;
+  j: number;
+}
+export function editScript(
+  a: readonly string[],
+  b: readonly string[],
+  maxEdits = DEFAULT_MAX_EDITS,
+): Edit[] {
+  const pairs = commonSubsequence(a, b, maxEdits) ?? [];
+  const out: Edit[] = [];
+  let i = 0;
+  let j = 0;
+  for (const [x, y] of [...pairs, [a.length, b.length] as [number, number]]) {
+    while (i < x) out.push({ op: "del", i: i++, j });
+    while (j < y) out.push({ op: "ins", i, j: j++ });
+    if (x < a.length && y < b.length) {
+      out.push({ op: "same", i: x, j: y });
+      i = x + 1;
+      j = y + 1;
+    }
+  }
   return out;
 }
 
@@ -175,24 +203,17 @@ export function diffWords(a: string, b: string, options: DiffOptions = {}): Word
   const A = tokenize(a);
   const B = tokenize(b);
   const keys = (t: Token[]) => t.map((x) => x.text);
-  const pairs = commonSubsequence(keys(A), keys(B), options.maxEdits) ?? [];
   const marked: Marked[] = [];
-  let i = 0;
-  let j = 0;
-  const del = (t: Token) => marked.push({ op: "del", text: t.text, lead: t.lead });
-  const ins = (t: Token) => marked.push({ op: "ins", text: t.text, lead: t.lead });
-  for (const [mi, mj] of [...pairs, [A.length, B.length] as [number, number]]) {
-    while (i < mi) del(A[i++] as Token);
-    while (j < mj) ins(B[j++] as Token);
-    if (mi < A.length && mj < B.length) {
-      const ta = A[mi] as Token;
-      const tb = B[mj] as Token;
+  for (const { op, i, j } of editScript(keys(A), keys(B), options.maxEdits)) {
+    const ta = A[i] as Token;
+    const tb = B[j] as Token;
+    if (op === "del") marked.push({ op, text: ta.text, lead: ta.lead });
+    else if (op === "ins") marked.push({ op, text: tb.text, lead: tb.lead });
+    else {
       // A word that followed a deleted one by a space keeps that space.
       const prev = marked[marked.length - 1];
       const lead = tb.lead === "" && ta.lead !== "" && prev?.op === "del" ? ta.lead : tb.lead;
-      marked.push({ op: "same", text: tb.text, lead });
-      i = mi + 1;
-      j = mj + 1;
+      marked.push({ op, text: tb.text, lead });
     }
   }
   return fold(marked);
@@ -400,10 +421,6 @@ function entryWords(e: Entry): { added: number; removed: number } {
     return { added: wordsOf(e.parts, "ins"), removed: wordsOf(e.parts, "del") };
   return { added: 0, removed: 0 };
 }
-
-// oxfmt-ignore
-/** @deprecated The British spelling, kept so existing imports work; use `analyze`. */
-export const analyse = (before: string, after: string, options: SentenceOptions = {}): Analysis => analyze(before, after, options); // codespell:ignore
 
 export function analyze(before: string, after: string, options: SentenceOptions = {}): Analysis {
   const entries = diffSentences(before, after, options);

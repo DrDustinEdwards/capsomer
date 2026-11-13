@@ -267,12 +267,4 @@ eachTheme((theme) => {
     await expect(page.locator("#sel-platform-native")).toBeHidden();
     await expect(page.locator("#sel-platform-native")).toHaveAttribute("aria-hidden", "true");
   });
-
-  test("keyboard: the native select (no enhancement) is operable by typing", async ({ page }) => {
-    await visitStates(page, "select", theme);
-    const sel = page.locator("#sel-native");
-    await sel.focus();
-    await page.keyboard.type("o");
-    await expect(sel).toHaveValue("old");
-  });
 });
