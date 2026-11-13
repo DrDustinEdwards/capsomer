@@ -470,3 +470,58 @@ test("group: a group must be on a sortable field that the default sort orders by
     /not a sortable field/,
   );
 });
+
+// A range facet over spans: an item held from 2019 to now matches 2024, an undated one matches
+// nothing, an inverted range is read the right way round, and the chip says it in words.
+test("a range facet matches overlapping spans and canonicalizes its address", async () => {
+  const { activeCount, catalogMarkdown, catalogDownloads, listParam, summaryText } =
+    await import("../../components/catalog/catalog-core.ts");
+  const jobs = [
+    { id: "a", title: "Field lead", from: 2019, to: null },
+    { id: "b", title: "Lab | bench", from: 2015, to: 2017 },
+    { id: "c", title: "Undated", from: null, to: null },
+  ];
+  const def = defineCatalog({
+    id: "jobs",
+    noun: ["role", "roles"],
+    basePath: "/cv",
+    itemKey: (j) => j.id,
+    fields: [
+      { key: "title", label: "Role", value: (j) => j.title, search: 1, column: {} },
+      {
+        key: "year",
+        label: "Year",
+        value: (j) => (j.from ? String(j.from) : null),
+        facet: { kind: "range", span: (j) => (j.from ? [j.from, j.to ?? Infinity] : null) },
+      },
+    ],
+  });
+  const state = parseCatalogParams(def, new URLSearchParams("year-from=2025&year-to=2024"));
+  assert.deepEqual(state.filters.year, ["2024..2025"]);
+  assert.equal(catalogHref(def, state), "/cv?year-from=2024&year-to=2025");
+  const result = queryCatalog(def, jobs, state);
+  assert.deepEqual(
+    result.rows.map((j) => j.id),
+    ["a"],
+  );
+  assert.equal(result.chips[0].label, "Year: 2024 to 2025");
+  assert.equal(activeCount(result), 1);
+  assert.equal(summaryText(def, result), "Showing 1 of 3 roles");
+  const facet = result.facets.find((f) => f.key === "year");
+  assert.equal(facet.range.values[0], 2015);
+  assert.equal(
+    catalogRedirect(def, new URL("https://example.com/cv?year-from=2024&utm=x"), {
+      keepUnknown: true,
+    }),
+    null,
+  );
+  assert.equal(
+    catalogMarkdown(def, jobs, "", { href: (j) => `/cv/${j.id}` }).split("\n")[3],
+    "| [Lab \\| bench](/cv/b) |",
+  );
+  assert.equal(catalogDownloads(def, result).csv, "/cv.csv?year-from=2024&year-to=2025");
+  assert.deepEqual(listParam(new URLSearchParams("t=a,b&t=a&t=z"), "t", new Set(["a", "b"])), [
+    "a",
+    "b",
+  ]);
+});

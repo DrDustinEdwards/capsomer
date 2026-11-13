@@ -1,0 +1,121 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* A graph drawn at build time (graph.ts): boxes on the surface, each edged in its first status's
+   tone and weight (so the edge says it without color too: a heavier line for worse), the status
+   glyph and word inside, a marked box in a dashed ring. The drawing is aria-hidden; the page's
+   table or list beside it carries the same facts. */
+@layer cap.components {
+  .cap-graph {
+    display: grid;
+    gap: var(--space-3);
+    margin: 0;
+    container-type: inline-size;
+
+    & figcaption {
+      color: var(--muted);
+      font-size: var(--fs-detail);
+    }
+  }
+  .cap-graph-scroller {
+    overflow-x: auto;
+    border-radius: var(--radius-m);
+
+    &:focus-visible {
+      outline: 2px solid var(--ring);
+      outline-offset: 2px;
+    }
+  }
+  .cap-graph-svg {
+    display: block;
+    max-inline-size: 100%;
+    block-size: auto;
+    margin-inline: auto;
+    font: 13px / 1 var(--ui);
+  }
+  .cap-graph-wire {
+    fill: none;
+    stroke: var(--line-strong);
+    stroke-width: 1.25;
+  }
+  .cap-graph-head {
+    fill: var(--line-strong);
+  }
+  .cap-graph-card {
+    fill: var(--surface);
+    stroke: var(--line-strong);
+    stroke-width: 1.5;
+  }
+  .cap-graph-box[data-tone="crit"] > .cap-graph-card {
+    stroke: var(--crit);
+    stroke-width: 2.5;
+  }
+  .cap-graph-box[data-tone="warn"] > .cap-graph-card {
+    stroke: var(--warn);
+    stroke-width: 2;
+  }
+  .cap-graph-box[data-tone="ok"] > .cap-graph-card {
+    stroke: var(--ok);
+  }
+  .cap-graph-ring {
+    fill: none;
+    stroke: var(--crit);
+    stroke-dasharray: 5 4;
+    stroke-width: 1.5;
+  }
+  .cap-graph text {
+    fill: var(--text);
+  }
+  .cap-graph-name {
+    font-weight: 600;
+  }
+  .cap-graph-sub {
+    fill: var(--muted);
+  }
+  .cap-graph-ring-label {
+    fill: var(--crit);
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .cap-graph-status {
+    color: var(--muted);
+
+    &[data-tone="crit"] {
+      color: var(--crit);
+    }
+    &[data-tone="warn"] {
+      color: var(--warn);
+    }
+    &[data-tone="ok"] {
+      color: var(--ok);
+    }
+    & text {
+      fill: currentColor;
+      font-weight: 600;
+    }
+  }
+  .cap-graph a:hover .cap-graph-card {
+    fill: var(--sel);
+  }
+  /* A phone keeps the drawing's size and scrolls it, so its 13 px text never shrinks. */
+  @container (width < 40rem) {
+    .cap-graph-svg {
+      max-inline-size: none;
+    }
+  }
+
+  @media (forced-colors: active) {
+    .cap-graph-card,
+    .cap-graph-wire {
+      stroke: CanvasText;
+    }
+    .cap-graph-head {
+      fill: CanvasText;
+    }
+    .cap-graph text,
+    .cap-graph-status {
+      fill: CanvasText;
+      color: CanvasText;
+    }
+  }
+}
