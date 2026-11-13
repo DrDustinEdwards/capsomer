@@ -30,7 +30,7 @@ The top of the page: the hero. An action inside a form: a button.
 
 - **A section named by its heading**, so it is a region a screen reader lists.
 - **A tinted band with the accent's edge**, the edge carrying it in forced colors; `quiet` is a rule above and no fill, for a page that already has many panels.
-- **Look comes from tokens** (`--cta-band-bg`).
+- **Look comes from tokens**, each defaulting to the look shown here: `--cta-band-bg`, `--cta-band-align` (center; also `start`), `--cta-band-border` (1px in the accent's line), `--cta-band-pad` (`--space-7` `--space-6`), and the title's `--cta-band-title-face`, `--cta-band-title-size`, `--cta-band-title-weight` and `--cta-band-title-leading` (unset, the heading's own). The eyebrow is the eyebrow component in the accent tone.
 - **`eyebrow` and `note`** are optional small lines above the heading and under the actions (Foxing's "Start reading" and its apps note).
 
 ## Keyboard
@@ -46,7 +46,7 @@ The top of the page: the hero. An action inside a form: a button.
 ## Markup
 
 ```html
-<section class="cap-cta-band" aria-labelledby="c"><p class="cap-cta-band-eyebrow">Start here</p><h2 id="c" class="cap-cta-band-title">Ready to write it down?</h2>
+<section class="cap-cta-band" aria-labelledby="c"><p class="cap-eyebrow" data-tone="accent">Start here</p><h2 id="c" class="cap-cta-band-title">Ready to write it down?</h2>
   <p class="cap-cta-band-text">Set up a notebook in two minutes.</p><div class="cap-cta-band-actions">[button links]</div>
   <p class="cap-cta-band-note">Apps for phones are coming.</p></section>
 ```

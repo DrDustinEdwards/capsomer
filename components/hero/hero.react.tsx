@@ -1,4 +1,5 @@
 import { useId, type ReactNode } from "react";
+import { Eyebrow } from "../eyebrow/eyebrow.react.tsx";
 
 // A landing page's first section (hero.md): an eyebrow, the page's one h1, a lead, the actions
 // and a note, with an aside beside them where there is room (a card, a picture, a product view)
@@ -60,7 +61,7 @@ export function Hero(props: HeroProps) {
         </div>
       ) : null}
       <div className="cap-hero-text" data-card={card ? "" : undefined}>
-        {eyebrow ? <p className="cap-hero-eyebrow">{eyebrow}</p> : null}
+        {eyebrow ? <Eyebrow tone="accent">{eyebrow}</Eyebrow> : null}
         <H id={titleId} className="cap-hero-title">
           {title}
         </H>
