@@ -13,7 +13,7 @@
 // Exit 0: every file and every edit held. Exit 1: a byte changed, listed with its file and line.
 // Exit 2: no folder given, or no Markdown found in it.
 
-import { readdirSync, readFileSync, statSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { join, relative } from "node:path";
 
 import {
@@ -35,6 +35,7 @@ if (roots.length === 0) {
 
 /** @param {string} dir @returns {string[]} */
 function markdownUnder(dir) {
+  if (!existsSync(dir)) return [];
   if (statSync(dir).isFile()) return dir.endsWith(".md") ? [dir] : [];
   return readdirSync(dir).flatMap((name) =>
     name === "node_modules" || name.startsWith(".") ? [] : markdownUnder(join(dir, name)),
@@ -102,9 +103,10 @@ for (const file of files) {
     };
     if (!addWord(edited.content[at])) return;
     edits++;
-    const out = fromDoc(normalize(edited), loaded.tail, prints, dialect);
+    const held = normalize(edited);
+    const out = fromDoc(held, loaded.tail, prints, dialect);
     const md = block.attrs.md;
-    const written = writeChecked(normalize(edited).content[at], dialect);
+    const written = writeChecked(held.content[at], dialect);
     // The file with only that block's bytes replaced: anything else differing is a stray change.
     const start =
       doc.content
@@ -119,11 +121,14 @@ for (const file of files) {
       problems.push(
         `${name}: an edit to block ${at + 1} changed other bytes, ${firstDifference(expected, out)}`,
       );
-    const back = toDoc(written, dialect).doc.content ?? [];
-    if (
-      back.length !== 1 ||
-      !sameBlock(normalize(edited).content[at], /** @type {any} */ (back[0]))
-    )
+    // A block that does not parse back at all is a loose block too, never the end of the run.
+    let back = [];
+    try {
+      back = toDoc(written, dialect).doc.content ?? [];
+    } catch {
+      back = [];
+    }
+    if (back.length !== 1 || !sameBlock(held.content[at], /** @type {any} */ (back[0])))
       loose.push(
         `${name}: block ${at + 1}, once edited, reads back differently: ${JSON.stringify(written.slice(0, 160))}`,
       );

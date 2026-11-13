@@ -167,7 +167,12 @@ export function attachSuggest(root: HTMLElement, opts: SuggestOptions): () => vo
           open();
         },
         () => {
-          // Aborted or offline: the form still searches.
+          // Offline or failed: the last query's suggestions no longer fit, so they go; the form
+          // still searches. An aborted call is a newer query's to answer.
+          if (ctrl.signal.aborted) return;
+          items = [];
+          status.textContent = "";
+          close();
         },
       );
     }, delay);

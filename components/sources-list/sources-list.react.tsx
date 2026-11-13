@@ -1,3 +1,6 @@
+import { AwayLink } from "../link/link.react.tsx";
+import { ABSOLUTE } from "../link/link.ts";
+
 export interface Source {
   // The kind: credit, music, image, article, book, web, or any other word.
   type: string;
@@ -27,7 +30,7 @@ export interface SourcesListProps {
   markAway?: boolean;
 }
 
-const external = (url: string) => /^https?:\/\//i.test(url);
+const external = (url: string) => ABSOLUTE.test(url) && !/^(mailto|tel):/i.test(url);
 
 // The HTML contract in sources-list.md.
 export function SourcesList({ sources, label, isExternal = external, markAway }: SourcesListProps) {
@@ -37,12 +40,12 @@ export function SourcesList({ sources, label, isExternal = external, markAway }:
       {sources.map((s, i) => (
         <li className="cap-source" key={i}>
           <span className="cap-source-kind">{SOURCE_KINDS[s.type] ?? s.type}</span>
-          {s.url ? (
-            <a
-              className="cap-source-title"
-              href={s.url}
-              data-link={markAway && isExternal(s.url) ? "away" : undefined}
-            >
+          {s.url && markAway && isExternal(s.url) ? (
+            <AwayLink className="cap-source-title" href={s.url}>
+              {s.title}
+            </AwayLink>
+          ) : s.url ? (
+            <a className="cap-source-title" href={s.url}>
               {s.title}
               {isExternal(s.url) ? <span className="cap-sr-only"> (another site)</span> : null}
             </a>

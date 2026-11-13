@@ -143,6 +143,10 @@ export interface SortableBoardProps<T> extends CoreProps<T> {
   "aria-label"?: string;
 }
 
+// How long an Add waits for the host's new row before giving up on moving focus into it: a host
+// that refused must not have focus pulled into a row it adds later.
+const ADD_WAIT_MS = 3000;
+
 const Grip = () => (
   <svg
     viewBox="0 0 16 16"
@@ -418,7 +422,8 @@ function Core<T>({
     const at = locate(ids, id);
     if (!at || !onRemove) return;
     setLifted(null);
-    say(text.removed(labelOf(id), total - 1));
+    // A board's lanes keep their own count: the words and `min` are the lane's.
+    say(text.removed(labelOf(id), (ids[at.list]?.length ?? 1) - 1));
     afterRemove.current = { ...at, total };
     onRemove(id, { index: at.index, list: at.list });
   };
@@ -431,7 +436,7 @@ function Core<T>({
     // A host that never adds anything (it refused) must not steal focus from a later change.
     window.setTimeout(() => {
       if (added.current === token) added.current = null;
-    }, 3000);
+    }, ADD_WAIT_MS);
     onAdd();
   };
 
@@ -634,7 +639,7 @@ function Core<T>({
                       data-variant={removeStyle === "quiet" ? "quiet" : undefined}
                       data-size="sm"
                       data-cap-part="remove"
-                      disabled={busy || total <= min}
+                      disabled={busy || order.length <= min}
                       onClick={(e) => {
                         e.preventDefault();
                         remove(id);

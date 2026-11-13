@@ -30,10 +30,6 @@ export {
   stopCommand,
 } from "./command-menu.ts";
 
-// The idle host lives in its own light module (capsomer/react/command-host), so an app that
-// loads the menu lazily does not pull it into every route; exported here as well.
-export { useCommandHost } from "./command-host.react.tsx";
-
 export interface CommandMenuProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;

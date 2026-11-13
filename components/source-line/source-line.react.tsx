@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { AwayLink } from "../link/link.react.tsx";
 
 // A figure's source, under it: "Source: stripe.com, read October 2026 ↗". Every statistic names
 // where it came from and when it was read, as a link to that page.
@@ -23,13 +24,9 @@ export interface SourceLineProps {
 export function SourceLine({ href, read, name }: SourceLineProps) {
   return (
     <p className="cap-source-line">
-      <a href={href} rel="noopener noreferrer">
+      <AwayLink href={href}>
         Source: {name ?? citation(href)}, read {read}
-        <svg viewBox="0 0 12 12" aria-hidden="true" focusable="false">
-          <path d="M3.5 8.5l5-5M4.5 3.5h4v4" />
-        </svg>
-        <span className="cap-sr-only"> (opens the source)</span>
-      </a>
+      </AwayLink>
     </p>
   );
 }

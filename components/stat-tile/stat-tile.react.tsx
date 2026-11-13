@@ -1,4 +1,3 @@
-import { dataTableBlock, type DataTable } from "enarratio";
 import { Children, type ReactNode } from "react";
 import { markup } from "../trusted-html/trusted-html.ts";
 
@@ -28,11 +27,11 @@ interface StatTileBase {
   // One sentence with the chart's numbers, "Actions minutes per day, last 7 days: 260 rising to
   // 340.", when the SVG's own name is not it: the slot becomes the image, named by this.
   chartSummary?: string;
-  // The chart's numbers (Enarratio's sparklineTable().table). With it Enarratio's table, visually
-  // hidden for screen readers and AI agents, sits under the tile, outside the link. Name it in
-  // chartTableLabel ("Actions minutes by day").
-  chartTable?: DataTable;
-  chartTableLabel?: string;
+  // The chart's numbers as Enarratio's table markup (dataTableBlock(table, "Actions minutes by
+  // day"), or sparklineTable(options).markup), visually hidden for screen readers and AI agents,
+  // under the tile, outside the link. Markup, not the table, so a module with only static tiles
+  // never loads Enarratio.
+  chartTable?: string;
   // Opens the view behind the figure: a link with href, or a button with onClick.
   href?: string;
   onClick?: () => void;
@@ -84,7 +83,6 @@ export function StatTile(props: StatTileProps) {
     chart,
     chartSummary,
     chartTable,
-    chartTableLabel,
     href,
     onClick,
     renderLink = plainLink,
@@ -151,26 +149,11 @@ export function StatTile(props: StatTileProps) {
     return (
       <div className="cap-data">
         {tile}
-        <div
-          dangerouslySetInnerHTML={markup(
-            dataTableBlock(chartTable, chartTableLabel ?? `${label}, by period`),
-          )}
-        />
+        <div dangerouslySetInnerHTML={markup(chartTable)} />
       </div>
     );
   }
   return tile;
-}
-
-export type DeltaDirection = "up" | "down" | "flat";
-
-export interface StatDelta {
-  // The signed amount, in words a person can read: "+$1,200", "-3 points", "No change".
-  text: string;
-  direction: DeltaDirection;
-  // Whether the move is good, bad or neither. Defaults from the direction (up ok, down crit,
-  // flat none); a figure where up is bad (churn) passes it.
-  tone?: "ok" | "warn" | "crit" | "nodata";
 }
 
 interface StaticStatTileBase {
@@ -180,8 +163,11 @@ interface StaticStatTileBase {
   size?: "lg";
   // A drawing before the label: any inline SVG. Hidden from a screen reader.
   icon?: ReactNode;
-  // How the figure moved, beside it: a direction glyph, a signed amount and a tone.
-  delta?: StatDelta;
+  // How the figure moved, beside it: Capsomer's Delta (`<Delta current previous higherIsBetter />`).
+  delta?: ReactNode;
+  // The figure above its label ("41%", then "Open rate"), for a row read by its numbers. Default:
+  // the label first.
+  figureFirst?: boolean;
   // The note under the figure.
   detail?: ReactNode;
 }
@@ -194,28 +180,24 @@ export type StaticStatTileProps =
     })
   | (StaticStatTileBase & { tone: "nodata"; reason: string; figure?: never; unit?: never });
 
-const ARROW: Record<DeltaDirection, string> = {
-  up: "M8 13V3M3.5 7.5 8 3l4.5 4.5",
-  down: "M8 3v10M3.5 8.5 8 13l4.5-4.5",
-  flat: "M3 8h10",
-};
-const DELTA_TONE = { up: "ok", down: "crit", flat: "nodata" } as const;
-
 // The static variant: a label, a figure, an optional delta and note, and nothing to follow. A
 // figure that leads somewhere is a StatTile, always a link or a button.
 export function StaticStatTile(props: StaticStatTileProps) {
-  const { label, icon, delta, detail, size, tone } = props;
+  const { label, icon, delta, detail, size, tone, figureFirst = false } = props;
   const nodata = props.tone === "nodata";
+  const name = (
+    <p className="cap-tile-label">
+      {icon ? (
+        <span className="cap-tile-icon" aria-hidden="true">
+          {icon}
+        </span>
+      ) : null}
+      {label}
+    </p>
+  );
   return (
     <div className="cap-tile" data-variant="static" data-tone={tone} data-size={size}>
-      <p className="cap-tile-label">
-        {icon ? (
-          <span className="cap-tile-icon" aria-hidden="true">
-            {icon}
-          </span>
-        ) : null}
-        {label}
-      </p>
+      {figureFirst ? null : name}
       <p className="cap-tile-line">
         {props.tone === "nodata" ? (
           <span className="cap-tile-figure">
@@ -233,27 +215,9 @@ export function StaticStatTile(props: StaticStatTileProps) {
             ) : null}
           </span>
         )}
-        {delta && !nodata ? (
-          <>
-            {" "}
-            <span className="cap-tile-delta" data-tone={delta.tone ?? DELTA_TONE[delta.direction]}>
-              <svg
-                viewBox="0 0 16 16"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.8"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                aria-hidden="true"
-                focusable="false"
-              >
-                <path d={ARROW[delta.direction]} />
-              </svg>
-              {delta.text}
-            </span>
-          </>
-        ) : null}
+        {delta && !nodata ? <> {delta}</> : null}
       </p>
+      {figureFirst ? name : null}
       {props.tone === "nodata" ? (
         <p className="cap-tile-detail">{props.reason}</p>
       ) : detail ? (

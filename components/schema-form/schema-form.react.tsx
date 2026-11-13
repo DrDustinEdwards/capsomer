@@ -1,7 +1,8 @@
 import type { ComponentType, FormHTMLAttributes, ReactNode } from "react";
 import { ErrorSummary } from "../error-summary/error-summary.react.tsx";
-import { Check, DateTimeField, Field, MoneyField } from "../field/field.react.tsx";
+import { Check, DateTimeField, Field, FieldSet, MoneyField } from "../field/field.react.tsx";
 import { toDateTimeLocal } from "../field/field.ts";
+import { moneyInputValue } from "@dustinedwards/site-runtime/money";
 import { specId, type FieldSpec, type SpecError } from "./schema-form.ts";
 
 // What a renderer for one kind is given.
@@ -59,10 +60,8 @@ export function FieldFromSpec({
     case "readonly":
       return (
         <div className="cap-field">
-          <span className="cap-field-label" id={`${id}-label`}>
-            {spec.label}
-          </span>
-          <p className="cap-schema-readonly" id={id} aria-labelledby={`${id}-label`}>
+          <span className="cap-field-label">{spec.label}</span>
+          <p className="cap-schema-readonly" id={id}>
             {str(value) || "None"}
           </p>
           {spec.help ? <p className="cap-field-help">{spec.help}</p> : null}
@@ -128,8 +127,15 @@ export function FieldFromSpec({
         <MoneyField
           {...words}
           id={id}
-          name={controlled ? undefined : spec.key}
           defaultCents={typeof value === "number" ? value : null}
+          {...(controlled
+            ? {
+                // The typed dollars while controlled, so "12." survives a keystroke.
+                value: typeof value === "number" ? moneyInputValue(value, "usd") : str(value),
+                onChange: (e: { target: { value: string } }) =>
+                  onChange(orEmpty(e.target.value, e.target.value === "")),
+              }
+            : { name: spec.key })}
         />
       );
     case "datetime":
@@ -192,25 +198,13 @@ export function FieldFromSpec({
       const many = spec.kind === "multi";
       const picked = many ? list(value) : [str(value)];
       return (
-        <fieldset
-          className="cap-field"
+        <FieldSet
           id={id}
-          aria-describedby={spec.help ? `${id}-help` : undefined}
-          data-invalid={error ? "true" : undefined}
+          legend={spec.label}
+          help={spec.help}
+          error={error}
+          required={spec.required}
         >
-          <legend className="cap-field-label">
-            {spec.label}
-            {spec.required ? (
-              <span className="cap-field-required" aria-hidden="true">
-                Required
-              </span>
-            ) : null}
-          </legend>
-          {spec.help ? (
-            <p className="cap-field-help" id={`${id}-help`}>
-              {spec.help}
-            </p>
-          ) : null}
           <div className="cap-field-options">
             {(spec.options ?? []).map((o) => (
               <Check
@@ -235,10 +229,7 @@ export function FieldFromSpec({
               />
             ))}
           </div>
-          <p className="cap-field-error" hidden={!error}>
-            {error ?? null}
-          </p>
-        </fieldset>
+        </FieldSet>
       );
     }
     default:
@@ -326,7 +317,7 @@ export function SettingsForm({
   pending = false,
   submitLabel = "Save",
   pendingLabel = "Saving…",
-  form: FormEl = "form" as unknown as FormComponent,
+  form: Tag = "form",
   method = "post",
   action,
   idPrefix,
@@ -348,7 +339,6 @@ export function SettingsForm({
   // Hidden inputs (an intent) and anything else that posts with the fields.
   children?: ReactNode;
 }) {
-  const Tag = FormEl as FormComponent;
   return (
     <Tag {...rest} method={method} action={action} className="cap-schema-form" noValidate>
       <ErrorSummary errors={errors.map((e) => ({ id: specId(e.key, idPrefix), text: e.text }))} />

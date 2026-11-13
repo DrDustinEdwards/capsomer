@@ -19,11 +19,6 @@
     border: var(--line-w) solid var(--line);
     border-radius: var(--radius-m);
     padding: var(--pad-card);
-
-    &:focus-visible {
-      outline: var(--focus-width) solid var(--ring);
-      outline-offset: var(--focus-offset);
-    }
     &[data-frame="none"] {
       border: 0;
       padding: 0;

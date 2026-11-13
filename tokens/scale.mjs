@@ -261,8 +261,6 @@ export const SCALE = {
     ["z-sticky", "20", "a sticky top bar or anchor bar"],
     ["z-tabbar", "30", "the phone tab bar"],
     ["z-overlay", "40", "a scrim and a side panel"],
-    ["z-dropdown", "50", "a menu or listbox that is not in the top layer"],
-    ["z-drawer", "60", "a drawer over its scrim (--z-overlay)"],
     ["z-message", "70", "the status region"],
     ["z-tip", "80", "a tooltip"],
     ["z-progress", "90", "the page's loading bar, over everything but the skip link"],
@@ -418,7 +416,8 @@ export const SCALE = {
 };
 
 // Breakpoints: [name, width, what changes there]. A media query cannot read a custom property, so these are not CSS
-// tokens: they are the widths every @media in Capsomer and the sites uses (tokens.json carries them for tools), and a
+// tokens: they are the widths a page-level @media should use (tokens.json carries them for tools; older queries still
+// use their own widths, 768px, 52rem and the like, and move to these when their layout is next touched), and a
 // component that answers to its own width uses a container query instead. Write them in rem, min-width, mobile first.
 export const BREAKPOINTS = [
   ["bp-sm", "40rem", "a phone ends: one column becomes two, a tray becomes a sidebar"],

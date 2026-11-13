@@ -22,26 +22,32 @@ export function markCurrent(nav: Element, id: string | null): void {
   }
 }
 
+// One contents list: a click scrolls to its section, and the current section is marked as the page
+// scrolls. Returns a function that undoes it.
+export function attach(nav: HTMLElement): () => void {
+  if (nav.hasAttribute("data-cap-ready")) return () => {};
+  const headings = linkedHeadings(nav);
+  if (!headings.length) return () => {};
+  const click = (e: Event) => {
+    const a = (e.target as Element).closest<HTMLAnchorElement>("a.cap-toc-link");
+    const h = a && document.getElementById(decodeURIComponent(a.hash.slice(1)));
+    if (!h) return;
+    e.preventDefault();
+    goToSection(h);
+  };
+  nav.addEventListener("click", click);
+  const stop = watchSections(headings, (id) => markCurrent(nav, id));
+  nav.dataset.capReady = "";
+  return () => {
+    nav.removeEventListener("click", click);
+    stop();
+    delete nav.dataset.capReady;
+  };
+}
+
 export function enhance(root: ParentNode = document): () => void {
-  const off: Array<() => void> = [];
-  for (const nav of root.querySelectorAll<HTMLElement>('[data-cap="toc"]:not([data-cap-ready])')) {
-    const headings = linkedHeadings(nav);
-    if (!headings.length) continue;
-    const click = (e: Event) => {
-      const a = (e.target as Element).closest<HTMLAnchorElement>("a.cap-toc-link");
-      const h = a && document.getElementById(decodeURIComponent(a.hash.slice(1)));
-      if (!h) return;
-      e.preventDefault();
-      goToSection(h);
-    };
-    nav.addEventListener("click", click);
-    const stop = watchSections(headings, (id) => markCurrent(nav, id));
-    nav.dataset.capReady = "";
-    off.push(() => {
-      nav.removeEventListener("click", click);
-      stop();
-      delete nav.dataset.capReady;
-    });
-  }
+  const off = [...root.querySelectorAll<HTMLElement>('[data-cap="toc"]:not([data-cap-ready])')].map(
+    attach,
+  );
   return () => off.forEach((f) => f());
 }

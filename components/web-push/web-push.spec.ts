@@ -13,9 +13,9 @@ eachTheme((theme) => {
     await visitStates(page, "web-push", theme);
     await expectNoAxeViolations(page);
     await expectContrast(page, [
-      { sel: "#push-devices .cap-push-device-detail", what: "a device's detail" },
-      { sel: "#push-setup .cap-push-note", what: "the not set up note" },
-      { sel: "#push-setup .cap-push-unsupported", what: "the no Web Push line" },
+      { sel: "#push-devices .cap-web-push-device-detail", what: "a device's detail" },
+      { sel: "#push-setup .cap-web-push-note", what: "the not set up note" },
+      { sel: "#push-setup .cap-web-push-unsupported", what: "the no Web Push line" },
     ]);
   });
 });

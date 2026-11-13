@@ -2,29 +2,29 @@
 // timeline scrolls into view (200px early). With no script, and with reduced motion, it is drawn
 // full. The fill is a transform, so nothing is measured and a resize needs no work.
 
-export function enhance(root: ParentNode = document): () => void {
+// One timeline: fills its line once it nears the view. Returns a function that undoes it.
+export function attach(el: HTMLElement): () => void {
+  if (el.hasAttribute("data-cap-ready")) return () => {};
+  el.dataset.capReady = "";
   const io = new IntersectionObserver(
-    (entries) => {
-      for (const e of entries) {
-        if (!e.isIntersecting) continue;
-        io.unobserve(e.target);
-        (e.target as HTMLElement).dataset.shown = "";
-      }
+    ([e]) => {
+      if (!e?.isIntersecting) return;
+      io.disconnect();
+      el.dataset.shown = "";
     },
     { rootMargin: "200px" },
   );
-  const els = [
-    ...root.querySelectorAll<HTMLElement>('[data-cap="timeline"]:not([data-cap-ready])'),
-  ];
-  for (const el of els) {
-    el.dataset.capReady = "";
-    io.observe(el);
-  }
+  io.observe(el);
   return () => {
     io.disconnect();
-    for (const el of els) {
-      delete el.dataset.capReady;
-      delete el.dataset.shown;
-    }
+    delete el.dataset.capReady;
+    delete el.dataset.shown;
   };
+}
+
+export function enhance(root: ParentNode = document): () => void {
+  const off = [
+    ...root.querySelectorAll<HTMLElement>('[data-cap="timeline"]:not([data-cap-ready])'),
+  ].map(attach);
+  return () => off.forEach((f) => f());
 }
