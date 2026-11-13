@@ -1,0 +1,57 @@
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+/* The ambient layer's blobs alone (ambient.css has all three). It needs
+   ambient-base.css, the rules every kind shares, imported before it. */
+
+@layer cap.components {
+  /* Blobs: full-bleed to the window without 100vw, clipped on the inline axis only, so no blob makes
+     the page scroll sideways and none shows a straight edge at the top or bottom. */
+  .cap-ambient[data-variant="blobs"] {
+    inset-inline: calc(50% - 50vw);
+    overflow: visible;
+    overflow-x: clip;
+    opacity: var(--cap-ambient-strength, 0.6);
+
+    & > span {
+      position: absolute;
+      inline-size: var(--s);
+      block-size: var(--s);
+      inset-block-start: var(--y);
+      inset-inline-start: var(--x);
+      background: radial-gradient(circle, var(--c) 0%, transparent 70%);
+      opacity: var(--o);
+      filter: blur(64px);
+    }
+
+    & > span:nth-child(1) { --c: var(--cap-ambient-1); --o: 0.55; --y: -40%; --x: 2%; --s: 26rem; --dx: 26px; --dy: 20px; --k: 1.12; --d: 30s; --l: -4s; }
+    & > span:nth-child(2) { --c: var(--cap-ambient-1); --o: 0.5; --y: -44%; --x: 48%; --s: 30rem; --dx: -30px; --dy: 16px; --k: 1.1; --d: 36s; --l: -12s; }
+    & > span:nth-child(3) { --c: var(--cap-ambient-1); --o: 0.42; --y: -28%; --x: 26%; --s: 24rem; --dx: 18px; --dy: -22px; --k: 1.14; --d: 26s; --l: -8s; }
+    & > span:nth-child(4) { --c: var(--cap-ambient-2); --o: 0.38; --y: -36%; --x: 70%; --s: 26rem; --dx: -20px; --dy: -18px; --k: 1.08; --d: 38s; --l: -2s; }
+  }
+
+  /* Right to left, the drift is mirrored, as the blobs' places are. An attribute, not :dir(), which the
+     build lowers to a :lang() list that a dir attribute does not match. */
+  [dir="rtl"] .cap-ambient {
+    --cap-ambient-flip: -1;
+  }
+
+  :root[data-theme="dark"] .cap-ambient[data-variant="blobs"] {
+    opacity: var(--cap-ambient-strength-dark, 0.35);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) .cap-ambient[data-variant="blobs"] {
+      opacity: var(--cap-ambient-strength-dark, 0.35);
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .cap-ambient[data-variant="blobs"] > span {
+      animation: cap-ambient-drift var(--d) ease-in-out var(--l) infinite alternate;
+    }
+  }
+
+  @keyframes cap-ambient-drift {
+    from { transform: translate3d(0, 0, 0) scale(1); }
+    to { transform: translate3d(calc(var(--dx, 0px) * var(--cap-ambient-flip, 1)), var(--dy, 0), 0) scale(var(--k, 1)); }
+  }
+}
