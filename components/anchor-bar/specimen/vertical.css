@@ -1,0 +1,13 @@
+/* Layout for the states page only. */
+.anchor-vertical-demo {
+  display: grid;
+  grid-template-columns: 12rem minmax(0, 1fr);
+  gap: 2rem;
+  align-items: start;
+}
+
+/* Room to scroll: the sections are tall enough that a middle one can be read without reaching the page's end, where
+   the last link is current. */
+.anchor-vertical-demo section {
+  min-block-size: 36rem;
+}

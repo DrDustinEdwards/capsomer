@@ -1,0 +1,87 @@
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* A like: a toggle button with a heart and its count, pressed when the reader has liked it. The
+   heart fills when pressed, so the state is told by shape as well as color. Extracted from Foxing's
+   LikeButton (components/social/like-button.tsx, .fx-like-button-* in styles/social.css). */
+@layer cap.components {
+  .cap-like {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-1);
+  }
+
+  .cap-like-button {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-block-size: var(--target);
+    padding: 0 var(--pad-x);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-full);
+    background: var(--surface);
+    color: var(--muted);
+    font: inherit;
+    font-size: var(--fs-detail);
+    font-variant-numeric: tabular-nums;
+    cursor: pointer;
+
+    & svg {
+      inline-size: 1rem;
+      block-size: 1rem;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 1.8;
+    }
+
+    &:hover:not(:disabled),
+    &[data-force="hover"] {
+      border-color: var(--line-strong);
+      color: var(--text);
+    }
+
+    &[aria-pressed="true"] {
+      border-color: var(--accent-line);
+      color: var(--accent-text);
+
+      & svg {
+        fill: currentColor;
+      }
+    }
+
+    &:disabled {
+      cursor: default;
+      opacity: 0.7;
+    }
+
+    &[aria-busy="true"] {
+      cursor: progress;
+    }
+
+    @media (prefers-reduced-motion: no-preference) {
+      transition: color var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out);
+
+      &[aria-pressed="true"] svg {
+        animation: cap-like-pop var(--dur-base) var(--ease-spring);
+      }
+    }
+  }
+
+  .cap-like-error {
+    margin: 0;
+    color: var(--crit);
+    font-size: var(--fs-detail);
+  }
+
+  @keyframes cap-like-pop {
+    50% {
+      transform: scale(1.25);
+    }
+  }
+}
+
+@media (forced-colors: active) {
+  .cap-like-button[aria-pressed="true"] {
+    border-color: Highlight;
+  }
+}

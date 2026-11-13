@@ -1,0 +1,268 @@
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* An annotated document: an edited text shown three ways (the original, the edit with its
+   notes, every change marked) beside a rail of notes. Each note lights the passages it is about,
+   and each passage leads to its note. The views are a segmented control of real radios and pure
+   CSS (:has), so they work without script; the script adds only the linking.
+   Extracted from BioScience Writers' Precision Editing demo (EditingDemo.tsx, islands/editing-demo.ts,
+   .psms-* in app.css). */
+@layer cap.components {
+  .cap-annotated {
+    --cap-annotated-h: 32rem;
+    container-type: inline-size;
+    display: grid;
+    gap: var(--space-4);
+  }
+
+  .cap-annotated-layout {
+    display: grid;
+    gap: var(--space-4);
+  }
+
+  @container (min-width: 48rem) {
+    .cap-annotated-layout {
+      grid-template-columns: minmax(0, 1fr) minmax(16rem, 22rem);
+    }
+  }
+
+  .cap-annotated-doc,
+  .cap-annotated-notes {
+    max-block-size: var(--cap-annotated-h);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-m);
+    background: var(--raised);
+
+    &:focus-visible {
+      outline: var(--ring-width) solid var(--ring);
+      outline-offset: var(--focus-offset);
+    }
+  }
+
+  .cap-annotated-doc {
+    padding: var(--space-5) var(--space-6);
+    color: var(--text);
+    line-height: var(--leading);
+
+    & > :first-child {
+      margin-block-start: 0;
+    }
+  }
+
+  @container (max-width: 48rem) {
+    .cap-annotated-doc {
+      padding: var(--space-4);
+    }
+
+    .cap-annotated-notes {
+      max-block-size: 18rem;
+    }
+  }
+
+  /* Changes and passages. Native ins and del, so the edit means the same with no styles at all. */
+  .cap-annotated-doc ins {
+    text-decoration: none;
+  }
+
+  .cap-annotated-doc del {
+    display: none;
+  }
+
+  .cap-annotated-doc mark {
+    --cap-annotated-tone: var(--accent);
+    --cap-annotated-soft: var(--accent-soft);
+    padding-inline: 1px;
+    border-radius: 2px;
+    background: var(--cap-annotated-soft);
+    color: inherit;
+    box-shadow: inset 0 -2px 0 var(--cap-annotated-tone);
+    cursor: pointer;
+    transition: box-shadow var(--dur-fast) var(--ease-out);
+
+    &[data-lit] {
+      box-shadow:
+        inset 0 -2px 0 var(--cap-annotated-tone),
+        0 0 0 2px var(--cap-annotated-tone);
+    }
+  }
+
+  /* The original: the text before the edit, nothing marked. */
+  .cap-annotated:has(.cap-annotated-view input[value="original"]:checked) .cap-annotated-doc {
+    & ins {
+      display: none;
+    }
+
+    & del {
+      display: inline;
+      text-decoration: none;
+    }
+
+    & mark:not([data-lit]) {
+      background: none;
+      box-shadow: none;
+    }
+  }
+
+  /* Every change: insertions underlined in the accent, deletions struck through. */
+  .cap-annotated:has(.cap-annotated-view input[value="all"]:checked) .cap-annotated-doc {
+    & ins {
+      color: var(--accent-text);
+      text-decoration: underline;
+      text-decoration-thickness: 2px;
+      text-underline-offset: 0.18em;
+    }
+
+    & del {
+      display: inline;
+      color: var(--crit);
+      text-decoration: line-through;
+      text-decoration-thickness: 2px;
+    }
+
+    /* Most screen readers say nothing for ins and del, so the marked view says where each starts and ends
+       (Adrian Roselli, "Tweaking Text Level Styles"). */
+    & :is(ins, del)::before,
+    & :is(ins, del)::after {
+      position: absolute;
+      inline-size: 1px;
+      block-size: 1px;
+      overflow: hidden;
+      clip-path: inset(100%);
+      white-space: nowrap;
+    }
+
+    & ins::before {
+      content: " [insertion start] ";
+    }
+
+    & ins::after {
+      content: " [insertion end] ";
+    }
+
+    & del::before {
+      content: " [deletion start] ";
+    }
+
+    & del::after {
+      content: " [deletion end] ";
+    }
+  }
+
+  .cap-annotated-notes {
+    display: grid;
+    align-content: start;
+    gap: var(--space-2);
+    margin: 0;
+    padding: var(--space-3);
+    list-style: none;
+    background: var(--sunken);
+  }
+
+  .cap-annotated-note {
+    --cap-annotated-tone: var(--accent);
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: var(--space-1) var(--space-3);
+    inline-size: 100%;
+    min-block-size: var(--target);
+    padding: var(--space-3);
+    border: 1px solid var(--line);
+    border-inline-start: 3px solid var(--cap-annotated-tone);
+    border-radius: var(--radius-m);
+    background: var(--raised);
+    color: var(--text);
+    font: inherit;
+    text-align: start;
+    cursor: pointer;
+
+    &:hover {
+      border-color: var(--line-strong);
+      border-inline-start-color: var(--cap-annotated-tone);
+    }
+
+    &:focus-visible {
+      outline: var(--ring-width) solid var(--ring);
+      outline-offset: var(--focus-offset);
+    }
+
+    &[aria-pressed="true"] {
+      border-color: var(--cap-annotated-tone);
+      box-shadow: 0 0 0 1px var(--cap-annotated-tone);
+    }
+  }
+
+  .cap-annotated-note:not(:has(.cap-annotated-note-icon)) {
+    grid-template-columns: 1fr;
+
+    & > * {
+      grid-column: 1;
+    }
+  }
+
+  .cap-annotated-note-kind {
+    grid-column: 2;
+    color: var(--muted);
+    font-size: var(--fs-label);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .cap-annotated-note-icon {
+    grid-row: span 2;
+    display: grid;
+    place-items: center;
+    inline-size: 1.5rem;
+    block-size: 1.5rem;
+    border-radius: var(--radius-full);
+    background: var(--cap-annotated-soft, var(--accent-soft));
+    color: var(--text);
+    font-size: var(--fs-label);
+    font-weight: 700;
+  }
+
+  .cap-annotated-note-text {
+    grid-column: 2;
+    font-size: var(--fs-detail);
+  }
+
+  /* Tones: a kind of note, the same on its passages and its card. */
+  :is(.cap-annotated-doc mark, .cap-annotated-note) {
+    &[data-tone="info"] {
+      --cap-annotated-tone: var(--info);
+      --cap-annotated-soft: var(--info-soft);
+    }
+
+    &[data-tone="ok"] {
+      --cap-annotated-tone: var(--ok);
+      --cap-annotated-soft: var(--ok-soft);
+    }
+
+    &[data-tone="warn"] {
+      --cap-annotated-tone: var(--warn);
+      --cap-annotated-soft: var(--warn-soft);
+    }
+
+    &[data-tone="crit"] {
+      --cap-annotated-tone: var(--crit);
+      --cap-annotated-soft: var(--crit-soft);
+    }
+  }
+
+  @media (forced-colors: active) {
+    .cap-annotated-doc mark {
+      forced-color-adjust: none;
+      background: Mark;
+      color: MarkText;
+
+      &[data-lit] {
+        outline: 2px solid Highlight;
+      }
+    }
+
+    .cap-annotated-note[aria-pressed="true"] {
+      outline: 2px solid Highlight;
+    }
+  }
+}

@@ -1,0 +1,67 @@
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* A section band: a full-width band of its own color that sets one section apart. `data-cut="slant"`
+   cuts its top and bottom edges on a diagonal, with a translucent wedge along each edge, so the
+   sections before and after show faintly through and each edge reads as two parallel slants.
+   `data-overlap` pulls the band up and down over its neighbors by the slant's depth, so no straight
+   edge shows behind it. One pseudo-element draws the solid slab; the band's own ground, clipped to the
+   outer outline, is the wedges. Extracted from BioScience Writers' impact band (.band-cut). */
+@layer cap.components {
+  .cap-section-band {
+    --cap-band-rise: 6rem;
+    --cap-band-step: 2.5rem;
+    --cap-band-fall: 5.5rem;
+    position: relative;
+    isolation: isolate;
+    color: var(--cap-band-text, var(--accent-1));
+    background: var(--cap-band-bg, var(--accent-12));
+
+    & > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    &[data-cut="slant"] {
+      padding-block: calc(var(--cap-band-rise) + var(--space-6)) calc(var(--cap-band-fall) + var(--space-6));
+      background: var(--cap-band-ghost, color-mix(in srgb, var(--cap-band-bg, var(--accent-12)) 50%, transparent));
+      clip-path: polygon(
+        0 var(--cap-band-rise),
+        100% 0,
+        100% calc(100% - var(--cap-band-fall)),
+        0 100%
+      );
+
+      &::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: 0;
+        background: var(--cap-band-bg, var(--accent-12));
+        clip-path: polygon(
+          0 var(--cap-band-rise),
+          100% var(--cap-band-step),
+          100% calc(100% - var(--cap-band-fall)),
+          0 calc(100% - var(--cap-band-step))
+        );
+        pointer-events: none;
+      }
+    }
+
+    &[data-overlap] {
+      z-index: var(--z-base, 1);
+      margin-block: calc(-1 * var(--cap-band-rise)) calc(-1 * var(--cap-band-fall));
+    }
+
+    @media (max-width: 47.99rem) {
+      --cap-band-rise: 2.5rem;
+      --cap-band-step: 1.25rem;
+      --cap-band-fall: 2.5rem;
+    }
+  }
+}
+
+@media (forced-colors: active) {
+  .cap-section-band {
+    border-block: 1px solid CanvasText;
+  }
+}

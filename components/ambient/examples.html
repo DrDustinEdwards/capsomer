@@ -1,0 +1,26 @@
+<link rel="stylesheet" href="./specimen/demo.css" />
+<section class="cap-specimen" aria-labelledby="s-hex">
+  <h2 id="s-hex">Hex field</h2>
+  <div class="ambient-demo" id="am-hex">
+    <div class="cap-ambient" data-cap="ambient" data-variant="hex-field" aria-hidden="true"></div>
+    <p class="ambient-demo-words">Editing by scientists, for scientists.</p>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-blobs">
+  <h2 id="s-blobs">Blobs</h2>
+  <div class="ambient-demo" id="am-blobs">
+    <div class="cap-ambient" data-cap="ambient" data-variant="blobs" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+    <p class="ambient-demo-words">Field notes, every week.</p>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-eq">
+  <h2 id="s-eq">Equalizer</h2>
+  <div class="cap-ambient" data-cap="ambient" data-variant="equalizer" aria-hidden="true" id="am-eq"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+</section>
+
+<script type="module">
+  import { enhance } from "./ambient.ts";
+  enhance(document, { random: () => 0.5 });
+</script>

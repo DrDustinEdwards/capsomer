@@ -4,7 +4,7 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
-## [0.132.0]
+## [0.133.0]
 
 - **Sites: dustinedwards.info's entry no longer sets `--radius-control: 0`.** 0.126.0 carried it over from the site's app.css, but before Capsomer 0.123.0 no control read that token, so the live site's buttons and fields have always been rounded; with it, they turned square. Its controls keep Capsomer's `--radius-m`.
 - **Fonts: one file per family.** `capsomer/fonts-<family>.css` (`fonts-dm-sans.css`, `fonts-dm-mono.css`, `fonts-inter.css`, `fonts-source-serif-4.css`, and one for each other face) holds that family's faces and its size-matched fallback, written by tokens/fonts.mjs beside `fonts.css`, for a site that draws only some of the network's faces: Foxhound draws DM Sans and DM Mono alone, and the whole fonts.css cost its dashboard 2 KB gzip of rules it never uses. `fonts.css` is unchanged.
@@ -12,6 +12,18 @@ Each release names every removed or renamed token or class, and every changed HT
 - **Icons: `iconScanSearch` and a button's icon side** (from #391). New icon `iconScanSearch` (Lucide's ScanSearch, joined into one path), the one pictogram Foxhound drew that the set lacked. `Icon` takes `data-icon="start"` or `"end"`, so an icon inside a `cap-btn` pulls the button's padding in on its side, as an inline SVG with that attribute already did. Foxhound's entry sets `--icon-stroke: 2`, Lucide's stroke, which its icons were drawn at.
 - **`capsomer/token-check` no longer exports `normalizeHex`.** Prelum owns it now (one copy): import `normalizeHex` from `@drdustinedwards/site-helpers/text` (Prelum 0.55.0). The behavior is the same (`#abc` or `#aabbcc` as lowercase `#aabbcc`, space and a missing `#` tolerated); `token-check` itself imports it from there. No token or class was removed or renamed, and no HTML contract changed.
 - `@drdustinedwards/site-helpers` is now at least 0.55.0 (dev v0.55.0, peer `>=0.55.0`), and `token-check` needs it installed. The dev `@dustinedwards/site-runtime` moves to v0.143.0, which Prelum 0.55.0 requires as a peer; Capsomer's own site-runtime peer range is unchanged.
+
+## [0.132.0]
+
+**Content and marketing blocks** (the shared-code audit's batch 5, clusters C39-C53). Nineteen new components, a stream reader and three additions, each built once from the sites that had it, so every site gets the same block and the same behavior. New classes, exports and HTML contracts only; no token, class or contract is removed or renamed.
+
+- **New components:** `process` (numbered steps, side by side when there is room; from Foxhound, bsw and germomics), `feature` (a text and media block, alternating, and a grid of cards; Foxhound), `eyebrow` (the small label over a title, and `.cap-label[data-variant="mono"]`; Foxhound, dei, Foxing), `price-card` (plan cards and a plan choice of native radios; Foxhound, bsw, Foxing), `contact-card` (ways to reach a person or office, `telHref`; bsw, julieedwards-info), `section-band` (a full-width band, straight or slanted; bsw), `prose-page` (a page title band over a prose column; bsw), `faq` (an accordion of questions on native `details name=`, in Prelum's `{ question, answer }` shape; bsw, germomics), `app-frame` (a browser or app window around a screenshot or a live demo; Foxhound), `ambient` (a hex field, drifting blobs and an equalizer behind a hero, drawn through the CSSOM with no style attributes, still under reduced motion and paused off screen; bsw, germomics), `newsletter-signup` (germomics), `leaderboard` (germomics), `like-button` (Foxing), `poll` (Foxing), `sources-list` (germomics), `ask-panel` (an AI answer streamed into the page with its sources and a cut-off note, textContent only; dei), `ai-sample` (a live AI call on a marketing page, shown as labeled fields; Foxhound), `annotated-document` (an edit shown as the original, the edit or every change, beside notes that light their passages; bsw) and `document` (`Document`, `SiteScope`, `documentAttrs`, `startSite`, and site-runtime's `routeHydrates` re-exported, for a site's root and its no-React script; bsw, julieedwards-info, germomics, txasm, Foxhound).
+- **New behavior modules:** `capsomer/behavior/sse` (a WHATWG event-stream reader: `readSse`, `takeEvents`, `parseEvent`, `jsonData`; dei and Foxing; the frame's text and finish reason are site-runtime's `./ai-ask` `answerDelta` and `finishReason`), `ask-panel`, `ai-sample`, `annotated-document`, `ambient`, `poll` and `document`.
+- **Email: `htmlToBlocks`** turns a body written as HTML into the email's blocks (from Foxhound's templates), exported from `capsomer/email`.
+- **Anchor bar: `data-orientation="vertical"`** lists the links down the side of the sections and takes no room above them (`orientation` on the React `AnchorBar`).
+- **Breadcrumb: `minItems`** (default 2) leaves the trail out when it has fewer items (germomics' SectionTrail).
+- **The peer `@dustinedwards/site-runtime` is `>=0.131.0`**: the ask panel reads frames with its `./ai-ask` and `Document` re-exports its `./deferred-scripts` `routeHydrates`.
+- **Hydrating on intent is site-runtime's** (`./deferred-scripts` and `./hydrate-on-intent`), not part of `Document`.
 
 ## [0.131.0]
 

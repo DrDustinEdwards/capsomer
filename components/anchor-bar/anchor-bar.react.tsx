@@ -17,17 +17,28 @@ export interface AnchorBarProps {
   // Show the bar even when the view is short or has fewer than three sections.
   always?: boolean;
   label?: string;
+  // "vertical": a list down a side column, sticky beside the sections (a long page's section nav).
+  orientation?: "horizontal" | "vertical";
 }
 
-export function AnchorBar({ sections, always = false, label = "On this page" }: AnchorBarProps) {
-  if (!sections) return <FoundAnchorBar always={always} label={label} />;
-  return <ListedAnchorBar sections={sections} always={always} label={label} />;
+type BarProps = { always: boolean; label: string; orientation: "horizontal" | "vertical" };
+const orientationAttr = (o: BarProps["orientation"]) => (o === "vertical" ? "vertical" : undefined);
+
+export function AnchorBar({
+  sections,
+  always = false,
+  label = "On this page",
+  orientation = "horizontal",
+}: AnchorBarProps) {
+  const bar = { always, label, orientation };
+  if (!sections) return <FoundAnchorBar {...bar} />;
+  return <ListedAnchorBar sections={sections} {...bar} />;
 }
 
 // The list is the behavior module's: React renders it empty and never touches it. The bar starts
 // hidden (no empty bar before the script runs) and the module shows it; React sets `hidden` once
 // and, as the value never changes, never sets it again.
-function FoundAnchorBar({ always, label }: { always: boolean; label: string }) {
+function FoundAnchorBar({ always, label, orientation }: BarProps) {
   const nav = useRef<HTMLElement>(null);
   useEffect(() => {
     const parent = nav.current?.parentElement;
@@ -40,6 +51,7 @@ function FoundAnchorBar({ always, label }: { always: boolean; label: string }) {
       aria-label={label}
       data-cap="anchor-bar"
       data-always={always || undefined}
+      data-orientation={orientationAttr(orientation)}
       hidden={!always}
     >
       <span className="cap-anchors-label" aria-hidden="true">
@@ -54,7 +66,8 @@ function ListedAnchorBar({
   sections,
   always,
   label,
-}: Required<Pick<AnchorBarProps, "sections">> & { always: boolean; label: string }) {
+  orientation,
+}: Required<Pick<AnchorBarProps, "sections">> & BarProps) {
   const nav = useRef<HTMLElement>(null);
   const [shown, setShown] = useState(always);
   const [current, setCurrent] = useState<string | null>(null);
@@ -112,7 +125,14 @@ function ListedAnchorBar({
   }, [ids, shown]);
 
   return (
-    <nav ref={nav} className="cap-anchors" aria-label={label} data-cap="anchor-bar" hidden={!shown}>
+    <nav
+      ref={nav}
+      className="cap-anchors"
+      aria-label={label}
+      data-cap="anchor-bar"
+      data-orientation={orientationAttr(orientation)}
+      hidden={!shown}
+    >
       <span className="cap-anchors-label" aria-hidden="true">
         {label}
       </span>
