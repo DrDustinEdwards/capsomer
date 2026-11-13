@@ -27,13 +27,17 @@ export interface AiEngineSettingsProps {
   // The model choices, with their prices (from site-runtime's MODEL_IDS and PRICES). The first is
   // "The job's own default", value "".
   modelOptions: readonly SelectOption[];
+  // The effort each job's API run uses ("low" to "max"), a partial map like `models`, and its
+  // choices, the first "The job's own default", value "".
+  efforts: Readonly<Partial<Record<string, string>>>;
+  effortOptions: readonly SelectOption[];
   // Whether each engine can work now: the routine connected, an API key set.
   ready: { subscription: boolean; api: boolean };
   // What to do when one cannot, in a sentence.
   readyNote?: ReactNode;
-  // This month's API spend, and by job.
+  // This month's API spend, and by job (and by effort, where a run had one).
   spentMicros: number;
-  usage: ReadonlyArray<{ job: string; calls: number; micros: number }>;
+  usage: ReadonlyArray<{ job: string; effort?: string | null; calls: number; micros: number }>;
   // The cap field's help, and the note under the spend, where the site has more to say.
   capHelp?: ReactNode;
   costNote?: ReactNode;
@@ -43,12 +47,14 @@ export interface AiEngineSettingsProps {
 }
 
 // Which engine does each AI job: one table, everything then a row per job with its engine and the
-// model the API uses, saved together with the month's cap on API spend; beside it, the spend.
+// model and effort the API uses, saved together with the month's cap on API spend; beside it, the spend.
 export function AiEngineSettings({
   settings,
   models,
   jobs,
   modelOptions,
+  efforts,
+  effortOptions,
   ready,
   readyNote,
   spentMicros,
@@ -106,13 +112,14 @@ export function AiEngineSettings({
           <div className="cap-table-wrap" role="region" aria-labelledby={`${uid}-cap`} tabIndex={0}>
             <table className="cap-table cap-ai-engine-table">
               <caption id={`${uid}-cap`} className="cap-sr-only">
-                The engine and model for each job
+                The engine, model and effort for each job
               </caption>
               <thead>
                 <tr>
                   <th scope="col">Job</th>
                   <th scope="col">Engine</th>
                   <th scope="col">Model when the API does it</th>
+                  <th scope="col">Effort</th>
                 </tr>
               </thead>
               <tbody>
@@ -131,6 +138,7 @@ export function AiEngineSettings({
                       options={engines}
                     />
                   </td>
+                  <td className="cap-muted">Each job's own</td>
                   <td className="cap-muted">Each job's own</td>
                 </tr>
                 {jobs.map((j) => (
@@ -159,6 +167,14 @@ export function AiEngineSettings({
                         aria-label={`${j.label}: model when the API does it`}
                         defaultValue={models[j.key] ?? ""}
                         options={[...modelOptions]}
+                      />
+                    </td>
+                    <td>
+                      <Select
+                        name={`effort-${j.key}`}
+                        aria-label={`${j.label}: effort`}
+                        defaultValue={efforts[j.key] ?? ""}
+                        options={[...effortOptions]}
                       />
                     </td>
                   </tr>
@@ -190,8 +206,8 @@ export function AiEngineSettings({
             <RowList label="API spend by job">
               {usage.map((u) => (
                 <Row
-                  key={u.job}
-                  title={jobs.find((j) => j.key === u.job)?.label ?? u.job}
+                  key={`${u.job} ${u.effort ?? ""}`}
+                  title={`${jobs.find((j) => j.key === u.job)?.label ?? u.job}${u.effort ? `, effort ${effortOptions.find((e) => e.value === u.effort)?.label ?? u.effort}` : ""}`}
                   detail={`${u.calls.toLocaleString("en-US")} ${u.calls === 1 ? "call" : "calls"} · ${dollars(u.micros)}`}
                 />
               ))}
