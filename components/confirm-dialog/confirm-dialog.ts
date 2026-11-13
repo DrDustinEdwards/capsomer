@@ -6,22 +6,12 @@
 // the typed-word guard, the reason, and the failure that stays inside with Try again. No
 // framework; the React wrapper reuses the pure functions exported here.
 
-// The generic overlay helpers moved to the shared dialog (components/dialog/dialog.ts). They
-// are re-exported here, so what imported them from this module keeps working.
 import { isImeEnter } from "../shortcuts/shortcuts.ts";
 import { errorText, isBusy, openDialog, setDialogBusy, wireDialog } from "../dialog/dialog.ts";
 import { uid } from "../hooks/hooks.ts";
-export {
-  errorText,
-  isBackdropClick,
-  isBusy,
-  rememberOpener,
-  returnFocus,
-} from "../dialog/dialog.ts";
 
 // The typed-word guard lives with the server half (confirm-server.ts), which a Worker imports without the DOM code.
 import { wordMatches } from "./confirm-server.ts";
-export { wordMatches };
 
 // The typed-word guard as an HTML `pattern`, for the page form with no script: every letter is
 // a class of both cases ("delete" gives [Dd][Ee][Ll][Ee][Tt][Ee]) and anything else is escaped,

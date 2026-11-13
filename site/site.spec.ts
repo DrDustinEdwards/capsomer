@@ -64,9 +64,6 @@ eachTheme(() => {
     await expect(link).toHaveAttribute("aria-current", "page");
     await expect(page.locator("#cap-main h1")).toHaveText("Color and contrast");
     await expect(page).toHaveTitle(/^Color and contrast · Capsomer/);
-    // The color page's old address still opens it.
-    await page.goto("./admin/#/colour"); // codespell:ignore
-    await expect(page.locator("#cap-main h1")).toHaveText("Color and contrast");
   });
 
   test("behavior: the site is the reference shell: the site header with the theme button, the family's app strip, the collapse control at the menu's top", async ({

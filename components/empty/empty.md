@@ -100,7 +100,7 @@ Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the a
 </div>
 ```
 
-In React, `import { Empty, Wait } from "capsomer/react/empty"`: `<Empty kind="no-match" title="No jobs match “Blocked”" action={<button className="cap-btn">Clear filter</button>}>14 jobs are hidden by this filter.</Empty>`; `icon` and `flush` are optional. `Skeleton` and `Spinner` are still exported from it; they now live in `capsomer/react/skeleton`.
+In React, `import { Empty, Wait } from "capsomer/react/empty"`: `<Empty kind="no-match" title="No jobs match “Blocked”" action={<button className="cap-btn">Clear filter</button>}>14 jobs are hidden by this filter.</Empty>`; `icon` and `flush` are optional. `Skeleton` and `Spinner` are in `capsomer/react/skeleton`.
 
 ## The shadcn component it matches
 

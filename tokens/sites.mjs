@@ -85,7 +85,6 @@ const SITES = {
       "fs-detail": "0.8125rem",
       "fs-body": "0.875rem",
       control: "38px",
-      "control-h": "38px",
       "pad-x": "14px",
       "pad-y": "8px",
       "pad-card": "20px",
@@ -108,7 +107,7 @@ const SITES = {
       "link-pressed-bg": "transparent",
       "link-tint-pad": "0px",
     },
-    coarse: { control: "44px", "control-h": "44px" },
+    coarse: { control: "44px" },
     // Text, muted, dim and the control border are Foxhound's own hues lifted to Capsomer's APCA
     // floors (the dark mode plan, 2026-10-29): they were #e5e8e2, #a8a49e, #928d87 and #4a4c44,
     // the last 2.02:1 on the surface, under WCAG's 3:1 for a control's edge.

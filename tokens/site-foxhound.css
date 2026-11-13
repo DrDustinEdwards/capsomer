@@ -13,7 +13,6 @@
     --fs-detail: 0.8125rem;
     --fs-body: 0.875rem;
     --control: 38px;
-    --control-h: 38px;
     --pad-x: 14px;
     --pad-y: 8px;
     --pad-card: 20px;
@@ -141,7 +140,6 @@
     [data-cap-site="foxhound"][data-cap-site],
     [data-cap-site="foxhound"][data-cap-site] :is([data-family], [data-density]) {
       --control: 44px;
-      --control-h: 44px;
     }
   }
 }

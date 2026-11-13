@@ -2,10 +2,6 @@ import type { ReactNode } from "react";
 import { Glyph } from "../status/status.react.tsx";
 import { Spinner } from "../skeleton/skeleton.react.tsx";
 
-// Spinner and Skeleton moved to components/skeleton in 0.2; still exported here so
-// "capsomer/react/empty" imports keep working.
-export { Skeleton, Spinner, SkeletonBlock } from "../skeleton/skeleton.react.tsx";
-
 export type EmptyKind = "nothing-yet" | "no-match" | "all-clear" | "failed";
 
 export interface EmptyProps {
