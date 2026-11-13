@@ -4,6 +4,10 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+## [0.139.2]
+
+- **The `enarratio` peer range adds `^0.15.0`.** Enarratio 0.15.0 adds `enarratio/lite/sparkline`, so a site that wants it could not install it beside Capsomer (npm ERESOLVE). The dev dependency is 0.15.0 and the full check passes unchanged; no token, class, export or HTML contract changes.
+
 - **Collab editor: `Room.doc` and `Room.provider` are `null` before the page is in the browser.** `useRoom`'s first render returned an object cast `as unknown as Room` that lacked both; the type now says so (`Y.Doc | null`, `YProvider | null`) and the cast is gone. `useRoomEditing` is unchanged (it reads them once `synced`). An app that reads `room.doc` or `room.provider` from `useRoom` directly must handle null.
 - **`MediaPicker`: a library chunk that fails to load shows "The library did not load"** (the failed `Empty`) instead of breaking the dialog.
 - **Command host: a failed menu load is no longer kept.** `load()` clears itself on failure so the next `open` or `load` fetches the chunk again; the idle warm-up and `runWhenReady` share one fire-and-forget `warm`, and `open` still rejects.
