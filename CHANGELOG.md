@@ -4,13 +4,30 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
-## [0.124.0]
+## [0.126.0]
 
 - **Layout: item helpers.** `.cap-grow` (takes the room its row leaves and may shrink below its content), `.cap-shrink` (a flex or grid item that may shrink below its content: `min-inline-size: 0`), `.cap-keep` (never shrinks), `.cap-full` (a whole row: every grid column, the full line of a cluster, the full width of a block) and `.cap-column`, a centered column for a form (42rem), with `data-width="narrow"` (28rem, a sign-in) or `"reading"` (48rem). They replace txasm's `.grow`, `.shrink`, `.span-2`, `.narrow`, `.form-page` and `.reading`, and Foxing's `.grow`, `.shrink-0`, `.min-0` and `.full`.
 - **New: site footer** (`capsomer/site-footer.css`, `.cap-site-footer`, `.cap-site-footer-links`, `.cap-site-footer-note`): a site's own plain footer for a site outside the family footer, a hairline over a links row, a mark and the small print, in the page's column; `data-tone="raised"` on the raised surface, `data-links="quiet"` for muted links. Slots `--site-footer-gap`, `--site-footer-pad`, `--site-footer-bg`, `--site-footer-fs`. From txasm's and julieedwards.info's footers.
 - **Sites: page columns in their entries.** txasm's entry sets its 72rem page column (`--page-max`), 24px sides (16px on a phone), and 16px text on a 1.5 line (`--fs-page`, `--page-leading`), so its public pages use `.cap-page` instead of their own frame. julieedwards.info's entry sets its 67.5rem column, 32px sides and 1.65 line. Removed or renamed: no token or class.
 - **Site footer links are at least `--target` tall** (24px by default, WCAG 2.2 2.5.8): the sweep found them 20px on a touch screen.
 - **Fonts: DM Sans declares its file's whole weight axis** (100 to 1000, was 400 to 700), as dustinedwards.info's font gate checks every face it loads.
+
+## [0.124.0]
+
+Batch 6 of the shared-code audit, pass 2 (C54 to C63, data display): what the sites wrote by hand for numbers, statuses, steps, charts, search results, graphs, the system map's model, catalogs and media picking, moved into components. New peers: `@dagrejs/dagre ^3.1.3` and `zod ^4.6.7`, both optional (only `capsomer/behavior/graph` and `capsomer/behavior/system-model` import them).
+
+- **Format** (new, `capsomer/behavior/format`): `pluralWord`, `formatBytes` (binary, as before, now up to TB), `shortCount` (exact under 10,000, then "12.3K"; the grouped figure alone is Prelum's `formatCount`), `median`, `percentOf`, `formatPercent` and `formatBps`. Changed: `byteSize` (media) and `formatBytes` (drop-zone) are this `formatBytes`, so a size of exactly 2 MB reads "2 MB", not "2.0 MB". `describeSeries` lists peaks with `listText` (serial comma).
+- **Status:** `capsomer/behavior/status` has `statusHtml`, `glyphHtml`, `glyphParts` and `STATUS_GLYPH`, the one table of glyph shapes React's `Status` now also draws from (its markup is unchanged), and `outcomeStatus(conclusion, labels)`, one reading of a run's conclusion for every site: success and neutral are ok, skipped is no data, canceled, timed out, stale and action required are warnings, queued and in progress are running, anything else failed.
+- **Step player** (new component): Play, Pause and Play again over a set of steps, stopping at the end, on a hidden tab and when the person moves themselves (WCAG 2.2.2); slower under reduced motion. `[data-cap="step-player"]` with `enhance()`, or `stepPlayer()` over a page's own steps.
+- **Step indicator: three variants.** `data-variant="stations"` (dots on a rule, the last a stub, a filled dot when complete), `"inline"` (one wrapping line joined by a connector) and `"ordered"` (numbered rows under a top rule, with `.cap-step-number`, `.cap-step-meta`). New classes: `.cap-step-dot`, `.cap-step-meta`, `.cap-step-number`. The default is unchanged.
+- **Chart frame:** `ChartPanel` (a chart in a panel, with its no-data and "Not refreshed" states), `DataPreview` (a dataset's card beside an article), `drawWith`, `narrowRedraw`, `describeSeries` (the finding's sentence from the numbers), and `capsomer/behavior/chart-presets` with `countsByYearHtml` and `sparkHtml`. `ChartFit` and `shownHeight` move to `capsomer/behavior/chart-frame` (React re-exports them). New classes: `.cap-chart-stale`, `.cap-spark`, `.cap-data-preview` and its parts; `[data-out-of-range]` fades a bar. A server drawing with `data-enarratio-redraw` scales to its column under 30rem until the narrow drawing replaces it.
+- **Search results** (new component): `SearchResults`, `SearchResult` and `Snippet`, with facets beside the results from 52rem, the count in a live region and an empty state with something to try; `snippetHtml` and `markQuery` mark the matched words as text, never as markup.
+- **Graph** (new, `capsomer/behavior/graph`): `graphSvg` lays out boxes and wires with dagre into one SVG with status glyphs and an outside ring, for an architecture or system drawing.
+- **System map: the model.** `capsomer/behavior/system-model` has the public model's schema (`PublicModelSchema`, `parsePublicModel` with its cross-checks), `connectionsOf`, `partsOf`, `outsideOf`, `wiresOf`, `explorerHref` and `modelMarkdown`/`systemMarkdown` for the model's Markdown twin.
+- **Catalog:** a range facet (`kind: "range"`, From and To menus, overlapping spans, `?<key>-from=&<key>-to=`), `group.empty`, `summaryText`, `activeCount`, `facetCounts`, `catalogRecords` options (`id`, `url`, `keys`, `allFields`), `catalogMarkdown` and `markdownCell`, `catalogDownloads`, `catalogParams`, `catalogRedirect(..., { keepUnknown })`, and `oneOf`, `listParam`, `yearParam`. New classes: `.cap-catalog-range`, `.cap-catalog-range-ends`, `.cap-catalog-range-end`.
+- **Media library:** `MediaPicker` ("Insert from library" in a dialog) and `ImageField` (one chosen image with its preview, Choose another and Remove) in `capsomer/react/media-picker`, and `uploadImage`, `loadMediaView` and `libraryOf` in `capsomer/behavior/media-picker`. New classes: `.cap-image-field` and its parts.
+
+No token was removed or renamed.
 
 ## [0.123.0]
 

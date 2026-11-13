@@ -5,7 +5,7 @@ summary: A site's own plain footer, for a site outside the family footer: a hair
 parts: [css]
 tool: native
 states: [plain, raised, quiet links, with a mark]
-added: 0.124.0
+added: 0.126.0
 source: txasm app/app.css (.txasm-footer) and julieedwards.info app/app.css (.je-footer, .footer-links, .footer-note)
 replaces:
   - "\\.(txasm|je)-footer|\\.footer-(links|note)"
