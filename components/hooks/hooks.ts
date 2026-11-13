@@ -18,6 +18,14 @@ export function listText(words: readonly string[], join: "and" | "or" = "and"): 
   }).format(words);
 }
 
+/** The reader asks for reduced motion (false where there is no window: a server, a test). */
+export function reducedMotion(): boolean {
+  return (
+    typeof window !== "undefined" &&
+    !!window.matchMedia?.("(prefers-reduced-motion: reduce)").matches
+  );
+}
+
 let ids = 0;
 
 /** A new id on every call, `prefix-1`, `prefix-2`: for a part a script gives an id to. */

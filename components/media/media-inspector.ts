@@ -2,7 +2,6 @@
 // Plain functions of the inspector element; the controller in media.ts owns when they run.
 
 import {
-  byteSize,
   copySnippets,
   parseTags,
   type MediaFields,
@@ -10,6 +9,7 @@ import {
 } from "./media-record.ts";
 import type { SaveState } from "./media-autosave.ts";
 import { glyph, part } from "./media-tile.ts";
+import { formatBytes } from "../format/format.ts";
 
 const SAVE_TEXT: Record<SaveState, string> = {
   idle: "Changes save by themselves.",
@@ -88,7 +88,7 @@ export function fillInspector(
     (el) =>
       (el.textContent = [
         r.type.split("/").pop()?.toUpperCase(),
-        byteSize(r.bytes),
+        formatBytes(r.bytes),
         r.width && r.height ? `${r.width} by ${r.height}` : "",
       ]
         .filter(Boolean)
@@ -154,7 +154,7 @@ export function fillInspector(
     const rows: Array<[string, string]> = [
       ["Key", r.key],
       ["Type", r.type || "unknown"],
-      ["Size", byteSize(r.bytes)],
+      ["Size", formatBytes(r.bytes)],
       ["Dimensions", r.width && r.height ? `${r.width} by ${r.height}` : "not measured"],
       ["Uploaded", r.uploaded ?? "ships with the site"],
     ];

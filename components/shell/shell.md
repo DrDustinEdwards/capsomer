@@ -114,7 +114,7 @@ The tab bar's count is a Count: load `count.css` with `shell.css`.
 </div>
 ```
 
-`import { enhance, toggleRail, openMore, closeMore } from "capsomer/behavior/shell"` wires the collapse button and the More sheet (through the dialog's `wireDialog`, so the sheet needs no separate `enhance()`). `readPref` and `writePref` are exported too: the theme switch and the shortcuts share them. In React, `import { Shell } from "capsomer/react/shell"`; pass `renderLink` to use a router's link, `tabs` (at most four), `more`, `moreLabel` and `moreIcon` for the phone tab bar and its sheet, and `group` on an entry to put it under a group label. The top bar's Settings link and the rail's hints go in `actions` and `railFoot`.
+`import { enhance, toggleRail, openMore, closeMore } from "capsomer/behavior/shell"` wires the collapse button and the More sheet (through the dialog's `wireDialog`, so the sheet needs no separate `enhance()`). Its choices are kept with `readStored` and `writeStored` (`capsomer/behavior/hooks`). In React, `import { Shell } from "capsomer/react/shell"`; pass `renderLink` to use a router's link, `tabs` (at most four), `more`, `moreLabel` and `moreIcon` for the phone tab bar and its sheet, and `group` on an entry to put it under a group label. The top bar's Settings link and the rail's hints go in `actions` and `railFoot`.
 
 ## Density
 

@@ -1,6 +1,7 @@
 import { useEffect, useId, useRef, useState, type ReactNode } from "react";
 import { useHydrated } from "../hooks/hooks.react.tsx";
-import { acceptLabel, formatBytes, validateFiles } from "../drop-zone/drop-zone.ts";
+import { acceptLabel, validateFiles } from "../drop-zone/drop-zone.ts";
+import { formatBytes } from "../format/format.ts";
 
 export interface AttachedFile {
   id: string;

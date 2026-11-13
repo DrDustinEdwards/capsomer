@@ -40,6 +40,7 @@ import {
   type StepInfo,
   type StepTimer,
 } from "./checklist-run-model.ts";
+import { reducedMotion } from "../hooks/hooks.ts";
 
 export interface RunOptions {
   // What is being run, in the controls' words: "Run this procedure". Default "checklist"; also data-run-noun.
@@ -328,7 +329,7 @@ export function start(root: HTMLElement, options: RunOptions = {}): () => void {
   function focusStep(li: HTMLElement) {
     li.scrollIntoView({
       block: "center",
-      behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
+      behavior: reducedMotion() ? "auto" : "smooth",
     });
     li.querySelector<HTMLElement>(".cap-run-done input")?.focus({ preventScroll: true });
   }

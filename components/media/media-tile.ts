@@ -3,7 +3,6 @@
 
 import { enhance as enhanceMeters, percent } from "../meter/meter.ts";
 import {
-  byteSize,
   describeRecord,
   flagsFor,
   parseTags,
@@ -13,6 +12,7 @@ import {
   type MediaRecord,
   type UsedIn,
 } from "./media-record.ts";
+import { formatBytes } from "../format/format.ts";
 
 const NS = "http://www.w3.org/2000/svg";
 const GLYPHS: Record<string, string[]> = {
@@ -215,7 +215,7 @@ export function syncTile(tile: HTMLElement): void {
         ? "Uploading"
         : r.state === "failed"
           ? "Not uploaded"
-          : [r.type.split("/").pop()?.toUpperCase(), byteSize(r.bytes)].filter(Boolean).join(" · ");
+          : [r.type.split("/").pop()?.toUpperCase(), formatBytes(r.bytes)].filter(Boolean).join(" · ");
   let flags = tile.querySelector<HTMLElement>(".cap-media-flags");
   if (!flags) {
     flags = document.createElement("span");

@@ -10,7 +10,6 @@ import {
   applyBulkTag,
   altStateOf,
   bands,
-  byteSize,
   copySnippets,
   createAutosave,
   flagsFor,
@@ -94,10 +93,7 @@ test("behavior: alt text has three states, and decorative is a choice that missi
   ).toEqual(["Unattached"]);
 });
 
-test("behavior: sizes, tags and the copy snippets", () => {
-  expect(byteSize(512)).toBe("512 B");
-  expect(byteSize(421888)).toBe("412 kB");
-  expect(byteSize(2516582)).toBe("2.4 MB");
+test("behavior: tags and the copy snippets", () => {
   expect(parseTags(" Release, dashboard,release,, ")).toEqual(["release", "dashboard"]);
   const img = copySnippets({
     url: "https://x.test/a.png",

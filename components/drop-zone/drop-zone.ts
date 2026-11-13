@@ -92,9 +92,6 @@ export function acceptLabel(accept: string | null | undefined): string {
   return names.length === 0 ? "any file" : listText(names);
 }
 
-// A size as a person reads it: the format module's, re-exported for the drop zone's callers.
-export { formatBytes };
-
 export function rejectionMessage(file: FileLike, reason: RejectReason, rules: DropRules): string {
   if (reason === "type")
     return `${file.name}: type not allowed. This takes ${acceptLabel(rules.accept)}.`;
