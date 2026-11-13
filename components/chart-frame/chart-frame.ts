@@ -20,13 +20,18 @@ export interface FrameOptions {
   // What behavior/chart-enhance draws the chart again from at the frame's width (Enarratio's
   // enarratio/redraw): a light chart and its options. Without it the server's drawing scales.
   redraw?: RedrawSpec;
+  // The redraw's narrow drawing keeps the chart's shape (a map; narrowRedraw's `keepShape`), so
+  // until it is swapped in the wide drawing scales into the column at the narrow one's height.
+  keepShape?: boolean;
 }
 
 // Enarratio's figure (trusted markup: a chart or a primitive's figure) in the frame.
 export function frameHtml(chart: string, o: FrameOptions = {}): string {
   const grid = o.gridlines ? ` data-gridlines="${o.gridlines}"` : "";
   const redraw = o.redraw ? ` ${redrawAttribute(o.redraw)}` : "";
-  return `<div class="cap-chart"${o.inline ? ' data-head="inline"' : ""}${grid}${redraw}><div class="cap-chart-figure">${chart}</div>${o.after ?? ""}</div>`;
+  const box = o.keepShape && o.redraw && "narrow" in o.redraw ? chartViewBox(o.redraw.narrow) : undefined;
+  const shape = box ? ` style="--cap-narrow-height: ${box.h}px"` : "";
+  return `<div class="cap-chart"${o.inline ? ' data-head="inline"' : ""}${grid}${redraw}${shape}><div class="cap-chart-figure">${chart}</div>${o.after ?? ""}</div>`;
 }
 
 // No data is a state with its reason, never an empty chart or a zero: the title, then the
@@ -83,12 +88,16 @@ export function drawWith<O extends object>(
 // The drawing a phone shows for a chart drawn on a server (enarratio/redraw's `{ narrow }` spec),
 // drawn at the phone's width and at the height the wide drawing shows there, so swapping it in
 // does not move the page. The spec carries markup, not options, so a chart whose options hold a
-// function (a formatter) still follows the frame's width.
+// function (a formatter) still follows the frame's width. With `keepShape` (a map, whose height
+// follows its width) the narrow drawing takes its own height, and frameHtml's `keepShape` scales the
+// wide drawing into that height until the swap.
 export function narrowRedraw(
   wide: string,
   drawNarrow: (width: number, fit: ChartFit) => string,
+  o: { keepShape?: boolean } = {},
 ): RedrawSpec {
-  return { narrow: drawNarrow(NARROW_WIDTH, { height: shownHeight(wide, NARROW_WIDTH) }) };
+  const fit = o.keepShape ? {} : { height: shownHeight(wide, NARROW_WIDTH) };
+  return { narrow: drawNarrow(NARROW_WIDTH, fit) };
 }
 
 export interface SeriesText {
