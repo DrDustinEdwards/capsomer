@@ -143,7 +143,7 @@
         color var(--dur-fast) var(--ease-out);
     }
     .cap-dictionary-entry-listen[aria-pressed="true"] .cap-dictionary-entry-wave {
-      animation: cap-dictionary-entry-wave 900ms var(--ease-in-out) infinite;
+      animation: cap-dictionary-entry-wave var(--dur-wait) var(--ease-in-out) infinite;
     }
     .cap-dictionary-entry-listen[aria-pressed="true"] .cap-dictionary-entry-wave + .cap-dictionary-entry-wave {
       animation-delay: 180ms;
