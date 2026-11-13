@@ -46,7 +46,7 @@ The blocks under a post that point somewhere else: what to read next, which post
 ## Accessibility
 
 - Each block is a landmark named by its title: a `nav` for internal links, a `section` otherwise, `aria-labelledby` its `h2`.
-- The date is a `time` with its ISO `datetime`.
+- The date is the shared Time (`format="date"`), a `time` with its `datetime`, inside `.cap-related-date`.
 - Screen readers: no manual run, by decision; the axe scan and a front-end review stand in.
 
 ## Markup
@@ -65,7 +65,7 @@ The blocks under a post that point somewhere else: what to read next, which post
     <li>
       <a class="cap-related-name" href="https://example.com/alex" rel="nofollow ugc noopener noreferrer">Alex Rivera</a>
       <p class="cap-related-excerpt">Linked this from our release notes.</p>
-      <time class="cap-related-date" datetime="2026-09-05T04:05:09.000Z">September 5, 2026</time>
+      <span class="cap-related-date"><time class="cap-time" datetime="2026-09-05" data-format="date">September 5, 2026</time></span>
     </li>
   </ul>
 </section>
