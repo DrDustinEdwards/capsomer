@@ -94,10 +94,10 @@ const SITES = {
       "card-lift": "-4px",
       "card-edge": "1",
       "btn-sweep": "1",
-      // Recova's links (Dustin, 2026-11-13, "Recova's underlined links"): a line 2px under the text at
-      // the text's own weight, with no tint under the pointer.
-      "link-weight": "inherit",
-      "link-decoration": "underline",
+      // Foxhound's links (Dustin, 2026-11-13: "the links should not be underlined ... underline on
+      // hover"): the network's semibold amber link, which is the cue that is not color (WCAG F73), and
+      // a line 2px under it on hover in place of the tint.
+      "link-hover-decoration": "underline",
       "link-offset": "2px",
       "link-hover-bg": "transparent",
       "link-pressed-bg": "transparent",

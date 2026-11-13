@@ -66,6 +66,7 @@
   /* link */
   --link-weight: 600;
   --link-decoration: none;
+  --link-hover-decoration: none;
   --link-offset: auto;
   --link-hover-bg: var(--accent-soft);
   --link-pressed-bg: var(--accent-5);
