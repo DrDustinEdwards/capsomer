@@ -89,14 +89,15 @@
 
   /* A chart drawn on a server with a narrow drawing for phones (narrowRedraw): until the script
      swaps the narrow one in, the wide drawing scales into the column instead of scrolling, at about
-     the height the narrow one will have, so the swap does not move the page. With no script nothing
-     swaps, and the wide drawing keeps its width and scrolls. */
+     the height the narrow one will have, so the swap does not move the page. A chart that keeps its
+     shape (a map) gives the narrow drawing's own height (--cap-narrow-height, frameHtml's keepShape).
+     With no script nothing swaps, and the wide drawing keeps its width and scrolls. */
   @media (scripting: enabled) {
     @container (width < 30rem) {
       .cap-chart[data-enarratio-redraw] .enarratio-frame-wide > svg {
         min-inline-size: 0;
         inline-size: 100%;
-        block-size: auto;
+        block-size: var(--cap-narrow-height, auto);
       }
     }
   }
@@ -127,11 +128,15 @@
     border: var(--line-w) solid var(--line);
     border-radius: var(--radius-l);
     background: var(--surface);
+    /* A card's own text size and leading, not the article's beside it. */
+    font-size: var(--fs-body);
+    line-height: var(--leading-relaxed);
   }
   .cap-data-preview-heading {
     margin: 0;
     font-family: var(--display);
     font-size: var(--fs-lead);
+    font-weight: var(--weight-heading);
     line-height: var(--leading-snug);
   }
   .cap-data-preview-chart > svg {

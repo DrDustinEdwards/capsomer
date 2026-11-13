@@ -3,7 +3,8 @@
 /* A price card: one plan or tier with its name, its price and what the price is per, a line of what
    it is for, the list of what it includes, and its call to action. Cards sit in `.cap-price-grid`,
    as many columns as fit. `data-featured` raises the one to recommend. The plan choice is the same
-   offer as a radio group, for choosing a plan inside a form (a paywall, a checkout). Extracted from
+   offer as a radio group, for choosing a plan inside a form (a paywall, a checkout); its rules are
+   plan-choice.css, so a page of cards does not carry them. Extracted from
    BioScience Writers' pricing tiers, Foxhound's pricing cards and Foxing's paywall plans. */
 @layer cap.components {
   .cap-price-grid {
@@ -120,92 +121,10 @@
     margin-block-start: auto;
     padding-block-start: var(--space-2);
   }
-
-  /* The plan choice: the same offers as radios, the whole card the label. */
-  .cap-plan-choice {
-    margin: 0;
-    padding: 0;
-    border: 0;
-    min-inline-size: 0;
-
-    & > legend {
-      margin-block-end: var(--space-2);
-      padding: 0;
-      color: var(--text);
-      font-weight: var(--weight-semibold);
-    }
-  }
-
-  .cap-plan-choice-options {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 9rem), 1fr));
-    gap: var(--space-2);
-  }
-
-  .cap-plan-option {
-    position: relative;
-    display: grid;
-    gap: var(--space-1);
-    min-block-size: var(--target);
-    padding: var(--pad-y) var(--pad-x);
-    border: var(--line-w) solid var(--line);
-    border-radius: var(--radius-m);
-    background: var(--surface);
-    cursor: pointer;
-
-    & > input {
-      position: absolute;
-      inset-block-start: var(--pad-y);
-      inset-inline-end: var(--pad-x);
-      margin: 0;
-      accent-color: var(--accent);
-    }
-
-    &:hover {
-      border-color: var(--line-strong);
-    }
-
-    &:has(input:checked) {
-      border-color: var(--accent);
-      box-shadow: 0 0 0 var(--line-w) var(--accent);
-    }
-
-    &:has(input:focus-visible) {
-      outline: var(--ring-width) solid var(--ring);
-      outline-offset: var(--focus-offset);
-    }
-
-    &:has(input:disabled) {
-      cursor: default;
-      opacity: var(--opacity-muted);
-    }
-
-    @media (prefers-reduced-motion: no-preference) {
-      transition: border-color var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out);
-    }
-  }
-
-  .cap-plan-option-name {
-    padding-inline-end: var(--space-6);
-    color: var(--text);
-    font-weight: var(--weight-semibold);
-    font-size: var(--text-size);
-  }
-
-  .cap-plan-option-price,
-  .cap-plan-option-note {
-    color: var(--muted);
-    font-size: var(--fs-detail);
-    font-variant-numeric: tabular-nums;
-  }
 }
 
 @media (forced-colors: active) {
   .cap-price-card-points > li::before {
     background: CanvasText;
-  }
-
-  .cap-plan-option:has(input:checked) {
-    outline: var(--focus-width) solid Highlight;
   }
 }

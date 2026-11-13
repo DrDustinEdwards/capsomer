@@ -10,4 +10,4 @@ components/*/states.html
 components/*/states.css
 coverage/
 components/*/index.html
-site/accessibility.html
+site/gen/

@@ -53,9 +53,12 @@ export interface ChartFrameProps {
 }
 
 // enarratio/enhance, loaded once on the first frame that wants it, so a page without charts and
-// the server never load it.
+// the server never load it; a server build (Vite's SSR) drops it from its bundle.
 let enhancer: Promise<typeof import("enarratio/enhance")> | undefined;
-const loadEnhance = () => (enhancer ??= import("enarratio/enhance"));
+const loadEnhance = () =>
+  (enhancer ??= (import.meta as { env?: { SSR?: boolean } }).env?.SSR
+    ? Promise.reject(new Error("chart-frame: enhance runs only in a browser"))
+    : import("enarratio/enhance"));
 
 export function ChartFrame({
   draw,

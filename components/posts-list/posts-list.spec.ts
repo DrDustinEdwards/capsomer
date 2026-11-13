@@ -11,13 +11,12 @@ import {
   contentStatus,
   countLine,
   emptyWords,
-  intentForm,
-  outcomesOf,
   postActions,
   postsHref,
   rowActions,
   withFilter,
 } from "./posts-list.ts";
+import { intentForm, outcomesOf } from "../content/content.ts";
 
 const NOW = Date.parse("2026-10-10T12:00:00Z");
 const ALL = {
