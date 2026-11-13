@@ -41,7 +41,7 @@ Every image a site serves from its library, on any page: a cover, a body image, 
 
 ## The default and its reason
 
-- **The placeholder is in the image's own style attribute**, so it paints with the first HTML, before any script, and the image's width and height hold its box. The tiny picture is drawn at the box's size; the browser smooths it into a blur, so no filter has to touch the real pixels. The main color sits under it and stands alone where a file has no placeholder.
+- **The placeholder is in the image's own style attribute**, so it paints with the first HTML, before any script, and the image's width and height hold its box. The tiny picture is drawn at the box's size; the browser smooths it into a blur, so no filter has to touch the real pixels. The main color sits under it and stands alone where a file has no placeholder. It is the one style attribute a React wrapper renders (components/README.md asks for none), so a page that shows placeholders sets site-runtime's `styleAttributesInline`; under a plain `style-src 'self'` the browser drops it and the image paints alone.
 - **No fade.** The image paints over the placeholder when it arrives; a fade would need script on every image and delays the picture.
 - **Pause is a checkbox, not a scripted button.** It works with no script, before hydration and in a feed reader's cached page. Checked, the moving picture is hidden and its still shows; the still is lazy, so it is fetched only when shown.
 - **Less motion wins.** With `prefers-reduced-motion: reduce` the still shows and the control is hidden, as the `<picture>`'s own still sources already do.
