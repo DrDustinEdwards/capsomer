@@ -69,23 +69,6 @@
     line-height: 1.4;
     color: var(--muted);
   }
-  /* A title or summary cut to a number of lines with an ellipsis: data-lines="1|2|3" (2 by default). The whole text
-     stays in the DOM, so a screen reader and find-in-page still reach it. */
-  .cap-clamp {
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
-    line-clamp: 2;
-    overflow: hidden;
-    &[data-lines="1"] {
-      -webkit-line-clamp: 1;
-      line-clamp: 1;
-    }
-    &[data-lines="3"] {
-      -webkit-line-clamp: 3;
-      line-clamp: 3;
-    }
-  }
 }
 
 /* The family arrow (Dustin, 2026-10-27): one bold arrow, square shaft and wide solid head, for every
