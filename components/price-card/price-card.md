@@ -6,7 +6,7 @@ parts: [css, react]
 tool: native
 states: [grid of three, featured with a flag, price with unit and label, plan choice, plan choice with one disabled, plan note, legend hidden, two text lines]
 added: 0.132.0
-updated: 0.138.0
+updated: 0.136.0
 source: BioScience Writers' pricing tiers (app/routes/pricing.tsx), Foxhound's pricing cards (app/routes/pricing.tsx) and ProductPricing (app/components/product-sections-cap.tsx), Foxing's paywall plans (.fx-paywall-plan in styles/account.css)
 replaces:
   - 'fx-paywall-plan'

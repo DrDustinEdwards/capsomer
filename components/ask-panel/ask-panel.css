@@ -69,12 +69,23 @@
   }
 
   .cap-ask-sources {
-    display: grid;
-    gap: var(--space-1);
     margin: var(--space-3) 0 0;
-    padding: 0;
-    list-style: none;
     font-size: var(--fs-detail);
+
+    & ol {
+      display: grid;
+      gap: var(--space-1);
+      margin: var(--space-1) 0 0;
+      padding: 0;
+      /* Numbers from the list itself, inside so they sit at the panel's edge; without a list style, Safari drops
+         the list's role. */
+      list-style: decimal inside;
+    }
+
+    & li::marker {
+      color: var(--muted);
+      font-variant-numeric: tabular-nums;
+    }
   }
 
   /* Each link is a full target (--target: 24px, 44px on touch; WCAG 2.5.8): the list is tight, so its links are not
@@ -86,6 +97,7 @@
   }
 
   .cap-ask-sources-heading {
+    margin: 0;
     color: var(--muted);
     font-size: var(--fs-label);
     font-weight: 600;
@@ -93,7 +105,6 @@
     text-transform: uppercase;
   }
 
-  .cap-ask-source-index,
   .cap-ask-source-kind {
     color: var(--muted);
     font-variant-numeric: tabular-nums;
