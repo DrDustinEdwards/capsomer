@@ -42,7 +42,7 @@ A short, finite set the reader may browse but need not see all of: testimonials,
     </div>
   </div>
   <p class="cap-carousel-status cap-sr-only" role="status" aria-live="polite"></p>
-  <nav class="cap-carousel-markers" aria-label="Choose a slide">
+  <nav class="cap-carousel-markers" aria-label="Choose a slide: Testimonials">
     <button type="button" aria-label="Go to slide 1" aria-current="true"></button>
     …
   </nav>

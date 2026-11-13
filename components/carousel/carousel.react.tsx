@@ -40,6 +40,9 @@ export function Carousel({
     <section
       ref={root}
       className="cap-carousel"
+      data-cap="carousel"
+      // React wires it (below); a page's enhance() leaves it alone.
+      data-cap-ready=""
       aria-roledescription="carousel"
       aria-label={label}
       data-per-view={perView}
