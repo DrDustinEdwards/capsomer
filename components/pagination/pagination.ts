@@ -132,15 +132,6 @@ export function pageRelLinks(
   return links;
 }
 
-// A count line for a list that shows some of a total without a page range (the first rows of a
-// queue, a filtered view): "Showing 20 of 312 mentions", or "12 mentions" when every one is shown.
-// `one` is the singular ("mention") for a count of 1.
-export function countText(shown: number, total: number, noun = "items", one?: string): string {
-  const word = (n: number) => (n === 1 && one ? one : noun);
-  if (total <= 0) return `No ${noun}`;
-  return total > shown ? `Showing ${shown} of ${total} ${word(total)}` : `${total} ${word(total)}`;
-}
-
 function el<K extends keyof HTMLElementTagNameMap>(
   tag: K,
   className?: string,

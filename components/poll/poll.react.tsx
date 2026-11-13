@@ -1,4 +1,5 @@
-import { useLayoutEffect, useRef } from "react";
+import { useRef } from "react";
+import { useIsoLayoutEffect } from "../hooks/hooks.react.tsx";
 import { setShares } from "./poll.ts";
 
 export interface PollOption {
@@ -16,8 +17,6 @@ export interface PollProps {
   pending?: boolean;
   label?: string;
 }
-
-const useIsoLayoutEffect = typeof document === "undefined" ? () => {} : useLayoutEffect;
 
 // The HTML contract in poll.md.
 export function Poll({ options, mine = [], onVote, closed, pending, label }: PollProps) {

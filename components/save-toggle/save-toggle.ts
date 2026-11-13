@@ -36,14 +36,10 @@ export function subscribeSaved(onChange: () => void): () => void {
   return subscribeStored(onChange);
 }
 
-// The button's words and icon from its state.
+// The button's state: aria-pressed, which fills the bookmark. Its label stays the same (APG
+// button: a toggle's name does not change with its state).
 export function paint(button: HTMLElement, saved: boolean): void {
   button.setAttribute("aria-pressed", String(saved));
-  const label = button.querySelector(".cap-save-label");
-  if (label)
-    label.textContent = saved
-      ? (button.dataset.savedLabel ?? "Saved")
-      : (button.dataset.label ?? "Save");
 }
 
 // A page with no React: every button.cap-save[data-cap="save-toggle"] with data-key and data-id.

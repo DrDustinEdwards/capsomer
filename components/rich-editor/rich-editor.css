@@ -26,8 +26,8 @@
 
     /* An outline, not a shadow: forced colors keeps outlines and drops shadows. */
     &:focus-visible {
-      outline: var(--ring-width, var(--focus-width)) solid var(--ring);
-      outline-offset: calc(var(--ring-width, var(--focus-offset)) * -1);
+      outline: var(--ring-width) solid var(--ring);
+      outline-offset: calc(var(--ring-width) * -1);
     }
     & :is(p, ul, ol, blockquote, h1, h2, h3, h4, h5, h6, hr, .cap-rich-editor-src) {
       margin-block: 0 var(--space-6);
@@ -116,7 +116,7 @@
     overflow-x: auto;
 
     &:focus-visible {
-      outline: var(--ring-width, var(--focus-width)) solid var(--ring);
+      outline: var(--ring-width) solid var(--ring);
       outline-offset: var(--focus-offset);
     }
   }
@@ -195,7 +195,7 @@
   }
   .ProseMirror-focused .ProseMirror-selectednode.cap-rich-editor-src,
   .ProseMirror-focused .ProseMirror-selectednode.cap-rich-editor-src-inline {
-    outline: var(--ring-width, var(--line-w-bar)) solid var(--ring);
+    outline: var(--ring-width) solid var(--ring);
     outline-offset: var(--focus-offset);
   }
 

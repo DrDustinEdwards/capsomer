@@ -4,7 +4,7 @@
 /* The two-handle range: a label with the chosen span over a track filled between the handles,
    the track's ends under it. Two native range inputs share the track; the inputs' own tracks
    are transparent and let pointer events through, so only the thumbs take them and each handle
-   drags on its own. Extracted from Foxhound's DualRangeSlider (app/components/dual-range-slider.tsx,
+   drags on its own; a press on the rail itself moves the nearer handle there (WCAG 2.5.7). Extracted from Foxhound's DualRangeSlider (app/components/dual-range-slider.tsx,
    Recova's AmountRangeSlider). The thumb is the single slider's (field.css .cap-range). */
 @layer cap.components {
   .cap-range-slider {
@@ -37,7 +37,9 @@
   }
   .cap-range-slider-track {
     position: relative;
-    block-size: max(var(--target), 24px);
+    block-size: var(--target);
+    /* A press on the rail moves the nearer handle there. */
+    cursor: pointer;
     /* The rail, and the fill between the two handles. */
     &::before {
       content: "";
@@ -49,6 +51,15 @@
       border-radius: var(--radius-full);
       background: linear-gradient(
         to right,
+        var(--line-strong) var(--cap-range-lo),
+        var(--primary) var(--cap-range-lo) var(--cap-range-hi),
+        var(--line-strong) var(--cap-range-hi)
+      );
+    }
+    /* A right-to-left track runs from the right, as its inputs do. */
+    &:dir(rtl)::before {
+      background: linear-gradient(
+        to left,
         var(--line-strong) var(--cap-range-lo),
         var(--primary) var(--cap-range-lo) var(--cap-range-hi),
         var(--line-strong) var(--cap-range-hi)

@@ -3,6 +3,7 @@ import {
   useCallback,
   useEffect,
   useId,
+  useLayoutEffect,
   useMemo,
   useState,
   useSyncExternalStore,
@@ -17,6 +18,10 @@ export { cn } from "./hooks.ts";
 // arrives in the next render with no effect setting state.
 
 const noSubscribe = () => () => {};
+
+// useLayoutEffect in the browser, useEffect on the server, where a layout effect never runs and
+// React warns about it: for a measure or a write that must land before paint.
+export const useIsoLayoutEffect = typeof window === "undefined" ? useEffect : useLayoutEffect;
 
 /** React's useId with only letters and digits, safe in an id, a selector and an anchor (React's own has colons). */
 export function useCleanId(): string {

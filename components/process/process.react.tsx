@@ -22,7 +22,7 @@ export interface ProcessStepsProps {
   label?: string;
 }
 
-// The HTML contract in steps.md.
+// The HTML contract in process.md.
 export function ProcessSteps({
   steps,
   layout = "columns",

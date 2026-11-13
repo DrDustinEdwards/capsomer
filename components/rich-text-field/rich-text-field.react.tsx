@@ -154,8 +154,8 @@ export function RichTextField({
     if (!(event.ctrlKey || event.metaKey) || event.altKey || event.shiftKey) return;
     const tag = tags.find((t) => BUTTONS[t].key === event.key.toLowerCase());
     if (!tag) {
-      // The browser's own bold and underline would write tags the field does not allow.
-      if (["b", "u"].includes(event.key.toLowerCase())) event.preventDefault();
+      // The browser's own bold, italic and underline would write tags the field does not allow.
+      if (["b", "i", "u"].includes(event.key.toLowerCase())) event.preventDefault();
       return;
     }
     event.preventDefault();

@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { Check } from "../field/field.react.tsx";
 
 export interface PriceCardProps {
   // The plan's name, a heading; left out for a card that is the page's one offer.
@@ -112,21 +113,25 @@ export function PlanChoice({
       <legend className={hideLegend ? "cap-sr-only" : undefined}>{legend}</legend>
       <div className="cap-plan-choice-options">
         {options.map((o) => (
-          <label className="cap-plan-option" key={o.value}>
-            <input
-              type="radio"
-              name={name}
-              value={o.value}
-              disabled={o.disabled}
-              required={required}
-              {...(value !== undefined
-                ? { checked: value === o.value, onChange: () => onChange?.(o.value) }
-                : { defaultChecked: defaultValue === o.value })}
-            />
-            <span className="cap-plan-option-name">{o.name}</span>
-            {o.price ? <span className="cap-plan-option-price">{o.price}</span> : null}
-            {o.note ? <span className="cap-plan-option-note">{o.note}</span> : null}
-          </label>
+          <Check
+            key={o.value}
+            type="radio"
+            variant="card"
+            name={name}
+            value={o.value}
+            disabled={o.disabled}
+            required={required}
+            {...(value !== undefined
+              ? { checked: value === o.value, onChange: () => onChange?.(o.value) }
+              : { defaultChecked: defaultValue === o.value })}
+            label={
+              <span className="cap-plan-option-text">
+                <span className="cap-plan-option-name">{o.name}</span>
+                {o.price ? <span className="cap-plan-option-price">{o.price}</span> : null}
+                {o.note ? <span className="cap-plan-option-note">{o.note}</span> : null}
+              </span>
+            }
+          />
         ))}
       </div>
     </fieldset>

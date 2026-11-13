@@ -1,7 +1,7 @@
 // The posts list's pure helpers: the status of a post in words, the addresses of its filters,
 // which actions a person is offered here and why the others are withheld, and the forms the
 // script path posts. No DOM; the React component and a server render use the same functions.
-import { DAY, toMs, two } from "../time/time.ts";
+import { DAY, toMs } from "../time/time.ts";
 import {
   countText,
   nounsOf,
@@ -359,22 +359,4 @@ export function rowActions(row: PostRow, data: Pick<PostsData, "offers" | "can">
   if (can.deleteContent && offers.delete && !offers.trash)
     items.push({ label: "Delete", value: "delete", danger: true });
   return items;
-}
-
-// ---------------------------------------------------------------------------------------
-// The reschedule time field.
-
-// An ISO time as a datetime-local value in this browser's zone ("2030-01-01T16:00").
-export function localInputValue(iso: string): string {
-  const d = new Date(toMs(iso));
-  if (!Number.isFinite(d.getTime())) return "";
-  return `${d.getFullYear()}-${two(d.getMonth() + 1)}-${two(d.getDate())}T${two(d.getHours())}:${two(d.getMinutes())}`;
-}
-
-// A datetime-local value, read in this browser's zone, as the UTC time the kit takes
-// ("2030-01-01T15:00:00Z"). "" for an empty or impossible value.
-export function isoFromLocal(value: string): string {
-  if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(value)) return "";
-  const d = new Date(value);
-  return Number.isFinite(d.getTime()) ? d.toISOString().replace(/\.\d{3}Z$/, "Z") : "";
 }

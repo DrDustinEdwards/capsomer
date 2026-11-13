@@ -1,13 +1,5 @@
-import {
-  useEffect,
-  useId,
-  useRef,
-  useState,
-  type ComponentProps,
-  type ComponentType,
-  type FormHTMLAttributes,
-  type ReactNode,
-} from "react";
+import { useEffect, useId, useRef, useState, type ReactNode } from "react";
+import { PlainForm, type FormComponent } from "../plain-form/plain-form.react.tsx";
 import { isImeEnter } from "../shortcuts/shortcuts.ts";
 import { attachRowList } from "./row-list.ts";
 
@@ -171,6 +163,8 @@ export interface RowReplyProps {
   sendLabel?: string;
   // Shown when Send is pressed with nothing written.
   emptyHint?: string;
+  // Shown when onSend throws or rejects; the draft stays in the box.
+  failedHint?: string;
   defaultValue?: string;
   rows?: number;
 }
@@ -183,6 +177,7 @@ export function RowReply({
   onCancel,
   sendLabel = "Send",
   emptyHint = "Write something first.",
+  failedHint = "This was not sent. Your words are still here; try again.",
   defaultValue = "",
   rows = 3,
 }: RowReplyProps) {
@@ -202,6 +197,10 @@ export function RowReply({
     try {
       const refused = await onSend(text.trim());
       if (typeof refused === "string") setHint(refused);
+    } catch (error) {
+      // The draft stays in the box, so nothing typed is lost.
+      setHint(failedHint);
+      reportError(error);
     } finally {
       setBusy(false);
     }
@@ -262,20 +261,11 @@ export function RowReply({
 // calls the hook once, so each row has its own (React Router: useRouterRowForm in
 // capsomer/react/router).
 export interface RowForm {
-  Form: ComponentType<
-    Omit<FormHTMLAttributes<HTMLFormElement>, "method"> & {
-      method?: "post" | "get";
-      children?: ReactNode;
-    }
-  >;
+  Form: FormComponent;
   pending: boolean;
-}
-
-function PlainForm({ method = "post", ...props }: ComponentProps<"form">) {
-  return <form method={method} {...props} />;
 }
 
 // The default: a plain form that posts and loads the page the server answers with.
 export function usePlainRowForm(): RowForm {
-  return { Form: PlainForm as RowForm["Form"], pending: false };
+  return { Form: PlainForm, pending: false };
 }

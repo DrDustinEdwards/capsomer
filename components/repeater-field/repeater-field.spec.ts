@@ -16,7 +16,9 @@ eachTheme((theme) => {
     await expect(
       links.getByRole("group", { name: "Link 4" }).getByRole("textbox").first(),
     ).toBeFocused();
-    await expect(page.getByRole("status").filter({ hasText: "Link 4 added." })).toHaveCount(1);
+    await expect(
+      page.getByRole("status").filter({ hasText: "Added Link 4. 4 in the list." }),
+    ).toHaveCount(1);
 
     await links.getByRole("button", { name: "Remove Link 2" }).press("Enter");
     await expect(
