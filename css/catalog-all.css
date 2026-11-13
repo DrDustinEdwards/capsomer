@@ -10,4 +10,6 @@
 @import "../components/chips/chips.css";
 @import "../components/empty/empty.css";
 @import "../components/pagination/pagination.css";
+@import "../components/select/select.css";
+@import "../components/link/link.css";
 @import "../components/catalog/catalog.css";
