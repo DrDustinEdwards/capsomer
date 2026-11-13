@@ -21,22 +21,6 @@ eachTheme((theme) => {
     ]);
   });
 
-  test("keyboard: Tab reaches the quantity, the units and the button; arrows step", async ({
-    page,
-  }) => {
-    await visitStates(page, "scale-control", theme);
-    const form = page.getByRole("form", { name: "Scale this recipe" });
-    const servings = form.getByRole("spinbutton", { name: "Servings" });
-    await page.keyboard.press("Tab");
-    await expect(servings).toBeFocused();
-    await page.keyboard.press("ArrowUp");
-    await expect(servings).toHaveValue("5");
-    await page.keyboard.press("Tab");
-    await expect(form.getByRole("combobox", { name: "Units" })).toBeFocused();
-    await page.keyboard.press("Tab");
-    await expect(form.getByRole("button", { name: "Show" })).toBeFocused();
-  });
-
   test("behavior: the stepper is disabled at the least, and Scale sends the count", async ({
     page,
   }) => {

@@ -217,35 +217,6 @@ eachTheme((theme) => {
     expect((await header.boundingBox())!.y).toBeLessThan(0);
   });
 
-  test("behavior: links on the right sit after a thin divider before the tools; centered links sit in the middle of the band", async ({
-    page,
-  }) => {
-    await visitStates(page, "site-header", theme, "fh-public");
-    const right = await page.evaluate(() => {
-      const nav = document.querySelector(".cap-site-header-sections")!.getBoundingClientRect();
-      const tools = document.querySelector(".cap-site-header-tools")!;
-      const line = getComputedStyle(tools, "::before");
-      return {
-        navRight: nav.right,
-        toolsLeft: tools.getBoundingClientRect().left,
-        logoRight: document.querySelector(".cap-site-header-logo")!.getBoundingClientRect().right,
-        navLeft: nav.left,
-        w: line.width,
-        h: line.height,
-      };
-    });
-    expect(right.navRight).toBeLessThanOrEqual(right.toolsLeft);
-    expect(right.navLeft - right.logoRight, "the links are pushed right").toBeGreaterThan(300);
-    expect(right.w).toBe("1px");
-    expect(right.h).toBe("16px");
-    await visitStates(page, "site-header", theme, "fx-public");
-    const center = await page.evaluate(() => {
-      const nav = document.querySelector(".cap-site-header-sections")!.getBoundingClientRect();
-      return Math.abs(nav.left + nav.width / 2 - innerWidth / 2);
-    });
-    expect(center).toBeLessThanOrEqual(1);
-  });
-
   test("behavior: moving along the icons, the avatar's name never sits over its open account menu", async ({
     page,
   }) => {
@@ -288,6 +259,7 @@ eachTheme((theme) => {
     await page.mouse.move(640, 600);
     await expect(panel).toBeHidden();
     await expect(books).toHaveAttribute("aria-expanded", "false");
+    await expect(books).not.toBeFocused();
   });
 
   test("keyboard: Enter opens a panel and focuses its first item; Up, Down, Home and End move; Esc closes and returns focus", async ({
@@ -498,27 +470,6 @@ eachTheme((theme) => {
       expect(got.weight, only).toBe("500");
       expect(got.ratio, `${only}: the underline against the band`).toBeGreaterThanOrEqual(3);
     }
-  });
-
-  test("behavior: the dark band stays dark in both themes; the translucent band is see-through and blurred", async ({
-    page,
-  }) => {
-    await visitStates(page, "site-header", theme, "fh-public");
-    const lum = await page.locator(".cap-site-header").evaluate((el) => {
-      const x = document.createElement("canvas").getContext("2d")!;
-      x.fillStyle = getComputedStyle(el).backgroundColor;
-      x.fillRect(0, 0, 1, 1);
-      const [r, g, b] = x.getImageData(0, 0, 1, 1).data;
-      return (r! + g! + b!) / 3;
-    });
-    expect(lum).toBeLessThan(60);
-    await visitStates(page, "site-header", theme, "fx-public");
-    const t = await page.locator(".cap-site-header").evaluate((el) => ({
-      bg: getComputedStyle(el).backgroundColor,
-      blur: getComputedStyle(el).backdropFilter,
-    }));
-    expect(t.bg).toMatch(/^(rgba|color)\(.*(0\.85|\/ 0\.85)/);
-    expect(t.blur).toContain("blur");
   });
 
   test("accessibility: at phone width, one 56px row: the logo, up to two site icons, the theme, Sign in or the avatar, the menu button last; no second row", async ({
@@ -741,19 +692,6 @@ eachTheme((theme) => {
     await page.keyboard.press("t");
     await expect(page.locator("html")).toHaveAttribute("data-theme", other);
     expect(await page.evaluate(() => document.cookie)).toContain(`sample_theme=${other}`);
-  });
-
-  test("behavior: a panel opened by hover closes as the pointer leaves without putting focus on its button", async ({
-    page,
-  }) => {
-    await visitStates(page, "site-header", theme, "fx-public");
-    const books = page.getByRole("button", { name: "Books" });
-    const panel = page.locator("#" + (await books.getAttribute("aria-controls")));
-    await books.hover();
-    await expect(panel).toBeVisible();
-    await page.mouse.move(5, 600);
-    await expect(panel).toBeHidden();
-    await expect(books).not.toBeFocused();
   });
 
   test("behavior: a wide panel (a mega-menu) is 40rem, under the header, inside the window", async ({

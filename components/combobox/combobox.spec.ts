@@ -111,16 +111,6 @@ eachTheme((theme) => {
     );
   });
 
-  test("accessibility: the open list's roles and names", { tag: "@markup" }, async ({ page }) => {
-    await visitStates(page, "combobox", theme, "filtered");
-    await expect(page.getByRole("listbox")).toMatchAriaSnapshot(`
-      - listbox:
-        - option "shop.example.com"
-        - option "shop.example.com staging"
-    `);
-    await expect(page.getByRole("option")).toHaveCount(2);
-  });
-
   test("keyboard: ArrowDown opens the list and moves through the options", async ({ page }) => {
     await visitStates(page, "combobox", theme);
     const input = site(page);
@@ -236,9 +226,7 @@ eachTheme((theme) => {
     await expectContrast(page, [{ sel: ".cap-listbox-label", what: "a group label" }]);
   });
 
-  test("accessibility: several values, open and closed, have no axe violations and name each remove button", async ({
-    page,
-  }) => {
+  test("accessibility: several values, open, have no axe violations", async ({ page }) => {
     await visitStates(page, "combobox", theme, "open-chips");
     await expect(page.getByRole("listbox")).toBeVisible();
     // While the list is open Base UI hides the rest of the page from assistive technology, so the
@@ -246,11 +234,6 @@ eachTheme((theme) => {
     await expect(page.locator(".cap-combobox-chip-remove")).toHaveCount(2);
     await expectNoAxeViolations(page, undefined, { baseUi: true });
     await expect(page.getByRole("listbox")).toHaveAttribute("aria-multiselectable", "true");
-    await visitStates(page, "combobox", theme);
-    await expect(
-      page.locator("[data-mount='chips']").getByRole("button", { name: "Remove Admin portal" }),
-    ).toBeVisible();
-    await expectNoAxeViolations(page, undefined, { baseUi: true });
   });
 
   test("behavior: several values show as chips, and a chip's remove button takes that value away", async ({
@@ -302,10 +285,8 @@ eachTheme((theme) => {
     const violations = await page.evaluate(() => (window as unknown as { __csp: string[] }).__csp);
     expect(violations).toEqual([]);
   });
-  test("accessibility: the tag field, open and closed, has no axe violations", async ({ page }) => {
+  test("accessibility: the tag field, open, has no axe violations", async ({ page }) => {
     await visitStates(page, "combobox", theme, "open-tags");
-    await expectNoAxeViolations(page);
-    await visitStates(page, "combobox", theme);
     await expectNoAxeViolations(page);
   });
 

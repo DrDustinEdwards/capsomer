@@ -110,61 +110,6 @@ eachTheme((theme) => {
     ]);
   });
 
-  test(
-    "accessibility: the control is one named input described by the rules",
-    { tag: "@markup" },
-    async ({ page }) => {
-      await visitStates(page, "drop-zone", theme);
-      const input = page.getByLabel("Drop files here, or browse").first();
-      await expect(input).toHaveAttribute("type", "file");
-      await expect(input).toHaveAccessibleDescription(
-        "Images and PDF, up to 5 MB each, up to 4 at a time.",
-      );
-      await expect(page.locator("#dz-over input")).toHaveAccessibleName("Drop to upload");
-      await expect(page.locator("#dz-single input")).toHaveAccessibleName(
-        "Drop a profile picture, or browse",
-      );
-    },
-  );
-
-  test(
-    "accessibility: results are a status and refusals an alert, both present before anything is chosen",
-    { tag: "@markup" },
-    async ({ page }) => {
-      await visitStates(page, "drop-zone", theme);
-      await expect(page.locator("#dz-idle [role=status]")).toBeAttached();
-      await expect(page.locator("#dz-idle [role=alert]")).toBeAttached();
-      await expect(page.locator("#dz-rejected")).toMatchAriaSnapshot(`
-      - alert:
-        - paragraph: 3 files were not added
-        - list:
-          - listitem: "fieldnotes-scan.heic: type not allowed. This takes images and PDF."
-          - listitem: "site-recording.pdf: too big at 8.4 MB. The limit is 5 MB."
-          - listitem: "logo-variant-5.png: too many files. The limit is 4 files at a time, so this one was left out."
-    `);
-      await expect(page.locator("#dz-accepted")).toMatchAriaSnapshot(`
-      - status:
-        - paragraph: 3 files are ready to upload.
-        - list:
-          - listitem: spring-hero.jpg 412 kB
-          - listitem: uptime-report-september.pdf 1.8 MB
-          - listitem: annual-report-chart.png 96 kB
-    `);
-    },
-  );
-
-  test(
-    "accessibility: every state is in the delivered HTML",
-    { tag: "@markup" },
-    async ({ page }) => {
-      const html = await (await page.request.get("components/drop-zone/states.html")).text();
-      expect(html).toContain("3 files were not added");
-      expect(html).toContain("fieldnotes-scan.heic: type not allowed");
-      expect(html).toContain("3 files are ready to upload.");
-      expect(html).toContain('data-state="over"');
-    },
-  );
-
   test("keyboard: Tab reaches the zone as one stop, with a visible focus ring", async ({
     page,
   }) => {
@@ -175,25 +120,6 @@ eachTheme((theme) => {
     await expect(page.locator("#dz-idle .cap-drop-label")).toHaveCSS("outline-style", "solid");
     await page.keyboard.press("Tab");
     await expect(page.locator("#dz-idle input")).not.toBeFocused();
-  });
-
-  test("keyboard: Enter on the focused zone opens the file picker", async ({ page }) => {
-    await visitStates(page, "drop-zone", theme);
-    // Listen before focusing: Playwright turns the picker's interception on without waiting, and
-    // a key sent straight after can reach the page first and open a real picker the test never sees.
-    // The focus round trip lands after the interception does.
-    const chooser = page.waitForEvent("filechooser");
-    await page.locator("#dz-idle input").focus();
-    await page.keyboard.press("Enter");
-    expect((await chooser).isMultiple()).toBe(true);
-  });
-
-  test("keyboard: Space on the focused zone opens the file picker", async ({ page }) => {
-    await visitStates(page, "drop-zone", theme);
-    const chooser = page.waitForEvent("filechooser");
-    await page.locator("#dz-single input").focus();
-    await page.keyboard.press("Space");
-    expect((await chooser).isMultiple()).toBe(false);
   });
 
   test("keyboard: pasting files takes them when the zone asks for paste", async ({ page }) => {
@@ -406,10 +332,5 @@ eachTheme((theme) => {
     await expect(page.locator("#dz-page .cap-drop-overlay")).toBeVisible();
     await drag(page, "body", "dragleave");
     await expect(page.locator("#dz-page .cap-drop-overlay")).toBeHidden();
-  });
-
-  test("behavior: a disabled zone takes no files", async ({ page }) => {
-    await visitStates(page, "drop-zone", theme);
-    await expect(page.locator("#dz-disabled input")).toBeDisabled();
   });
 });

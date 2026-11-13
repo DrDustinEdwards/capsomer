@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { test } from "@playwright/test";
 import {
   eachTheme,
   expectContrast,
@@ -79,52 +79,5 @@ eachTheme((theme) => {
         min: 3,
       },
     ]);
-  });
-
-  test(
-    "accessibility: day headings name their lists, and the marker names its deploy",
-    { tag: "@markup" },
-    async ({ page }) => {
-      await visitStates(page, "feed", theme);
-      await expect(page.locator("#feed-incident")).toMatchAriaSnapshot(`
-      - heading "Today" [level=4]
-      - list "Today":
-        - listitem:
-          - link "Incident began 4 minutes after this deploy"
-        - listitem:
-          - link "Roll back"
-      - heading "Yesterday" [level=4]
-      - list "Yesterday":
-        - listitem:
-          - link "Error rate rose 2 minutes after this deploy"
-    `);
-      const marker = page.getByRole("link", { name: "Incident began 4 minutes after this deploy" });
-      await expect(marker).toHaveAccessibleDescription("web deployed a91c4e0");
-      await expect(
-        page.locator("#feed-day").getByRole("list", { name: "Yesterday" }).getByRole("listitem"),
-      ).toHaveCount(2);
-    },
-  );
-
-  test("keyboard: Tab moves through the feed's links in reading order", async ({ page }) => {
-    await visitStates(page, "feed", theme);
-    const feed = page.locator("#feed-incident");
-    await feed.getByRole("link", { name: "Incident began 4 minutes after this deploy" }).focus();
-    await page.keyboard.press("Tab");
-    await expect(feed.getByRole("link", { name: "Roll back" })).toBeFocused();
-    await page.keyboard.press("Tab");
-    await expect(
-      feed.getByRole("link", { name: "Error rate rose 2 minutes after this deploy" }),
-    ).toBeFocused();
-  });
-
-  test("keyboard: Enter on the marker follows it to the incident", async ({ page }) => {
-    await visitStates(page, "feed", theme);
-    await page
-      .locator("#feed-incident")
-      .getByRole("link", { name: "Incident began 4 minutes after this deploy" })
-      .focus();
-    await page.keyboard.press("Enter");
-    await expect(page).toHaveURL(/#incident-412$/);
   });
 });

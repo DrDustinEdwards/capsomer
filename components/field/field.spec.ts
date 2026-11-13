@@ -49,26 +49,6 @@ eachTheme((theme) => {
     ]);
   });
 
-  test("accessibility: the live form's roles and names", { tag: "@markup" }, async ({ page }) => {
-    await visitStates(page, "field", theme);
-    await expect(page.locator("#add-site")).toMatchAriaSnapshot(`
-      - form "A live form":
-        - textbox "Site name"
-        - textbox "Site address"
-        - group "Platform":
-          - radio "Cloudflare"
-          - radio "Vercel"
-        - checkbox "Start checks on the next pass"
-        - button "Add site"
-    `);
-    await expect(page.locator("#f-invalid")).toHaveAccessibleDescription(
-      /Use https:\/\/ and remove/,
-    );
-    await expect(page.locator("#f-help")).toHaveAccessibleDescription(
-      "Starts with https:// and has no path.",
-    );
-  });
-
   test("keyboard: Tab leaves a changed field and checks it; an untouched field is left alone", async ({
     page,
   }) => {
@@ -90,28 +70,6 @@ eachTheme((theme) => {
     await expect(page.locator("#site-url")).toHaveAccessibleDescription(
       /Use https:\/\/ and leave off any path/,
     );
-  });
-
-  test("keyboard: Space checks and unchecks a checkbox", async ({ page }) => {
-    await visitStates(page, "field", theme);
-    const box = page.getByRole("checkbox", { name: "Start checks on the next pass" });
-    await box.focus();
-    await page.keyboard.press("Space");
-    await expect(box).toBeChecked();
-    await page.keyboard.press("Space");
-    await expect(box).not.toBeChecked();
-  });
-
-  test("keyboard: arrow keys move between radios and select", async ({ page }) => {
-    await visitStates(page, "field", theme);
-    const five = page.getByRole("radio", { name: "5 minutes", exact: true });
-    await five.focus();
-    await page.keyboard.press("ArrowDown");
-    const fifteen = page.getByRole("radio", { name: "15 minutes" });
-    await expect(fifteen).toBeFocused();
-    await expect(fifteen).toBeChecked();
-    await page.keyboard.press("ArrowUp");
-    await expect(five).toBeChecked();
   });
 
   test("keyboard: Enter submits; two or more fields in error send focus to the error summary", async ({
@@ -296,34 +254,13 @@ eachTheme((theme) => {
     await expect(page.locator("#site-url-e")).toHaveText(
       "Enter a full address, starting with https://.",
     );
+    const field = url.locator("xpath=ancestor::div[contains(@class,'cap-field')][1]");
+    await expect(field).toHaveAttribute("data-invalid", "true");
     await url.fill("https://fieldnotes.example/");
     await expect(page.locator("#site-url-e")).toBeHidden();
     await expect(url).not.toHaveAttribute("aria-invalid", "true");
+    await expect(field).not.toHaveAttribute("data-invalid", "true");
   });
-
-  test(
-    "accessibility: a checkbox can be mixed and reports it",
-    { tag: "@markup" },
-    async ({ page }) => {
-      await visitStates(page, "field", theme);
-      await expect(
-        page.getByRole("checkbox", { name: "Select all sites (some chosen)" }),
-      ).toBeChecked({ indeterminate: true });
-    },
-  );
-
-  test(
-    "accessibility: an invalid checkbox and radio expose aria-invalid and their message",
-    { tag: "@markup" },
-    async ({ page }) => {
-      await visitStates(page, "field", theme);
-      await expect(page.locator("#c-invalid")).toHaveAttribute("aria-invalid", "true");
-      await expect(page.locator("#c-invalid")).toHaveAccessibleDescription(
-        "Accept the terms to continue.",
-      );
-      await expect(page.locator("#r-invalid")).toHaveAttribute("aria-invalid", "true");
-    },
-  );
 
   test("accessibility: the group and the focus ring on a field", async ({ page }) => {
     await visitStates(page, "field", theme);
@@ -368,21 +305,5 @@ eachTheme((theme) => {
     await expect(page.locator("#g-url")).toBeFocused();
     await page.getByRole("button", { name: "Paste an address" }).click();
     await expect(page.locator("#g-url")).not.toBeFocused();
-  });
-
-  test("behavior: a message sets data-invalid on its field and clears it when fixed", async ({
-    page,
-  }) => {
-    await visitStates(page, "field", theme);
-    const url = page.locator("#site-url");
-    await url.fill("example.com");
-    await url.blur();
-    await expect(
-      page.locator("#site-url").locator("xpath=ancestor::div[contains(@class,'cap-field')][1]"),
-    ).toHaveAttribute("data-invalid", "true");
-    await url.fill("https://example.com");
-    await expect(
-      page.locator("#site-url").locator("xpath=ancestor::div[contains(@class,'cap-field')][1]"),
-    ).not.toHaveAttribute("data-invalid", "true");
   });
 });

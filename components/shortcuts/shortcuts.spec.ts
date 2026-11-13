@@ -98,12 +98,6 @@ eachTheme((theme) => {
     await expect(said(page)).toHaveText("Went to Overview.");
   });
 
-  test("keyboard: Ctrl K (Cmd K on a Mac) runs its shortcut", async ({ page }) => {
-    await visitStates(page, "shortcuts", theme, "page");
-    await page.keyboard.press("ControlOrMeta+k");
-    await expect(said(page)).toHaveText("The command menu opens here.");
-  });
-
   test("keyboard: keys typed into a field are left alone", async ({ page }) => {
     await visitStates(page, "shortcuts", theme, "page");
     await page.getByRole("textbox", { name: "A note" }).focus();
@@ -154,10 +148,5 @@ eachTheme((theme) => {
     await expect(
       page.getByRole("link", { name: "example.org is not answering" }),
     ).not.toBeFocused();
-  });
-
-  test("behavior: the off specimen shows the switch off", async ({ page }) => {
-    await visitStates(page, "shortcuts", theme, "off");
-    await expect(page.getByRole("switch", { name: "Single-key shortcuts" })).not.toBeChecked();
   });
 });

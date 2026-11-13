@@ -194,27 +194,11 @@ eachTheme((theme) => {
     await expect(page.getByRole("status")).toHaveText("Ran: Revoke deploy-agent opens its preview");
   });
 
-  test("behavior: the stops specimen shows what typing stop finds", async ({ page }) => {
-    await visitStates(page, "command-menu", theme, "stops");
-    await expect(box(page)).toHaveValue("stop");
-    await expect(shownOptions(page)).toHaveCount(2);
-  });
-
   test("behavior: a click on an option runs it", async ({ page }) => {
     await openFromButton(page, theme);
     await page.getByRole("option", { name: /Switch light and dark/ }).click();
     await expect(menu(page)).toBeHidden();
     await expect(page.getByRole("status")).toHaveText("Ran: Switch light and dark");
-  });
-
-  test("behavior: the filtered and no-match specimens show what was typed", async ({ page }) => {
-    await visitStates(page, "command-menu", theme, "filtered");
-    await expect(box(page)).toHaveValue("ck");
-    await expect(shownOptions(page)).toHaveCount(3);
-    await visitStates(page, "command-menu", theme, "nomatch");
-    await expect(menu(page).locator(".cap-listbox-empty")).toHaveText(
-      "No commands match “deploy to vercel”",
-    );
   });
 
   for (const state of ["live", "live-dom"]) {

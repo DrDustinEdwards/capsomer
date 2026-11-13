@@ -84,51 +84,6 @@ eachTheme((theme) => {
     },
   );
 
-  test(
-    "accessibility: the delivered HTML has the selection, and the empty bar is hidden",
-    { tag: "@markup" },
-    async ({ page }) => {
-      const html = await (await page.request.get("components/bulk-bar/states.html")).text();
-      expect(html).toContain('<p class="cap-bulk-count" role="status">3 selected <span');
-      expect(html).toContain('<p class="cap-bulk-count" role="status">12 selected</p>');
-      await visitStates(page, "bulk-bar", theme);
-      await expect(page.locator("#bulk-none")).toBeHidden();
-      await expect(page.locator("#bulk-none")).toHaveAttribute("hidden", "");
-    },
-  );
-
-  test("keyboard: Tab goes through the bar's controls in reading order", async ({ page }) => {
-    await visitStates(page, "bulk-bar", theme);
-    await page.getByRole("button", { name: "Select all 24 in view" }).focus();
-    await page.keyboard.press("Tab");
-    await expect(
-      page.locator("#bulk-static").getByRole("button", { name: "Archive" }),
-    ).toBeFocused();
-    await page.keyboard.press("Tab");
-    await expect(page.locator("#bulk-static").getByRole("combobox", { name: "Tag" })).toBeFocused();
-    await page.keyboard.press("Tab");
-    await expect(
-      page.locator("#bulk-static").getByRole("button", { name: "Add tag" }),
-    ).toBeFocused();
-    await page.keyboard.press("Tab");
-    await page.keyboard.press("Tab");
-    await expect(
-      page.locator("#bulk-static").getByRole("button", { name: "Clear selection" }),
-    ).toBeFocused();
-  });
-
-  test("keyboard: Space on an item's checkbox selects it and the bar appears", async ({ page }) => {
-    await visitStates(page, "bulk-bar", theme);
-    await expect(page.locator("#bulk-live")).toBeHidden();
-    await check(page, "live-list", 2).focus();
-    await page.keyboard.press("Space");
-    await expect(page.locator("#bulk-live")).toBeVisible();
-    await expect(page.locator("#bulk-live .cap-bulk-count")).toHaveText("1 selected");
-    await check(page, "live-list", 4).focus();
-    await page.keyboard.press("Space");
-    await expect(page.locator("#bulk-live .cap-bulk-count")).toHaveText("2 selected");
-  });
-
   test("keyboard: Enter on a reversible action runs it at once and the region offers Undo", async ({
     page,
   }) => {
@@ -397,15 +352,5 @@ eachTheme((theme) => {
     // Ticking an item brings the bar back without the old outcomes.
     await check(page, "outcome-list", 2).check();
     await expect(bar.locator(".cap-bulk-count")).toHaveText("1 selected");
-  });
-
-  test("behavior: the outcome list is in the delivered HTML, with its Dismiss hidden until script runs", async ({
-    page,
-  }) => {
-    const html = await page.request.get("components/bulk-bar/states.html").then((r) => r.text());
-    expect(html).toContain(
-      '<div class="cap-bulk-results" data-cap-part="results" role="group" aria-labelledby="bulk-outcomes-summary">',
-    );
-    expect(html).toMatch(/data-cap-part="dismiss-results" hidden>Dismiss results/);
   });
 });

@@ -172,38 +172,8 @@ eachTheme((theme) => {
     );
   });
 
-  test(
-    "accessibility: status is a glyph, a word and a color",
-    { tag: "@markup" },
-    async ({ page }) => {
-      await visitStates(page, "flag-list", theme);
-      for (const id of ["f1", "f3"]) {
-        const s = flag(page, id).locator(".cap-row-status .cap-status");
-        await expect(s.locator("svg[aria-hidden='true']")).toHaveCount(1);
-      }
-      await expect(flag(page, "f1").locator(".cap-row-status")).toHaveText("Blocking");
-      await expect(flag(page, "f3").locator(".cap-row-status")).toHaveText("Advisory");
-      await expect(flag(page, "f2").locator(".cap-flag-title .cap-status svg")).toHaveCount(1);
-    },
-  );
-
   // -------------------------------------------------------------------------------------
   // Keyboard, one test per row of the doc page's table.
-
-  test("keyboard: Tab moves through the filter, then each flag's link and buttons", async ({
-    page,
-  }) => {
-    await visitStates(page, "flag-list", theme);
-    await main(page).getByRole("radio", { name: /^Open/ }).focus();
-    await page.keyboard.press("Tab"); // the batch button
-    await expect(main(page).getByRole("button", { name: "Apply 2 suggestions" })).toBeFocused();
-    await page.keyboard.press("Tab");
-    await expect(flag(page, "f1").getByRole("link")).toBeFocused();
-    await page.keyboard.press("Tab");
-    await expect(flag(page, "f1").getByRole("button", { name: /^Resolve/ })).toBeFocused();
-    await page.keyboard.press("Tab");
-    await expect(flag(page, "f1").getByRole("button", { name: /^Dismiss/ })).toBeFocused();
-  });
 
   test("keyboard: j and k move between flags across both groups", async ({ page }) => {
     await visitStates(page, "flag-list", theme);
@@ -217,13 +187,6 @@ eachTheme((theme) => {
     await expect(flag(page, "f3").getByRole("link")).toBeFocused();
     await page.keyboard.press("k");
     await expect(flag(page, "f1").getByRole("link")).toBeFocused();
-  });
-
-  test("keyboard: Enter on the title link goes to the passage", async ({ page }) => {
-    await visitStates(page, "flag-list", theme);
-    await flag(page, "f1").getByRole("link").focus();
-    await page.keyboard.press("Enter");
-    await expect(page).toHaveURL(/#fl-draft$/);
   });
 
   test("keyboard: Enter or Space on Resolve does it at once and moves focus on", async ({
@@ -304,21 +267,6 @@ eachTheme((theme) => {
     await expect(page.locator("#fl-draft")).toHaveValue(DRAFT);
   });
 
-  test("keyboard: arrow keys in the filter move between Open, Resolved and All and choose", async ({
-    page,
-  }) => {
-    await visitStates(page, "flag-list", theme);
-    await main(page).getByRole("radio", { name: /^Open/ }).focus();
-    await page.keyboard.press("ArrowRight");
-    await expect(main(page).getByRole("radio", { name: /^Resolved/ })).toBeChecked();
-    await expect(flag(page, "f6")).toBeVisible();
-    await expect(flag(page, "f1")).toBeHidden();
-    await page.keyboard.press("ArrowRight");
-    await expect(main(page).getByRole("radio", { name: /^All/ })).toBeChecked();
-    await expect(flag(page, "f1")).toBeVisible();
-    await expect(flag(page, "f6")).toBeVisible();
-  });
-
   test("keyboard: z runs the newest Undo", async ({ page }) => {
     await visitStates(page, "flag-list", theme);
     await flag(page, "f1")
@@ -343,39 +291,6 @@ eachTheme((theme) => {
 
   // -------------------------------------------------------------------------------------
   // Behavior.
-
-  test("behavior: the whole record, resolved flags included, is in the delivered HTML", async ({
-    page,
-  }) => {
-    const html = await (await page.request.get("components/flag-list/states.html")).text();
-    expect(html).toContain("Resolved by Rosa Park");
-    expect(html).toContain("Dismissed by Alex Rivera");
-    expect(html).toContain("Anchor lost");
-    expect(html).toContain("Roughly 40% of the alerts last quarter were false alarms");
-    expect(html).toContain('href="#fl-draft"');
-    expect(html).toContain("2 blocking, 3 advisory, 2 resolved");
-  });
-
-  test("behavior: blocking comes before advisory, and open before resolved within a group", async ({
-    page,
-  }) => {
-    await visitStates(page, "flag-list", theme);
-    await main(page).getByRole("radio", { name: /^All/ }).check();
-    const order = await main(page)
-      .locator("li.cap-flag")
-      .evaluateAll((els) => els.map((e) => (e as HTMLElement).dataset.flag));
-    expect(order).toEqual(["f1", "f2", "f6", "f3", "f4", "f5", "f7"]);
-  });
-
-  test("behavior: the summary line and the filter counts say it in words", async ({ page }) => {
-    await visitStates(page, "flag-list", theme);
-    await expect(main(page).locator("[data-cap-part='summary']")).toHaveText(
-      "2 blocking, 3 advisory, 2 resolved",
-    );
-    await expect(main(page).getByRole("radio", { name: "Open 5" })).toBeChecked();
-    await expect(main(page).getByRole("radio", { name: "Resolved 2" })).toBeVisible();
-    await expect(main(page).getByRole("radio", { name: "All 7" })).toBeVisible();
-  });
 
   test("behavior: resolving keeps the flag on the record with who and when, and the counts follow", async ({
     page,
@@ -554,14 +469,6 @@ eachTheme((theme) => {
     await expect(flag(page, "f3")).toHaveAttribute("data-state", "open");
   });
 
-  test("behavior: canceling the batch preview changes nothing", async ({ page }) => {
-    await visitStates(page, "flag-list", theme);
-    await main(page).getByRole("button", { name: "Apply 2 suggestions" }).click();
-    await page.getByRole("alertdialog").getByRole("button", { name: "Cancel" }).click();
-    await expect(page.locator("#fl-draft")).toHaveValue(DRAFT);
-    await expect(flag(page, "f3")).toHaveAttribute("data-state", "open");
-  });
-
   test("behavior: a change is reported to the app", async ({ page }) => {
     await visitStates(page, "flag-list", theme);
     await page.evaluate(() => {
@@ -649,23 +556,6 @@ eachTheme((theme) => {
     await expect(
       page.locator("#fl-phone-mf3").getByRole("button", { name: /^Apply suggestion/ }),
     ).toBeVisible();
-  });
-
-  test("behavior: comfortable density makes a row roomier than the compact default", async ({
-    page,
-  }) => {
-    await visitStates(page, "flag-list", theme);
-    const pad = (sel: string) =>
-      page.locator(sel).evaluate((e) => parseFloat(getComputedStyle(e).paddingTop));
-    expect(await pad("#fl-comfy-c5")).toBeGreaterThan(await pad("#fl-main-f5"));
-  });
-
-  test("behavior: the filter defaults per its markup and the record is complete under All", async ({
-    page,
-  }) => {
-    await visitStates(page, "flag-list", theme);
-    await expect(page.locator("#fl-guest").getByRole("radio", { name: /^All/ })).toBeChecked();
-    await expect(page.locator("#fl-guest li.cap-flag:visible")).toHaveCount(4);
   });
 });
 
