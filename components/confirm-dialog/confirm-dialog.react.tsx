@@ -9,6 +9,7 @@ import {
   DialogTitle,
   DialogBody,
 } from "../dialog/dialog.react.tsx";
+import type { Answer } from "../data/data.ts";
 import { errorText, wordMatches, wordPattern } from "./confirm-dialog.ts";
 import { CONFIRM_FIELD, REASON_FIELD } from "./confirm-server.ts";
 
@@ -520,4 +521,128 @@ export function ConfirmModal(props: ConfirmModalProps) {
       <ConfirmPage {...props} headingLevel="h2" />
     </dialog>
   );
+}
+
+// ---- Who asked, and the two steps ---------------------------------------------------------------
+
+/** What the dialog is asking about and the control that opened it, or null when closed. */
+export interface ConfirmAsk<T> {
+  subject: T;
+  opener: HTMLElement | null;
+}
+
+/**
+ * The state a page keeps for its confirm dialogs: what is being asked about and the control that
+ * asked, so focus goes back to it. `ask(subject, event.currentTarget)` opens; spread `props` into
+ * the ConfirmDialog whose `open` is your own test of `subject`.
+ */
+export function useConfirmAction<T>(): {
+  subject: T | null;
+  ask: (subject: T, opener?: EventTarget | null) => void;
+  close: () => void;
+  props: { returnTo: HTMLElement | null | undefined; onClose: (performed: boolean) => void };
+} {
+  const [asking, setAsking] = useState<ConfirmAsk<T> | null>(null);
+  const close = () => setAsking(null);
+  return {
+    subject: asking?.subject ?? null,
+    ask: (subject, opener) =>
+      setAsking({ subject, opener: opener instanceof HTMLElement ? opener : null }),
+    close,
+    props: { returnTo: asking?.opener, onClose: close },
+  };
+}
+
+/** A failed step: the server's words, and whether the preview it rested on has expired. */
+export interface StepError {
+  text: string;
+  expired: boolean;
+  /** The failure is about a field (a reason, a typed word), shown beside it. */
+  field?: boolean;
+}
+
+/** What a step's request came to: `capsomer/react/data`'s Answer. */
+type StepAnswer<T> = Answer<T>;
+
+/**
+ * Preview, then perform: the preview writes nothing and answers what will change (and a token);
+ * perform carries it out. Every press ends in something the person can see: the preview, the
+ * result, a refusal in the server's words, or why it could not be sent. A perform refused because
+ * its preview expired drops the preview, so the next press previews again. Answers that arrive
+ * after the dialog has gone are ignored.
+ */
+export function useTwoStep<I, P, R>({
+  preview,
+  perform,
+  onDone,
+  onSignedOut,
+  reachText = (message) => `Could not reach the server: ${message}`,
+}: {
+  preview: (input: I) => Promise<StepAnswer<P>>;
+  perform: (preview: P) => Promise<StepAnswer<R>>;
+  onDone: (result: R) => void;
+  onSignedOut: () => void;
+  reachText?: (message: string) => string;
+}) {
+  const [shown, setShown] = useState<P | null>(null);
+  const [pending, setPending] = useState<null | "preview" | "perform">(null);
+  const [error, setError] = useState<StepError | null>(null);
+  const alive = useRef(true);
+  useEffect(() => {
+    alive.current = true;
+    return () => {
+      alive.current = false;
+    };
+  }, []);
+  const failed = (r: Exclude<StepAnswer<unknown>, { kind: "ok" }>) => {
+    if (r.kind === "signed-out") return onSignedOut();
+    if (r.kind === "expired") return setError({ text: r.message, expired: true });
+    if (r.kind === "refused") return setError({ text: r.message, expired: false });
+    setError({ text: reachText(r.message), expired: false });
+  };
+  const thrown = (lead: string, e: unknown) =>
+    setError({ text: `${lead}: ${e instanceof Error ? e.message : String(e)}`, expired: false });
+
+  const runPreview = async (input: I) => {
+    setPending("preview");
+    setError(null);
+    setShown(null);
+    try {
+      const r = await preview(input);
+      if (!alive.current) return;
+      if (r.kind === "ok") setShown(r.value);
+      else failed(r);
+    } catch (e) {
+      if (alive.current) thrown("The preview could not be shown", e);
+    } finally {
+      if (alive.current) setPending(null);
+    }
+  };
+
+  const runPerform = async () => {
+    if (!shown) return;
+    setPending("perform");
+    setError(null);
+    try {
+      const r = await perform(shown);
+      if (!alive.current) return;
+      if (r.kind === "ok") return onDone(r.value);
+      if (r.kind === "expired") setShown(null);
+      failed(r);
+    } catch (e) {
+      if (alive.current) thrown("The result could not be shown", e);
+    } finally {
+      if (alive.current) setPending(null);
+    }
+  };
+
+  return {
+    preview: shown,
+    pending,
+    busy: pending !== null,
+    error,
+    setError,
+    runPreview,
+    runPerform,
+  };
 }
