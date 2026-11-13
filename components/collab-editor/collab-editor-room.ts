@@ -20,8 +20,9 @@ import type {
 export type RoomStatus = "connecting" | "connected" | "offline";
 
 export type Room = {
-  doc: Y.Doc;
-  provider: YProvider;
+  /** The shared copy and its provider: null until the page is in the browser. */
+  doc: Y.Doc | null;
+  provider: YProvider | null;
   /** The copy has arrived from the room: the editor may be made. */
   synced: boolean;
   status: RoomStatus;
@@ -166,7 +167,9 @@ export function useRoom(path: string, initial: string, initiallyUnsaved: boolean
             setSource,
           }
         : // Before the page is in the browser: the text the server read, and nothing live yet.
-          ({
+          {
+            doc: null,
+            provider: null,
             synced: false,
             status: "connecting",
             source,
@@ -178,7 +181,7 @@ export function useRoom(path: string, initial: string, initiallyUnsaved: boolean
             send,
             flush,
             setSource,
-          } as unknown as Room),
+          },
     [
       live,
       synced,
