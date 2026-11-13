@@ -70,3 +70,17 @@ test("every scroll-driven animation keeps duration auto after minifying", async 
   const bad = rules.filter(([, body]) => !/animation-duration:auto(?![^;]*,)/.test(body));
   assert.deepEqual(bad, []);
 });
+
+// `./*.css` maps `capsomer/<name>.css` to `components/<name>/<name>.css`; a stylesheet named
+// otherwise (role-grid.css in people-roles/) needs its own export, or an import of it fails to resolve.
+test("every component stylesheet can be imported by name", () => {
+  const exports = JSON.parse(readFileSync("package.json", "utf8")).exports;
+  for (const file of cssFiles("components")) {
+    const [, dir, name] = file.split(/[\\/]/);
+    const css = name.replace(/\.css$/, "");
+    assert.ok(
+      dir === css || exports[`./${css}.css`] === `./${file.replace(/\\/g, "/")}`,
+      `${file} has no export: add "./${css}.css" to package.json`,
+    );
+  }
+});

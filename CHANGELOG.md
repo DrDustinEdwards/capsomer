@@ -17,6 +17,10 @@ Each release names every removed or renamed token or class, and every changed HT
 - **Density now reaches the sizes components hard-coded.** A size equal to a density step is now that step (`--fs-label`, `--fs-detail`, `--fs-body`, `--fs-lead`), as DEFAULTS asks, so under `data-density="comfortable"` those labels and leads grow with the rest. Compact, the default, draws the same.
 - No token or class was removed or renamed, and no HTML contract changed.
 
+## [0.139.1]
+
+- **Fix: `capsomer/role-grid.css` resolves.** 0.139.0 added the file but the `./*.css` export maps a name to `components/<name>/<name>.css`, so `@import "capsomer/role-grid.css"` failed to resolve; it now has its own export. No class or token changes.
+
 ## [0.139.0]
 
 - **Breaking: the layout classes and the text roles are their own stylesheets, no longer part of `base.css`.** `base.css` imported `utilities.css`, which since 0.126.0 carried the layout classes (`.cap-stack`, `.cap-cluster`, `.cap-spread`, `.cap-grid`, the panes and the item helpers, 1.98 KB gzip) and the text roles (`.cap-text`, `.cap-title`, `.cap-clamp`, 1.22 KB gzip), so every site shipped about 3.2 KB gzip it might not use (txasm's public routes grew 2.9 KB gzip, the Portal's CSS went over its budget). They are now `capsomer/layout.css` and `capsomer/text.css` (`css/layout.css`, `css/text.css`). **A site that uses those classes adds `import "capsomer/layout.css";` and `import "capsomer/text.css";` beside `capsomer/base.css`** (Foxing, Carrel and the Portal use both); a site that does not, changes nothing and loses the weight. `capsomer/utilities.css` keeps everything else. No class, token or attribute is renamed or removed, and no HTML contract changes.

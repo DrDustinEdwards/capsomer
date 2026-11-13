@@ -48,6 +48,7 @@
     "./base.css": "./css/base.css",
     "./utilities.css": "./css/utilities.css",
     "./layout.css": "./css/layout.css",
+    "./role-grid.css": "./components/people-roles/role-grid.css",
     "./text.css": "./css/text.css",
     "./focus.css": "./css/focus.css",
     "./print.css": "./css/print.css",
