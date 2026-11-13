@@ -8,6 +8,12 @@ Each release names every removed or renamed token or class, and every changed HT
 
 - **`MediaPicker` and `ImageField` load the media library when the dialog opens.** `media-picker.react.tsx` imported `MediaLibrary` statically, so a page that drew only the button (an editor, a settings form) shipped the whole library: 32 KB gzip on Carrel's editor route (capsomer#408). The library is now its own chunk behind `React.lazy` and `Suspense`, showing the same "Loading media..." text while it arrives. No token, class, export or HTML contract changed.
 
+## [0.135.0]
+
+- **Command menu: an answer under the list.** `answer: { label, offer, run(query, region) }` on `createCommandMenu`, `buildMenu` and `attach` adds `.cap-cmd-answer` (a quiet button, a status, `.cap-cmd-answer-region`) between the list and the key hints: the button shows while words are typed, `run` fills the region and returns `{ cancel }` (or a promise of it, so its code loads only when pressed), focus moves into the answer before the button hides, and typing again or closing cancels it. `ask(region, options)` from `capsomer/behavior/ask-panel` is such a `run`. `offer: false` with `Attached.offerAnswer(on)` lets a search say whether answers are on. New export `ANSWER_LABEL`, type `AnswerRun`. The React menu has no answer area yet.
+- **Ask panel: focus moves to the answer when its trigger hides, also while the browser still reports the hidden trigger as focused.** dei's Ask checked for this; the extraction had dropped it.
+- **Ask panel: the sources are an `ol` named by its "Sources" heading.** Before, the heading was the list's first item, so a screen reader counted it as a source, and the numbers were text inside each link. HTML contract: `.cap-ask-sources` is now a `div` holding `p.cap-ask-sources-heading` and an `ol` (numbers from `list-style`); `.cap-ask-source-index` is removed.
+
 ## [0.134.0]
 
 - **Sites: dustinedwards.info's entry no longer sets `--radius-control: 0`.** 0.126.0 carried it over from the site's app.css, but before Capsomer 0.123.0 no control read that token, so the live site's buttons and fields have always been rounded; with it, they turned square. Its controls keep Capsomer's `--radius-m`.
