@@ -5,6 +5,7 @@
 import { useId, useState, type ChangeEvent, type ReactNode } from "react";
 import { joinSource, splitSource } from "@drdustinedwards/site-helpers/frontmatter";
 import { Check, Field } from "../field/field.react.tsx";
+import { clamp } from "../hooks/hooks.ts";
 import { setBox, typeFront, type FieldSpec, type TypedField } from "./frontmatter-fields.ts";
 
 export interface FrontmatterFieldsProps {
@@ -135,25 +136,23 @@ export function FrontmatterFields({
       {raw ? (
         <details className="cap-disclosure cap-fm-raw" open={startOpen || undefined}>
           <summary>{rawSummary}</summary>
-          <div className="cap-disclosure-body cap-field">
-            <label className="cap-field-label" htmlFor={rawId}>
-              The frontmatter as text
-            </label>
-            {rawOnly.length ? (
-              <p className="cap-field-help" id={`${rawId}-help`}>
-                Only here: {rawOnly.join(", ")}.
-              </p>
-            ) : null}
-            <textarea
-              className="cap-input cap-fm-raw-text"
+          <div className="cap-disclosure-body">
+            <Field
+              label="The frontmatter as text"
+              help={rawOnly.length ? `Only here: ${rawOnly.join(", ")}.` : undefined}
               id={rawId}
-              aria-describedby={rawOnly.length ? `${rawId}-help` : undefined}
-              rows={Math.min(Math.max(front.split("\n").length + 1, 4), 24)}
-              value={front}
-              readOnly={locked}
-              spellCheck={false}
-              onChange={(event) => onChange?.(joinSource({ ...split, front: event.target.value }))}
-            />
+            >
+              <textarea
+                className="cap-input cap-fm-raw-text"
+                rows={clamp(front.split("\n").length + 1, 4, 24)}
+                value={front}
+                readOnly={locked}
+                spellCheck={false}
+                onChange={(event) =>
+                  onChange?.(joinSource({ ...split, front: event.target.value }))
+                }
+              />
+            </Field>
           </div>
         </details>
       ) : null}
@@ -162,4 +161,3 @@ export function FrontmatterFields({
 }
 
 export type { FieldSpec, BoxKind, FlagWords, TypedField } from "./frontmatter-fields.ts";
-export { LIST_HINT, LINES_HINT } from "./frontmatter-fields.ts";
