@@ -1,0 +1,11 @@
+/* Sample layout for the hero's states page: a soft drawing behind the card. */
+.hero-specimen-backdrop {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 20% 30%, var(--accent-soft), transparent 60%),
+    radial-gradient(circle at 80% 70%, var(--sunken), transparent 55%);
+}
+.cap-hero:has(.hero-specimen-backdrop) {
+  padding: var(--space-7);
+}

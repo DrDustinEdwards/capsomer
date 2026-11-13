@@ -6,7 +6,7 @@ parts: [css, behavior, react]
 tool: own JavaScript
 states: [link states (rest, current, hover, pressed), top of page, scrolled into the third section, blocks marked data-section, short page with no bar]
 added: 0.1.0
-updated: 0.125.0
+updated: 0.127.0
 source: the approved mockup's .onpage bar; Capsid Portal, dashboard/src/ui/anchors.tsx and styles.css (".anchors")
 replaces:
   - 'class="onpage"'
