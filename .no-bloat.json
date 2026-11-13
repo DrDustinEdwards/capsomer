@@ -14,8 +14,8 @@
     },
     "legacy": {},
     "tests": {
-      "files": 256,
-      "cases": 2006
+      "files": 255,
+      "cases": 2003
     },
     "comments": {
       "lines": 14484,
