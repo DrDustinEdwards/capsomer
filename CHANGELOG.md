@@ -4,6 +4,11 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+## [0.129.0]
+
+- **`capsomer/token-check` no longer exports `normalizeHex`.** Prelum owns it now (one copy): import `normalizeHex` from `@drdustinedwards/site-helpers/text` (Prelum 0.55.0). The behavior is the same (`#abc` or `#aabbcc` as lowercase `#aabbcc`, space and a missing `#` tolerated); `token-check` itself imports it from there. No token or class was removed or renamed, and no HTML contract changed.
+- `@drdustinedwards/site-helpers` is now at least 0.55.0 (dev v0.55.0, peer `>=0.55.0`), and `token-check` needs it installed. The dev `@dustinedwards/site-runtime` moves to v0.143.0, which Prelum 0.55.0 requires as a peer; Capsomer's own site-runtime peer range is unchanged.
+
 ## [0.125.0]
 
 Second-pass shared-code audit, batch 1 (Dustin, 2026-11-11: any UI that is a component lives in Capsomer, even if one site uses it).

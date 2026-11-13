@@ -5,7 +5,6 @@ export type Declarations = Record<string, string[]>;
 /** [fg token, bg token, minimum WCAG ratio, what the pair is]. */
 export type Pair = readonly [string, string, number, string];
 export function stripCss(css: string): string;
-export function normalizeHex(hex: string): string;
 export function flattenMix(expr: string): string | null;
 export function mediaBlock(css: string, query: string): string | null;
 export function readDeclarations(css: string, selector: string): Declarations;
