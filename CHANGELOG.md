@@ -4,6 +4,8 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+- **One `dayKey`, site-runtime's.** site-runtime 0.155.0's `./time` exports the zone-aware `dayKey(at, zone?)` (a Date, epoch milliseconds or a stored time; zoneless text is UTC; the runtime's zone without one), so Capsomer's own copy and its formatter cache are gone from `time.ts`, and devkit's shared-code check stops failing on it. The time functions, history list, schedule and writing progress import it from `@dustinedwards/site-runtime/time`. **Removed exports: `dayKey` from `capsomer/behavior/time` and `capsomer/behavior/writing-progress`**: import it from `@dustinedwards/site-runtime/time`. **Peer floor raised: `@dustinedwards/site-runtime` `>=0.155.0`** (was `>=0.131.0`); a site that uses the time, history list, schedule or writing progress behavior needs site-runtime 0.155.0 or later. No token, class or HTML contract changes.
+
 ## [0.142.0]
 
 The gaps the site moves onto 0.132.0's content and marketing blocks found (bsw, julieedwards.info, dei, Foxing, germomics, Foxhound). Every site can get its current look back by setting tokens or props; each default stays what 0.132.0 drew, except the fixes below. No token, class or contract is removed or renamed.
