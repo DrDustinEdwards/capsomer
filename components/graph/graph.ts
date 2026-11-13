@@ -52,6 +52,7 @@ const LINE = 18;
 // breaks removed, as the URL parser does), kept when it is a path or an http(s) address; null for
 // any other scheme (javascript:, data:), which draws the box without a link.
 function boxHref(href: string): string | null {
+  // oxlint-disable-next-line no-control-regex -- matching the control characters is the point: the URL parser drops them.
   const bare = href.replace(/^[\u0000-\u0020]+/, "").replace(/[\t\n\r]/g, "");
   return ABSOLUTE.test(bare) ? httpHref(bare) : bare;
 }
