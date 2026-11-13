@@ -3,9 +3,9 @@
     "measured_at": "21f9199",
     "knip": {},
     "jscpd": {
-      "clones": 85,
-      "lines": 1221,
-      "percentage": 0.63,
+      "clones": 83,
+      "lines": 1198,
+      "percentage": 0.61,
       "unread": 24
     },
     "shared copies": {

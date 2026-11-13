@@ -64,9 +64,6 @@ eachTheme(() => {
     await expect(link).toHaveAttribute("aria-current", "page");
     await expect(page.locator("#cap-main h1")).toHaveText("Color and contrast");
     await expect(page).toHaveTitle(/^Color and contrast · Capsomer/);
-    // The color page's old address still opens it.
-    await page.goto("./admin/#/colour"); // codespell:ignore
-    await expect(page.locator("#cap-main h1")).toHaveText("Color and contrast");
   });
 
   test("behavior: the overview counts every family's contrast pairs, not just the committed palette's", async ({

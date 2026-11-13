@@ -22,7 +22,6 @@ export {
   splitSentences,
   diffSentences,
   analyze,
-  analyse, // codespell:ignore
   countsText,
 } from "./draft-compare-diff.ts";
 export type {

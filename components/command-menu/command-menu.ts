@@ -200,6 +200,39 @@ export interface AttachOptions {
 
 export const ANSWER_LABEL = "Answer this";
 
+// Starts an answer for the words typed, filling `region`, for the menu without React and the
+// React menu alike. A failed load gives the words the status says (the button stays, so the
+// person can try again). When `wanted()` is false once the code has loaded (the words changed or
+// the menu closed), the answer is for nothing shown: it is canceled, the region emptied, and
+// null returned.
+export async function startAnswer(
+  answer: NonNullable<AttachOptions["answer"]>,
+  query: string,
+  region: HTMLElement,
+  wanted: () => boolean,
+): Promise<{ run: AnswerRun } | { failed: string } | null> {
+  let run: AnswerRun;
+  try {
+    run = await answer.run(query, region);
+  } catch {
+    return { failed: `${answer.label ?? ANSWER_LABEL} could not load. Try again.` };
+  }
+  if (!wanted()) {
+    run.cancel();
+    region.replaceChildren();
+    return null;
+  }
+  return { run };
+}
+
+// Focus moves into the answer (its first focus target, or the region) before the button hides:
+// hiding a focused button drops focus to <body>, which in a modal dialog leaves the person
+// nowhere (WCAG 2.4.3).
+export function focusAnswer(region: HTMLElement): void {
+  region.hidden = false;
+  (region.querySelector<HTMLElement>("[tabindex='-1']") ?? region).focus();
+}
+
 // Fills a snippet with its text, the typed words in <mark>; built from nodes, never from HTML.
 export function markSnippet(el: HTMLElement, query: string): void {
   const parts = markQuery(el.textContent ?? "", query);
@@ -578,29 +611,21 @@ export function attach(
     // The button stays while the code loads, so a second press must not start a second answer.
     if (!answer || !answerRegion || !q || answerLoading || answerRun) return;
     answerLoading = true;
-    let started: AnswerRun;
-    try {
-      started = await answer.run(q, answerRegion);
-    } catch {
-      // The button stays, so the person can try again, and the status says so.
-      if (answerStatus)
-        answerStatus.textContent = `${answer.label ?? ANSWER_LABEL} could not load. Try again.`;
-      return;
-    } finally {
-      answerLoading = false;
-    }
-    // The words changed or the menu closed while it loaded: this answer is for nothing shown.
-    if (!dialog.open || input.value.trim() !== q) {
-      started.cancel();
-      answerRegion.replaceChildren();
+    const got = await startAnswer(
+      answer,
+      q,
+      answerRegion,
+      () => dialog.open && input.value.trim() === q,
+    );
+    answerLoading = false;
+    if (!got) return;
+    if ("failed" in got) {
+      if (answerStatus) answerStatus.textContent = got.failed;
       return;
     }
-    answerRun = started;
+    answerRun = got.run;
     if (answerStatus) answerStatus.textContent = "";
-    answerRegion.hidden = false;
-    // Focus moves before the button hides: hiding a focused button drops focus to <body>, which in
-    // a modal dialog leaves the person nowhere (WCAG 2.4.3).
-    (answerRegion.querySelector<HTMLElement>("[tabindex='-1']") ?? answerRegion).focus();
+    focusAnswer(answerRegion);
     showAnswerButton();
   };
   const onAnswerClick = () => void runAnswer();

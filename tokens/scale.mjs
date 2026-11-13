@@ -390,8 +390,8 @@ export const BREAKPOINTS = [
   ["bp-xl", "72rem", "a wide desktop: the page reaches its widest grid"],
 ];
 
-// Density: [name, compact, comfortable, what it is for]. `control` and `control-h` are the
-// same height (control-h is kept from 0.1). Touch raises control and target to 44 px in both.
+// Density: [name, compact, comfortable, what it is for]. Touch raises control and target to
+// 44 px in both.
 export const DENSITY = [
   [
     "control",
@@ -399,7 +399,6 @@ export const DENSITY = [
     "36px",
     "a control's height with a fine pointer (one step above the Portal's 32; shadcn vega's h-9)",
   ],
-  ["control-h", "34px", "36px", "alias of --control, kept from 0.1"],
   ["target", "24px", "28px", "the smallest hit area (WCAG 2.5.8 asks 24)"],
   ["pad-x", "12px", "12px", "a control's inline padding (vega's px-3)"],
   [
@@ -432,7 +431,6 @@ const TEXT_SIZE = ["text-size", "var(--fs-body)"];
 // Touch: the height a thumb needs wins over density.
 const COARSE = [
   ["control", "var(--control-h-coarse)"],
-  ["control-h", "var(--control-h-coarse)"],
   ["target", "44px"],
   ["row-h", "44px"],
 ];
@@ -536,7 +534,7 @@ export function renderJson() {
   const fs = compact.filter(([n]) => n.startsWith("fs-"));
   groups.type = [...fs, ...groups.type];
   groups.control = [
-    ...compact.filter(([n]) => ["control", "control-h", "target"].includes(n)),
+    ...compact.filter(([n]) => ["control", "target"].includes(n)),
     ["control-h-coarse", "44px", "a control's height with a coarse pointer"],
   ];
   groups["density-compact"] = compact;
