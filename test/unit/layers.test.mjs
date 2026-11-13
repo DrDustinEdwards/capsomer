@@ -19,7 +19,14 @@ function cssFiles(dir) {
 }
 
 test("every component and base stylesheet states the layer order", () => {
-  const files = [...cssFiles("components"), "css/base.css", "css/utilities.css", "css/prose.css"];
+  const files = [
+    ...cssFiles("components"),
+    "css/base.css",
+    "css/utilities.css",
+    "css/layout.css",
+    "css/text.css",
+    "css/prose.css",
+  ];
   assert.ok(files.length > 20);
   const bad = files.filter((f) => !readFileSync(f, "utf8").includes(ORDER));
   assert.deepEqual(bad, []);
@@ -46,7 +53,7 @@ test("no component stylesheet puts rules outside a cap layer", () => {
 // Longhands with `animation-duration: auto` survive minifying; this checks the minified output.
 test("every scroll-driven animation keeps duration auto after minifying", async () => {
   const { transform } = await import("lightningcss");
-  const files = [...cssFiles("components"), "css/utilities.css"];
+  const files = [...cssFiles("components"), "css/utilities.css", "css/layout.css", "css/text.css"];
   const rules = files.flatMap((f) => {
     const out = transform({ filename: f, code: readFileSync(f), minify: true }).code.toString();
     // Each run of declarations between braces; nesting only splits a rule into more runs.
