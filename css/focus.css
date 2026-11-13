@@ -1,0 +1,24 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in (css/layers.css has the note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* The focus policy, one for every site (base.css imports it; a page that keeps its own base, as a site still on
+   Tailwind does, imports capsomer/focus.css alone instead of writing its own). Layered, so each component's own ring
+   (a field's glow, a header's inset ring) still wins, with no revert-layer patches. */
+@layer cap.base {
+  /* A pointer press shows no ring; the keyboard always does. */
+  :focus:not(:focus-visible) {
+    outline: none;
+  }
+  :focus-visible,
+  a[data-force="focus"] {
+    /* The shared focus indicator: a 2 px solid --ring outline, 3:1 against every surface
+       (palette.mjs checks it). A field may add --shadow-ring, the soft 3 px glow, beside it. */
+    outline: var(--focus-width) solid var(--ring);
+    outline-offset: var(--focus-offset);
+  }
+  /* A scroll region (a code box or wide table: tabindex="0", role="region", a name) draws the ring
+     inside its edge, so a parent that clips its overflow cannot hide it (the table's and dialog's rule). */
+  [role="region"][tabindex="0"]:focus-visible {
+    outline-offset: calc(var(--focus-width) * -1);
+  }
+}

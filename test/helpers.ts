@@ -1,7 +1,7 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Page } from "@playwright/test";
 
-import { paintedContrast, settled } from "./page.ts";
+import { CHECK_WIDTHS, overflowScan, paintedContrast, settled, shellState } from "./page.ts";
 
 // The page helpers need no test runner: they are in ./page (capsomer/testing/page), and here too.
 export * from "./page.ts";
@@ -152,4 +152,31 @@ export async function expectContrast(
       low.push(`${c.what}: ${r.fg} on ${r.bg} is ${r.ratio.toFixed(2)}:1, needs ${min}:1`);
   }
   expect(low).toEqual([]);
+}
+
+// No page scrolls sideways at any of the check widths (WCAG 1.4.10, reflow).
+export async function expectNoOverflow(
+  page: Page,
+  widths: readonly number[] = CHECK_WIDTHS,
+): Promise<void> {
+  const height = page.viewportSize()?.height ?? 900;
+  for (const width of widths) {
+    await page.setViewportSize({ width, height });
+    expect(await overflowScan(page), `at ${width}px`).toEqual([]);
+  }
+}
+
+// Every admin path draws the shell with its stylesheet. `signIn` is the path a bounced session lands on.
+export async function expectShellRenders(
+  page: Page,
+  paths: readonly string[],
+  { signIn = "/login" }: { signIn?: string } = {},
+): Promise<void> {
+  for (const path of paths) {
+    await page.goto(path);
+    const s = await shellState(page);
+    expect(s.path, `${path} bounced to sign-in`).not.toBe(signIn);
+    expect(s.menu && s.bar && s.styled, `${path} draws the admin shell`).toBe(true);
+    expect(s.text, `${path} has a body`).toBeGreaterThan(100);
+  }
 }

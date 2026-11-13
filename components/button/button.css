@@ -29,7 +29,7 @@
     margin: 0;
     padding: 0 var(--pad-x);
     border: 1px solid var(--cap-btn-line);
-    border-radius: var(--radius-m);
+    border-radius: var(--radius-control);
     background: var(--cap-btn-bg);
     background-clip: padding-box;
     color: var(--cap-btn-fg);
@@ -330,7 +330,7 @@
     min-height: var(--control);
     padding: 0 var(--pad-x);
     border: 1px solid var(--line-strong);
-    border-radius: var(--radius-m);
+    border-radius: var(--radius-control);
     background: var(--sunken);
     color: var(--text);
     font-size: var(--fs-body);
