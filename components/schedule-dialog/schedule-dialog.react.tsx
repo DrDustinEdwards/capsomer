@@ -63,7 +63,6 @@ export function ScheduleDialog({
   // another item's, and measures "past" from then.
   useEffect(() => {
     if (!open) return;
-    // oxlint-disable-next-line react/set-state-in-effect -- an opening starts the field again from the item it is for
     setValue(startValue());
     setChosenAt(Date.now());
     // oxlint-disable-next-line react/exhaustive-deps -- only an opening resets it; `current` is read as it is then

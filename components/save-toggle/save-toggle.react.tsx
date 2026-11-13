@@ -14,11 +14,7 @@ const ICON = <path d="M4 2.5h8v11L8 10.5l-4 3z" />;
 
 // The HTML contract in save-toggle.md. The server and hydration render it unpressed; the stored
 // state follows once the page runs, and so does another tab's change.
-export function SaveToggle({
-  storageKey,
-  id,
-  label = "Save",
-}: SaveToggleProps) {
+export function SaveToggle({ storageKey, id, label = "Save" }: SaveToggleProps) {
   const saved = isSaved(
     useSyncExternalStore(
       subscribeSaved,
