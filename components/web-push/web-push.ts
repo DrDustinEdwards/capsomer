@@ -1,6 +1,7 @@
 // Phone alerts in the browser: whether this browser can take Web Push, a short name for the
 // device, and turning it on (permission, the service worker, the subscription). The site's server
 // keeps the subscriptions and sends the alerts; push-sw.js beside this file shows them.
+import { guessPlatform } from "../tabs/tabs.ts";
 
 export function pushSupported(): boolean {
   return (
@@ -10,6 +11,15 @@ export function pushSupported(): boolean {
     "Notification" in window
   );
 }
+
+const SYSTEM_NAMES = {
+  ios: "iOS",
+  android: "Android",
+  windows: "Windows",
+  macos: "macOS",
+  linux: "Linux",
+  none: "this device",
+} as const;
 
 // "Chrome on Android": enough to tell two devices apart, and nothing more.
 export function deviceLabel(ua: string): string {
@@ -22,17 +32,7 @@ export function deviceLabel(ua: string): string {
         : /Safari\//.test(ua)
           ? "Safari"
           : "A browser";
-  const os = /Android/.test(ua)
-    ? "Android"
-    : /iPhone|iPad/.test(ua)
-      ? "iOS"
-      : /Mac OS X/.test(ua)
-        ? "macOS"
-        : /Windows/.test(ua)
-          ? "Windows"
-          : /Linux/.test(ua)
-            ? "Linux"
-            : "this device";
+  const os = SYSTEM_NAMES[guessPlatform(ua) ?? "none"];
   return `${browser} on ${os}`;
 }
 
