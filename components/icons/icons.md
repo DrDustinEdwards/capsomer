@@ -6,7 +6,7 @@ parts: [css, behavior, react]
 tool: own JavaScript
 states: [ui icons, social marks, labeled, inside a button, own drawing, right to left]
 added: 0.99.0
-updated: 0.133.0
+updated: 0.134.0
 source: the sites' own inline SVGs, gathered: txasm's admin menu (admin.layout.tsx), Foxing's account panel and header (account-panel.tsx, page-shell.tsx), julieedwards.info's header (Chrome.tsx) and priorities (Sections.tsx), the germomics and bsw footers' social marks; and Lucide's drawings of the pictograms Foxhound, germomics and bsw imported from lucide-react (ISC, components/icons/LICENSE-lucide.txt)
 replaces:
   - 'from "lucide-react"'

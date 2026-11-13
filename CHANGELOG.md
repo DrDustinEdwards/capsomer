@@ -4,7 +4,7 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
-## [0.133.0]
+## [0.134.0]
 
 - **Sites: dustinedwards.info's entry no longer sets `--radius-control: 0`.** 0.126.0 carried it over from the site's app.css, but before Capsomer 0.123.0 no control read that token, so the live site's buttons and fields have always been rounded; with it, they turned square. Its controls keep Capsomer's `--radius-m`.
 - **Fonts: one file per family.** `capsomer/fonts-<family>.css` (`fonts-dm-sans.css`, `fonts-dm-mono.css`, `fonts-inter.css`, `fonts-source-serif-4.css`, and one for each other face) holds that family's faces and its size-matched fallback, written by tokens/fonts.mjs beside `fonts.css`, for a site that draws only some of the network's faces: Foxhound draws DM Sans and DM Mono alone, and the whole fonts.css cost its dashboard 2 KB gzip of rules it never uses. `fonts.css` is unchanged.
@@ -12,7 +12,16 @@ Each release names every removed or renamed token or class, and every changed HT
 - **Icons: `iconScanSearch` and a button's icon side** (from #391). New icon `iconScanSearch` (Lucide's ScanSearch, joined into one path), the one pictogram Foxhound drew that the set lacked. `Icon` takes `data-icon="start"` or `"end"`, so an icon inside a `cap-btn` pulls the button's padding in on its side, as an inline SVG with that attribute already did. Foxhound's entry sets `--icon-stroke: 2`, Lucide's stroke, which its icons were drawn at.
 - **`capsomer/token-check` no longer exports `normalizeHex`.** Prelum owns it now (one copy): import `normalizeHex` from `@drdustinedwards/site-helpers/text` (Prelum 0.55.0). The behavior is the same (`#abc` or `#aabbcc` as lowercase `#aabbcc`, space and a missing `#` tolerated); `token-check` itself imports it from there. No token or class was removed or renamed, and no HTML contract changed.
 - `@drdustinedwards/site-helpers` is now at least 0.55.0 (dev v0.55.0, peer `>=0.55.0`), and `token-check` needs it installed. The dev `@dustinedwards/site-runtime` moves to v0.143.0, which Prelum 0.55.0 requires as a peer; Capsomer's own site-runtime peer range is unchanged.
+
+## [0.133.0]
+
+- **New layout: panes** (`css/utilities.css`). `.cap-panes` sets two panels side by side, the first the wider (3:2); `data-flip` makes the second the wider (2:3) and `data-even` halves the row. The gap is `data-gap` like the other layouts (default `--space-6`). The panes stack when the row is narrower than `--panes-break` (50rem), measured on the row itself rather than the window, so they also stack inside a narrow shell or a drawer, with no media query. Tops line up and a short pane does not stretch; a third panel takes a row of its own. It replaces the Portal's `.grid2` and Carrel's `.app-split`.
+- **Stacks take `data-align`** (`start`, `center`, `end`): every item keeps its own width, lined up on that side, as clusters already could. It replaces the Portal's `.mt4` and `.mt8` notes under a status and its stacked button cells. Removed or renamed: no token or class.
 - Showcase site: every page carries `<meta name="color-scheme" content="light dark">`, so `theme.js` and the theme switch have a meta to set before paint, and `<meta name="text-scale" content="scale">`, so the site follows the reader's system text size (Modern Web Guidance, respect-os-text-scale). They come from `siteHead()` (site/seo.ts); the states pages already had both. Nothing in the package changes.
+
+## [0.133.0]
+
+- **A progressive tab set prints every panel.** The print rule set `display: block` in `cap.components`, and the reset's `[hidden] { display: none !important }` in `cap.reset` beats every later layer, so the inactive panels stayed off the page. The rule is now `!important` in `cap.reset`, where its specificity wins. No token or class changed.
 
 ## [0.132.0]
 
