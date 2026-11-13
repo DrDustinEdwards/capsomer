@@ -63,7 +63,10 @@
     max-inline-size: var(--measure);
     margin: 0 0 var(--space-6);
     color: var(--muted);
-    font: var(--weight-regular) var(--hero-lead-size, var(--title-4)) / var(--leading-normal) var(--hero-lead-face, inherit);
+    font-family: var(--hero-lead-face, inherit);
+    font-size: var(--hero-lead-size, var(--title-4));
+    font-weight: var(--weight-regular);
+    line-height: var(--leading-normal);
     text-wrap: pretty;
   }
   /* More words between the lead and the actions, in body type. */
