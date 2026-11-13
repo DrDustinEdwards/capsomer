@@ -6,7 +6,7 @@
 // steppers, a search field's Clear and a date input's real-date check. No framework; the
 // React wrapper and switch-reason use the same functions.
 
-import { wordCount } from "@drdustinedwards/site-helpers/text";
+import { plural, wordCount } from "@drdustinedwards/site-helpers/text";
 import {
   hideSummary,
   setTitleError,
@@ -208,10 +208,10 @@ export function countText(
 ): { text: string; over: boolean } {
   const used = words ? wordCount(value) : value.length;
   const n = Math.abs(limit - used);
-  const unit = `${words ? "word" : "character"}${n === 1 ? "" : "s"}`;
+  const counted = plural(n, words ? "word" : "character");
   return used > limit
-    ? { text: `You have ${n} ${unit} too many`, over: true }
-    : { text: `You have ${n} ${unit} remaining`, over: false };
+    ? { text: `You have ${counted} too many`, over: true }
+    : { text: `You have ${counted} remaining`, over: false };
 }
 
 // The limit a control counts against: data-maxlength (characters) or data-maxwords.

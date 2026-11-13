@@ -1,7 +1,7 @@
 ---
 name: format
 title: Number words
-summary: A figure, a noun for a count, a file size, a short count, a median and a percent, written the same way on every site.
+summary: A figure, a file size, a short count, a median and a percent, written the same way on every site.
 parts: [behavior]
 tool: own JavaScript
 states: []
@@ -18,7 +18,7 @@ replaces:
 
 ## The default and its reason
 
-- **`pluralWord(n, one, many?)`** is the noun for a count: only 1 is singular, so 0, 1.5 and -1 take the plural. `many` is the plural when it is not `one + "s"`, and it may be a phrase ("check fails", "checks fail"). The count with its noun is `plural` in `capsomer/behavior/hooks`, or Prelum's `plural(n, one, many, { grouped: true })` for a grouped figure ("1,204 people").
+- **A count with its noun** is Prelum's `plural(n, one, many?, { grouped })` in `@drdustinedwards/site-helpers/text` ("3 files", "1,204 people" with `grouped: true`); Capsomer keeps no copy of it.
 - **Figures are grouped by thousands** (Prelum's `formatCount(n)` in `@drdustinedwards/site-helpers/text`, "1,204"), as the GOV.UK style guide asks for numbers over 999.
 - **`formatBytes(bytes)`** divides by 1,024, as Windows File Explorer does and as every copy in the network already did, so no size on a site changes (macOS divides by 1,000; the two differ by 2.4% at kB and 7.4% at GB). It writes "512 B", "412 kB", "2.4 MB", "10 GB": bytes and kB whole, MB and up with one decimal under 100 and no trailing ".0". It never shows "1024 kB" (it says "1 MB"). Not a number is "Unknown size".
 - **`shortCount(n)`** is for a tile or a chip: exact under 10,000, then short ("12.3K", "1.2M"). Put the exact figure in the accessible name or a title when the short one stands in for it.

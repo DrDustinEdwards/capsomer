@@ -8,9 +8,8 @@
 // editor is its own chunk. The pure helpers (edits, counting, filtering, roving) are
 // exported so the React wrapper and a node test can use them without the browser.
 
-import { plural } from "../hooks/hooks.ts";
 import { clamp } from "../hooks/hooks.ts";
-import { readingMinutes, wordCount } from "@drdustinedwards/site-helpers/text";
+import { plural, readingMinutes, wordCount } from "@drdustinedwards/site-helpers/text";
 import { type Listbox, createListbox } from "../listbox/listbox.ts";
 import { isImeEnter } from "../shortcuts/shortcuts.ts";
 import { place } from "../popover/popover.ts";
@@ -236,7 +235,7 @@ export async function mountMarkdownEditor(
   function updateStats(value: string) {
     const words = wordCount(value);
     const mins = readingMinutes(words, 0, o.wordsPerMinute);
-    statsCount.textContent = `${words.toLocaleString("en")} word${words === 1 ? "" : "s"}${words > 0 ? ` · ${mins} min read` : ""}`;
+    statsCount.textContent = `${plural(words, "word", "words", { grouped: true })}${words > 0 ? ` · ${mins} min read` : ""}`;
     const max = maxLength();
     if (max === undefined) {
       statsLimit.textContent = "";

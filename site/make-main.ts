@@ -2,7 +2,7 @@
 // Capsomer's own generator (tokens/palette-core.mjs, the code that writes Capsomer's color files),
 // paints both previews through the CSSOM (the CSP allows no inline style), checks every pair, and
 // rewrites the CSS, the tokens file and the address, so a link opens the same theme.
-import { plural } from "../components/hooks/hooks.ts";
+import { plural } from "@drdustinedwards/site-helpers/text";
 import "@fontsource/dm-sans/400.css";
 import "@fontsource/dm-sans/600.css";
 import "@fontsource/dm-sans/700.css";

@@ -14,8 +14,7 @@
 // and works out the Markdown, and `value` only feeds the word count. This file imports no Yjs, so an
 // editor outside a room does not carry it.
 
-import { plural } from "../hooks/hooks.ts";
-import { readingMinutes, wordCount } from "@drdustinedwards/site-helpers/text";
+import { plural, readingMinutes, wordCount } from "@drdustinedwards/site-helpers/text";
 import { Editor, type AnyExtension, type JSONContent } from "@tiptap/core";
 import { Placeholder } from "@tiptap/extensions";
 import { DOMParser as SchemaParser } from "@tiptap/pm/model";

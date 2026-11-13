@@ -1,7 +1,6 @@
 // Draft compare's diff: by sentence, then by word, and the counts (draft-compare.ts).
 
-import { plural } from "../hooks/hooks.ts";
-import { wordCount } from "@drdustinedwards/site-helpers/text";
+import { plural, wordCount } from "@drdustinedwards/site-helpers/text";
 
 // ---------------------------------------------------------------------------------------
 // The diff

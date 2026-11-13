@@ -2,7 +2,7 @@
 // zone with UTC beside it. The pure functions take the zone so they can be checked anywhere; in a page
 // the zone is the viewer's.
 
-import { plural } from "../hooks/hooks.ts";
+import { plural } from "@drdustinedwards/site-helpers/text";
 
 export const SEC = 1000;
 export const MIN = 60 * SEC;

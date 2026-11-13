@@ -6,7 +6,8 @@
 // navigates away. Every file is checked and each refusal named. No framework; the React wrapper uses the same pure functions.
 import { formatBytes } from "../format/format.ts";
 
-import { listText, plural } from "../hooks/hooks.ts";
+import { plural } from "@drdustinedwards/site-helpers/text";
+import { listText } from "../hooks/hooks.ts";
 
 const READY = "data-cap-ready";
 
@@ -100,7 +101,7 @@ export function rejectionMessage(file: FileLike, reason: RejectReason, rules: Dr
   if (reason === "size")
     return `${file.name}: too big at ${formatBytes(file.size)}. The limit is ${formatBytes(rules.maxBytes ?? 0)}.`;
   const n = rules.maxFiles ?? 0;
-  return `${file.name}: too many files. The limit is ${plural(n, "file", "files")} at a time, so this one was left out.`;
+  return `${file.name}: too many files. The limit is ${plural(n, "file")} at a time, so this one was left out.`;
 }
 
 // Checks every file, in order. A file is refused for its type first, then its size; the files

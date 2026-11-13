@@ -40,7 +40,7 @@ export const WEEKDAYS = [
 /** How far back a streak is followed; the loader sends this many days of saves. */
 export const STREAK_HORIZON_DAYS = 400;
 
-import { plural } from "../hooks/hooks.ts";
+import { plural } from "@drdustinedwards/site-helpers/text";
 import { dayKey } from "../time/time.ts";
 
 export { dayKey, knownZone } from "../time/time.ts";

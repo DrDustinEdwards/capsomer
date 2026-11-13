@@ -1,6 +1,6 @@
 // Draft compare's unified-diff view: parsePatch and renderPatch (draft-compare.ts).
 
-import { plural } from "../hooks/hooks.ts";
+import { plural } from "@drdustinedwards/site-helpers/text";
 import { commonSubsequence } from "./draft-compare-diff.ts";
 import { escapeHtml as esc } from "@dustinedwards/site-runtime/html";
 import { sr } from "./draft-compare-render.ts";
@@ -124,7 +124,7 @@ export function patchCounts(files: readonly PatchFile[]): PatchCounts {
 }
 
 export function patchCountsText(c: PatchCounts): string {
-  return `${plural(c.files, "file", "files")} changed, ${plural(c.added, "line", "lines")} added, ${c.removed} removed`;
+  return `${plural(c.files, "file")} changed, ${plural(c.added, "line")} added, ${c.removed} removed`;
 }
 
 const SIGN: Record<PatchOp, string> = { same: "", ins: "+", del: "−" };

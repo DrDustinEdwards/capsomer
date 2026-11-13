@@ -894,14 +894,14 @@ eachTheme((theme) => {
     await expect(chip).toHaveAttribute("aria-pressed", "true");
     await expect(page.locator(".cap-media-tile:not([hidden])")).toHaveCount(3); // the unattached one, plus the upload in progress and the failed one
     await expect(tile(page, "fieldnotes-migration.jpg")).toBeVisible();
-    await expect(page.locator(".cap-media-count")).toHaveText("1 of 6 files");
+    await expect(page.locator(".cap-media-count")).toHaveText("Showing 1 of 6 files");
     await page.getByRole("button", { name: "Clear", exact: true }).click();
     await expect(page.locator(".cap-media-count")).toHaveText("6 files");
     await link(page, "fieldnotes-migration.jpg").focus();
     await page.keyboard.press("Enter");
     await inspector(page).getByRole("button", { name: "Show unattached files" }).click();
     await expect(chip).toHaveAttribute("aria-pressed", "true");
-    await expect(page.locator(".cap-media-count")).toHaveText("1 of 6 files");
+    await expect(page.locator(".cap-media-count")).toHaveText("Showing 1 of 6 files");
   });
 
   test("behavior: the no alt text filter lists what still needs a description", async ({
@@ -927,7 +927,7 @@ eachTheme((theme) => {
     await q.fill("zzzz");
     await expect(page.locator(".cap-media-empty")).toBeVisible();
     await expect(page.getByText("No files match your search")).toBeVisible();
-    await expect(page.locator(".cap-media-count")).toHaveText("0 of 6 files");
+    await expect(page.locator(".cap-media-count")).toHaveText("Showing 0 of 6 files");
     await page.getByRole("button", { name: "Clear the search" }).click();
     await expect(q).toHaveValue("");
     await expect(page.locator(".cap-media-empty")).toBeHidden();

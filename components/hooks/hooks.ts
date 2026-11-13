@@ -18,11 +18,6 @@ export function listText(words: readonly string[], join: "and" | "or" = "and"): 
   }).format(words);
 }
 
-/** A count with its noun: `plural(1, "post")` is "1 post", `plural(3, "post")` "3 posts"; an irregular noun passes its plural. */
-export function plural(n: number, one: string, many: string = `${one}s`): string {
-  return `${n} ${n === 1 ? one : many}`;
-}
-
 let ids = 0;
 
 /** A new id on every call, `prefix-1`, `prefix-2`: for a part a script gives an id to. */

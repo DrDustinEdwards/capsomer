@@ -1,7 +1,6 @@
 // The history list's data and its pure helpers (history-list.ts).
 
-import { plural } from "../hooks/hooks.ts";
-import { wordCount } from "@drdustinedwards/site-helpers/text";
+import { plural, wordCount } from "@drdustinedwards/site-helpers/text";
 import { dayKey, formatDate, parse } from "../time/time.ts";
 
 // ---------------------------------------------------------------------------------------
