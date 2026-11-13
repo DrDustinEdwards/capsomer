@@ -48,13 +48,15 @@
     min-inline-size: 0;
     overflow: hidden;
     color: var(--text);
+    font-family: var(--cap-leaderboard-name-face, inherit);
     text-overflow: ellipsis;
     white-space: nowrap;
   }
 
   .cap-leaderboard-score {
     color: var(--accent-text);
-    font-family: var(--figures, var(--mono));
+    /* The mono face; --figures is a font-variant-numeric value, invalid as a face. */
+    font-family: var(--mono);
     font-variant-numeric: tabular-nums;
   }
 

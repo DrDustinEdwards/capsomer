@@ -44,20 +44,35 @@
 
   .cap-contact-card-title {
     margin: 0;
-    color: var(--text);
-    font-family: var(--display);
-    font-size: var(--fs-h3);
-    font-weight: var(--weight-heading);
+    color: var(--cap-contact-card-title-color, var(--text));
+    font-family: var(--cap-contact-card-title-face, var(--display));
+    font-size: var(--cap-contact-card-title-size, var(--fs-h3));
+    font-weight: var(--cap-contact-card-title-weight, var(--weight-heading));
     line-height: var(--leading-snug);
+    letter-spacing: var(--cap-contact-card-title-tracking, normal);
+    text-transform: var(--cap-contact-card-title-case, none);
   }
 
   .cap-contact-ways {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(min(100%, 12rem), 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--cap-contact-way-min, 12rem)), 1fr));
     gap: var(--space-2) var(--space-4);
     margin: 0;
     padding: 0;
     list-style: none;
+
+    /* One card's own column count, in place of as many as fit. */
+    &[data-columns="1"] {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    &[data-columns="2"] {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    &[data-columns="3"] {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
   }
 
   .cap-contact-way {
@@ -65,7 +80,9 @@
     align-items: center;
     gap: var(--space-2);
     min-block-size: var(--target);
-    color: var(--accent-text);
+    color: var(--cap-contact-way-color, var(--accent-text));
+    font-family: var(--cap-contact-way-face, inherit);
+    font-size: var(--cap-contact-way-size, inherit);
     font-weight: var(--weight-semibold);
     overflow-wrap: anywhere;
     text-decoration: none;
@@ -87,11 +104,13 @@
     display: grid;
     margin: 0;
     font-style: normal;
-    color: var(--muted);
+    color: var(--cap-contact-address-color, var(--muted));
+    font-family: var(--cap-contact-address-face, inherit);
+    font-size: var(--cap-contact-address-size, inherit);
     line-height: var(--leading);
 
     &:is(a) {
-      color: var(--accent-text);
+      color: var(--cap-contact-way-color, var(--accent-text));
       text-decoration: none;
 
       &:hover {
@@ -119,16 +138,18 @@
     & dd {
       display: flex;
       flex-wrap: wrap;
+      align-items: center;
       gap: 0 var(--space-3);
       margin: 0;
       color: var(--muted);
     }
 
-    /* The base link cues (weight, hover tint, visited) are the link's own; this adds the figures and a 24px target. */
+    /* The base link cues (weight, hover tint, visited) are the link's own; this adds the figures and
+       the target (24px, 44px on a touch screen), so numbers that wrap onto two lines stay apart. */
     & a {
       display: inline-flex;
       align-items: center;
-      min-block-size: 24px;
+      min-block-size: var(--target);
       font-variant-numeric: tabular-nums;
     }
   }

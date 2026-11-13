@@ -4,8 +4,9 @@ title: Ambient layer
 summary: Decoration behind a hero that carries no information: drifting hexagons, blurred color fields, or a row of rising bars.
 parts: [css, behavior, react]
 tool: own JavaScript
-states: [hex field, blobs, equalizer, reduced motion, paused off screen]
+states: [hex field, blobs, equalizer, equalizer hidden on a phone, reduced motion, paused off screen]
 added: 0.132.0
+updated: 0.142.0
 source: BioScience Writers' HexField (app/components/HexField.tsx, app/islands/hex-field.ts, app.css hex-drift); germomics' HeroBackground and HeroEqualizer (app/components/content/)
 replaces:
   - 'HexField'
@@ -56,7 +57,11 @@ One hero per site, to give the first screen movement that says something about t
 <div class="cap-ambient" data-cap="ambient" data-variant="equalizer" aria-hidden="true"><span></span> ... 28 spans</div>
 ```
 
-`enhance()` from `capsomer/behavior/ambient` draws every hex field and pauses every layer off screen; call it from the page's script after `startPage()`. React: `Ambient` from `capsomer/react/ambient` takes `variant`. Sizes: `--cap-ambient-width`, `--cap-ambient-height` (equalizer), `--cap-ambient-strength` and `--cap-ambient-strength-dark` (blobs).
+`enhance()` from `capsomer/behavior/ambient` draws every hex field and pauses every layer off screen; call it from the page's script after `startPage()`. React: `Ambient` from `capsomer/react/ambient` takes `variant` and renders the same contract, `data-cap="ambient"` included, so a server-rendered page that never hydrates still has a layer its `enhance()` finds; a layer `enhance()` already took is left to it. Sizes: `--cap-ambient-width`, `--cap-ambient-height` (equalizer), `--cap-ambient-strength` and `--cap-ambient-strength-dark` (blobs).
+
+`data-hide="phone"` on the equalizer (React `hideOnPhone`) leaves the shelf out under 48rem.
+
+Stylesheets: `capsomer/ambient.css` has all three kinds. A page that draws one imports the shared rules, `capsomer/ambient-base.css`, and then that kind's file alone, `ambient-hex-field.css`, `ambient-blobs.css` or `ambient-equalizer.css`, so a blobs-only hero does not carry the other two.
 
 ## Keyboard
 

@@ -6,6 +6,7 @@ parts: [css, behavior, react]
 tool: own JavaScript
 states: [a sample, generating, failed]
 added: 0.132.0
+updated: 0.142.0
 source: Foxhound's home page email generator (app/components/email-samples.tsx, app/islands/email-generator.ts)
 replaces:
   - 'data-island="email-generator"'
@@ -55,7 +56,7 @@ Showing a product's AI on its own marketing page, on a real call, with nothing s
 </form>
 ```
 
-`enhance(root, { generate })` from `capsomer/behavior/ai-sample` wires it on a page that does not hydrate; `generate(formData)` returns `{ fields: [{ label, value, mono? }], note? }` or `{ error: true }`. `drawSample(out, result)` draws one by hand. React: `AiSample` from `capsomer/react/ai-sample` draws the same markup from the page's state (`busy`, `result`, `onGenerate`, `onChange`).
+`enhance(root, { generate })` from `capsomer/behavior/ai-sample` wires it on a page that does not hydrate; `generate(formData)` returns `{ fields: [{ label, value, mono? }], note? }` or `{ error: true }`. `drawSample(out, result)` draws one by hand. React: `AiSample` from `capsomer/react/ai-sample` draws the same markup from the page's state (`busy`, `result`, `onGenerate`, `onChange`), `data-cap="ai-sample"`, `data-ai-sample-generate` and a text `busyLabel`'s `data-busy-label` included, so a server-rendered page that never hydrates can call `enhance()` on it. Once hydrated, React marks it taken (`data-cap-ready`) and `enhance()` leaves it alone; a page that hydrates does not also wire it.
 
 ## Keyboard
 

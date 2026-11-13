@@ -19,6 +19,15 @@
     gap: var(--space-4);
   }
 
+  /* The view control's place over the document: start by default, data-view-align="center" or "end". */
+  .cap-annotated[data-view-align="center"] > .cap-annotated-view {
+    justify-self: center;
+  }
+
+  .cap-annotated[data-view-align="end"] > .cap-annotated-view {
+    justify-self: end;
+  }
+
   @container (min-width: 48rem) {
     .cap-annotated-layout {
       grid-template-columns: minmax(0, 1fr) minmax(16rem, 22rem);
@@ -101,6 +110,17 @@
     & mark:not([data-lit]) {
       background: none;
       box-shadow: none;
+    }
+  }
+
+  /* data-hide-notes="original": the original is the text alone, the document the whole width. */
+  .cap-annotated[data-hide-notes="original"]:has(.cap-annotated-view input[value="original"]:checked) {
+    & .cap-annotated-notes {
+      display: none;
+    }
+
+    & .cap-annotated-layout {
+      grid-template-columns: minmax(0, 1fr);
     }
   }
 
@@ -225,6 +245,18 @@
   .cap-annotated-note-text {
     grid-column: 2;
     font-size: var(--fs-detail);
+  }
+
+  /* data-kind="tone": each note's kind in its tone's color and its icon a disc of the tone. */
+  .cap-annotated[data-kind="tone"] {
+    & .cap-annotated-note-kind {
+      color: var(--cap-annotated-tone);
+    }
+
+    & .cap-annotated-note-icon {
+      background: var(--cap-annotated-tone);
+      color: var(--ground);
+    }
   }
 
   /* Tones: a kind of note, the same on its passages and its card. */

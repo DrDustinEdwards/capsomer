@@ -12,7 +12,8 @@
     padding: var(--pad-card);
     border: var(--line-w) solid var(--line);
     border-radius: var(--radius-l);
-    background: var(--surface);
+    /* The card's own ground, apart from --surface, which the field inside also reads. */
+    background: var(--cap-newsletter-bg, var(--surface));
 
     &[data-variant="plain"] {
       padding: 0;

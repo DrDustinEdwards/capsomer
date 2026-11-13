@@ -61,6 +61,17 @@
     justify-self: start;
   }
 
+  /* A step's end: its timing and status, in a row at the line's end. */
+  .cap-process-end {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2) var(--space-3);
+    justify-self: start;
+    color: var(--muted);
+    font-size: var(--fs-detail);
+  }
+
   @container (min-width: 40rem) {
     .cap-process:not([data-layout="rows"]) .cap-process-list {
       grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
@@ -86,6 +97,17 @@
 
       & > * {
         grid-column: 2;
+      }
+
+      &:has(> .cap-process-end) {
+        grid-template-columns: 2.5ch minmax(0, 1fr) auto;
+      }
+
+      & > .cap-process-end {
+        grid-column: 3;
+        grid-row: 1 / span 3;
+        align-self: center;
+        justify-self: end;
       }
     }
 

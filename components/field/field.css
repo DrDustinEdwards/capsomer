@@ -594,6 +594,17 @@
     font-variant-numeric: tabular-nums;
   }
 
+  /* A span from two menus (SpanField): From and To side by side, each menu the full width of its half.
+     The menus are select.cap-select, so a page with one loads select.css too. */
+  .cap-span-field-ends {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-2);
+  }
+  .cap-span-field-end {
+    min-width: 0;
+  }
+
   /* Radios or checkboxes in a fieldset.cap-field: one per line. */
   .cap-field-options {
     display: grid;
@@ -749,7 +760,10 @@
     flex-wrap: wrap;
     gap: var(--space-4);
   }
-  .cap-date-input-part {
+  /* A part with its own small label over its control: a date input's day, month or year, and a span's From
+     or To. */
+  .cap-date-input-part,
+  .cap-span-field-end {
     display: grid;
     gap: var(--space-1);
 

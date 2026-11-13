@@ -4,18 +4,69 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
-## [0.140.0]
+## [0.143.0]
 
-- **Collab editor: `Room.doc` and `Room.provider` are `null` before the page is in the browser.** `useRoom`'s first render returned an object cast `as unknown as Room` that lacked both; the type now says so (`Y.Doc | null`, `YProvider | null`) and the cast is gone. `useRoomEditing` is unchanged (it reads them once `synced`). An app that reads `room.doc` or `room.provider` from `useRoom` directly must handle null.
-- **`MediaPicker`: a library chunk that fails to load shows "The library did not load"** (the failed `Empty`) instead of breaking the dialog.
-- **Command host: a failed menu load is no longer kept.** `load()` clears itself on failure so the next `open` or `load` fetches the chunk again; the idle warm-up and `runWhenReady` share one fire-and-forget `warm`, and `open` still rejects.
-- **Theme switch: optional `onError(error)`** on `ThemeSwitch`, `ThemeButton`, `enhance` and `chooseTheme`/`toggleTheme`'s memory, called when `onSave` throws or rejects. Without it the failure is let go as before.
-- **Carousel: `trackLabel`** names the scrolling track (default "Slides"), for a page in another language.
 - **Every design value in Capsomer's CSS is a token.** `capsomer token-check` checked only colors and spacing (83 warnings); it now checks every kind of design value: colors (hex, `rgb()`, `oklch()` and the rest, named colors, and var() fallbacks), spaces, font sizes (and the `font` shorthand), weights, line heights, tracking, radii, line widths, outline widths and offsets, layers, durations, easings, shadows and opacities, and names the exact token or the nearest step. The scanner is `rawValues(css, tokenScale(tokens.json))` in `capsomer/token-check`, pure over CSS text, so a site's gate can run it. `capsomer token-check --fix` (and `fixCss`) writes every value that has an exact token in place, which changes nothing on the page; the report then lists only what needs a choice. Not checked, on purpose: a component's own geometry, relative units, lengths inside `calc()` that are not a step, and print (paper is black on white). It found 1,650 raw values in components/ and css/; all are now tokens, except the error ad's two ink colors (artwork). site/ waits for the docs site rebuild (#405).
 - **New scale steps**, each where Capsomer already used the value: `--space-1-5` (3px), `--space-2-5` (6px), `--space-3-5` (10px); `--radius-xs` (2px); `--fs-tiny` (0.625rem), `--fs-small` (0.75rem), `--title-display` (fluid 32 to 48px); `--weight-light` to `--weight-heavy` (300 to 800); `--leading-none`, `-tight`, `-snug`, `-compact`, `-normal`, `-relaxed`, `-loose` (1 to 1.7); `--tracking-tighter` to `--tracking-sign` (-0.04em to 0.1em); `--opacity-ghost`, `-faint`, `-half`, `-muted`, `-soft`; `--line-w-mid` (1.5px), `--line-w-bar` (3px), `--line-w-heavy` (4px), `--line-w-band` (6px); `--focus-offset-tight` (1px); `--dur-pulse` (1.6s), `--dur-flow` (2s).
 - **Values snapped to the scale** (a fraction of a pixel or a few percent each, no layout change): line heights 1.35, 1.25, 1.55, 1.45, 1.65 and 1.15 to the nearest step; tracking 0.07em, 0.05em and 0.12em to 0.08, 0.06 and 0.1em; radii of 1px to 2px; opacities 0.28, 0.4, 0.55 and 0.7 to 0.35, 0.35, 0.5 and 0.6; spinners of 0.8 and 1s and the editor's 1.1s blink to `--dur-wait` (0.9s); the ambient loops, the skeleton pulse and the long-name marquee from the browser's `ease-in-out` and `ease-in` to `--ease-in-out`; weight 650 to 600; the dictionary headword from 28 to 30px; the site header's 12.5px label to 12px; the 404 title onto `--title-display` (its widest size grows from 44 to 48px).
 - **Density now reaches the sizes components hard-coded.** A size equal to a density step is now that step (`--fs-label`, `--fs-detail`, `--fs-body`, `--fs-lead`), as DEFAULTS asks, so under `data-density="comfortable"` those labels and leads grow with the rest. Compact, the default, draws the same.
 - No token or class was removed or renamed, and no HTML contract changed.
+
+## [0.142.0]
+
+The gaps the site moves onto 0.132.0's content and marketing blocks found (bsw, julieedwards.info, dei, Foxing, germomics, Foxhound). Every site can get its current look back by setting tokens or props; each default stays what 0.132.0 drew, except the fixes below. No token, class or contract is removed or renamed.
+
+**Fixes**
+
+- **FAQ: a rule between questions again.** Each question sits in its own `li`, so the disclosure's `:last-of-type` (which ends the rules between accordion sections) matched every one and no rule was drawn. The FAQ draws the rule for its items: under each but the last.
+- **Price card, poll, leaderboard: `font-family: var(--figures, ...)`.** `--figures` is a `font-variant-numeric` value, so as a face it was invalid and the text fell back to the inherited face. The price card's amount is in the mono face, as its doc said (new slot `--cap-price-face`; a site that set `--figures` to a face sets this instead); the leaderboard's score in the mono face; the poll's count keeps the face it drew (the line is removed).
+- **Ambient: the equalizer's bars take their heights.** `&:nth-child(n)` nested in the equalizer selected the layer itself, not `> span:nth-child(n)`, so no bar got its `--h`.
+- **Ambient and AI sample: React renders the HTML contract `enhance()` finds.** `Ambient` renders `data-cap="ambient"` (not `data-cap-ready`), and `AiSample` renders `data-cap="ai-sample"`, `data-ai-sample-generate` and a text `busyLabel`'s `data-busy-label`, so a server-rendered page that never hydrates can call `enhance()` on them (the off-screen pause, the generate button). Once hydrated, React marks them `data-cap-ready` itself; a layer `enhance()` already took is left to it.
+- **Ambient: one file per kind.** `ambient.css` (all three, the same rules) imports `capsomer/ambient-base.css` (what every kind shares), then `ambient-hex-field.css`, `ambient-blobs.css` and `ambient-equalizer.css`; a page that draws one kind imports the base and its kind alone. A blobs-only hero drops from 1.3 KB gzip to 0.9 KB.
+- **Poll: the count is a polite live region** (`aria-live="polite" aria-atomic="true"` on `.cap-poll-count`), so a vote that changes it is announced, as Foxing's own poll did.
+- **Poll options and the like button are in the interface face** (`--ui`), not `font: inherit` (the reading face around them on a serif page).
+- **Contact card: a phone number is a `--target` tall** (24px, 44px on a touch screen), as its doc said; it was a literal 24px, so two numbers that wrapped onto two lines were too close on a touch screen (WCAG 2.5.8, found by the sweep once a joining word made them wrap).
+- **Newsletter sign-up: `renderForm` is given `NewsletterFormProps`** (`method: "post"`, not a plain string), so React Router's `Form` takes them spread with no cast.
+
+**Tokens** (each default is the value 0.132.0 drew)
+
+- Prose page: `--cap-prose-page-title-leading` (1.15), `--cap-prose-page-title-max` (40rem), `--cap-prose-page-title-wrap` (`balance`), `--cap-prose-page-body-pad` (`--space-8`).
+- Section band: `--cap-band-pad-top` and `--cap-band-pad-bottom` (the slant's depth and `--space-6`).
+- Price card: `--cap-price-face` (`--mono`), `--cap-price-weight` (600), `--cap-price-unit-size` and `--cap-price-label-size` (`--fs-detail`), `--cap-price-label-weight` (400).
+- Contact card: `--cap-contact-card-title-face` (`--display`), `-size` (`--fs-h3`), `-weight` (`--weight-heading`), `-color` (`--text`), `-tracking` (`normal`), `-case` (`none`); `--cap-contact-way-color` (`--accent-text`, also a linked address), `--cap-contact-way-face` and `--cap-contact-way-size` (inherited); `--cap-contact-address-color` (`--muted`), `-face` and `-size` (inherited); `--cap-contact-way-min` (12rem).
+- Eyebrow: `--cap-eyebrow-size` (`--fs-label`), `--cap-eyebrow-weight` (600; mono 500), `--cap-eyebrow-color` (`--muted`), and `data-tone="dim"` (`--dim`).
+- Leaderboard: `--cap-leaderboard-name-face` (inherited). Newsletter: `--cap-newsletter-bg` (`--surface`), the card's ground apart from the field's. Sources: `--cap-source-kind-pad` (1px `--space-2`).
+- **Sites: dustinedwards.info's entry sets `--cap-eyebrow-tracking: 0.08em`**, its labels' tracking.
+
+**Props, slots and attributes** (each off or unchanged by default)
+
+- `Eyebrow`: `className`, `tone="dim"`.
+- `PlanChoice`: `className`, `hideLegend` (`<legend class="cap-sr-only">`: read, not shown, no room). A plan option: `note` (`.cap-plan-option-note`, a line under the price).
+- `PriceCard`: `name` is optional; `text` takes a list, a paragraph each (a second line).
+- `ContactWay`: `iconEnd` (an icon after the words). `ContactLine`: `join` (a word between the numbers, "or"). `ContactCard`: `wayColumns`, `data-columns="1|2|3"` on one card's `.cap-contact-ways`.
+- Annotated document: `data-hide-notes="original"` (`hideNotesInOriginal`: the original is the text alone, full width), `data-view-align="center|end"` (`viewAlign`), `data-kind="tone"` (`kind="tone"`: each note's kind in its tone's color and its icon a disc of the tone).
+- `ProsePage`: `html`, a body the server stored and sanitized as HTML, through the `capsomer` Trusted Types policy; `ProsePageHead`, the title band alone (an error page).
+- Ambient: `data-hide="phone"` on the equalizer (`hideOnPhone`) leaves it out under 48rem.
+- `SourcesList`: `markAway` marks a link to another site with the link system's ↗ (`data-link="away"`).
+- `FeatureCard`: `tag` (`.cap-feature-card-head` and `.cap-feature-card-tag`, a pill at the end of the title's line) and `attributes` (the site's own `data-*` on the card).
+- Process: a step's `end` (`.cap-process-end`), its timing and status at the end of a row's line.
+
+**Also in this release (#411)**
+
+## [0.141.1]
+
+- **The `enarratio` peer range adds `^0.15.0`.** Enarratio 0.15.0 adds `enarratio/lite/sparkline`, so a site that wants it could not install it beside Capsomer (npm ERESOLVE). The dev dependency is 0.15.0 and the full check passes unchanged; no token, class, export or HTML contract changes.
+
+## [0.141.0]
+
+- **Field: `SpanField`, a span chosen from two menus (From and To).** It was Catalog's range facet, which only a Catalog could draw, so a page with its own filters (dustinedwards.info's CV) had to keep its own year menus. It is now a part of Field, in `field.css`, and Catalog's range facet renders it. A page that draws it loads `field.css` and `select.css` (its menus are `select.cap-select`), not the catalog's stylesheet.
+- **Removed classes: `.cap-catalog-range`, `.cap-catalog-range-ends`, `.cap-catalog-range-end`.** They are `.cap-span-field-ends` and `.cap-span-field-end` (in `field.css`); the facet's fieldset keeps `.cap-field.cap-catalog-facet`. HTML contract: the range facet's ends are `div.cap-span-field-ends > div.cap-span-field-end`, each a `label` (for its menu's id) and the `select.cap-select`; the From and To labels take the date input's part-label look (detail size, weight 500) in place of the field label's.
+- **`catalog-all.css` imports `select.css`.** The range facet's menus are `select.cap-select`, which only `select.css` draws, so on a page that loaded `catalog-all.css` alone they were the browser's plain menus.
+- **Collab editor: `Room.doc` and `Room.provider` are `null` before the page is in the browser.** `useRoom`'s first render returned an object cast `as unknown as Room` that lacked both; the type now says so (`Y.Doc | null`, `YProvider | null`) and the cast is gone. `useRoomEditing` is unchanged (it reads them once `synced`). An app that reads `room.doc` or `room.provider` from `useRoom` directly must handle null.
+- **`MediaPicker`: a library chunk that fails to load shows "The library did not load"** (the failed `Empty`) instead of breaking the dialog.
+- **Command host: a failed menu load is no longer kept.** `load()` clears itself on failure so the next `open` or `load` fetches the chunk again; the idle warm-up and `runWhenReady` share one fire-and-forget `warm`, and `open` still rejects.
+- **Theme switch: optional `onError(error)`** on `ThemeSwitch`, `ThemeButton`, `enhance` and `chooseTheme`/`toggleTheme`'s memory, called when `onSave` throws or rejects. Without it the failure is let go as before.
+- **Carousel: `trackLabel`** names the scrolling track (default "Slides"), for a page in another language.
 
 ## [0.139.1]
 

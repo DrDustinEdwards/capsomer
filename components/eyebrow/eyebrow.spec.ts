@@ -17,6 +17,7 @@ eachTheme((theme) => {
       { sel: "#eb-accent", what: "the accent eyebrow" },
       { sel: "#eb-mono", what: "the mono eyebrow" },
       { sel: "#eb-mono-accent", what: "the mono accent eyebrow" },
+      { sel: "#eb-dim", what: "the dim eyebrow" },
     ]);
   });
 });

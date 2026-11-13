@@ -26,7 +26,7 @@
   }
 
   .cap-source-kind {
-    padding: 1px var(--space-2);
+    padding: var(--cap-source-kind-pad, 1px var(--space-2));
     border-radius: var(--radius-s);
     background: var(--sunken);
     color: var(--muted);
@@ -45,6 +45,11 @@
       padding-block: var(--space-1);
       color: var(--accent-text);
       font-weight: var(--weight-medium);
+    }
+
+    /* Marked as a kind of link (data-link="away"), it keeps the text link's visited color. */
+    &:is(a)[data-link]:is(:visited, [data-force="visited"]) {
+      color: var(--accent-visited);
     }
   }
 
