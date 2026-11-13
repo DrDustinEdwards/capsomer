@@ -6,6 +6,7 @@
 
 import { answerDelta } from "@dustinedwards/site-runtime/ai-ask";
 
+import { uid } from "../hooks/hooks.ts";
 import { jsonData, readSse, type SseEvent } from "../sse/sse.ts";
 
 export interface AskSource {
@@ -107,8 +108,14 @@ export function ask(container: HTMLElement, options: AskOptions): AskHandle {
   body.setAttribute("aria-busy", "true");
   const cutNote = el("p", "cap-ask-cut", w.cut);
   cutNote.hidden = true;
-  const sources = el("ul", "cap-ask-sources");
+  // A list named by its heading: a heading inside the list would be read as one more source.
+  const sources = el("div", "cap-ask-sources");
   sources.hidden = true;
+  const sourcesHeading = el("p", "cap-ask-sources-heading", w.sources);
+  sourcesHeading.id = uid("cap-ask-sources");
+  const sourceList = el("ol");
+  sourceList.setAttribute("aria-labelledby", sourcesHeading.id);
+  sources.append(sourcesHeading, sourceList);
   const followUp = el("p", "cap-ask-followup");
   followUp.hidden = true;
   const announcer = el("p", "cap-sr-only");
@@ -132,17 +139,12 @@ export function ask(container: HTMLElement, options: AskOptions): AskHandle {
       const li = el("li");
       const a = el("a");
       a.href = s.url;
-      a.append(
-        el("span", "cap-ask-source-index", `${items.length + 1}. `),
-        el("span", undefined, s.title),
-      );
+      a.textContent = s.title;
       li.append(a);
       if (s.kind) li.append(el("span", "cap-ask-source-kind", ` ${s.kind}`));
       items.push(li);
     }
-    sources.replaceChildren(
-      ...(items.length ? [el("li", "cap-ask-sources-heading", w.sources), ...items] : []),
-    );
+    sourceList.replaceChildren(...items);
     sources.hidden = items.length === 0;
   };
 

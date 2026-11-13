@@ -273,7 +273,7 @@ eachTheme((theme) => {
     const answer = page.getByRole("region", { name: "AI answer" });
     await expect(answer).toBeFocused();
     await expect(button).toBeHidden();
-    await expect(answer.locator(".cap-ai-answer-body")).toHaveText(
+    await expect(answer.locator(".cap-ask-body")).toHaveText(
       "Field notes are kept for each spring survey, one page per plot.",
     );
     await expect(answer.getByRole("list", { name: "Sources" }).getByRole("link")).toHaveCount(2);
