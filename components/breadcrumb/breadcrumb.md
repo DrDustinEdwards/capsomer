@@ -103,7 +103,7 @@ In React, `import { Breadcrumb } from "capsomer/react/breadcrumb"`:
 />
 ```
 
-`minItems` (default 2) is the fewest levels that draw a trail. germomics leaves the home page out (its header's wordmark links it) and shows a trail only when the page's BreadcrumbList has Prelum's `BREADCRUMB_MIN_ITEMS`: it passes that less one. Added in 0.123.0.
+`minItems` (default 2) is the fewest levels that draw a trail. germomics leaves the home page out (its header's wordmark links it) and shows a trail only when the page's BreadcrumbList has Prelum's `BREADCRUMB_MIN_ITEMS`: it passes that less one. Added in 0.124.0.
 
 ## The back link
 

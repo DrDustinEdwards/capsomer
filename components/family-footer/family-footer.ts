@@ -325,3 +325,15 @@ export function familyFooterHtml({
   ).join("");
   return `<div class="cap-family-footer"><div class="cap-family-footer-local">${center}<nav class="cap-family-footer-sites" aria-labelledby="cap-family-footer-network"><h2 class="cap-family-footer-heading" id="cap-family-footer-network">Network</h2><ul>${sites}</ul></nav></div><div class="cap-livery" aria-hidden="true"></div><div class="cap-letterhead cap-family-footer-head"><div><a href="${escapeHtml(`${origin}/`)}" class="cap-letterhead-logo cap-family-footer-logo"><span>Dustin</span><span>Edwards</span></a><p class="cap-family-footer-note">&copy; 2006&ndash;${year}</p></div><div class="cap-family-footer-columns"><div><ul class="cap-family-footer-social" aria-label="Social media">${social}</ul>${list(PROFILE_LINKS)}</div><nav aria-labelledby="cap-family-footer-workspace"><h2 class="cap-family-footer-heading" id="cap-family-footer-workspace">${WORKSPACE_HEADING}</h2><ul class="cap-family-footer-links">${workspace}</ul></nav><nav aria-labelledby="cap-family-footer-site"><h2 class="cap-family-footer-heading" id="cap-family-footer-site">${SITE_HEADING}</h2>${list(siteGroup)}</nav><nav aria-labelledby="cap-family-footer-legal"><h2 class="cap-family-footer-heading" id="cap-family-footer-legal">${LEGAL_HEADING}</h2>${list(legalGroup)}</nav></div></div></div>`;
 }
+
+/**
+ * A footer's copyright line, the same everywhere: "© 2024–2026 Example Co", or "© 2026 Example Co"
+ * when `since` is this year or later. The year is the server's (UTC), so a page rendered on New
+ * Year's Eve and hydrated after midnight in another zone keeps the server's text: render it once,
+ * on the server, and never recompute it in an effect.
+ */
+export function copyright(name: string, since?: number, now: Date = new Date()): string {
+  const year = now.getUTCFullYear();
+  const span = since !== undefined && since < year ? `${since}–${year}` : String(year);
+  return `© ${span} ${name}`;
+}

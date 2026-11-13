@@ -1,5 +1,5 @@
 // htmlToBlocks: a body written as HTML (a sender's template, a model's draft) read into the email's Blocks, the only
-// shape renderEmail draws. Extracted from Foxhound (app/lib/email/templates.ts) in 0.123.0, so any site that lets
+// shape renderEmail draws. Extracted from Foxhound (app/lib/email/templates.ts) in 0.124.0, so any site that lets
 // someone write an email body in HTML gets the same reader. Pure: no DOM, so it runs in a Worker.
 import { checkUrl, type Block } from "./email.ts";
 

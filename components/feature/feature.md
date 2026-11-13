@@ -5,7 +5,7 @@ summary: A feature told at length (eyebrow, title, paragraph and a picture of it
 parts: [css, react]
 tool: native
 states: [stacked block, beside, alternating, lifted, tall preview that scrolls, card grid, card without an icon]
-added: 0.123.0
+added: 0.124.0
 source: Foxhound's FeatureBlocks (app/components/product-sections-cap.tsx), the guide's AuditScopes cards (app/components/docs/doc-widgets.tsx) and the features page's FeatureCard
 replaces:
   - 'FeatureBlocks'

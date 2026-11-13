@@ -1,7 +1,7 @@
 // The AI sample's behavior on a page that does not hydrate, as the React view behaves: choosing another input
 // clears the last sample; Generate says its busy label while the call runs, then shows the sample or the failure
 // line. Every write is textContent: generated text is never markup.
-// Extracted from Foxhound's email generator island (app/islands/email-generator.ts) in 0.123.0.
+// Extracted from Foxhound's email generator island (app/islands/email-generator.ts) in 0.124.0.
 
 export interface AiSampleField {
   label: string;

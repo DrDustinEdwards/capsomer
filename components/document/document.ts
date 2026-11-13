@@ -1,7 +1,7 @@
 // The document's root: the attributes that put a page under its family and site layer, and the
 // start of a page that does not. One home for what every site's root.tsx and site.ts wrote by hand.
 // Extracted from bsw, julieedwards-info, germomics and txasm (root.tsx, app/site.ts, germomics app/lib/hydration.ts)
-// in 0.123.0.
+// in 0.124.0.
 
 export interface DocumentScope {
   // A Capsomer family (data-family): purple, fox, teal, navy, forest, amber and the rest.

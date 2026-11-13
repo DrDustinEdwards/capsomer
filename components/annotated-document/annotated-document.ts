@@ -1,7 +1,7 @@
 // The annotated document's linking: a note lights the passages it is about and brings the first into view in the
 // document; a passage clicked lights its note and brings it into view in the rail. Changing the view clears it. The
 // views themselves are CSS over the segmented control's radios and need no script.
-// Extracted from BioScience Writers' editing demo island (app/islands/editing-demo.ts) in 0.123.0.
+// Extracted from BioScience Writers' editing demo island (app/islands/editing-demo.ts) in 0.124.0.
 
 import { reducedMotion } from "../count-up/count-up.ts";
 

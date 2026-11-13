@@ -246,3 +246,103 @@ export function rowOverflow(page: PageLike): Promise<string[]> {
     return out;
   });
 }
+
+// Site-level checks, shared so every site's browser suite asks the same questions of Capsomer's parts.
+
+// The widths every page is held at: the smallest phone (WCAG 1.4.10's 320), a common phone, Capsomer's breakpoints
+// (tokens.json `breakpoint`: 40rem, 48rem, 64rem, 72rem) and a desktop.
+export const CHECK_WIDTHS = [320, 375, 640, 768, 1024, 1152, 1280] as const;
+
+// The first elements reaching past the document's right edge, as tag.class@right. Anything left of -1000px is
+// off-screen by design (a skip link, a closed drawer translated out of view).
+export function overflowScan(page: PageLike): Promise<string[]> {
+  return run(page).evaluate(() => {
+    const width = document.documentElement.clientWidth;
+    const over: string[] = [];
+    for (const el of document.querySelectorAll("body *")) {
+      const r = el.getBoundingClientRect();
+      if (r.left < -1000 || r.width === 0) continue;
+      if (r.right > width + 0.5) {
+        const cls = typeof el.className === "string" ? el.className.split(/\s+/)[0] : "";
+        over.push(`${el.tagName.toLowerCase()}${cls ? `.${cls}` : ""}@${Math.round(r.right)}`);
+        if (over.length === 4) break;
+      }
+    }
+    return over;
+  });
+}
+
+/** Whether the admin shell is drawn (shellState). */
+export interface ShellState {
+  menu: boolean;
+  bar: boolean;
+  styled: boolean;
+  text: number;
+  path: string;
+}
+
+// Whether the admin shell is drawn: its menu and bar present and laid out by Capsomer's CSS (a rail the browser drew
+// unstyled is a full-width block), the session not bounced to a sign-in page, and a real body under it.
+export function shellState(page: PageLike): Promise<ShellState> {
+  return run(page).evaluate(() => {
+    const menu = document.querySelector(".cap-admin-menu");
+    const style = menu ? getComputedStyle(menu) : null;
+    return {
+      menu: !!menu,
+      bar: !!document.querySelector(".cap-admin-bar"),
+      styled:
+        !!style &&
+        style.display !== "inline" &&
+        parseFloat(style.width) > 0 &&
+        parseFloat(style.width) < innerWidth,
+      text: (document.body.innerText || "").trim().length,
+      path: location.pathname,
+    };
+  });
+}
+
+// The theme's head contract, on a page's HTML as served: a color-scheme meta, before the first stylesheet, so the
+// browser paints the right canvas before any CSS arrives. Returns the problems in words. Pure: no page needed.
+export function headContractProblems(html: string, scheme?: string): string[] {
+  const meta = /<meta name="color-scheme" content="([^"]*)"/.exec(html);
+  const sheet = html.search(/<link[^>]+rel="stylesheet"/);
+  const problems: string[] = [];
+  if (!meta) return ["no color-scheme meta"];
+  if (scheme && meta[1] !== scheme)
+    problems.push(`color-scheme is "${meta[1]}", expected "${scheme}"`);
+  if (sheet !== -1 && meta.index > sheet)
+    problems.push("the color-scheme meta comes after the first stylesheet");
+  return problems;
+}
+
+// What a page runs with motion reduced: every animation or transition longer than a frame (Capsomer's motion is
+// written inside prefers-reduced-motion: no-preference, and base.css catches the rest), as tag.class: ms.
+export function runningMotion(page: PageLike): Promise<string[]> {
+  return run(page).evaluate(() => {
+    const out: string[] = [];
+    for (const a of document.getAnimations()) {
+      const timing = a.effect?.getComputedTiming();
+      const ms = Number(timing?.duration ?? 0) * (Number(timing?.iterations ?? 1) || 1);
+      if (ms > 16) {
+        const t = (a.effect as KeyframeEffect | null)?.target;
+        out.push(
+          `${t?.tagName.toLowerCase() ?? "?"}${t?.className ? `.${String(t.className).split(/\s+/)[0]}` : ""}: ${Math.round(ms)}ms`,
+        );
+      }
+    }
+    return out;
+  });
+}
+
+// The script and other resources the page has loaded whose address matches `pattern` (a lazy part, such as the
+// command menu, must not load before its key).
+export function loadedScripts(page: PageLike, pattern: string): Promise<string[]> {
+  return run(page).evaluate(
+    (source: string) =>
+      performance
+        .getEntriesByType("resource")
+        .map((e) => e.name)
+        .filter((name) => new RegExp(source).test(name)),
+    pattern,
+  );
+}
