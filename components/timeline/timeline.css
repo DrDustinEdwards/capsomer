@@ -12,7 +12,8 @@
     --cap-timeline-node-line: var(--line-strong);
     --cap-timeline-track: var(--line);
     --cap-timeline-fill: var(--primary);
-    --cap-timeline-duration: 1.2s;
+    /* The line fills slowly, three of the slow steps: it draws the eye down the steps once. */
+    --cap-timeline-duration: calc(var(--dur-slow) * 3);
     --cap-timeline-gap: var(--space-7);
     container-type: inline-size;
     position: relative;
@@ -98,7 +99,7 @@
       margin-block-end: 0;
     }
   }
-  /* A narrow space: smaller nodes, closer steps. */
+  /* A narrow space: the body closer to its node. */
   @container (max-width: 30rem) {
     .cap-timeline-step {
       gap: var(--space-4);

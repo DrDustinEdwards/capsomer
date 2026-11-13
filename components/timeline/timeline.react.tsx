@@ -1,5 +1,5 @@
 import { useEffect, useRef, type ReactNode } from "react";
-import { enhance } from "./timeline.ts";
+import { attach } from "./timeline.ts";
 
 export interface TimelineStep {
   // The number in the node ("01").
@@ -20,10 +20,8 @@ export interface TimelineProps {
 // The HTML contract in timeline.md.
 export function Timeline({ steps, level: H = "h3", className }: TimelineProps) {
   const ref = useRef<HTMLOListElement>(null);
-  useEffect(
-    () => (ref.current?.parentElement ? enhance(ref.current.parentElement) : undefined),
-    [],
-  );
+  // This timeline only: a sibling's own effect attaches the sibling.
+  useEffect(() => (ref.current ? attach(ref.current) : undefined), []);
   return (
     <ol
       ref={ref}
