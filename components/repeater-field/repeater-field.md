@@ -30,7 +30,7 @@ Any list of records a person writes by hand in a form, where each record has mor
 
 - **Each row is a group named by its place**, so a field labeled "Address" is heard as "Link 2, group, Address". The buttons name the row too ("Remove Link 2"), with the visible word first.
 - **Focus is never lost.** Add moves it to the new row's first field; Remove to the next row (the previous at the end), or to Add when none is left; Move up and Move down follow the row, staying on the same button.
-- **Each change is said** in the status region when the app has a MessageProvider ("Link 3 added.", "Link 2 moved up, now Link 1.").
+- **Each change is said** in the status region when the app has a MessageProvider in the sortable list's words ("Added Link 3. 3 in the list.", "Moved Link 2 to position 1 of 3.").
 - **It posts with no script.** Each row's fields are named `name[i][key]` (`api.name(key)`); before script the buttons are hidden and `spare` empty rows (one by default) stand in for Add. With `json`, script posts the rows as one JSON array in a hidden input instead. `rowsFromForm(form, name, keys)` reads either, trims, drops empty rows, and answers null for a JSON field that does not parse, so an action never saves an empty list over a broken post.
 - **`min` and `max`**: Remove is off at the minimum and Add at the maximum, disabled with the count in view.
 

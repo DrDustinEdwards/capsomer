@@ -8,7 +8,7 @@ import {
   fromDateTimeLocal,
   toDateTimeLocal,
 } from "../../components/field/field.ts";
-import { moveRow, rowsFromForm } from "../../components/repeater-field/repeater-field.ts";
+import { rowsFromForm } from "../../components/repeater-field/repeater-field.ts";
 import { parseJsonField, readSpecs } from "../../components/schema-form/schema-form.ts";
 
 test("money goes from cents to the box and back without a float", () => {
@@ -60,7 +60,6 @@ test("repeater rows come back from JSON or from indexed fields, empty rows dropp
   const broken = new FormData();
   broken.append("links", "{not json");
   assert.equal(rowsFromForm(broken, "links", ["label"]), null);
-  assert.deepEqual(moveRow(["a", "b", "c"], 2, 0), ["c", "a", "b"]);
 });
 
 test("specs read a post back, with the field's own words for what is wrong", () => {

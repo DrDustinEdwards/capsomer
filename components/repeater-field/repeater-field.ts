@@ -1,5 +1,4 @@
-// The repeater's pure parts, safe on the server: reading its rows back from a posted form, and
-// moving one row. No DOM.
+// The repeater's pure parts, safe on the server: reading its rows back from a posted form. No DOM.
 
 export type Row = Record<string, string>;
 
@@ -43,24 +42,4 @@ export function rowsFromForm(form: FormData, name: string, keys: readonly string
     rows = [...found.entries()].sort((a, b) => a[0] - b[0]).map(([, r]) => r);
   }
   return rows.filter((r) => keys.some((k) => r[k] !== ""));
-}
-
-// A copy of `list` with the item at `from` moved to `to` (both clamped to the list).
-export function moveRow<T>(list: readonly T[], from: number, to: number): T[] {
-  const next = [...list];
-  if (from < 0 || from >= next.length) return next;
-  const [item] = next.splice(from, 1);
-  next.splice(Math.max(0, Math.min(to, next.length)), 0, item as T);
-  return next;
-}
-
-// What the status region says after a change: "Link 3 added.", "Link 2 removed.",
-// "Link 2 moved up, now Link 1."
-export function changeText(
-  change: "added" | "removed" | "up" | "down",
-  label: string,
-  now?: string,
-): string {
-  if (change === "added" || change === "removed") return `${label} ${change}.`;
-  return `${label} moved ${change}${now ? `, now ${now}` : ""}.`;
 }
