@@ -4,6 +4,10 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+## [0.117.0]
+
+- **Links: a site's line on text links only, and `--link-offset`.** `--link-decoration` now draws on text links (no component class, or a `data-link` kind) outside a `nav`, as the tints do; every other link has no line. New token `--link-offset` (auto) sets how far the line sits under the text. Foxhound's entry sets Recova's links: underlined 2px under the text at the text's own weight, with no tint (Dustin, 2026-11-13). Its entry now also goes on `<html>` on every page but the admin. Removed or renamed: no token or class.
+
 ## [0.116.0]
 
 - **New: `capsomer/links.css`, the link system's base alone.** Every link's base cues (the link color, semibold with no line, the hover and pressed tints, the visited color) move from `css/base.css` into `css/links.css`, which base.css imports, so a site that loads base.css gets the same rules as before. A Tailwind site that keeps its own reset and body styles (Foxhound) imports `capsomer/links.css` alone, as it imports `capsomer/utilities.css`, and its links are the network's links instead of hand-written underline classes. The focus ring stays in base.css. Removed or renamed: no token or class.

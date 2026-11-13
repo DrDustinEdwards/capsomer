@@ -13,12 +13,15 @@
      color, cloned onto each line a link wraps to. A link that is a control is drawn by its component. */
   a {
     color: var(--accent-text);
-    text-decoration: var(--link-decoration);
+    text-decoration: none;
     &:is(:not([class*="cap-"]), [data-link], .cap-footnote-ref) {
       font-weight: var(--link-weight);
     }
     /* Not in a nav: a menu is told by its place, and draws its own tint (link.md). */
     &[href]:is(:not([class*="cap-"]), [data-link], .cap-footnote-ref):not(nav a) {
+      /* A site that wants a line (--link-decoration) draws it on text links only, never a menu's. */
+      text-decoration: var(--link-decoration);
+      text-underline-offset: var(--link-offset);
       border-radius: 3px;
       -webkit-box-decoration-break: clone;
       box-decoration-break: clone;
