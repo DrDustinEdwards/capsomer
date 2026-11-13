@@ -27,7 +27,12 @@ import { EditorState, Plugin, PluginKey, type Transaction } from "@tiptap/pm/sta
 
 import { SUGGESTION_BLOCKS } from "../rich-editor/rich-editor-schema.mjs";
 
-const SUGGESTION_TYPES = ["insertion", "deletion", "modification"] as const;
+// The marks a suggestion is made of; collab-editor-doc.ts finds them in a stored document.
+export const SUGGESTION_TYPES: ReadonlySet<string> = new Set([
+  "insertion",
+  "deletion",
+  "modification",
+]);
 
 type MarkJson = { type: string; attrs?: Record<string, unknown> };
 export type JsonDoc = {
@@ -38,8 +43,7 @@ export type JsonDoc = {
   text?: string;
 };
 
-const isSuggestion = (mark: Mark) =>
-  (SUGGESTION_TYPES as readonly string[]).includes(mark.type.name);
+const isSuggestion = (mark: Mark) => SUGGESTION_TYPES.has(mark.type.name);
 const blockSuggestions = (node: PmNode) => node.marks.filter(isSuggestion);
 const markJson = (marks: readonly Mark[]): string | null =>
   marks.length ? JSON.stringify(marks.map((m) => m.toJSON())) : null;
@@ -164,16 +168,16 @@ function stamp(
     return mark.type.create({ ...mark.attrs, id, by: s.by, round: s.round(), at });
   };
   /** The same kind of suggestion that sat at this place before the transaction, if any. */
-  const earlier = (pos: number, mark: Mark, node: boolean): Mark | null => {
+  const earlier = (pos: number, mark: Mark): Mark | null => {
     const result = back.mapResult(pos, 1);
     if (result.deletedAfter) return null; // Put in by this transaction.
-    const old = node ? before.nodeAt(result.pos) : before.nodeAt(result.pos);
+    const old = before.nodeAt(result.pos);
     return old?.marks.find((m) => m.type === mark.type && m.attrs.by != null) ?? null;
   };
   doc.descendants((node, pos) => {
     for (const mark of node.marks) {
       if (!isSuggestion(mark) || mark.attrs.by != null) continue;
-      const was = earlier(pos, mark, !node.isInline);
+      const was = earlier(pos, mark);
       fixes.push({
         from: pos,
         to: pos + node.nodeSize,
@@ -253,7 +257,7 @@ export function listSuggestions(doc: PmNode): Suggestion[] {
         to: pos,
       };
       const text = node.isText
-        ? (node.text ?? "").replace(/​/g, "")
+        ? (node.text ?? "").replace(/\u200b/g, "")
         : node.isBlock
           ? (s.inserted || s.deleted ? "\n" : "") + node.textContent
           : "";

@@ -29,7 +29,7 @@ import {
   type JsonNode,
 } from "../rich-editor/rich-editor-markdown.mjs";
 import { editorSchema } from "../rich-editor/rich-editor-schema.mjs";
-import { settle, type JsonDoc } from "./collab-editor-suggest.ts";
+import { SUGGESTION_TYPES, settle, type JsonDoc } from "./collab-editor-suggest.ts";
 
 export const FRAGMENT = "default";
 export const META = "carrel";
@@ -110,11 +110,10 @@ function addPrints(ydoc: Y.Doc, prints: Map<number, string>, tail?: string): voi
   });
 }
 
-const SUGGESTION_MARKS = new Set(["insertion", "deletion", "modification"]);
 function hasSuggestion(node: JsonDoc): boolean {
   return (
     Boolean(node.attrs?.smark) ||
-    (node.marks ?? []).some((m) => SUGGESTION_MARKS.has(m.type)) ||
+    (node.marks ?? []).some((m) => SUGGESTION_TYPES.has(m.type)) ||
     (node.content ?? []).some(hasSuggestion)
   );
 }
