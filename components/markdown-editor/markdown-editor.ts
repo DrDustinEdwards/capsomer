@@ -523,6 +523,7 @@ export async function mountMarkdownEditor(
     input.addEventListener("keydown", (e) => {
       const l = link;
       if (!l) return;
+      // legacy-scan:keep isImeEnter (shortcuts.ts) checks isComposing and keyCode 229; the scanner cannot follow it.
       if (e.key === "Enter" && !isImeEnter(e) && looksLikeUrl(l.input.value)) {
         e.preventDefault();
         insertLink(l.input.value.trim(), l.input.value.trim());
@@ -785,6 +786,7 @@ export async function mountMarkdownEditor(
       insert.disabled = alt.value.trim() === "" || panel.hasAttribute("aria-busy");
     });
     alt.addEventListener("keydown", (e) => {
+      // legacy-scan:keep isImeEnter (shortcuts.ts) checks isComposing and keyCode 229; the scanner cannot follow it.
       if (e.key === "Enter" && !isImeEnter(e)) {
         e.preventDefault();
         void go(false);

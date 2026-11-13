@@ -239,6 +239,7 @@ export function wire(dialog: HTMLDialogElement, fallback?: HTMLElement | null): 
   const onPerform = (e: Event) => void run(e);
   const onKey = (e: KeyboardEvent) => {
     // Enter in the guard field performs once the word matches, and never submits a form.
+    // legacy-scan:keep isImeEnter (shortcuts.ts) checks isComposing and keyCode 229; the scanner cannot follow it.
     if (e.key === "Enter" && e.target === input && !isImeEnter(e)) {
       e.preventDefault();
       if (input && wordMatches(input.value, input.dataset.capWord)) perform?.click();
