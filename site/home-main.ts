@@ -34,7 +34,8 @@ enhanceTabs();
 // The preview takes the chosen family as a site would, with data-family, crossfading where the browser has view transitions and motion is allowed (site/home.css).
 const stage = document.querySelector<HTMLElement>("[data-cap-part='stage']");
 const still = matchMedia("(prefers-reduced-motion: reduce)");
-for (const input of document.querySelectorAll<HTMLInputElement>("input[name='home-family']")) {
+const families = document.querySelectorAll<HTMLInputElement>("input[name='home-family']");
+for (const input of families) {
   input.addEventListener("change", () => {
     if (!stage) return;
     const apply = () => {
@@ -50,12 +51,18 @@ for (const chip of document.querySelectorAll<HTMLButtonElement>(".home-try .cap-
     chip.setAttribute("aria-pressed", String(chip.getAttribute("aria-pressed") !== "true")),
   );
 }
+const switchState = (sw: HTMLInputElement) => {
+  const state = sw.parentElement?.querySelector(".cap-switch-state");
+  if (state) state.textContent = sw.checked ? "On" : "Off";
+};
 for (const sw of document.querySelectorAll<HTMLInputElement>(".home-try .cap-switch input")) {
-  sw.addEventListener("change", () => {
-    const state = sw.parentElement?.querySelector(".cap-switch-state");
-    if (state) state.textContent = sw.checked ? "On" : "Off";
-  });
+  sw.addEventListener("change", () => switchState(sw));
+  // A choice made before this script ran (a slow load, or the form state a Back restores) fires no
+  // change event, so the panel starts from what the controls already say.
+  switchState(sw);
 }
+const chosen = [...families].find((input) => input.checked);
+if (stage && chosen) stage.dataset.family = chosen.value;
 
 // Your own words in every size of the type scale.
 const sample = document.querySelector<HTMLElement>("[data-cap-part='sample']");
