@@ -244,8 +244,10 @@ export function enhance(
       trigger.hidden = true;
       const q = question();
       handle = ask(container, { ...options, request: (signal) => options.request(q, signal) });
-      // Hiding the trigger dropped focus to the body (WCAG 2.4.3): put it on the answer it asked for.
-      if (!document.activeElement || document.activeElement === document.body) {
+      // Hiding the trigger drops focus to the body (WCAG 2.4.3): put it on the answer it asked for. A browser may still
+      // report the hidden trigger as focused until its next rendering update, so that counts as dropped too.
+      const held = document.activeElement;
+      if (!held || held === document.body || held === trigger) {
         container.querySelector<HTMLElement>(".cap-ask")?.focus();
       }
     };
