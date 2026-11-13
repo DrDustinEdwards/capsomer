@@ -2,8 +2,8 @@
   "name": "capsomer",
   "version": "0.141.1",
   "description": "An open-source design system in plain CSS: design tokens, themes, components and page patterns, with optional behavior modules and React wrappers, checked against WCAG 2.2 AA.",
-  "license": "MIT",
   "homepage": "https://capsomer.dustinedwards.info",
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/DrDustinEdwards/capsomer.git"
