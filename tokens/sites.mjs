@@ -32,12 +32,11 @@ const SITES = {
   dustinedwards: {
     family: "purple",
     on: "<html>",
-    note: "its paper ground, square controls (the manual look), layers above its own pinned bar with the reading-progress line over them, and the public charts' look from before Enarratio 0.3 (Enarratio's own literals)",
+    note: "its paper ground, layers above its own pinned bar with the reading-progress line over them, and the public charts' look from before Enarratio 0.3 (Enarratio's own literals)",
     all: {
       "z-sticky": "100",
       "z-overlay": "800",
       "z-progress": "900",
-      "radius-control": "0",
       "enarratio-font-size": "1rem",
       "enarratio-font-size-small": "0.875em",
       "enarratio-line-height-tooltip": "1.35",

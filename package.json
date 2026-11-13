@@ -62,6 +62,7 @@
     "./links.css": "./css/links.css",
     "./reset.css": "./css/reset.css",
     "./fonts.css": "./css/fonts.css",
+    "./fonts-*.css": "./css/fonts-*.css",
     "./fallback-fonts.css": "./css/fallback-fonts.css",
     "./fonts/*": "./fonts/*",
     "./prose.css": "./css/prose.css",
