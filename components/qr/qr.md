@@ -36,7 +36,7 @@ Capsomer carries no QR encoder: an encoder is a dependency, and the family alrea
 - **One path, crisp edges**: each row's runs of dark modules are one rectangle, so the markup stays small (about 4 KB for a short address).
 - **Only an absolute http(s) address.** `Qr` throws on anything else (`checkQrUrl`).
 - **Named for what it opens** ("QR code for https://…"), and **the address is shown as text** under it, broken anywhere, so a reader with no scanner can type it.
-- **6.5rem across**, the size of the procedure sheet's code; `data-size="lg"` is 10rem for a poster or a slide.
+- **6.5rem across**, the size of the procedure sheet's code; `data-size="lg"` (React: `size="lg"`) is 10rem for a poster or a slide.
 
 ## Keyboard
 
