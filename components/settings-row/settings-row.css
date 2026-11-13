@@ -1,5 +1,7 @@
 /* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+/* The back link's chevron is the icon set's. */
+@import "../icons/icons.css";
 
 /* Settings rows: a setting's name and line at the start, its control at the end, a rule
    between rows. The settings page: a back link to the index on a phone, then the page head. */
