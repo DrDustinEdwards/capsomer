@@ -5,7 +5,7 @@ summary: The works a page draws on and the credits it owes, each with its kind, 
 parts: [css, react]
 tool: native
 states: [mixed kinds, linked and not, in a closed disclosure]
-added: 0.131.0
+added: 0.132.0
 source: germomics' episode Sources (app/components/content/EpisodeExtras.tsx, Source in app/lib/types.ts)
 replaces:
   - 'SOURCE_KIND'

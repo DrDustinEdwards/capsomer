@@ -5,7 +5,7 @@ summary: Ranked names and scores, highest first, with the reader's own entry mar
 parts: [css, react]
 tool: native
 states: [ten entries, the reader's own entry, a long name, empty]
-added: 0.131.0
+added: 0.132.0
 source: germomics' game leaderboard (app/routes/games.$slug.tsx, app/lib/scores.server.ts)
 replaces:
   - 'Leaderboard'

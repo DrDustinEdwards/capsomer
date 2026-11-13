@@ -5,7 +5,7 @@ summary: A plan's name, price, what it is for, what it includes and its call to 
 parts: [css, react]
 tool: native
 states: [grid of three, featured with a flag, price with unit and label, plan choice, plan choice with one disabled]
-added: 0.131.0
+added: 0.132.0
 source: BioScience Writers' pricing tiers (app/routes/pricing.tsx), Foxhound's pricing cards (app/routes/pricing.tsx) and ProductPricing (app/components/product-sections-cap.tsx), Foxing's paywall plans (.fx-paywall-plan in styles/account.css)
 replaces:
   - 'fx-paywall-plan'

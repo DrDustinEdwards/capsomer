@@ -5,7 +5,7 @@ summary: A window around a preview of the product, with dots and an address bar 
 parts: [css, react]
 tool: native
 states: [browser, app, with a foot line, decorative with a description]
-added: 0.131.0
+added: 0.132.0
 source: Foxhound's recovery queue demo (app/components/recovery-queue-demo.tsx) and its product previews
 replaces:
   - 'h-2.5 w-2.5 rounded-full bg-border'

@@ -6,7 +6,7 @@ parts: [css, behavior, react]
 tool: own JavaScript
 states: [link states (rest, current, hover, pressed), top of page, scrolled into the third section, blocks marked data-section, short page with no bar, vertical]
 added: 0.1.0
-updated: 0.131.0
+updated: 0.132.0
 source: the approved mockup's .onpage bar; Capsid Portal, dashboard/src/ui/anchors.tsx and styles.css (".anchors")
 replaces:
   - 'class="onpage"'
@@ -78,7 +78,7 @@ Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the a
 
 ## Vertical
 
-`data-orientation="vertical"` (React `orientation="vertical"`) sets the links down a side column, sticky below the site header (`--header-h`), each with a rule at its start that turns accent beside the current section. It sits beside the sections, so it takes no room at their top (`--cap-anchors-h` is 0). The rule, the spy, focus and the hash work as for the bar. The page lays out the column (a grid of a 14rem side and the content) and hides it on a narrow screen, where the horizontal bar or nothing serves. Added in 0.131.0 from Foxhound's features page, which drew the column by hand ("a vertical anchor bar is a Capsomer gap").
+`data-orientation="vertical"` (React `orientation="vertical"`) sets the links down a side column, sticky below the site header (`--header-h`), each with a rule at its start that turns accent beside the current section. It sits beside the sections, so it takes no room at their top (`--cap-anchors-h` is 0). The rule, the spy, focus and the hash work as for the bar. The page lays out the column (a grid of a 14rem side and the content) and hides it on a narrow screen, where the horizontal bar or nothing serves. Added in 0.132.0 from Foxhound's features page, which drew the column by hand ("a vertical anchor bar is a Capsomer gap").
 
 ```html
 <nav class="cap-anchors" aria-label="Sections" data-cap="anchor-bar" data-orientation="vertical" data-always>

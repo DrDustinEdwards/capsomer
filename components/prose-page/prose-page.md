@@ -5,7 +5,7 @@ summary: The frame of a page that is mostly words: a title band across the page,
 parts: [css, react]
 tool: native
 states: [title only, title and lead, long title, phone]
-added: 0.131.0
+added: 0.132.0
 source: BioScience Writers' PageHero (app/components/PageHero.tsx) and the `.page-prose` column (app/app.css), used by 21 of its 22 routes
 replaces:
   - 'PageHero'
