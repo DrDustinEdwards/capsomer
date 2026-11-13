@@ -2,6 +2,7 @@
 // zone with UTC beside it. The pure functions take the zone so they can be checked anywhere; in a page
 // the zone is the viewer's.
 
+import { fromDateTimeLocal, toDateTimeLocal } from "../field/field.ts";
 import { plural } from "../hooks/hooks.ts";
 
 export const SEC = 1000;
@@ -224,18 +225,6 @@ export function dateRange(
   const to = formatDate(b, options);
   if (from && to) return a === b || from === to ? from : `${from} to ${to}`;
   return from ?? to;
-}
-
-// The value a <input type="datetime-local"> takes, in UTC ("2026-09-30T13:02"), and back. A page
-// that edits times in UTC (an admin entering a meeting's hours) round-trips with these.
-export function utcInputValue(at: number | Date | string | null | undefined): string {
-  const t = toMs(at);
-  return Number.isFinite(t) ? new Date(t).toISOString().slice(0, 16) : "";
-}
-export function fromUtcInputValue(value: string): number {
-  return /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(:\d{2})?$/.test(value.trim())
-    ? Date.parse(`${value.trim()}Z`)
-    : Number.NaN;
 }
 
 // ---------------------------------------------------------------------------------------
@@ -561,24 +550,10 @@ export function laterUntil(
   zone: string | null | undefined,
   hour: number = LATER_HOUR,
 ): string {
-  const format = new Intl.DateTimeFormat("en-US", {
-    timeZone: knownZone(zone),
-    hourCycle: "h23",
-    year: "numeric",
-    month: "numeric",
-    day: "numeric",
-    hour: "numeric",
-    minute: "numeric",
-  });
-  const wall = (at: number) => {
-    const p = new Map(format.formatToParts(at).map((x) => [x.type, Number(x.value)]));
-    const part = (type: Intl.DateTimeFormatPartTypes) => p.get(type) ?? 0;
-    const [y, m, d] = [part("year"), part("month"), part("day")];
-    return { y, m, d, ms: Date.UTC(y, m - 1, d, part("hour"), part("minute")) };
-  };
-  const today = wall(typeof now === "number" ? now : now.getTime());
-  const want = Date.UTC(today.y, today.m - 1, today.d + 1, hour);
-  let at = want;
-  for (let i = 0; i < 2; i++) at += want - wall(at).ms;
-  return new Date(at).toISOString();
+  const z = knownZone(zone);
+  // Tomorrow's date on the zone's wall clock, then that hour there (fromDateTimeLocal settles the
+  // offset on the right side of a clock change).
+  const [y, m, d] = toDateTimeLocal(new Date(now), z).slice(0, 10).split("-").map(Number);
+  const next = new Date(Date.UTC(y!, m! - 1, d! + 1)).toISOString().slice(0, 10);
+  return fromDateTimeLocal(`${next}T${two(hour)}:00`, z)!.toISOString();
 }
