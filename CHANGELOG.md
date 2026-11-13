@@ -4,6 +4,20 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+## [0.125.0]
+
+Second-pass shared-code audit, batch 1 (Dustin, 2026-11-11: any UI that is a component lives in Capsomer, even if one site uses it).
+
+- **New components:** `form-status` (a post's result, focused when it arrives, `FormStatus` and `useActionStatus`; from txasm's five copies), `filter-bar` (a GET filter form as a named search landmark with Apply, Clear and a live count (`countText` from `capsomer/content`), `withParams`, `clearedHref`, `isFiltered`, `applyVariant` and `live`, which waits out an IME composition; `onSubmit` for another router, its `Form` typed from the props it passes so React Router's `Form` fits; Foxhound, txasm, the Capsid Portal), `legal-doc` (numbered sections, contents and "Last updated" from one list; Foxhound and Foxing), `rating` (a star rating in halves, shown and asked for; Foxing), `hero` (with `children` between the lead and the actions, and `id`) and `cta-band` (with `eyebrow`, `note` and `quiet`): a landing page's first and last sections, the look from each site's tokens (Carrel, julieedwards.info, the Capsid explorer, Foxing, BioScience Writers, Foxhound).
+- **Save bar: one component for every settings form.** The 0.113.0 bar keeps its props and gains `children` (another action before Save), `disabledReason` (Save stays, unusable, and says why), `sticky` (on the window's bottom edge while a long form scrolls, `[data-sticky]`), `form`, `name` and `value` (to the button) and `className`. `saved` also takes words ("Saved.") in place of "Saved". With `button={false}` the bar is a form that saves as each control changes: it says "Saving…" while `pending`, then the result. No class or prop is removed or renamed.
+- **Table: a React part.** `capsomer/react/table` exports `Table` (the labeled region, table and caption for hand-written rows) and `DataTable` (rows from columns, sorted in React with `aria-sort`, an empty sentence, a totals row), in place of hand-written `div.cap-table-wrap` blocks (Foxhound, Carrel, txasm).
+- **Button:** `data-wrap` (`wrap`) lets a long label wrap, balanced; `data-block` (`block`) fills the row; `pendingLabel` says the pending state once from a polite live region beside the button.
+- **Link:** `ButtonLink` (a link drawn as a button, with `to` or `href`, and `away` and `newTab`; a same-site `newTab` says "(opens in a new tab)") and `AwayLink` (the `away` kind with its words, `newTab` and `sponsored`), with `awayRel()`, `awayWords()` and `NEW_TAB_WORDS`. New class `.cap-btn-away` (the ↗ in a button link).
+- **Chips:** `LinkChips` (link chips in a named nav, each with a count; `showLabel`) and `CheckChips` (React for 0.115.0's checkbox chips: `fieldset.cap-chips`, `input.cap-chip-input`). A pressed or current chip's `.cap-chip-count` now reads in the pressed word's color (it stayed `--dim`; dustinedwards.info's colophon patched it).
+- **Family footer:** `copyright(name, since)` writes "© 2024–2026 Example Co" from the server's UTC year, for sites with their own footer (bsw, Foxhound, julieedwards.info).
+
+No token or class was removed or renamed.
+
 ## [0.124.0]
 
 Batch 6 of the shared-code audit, pass 2 (C54 to C63, data display): what the sites wrote by hand for numbers, statuses, steps, charts, search results, graphs, the system map's model, catalogs and media picking, moved into components. New peers: `@dagrejs/dagre ^3.1.3` and `zod ^4.6.7`, both optional (only `capsomer/behavior/graph` and `capsomer/behavior/system-model` import them).
