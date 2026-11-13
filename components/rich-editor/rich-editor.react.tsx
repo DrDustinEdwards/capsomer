@@ -21,8 +21,9 @@ import { Placeholder } from "@tiptap/extensions";
 import { DOMParser as SchemaParser } from "@tiptap/pm/model";
 import type { EditorState } from "@tiptap/pm/state";
 import type { EditorView } from "@tiptap/pm/view";
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useId, useLayoutEffect, useRef, useState } from "react";
 import {
+  GLYPH,
   defaultImageMarkdown,
   filterLinkTargets,
   looksLikeUrl,
@@ -30,9 +31,9 @@ import {
   type LinkTarget,
   type Scaffold,
 } from "../markdown-editor/markdown-editor.ts";
-import { GLYPH } from "../markdown-editor/markdown-editor.ts";
-import { place } from "../popover/popover.ts";
+import { openAt, type VirtualAnchor } from "../popover/popover.ts";
 import { isImeEnter } from "../shortcuts/shortcuts.ts";
+import { rovingIndex } from "../toolbar/toolbar.ts";
 import { inertDocument } from "../trusted-html/trusted-html.ts";
 
 import {
@@ -139,6 +140,8 @@ export function RichEditor(props: RichEditorProps) {
   const [alt, setAlt] = useState("");
   const [said, say] = useState("");
   const [activeTool, setActiveTool] = useState(0);
+  // One editor's ids, so two editors on a page never share a label's or a listbox's target.
+  const uid = useId();
   const toolbar = useRef<HTMLDivElement>(null);
   const paletteRef = useRef<HTMLDivElement>(null);
   const slashRef = useRef<HTMLUListElement>(null);
@@ -273,7 +276,6 @@ export function RichEditor(props: RichEditorProps) {
         origin.current.last = md;
         setWords(wordCount(md));
         propsRef.current.onChange(md);
-        syncSlash(e);
       },
       onSelectionUpdate: ({ editor: e }) => syncSlash(e),
     });
@@ -338,23 +340,10 @@ export function RichEditor(props: RichEditorProps) {
     const menu = slashRef.current;
     const editor = editorRef.current;
     if (!menu || !editor || slash === null) return;
-    menu.showPopover?.();
-    const at = editor.view.coordsAtPos(slash + 1);
-    place(
-      {
-        getBoundingClientRect: () => new DOMRect(at.left, at.top, 0, at.bottom - at.top),
-      } as Element,
-      menu,
-      { side: "bottom", align: "start" },
-    );
+    // The anchor is read again on scroll, so the menu stays under the "/".
+    const close = openAt(menu, caretAnchor(editor, slash + 1), { side: "bottom", align: "start" });
     say("Block menu open. Press Down arrow to choose a block, Escape to close.");
-    return () => {
-      try {
-        menu.hidePopover?.();
-      } catch {
-        // Already closed.
-      }
-    };
+    return close;
   }, [slash]);
 
   function insertScaffold(s: Scaffold, fromSlash: boolean) {
@@ -413,23 +402,12 @@ export function RichEditor(props: RichEditorProps) {
     const panel = paletteRef.current;
     const editor = editorRef.current;
     if (!panel || !editor || !palette) return;
-    panel.showPopover?.();
-    const at = editor.view.coordsAtPos(palette.from);
-    place(
-      {
-        getBoundingClientRect: () => new DOMRect(at.left, at.top, 0, at.bottom - at.top),
-      } as Element,
-      panel,
-      { side: "bottom", align: "start" },
-    );
+    const close = openAt(panel, caretAnchor(editor, palette.from), {
+      side: "bottom",
+      align: "start",
+    });
     panel.querySelector<HTMLInputElement>("input")?.focus();
-    return () => {
-      try {
-        panel.hidePopover?.();
-      } catch {
-        // Already closed.
-      }
-    };
+    return close;
     // Opened once per palette; typing in it does not move it.
     // oxlint-disable-next-line react/exhaustive-deps -- opened once per palette; typing in it does not move it
   }, [palette !== null]);
@@ -626,16 +604,8 @@ export function RichEditor(props: RichEditorProps) {
         []),
     ];
     const at = buttons.findIndex((b) => b === document.activeElement);
-    const next =
-      event.key === "ArrowRight"
-        ? (at + 1) % buttons.length
-        : event.key === "ArrowLeft"
-          ? (at - 1 + buttons.length) % buttons.length
-          : event.key === "Home"
-            ? 0
-            : event.key === "End"
-              ? buttons.length - 1
-              : null;
+    const rtl = toolbar.current ? getComputedStyle(toolbar.current).direction === "rtl" : false;
+    const next = rovingIndex(event.key, at, buttons.length, "horizontal", rtl);
     if (next === null || at < 0) return;
     event.preventDefault();
     buttons[next]?.focus();
@@ -748,7 +718,7 @@ export function RichEditor(props: RichEditorProps) {
         >
           <img className="cap-md-upload-thumb" src={upload.preview || undefined} alt="" />
           <div className="cap-md-upload-fields">
-            <label className="cap-field-label" htmlFor="rich-alt">
+            <label className="cap-field-label" htmlFor={`${uid}-alt`}>
               Alt text{" "}
               <span className="cap-field-required" aria-hidden="true">
                 Required
@@ -756,11 +726,11 @@ export function RichEditor(props: RichEditorProps) {
             </label>
             <input
               ref={altRef}
-              id="rich-alt"
+              id={`${uid}-alt`}
               className="cap-input"
               autoComplete="off"
               placeholder="What the image shows"
-              aria-describedby="rich-alt-help"
+              aria-describedby={`${uid}-alt-help`}
               value={alt}
               readOnly={Boolean(upload.sending)}
               onChange={(e) => setAlt(e.target.value)}
@@ -772,7 +742,7 @@ export function RichEditor(props: RichEditorProps) {
                 }
               }}
             />
-            <p className="cap-field-help" id="rich-alt-help">
+            <p className="cap-field-help" id={`${uid}-alt-help`}>
               Describe {upload.file.name} for a person who cannot see it, or insert it as decorative
               if it adds nothing. It is uploaded when you insert it.
             </p>
@@ -825,18 +795,18 @@ export function RichEditor(props: RichEditorProps) {
               closePalette(false);
           }}
         >
-          <label className="cap-md-palette-label" htmlFor="rich-link">
+          <label className="cap-md-palette-label" htmlFor={`${uid}-link`}>
             Link to
           </label>
           <input
-            id="rich-link"
+            id={`${uid}-link`}
             type="text"
             className="cap-input"
             role="combobox"
             aria-autocomplete="list"
             aria-expanded={matches.length > 0}
-            aria-controls="rich-link-list"
-            aria-activedescendant={matches.length > 0 ? `rich-link-${palette.active}` : undefined}
+            aria-controls={`${uid}-link-list`}
+            aria-activedescendant={matches.length > 0 ? `${uid}-link-${palette.active}` : undefined}
             autoComplete="off"
             spellCheck={false}
             placeholder="Search pages, or type a URL"
@@ -867,7 +837,7 @@ export function RichEditor(props: RichEditorProps) {
           <div
             className="cap-listbox"
             role="listbox"
-            id="rich-link-list"
+            id={`${uid}-link-list`}
             aria-label="Pages"
             data-wrap=""
           >
@@ -875,7 +845,7 @@ export function RichEditor(props: RichEditorProps) {
               // oxlint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/interactive-supports-focus -- a listbox option chosen by pointer; the palette's input drives it from the keyboard (aria-activedescendant)
               <div
                 key={m.href}
-                id={`rich-link-${i}`}
+                id={`${uid}-link-${i}`}
                 className="cap-option"
                 role="option"
                 aria-selected={i === palette.active}
@@ -919,19 +889,10 @@ export function RichEditor(props: RichEditorProps) {
               e.stopPropagation();
               setSlash(null);
               editorRef.current?.commands.focus();
-            } else if (
-              e.key === "ArrowDown" ||
-              e.key === "ArrowUp" ||
-              e.key === "Home" ||
-              e.key === "End"
-            ) {
+            } else {
+              const next = rovingIndex(e.key, at, items.length, "vertical");
+              if (next === null) return;
               e.preventDefault();
-              const next =
-                e.key === "Home"
-                  ? 0
-                  : e.key === "End"
-                    ? items.length - 1
-                    : (at + (e.key === "ArrowDown" ? 1 : items.length - 1)) % items.length;
               items[next]?.focus();
             }
           }}
@@ -983,6 +944,16 @@ function Icon({ paths }: { paths: string[] }) {
  * string to the page's default Trusted Types policy, which escapes markup, so a formatted paste would
  * arrive as tags in the text.
  */
+// A popup's anchor at a document position: the caret's box there, read each time it is placed.
+function caretAnchor(editor: Editor, pos: number): VirtualAnchor {
+  return {
+    getBoundingClientRect: () => {
+      const at = editor.view.coordsAtPos(pos);
+      return new DOMRect(at.left, at.top, 0, at.bottom - at.top);
+    },
+  };
+}
+
 function pasteHtml(view: EditorView, html: string) {
   const body = inertDocument(html).body;
   let slice = SchemaParser.fromSchema(view.state.schema).parseSlice(body, {

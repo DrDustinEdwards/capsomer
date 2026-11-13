@@ -29,6 +29,7 @@ Each release names every removed or renamed token or class, and every changed HT
 - **Range slider: a press on the track sets the nearer handle** (WCAG 2.5.7, a single pointer with no drag), in the behavior module and `RangeSlider`; new export `trackPick`. The fill runs from the right on a right-to-left track. DEFAULTS.md's refused-patterns row records Dustin's ruling (2026-11-13) that the range slider is built, and how it meets WCAG 2.5.7 and the APG Multi-Thumb Slider.
 - Rating: `RatingInput` draws its select with the shared `Select` (`native`); the wrapper is now `div.cap-select-wrap[data-cap="select"][data-native]` (was a `span`).
 - **Repeater field: rows keep their keys with the sortable list's `useRows`,** move with `moveId` and are announced in `sortText`'s words ("Added Link 4. 4 in the list.", "Moved Link 2 to position 1 of 3.", "Removed Link 2. 2 left."). **Removed:** `moveRow` and `changeText` from `capsomer/behavior/repeater-field`; use `moveId` and `sortText` from `capsomer/behavior/sortable-list`.
+- **Rich editor: two editors on one page keep their own ids.** The image step's alt field and help and the link palette's field, listbox and options were fixed ids (`rich-alt`, `rich-link`, ...), so a second editor's labels and `aria-activedescendant` pointed into the first; they are prefixed with `useId()`. The block menu and link palette open with the popover's `openAt` (re-placed on scroll at the caret), and the toolbar and block menu arrows use toolbar's `rovingIndex` (right-to-left aware).
 
 ## [0.139.1]
 
