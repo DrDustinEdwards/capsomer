@@ -3,7 +3,7 @@
 // query's words are marked in each result, as people scan results for them (NN/g), and the header's
 // box shows the query too, so the page never holds two boxes that disagree.
 import { plural } from "@drdustinedwards/site-helpers/text";
-import "./home-main.ts";
+import "./page.ts";
 import {
   searchWords,
   staticSearch,

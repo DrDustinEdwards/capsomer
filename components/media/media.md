@@ -1,7 +1,7 @@
 ---
 name: media
 title: Media library
-summary: A grid of file tiles with roving focus, and an inspector, a pane or a side sheet, that saves alt text, caption and tags by itself.
+summary: A grid of file tiles with roving focus and an inspector that saves alt text, caption and tags.
 parts: [css, behavior, react]
 tool: native + own JavaScript (the shared dialog, meter, chips, bulk bar, drop zone and message region)
 states: [alt text written, selected, list layout and sort, no alt text, decorative, unattached, document, uploading, failed with Retry, in Trash with Restore, inspector as a pane, inspector as a sheet, saving, saved, could not save with Retry, not used anywhere, empty library, nothing matches, empty bin]
@@ -14,83 +14,7 @@ replaces:
 
 # Media library
 
-The files a site uses, as a grid of tiles, and beside them the details of the one you are looking at: its alt text, caption, tags, address and the posts that use it. Edits save themselves.
-
-**Provenance.** MIXED, against dustinedwards.info (`media-grid.tsx`, `media-tile.tsx`, `media-inspector.tsx`, `media-inspector-sections.tsx`, `media-drawer.tsx`, `media-keyboard.tsx`, `media-facets.tsx`, `media-trash-controls.tsx`, `media-empty-state.tsx`, `copy-button.tsx`, `use-media-search.ts`, `lib/media/tile-nav.mjs`, `lib/media/usage.mjs`, the media stylesheets). EXTRACTED: roving focus with one tab stop per grid and arrow keys read from the rendered boxes (`bands` and `nextTile` are the site's `tile-nav.mjs`, with Home, End, previous and next added); the tile's real checkbox, so a selection is also a form field; the thumbnail frame that reserves its space; the lazy thumbnail with width and height; a long name kept to one line with an ellipsis and the full key in `title`; the three-way alt state (written, missing, and here also decorative); "Unattached" is an absence of evidence, never "unused" (the site's wording, kept in the used-in note); the copy snippets (address, Markdown, HTML, an image as an image and a document as a link); copy with a live "Copied" and a failure that says so; the lens chips with counts (Unattached, No alt text, Over 1 MB), Trash as a view, not a takedown; bulk tags (`applyBulkTag`, one item's failure does not stop the rest); the trash is reversible and needs no confirmation. REWROTE: the inspector. The site's was a form with a Save button per field; this one saves by itself, with a status. The site opened it as a route (`?key=`), a dialog on a page load; here the first file's inspector is in the HTML, the others fill from the tiles, and a container query chooses a pane or a sheet. Selection, search, filters, Trash and uploads are the family's shared parts (bulk bar, field, chips, segmented, drop zone, empty, meter, message) instead of the site's own.
-
-## When to use it
-
-Anywhere a person browses files they own and edits what describes them: a site's media, a draft's images, an artifact store.
-
-## When not to
-
-- One image attached to one field (a cover, an avatar) is a drop zone and a thumbnail, not a library.
-- A table of files with many columns to sort is a table; the grid is for looking.
-- A document store with folders to move files between is a file manager; the grouping here is a heading, not a tree.
-
-## The default and its reason
-
-- **The tile is one link, one tab stop.** The thumbnail, the name and the type and size are a single link, so a screen reader reads "launch-hero.jpg, JPEG, 412 kB" once, and Tab crosses the grid in the active tile's few controls instead of through every file. The arrow keys move focus (real focus, so Enter, scrolling and a screen reader's cursor all follow). The grid is a list, not a `role="grid"`: the column count follows the container's width, so a position means nothing to a screen reader.
-- **Selection is a real checkbox.** It sits over the picture on its own surface (so its edge reads over any photo), appears on hover, focus and whenever anything is selected, and when checked says "Selected" in words beside the tick. Space and x toggle it from the tile; Shift-click selects a range, Ctrl or Cmd click toggles.
-- **No alt text, Decorative, Unattached, In Trash are words with shapes.** Missing alt text is a warning ("No alt text"), decorative is a notice ("Decorative"): a choice the author made is not a gap, so it carries a different glyph, word and tone, and is stored as `data-alt="decorative"`, never as empty alt text.
-- **The inspector saves by itself.** Typing waits 800 ms of quiet, then saves; leaving a field saves at once; the decorative checkbox and tag changes save at once. A change made while a save runs is saved after it. The status is a live region with a glyph and a word: "Changes save by themselves.", "Unsaved changes", "Saving…", "Saved", and "Could not save: the reason. What you typed is still here." with Retry. The form is `aria-busy` while saving. Nothing typed is ever lost: the fields are never cleared by a failure, and a failed edit is kept per file, so moving to another file and back brings it back with Retry.
-- **Moving to another file saves the first.** Alt and an arrow, or an arrow in the grid, first sends what is unsaved to the file it was typed for.
-- **Pane or sheet, by the container.** At 56rem and wider the inspector is a pane beside the grid, sticking as the grid scrolls, and focus stays where it was when it follows the active tile. Narrower, it is the shared dialog as a modal side sheet. The breakpoint is written once, in a container query, and the behavior reads the answer (`--cap-media-mode`). Without script, the inspector is open in the page, under the grid when narrow.
-- **Focus.** Enter on a tile opens the inspector and puts focus in the alt text (or the first field). With the inspector open, the arrow keys move between tiles with focus staying in the grid and the inspector following; Alt and an arrow does the same from inside a field, so a person can describe a run of images without leaving the field. Esc in a field goes back to the tile; a sheet closes on Esc and returns focus to its tile.
-- **Used in is real links.** When a file is used nowhere the pane says "Not used anywhere." and why that is not proof, and a button turns the Unattached filter on.
-- **A reversible action runs at once and offers Undo.** Move to Trash (from the inspector or the bulk bar) and Restore run at once and say so in the message region with Undo (`z`). Only a permanent delete (Delete for good, in the bulk bar) previews first, in the shared confirm dialog, with every file listed.
-- **Search, filters, view, sort, layout and size are composed from the family's parts**, not drawn here: the field for search, the chips for Unattached, No alt text and Over 1 MB (a pressed chip narrows the grid; several chips all apply), segmented controls for Library or Trash, Newest, A to Z or Largest, Grid or List, and tile size. The count is a live region ("Showing 3 of 24 files", content's `countText`). A file that a filter or Trash hides is never selected, so a bulk action cannot reach what the person cannot see. When nothing is shown, the page says why (nothing matches, nothing in this view, nothing here yet, Trash is empty) and offers the way out.
-- **Sort orders each group, and keeps uploads first.** An upload in progress or a failed one stays at the head of its group while it is news. Sorting moves nodes and puts focus back where it was.
-- **The list layout is the same markup** (`data-view="list"`): a small picture, the name and the type and size on a line, the flags at the end, the checkbox first. The arrow keys follow the rendered rows.
-- **A file dropped anywhere becomes an uploading tile.** The drop zone in its page mode sits above the toolbar; `cap-drop-accepted` is the app's cue to start the uploads and to call `media.add`.
-- **Uploading is a native `<progress class="cap-meter-bar" max="100">`** in the shared meter's look (its role and value are the browser's own; Modern Web Guidance, progress). A failed upload says why on the tile and offers Retry.
-- **Copy says what it did.** The button writes "Copied the address." into a live region; if the clipboard refuses, it says so and leaves the address selected.
-
-## The shadcn component it matches
-
-Card for the tile (a bordered, rounded surface with a media area and a text area); Checkbox (the box, the check mark, the ring); Badge for the flags (a glyph and a word in a small pill); Sheet for the narrow inspector, via the shared dialog; Input and Textarea for the fields, via the field component. shadcn has no media grid, so the arrow-key model and the autosave are not matched to anything.
-
-## Deliberately different
-
-- **The tile's edge is decorative; its state is not.** The active tile has a thicker accent edge and `aria-current` on its link; the selected one has the check and the word. The hairline around an ordinary tile is not a control boundary, so it is `--line`.
-- **The checkbox is on its own surface with an edge in `--muted`**, because a box drawn straight on a photograph can fall below 3:1 anywhere.
-- **The picture of a binned file is dimmed; its words are not.** Opacity on text would drop it under 4.5:1.
-- **The save status is not a toast.** It sits in the inspector's footer, in the place the person is looking, and stays until the next edit. A failure is a `role="alert"` with a button, not a message that leaves.
-- **The inspector is a native dialog in both modes.** In the pane it is opened without `showModal()` (no inert page, no focus trap, so Tab leaves it for the next control); in the sheet it is modal. One element, one markup.
-- **The count is "Showing 3 of 24 files", and an upload in progress is always shown.** A search must not hide the file you just dropped.
-
-## Keyboard
-
-| Key | Does |
-| --- | --- |
-| Tab, Shift Tab | Into the grid at the active tile, through that tile's controls (its checkbox, Retry or Restore), and out; then on to the inspector |
-| Arrow keys, on a tile | Move focus to the neighboring tile, in two dimensions; Left and Right wrap to the next row; Up and Down stop at the first and last row |
-| Home, End, on a tile | First, last file |
-| Enter, on a tile | Opens the inspector on it and moves focus to its alt text; a sheet opens modal; an uploading or failed tile opens nothing |
-| Space, x, on a tile | Selects or clears it (x is off while single keys are off) |
-| Esc, in the grid | Clears the selection (the bulk bar's rule) |
-| Alt and an arrow, in an inspector field | Previous or next file; the inspector follows and focus stays in the field |
-| Esc, in an inspector field | Focus returns to the active tile; in a sheet, closes it and returns focus to the tile |
-| Enter, in the tag field | Adds the tag; it saves |
-| Enter on a tag chip | Removes the tag; it saves |
-| Enter or Space on Copy | Copies the address (or the Markdown, the HTML) and says so |
-| Enter or Space on Retry, Restore | Retries the upload; restores the file, with Undo |
-
-## Accessibility
-
-- A tile is a list item holding one named link (name, type and size, described by its flags), a named checkbox ("Select launch-hero.jpg"), and its state in words. An uploading tile's bar is a `<progress>` (role progressbar) named "Uploading" with `aria-valuetext` "62 percent of capsid-walkthrough.png uploaded". A failed tile names its reason, and Retry names the file.
-- The inspector is a dialog named by the file's name. Every field has a visible label and, where it helps, a description (what alt text is for, what decorative means). Alt text is disabled while Decorative is checked.
-- The save status is `role="status"`; a failure is `role="alert"`; the copy confirmation is `role="status"`. All are in the page before they are used.
-- Color is never alone: every flag and status has a glyph and a word. Text is at 4.5:1 in both themes (the flags, the meta line, the help, the facts, the used-in links); the checkbox edge and the fields' edges are at 3:1.
-- Hit areas of the tile's controls are at least `var(--target)`. The checkbox is always shown on a touch screen.
-- Forced colors: the active tile is outlined in Highlight, the checkbox box keeps its edge, the failure block keeps its border.
-- Reduced motion: nothing eases.
-
-Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the automated browser checks and a front-end review stand in. Automated: see the site's Tests page.
-
-## Markup
-
-A tile, as the server renders it. Every fact the filters and the inspector read is a data attribute.
+## Usage
 
 ```html
 <li class="cap-media-tile" id="tile-launch-hero" data-key="media/launch-hero.jpg" data-label="launch-hero.jpg"
@@ -112,10 +36,6 @@ A tile, as the server renders it. Every fact the filters and the inspector read 
   </label>
 </li>
 ```
-
-`data-state` is `ready`, `uploading` (add `data-progress="62"` and a `.cap-media-state` block holding `.cap-meter` with a `<progress class="cap-meter-bar" max="100" value="62">` bar), `failed` (add `data-error`, a `.cap-media-state[data-tone="crit"]` block with the reason and a `data-cap-part="retry"` button) or `binned` (a `data-cap-part="restore"` button inside `.cap-media-flags`). `data-alt` is `set`, `missing` or `decorative`. An uploading or failed tile's open control is a `<button type="button" aria-disabled="true">` and it has no checkbox. A document has no `<img>`: `<span class="cap-media-doc" aria-hidden="true">PDF</span>` inside the thumbnail frame.
-
-The library: a container, a layout, the main column and the inspector.
 
 ```html
 <div class="cap-media" data-cap="media" data-size="m">        <!-- data-size="s|m|l" -->
@@ -160,8 +80,6 @@ The library: a container, a layout, the main column and the inspector.
 </div>
 ```
 
-The whole inspector is in the HTML for the active file; the others fill from their tiles' attributes. The bulk bar uses the bulk bar's contract exactly, bound to the tiles with `data-cap-list`; each tile's checkbox has `data-cap-select`.
-
 ```ts
 import { attachMedia, enhance } from "capsomer/behavior/media";
 const media = attachMedia(el, {
@@ -173,8 +91,6 @@ media.add({ key, name, url, kind: "image", type: file.type, bytes: file.size, al
 media.update(key, { progress: 60 }); media.update(key, { state: "ready" }); media.update(key, { state: "failed", error: "The file is 6 MB and the limit is 5 MB." });
 ```
 
-`enhance()` attaches every `[data-cap="media"]` with the default save, a POST of the inspector's form to its `action`. The module also exports the pure parts: `bands`, `nextTile`, `createAutosave` (`AUTOSAVE_MS` is 800), `applyBulkTag`, `altStateOf`, `flagsFor`, `copySnippets`, `copyText`, `parseTags`, `buildTile`, `recordOf`, `syncTile`. The filters are the chips behavior (`enhance` from `capsomer/behavior/chips`) and the uploads are the drop zone's `cap-drop-accepted`, wired by the app as above.
-
 ```tsx
 import { MediaGrid, MediaInspector, MediaTile, useMediaMode } from "capsomer/react/media";
 <MediaGrid groups={[{ label: "September 2026", items }]} activeKey={key} onActiveChange={setKey} onOpen={open}
@@ -183,20 +99,27 @@ import { MediaGrid, MediaInspector, MediaTile, useMediaMode } from "capsomer/rea
   onBin={bin} onRestore={restore} onShowUnattached={showUnattached} onStep={(dir) => step(dir)} />
 ```
 
-The React wrappers render exactly this markup, take the selection and the active file as state, have no `style` prop (the progress bar's fill is set with a ref), and `useMediaMode` reads the same container query as the behavior.
+## Accessibility
 
-**Form mode and a site's own fields** (0.6.0, for the media library, whose states page shows it). `MediaInspector` takes `show` (`{ alt, title, caption, tags }`, all shown by default; a site with no title or caption leaves them out), `saving` (`"auto"`, the default, or `"form"`), `action` and `Form`. In form mode each group of fields is its own `form.cap-media-field-form` with a Save button ("Save alt text", "Save title and caption", "Save tags", tags as a comma list), posting the content kit's `intent` (`alt`, `tags`, `caption`, or `save-details` where the site keeps a title too), `ids` and `versions`, so it works with no script; nothing saves by itself. With `action`, Move to Trash, Restore and (with `can.delete`) Delete for good are each a `form.cap-media-act` posting `intent` (`trash`, `restore`, `delete`), `ids` and `versions`, in either mode. `closeHref` makes Close a link. `MediaGrid` takes `hrefFor` (a tile's address with no script), `selectForm` (the boxes post as `ids` in that form, each with a hidden `version:<id>` holding the version the page saw) and `selectable` (false: no boxes, for a picker). A binned tile's Restore is drawn only when `onRestore` is given. A record may carry `version` (posted back by the forms) and `usedUnknown` (a list that did not read where a file is used: no Unattached flag, and the inspector says so). The app supplies the toolbar from the field, chips and segmented components, the bulk bar from `BulkBar`, and uploads from `DropZone`.
+| Key | Does |
+| --- | --- |
+| Tab, Shift Tab | Into the grid at the active tile, through that tile's controls (its checkbox, Retry or Restore), and out; then on to the inspector |
+| Arrow keys, on a tile | Move focus to the neighboring tile, in two dimensions; Left and Right wrap to the next row; Up and Down stop at the first and last row |
+| Home, End, on a tile | First, last file |
+| Enter, on a tile | Opens the inspector on it and moves focus to its alt text; a sheet opens modal; an uploading or failed tile opens nothing |
+| Space, x, on a tile | Selects or clears it (x is off while single keys are off) |
+| Esc, in the grid | Clears the selection (the bulk bar's rule) |
+| Alt and an arrow, in an inspector field | Previous or next file; the inspector follows and focus stays in the field |
+| Esc, in an inspector field | Focus returns to the active tile; in a sheet, closes it and returns focus to the tile |
+| Enter, in the tag field | Adds the tag; it saves |
+| Enter on a tag chip | Removes the tag; it saves |
+| Enter or Space on Copy | Copies the address (or the Markdown, the HTML) and says so |
+| Enter or Space on Retry, Restore | Retries the upload; restores the file, with Undo |
 
-**The picture tools: focal point, crop and replace** (ported from Carrel's own). `MediaInspector` takes `tools` (`{ focus, replace: { accept, hint } | null, crop: { src, asNew, inPlace, onSave } | null, keepsSize }`) and, in autosave mode, `onTool(form)`, which gets each tool's fields as a `FormData` to run as an intent. Each tool is a disclosure under the picture, so the inspector stays short:
-
-- **Focal point**: the part of the picture a site's crops keep (site-runtime's `focus`). Click the picture or move the point with the arrow keys (Shift for bigger steps); the two percent fields are the control itself and the 1:1, 16:9 and 4:5 previews follow them. It posts `intent=focus` with `x` and `y` in percent, or `clear=yes`; the kit stores them as "XxY". The point is placed with custom properties from a ref (`--cap-focus-x`, `--cap-focus-y`), never a style attribute.
-- **Replace**: a multipart form posting `intent=replace` with `file`. It says what follows in words: the same address, every page shows the new file, the old one is gone, alt text, caption and tags stay and the focal point is cleared. With `keepsSize` (the site refuses a replacement of another size: site-api's `mediaReplaceKeepsSize`), it also says the size the file must be.
-- **Crop**: the Crop button opens a dialog that draws the file's own bytes (`crop.src`, on the page's origin, so the canvas can be exported) and cuts the chosen rectangle at full size: drag on the picture, or set the shape and the four pixel fields, which are the keyboard's way in. Save as a new file and, where `crop.inPlace` and not `keepsSize`, Replace this file. `onSave(file, "new" | "replace")` rejects with an Error to keep the dialog open and show why. The dialog is `media-crop.react.tsx`'s default export, loaded with `React.lazy` only when Crop is first pressed. Only JPEG, PNG and WebP can be cropped (`CROPPABLE`).
-
-**More sections** (site-api v0.13.0, for the media library). `more({ Tool, ident, base })` adds sections after the picture tools: `Tool` is the host's form in form mode and, in autosave mode, a group that hands its fields (inputs, text areas, selects and checked boxes) to `onTool`, since a form cannot sit inside the autosaving form; `ident(intent)` is the hidden `intent`, `ids` and `versions` every inspector form carries. A record may carry `usedCount` (a list's tile then says Unattached at 0), `credit`, `license`, `sourceUrl`, `licenseExpires`, `takenAt` and `twins`.
-
-Pure helpers in `media-crop.ts` (from `capsomer/behavior/media`): `fitRect`, `centered`, `ratioOf`, `cropName`, `focusPercents`, `CROP_SHAPES`, `CROPPABLE`, `bareType`. The tools need the disclosure, dialog, field, select, banner and button stylesheets. New classes: `.cap-media-tool`, `.cap-media-tool-actions`, `.cap-media-summary-note`, `.cap-media-focus` (with `-frame`, `-mark`, `-previews`, `-fields`), `.cap-media-crop` (with `-body`, `-canvas`, `-fields`, `-actions`).
-
-## Exceptions in production
-
-None yet.
+- A tile is a list item holding one named link (name, type and size, described by its flags), a named checkbox ("Select launch-hero.jpg"), and its state in words. An uploading tile's bar is a `<progress>` (role progressbar) named "Uploading" with `aria-valuetext` "62 percent of capsid-walkthrough.png uploaded". A failed tile names its reason, and Retry names the file.
+- The inspector is a dialog named by the file's name. Every field has a visible label and, where it helps, a description (what alt text is for, what decorative means). Alt text is disabled while Decorative is checked.
+- The save status is `role="status"`; a failure is `role="alert"`; the copy confirmation is `role="status"`. All are in the page before they are used.
+- Color is never alone: every flag and status has a glyph and a word. Text is at 4.5:1 in both themes (the flags, the meta line, the help, the facts, the used-in links); the checkbox edge and the fields' edges are at 3:1.
+- Hit areas of the tile's controls are at least `var(--target)`. The checkbox is always shown on a touch screen.
+- Forced colors: the active tile is outlined in Highlight, the checkbox box keeps its edge, the failure block keeps its border.
+- Reduced motion: nothing eases.

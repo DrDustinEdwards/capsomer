@@ -77,8 +77,8 @@ test("rawValues names each raw design value with its token, and leaves tokens, r
     "4 color #333 a color token from the palette",
     "4 line 1px var(--line-w)",
     "5 weight 600 var(--weight-semibold)",
-    "5 size 0.6875rem var(--fs-label)",
-    "5 leading /1.35 var(--leading-compact) (1.4, off scale)",
+    "5 size 0.6875rem var(--fs-label) (grows under comfortable density)",
+    "5 leading /1.35 var(--leading-snug-5) (1.375, off scale)",
     "6 duration 100ms var(--dur-fast)",
     "6 easing ease var(--ease-out), var(--ease-in-out), var(--ease-spring)",
     "7 line 3px var(--line-w-bar)",
@@ -95,4 +95,23 @@ test("rawValues names each raw design value with its token, and leaves tokens, r
     ),
     ".b {\n  padding: var(--space-2) 7px;\n  box-shadow:\n    inset 0 calc(-1 * var(--line-w-thick)) 0 red,\n    0 0 0 var(--line-w-thick) red;\n  font: var(--weight-semibold) var(--mono-size) / var(--leading-normal) var(--mono);\n}",
   );
+  // A line height in rem or px matches a line-box step, else is read as a ratio of its rule's font size, never fixed.
+  // A length inherits as a length and a ratio as a ratio, so a child at another size would move: report, never fix.
+  const lh =
+    ".a { font-size: 1.25rem; line-height: 1.7rem; }\n.b { line-height: 23px; }\n.c { line-height: 1.75rem; }";
+  const lines = rawValues(lh, scale)
+    .filter((i) => /^(leading|line-box)/.test(i.kind))
+    .map((i) => `${i.text} ${i.exact} ${i.suggestion}`);
+  assert.deepEqual(lines, [
+    "1.7rem false var(--leading-snug-5) (1.36x the rule's font size, off scale)",
+    "23px false a unitless leading token, at the ratio to the font size (no font-size in this rule)",
+    "1.75rem true var(--line-box-7)",
+  ]);
+  // A density step or a token the stylesheet sets is reported but not swapped: the page would not draw the same.
+  assert.equal(
+    fixCss(".d { --fs-page: 1rem; font-size: 0.6875rem; padding: 1.0625rem 14px; }", scale),
+    ".d { --fs-page: 1rem; font-size: 0.6875rem; padding: 1.0625rem var(--space-4-5); }",
+  );
+  // A line box the scale has is swapped for its length token, which inherits the same way.
+  assert.match(fixCss(lh, scale), /line-height: 1\.7rem;[\s\S]*line-height: var\(--line-box-7\)/);
 });

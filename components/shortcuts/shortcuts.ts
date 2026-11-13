@@ -29,8 +29,12 @@ const entries: Shortcut[] = [];
 let installed = false;
 let pending: { step: string; at: number } | null = null;
 // The built-in sheet (shortcuts-sheet.ts) loads the first time it is asked for, so a page that never
-// presses "?" never downloads it.
-const loadSheet = () => import("./shortcuts-sheet.ts");
+// presses "?" never downloads it. A server build (Vite sets import.meta.env.SSR) leaves the chunk out:
+// nothing presses a key there.
+const loadSheet = () =>
+  (import.meta as { env?: { SSR?: boolean } }).env?.SSR
+    ? Promise.reject(new Error("shortcuts: the sheet opens only in a browser"))
+    : import("./shortcuts-sheet.ts");
 const openBuiltIn = (opener?: Element | null) =>
   void loadSheet().then((m) => m.openShortcutSheet(opener ?? document.activeElement));
 let sheetOpener: () => void = () => openBuiltIn();

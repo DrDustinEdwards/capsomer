@@ -12,9 +12,6 @@ import { escapeHtml } from "@dustinedwards/site-runtime/html";
  */
 export const codeRegion = (name: string) =>
   `tabindex="0" role="region" aria-label="${escapeHtml(`Code: ${name}`)}"`;
-/** The same three attributes for a React pre. */
-export const codeRegionProps = (name: string) =>
-  ({ tabIndex: 0, role: "region", "aria-label": `Code: ${name}` }) as const;
 
 function inline(s: string): string {
   const codes: string[] = [];

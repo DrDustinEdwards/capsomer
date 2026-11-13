@@ -51,7 +51,13 @@ export interface MarkdownEditorProps extends Pick<
 // Renders the HTML contract in markdown-editor.md: a label and a real textarea holding the
 // markdown, which is all a server render (and a reader without script) gets. After mount it
 // loads the behavior module and CodeMirror with import(), so they are their own chunks and
-// never reach a bundle that renders no editor, and upgrades the textarea in place.
+// never reach a bundle that renders no editor, and upgrades the textarea in place. A server
+// build (Vite sets import.meta.env.SSR) leaves the behavior chunk out: effects never run there.
+const loadBehavior = () =>
+  (import.meta as { env?: { SSR?: boolean } }).env?.SSR
+    ? Promise.reject(new Error("markdown-editor: the editor mounts only in a browser"))
+    : import("./markdown-editor.ts");
+
 export function MarkdownEditor(props: MarkdownEditorProps) {
   const {
     label,
@@ -97,7 +103,7 @@ export function MarkdownEditor(props: MarkdownEditorProps) {
     linkTargets: async (query) => {
       const t = latest.current.linkTargets;
       if (typeof t === "function") return t(query);
-      const { filterLinkTargets } = await import("./markdown-editor.ts");
+      const { filterLinkTargets } = await loadBehavior();
       return filterLinkTargets((t ?? []) as LinkTarget[], query);
     },
     onUpload: latest.current.onUpload
@@ -121,7 +127,7 @@ export function MarkdownEditor(props: MarkdownEditorProps) {
     if (!host) return;
     let canceled = false;
     let mounted: MarkdownEditorHandle | null = null;
-    import("./markdown-editor.ts")
+    loadBehavior()
       .then((m) => (canceled ? null : m.mountMarkdownEditor(host, options())))
       .then((h) => {
         if (!h) return;

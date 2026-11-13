@@ -1,7 +1,7 @@
 ---
 name: message
 title: Message
-summary: The page's one status region; the result of an action, with Undo, and every warning or failure that must not be missed, never taking focus.
+summary: The page's one status region for action results and warnings, never taking focus.
 parts: [css, behavior, react]
 tool: native + own JavaScript
 states: [empty, plain message, message with Undo, after Undo, warning that stays, warning through the next result, failure, Undo that could not run, clears itself, a form action's error, a form action's success, an action answer with no words]
@@ -17,74 +17,11 @@ replaces:
 
 # Message
 
-The result of an action, said in the page: "Moved the mention to Trash", with Undo. One region per page, `role="status"`, so a screen reader hears it without focus moving. It holds the messages newest first: a plain result, which the next one replaces, and any warning, failure or failed Undo, which stay until dismissed.
-
-**Provenance.** MIXED, against the Capsid Portal at master (as of 2026-10-01): `lib/messages.ts` (`Message`, `lasting`, `withMessage`) and the message region and Undo flow in `app/App.tsx` are EXTRACTED, with the Portal's own comments' reasoning, adapted to be generic (a message holds an `undo` function and an `undone` sentence, not the Portal's `UndoRequest`; no wouter, context or feed types). The `z` key, the 4 second clearing of a plain confirmation, focus handling and the markup are REWRITTEN (the Portal at the extraction base had only a timed toast). The Portal's region is fixed at the bottom right of the window; Capsomer keeps it in the page, because the audit rules out a floating toast (see the default below).
-
-## When to use it
-
-- After a reversible action that happened at once: say what happened and offer Undo (patterns.md "Reversible").
-- After an action whose result is not otherwise visible: "Published to the Example Co newsletter."
-- When a result carries a warning the person must not miss: "Seat start is on. Warning: the audit row naming you was not written."
-- For a failure with no control beside it to say so: a failed copy, a failed refresh, a failed sign out.
-
-## When not to
-
-- An error with a source belongs beside that source, as an alert (`.cap-alert`), or, for a failed page read, a banner that keeps the last good data (`.cap-banner`). See Banner. Only a failure with no place of its own goes in the region.
-- A one-way action is previewed in a confirm dialog before it happens, not undone after.
-- Never a floating toast (decision, 0.1).
-
-## The default and its reason
-
-- **One region per page, `role="status"`, present from the start.** A live region added at the moment it speaks is often not announced. Empty, it shows nothing and takes no space. It is named "Results and failures", and `aria-atomic="false"` so a new message is read by itself and the older ones are not read again.
-- **It never takes focus.** The person keeps their place; the region speaks politely.
-- **A message with Undo stays until dismissed** (decision, 0.1). Every message that stays has Dismiss.
-- **A plain result is replaced by the next one. A warning, a failed Undo and a failure stay until dismissed, whatever is said after them** (the Portal's rule, decisions 2026-09-30 item 3, #221): the missing audit row is the one fact that cannot be found later by looking. The new message goes first; the ones that stay follow it. `say(text, { warning })` makes a result's warning stay. `fail(text)` says something that did not happen, as an alert.
-- **`z` runs the newest Undo** when focus is not in a text field and no modifier is held. The key is shown beside the Undo button. It is off while single-key shortcuts are off (the shortcuts switch, `data-cap-single-keys="off"` on `<html>`); `data-cap-undo-key="off"` on the region (React: `undoKey={false}`) turns off this region's `z` alone.
-- **Undo runs once,** then the message says what was undone: "Undone. The mention from fieldnotes.example is waiting again." Pass `undone` to say it in your own words; otherwise it reads "Undone: " and the message. A message that carried a warning keeps it, without its Undo, and what was undone is said beside it as a new message (the Portal's rule: Undo does not make the warning go away).
-- **If Undo fails, nothing was undone,** so Undo stays, the message stays, and it says why under its text, announced: "Could not undo that. The server did not answer. Try again." While Undo runs it reads "Undoing..." and Dismiss waits.
-- **Focus goes to the control that was undone** when the app says which (`returnFocus`, as the Portal returns focus to the switch it undid). Otherwise, if Undo had focus, it moves to that message's Dismiss; if Dismiss had focus, it returns to the control that caused the message, else the main region. Focus is never left on nothing.
-- **A plain confirmation may clear itself after 4 seconds** (`clears: true`) only when the control that caused it shows it too ("Copy link" turns to "Copied"). Such a message has no buttons. A message with Undo, a warning or a failure never clears itself.
-- **It sits at the bottom of the view's scroll area** (`position: sticky`), in the page's flow, so a result shows near the action even in a long view. This is where the Portal and the audit differ: the Portal draws it fixed over the page at the bottom right; the audit's rule (patterns.md "Result of an action", DEFAULTS.md) is a status region in the page, so Capsomer follows the audit.
-- **A lasting message wears the warning tone's edge, and says so in words** ("Warning:", or the failure's own words), never by color alone. A failure wears the critical edge. Each item also starts with a glyph (a tick for a result, a triangle for a warning or an Undo that failed, an octagon for a failure), `aria-hidden`, so the kind is a shape, a word and a color.
-- **The item wears the popover's surface** (raised, rounded `--radius-l`, `--shadow-m`), as shadcn's Sonner toast wears the popover's, but it stays in the page.
-
-## The result of a form action
-
-A form that posts (a React Router action) says its answer where the form is, with focus on it: that is `form-status` (`<FormStatus status={useActionStatus(actionData)} />`, with `focus="errors"` to move focus for a failure only). The message region is for messages that are not about a form (a copied link, an undo), and never takes focus.
-
-- **The line is always rendered.** Empty, it is visually hidden (`cap-sr-only`) and present, so a screen reader hears the next answer; with words it is an alert box (`cap-alert`), `data-tone="crit"` for an error and `"ok"` for a success, `role="alert"` for an error and `"status"` otherwise. It takes focus by script (`tabindex="-1"`), never by Tab.
-- **Focus moves after every answer with words** (`focus: "always"`, the default). `focus: "errors"` moves it for a refusal only, `"never"` leaves it where it is and lets the region speak. It follows the object, not the sentence, so the same words twice are said twice.
-- **An answer with no sentence neither shows nor focuses**: `{ ok: true }` (a move that has nothing to report), a blank string, no answer yet, a redirect's null.
-- **Not the page's message region.** The region (`say`) never takes focus and is for a result away from its source (Undo, a copy). This line is at the form and takes focus: it is where a person who submitted is looking.
-
-## Keyboard
-
-| Key | Does |
-| --- | --- |
-| `z` | Runs the newest Undo, once. Ignored in a text field, with Ctrl, Alt, Meta or Shift held, or when there is nothing to undo |
-| Enter or Space on Undo | Runs Undo; focus moves to the control that was undone, else to that message's Dismiss |
-| Enter or Space on Dismiss | Clears that message; focus returns to the control that caused the message |
-| (a message appears) | Focus does not move |
-
-## Accessibility
-
-- `role="status"` is polite. A new message is read by itself, with the names of its buttons, so a listener hears that Undo is there. A failure and a failed Undo's reason are `role="alert"` and are announced at once.
-- The same words said twice are announced twice (every message is a new element).
-- The `z` hint is `aria-hidden`, so the button's name is "Undo".
-- Text 4.5:1 on its raised background; each message's edge 3:1 (`--dim`, or `--warn` when it stays); buttons at least `var(--target)`.
-
-Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the automated browser checks and a front-end review stand in. Automated: see the site's Tests page.
-
-## Markup
-
-The region is empty; messages are added to it.
+## Usage
 
 ```html
 <div class="cap-message" data-cap="message" role="status" aria-label="Results and failures" aria-atomic="false"></div>
 ```
-
-Each message `say()` adds:
 
 ```html
 <div class="cap-message-item" data-cap-part="item" data-id="1" data-lasting data-kind="warning">
@@ -112,17 +49,17 @@ say("Copied the link to the mention.", { clears: true });
 fail("Refresh failed: the watcher pass failed: GitHub answered 502.");
 ```
 
-An Undo that rejects keeps its message and shows the error's message under it. 0.1.0's region held one text and two buttons directly; `enhance()` removes those, and the messages replace them. For the page's region, wrap the app in `<MessageProvider>` and call `const { say, fail } = useMessage()`; the provider renders the region after its children, or pass `region={false}` and place `<MessageRegion />` yourself. A shared component that must also work without a provider calls `useOptionalMessage()`, which returns the same API or `null`.
+## Accessibility
 
-## The shadcn component it matches
+| Key | Does |
+| --- | --- |
+| `z` | Runs the newest Undo, once. Ignored in a text field, with Ctrl, Alt, Meta or Shift held, or when there is nothing to undo |
+| Enter or Space on Undo | Runs Undo; focus moves to the control that was undone, else to that message's Dismiss |
+| Enter or Space on Dismiss | Clears that message; focus returns to the control that caused the message |
+| (a message appears) | Focus does not move |
+| (a form action answers) | Focus moves to the action's result line (`useActionResult`), unless `focus` says otherwise |
 
-Sonner (`sonner.tsx` and the `.cn-toast` rule): the toast's surface, its icon per kind (success, info, warning, error, loading), the Undo action and the close button. Not matched, on purpose:
-
-- **Stacking.** Sonner collapses a pile of toasts into a deck and expands it on hover. Here a warning or a failure stays until dismissed, and a collapsed deck would hide the one fact the person must not miss. The region lists them, newest first, and a plain result replaces the plain result before it, so the list stays short.
-- **Auto-dismiss.** Sonner closes every toast after 4 seconds by default. WCAG 2.2.1 asks for time to read, and a message with Undo is an action the person may want later. Only a plain confirmation that the control also shows clears itself.
-- **Floating and swipe.** Sonner floats over the page at a corner and is dismissed by a swipe. Dustin's default is a status region in the page (DEFAULTS.md), and Dismiss is a button.
-- **Motion.** Sonner slides each toast in and out. Here a new item fades in out of a 4 px blur (`--dur-base`, Arc's way in for words) and nothing slides, because text being read never moves.
-
-## Exceptions in production
-
-None yet.
+- `role="status"` is polite. A new message is read by itself, with the names of its buttons, so a listener hears that Undo is there. A failure and a failed Undo's reason are `role="alert"` and are announced at once.
+- The same words said twice are announced twice (every message is a new element).
+- The `z` hint is `aria-hidden`, so the button's name is "Undo".
+- Text 4.5:1 on its raised background; each message's edge 3:1 (`--dim`, or `--warn` when it stays); buttons at least `var(--target)`.

@@ -2,6 +2,7 @@
 name: session-row
 title: Session row
 summary: Agent sessions, waiting on you first, with the question waiting on you answered in place.
+group: pattern
 parts: [css, behavior, react]
 tool: native + own JavaScript
 states: [needs you, working, failed, idle, stopped, sampled]
@@ -16,52 +17,7 @@ replaces:
 
 # Session row
 
-One row per agent session: a state pill, the agent's name, how long it has been in that state, what it is doing now in plain words, and, when it is waiting on you, the exact question with its answer buttons. You answer without leaving the list.
-
-**Provenance.** REWROTE, as of Capsid master (88bf402), with one rule carried over. The Portal draws a live session as a `.qrow` grid row (state word, job title, last event; `LiveSessions` in `views/Queue.tsx`) that opens a drawer, and it has no in-place question, no collapsed steps and no sampling note; this component is a stacked block built from the approved mockup, sharing none of the `.qrow` rules. Carried over from the Portal's current code: the red left edge on a failed session (`.qrow.sev-crit`, `data-tone="crit"` here). The Portal's selected-row look (`main [data-row]:focus-visible`) belongs to its j and k row navigation and is the row-list's, not this component's.
-
-## When to use it
-
-For live agent sessions in an operations console: who is waiting on you, who failed, who is working, who is idle or stopped.
-
-## When not to
-
-A queue of jobs that wait for approval as a batch uses the approval sheet (`approval-sheet`). A finished history of what agents did is the feed (`feed`). A row that only opens a detail is a row-list row (`row-list`).
-
-## The default and its reason
-
-- **Waiting on you first, the longest wait at the top; then failed, working, idle, stopped.** What needs a person comes before what does not (patterns.md, "Status"). `order()` does the sort.
-- **State is a pill: shape, word and color.** Needs you (warning triangle), Working (info, a turning arc), Failed (critical octagon), Idle (no data, an empty circle with a bar), Stopped (no data tone, a filled square, so it differs from Idle by shape and word, not color).
-- **A failed session carries the red left edge** (`data-tone="crit"` on the row, which the React wrapper sets), as a critical row does in every list; the pill still says Failed. From the Portal's `.qrow.sev-crit`, which its Live sessions list gained in #215. Only failed rows have it: needing you is warning, not critical.
-- **The agent's name is mono**, because it is an identifier.
-- **The age is in words**: "waiting 3 minutes", "started 18 minutes ago", never "3m".
-- **Repeated steps collapse with a count.** The eye reads "read file ×12"; a screen reader hears "read file 12 times" (the "×12" is hidden from it and a `.cap-sr-only` "12 times" stands in).
-- **The ask block shows the exact command or question, mono and sunken, and wraps** rather than scrolling, so nothing that will run is out of sight.
-- **Answer buttons name the action**: "Approve push", "Decline", "Keep 0007". Never "Yes" or "OK".
-- **A sampled stream says so**: "Showing 1 in 10 steps".
-- **Freshness is stated in words** in the panel's source line: "Waiting on you first. Updates every 15 seconds".
-
-## Matches
-
-shadcn/ui `Item` (each row: a title line, a description, actions) with `Alert` for the question (the large radius, a tinted surface, a toned edge). Deliberately different: the state is a pill with a glyph and a word (shadcn's Badge is color-led), a failed row carries the critical edge, and the ask block is a labeled group with answers that name the action. A row is not itself a link, so it has no hover tint; the answer buttons are the shared `cap-btn` with its own hover, focus, pressed and busy states. Padding follows `--pad-card` and `--gap`, so comfortable density roomies the rows.
-
-## Keyboard
-
-| Key | Does |
-| --- | --- |
-| Tab | Reaches each answer button in turn, and any link in a row |
-| Enter or Space on an answer | Sends that answer; the button shows it is in flight |
-
-## Accessibility
-
-- The ask block is a group named by its question, so each answer button is heard in context.
-- A collapsed count is spoken in words.
-- The ask block's warning edge is a border, so it survives forced colors; the pill keeps its glyph and word when its tint is removed. A failed row's red edge is drawn in CanvasText there, and is never the only sign: the pill's octagon and the word Failed say it.
-- The list is named by its panel heading.
-
-Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the automated browser checks and a front-end review stand in. Automated: see the site's Tests page.
-
-## Markup
+## Usage
 
 ```html
 <ul class="cap-session-list" data-cap="session-row" aria-labelledby="sess-h">
@@ -90,8 +46,14 @@ Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the a
 </ul>
 ```
 
-`import { enhance, order } from "capsomer/behavior/session-row"`: `enhance()` makes each answer button dispatch a bubbling `cap-answer` event with `{ session, answer }`; the app performs it and sets `aria-busy="true"` on the button while it is in flight. In React, `import { SessionList } from "capsomer/react/session-row"` with `sessions` and `onAnswer`; it sorts with `order()`.
+## Accessibility
 
-## Exceptions in production
+| Key | Does |
+| --- | --- |
+| Tab | Reaches each answer button in turn, and any link in a row |
+| Enter or Space on an answer | Sends that answer; the button shows it is in flight |
 
-None yet.
+- The ask block is a group named by its question, so each answer button is heard in context.
+- A collapsed count is spoken in words.
+- The ask block's warning edge is a border, so it survives forced colors; the pill keeps its glyph and word when its tint is removed. A failed row's red edge is drawn in CanvasText there, and is never the only sign: the pill's octagon and the word Failed say it.
+- The list is named by its panel heading.

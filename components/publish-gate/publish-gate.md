@@ -1,7 +1,8 @@
 ---
 name: publish-gate
 title: Publish gate
-summary: One region beside the publish button that lists what stops a post going out, required apart from advisory, each cause linked to where it is, with a state for every destination site.
+summary: One region beside the publish button listing what stops a post going out, with a state per site.
+group: pattern
 parts: [css, behavior, react]
 tool: native + own JavaScript
 states: [blocked, ready, held, published, one row per destination, required failing, advisory failing, passing checks folded, check that flips while you watch, publish button states, first publication previewed, republish at once, unpublish with Undo, form without a script hook, narrow column, comfortable density]
@@ -14,72 +15,7 @@ replaces:
 
 # Publish gate
 
-The answer to "can this go out?" in one place, beside the button that sends it. If it cannot, the region says which required checks are failing, names the cause of each, and links to the passage, field or setting that causes it, with a hint for the fix.
-
-**Provenance.** MIXED. EXTRACTED from the site admin: the publish transitions and their one ceremony, only for a post that has never been public, with the sentence it shows (`publish-transition.mjs`, `FIRST_PUBLICATION_NOTE`); the policy that publishing for the first time is a decision for the owner and that an unknown intent fails closed to a draft (`publish-policy.mjs`); the unpublish that is not destructive but takes something off the public site; a failing check named in the words the operator uses, with the finding in plain English, failing ones first, and a repair only where there is one (`check-copy.mjs`, ADMIN-DESIGN "The overview"); the publish button as a real submit that works before script (`publish-actions.tsx`); results in a polite region and a refusal in an alert (`live-notice.tsx`). Carrel's rule that an open flag holds publish until it is fixed or dismissed is why a required check is a hold on the button. REWROTE: the region itself (the admin shows these as a table on the overview and as a disabled button), the destinations list, the held state and the live summary.
-
-## When to use it
-
-In an editor or a draft page, beside the publish button, for anything that is checked before it goes public: a post, a page, a procedure, a publication, to one site or several.
-
-## When not to
-
-- The flags raised against passages of the text, with their quotes and suggestions, are the flag list (`components/flag-list`). A gate row links to the field or passage; the flag list is the detail behind a text-level problem.
-- Whole-site health (drift, backups) is a table of checks with repairs, as the admin's overview has it.
-- A confirmation before a one-way action is the confirm dialog; the gate uses it for a first publication and does not replace it.
-
-## The default and its reason
-
-- **Failing checks first, required apart from advisory, passing ones folded.** Two groups, "Required, 2 failing" then "Advisory, 3", and "9 checks passed" in a disclosure (the person is not asked to read nine passes to find two failures). A group with nothing failing is not shown; with nothing failing at all the region says "No checks are failing."
-- **Every row names its cause and links to it.** The row's one link is the cause in words ("The cover image has no alt text") and goes to the passage, field or setting that causes it (`href="#field-alt"`). The detail gives the rule's name and the fix: "Alt text. Fix: Describe what the image shows, in a sentence."
-- **Four states, each shape, word and color.** Blocked (critical glyph), Held (square), Ready (tick), Published (tick). Blocked wins over held, held over ready; the overall state is the worst of the destinations'.
-- **A blocked button is `aria-disabled="true"`, never `disabled`, and described by the summary.** A keyboard or screen reader user can reach it and hear "Blocked: 2 required checks failing on example.com"; a `disabled` button is skipped and says nothing. Pressing it does nothing. It reads "Publish blocked"; a held one "Publish held"; the one at work "Publishing..." with `aria-busy`.
-- **The summary is a polite live region** that is written only when its words change, so a check that flips announces once. The region is a labeled `section`.
-- **One row per destination, each with its own state and button.** Publishing to each site is separate: the sites differ in what blocks them (a site's canonical address is its own check), and one blocked site does not stop another. The overall state is the worst.
-- **A hold is a person or a schedule, and says so**: "Held for review by Rosa until Fri 09:00", with a note for anything more. Nothing in the gate lifts a hold; the person who placed it does.
-- **Publishing is one-way for a first publication, so it is previewed.** The click opens the shared confirm dialog listing the destination and what a first publication does ("It has never been public. Publishing puts it on the blog, in the feed, the sitemap, the search index and the AI answer layer."), with focus on Cancel. Republishing something that has been public is reversible (Unpublish) and happens at once. Unpublishing happens at once and offers Undo in the message region.
-- **Works before script.** Every row is in the delivered HTML. The publish button is a real `submit` (`name="intent" value="publish"`): in a form with no script hook it posts, a first publication with the intent `publish-confirmed` after the preview, and the server must refuse an unconfirmed first publication as the admin's does.
-- **An app flips data, the region follows.** A check row's `data-ok`, a destination's `data-hold-text` or `data-published-at` changed anywhere redraws the groups, counts, destination rows, buttons and summary (a `MutationObserver`), or call `setCheck`, `setHold`, `setPublished`.
-
-## The shadcn component it matches
-
-Item (`item.tsx`) for the rows, Accordion for the folded passes, Badge for the status words, Button for the pair, Alert for the summary's place above the list. shadcn has no publish gate, destinations or live summary.
-
-## Deliberately different
-
-- **The blocked button is not `disabled`** (shadcn's Button dims a disabled button and takes it out of the tab order; here it stays focusable so its reason can be heard).
-- **No tabs and no stepper.** A checklist of eleven items is a list; a person reads two failing rows, not a wizard.
-- **The first publication is previewed in the shared confirm dialog**, whose perform button is in the danger style. That is the dialog's one look for a one-way change; the title and the list say what it does.
-- **The summary sentence is composed from the checks, not written by hand**, so it cannot say Ready while a required check fails.
-
-## Keyboard
-
-| Key | Does |
-| --- | --- |
-| Tab | Reaches the Publish button first, then each check's link, in reading order; a blocked or held Publish button is reachable and its reason is read |
-| Enter or Space on Publish (ready) | Opens the preview for a first publication, with focus on Cancel; publishes at once for a republication |
-| Enter or Space on Publish (blocked or held) | Does nothing; the summary is its description |
-| Enter on a check's link | Goes to the passage, field or setting that causes it |
-| Enter or Space on Unpublish | Takes it off the public site at once and says so with Undo |
-| Enter or Space on the "9 checks passed" summary | Opens or closes the passing checks |
-| `j`, `k` | Move between the checks' links (when single-key shortcuts are on) |
-| Esc in the preview | Closes it; nothing is published |
-| `z` | Runs the newest Undo in the message region |
-
-## Accessibility
-
-- The region is a `section` named by its heading, holding one `ul` (`role="list"`); each group is a list item named by its heading and holds its own list.
-- The summary is `role="status"` with `aria-live="polite"` and `aria-atomic="true"`, and describes the publish buttons that are not ready (`aria-describedby`).
-- Status is a glyph, a word and a color: "Failing", "Advisory", "Passed", "Blocked", "Held", "Ready", "Published".
-- A published destination's button becomes a link "View" (named with the destination) and a button "Unpublish".
-- Each check row's link is described by its status and detail (`aria-describedby`), so moving by link still says "Failing" and the fix.
-- Forced colors: the region keeps its border; the critical edge turns CanvasText.
-
-Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the automated browser checks and a front-end review stand in. Automated: see the site's Tests page.
-
-## Markup
-
-The region and the button it describes:
+## Usage
 
 ```html
 <div class="cap-gate-bar">
@@ -137,14 +73,10 @@ The region and the button it describes:
 </div>
 ```
 
-The button in each state: Publish (`data-variant="primary"`, no `aria-disabled`); Publishing... (`aria-busy="true" aria-disabled="true"`); Publish blocked and Publish held (`aria-disabled="true" aria-describedby="pg-sum"`); published, a link and a button:
-
 ```html
 <a class="cap-btn" data-cap-part="view" href="https://example.com/blog/why-the-editor-waits">View<span class="cap-sr-only"> live page</span></a>
 <button type="button" class="cap-btn" data-cap-part="unpublish" data-variant="quiet" data-site="example">Unpublish</button>
 ```
-
-A held destination has `data-hold-text="Held for review by Rosa until Fri 09:00"` and optional `data-hold-note`; a published one has `data-published-at` (ISO) and `data-published-url`; `data-first` marks one that has never been public.
 
 ```ts
 import { enhance, attachPublishGate, gateState, sortChecks, describeGate, siteState, worstState, countChecks } from "capsomer/behavior/publish-gate";
@@ -162,17 +94,28 @@ gateState(checks, hold);   // "blocked" | "held" | "ready"
 sortChecks(checks);        // failing required, failing advisory, passing; stable
 ```
 
-Each `check` is `{ id, name, required, ok, cause, pass?, href?, fix?, site? }`; a destination is `{ id, name, hold?, published?, first? }`. The page needs one message region (`components/message`) for results and Undo. In React:
-
 ```tsx
 import { PublishGate } from "capsomer/react/publish-gate";
 <PublishGate label="Publish checks" sites={sites} checks={checks} publish={(ids) => api.publish(slug, ids)} unpublish={(ids) => api.unpublish(slug, ids)} />
 ```
 
-Load `row-list.css`, `status.css`, `button.css`, `disclosure.css`, `message.css`, `time.css` and `confirm-dialog.css` with `publish-gate.css`.
+## Accessibility
 
-The post editor's transitions and the draft flag each intent asks for are the DOM-free `capsomer/publish-transition` (`transitionsFor`, `draftForIntent`, `saveInPlaceIntent`, `stateOf`, `DRAFT_BY_INTENT`, `PUBLISH_CONFIRMED_INTENT`, `FIRST_PUBLICATION_NOTE`), safe to import in a server action.
+| Key | Does |
+| --- | --- |
+| Tab | Reaches the Publish button first, then each check's link, in reading order; a blocked or held Publish button is reachable and its reason is read |
+| Enter or Space on Publish (ready) | Opens the preview for a first publication, with focus on Cancel; publishes at once for a republication |
+| Enter or Space on Publish (blocked or held) | Does nothing; the summary is its description |
+| Enter on a check's link | Goes to the passage, field or setting that causes it |
+| Enter or Space on Unpublish | Takes it off the public site at once and says so with Undo |
+| Enter or Space on the "9 checks passed" summary | Opens or closes the passing checks |
+| `j`, `k` | Move between the checks' links (when single-key shortcuts are on) |
+| Esc in the preview | Closes it; nothing is published |
+| `z` | Runs the newest Undo in the message region |
 
-## Exceptions in production
-
-None yet.
+- The region is a `section` named by its heading, holding one `ul` (`role="list"`); each group is a list item named by its heading and holds its own list.
+- The summary is `role="status"` with `aria-live="polite"` and `aria-atomic="true"`, and describes the publish buttons that are not ready (`aria-describedby`).
+- Status is a glyph, a word and a color: "Failing", "Advisory", "Passed", "Blocked", "Held", "Ready", "Published".
+- A published destination's button becomes a link "View" (named with the destination) and a button "Unpublish".
+- Each check row's link is described by its status and detail (`aria-describedby`), so moving by link still says "Failing" and the fix.
+- Forced colors: the region keeps its border; the critical edge turns CanvasText.
