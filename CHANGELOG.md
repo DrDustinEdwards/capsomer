@@ -24,6 +24,7 @@ Each release names every removed or renamed token or class, and every changed HT
 - Player: the clip wave's pulse uses `--dur-wait`; a refused clip play is reported with `reportError`, no longer thrown from the promise.
 - **Breaking: `PlanChoice`'s options are the field's card choice.** Each plan is `label.cap-check[data-variant="card"]` with its radio first and `span.cap-plan-option-text` holding `.cap-plan-option-name` and `.cap-plan-option-price`; **`.cap-plan-option` is removed** (it copied the card check). A page that writes the markup by hand loads `field.css`.
 - Poll: the share bar grows with `transform: scaleX()` from the start edge, no longer by animating `inline-size`. The forced-colors rules of poll, price card and process sit inside `cap.components`.
+- **Prose: the heading tokens live in `css/prose.css`.** `--prose-heading-face`, `--prose-heading-space`, `--prose-h2-size` and `--prose-h3-size` are read where the heading face, space and sizes are set, so `prose-blocks.css` no longer sets them a second time; the values are unchanged. **Removed:** prose blocks' `.reading-progress` rules (Prelum's render/enhance draws `.cap-reading-progress`, the reading-progress component, since Prelum's breaking change).
 
 ## [0.139.1]
 

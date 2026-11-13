@@ -50,17 +50,10 @@
     & :where(p, ul, ol, blockquote, figure, pre, table) {
       margin-block-end: var(--prose-flow, 1em);
     }
+    /* The heading face, sizes and space are css/prose.css's (with their tokens); the ink and weight here. */
     & :where(h1, h2, h3) {
-      margin-block-start: var(--prose-heading-space, 1.4em);
       color: var(--prose-heading-ink);
-      font-family: var(--prose-heading-face, var(--prose));
       font-weight: var(--prose-heading-weight, 700);
-    }
-    & :where(h2) {
-      font-size: var(--prose-h2-size, var(--fs-prose-h2));
-    }
-    & :where(h3) {
-      font-size: var(--prose-h3-size, calc(var(--fs-prose) * 1.2));
     }
     & :where(strong, b) {
       color: var(--prose-strong-ink);
@@ -1131,20 +1124,9 @@
     }
   }
 
-  /* render/enhance's furniture: reading progress, the code block's language and Copy, the footnote
-     preview, the image viewer and the selection link. The reading progress bar and Copy move to
-     the reading-progress and copy parts once Prelum's enhance renders them; they stay here until then. */
-  .reading-progress {
-    position: fixed;
-    inset: 0 0 auto;
-    z-index: var(--z-sticky);
-    block-size: 3px;
-    background: var(--accent);
-    transform: scaleX(0);
-    transform-origin: 0 50%;
-    /* It sits over a pinned header: without this the 3 px strip takes the header's clicks. */
-    pointer-events: none;
-  }
+  /* render/enhance's furniture: the code block's language and Copy, the footnote preview, the image
+     viewer and the selection link. Copy moves to the copy part once Prelum's enhance renders it. The
+     reading progress bar is the reading-progress component's (.cap-reading-progress). */
   /* Room for the language and Copy is kept only on the blocks that get them (render/enhance decorates
      pre[data-lang] and marks it data-enhanced), and only where script runs, so the room is there before
      the furniture arrives and nothing shifts. */
@@ -1266,9 +1248,6 @@
     font-weight: 700;
   }
   @media (prefers-reduced-motion: no-preference) {
-    .reading-progress {
-      transition: transform 0.1s linear;
-    }
     .lightbox[open] {
       animation: cap-lightbox-in var(--dur-fast) var(--ease-out);
     }
@@ -1285,7 +1264,6 @@
     }
   }
   @media print {
-    .reading-progress,
     .code-lang,
     .code-copy,
     .selection-link,

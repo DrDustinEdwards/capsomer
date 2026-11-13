@@ -36,17 +36,17 @@
       font-variant-numeric: var(--prose-numerals, oldstyle-nums);
     }
     & :where(h1, h2, h3) {
-      font-family: var(--prose);
+      font-family: var(--prose-heading-face, var(--prose));
       line-height: var(--prose-heading-leading, 1.15);
       letter-spacing: var(--prose-heading-tracking, -0.015em);
-      margin-block: 1.4em var(--prose-heading-gap, 0.5em);
+      margin-block: var(--prose-heading-space, 1.4em) var(--prose-heading-gap, 0.5em);
       max-inline-size: var(--prose-heading-measure, 30ch);
     }
     & :where(h2) {
-      font-size: var(--fs-prose-h2);
+      font-size: var(--prose-h2-size, var(--fs-prose-h2));
     }
     & :where(h3) {
-      font-size: calc(var(--fs-prose) * 1.2);
+      font-size: var(--prose-h3-size, calc(var(--fs-prose) * 1.2));
     }
     & :where(figcaption) {
       font-size: 0.85em;
