@@ -3,8 +3,8 @@
 // test/writing.test.ts with the code.
 import assert from "node:assert/strict";
 import { test } from "node:test";
+import { dayKey } from "../../components/time/time.ts";
 import {
-  dayKey,
   dayTotals,
   goalFromForm,
   pace,
