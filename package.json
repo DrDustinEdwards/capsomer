@@ -138,10 +138,6 @@
       "types": "./dist/components/system-map/system-model.d.ts",
       "default": "./dist/components/system-map/system-model.js"
     },
-    "./behavior/graph": {
-      "types": "./dist/components/graph/graph.d.ts",
-      "default": "./dist/components/graph/graph.js"
-    },
     "./behavior/chart-presets": {
       "types": "./dist/components/chart-frame/chart-presets.d.ts",
       "default": "./dist/components/chart-frame/chart-presets.js"
