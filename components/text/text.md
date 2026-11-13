@@ -5,8 +5,8 @@ summary: React Title and Text for the text roles and title sizes, so a page does
 parts: [react]
 tool: native
 states: []
-added: 0.146.0
-updated: 0.146.0
+added: 0.147.0
+updated: 0.147.0
 source: txasm (46 `cap-title` size 2, 46 `cap-text cap-muted` small and 130 more runs of the same attributes in its server bundle, which put its Worker 5.8 KiB over its size budget)
 replaces:
   - 'className="cap-title"'
