@@ -30,6 +30,13 @@
     align-items: center;
     gap: var(--space-3) var(--space-6);
 
+    /* Each link at least --target tall (24px by default, WCAG 2.2 2.5.8), its text centered. */
+    & a {
+      display: inline-flex;
+      align-items: center;
+      min-block-size: var(--target);
+    }
+
     /* Quiet links: the muted text color, turning the link color under the pointer, with no tint. */
     &[data-links="quiet"] a {
       color: var(--muted);
