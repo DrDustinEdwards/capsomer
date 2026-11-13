@@ -115,6 +115,13 @@ export function siteHead(
   ]);
 }
 
+/**
+ * Every page's color-scheme hint (theme.js and the theme switch set it to the choice; "light dark" follows the
+ * system) and its opt-in to the reader's system text size (Modern Web Guidance, respect-os-text-scale).
+ */
+export const PAGE_META =
+  '<meta name="color-scheme" content="light dark" />\n<meta name="text-scale" content="scale" />';
+
 /** The family icon set's links, on every page (site/vite.config.ts); the files are in site/public. */
 export const ICON_TAGS = iconLinks()
   .map(
