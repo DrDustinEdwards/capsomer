@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useReducer, useRef, useState } from "react";
+import { errorText } from "../dialog/dialog.ts";
 import {
   CLEAN_DRAFT,
   createSaveQueue,
@@ -7,7 +8,6 @@ import {
   type SaveQueue,
 } from "./form-hooks.ts";
 
-export { createSaveQueue, draftAfter, draftDirty } from "./form-hooks.ts";
 
 // No router and no DOM here, so a React Native app's shared client uses these too. The hooks that
 // read the address, a fetcher or loader data are capsomer/react/route-hooks.
@@ -105,7 +105,7 @@ export function useDebouncedPreview<R>(
           },
           (e: unknown) => {
             if (abort.signal.aborted) return;
-            setError(e instanceof Error ? e.message : String(e));
+            setError(errorText(e));
           },
         )
         .finally(() => {
