@@ -31,7 +31,7 @@ test("describeSeries says the span, the latest, the range and every peak", () =>
   );
   assert.equal(
     describeSeries({ what: "MRR", x: [1, 2, 3, 4, 5], values: [1, 5, 5, 5, 5], at: "on" }),
-    "MRR, 1 to 5: 5 on 5, from 1 to 5; most on 2, 3 and 3 more.",
+    "MRR, 1 to 5: 5 on 5, from 1 to 5; most on 2, 3 and 2 more.",
   );
   assert.equal(
     describeSeries({ what: "Talks", x: [2024, 2025], values: [2, 2] }),
