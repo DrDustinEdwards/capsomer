@@ -4,11 +4,17 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
-## [0.127.0]
+## [0.130.0]
 
 - **The theme switch keeps `<meta name="color-scheme">` in step.** A choice made on the page now sets the meta's content as well as `data-theme` (`colorSchemeContent`: the choice, or `light dark`). Before, a site that wrote the meta on the server (dustinedwards.info) kept the old value until the next page, so the browser's own controls and the canvas painted before the CSS showed the other scheme (Modern Web Guidance, dark-mode-toggle). No HTML contract changes; a page without the meta is unchanged.
 - Showcase site: `theme.js` sets the meta from the stored choice before paint, and the home band's word stagger is one `sibling-index()` rule in place of seven `:nth-child` delays (a browser without it raises the words together).
 - The five Enter handlers Chrome's legacy scanner flags (confirm-dialog, markdown-editor twice, media, rich-editor) carry `legacy-scan:keep` with the reason: `isImeEnter` (shortcuts.ts) already checks `isComposing` and keyCode 229, and the scanner cannot follow a helper (devkit 0.45.0). The legacy scan's count is 0.
+
+## [0.127.0]
+
+- **New: text roles, titles and line clamps** (`css/utilities.css`). `.cap-text` sets a run of text's role with one attribute per axis: `data-size="tiny|small|lead"`, `data-tone="muted|dim|ink|accent|ok|crit"`, `data-weight="strong"`, `data-face="ui|mono|prose|display"`, `data-align="center|end"`. `.cap-title` is a title outside a component, `data-size="1"` to `"6"` (2.25rem to 1rem, the display face at `--title-weight`). `.cap-clamp` cuts text at `data-lines="1"`, `"2"` (default) or `"3"` with an ellipsis. They replace the text-role and clamp classes Foxing, the Portal and txasm each wrote. New tokens a SITES entry may set: `--text-tiny`, `--text-small`, `--text-lead` (unset by default, so they fall back at use to `--fs-label`, `--fs-detail` and `--fs-lead`), `--text-strong` (600), `--title-weight` (the heading weight), `--title-1` to `--title-6`, and `--mono-size` (0.75rem), which `.cap-mono` now reads. Foxing's entry sets its text sizes (12, 14 and 18px), its strong weight (500) and its title weight (600); the Portal's sets 13px identifiers. Removed or renamed: no token or class.
+- **Anchor bar: React finds its own sections.** `<AnchorBar />` without `sections` renders an empty, hidden bar and lets the behavior module fill, show and spy on it, as the module does for plain HTML. A `[data-section][id]` block inside another is no longer an entry: the bar names the outer sections only (from the Portal's own bar, which it replaces).
+- **Sites: txasm's entry sets `--title-weight: 600`**, its page titles' weight before they moved onto `.cap-title`.
 
 ## [0.126.0]
 
