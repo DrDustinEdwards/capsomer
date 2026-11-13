@@ -4,13 +4,15 @@ export * from "./icons.ts";
 // drawing the set lacks (`box` for a grid other than 24, as Carrel's 16-unit menu). Each drawing is
 // its own export of icons.ts, so an app's bundle holds only the ones it imports. Hidden from
 // assistive technology (the button or link around it carries the name), or, with `label`, an image
-// named by it.
+// named by it. In a button, `data-icon` says which side of the label it sits on, so the button pulls
+// its padding in on that side (button.css).
 export function Icon(props: {
   d: string;
   box?: number;
   fill?: boolean;
   label?: string;
   className?: string;
+  "data-icon"?: "start" | "end";
 }) {
   const box = props.box || 24;
   return (
@@ -22,6 +24,7 @@ export function Icon(props: {
       aria-label={props.label}
       aria-hidden={props.label ? undefined : true}
       focusable="false"
+      data-icon={props["data-icon"]}
     >
       <path d={props.d} />
     </svg>

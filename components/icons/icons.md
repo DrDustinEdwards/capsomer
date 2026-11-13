@@ -19,11 +19,12 @@ replaces:
 `capsomer/icons.css`, then `Icon` and the icons it draws from `capsomer/react/icons`, or `iconSvg` and the icons from `capsomer/behavior/icons`. Each icon is its own export, so a site ships only the ones it imports.
 
 ```tsx
-import { Icon, iconExternal, iconSearch, markFacebook } from "capsomer/react/icons";
+import { Icon, iconArrowRight, iconExternal, iconSearch, markFacebook } from "capsomer/react/icons";
 
 <button type="button" className="cap-btn" aria-label="Search"><Icon d={iconSearch} /></button>
 <a href="https://example.com/team"><Icon {...markFacebook} /> Example Co on Facebook</a>
 <Icon d={iconExternal} label="Opens another site" />
+<button type="submit" className="cap-btn">Continue<Icon d={iconArrowRight} data-icon="end" /></button>
 <Icon d="M3 13h2l7-7-2-2-7 7z" box={16} />
 ```
 
@@ -36,7 +37,7 @@ link.append(iconSvg(markX.d, markX));
 
 | Set | Exports |
 | --- | --- |
-| UI (stroked), a path each | iconAccount, iconActivity, iconAdd, iconAlert, iconAntenna, iconArrowLeft, iconArrowRight, iconArrowUpRight, iconAssign, iconAward, iconBanknote, iconBell, iconBook, iconBrake, iconBug, iconBuilding, iconCalendar, iconCalendarClock, iconCaptions, iconCard, iconCheck, iconChevronDown, iconChevronLeft, iconChevronRight, iconChevronUp, iconCircle, iconClock, iconClose, iconCloudUpload, iconCopy, iconCut, iconDatabase, iconDecide, iconDisc, iconDna, iconDocument, iconDownload, iconEdit, iconExternal, iconFileAudio, iconFileCheck, iconFileUp, iconFolder, iconGamepad, iconGlobe, iconGoals, iconGraduation, iconHeadphones, iconHeart, iconHome, iconIdea, iconImageUp, iconInfo, iconInspect, iconKey, iconLibrary, iconLink, iconListChecks, iconListOrdered, iconListTree, iconLock, iconMail, iconMegaphone, iconMenu, iconMic, iconMoon, iconMusic, iconMusicNote, iconOverview, iconPaste, iconPeople, iconPercent, iconPhone, iconPlay, iconPlug, iconPodcast, iconQueue, iconQuote, iconRadio, iconReceipt, iconRefresh, iconRepeat, iconReset, iconRoles, iconRss, iconSave, iconScale, iconScroll, iconSearch, iconSend, iconSettings, iconShare, iconShield, iconShieldCheck, iconSliders, iconSpinner, iconStar, iconStats, iconStore, iconSun, iconTag, iconTicket, iconTrash, iconTrendingDown, iconTrendingUp, iconTrophy, iconUndo, iconUpload, iconUser, iconUserCheck, iconUserPlus, iconWarning, iconWebhook |
+| UI (stroked), a path each | iconAccount, iconActivity, iconAdd, iconAlert, iconAntenna, iconArrowLeft, iconArrowRight, iconArrowUpRight, iconAssign, iconAward, iconBanknote, iconBell, iconBook, iconBrake, iconBug, iconBuilding, iconCalendar, iconCalendarClock, iconCaptions, iconCard, iconCheck, iconChevronDown, iconChevronLeft, iconChevronRight, iconChevronUp, iconCircle, iconClock, iconClose, iconCloudUpload, iconCopy, iconCut, iconDatabase, iconDecide, iconDisc, iconDna, iconDocument, iconDownload, iconEdit, iconExternal, iconFileAudio, iconFileCheck, iconFileUp, iconFolder, iconGamepad, iconGlobe, iconGoals, iconGraduation, iconHeadphones, iconHeart, iconHome, iconIdea, iconImageUp, iconInfo, iconInspect, iconKey, iconLibrary, iconLink, iconListChecks, iconListOrdered, iconListTree, iconLock, iconMail, iconMegaphone, iconMenu, iconMic, iconMoon, iconMusic, iconMusicNote, iconOverview, iconPaste, iconPeople, iconPercent, iconPhone, iconPlay, iconPlug, iconPodcast, iconQueue, iconQuote, iconRadio, iconReceipt, iconRefresh, iconRepeat, iconReset, iconRoles, iconRss, iconSave, iconScale, iconScanSearch, iconScroll, iconSearch, iconSend, iconSettings, iconShare, iconShield, iconShieldCheck, iconSliders, iconSpinner, iconStar, iconStats, iconStore, iconSun, iconTag, iconTicket, iconTrash, iconTrendingDown, iconTrendingUp, iconTrophy, iconUndo, iconUpload, iconUser, iconUserCheck, iconUserPlus, iconWarning, iconWebhook |
 | Social (filled), `{ d, fill }` each | markFacebook, markInstagram, markLinkedin, markX |
 
 ## The default and its reason
