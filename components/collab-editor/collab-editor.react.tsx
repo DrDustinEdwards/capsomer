@@ -172,7 +172,7 @@ export function useRoomEditing(options: RoomEditingOptions): RoomEditing {
   const suggest = !mayEdit || mode === "suggest";
   const binding = useRichRoom({
     doc: room.synced ? room.doc : null,
-    awareness: room.synced ? room.provider.awareness : null,
+    awareness: room.synced ? (room.provider?.awareness ?? null) : null,
     people: room.people,
     comments: room.comments,
     by: String(viewer.id),
