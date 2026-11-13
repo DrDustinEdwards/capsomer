@@ -5,8 +5,8 @@ summary: A list's filters kept in the address - a GET form named as a search lan
 parts: [css, ts, react]
 tool: own JavaScript
 states: [apply and clear, applies as you type, nothing filtered]
-added: 0.124.0
-updated: 0.124.0
+added: 0.125.0
+updated: 0.125.0
 source: Foxhound (payments, customers, recommendations, webhooks), txasm (abstracts, awardees, documents), Capsid Portal (useNsFilter)
 replaces:
   - 'function (hrefWith|clearHref)\('

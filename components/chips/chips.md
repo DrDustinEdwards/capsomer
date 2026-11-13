@@ -6,7 +6,7 @@ parts: [css, behavior, react]
 tool: native + own JavaScript
 states: [link chips with the current one, checkbox chips in a form, none pressed, some pressed with the count, hover, pressed and hovered, keyboard focus, disabled, small and large, with a count or an icon, an empty result, solid]
 added: 0.1.0
-updated: 0.124.0
+updated: 0.125.0
 source: Capsid Portal, dashboard/src/styles.css (.chip)
 replaces:
   - 'class="(?:[^"]*\s)?chip[\s"]'

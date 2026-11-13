@@ -5,8 +5,8 @@ summary: A landing page's first section - eyebrow, the page's h1, a lead, the ac
 parts: [css, react]
 tool: native
 states: [words and an aside, centered, on a card over a backdrop]
-added: 0.124.0
-updated: 0.124.0
+added: 0.125.0
+updated: 0.125.0
 source: Carrel www/site.css .hero, julieedwards.info .hero, Capsid explorer .hero, Foxing .fx-hero, BioScience Writers home and PageHero, Foxhound product hero
 replaces:
   - 'class(Name)?="(fx-)?hero[ "]'

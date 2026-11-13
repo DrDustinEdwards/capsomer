@@ -1,215 +1,28 @@
 import type { ReactNode } from "react";
 
-// "muted" is the quiet gray for a state that is neither good nor bad: queued, unknown.
-export type Tone = "crit" | "warn" | "ok" | "info" | "nodata" | "muted";
-// A glyph is named by its tone, except running, which is an info tone with an arc, and the
-// marks a state or a kind of item has of its own (the Portal's queued, unknown, blocked,
-// and its inbox kinds). The quiet gray "muted" draws the no data circle unless a glyph is named.
-export type GlyphName =
-  | Tone
-  | "running"
-  | "queued"
-  | "unknown"
-  | "blocked"
-  | "question"
-  | "pr"
-  | "report"
-  | "proposal"
-  | "site-down";
+import { createElement } from "react";
+import { STATUS_GLYPH, type GlyphName, type Tone } from "./status.ts";
+
+export type { GlyphName, Tone };
 
 const box = { viewBox: "0 0 16 16", "aria-hidden": true, focusable: false } as const;
+// SVG attribute names as React spells them ("fill-rule" is fillRule).
+const reactName = (name: string) => name.replace(/-([a-z])/g, (_, c: string) => c.toUpperCase());
 
-// One shape per meaning, so the shape carries it without color. Marks inside a filled
-// shape are cut out (evenodd), so the glyph reads on any background, a tint included.
+// One shape per meaning (STATUS_GLYPH in status.ts, which the HTML renderer draws too).
+// A glyph on its own (a status icon beside a name, with no word of its own) takes its tone's color
+// from data-tone; inside a status or a pill it takes the word's.
 export function Glyph({ name, tone }: { name: GlyphName; tone?: Tone }) {
-  // A glyph on its own (a status icon beside a name, with no word of its own) takes its tone's
-  // color from data-tone; inside a status or a pill it takes the word's.
-  const attrs = { className: "cap-status-glyph", "data-tone": tone, ...box } as const;
-  switch (name) {
-    case "crit":
-      return (
-        <svg {...attrs}>
-          <path
-            fill="currentColor"
-            fillRule="evenodd"
-            d="M5 1h6l4 4v6l-4 4H5l-4-4V5zM7.2 4h1.6v5H7.2zM7.2 10.4h1.6V12H7.2z"
-          />
-        </svg>
-      );
-    case "warn":
-      return (
-        <svg {...attrs}>
-          <path
-            fill="currentColor"
-            fillRule="evenodd"
-            d="M8 1.2 15.4 14H.6zM7.3 6h1.4v4H7.3zM7.3 11h1.4v1.4H7.3z"
-          />
-        </svg>
-      );
-    case "info":
-      return (
-        <svg {...attrs}>
-          <rect
-            x="1.5"
-            y="1.5"
-            width="13"
-            height="13"
-            rx="2"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.6"
-          />
-          <path fill="currentColor" d="M7.2 7h1.6v5H7.2zM7.2 4h1.6v1.7H7.2z" />
-        </svg>
-      );
-    case "ok":
-      return (
-        <svg {...attrs}>
-          <path
-            fill="currentColor"
-            fillRule="evenodd"
-            d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"
-          />
-        </svg>
-      );
-    case "nodata":
-    case "muted":
-      return (
-        <svg {...attrs}>
-          <>
-            <circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" strokeWidth="1.6" />
-            <path
-              d="M5 8h6"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.6"
-              strokeLinecap="round"
-            />
-          </>
-        </svg>
-      );
-    case "queued":
-      return (
-        <svg {...attrs}>
-          <circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" strokeWidth="1.6" />
-        </svg>
-      );
-    case "unknown":
-    case "question":
-      return (
-        <svg {...attrs}>
-          <circle
-            cx="8"
-            cy="8"
-            r="6.2"
-            fill={name === "question" ? "currentColor" : "none"}
-            fillOpacity={name === "question" ? 0.18 : undefined}
-            stroke="currentColor"
-            strokeWidth="1.6"
-          />
-          <path
-            d="M6.1 6.4a1.95 1.95 0 1 1 2.9 1.7c-.6.3-1 .7-1 1.4"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-          />
-          <circle cx="8" cy="11.7" r=".9" fill="currentColor" />
-        </svg>
-      );
-    case "blocked":
-      return (
-        <svg {...attrs}>
-          <path
-            fill="currentColor"
-            fillRule="evenodd"
-            d="M4 1.5h8A2.5 2.5 0 0 1 14.5 4v8a2.5 2.5 0 0 1-2.5 2.5H4A2.5 2.5 0 0 1 1.5 12V4A2.5 2.5 0 0 1 4 1.5zM5.7 4.8h1.5v6.4H5.7zM8.8 4.8h1.5v6.4H8.8z"
-          />
-        </svg>
-      );
-    case "pr":
-      return (
-        <svg {...attrs}>
-          <g
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <circle cx="4.3" cy="3.4" r="1.8" />
-            <circle cx="4.3" cy="12.6" r="1.8" />
-            <circle cx="11.7" cy="12.6" r="1.8" />
-            <path d="M4.3 5.2v5.6M11.7 10.8V7.1A2.5 2.5 0 0 0 9.2 4.6H7.4M8.9 3 7.3 4.6l1.6 1.6" />
-          </g>
-        </svg>
-      );
-    case "report":
-      return (
-        <svg {...attrs}>
-          <path
-            d="M3.4 14.5V2M3.4 2.5h8.7l-1.8 3 1.8 3H3.4"
-            fill="currentColor"
-            fillOpacity={0.18}
-            stroke="currentColor"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
-      );
-    case "proposal":
-      return (
-        <svg {...attrs}>
-          <path
-            d="M3.4 1.7h6.3l2.9 2.9v9.7H3.4z"
-            fill="currentColor"
-            fillOpacity={0.18}
-            stroke="currentColor"
-            strokeWidth="1.5"
-            strokeLinejoin="round"
-          />
-          <path
-            d="M5.7 8h4.6M5.7 10.9h4.6"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-          />
-        </svg>
-      );
-    case "site-down":
-      return (
-        <svg {...attrs}>
-          <path
-            fill="currentColor"
-            fillRule="evenodd"
-            d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM7.2 4h1.6v4.1l1.5-1.5 1.1 1.1L8 11 4.6 7.7l1.1-1.1 1.5 1.5z"
-          />
-        </svg>
-      );
-    case "running":
-      return (
-        <svg {...attrs}>
-          <circle
-            cx="8"
-            cy="8"
-            r="6.2"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.6"
-            opacity="0.35"
-          />
-          <path
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.8"
-            strokeLinecap="round"
-            d="M8 1.8a6.2 6.2 0 0 1 6.2 6.2"
-          />
-        </svg>
-      );
-  }
+  return (
+    <svg className="cap-status-glyph" data-tone={tone} {...box}>
+      {STATUS_GLYPH[name].map(({ tag, attrs }, i) =>
+        createElement(tag, {
+          key: i,
+          ...Object.fromEntries(Object.entries(attrs).map(([k, v]) => [reactName(k), v])),
+        }),
+      )}
+    </svg>
+  );
 }
 
 export interface StatusProps {

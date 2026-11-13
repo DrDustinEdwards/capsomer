@@ -6,7 +6,7 @@ parts: [css, behavior, react]
 tool: native
 states: [default, hover, keyboard focus, pressed, open, disabled with its reason, invalid, pending, a label that changes, primary, secondary, danger, quiet, link, xs sm lg sizes, icon only, button group, link styled as a button, button styled as a link, a site's sweep]
 added: 0.1.0
-updated: 0.124.0
+updated: 0.125.0
 source: Capsid Portal, dashboard/src/styles.css (.btn, .iconbtn, .linkbtn)
 replaces:
   - 'class="(?:[^"]*\s)?(btn|iconbtn|linkbtn)[\s"]'

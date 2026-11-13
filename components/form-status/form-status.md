@@ -5,8 +5,8 @@ summary: The result of a form's post, said where the form is. Focus moves to it,
 parts: [css, react]
 tool: native
 states: [saved, failed, before a post]
-added: 0.124.0
-updated: 0.124.0
+added: 0.125.0
+updated: 0.125.0
 source: txasm (abstract edit, review, decisions, book and program pages; written five times)
 replaces:
   - 'ref=\{statusRef\}'
