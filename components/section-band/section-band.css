@@ -48,7 +48,7 @@
     }
 
     &[data-overlap] {
-      z-index: var(--z-base, 1);
+      z-index: var(--z-base);
       margin-block: calc(-1 * var(--cap-band-rise)) calc(-1 * var(--cap-band-fall));
     }
 
@@ -58,10 +58,10 @@
       --cap-band-fall: 2.5rem;
     }
   }
-}
 
-@media (forced-colors: active) {
-  .cap-section-band {
-    border-block: 1px solid CanvasText;
+  @media (forced-colors: active) {
+    .cap-section-band {
+      border-block: 1px solid CanvasText;
+    }
   }
 }
