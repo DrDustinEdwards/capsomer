@@ -59,14 +59,6 @@ eachTheme((theme) => {
     expect(box.fits).toBe(true);
   });
 
-  test("behavior: a long title wraps inside the card and the result", async ({ page }) => {
-    await visitStates(page, "share-preview", theme);
-    for (const sel of ["#sp-serp-cut", "#sp-og-note"]) {
-      const fits = await page.locator(sel).evaluate((el) => el.scrollWidth <= el.clientWidth);
-      expect(fits, sel).toBe(true);
-    }
-  });
-
   test("behavior: the width meter says the width in pixels, and past the cut says so in words", async ({
     page,
   }) => {

@@ -3,6 +3,39 @@
 Each release names every removed or renamed token or class, and every changed HTML contract. A pull request adds its entry as a
 changeset (`npx changeset`, `.changeset/README.md`); the release pull request writes them here.
 
+## 0.146.0
+
+### Minor Changes
+
+- **AI engine settings: an effort per job.** Each job's row gains an Effort column beside its model (`effort-<key>`, read back by `settingsFromForm` as `efforts`), and the spend by job can split by effort (`usage[].effort`), so a person sees what a higher effort cost. **Changed React contract: `AiEngineSettings` requires `efforts` and `effortOptions`** (the same shape as `models` and `modelOptions`). The table gains one column; no token or class changes.
+- **A chart that keeps its shape (a map) gets a phone drawing at its own height.** `narrowRedraw(wide, drawNarrow, { keepShape: true })` draws the narrow drawing at its own height instead of the wide one's, and `frameHtml(chart, { redraw, keepShape: true })` sets `--cap-narrow-height` on `.cap-chart`, which chart-frame.css uses so the wide drawing scales into a column under 30rem at the narrow drawing's height until the swap. From germomics' Soho map, which did this in its own CSS. No class renamed or removed; `--cap-narrow-height` is a new custom property on `.cap-chart`.
+  **DataPreview keeps its own text size and a heading weight.** `.cap-data-preview` sets `font-size: var(--fs-body)` and `line-height: var(--leading-relaxed)`, so the card's sentence is not drawn at the size of the article beside it, and its heading takes `--weight-heading`.
+  **One HTML escape.** Status glyphs, the graph and search results' `snippetHtml` drop their own escape tables for site-runtime's `escapeHtml`, which the rest of Capsomer already uses, so a site bundles it once. `snippetHtml` now also escapes `'` (as `&#39;`); nothing else changes in the output.
+- **`describeSeries` reads days.** A new `at: "on"` option writes "30% on Oct 3" and "most on Oct 3" for a chart over days; the default stays "in", for years and months. More than three peaks, as a daily series that held its top for weeks has, now name the first two and a count ("most on Oct 2, Oct 3 and 12 more") in place of every date. No class, token or HTML contract changes.
+
+## 0.145.1
+
+### Patch Changes
+
+- **The markdown editor's CodeMirror stays out of server bundles.** `mountMarkdownEditor` refuses before its `import()` when Vite's `import.meta.env.SSR` is set, so a server build drops the CodeMirror chunk it could never run (Carrel's Worker: about 300 KB raw). Outside Vite nothing changes. No token, class or HTML contract changes.
+
+## 0.145.0
+
+### Minor Changes
+
+- **First-load weight: four code paths that run only on a click, or only on some sites, load on demand.** Measured on the Capsid Portal's heaviest first load, 217.8 to 215.6 KB gzip.
+  - The site header's search behavior (`wireSearch`) is `site-header-search.ts`. `enhance` and the React `SiteHeader` load it through the new `wireSearchOnDemand(search, suggest)`, and only on a header that has search. Until it arrives the icon is the link to the search page it always was. `wireSearch` and `SUGGEST_DELAY_MS` are no longer exported from `capsomer/behavior/site-header`; `SearchHit` and `Suggest` still are.
+  - The shortcut sheet (`renderSheetList`, `buildSheet`, `wireSheet`, `openShortcutSheet`) is `shortcuts-sheet.ts`. It loads the first time "?" or a `[data-cap-keys-open]` button asks for it, or when `enhance` finds a sheet in the markup. Those four are no longer exported from `capsomer/behavior/shortcuts`. An app with its own sheet (`setSheetOpener`) never loads it.
+  - A sheet's drag to dismiss is `dialog-drag.ts`. `wireDialog` loads it when a bottom, left or right sheet first takes focus, which it does as it opens.
+  - `FOXHOUND_MARKS` moves to the admin shell's states page, the only place it was drawn, so it no longer ships in every admin shell. It is no longer exported from `capsomer/react/admin-shell`.
+  - No class, token or HTML contract changes.
+
+## 0.144.0
+
+### Minor Changes
+
+- **Manual theme: the catalog.** `capsomer/manual.css` now draws `.cap-catalog` in the manual: beside the results the facets sit in a ruled box under a dark "Filter" strip (`--sign`, `--on-sign`), the facet names, the bar's field labels and the table's head are mono capitals, and each group's heading is `--title-2` bold over a `--line-w-thick` rule. The phone's tray keeps its own head and a group's heading over cards keeps catalog.css's spacing. dustinedwards.info drew this in its own site-catalog.css, which this replaces. No token, class or HTML contract changes.
+
 ## 0.143.0
 
 - **Every design value in Capsomer's CSS is a token.** `capsomer token-check` checked only colors and spacing (83 warnings); it now checks every kind of design value: colors (hex, `rgb()`, `oklch()` and the rest, named colors, and var() fallbacks), spaces, font sizes (and the `font` shorthand), weights, line heights, tracking, radii, line widths, outline widths and offsets, layers, durations, easings, shadows and opacities, and names the exact token or the nearest step. The scanner is `rawValues(css, tokenScale(tokens.json))` in `capsomer/token-check`, pure over CSS text, so a site's gate can run it. `capsomer token-check --fix` (and `fixCss`) writes every value that has an exact token in place, which changes nothing on the page; the report then lists only what needs a choice. Not checked, on purpose: a component's own geometry, relative units, lengths inside `calc()` that are not a step, and print (paper is black on white). It found 1,650 raw values in components/ and css/; all are now tokens, except the error ad's two ink colors (artwork). site/ waits for the docs site rebuild (#405).

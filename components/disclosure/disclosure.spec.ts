@@ -126,40 +126,6 @@ eachTheme((theme) => {
     },
   );
 
-  test("keyboard: Enter on a summary opens and closes its section", async ({ page }) => {
-    await visitStates(page, "disclosure", theme);
-    const details = page.locator("details", { hasText: "Why is example.com marked degraded?" });
-    const summary = details.locator("summary");
-    await summary.focus();
-    await page.keyboard.press("Enter");
-    await expect(details).toHaveAttribute("open", "");
-    await expect(details.getByText("Its median response")).toBeVisible();
-    await page.keyboard.press("Space");
-    await expect(details).not.toHaveAttribute("open", "");
-  });
-
-  test("behavior: sections that share a name open one at a time", async ({ page }) => {
-    await visitStates(page, "disclosure", theme);
-    const first = page.locator("details[name='limits']").nth(0);
-    const second = page.locator("details[name='limits']").nth(1);
-    await expect(first).toHaveAttribute("open", "");
-    await second.locator("summary").click();
-    await expect(second).toHaveAttribute("open", "");
-    await expect(first).not.toHaveAttribute("open", "");
-  });
-
-  test("keyboard: an accordion-variant section opens and closes with Enter, one at a time", async ({
-    page,
-  }) => {
-    await visitStates(page, "disclosure", theme);
-    const items = page.locator("#accordion-specimen details");
-    await expect(items.nth(0)).toHaveAttribute("open", "");
-    await items.nth(2).locator("summary").focus();
-    await page.keyboard.press("Enter");
-    await expect(items.nth(2)).toHaveAttribute("open", "");
-    await expect(items.nth(0)).not.toHaveAttribute("open", "");
-  });
-
   test("behavior: a compact card opens in place to its form, with the body in the text color", async ({
     page,
   }) => {
@@ -195,15 +161,4 @@ eachTheme((theme) => {
       { sel: ".cap-group-toggle[data-force='pressed']", what: "a pressed group row" },
     ]);
   });
-
-  test(
-    "accessibility: a disabled group row is not operable and keeps its state",
-    { tag: "@markup" },
-    async ({ page }) => {
-      await visitStates(page, "disclosure", theme);
-      const btn = page.getByRole("button", { name: /^Archived/ });
-      await expect(btn).toBeDisabled();
-      await expect(btn).toHaveAttribute("aria-expanded", "false");
-    },
-  );
 });

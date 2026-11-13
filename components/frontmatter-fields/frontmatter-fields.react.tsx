@@ -45,6 +45,20 @@ export function useTyped(stored: string): TypedBox {
   return { value: typed ?? stored, keep: setTyped, done: () => setTyped(null) };
 }
 
+/** A text box's props from its TypedBox: what is typed kept, and each change written through `write`. */
+export function typedProps(box: TypedBox, locked: boolean, write: (text: string) => void) {
+  return {
+    className: "cap-input",
+    value: box.value,
+    readOnly: locked,
+    onBlur: box.done,
+    onChange: (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      box.keep(event.target.value);
+      write(event.target.value);
+    },
+  };
+}
+
 function Box({
   field,
   locked,
@@ -75,15 +89,8 @@ function Box({
     );
   }
   const props = {
-    className: "cap-input",
-    value: box.value,
-    readOnly: locked,
+    ...typedProps(box, locked, write),
     spellCheck: field.box === "text" || field.box === "lines" ? undefined : false,
-    onBlur: box.done,
-    onChange: (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      box.keep(event.target.value);
-      write(event.target.value);
-    },
   };
   return (
     <Field label={field.label} help={field.help}>

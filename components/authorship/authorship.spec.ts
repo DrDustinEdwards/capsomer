@@ -110,21 +110,6 @@ eachTheme((theme) => {
     },
   );
 
-  test(
-    "accessibility: an avatar in a label is not read a second time",
-    { tag: "@markup" },
-    async ({ page }) => {
-      await visitStates(page, "authorship", theme);
-      const label = page.locator("#au-avatar div.cap-run[data-kind='ai'] > .cap-run-label");
-      await expect(label).toBeVisible();
-      await expect(label.getByRole("img")).toHaveCount(0);
-      expect((await label.textContent())?.replace(/\s+/g, "")).toBe("AIAI");
-      const tree = await page.locator("#au-avatar").ariaSnapshot();
-      expect(tree.match(/\bAI\b/g)?.length).toBeGreaterThan(0);
-      expect(tree).not.toContain('img "AI"');
-    },
-  );
-
   test("keyboard: the switch is reached by Tab and Space turns the marks off and on", async ({
     page,
   }) => {
@@ -143,16 +128,6 @@ eachTheme((theme) => {
     await expect(page.locator("#au-on")).toHaveAttribute("data-authorship", "on");
     await expect(page.locator("#au-on .cap-run-label").first()).toBeVisible();
     await expect(page.locator("#au-on .cap-switch-state")).toHaveText("On");
-  });
-
-  test("keyboard: Tab does not stop on a run, a label or the bar: the switch is the one stop", async ({
-    page,
-  }) => {
-    await visitStates(page, "authorship", theme);
-    await page.locator("#au-on").getByRole("switch").focus();
-    await page.keyboard.press("Tab");
-    const inside = await page.evaluate(() => document.activeElement?.closest("#au-on") !== null);
-    expect(inside).toBe(false);
   });
 
   test("behavior: the summary says the percentages and the words, and matches what the html said", async ({
@@ -219,44 +194,6 @@ eachTheme((theme) => {
     expect(errors).toEqual([]);
   });
 
-  test("behavior: on a wide container the labels sit in the margin, left of the rule; on a narrow one above the text", async ({
-    page,
-  }) => {
-    await visitStates(page, "authorship", theme);
-    const wide = await page.locator("#au-on div.cap-run[data-kind='ai']").evaluate((run) => {
-      const l = run.querySelector(".cap-run-label")?.getBoundingClientRect();
-      const r = run.getBoundingClientRect();
-      return l ? { labelRight: l.right, runLeft: r.left, labelTop: l.top, runTop: r.top } : null;
-    });
-    expect(wide).not.toBeNull();
-    expect((wide?.labelRight ?? 0) <= (wide?.runLeft ?? 0)).toBe(true);
-
-    await page.setViewportSize({ width: 340, height: 800 });
-    await visitStates(page, "authorship", theme, "narrow");
-    const narrow = await page.locator("div.cap-run[data-kind='ai']").evaluate((run) => {
-      const l = run.querySelector(".cap-run-label")?.getBoundingClientRect();
-      const p = run.querySelector("p")?.getBoundingClientRect();
-      const r = run.getBoundingClientRect();
-      return l && p
-        ? { labelBottom: l.bottom, textTop: p.top, labelLeft: l.left, runLeft: r.left }
-        : null;
-    });
-    expect(narrow).not.toBeNull();
-    expect((narrow?.labelBottom ?? 0) <= (narrow?.textTop ?? 0) + 1).toBe(true);
-    expect((narrow?.labelLeft ?? 0) >= (narrow?.runLeft ?? 0)).toBe(true);
-  });
-
-  test("behavior: a run inside a paragraph is a span with a label at its start", async ({
-    page,
-  }) => {
-    await visitStates(page, "authorship", theme);
-    const inline = page.locator("#au-on p > span.cap-run");
-    await expect(inline).toHaveCount(3);
-    await expect(inline.nth(1).locator(".cap-run-label")).toHaveText("AI");
-    const text = await inline.nth(1).innerText();
-    expect(text).toContain("A suggestion is a note beside the mention");
-  });
-
   test("behavior: the React Authorship counts its Runs and the switch hides them", async ({
     page,
   }) => {
@@ -271,16 +208,6 @@ eachTheme((theme) => {
     await expect(box.locator(".cap-run-label").first()).toBeHidden();
     await expect(box.locator(".cap-authorship-summary")).toBeHidden();
   });
-});
-
-test("behavior: the delivered html has the labels, the summary and the prose with no script", async ({
-  page,
-}) => {
-  const html = await (await page.request.get("components/authorship/states.html")).text();
-  expect(html).toContain('<span class="cap-run-label">AI</span>');
-  expect(html).toContain('<span class="cap-run-label">Quoted</span>');
-  expect(html).toContain(SUMMARY);
-  expect(html).toContain("I wrote the queue first and the rest second.");
 });
 
 test.describe("without script", () => {

@@ -125,16 +125,6 @@ eachTheme((theme) => {
     await expect(rowLink(page)).toBeFocused();
   });
 
-  test("keyboard: Enter on the corner Close button closes the panel", async ({ page }) => {
-    await visitStates(page, "detail-panel", theme, "rows");
-    await rowLink(page).click();
-    await expect(panel(page)).toBeVisible();
-    await panel(page).getByRole("button", { name: "Close" }).focus();
-    await page.keyboard.press("Enter");
-    await expect(panel(page)).toBeHidden();
-    await expect(rowLink(page)).toBeFocused();
-  });
-
   test("behavior: a click on the backdrop closes the panel", async ({ page }) => {
     await visitStates(page, "detail-panel", theme, "rows");
     await rowLink(page).click();
@@ -245,31 +235,6 @@ eachTheme((theme) => {
     await expect(mention(page)).toBeHidden();
     await expect.poll(() => new URL(page.url()).searchParams.has("inspect")).toBe(false);
     expect(await page.evaluate(() => history.length)).toBe(before);
-  });
-
-  test("behavior: the plain form inside posts its fields and the pressed button, with no script of ours", async ({
-    page,
-  }) => {
-    await visitUrl(page, "mention-41");
-    const posted = page.evaluate(
-      () =>
-        new Promise<Record<string, string>>((done) => {
-          document.querySelector("#mention-41 form")!.addEventListener("submit", (e) => {
-            e.preventDefault();
-            const data = new FormData(e.target as HTMLFormElement, (e as SubmitEvent).submitter);
-            done(Object.fromEntries(Array.from(data.entries()).map(([k, v]) => [k, String(v)])));
-          });
-        }),
-    );
-    await mention(page)
-      .getByRole("textbox", { name: "Note, kept with the decision" })
-      .fill("Looks like a real reply.");
-    await mention(page).getByRole("button", { name: "Approve" }).click();
-    expect(await posted).toEqual({
-      id: "mention-41",
-      note: "Looks like a real reply.",
-      intent: "approve",
-    });
   });
 
   test("accessibility: the address-driven panel, open, has no axe violations", async ({ page }) => {

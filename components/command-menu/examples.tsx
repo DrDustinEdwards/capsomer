@@ -4,6 +4,7 @@ import { StrictMode, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { LazyCommandMenu, useCommandHost } from "./command-host.react.tsx";
 import { CommandMenu, navCommands, type Command } from "./command-menu.react.tsx";
+import { sampleAnswer } from "./specimen/answer-stream.ts";
 
 const CATALOG = [
   "Getting started with the editor",
@@ -109,11 +110,37 @@ function Extras() {
   );
 }
 
+// The answer under the list, as the answer-dom specimen's without React.
+function Answer() {
+  const [open, setOpen] = useState(true);
+  return (
+    <>
+      <main className="specimen-page" tabIndex={-1}>
+        <h1>Home</h1>
+      </main>
+      <CommandMenu
+        open={open}
+        onOpenChange={setOpen}
+        commands={[{ id: "go-notes", label: "Field notes", group: "Go to", run: () => {} }]}
+        label="Search this site"
+        answer={sampleAnswer}
+        bindKeys={false}
+      />
+    </>
+  );
+}
+
 for (const el of Array.from(document.querySelectorAll<HTMLElement>("[data-mount]"))) {
   if (el.dataset.mount === "extras")
     createRoot(el).render(
       <StrictMode>
         <Extras />
+      </StrictMode>,
+    );
+  if (el.dataset.mount === "answer")
+    createRoot(el).render(
+      <StrictMode>
+        <Answer />
       </StrictMode>,
     );
   if (el.dataset.mount === "live")

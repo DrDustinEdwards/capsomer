@@ -146,6 +146,11 @@ export async function mountMarkdownEditor(
   if (!found) throw new Error("markdown-editor: no <textarea> inside the element");
   const ta: HTMLTextAreaElement = found;
   const labelEl = host.querySelector("label");
+  // A server build (Vite sets import.meta.env.SSR) never reaches this line, since a surface mounts only in a browser,
+  // so the bundler drops the CodeMirror chunk from a server bundle: about 300 KB of Carrel's Worker was CodeMirror.
+  // Outside Vite `env` is undefined and the import runs as before.
+  if ((import.meta as { env?: { SSR?: boolean } }).env?.SSR)
+    throw new Error("markdown-editor: a surface mounts only in a browser");
   const { createSurface } = await import("./markdown-editor.view.ts");
   // The element may have been detached or upgraded while CodeMirror loaded.
   if (!host.isConnected) throw new Error("markdown-editor: the element left the page");
@@ -522,7 +527,7 @@ export async function mountMarkdownEditor(
     input.addEventListener("keydown", (e) => {
       const l = link;
       if (!l) return;
-      // legacy-scan:keep isImeEnter (shortcuts.ts) checks isComposing and keyCode 229; the scanner cannot follow it.
+      // legacy-scan:keep ime-safe-enter-submit isImeEnter (shortcuts.ts) checks isComposing and keyCode 229; the scanner cannot follow it.
       if (e.key === "Enter" && !isImeEnter(e) && looksLikeUrl(l.input.value)) {
         e.preventDefault();
         insertLink(l.input.value.trim(), l.input.value.trim());
@@ -785,7 +790,7 @@ export async function mountMarkdownEditor(
       insert.disabled = alt.value.trim() === "" || panel.hasAttribute("aria-busy");
     });
     alt.addEventListener("keydown", (e) => {
-      // legacy-scan:keep isImeEnter (shortcuts.ts) checks isComposing and keyCode 229; the scanner cannot follow it.
+      // legacy-scan:keep ime-safe-enter-submit isImeEnter (shortcuts.ts) checks isComposing and keyCode 229; the scanner cannot follow it.
       if (e.key === "Enter" && !isImeEnter(e)) {
         e.preventDefault();
         void go(false);

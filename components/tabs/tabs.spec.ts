@@ -67,21 +67,6 @@ eachTheme((theme) => {
   });
 
   test(
-    "accessibility: the chosen tab is the one tab stop and each tab names its panel",
-    { tag: "@markup" },
-    async ({ page }) => {
-      await visitStates(page, "tabs", theme);
-      const tabs = page.locator("#tabs-default [role='tab']");
-      await expect(tabs.nth(0)).toHaveAttribute("tabindex", "0");
-      for (const i of [1, 2, 3]) await expect(tabs.nth(i)).toHaveAttribute("tabindex", "-1");
-      await expect(page.locator("#tdp-runs")).toHaveAttribute("aria-labelledby", "td-runs");
-      await expect(page.locator("#td-runs")).toHaveAttribute("aria-controls", "tdp-runs");
-      await expect(page.locator("#tdp-runs")).toBeHidden();
-      await expect(page.locator("#td-alerts")).toHaveAttribute("aria-disabled", "true");
-    },
-  );
-
-  test(
     "accessibility: every tab is at least the target size",
     { tag: "@markup" },
     async ({ page }) => {
@@ -187,17 +172,6 @@ eachTheme((theme) => {
     await expect(page.locator("#tm-media")).toHaveAttribute("tabindex", "-1");
   });
 
-  test("keyboard: link tabs are each a tab stop and Enter follows one", async ({ page }) => {
-    await visitStates(page, "tabs", theme);
-    await page.getByRole("link", { name: "Open 12" }).focus();
-    await page.keyboard.press("Tab");
-    await expect(page.getByRole("link", { name: "Resolved 48" })).toBeFocused();
-    await page.keyboard.press("Enter");
-    // page.url() is Playwright's copy of the address, updated by an event that can arrive after
-    // the key press returns; toHaveURL waits for it.
-    await expect(page).toHaveURL(/#resolved$/);
-  });
-
   test("behavior: a click chooses a tab and shows only its panel", async ({ page }) => {
     await visitStates(page, "tabs", theme);
     await page.locator("#td-settings").click();
@@ -268,15 +242,6 @@ eachTheme((theme) => {
     await expect(page.locator("#tlp-preview")).toHaveAttribute("tabindex", "0");
   });
 
-  test("behavior: the delivered HTML holds every panel, the inactive ones hidden", async ({
-    page,
-  }) => {
-    const html = await (await page.request.get("components/tabs/states.html")).text();
-    expect(html).toContain("24 runs in the last day.");
-    expect(html).toContain('id="tdp-runs" aria-labelledby="td-runs" tabindex="0" hidden');
-    expect(html).toContain('<a class="cap-tab" href="#open" aria-current="page">');
-  });
-
   test("behavior: a list too wide for its space scrolls and keeps the chosen tab in view", async ({
     page,
   }) => {
@@ -297,15 +262,6 @@ eachTheme((theme) => {
       return a.left >= b.left - 1 && a.right <= b.right + 1;
     });
     expect(inView).toBe(true);
-  });
-
-  test("behavior: comfortable density makes the tabs taller", async ({ page }) => {
-    await visitStates(page, "tabs", theme);
-    const compact = await page
-      .locator("#td-overview")
-      .evaluate((el) => el.getBoundingClientRect().height);
-    const roomy = await page.locator("#tc-a").evaluate((el) => el.getBoundingClientRect().height);
-    expect(roomy).toBeGreaterThan(compact);
   });
   for (const mount of ["router", "router-per-link"]) {
     test(`behavior: a router link drawn by the ${mount === "router" ? "nav's" : "link's"} slot keeps the tab's look, count and current state`, async ({

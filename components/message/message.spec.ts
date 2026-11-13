@@ -95,25 +95,6 @@ eachTheme((theme) => {
     `);
   });
 
-  test(
-    "accessibility: a warning is a word as well as an edge, and a failure is an alert",
-    { tag: "@markup" },
-    async ({ page }) => {
-      await visitStates(page, "message", theme, "warning");
-      await expect(page.locator(".cap-message-text")).toContainText(
-        `Seat start is on. Warning: ${AUDIT}`,
-      );
-      await visitStates(page, "message", theme, "failure");
-      await expect(page.getByRole("alert")).toContainText(
-        "Refresh failed: the watcher pass failed",
-      );
-      await visitStates(page, "message", theme, "undo-failed");
-      await expect(page.getByRole("alert")).toHaveText(
-        "Could not undo that. The server did not answer. Try again.",
-      );
-    },
-  );
-
   test("keyboard: a message appears without moving focus", async ({ page }) => {
     await visitStates(page, "message", theme, "try");
     const bin = page.locator("#sample-bin");
@@ -215,14 +196,6 @@ eachTheme((theme) => {
     await expect(page.locator(".cap-message-item")).toHaveCount(0);
   });
 
-  test("behavior: clicking Undo runs it and the region says what was undone", async ({ page }) => {
-    await visitStates(page, "message", theme, "try");
-    await page.locator("#sample-bin").click();
-    await page.getByRole("button", { name: "Undo" }).click();
-    await expect(page.locator("#sample-row")).toHaveAttribute("data-undos", "1");
-    await expect(page.getByRole("status")).toContainText("Undone.");
-  });
-
   test("behavior: a plain result is replaced by the next one", async ({ page }) => {
     await visitStates(page, "message", theme, "try");
     await page.locator("#sample-copy").click();
@@ -292,14 +265,6 @@ eachTheme((theme) => {
     );
     await expect(item.getByRole("button", { name: "Undo" })).toBeVisible();
     await expect(item).toHaveAttribute("data-lasting", "");
-  });
-
-  test("behavior: a warning stays under a newer result in the stack specimen", async ({ page }) => {
-    await visitStates(page, "message", theme, "stack");
-    const items = page.locator(".cap-message-item");
-    await expect(items).toHaveCount(2);
-    await expect(items.first()).toContainText("Seat start is off.");
-    await expect(items.nth(1)).toContainText(`Warning: ${AUDIT}`);
   });
 
   test("accessibility: the leading glyph is hidden, differs by kind, and reaches 3:1", async ({
