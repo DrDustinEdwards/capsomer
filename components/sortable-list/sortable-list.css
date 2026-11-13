@@ -55,7 +55,7 @@
     gap: var(--sortable-item-gap, var(--space-2));
     min-width: 0;
     padding: var(--sortable-item-pad, var(--space-1));
-    border: var(--sortable-item-border, 1px solid var(--line));
+    border: var(--sortable-item-border, var(--line-w) solid var(--line));
     border-radius: var(--sortable-item-radius, var(--radius-m));
     background: var(--sortable-item-bg, var(--surface));
 
@@ -65,7 +65,7 @@
       z-index: 1;
       border-color: var(--accent);
       box-shadow:
-        inset 3px 0 0 var(--accent),
+        inset var(--line-w-bar) 0 0 var(--accent),
         var(--shadow-m);
     }
   }
@@ -124,7 +124,7 @@
     flex: none;
     min-width: 0;
     align-self: center;
-    font-weight: 600;
+    font-weight: var(--weight-semibold);
   }
 
   .cap-sortable-handle {
@@ -212,7 +212,7 @@
       /* A small button's own inset; 0 leaves the bare word, flush with the item's edge. */
       padding-inline: var(--sortable-remove-pad-inline, calc(var(--pad-x) - 1px));
       font-size: var(--sortable-remove-fs, var(--cap-btn-fs));
-      font-weight: var(--sortable-remove-weight, 500);
+      font-weight: var(--sortable-remove-weight, var(--weight-medium));
 
       &:not(:disabled) {
         color: var(--sortable-remove-ink, var(--sortable-step-ink, var(--muted)));
@@ -228,7 +228,7 @@
   .cap-sortable-label {
     display: block;
     overflow: hidden;
-    font-weight: 500;
+    font-weight: var(--weight-medium);
     text-overflow: ellipsis;
     white-space: nowrap;
   }
@@ -245,7 +245,7 @@
      an item. */
   .cap-sortable-empty {
     padding: var(--sortable-empty-pad, var(--space-4));
-    border: var(--sortable-empty-border, 1px dashed var(--line-strong));
+    border: var(--sortable-empty-border, var(--line-w) dashed var(--line-strong));
     border-radius: var(--radius-m);
     color: var(--muted);
     font-size: var(--fs-detail);
@@ -287,12 +287,12 @@
       &[data-lifted],
       &[data-dragging],
       &[data-force="lifted"] {
-        outline: 3px solid Highlight;
-        outline-offset: -1px;
+        outline: var(--line-w-bar) solid Highlight;
+        outline-offset: calc(-1 * var(--focus-offset-tight));
       }
     }
     .cap-sortable-handle[aria-pressed="true"] {
-      outline: 2px solid Highlight;
+      outline: var(--focus-width) solid Highlight;
     }
   }
 }

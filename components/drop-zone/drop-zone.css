@@ -39,7 +39,7 @@
     box-sizing: border-box;
     min-block-size: calc(var(--control) * 3.5);
     padding: var(--pad-card);
-    border: 1px dashed var(--cap-drop-edge);
+    border: var(--line-w) dashed var(--cap-drop-edge);
     border-radius: var(--radius-l);
     background: var(--surface);
     color: var(--text);
@@ -51,7 +51,7 @@
     }
     &:has(.cap-drop-input:focus-visible) {
       outline: var(--ring-width) solid var(--ring);
-      outline-offset: 2px;
+      outline-offset: var(--focus-offset);
     }
   }
 
@@ -67,12 +67,12 @@
   }
 
   .cap-drop-title {
-    font-weight: 600;
+    font-weight: var(--weight-semibold);
   }
   /* "browse" reads as the link it is; the whole label is the target. */
   .cap-drop-browse {
     color: var(--accent-text);
-    font-weight: 600;
+    font-weight: var(--weight-semibold);
   }
   .cap-drop-hint {
     color: var(--muted);
@@ -89,7 +89,7 @@
     & .cap-drop-label {
       --cap-drop-edge: var(--accent);
       border-style: solid;
-      border-width: 2px;
+      border-width: var(--line-w-thick);
       background: var(--accent-soft);
     }
     & .cap-drop-idle {
@@ -136,7 +136,7 @@
       place-content: center;
       justify-items: center;
       gap: var(--space-3);
-      border: 3px dashed var(--accent);
+      border: var(--line-w-bar) dashed var(--accent);
       border-radius: var(--radius-xl);
       background: var(--raised);
       color: var(--text);
@@ -153,7 +153,7 @@
   .cap-drop-overlay-title {
     margin: 0;
     font-size: var(--fs-h3);
-    font-weight: 800;
+    font-weight: var(--weight-heavy);
   }
   .cap-drop-overlay-text {
     margin: 0;
@@ -182,12 +182,12 @@
   }
   .cap-drop-rejections {
     padding: var(--space-3) var(--space-4);
-    border: 1px solid var(--crit);
+    border: var(--line-w) solid var(--crit);
     border-radius: var(--radius-m);
     background: var(--crit-soft);
   }
   .cap-drop-lead {
-    font-weight: 600;
+    font-weight: var(--weight-semibold);
 
     &[data-tone="crit"] {
       display: flex;

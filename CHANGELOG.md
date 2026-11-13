@@ -1,19 +1,63 @@
 # Changes
 
-Each release names every removed or renamed token or class, and every changed HTML contract.
+Each release names every removed or renamed token or class, and every changed HTML contract. A pull request adds its entry as a
+changeset (`npx changeset`, `.changeset/README.md`); the release pull request writes them here.
 
-## [Unreleased]
+## 0.143.0
 
-- **Breaking: the compatibility aliases are gone** (pre-launch: no aliases). **Removed:** `summarise` (authorship; use `summarize`), `analyse` (draft-compare; use `analyze`), `renderEmailColours` (palette; use `renderEmailColors`), the token `--control-h` (use `--control`; also dropped from `tokens.json`, the showcase's density presets and Foxhound's site layer; `--control-h-coarse` stays), the custom properties `--cap-run-colour` and `--cap-meter-colour` (set `--cap-run-color` and `--cap-meter-color`), the dialog placement `"centre"` (use `"center"`), the `Skeleton`, `Spinner` and `SkeletonBlock` re-exports from `capsomer/react/empty` (import them from `capsomer/react/skeleton`), the `intentForm` and `outcomesOf` re-exports from `posts-list` (import them from `capsomer/content`), the `errorText`, `isBackdropClick`, `isBusy`, `rememberOpener`, `returnFocus` and `wordMatches` re-exports from `capsomer/behavior/confirm-dialog` (the first five from `capsomer/behavior/dialog`, `wordMatches` from `capsomer/confirm-server`), and the showcase's `#/colour` address.
-- **Command menu: the React menu has the answer under the list.** `CommandMenu` takes `answer: { label, offer, run(query, region) }`, as `createCommandMenu` does, and renders the same `.cap-cmd-answer` (button, status, region); `offer` is read on each render (the React form of `offerAnswer`). The two share `startAnswer` and `focusAnswer` (new exports of `capsomer/behavior/command-menu`), so the load, the failed-load words, the late-answer cancel and the focus move are one code.
-- **Frontmatter fields: `typedProps(box, locked, write)`**, from `capsomer/react/frontmatter-fields`: an `input` or `textarea`'s props from a `useTyped` box (the value, `cap-input`, read-only when locked, `done` on blur, each change kept and written). The fields' own boxes use it; Carrel's post and search fields can import it in place of their copy (`app/components/editor/post-fields.tsx`).
-- **Chevrons come from the icon set.** The carousel, combobox, menu (trigger and submenu), tree, date picker and settings back link drew their own chevron SVGs (16- and 20-unit copies); they now draw `iconChevronLeft`, `iconChevronRight` and `iconChevronDown` (`Icon` in React, `iconSvg` in the behavior modules), each component setting `--icon-size` and `--icon-stroke` so the line keeps its weight. New icons `iconChevronsLeft` and `iconChevronsRight` (the date picker's year buttons). HTML contract: the chevron is now `<svg class="cap-icon" viewBox="0 0 24 24">` with the set's path, in the carousel's buttons, the combobox trigger, `.cap-menu-trigger`, `.cap-menu-chevron`, `.cap-tree-toggle` and `.cap-settings-back`. The showcase's previous and next arrows draw them too. The chevrons are a little narrower (the set's 12-unit span), otherwise unchanged.
+- **Every design value in Capsomer's CSS is a token.** `capsomer token-check` checked only colors and spacing (83 warnings); it now checks every kind of design value: colors (hex, `rgb()`, `oklch()` and the rest, named colors, and var() fallbacks), spaces, font sizes (and the `font` shorthand), weights, line heights, tracking, radii, line widths, outline widths and offsets, layers, durations, easings, shadows and opacities, and names the exact token or the nearest step. The scanner is `rawValues(css, tokenScale(tokens.json))` in `capsomer/token-check`, pure over CSS text, so a site's gate can run it. `capsomer token-check --fix` (and `fixCss`) writes every value that has an exact token in place, which changes nothing on the page; the report then lists only what needs a choice. Not checked, on purpose: a component's own geometry, relative units, lengths inside `calc()` that are not a step, and print (paper is black on white). It found 1,650 raw values in components/ and css/; all are now tokens, except the error ad's two ink colors (artwork). site/ waits for the docs site rebuild (#405).
+- **New scale steps**, each where Capsomer already used the value: `--space-1-5` (3px), `--space-2-5` (6px), `--space-3-5` (10px); `--radius-xs` (2px); `--fs-tiny` (0.625rem), `--fs-small` (0.75rem), `--title-display` (fluid 32 to 48px); `--weight-light` to `--weight-heavy` (300 to 800); `--leading-none`, `-tight`, `-snug`, `-compact`, `-normal`, `-relaxed`, `-loose` (1 to 1.7); `--tracking-tighter` to `--tracking-sign` (-0.04em to 0.1em); `--opacity-ghost`, `-faint`, `-half`, `-muted`, `-soft`; `--line-w-mid` (1.5px), `--line-w-bar` (3px), `--line-w-heavy` (4px), `--line-w-band` (6px); `--focus-offset-tight` (1px); `--dur-pulse` (1.6s), `--dur-flow` (2s).
+- **Values snapped to the scale** (a fraction of a pixel or a few percent each, no layout change): line heights 1.35, 1.25, 1.55, 1.45, 1.65 and 1.15 to the nearest step; tracking 0.07em, 0.05em and 0.12em to 0.08, 0.06 and 0.1em; radii of 1px to 2px; opacities 0.28, 0.4, 0.55 and 0.7 to 0.35, 0.35, 0.5 and 0.6; spinners of 0.8 and 1s and the editor's 1.1s blink to `--dur-wait` (0.9s); the ambient loops, the skeleton pulse and the long-name marquee from the browser's `ease-in-out` and `ease-in` to `--ease-in-out`; weight 650 to 600; the dictionary headword from 28 to 30px; the site header's 12.5px label to 12px; the 404 title onto `--title-display` (its widest size grows from 44 to 48px).
+- **Density now reaches the sizes components hard-coded.** A size equal to a density step is now that step (`--fs-label`, `--fs-detail`, `--fs-body`, `--fs-lead`), as DEFAULTS asks, so under `data-density="comfortable"` those labels and leads grow with the rest. Compact, the default, draws the same.
+- **One `dayKey`, site-runtime's.** site-runtime 0.155.0's `./time` exports the zone-aware `dayKey(at, zone?)` (a Date, epoch milliseconds or a stored time; zoneless text is UTC; the runtime's zone without one), so Capsomer's own copy and its formatter cache are gone from `time.ts`, and devkit's shared-code check stops failing on it. The time functions, history list, schedule and writing progress import it from `@dustinedwards/site-runtime/time`. **Removed exports: `dayKey` from `capsomer/behavior/time` and `capsomer/behavior/writing-progress`**: import it from `@dustinedwards/site-runtime/time`. **Peer floor raised: `@dustinedwards/site-runtime` `>=0.155.0`** (was `>=0.131.0`); a site that uses the time, history list, schedule or writing progress behavior needs site-runtime 0.155.0 or later. No token, class or HTML contract changes.
+- The token work removes or renames no token or class and changes no HTML contract.
 
-## [0.141.1]
+## 0.142.0
+
+The gaps the site moves onto 0.132.0's content and marketing blocks found (bsw, julieedwards.info, dei, Foxing, germomics, Foxhound). Every site can get its current look back by setting tokens or props; each default stays what 0.132.0 drew, except the fixes below. No token, class or contract is removed or renamed.
+
+**Fixes**
+
+- **FAQ: a rule between questions again.** Each question sits in its own `li`, so the disclosure's `:last-of-type` (which ends the rules between accordion sections) matched every one and no rule was drawn. The FAQ draws the rule for its items: under each but the last.
+- **Price card, poll, leaderboard: `font-family: var(--figures, ...)`.** `--figures` is a `font-variant-numeric` value, so as a face it was invalid and the text fell back to the inherited face. The price card's amount is in the mono face, as its doc said (new slot `--cap-price-face`; a site that set `--figures` to a face sets this instead); the leaderboard's score in the mono face; the poll's count keeps the face it drew (the line is removed).
+- **Ambient: the equalizer's bars take their heights.** `&:nth-child(n)` nested in the equalizer selected the layer itself, not `> span:nth-child(n)`, so no bar got its `--h`.
+- **Ambient and AI sample: React renders the HTML contract `enhance()` finds.** `Ambient` renders `data-cap="ambient"` (not `data-cap-ready`), and `AiSample` renders `data-cap="ai-sample"`, `data-ai-sample-generate` and a text `busyLabel`'s `data-busy-label`, so a server-rendered page that never hydrates can call `enhance()` on them (the off-screen pause, the generate button). Once hydrated, React marks them `data-cap-ready` itself; a layer `enhance()` already took is left to it.
+- **Ambient: one file per kind.** `ambient.css` (all three, the same rules) imports `capsomer/ambient-base.css` (what every kind shares), then `ambient-hex-field.css`, `ambient-blobs.css` and `ambient-equalizer.css`; a page that draws one kind imports the base and its kind alone. A blobs-only hero drops from 1.3 KB gzip to 0.9 KB.
+- **Poll: the count is a polite live region** (`aria-live="polite" aria-atomic="true"` on `.cap-poll-count`), so a vote that changes it is announced, as Foxing's own poll did.
+- **Poll options and the like button are in the interface face** (`--ui`), not `font: inherit` (the reading face around them on a serif page).
+- **Contact card: a phone number is a `--target` tall** (24px, 44px on a touch screen), as its doc said; it was a literal 24px, so two numbers that wrapped onto two lines were too close on a touch screen (WCAG 2.5.8, found by the sweep once a joining word made them wrap).
+- **Newsletter sign-up: `renderForm` is given `NewsletterFormProps`** (`method: "post"`, not a plain string), so React Router's `Form` takes them spread with no cast.
+
+**Tokens** (each default is the value 0.132.0 drew)
+
+- Prose page: `--cap-prose-page-title-leading` (1.15), `--cap-prose-page-title-max` (40rem), `--cap-prose-page-title-wrap` (`balance`), `--cap-prose-page-body-pad` (`--space-8`).
+- Section band: `--cap-band-pad-top` and `--cap-band-pad-bottom` (the slant's depth and `--space-6`).
+- Price card: `--cap-price-face` (`--mono`), `--cap-price-weight` (600), `--cap-price-unit-size` and `--cap-price-label-size` (`--fs-detail`), `--cap-price-label-weight` (400).
+- Contact card: `--cap-contact-card-title-face` (`--display`), `-size` (`--fs-h3`), `-weight` (`--weight-heading`), `-color` (`--text`), `-tracking` (`normal`), `-case` (`none`); `--cap-contact-way-color` (`--accent-text`, also a linked address), `--cap-contact-way-face` and `--cap-contact-way-size` (inherited); `--cap-contact-address-color` (`--muted`), `-face` and `-size` (inherited); `--cap-contact-way-min` (12rem).
+- Eyebrow: `--cap-eyebrow-size` (`--fs-label`), `--cap-eyebrow-weight` (600; mono 500), `--cap-eyebrow-color` (`--muted`), and `data-tone="dim"` (`--dim`).
+- Leaderboard: `--cap-leaderboard-name-face` (inherited). Newsletter: `--cap-newsletter-bg` (`--surface`), the card's ground apart from the field's. Sources: `--cap-source-kind-pad` (1px `--space-2`).
+- **Sites: dustinedwards.info's entry sets `--cap-eyebrow-tracking: 0.08em`**, its labels' tracking.
+
+**Props, slots and attributes** (each off or unchanged by default)
+
+- `Eyebrow`: `className`, `tone="dim"`.
+- `PlanChoice`: `className`, `hideLegend` (`<legend class="cap-sr-only">`: read, not shown, no room). A plan option: `note` (`.cap-plan-option-note`, a line under the price).
+- `PriceCard`: `name` is optional; `text` takes a list, a paragraph each (a second line).
+- `ContactWay`: `iconEnd` (an icon after the words). `ContactLine`: `join` (a word between the numbers, "or"). `ContactCard`: `wayColumns`, `data-columns="1|2|3"` on one card's `.cap-contact-ways`.
+- Annotated document: `data-hide-notes="original"` (`hideNotesInOriginal`: the original is the text alone, full width), `data-view-align="center|end"` (`viewAlign`), `data-kind="tone"` (`kind="tone"`: each note's kind in its tone's color and its icon a disc of the tone).
+- `ProsePage`: `html`, a body the server stored and sanitized as HTML, through the `capsomer` Trusted Types policy; `ProsePageHead`, the title band alone (an error page).
+- Ambient: `data-hide="phone"` on the equalizer (`hideOnPhone`) leaves it out under 48rem.
+- `SourcesList`: `markAway` marks a link to another site with the link system's ↗ (`data-link="away"`).
+- `FeatureCard`: `tag` (`.cap-feature-card-head` and `.cap-feature-card-tag`, a pill at the end of the title's line) and `attributes` (the site's own `data-*` on the card).
+- Process: a step's `end` (`.cap-process-end`), its timing and status at the end of a row's line.
+
+**Also in this release (#411)**
+
+## 0.141.1
 
 - **The `enarratio` peer range adds `^0.15.0`.** Enarratio 0.15.0 adds `enarratio/lite/sparkline`, so a site that wants it could not install it beside Capsomer (npm ERESOLVE). The dev dependency is 0.15.0 and the full check passes unchanged; no token, class, export or HTML contract changes.
 
-## [0.141.0]
+## 0.141.0
 
 - **Field: `SpanField`, a span chosen from two menus (From and To).** It was Catalog's range facet, which only a Catalog could draw, so a page with its own filters (dustinedwards.info's CV) had to keep its own year menus. It is now a part of Field, in `field.css`, and Catalog's range facet renders it. A page that draws it loads `field.css` and `select.css` (its menus are `select.cap-select`), not the catalog's stylesheet.
 - **Removed classes: `.cap-catalog-range`, `.cap-catalog-range-ends`, `.cap-catalog-range-end`.** They are `.cap-span-field-ends` and `.cap-span-field-end` (in `field.css`); the facet's fieldset keeps `.cap-field.cap-catalog-facet`. HTML contract: the range facet's ends are `div.cap-span-field-ends > div.cap-span-field-end`, each a `label` (for its menu's id) and the `select.cap-select`; the From and To labels take the date input's part-label look (detail size, weight 500) in place of the field label's.
@@ -24,26 +68,26 @@ Each release names every removed or renamed token or class, and every changed HT
 - **Theme switch: optional `onError(error)`** on `ThemeSwitch`, `ThemeButton`, `enhance` and `chooseTheme`/`toggleTheme`'s memory, called when `onSave` throws or rejects. Without it the failure is let go as before.
 - **Carousel: `trackLabel`** names the scrolling track (default "Slides"), for a page in another language.
 
-## [0.139.1]
+## 0.139.1
 
 - **Fix: `capsomer/role-grid.css` resolves.** 0.139.0 added the file but the `./*.css` export maps a name to `components/<name>/<name>.css`, so `@import "capsomer/role-grid.css"` failed to resolve; it now has its own export. No class or token changes.
 
-## [0.139.0]
+## 0.139.0
 
 - **Breaking: the layout classes and the text roles are their own stylesheets, no longer part of `base.css`.** `base.css` imported `utilities.css`, which since 0.126.0 carried the layout classes (`.cap-stack`, `.cap-cluster`, `.cap-spread`, `.cap-grid`, the panes and the item helpers, 1.98 KB gzip) and the text roles (`.cap-text`, `.cap-title`, `.cap-clamp`, 1.22 KB gzip), so every site shipped about 3.2 KB gzip it might not use (txasm's public routes grew 2.9 KB gzip, the Portal's CSS went over its budget). They are now `capsomer/layout.css` and `capsomer/text.css` (`css/layout.css`, `css/text.css`). **A site that uses those classes adds `import "capsomer/layout.css";` and `import "capsomer/text.css";` beside `capsomer/base.css`** (Foxing, Carrel and the Portal use both); a site that does not, changes nothing and loses the weight. `capsomer/utilities.css` keeps everything else. No class, token or attribute is renamed or removed, and no HTML contract changes.
 - **Breaking: the role grid's rules are `capsomer/role-grid.css`, no longer part of `people-roles.css`.** `people-roles.css` held two independent sets, the members page (`.cap-people-*`, about 1.4 KB gzip) and the `RoleGrid` rules (`.cap-role-grid`, `.cap-role-person`, `.cap-role-email`, `.cap-role-pills`, `.cap-role-actions`, 0.6 KB gzip), so an app that draws only the grid shipped the members page for nothing. The rules are unchanged. A site that draws `RoleGrid` adds `@import "capsomer/role-grid.css"` (Carrel: beside `people-roles.css`, which it can drop if it draws no members page). No token, class or HTML contract changes.
 
-## [0.137.0]
+## 0.137.0
 
 - **`MediaPicker` and `ImageField` load the media library when the dialog opens.** `media-picker.react.tsx` imported `MediaLibrary` statically, so a page that drew only the button (an editor, a settings form) shipped the whole library: 32 KB gzip on Carrel's editor route (capsomer#408). The library is now its own chunk behind `React.lazy` and `Suspense`, showing the same "Loading media..." text while it arrives. No token, class, export or HTML contract changed.
 
-## [0.135.0]
+## 0.135.0
 
 - **Command menu: an answer under the list.** `answer: { label, offer, run(query, region) }` on `createCommandMenu`, `buildMenu` and `attach` adds `.cap-cmd-answer` (a quiet button, a status, `.cap-cmd-answer-region`) between the list and the key hints: the button shows while words are typed, `run` fills the region and returns `{ cancel }` (or a promise of it, so its code loads only when pressed), focus moves into the answer before the button hides, and typing again or closing cancels it. `ask(region, options)` from `capsomer/behavior/ask-panel` is such a `run`. `offer: false` with `Attached.offerAnswer(on)` lets a search say whether answers are on. New export `ANSWER_LABEL`, type `AnswerRun`. The React menu has no answer area yet.
 - **Ask panel: focus moves to the answer when its trigger hides, also while the browser still reports the hidden trigger as focused.** dei's Ask checked for this; the extraction had dropped it.
 - **Ask panel: the sources are an `ol` named by its "Sources" heading.** Before, the heading was the list's first item, so a screen reader counted it as a source, and the numbers were text inside each link. HTML contract: `.cap-ask-sources` is now a `div` holding `p.cap-ask-sources-heading` and an `ol` (numbers from `list-style`); `.cap-ask-source-index` is removed.
 
-## [0.134.0]
+## 0.134.0
 
 - **Sites: dustinedwards.info's entry no longer sets `--radius-control: 0`.** 0.126.0 carried it over from the site's app.css, but before Capsomer 0.123.0 no control read that token, so the live site's buttons and fields have always been rounded; with it, they turned square. Its controls keep Capsomer's `--radius-m`.
 - **Fonts: one file per family.** `capsomer/fonts-<family>.css` (`fonts-dm-sans.css`, `fonts-dm-mono.css`, `fonts-inter.css`, `fonts-source-serif-4.css`, and one for each other face) holds that family's faces and its size-matched fallback, written by tokens/fonts.mjs beside `fonts.css`, for a site that draws only some of the network's faces: Foxhound draws DM Sans and DM Mono alone, and the whole fonts.css cost its dashboard 2 KB gzip of rules it never uses. `fonts.css` is unchanged.
@@ -53,13 +97,13 @@ Each release names every removed or renamed token or class, and every changed HT
 - `@drdustinedwards/site-helpers` is now at least 0.55.0 (dev v0.55.0, peer `>=0.55.0`), and `token-check` needs it installed. The dev `@dustinedwards/site-runtime` moves to v0.143.0, which Prelum 0.55.0 requires as a peer; Capsomer's own site-runtime peer range is unchanged.
 - **A progressive tab set prints every panel.** The print rule set `display: block` in `cap.components`, and the reset's `[hidden] { display: none !important }` in `cap.reset` beats every later layer, so the inactive panels stayed off the page. The rule is now `!important` in `cap.reset`, where its specificity wins. No token or class changed.
 
-## [0.133.0]
+## 0.133.0
 
 - **New layout: panes** (`css/utilities.css`). `.cap-panes` sets two panels side by side, the first the wider (3:2); `data-flip` makes the second the wider (2:3) and `data-even` halves the row. The gap is `data-gap` like the other layouts (default `--space-6`). The panes stack when the row is narrower than `--panes-break` (50rem), measured on the row itself rather than the window, so they also stack inside a narrow shell or a drawer, with no media query. Tops line up and a short pane does not stretch; a third panel takes a row of its own. It replaces the Portal's `.grid2` and Carrel's `.app-split`.
 - **Stacks take `data-align`** (`start`, `center`, `end`): every item keeps its own width, lined up on that side, as clusters already could. It replaces the Portal's `.mt4` and `.mt8` notes under a status and its stacked button cells. Removed or renamed: no token or class.
 - Showcase site: every page carries `<meta name="color-scheme" content="light dark">`, so `theme.js` and the theme switch have a meta to set before paint, and `<meta name="text-scale" content="scale">`, so the site follows the reader's system text size (Modern Web Guidance, respect-os-text-scale). They come from `siteHead()` (site/seo.ts); the states pages already had both. Nothing in the package changes.
 
-## [0.132.0]
+## 0.132.0
 
 **Content and marketing blocks** (the shared-code audit's batch 5, clusters C39-C53). Nineteen new components, a stream reader and three additions, each built once from the sites that had it, so every site gets the same block and the same behavior. New classes, exports and HTML contracts only; no token, class or contract is removed or renamed.
 
@@ -71,7 +115,7 @@ Each release names every removed or renamed token or class, and every changed HT
 - **The peer `@dustinedwards/site-runtime` is `>=0.131.0`**: the ask panel reads frames with its `./ai-ask` and `Document` re-exports its `./deferred-scripts` `routeHydrates`.
 - **Hydrating on intent is site-runtime's** (`./deferred-scripts` and `./hydrate-on-intent`), not part of `Document`.
 
-## [0.131.0]
+## 0.131.0
 
 - **Form and async hooks: `capsomer/react/form-hooks`** (shared-code audit pass 2, cluster C21). `useSaveQueue` (save on change without racing saves), `useDraftDirty`, `useDebounced` and `useDebouncedPreview` (an overtaken request is aborted), with no router or DOM; the pure parts (`createSaveQueue`, `draftAfter`, `draftDirty`, `filterParams`, `withParam`, `pagePending`) from `capsomer/behavior/form-hooks`. From Foxhound, Foxing, dustinedwards.info, Carrel and the Capsid Portal.
 - **Confirm dialog: `useConfirmAction` and `useTwoStep`** in `capsomer/react/confirm-dialog`: the subject and opener a page's confirm dialogs share, and preview-then-perform with the server's words on every failure and an expired preview dropped. From Carrel and the Capsid Portal.
@@ -80,19 +124,19 @@ Each release names every removed or renamed token or class, and every changed HT
 - **Data hooks: `capsomer/react/data`** (cluster C23). `createQueryClient`, `useSeededQuery`, `useWrite` with `patch` and `patchAll`, `Answer` with `getAnswer`, `postAnswer`, `answerOf`, `ask` and `SignedOut`, `useAnswer`, `createFlag` and `useFlag`, `useLiveRoom` (reconnects with backoff and jitter; Foxing's club room did not reconnect) and `preloadedLazy`. `@tanstack/react-query` is a new optional peer (`^5.104.0`). Nothing in it touches the DOM, so Foxing's shared web and mobile client uses it.
 - No token or class was removed or renamed.
 
-## [0.130.0]
+## 0.130.0
 
 - **The theme switch keeps `<meta name="color-scheme">` in step.** A choice made on the page now sets the meta's content as well as `data-theme` (`colorSchemeContent`: the choice, or `light dark`). Before, a site that wrote the meta on the server (dustinedwards.info) kept the old value until the next page, so the browser's own controls and the canvas painted before the CSS showed the other scheme (Modern Web Guidance, dark-mode-toggle). No HTML contract changes; a page without the meta is unchanged.
 - Showcase site: `theme.js` sets the meta from the stored choice before paint, and the home band's word stagger is one `sibling-index()` rule in place of seven `:nth-child` delays (a browser without it raises the words together).
 - The five Enter handlers Chrome's legacy scanner flags (confirm-dialog, markdown-editor twice, media, rich-editor) carry `legacy-scan:keep` with the reason: `isImeEnter` (shortcuts.ts) already checks `isComposing` and keyCode 229, and the scanner cannot follow a helper (devkit 0.45.0). The legacy scan's count is 0.
 
-## [0.127.0]
+## 0.127.0
 
 - **New: text roles, titles and line clamps** (`css/utilities.css`). `.cap-text` sets a run of text's role with one attribute per axis: `data-size="tiny|small|lead"`, `data-tone="muted|dim|ink|accent|ok|crit"`, `data-weight="strong"`, `data-face="ui|mono|prose|display"`, `data-align="center|end"`. `.cap-title` is a title outside a component, `data-size="1"` to `"6"` (2.25rem to 1rem, the display face at `--title-weight`). `.cap-clamp` cuts text at `data-lines="1"`, `"2"` (default) or `"3"` with an ellipsis. They replace the text-role and clamp classes Foxing, the Portal and txasm each wrote. New tokens a SITES entry may set: `--text-tiny`, `--text-small`, `--text-lead` (unset by default, so they fall back at use to `--fs-label`, `--fs-detail` and `--fs-lead`), `--text-strong` (600), `--title-weight` (the heading weight), `--title-1` to `--title-6`, and `--mono-size` (0.75rem), which `.cap-mono` now reads. Foxing's entry sets its text sizes (12, 14 and 18px), its strong weight (500) and its title weight (600); the Portal's sets 13px identifiers. Removed or renamed: no token or class.
 - **Anchor bar: React finds its own sections.** `<AnchorBar />` without `sections` renders an empty, hidden bar and lets the behavior module fill, show and spy on it, as the module does for plain HTML. A `[data-section][id]` block inside another is no longer an entry: the bar names the outer sections only (from the Portal's own bar, which it replaces).
 - **Sites: txasm's entry sets `--title-weight: 600`**, its page titles' weight before they moved onto `.cap-title`.
 
-## [0.126.0]
+## 0.126.0
 
 - **Layout: item helpers.** `.cap-grow` (takes the room its row leaves and may shrink below its content), `.cap-shrink` (a flex or grid item that may shrink below its content: `min-inline-size: 0`), `.cap-keep` (never shrinks), `.cap-full` (a whole row: every grid column, the full line of a cluster, the full width of a block) and `.cap-column`, a centered column for a form (42rem), with `data-width="narrow"` (28rem, a sign-in) or `"reading"` (48rem). They replace txasm's `.grow`, `.shrink`, `.span-2`, `.narrow`, `.form-page` and `.reading`, and Foxing's `.grow`, `.shrink-0`, `.min-0` and `.full`.
 - **New: site footer** (`capsomer/site-footer.css`, `.cap-site-footer`, `.cap-site-footer-links`, `.cap-site-footer-note`): a site's own plain footer for a site outside the family footer, a hairline over a links row, a mark and the small print, in the page's column; `data-tone="raised"` on the raised surface, `data-links="quiet"` for muted links. Slots `--site-footer-gap`, `--site-footer-pad`, `--site-footer-bg`, `--site-footer-fs`. From txasm's and julieedwards.info's footers.
@@ -101,7 +145,7 @@ Each release names every removed or renamed token or class, and every changed HT
 - **Sites: dustinedwards.info's entry sets `--radius-control: 0` (its square controls) and `--z-progress: 900` (its reading-progress line over its own 800 overlay)**, which its app.css declared itself.
 - **Fonts: DM Sans declares its file's whole weight axis** (100 to 1000, was 400 to 700), as dustinedwards.info's font gate checks every face it loads.
 
-## [0.125.0]
+## 0.125.0
 
 Second-pass shared-code audit, batch 1 (Dustin, 2026-11-11: any UI that is a component lives in Capsomer, even if one site uses it).
 
@@ -115,7 +159,7 @@ Second-pass shared-code audit, batch 1 (Dustin, 2026-11-11: any UI that is a com
 
 No token or class was removed or renamed.
 
-## [0.124.0]
+## 0.124.0
 
 Batch 6 of the shared-code audit, pass 2 (C54 to C63, data display): what the sites wrote by hand for numbers, statuses, steps, charts, search results, graphs, the system map's model, catalogs and media picking, moved into components. New peers: `@dagrejs/dagre ^3.1.3` and `zod ^4.6.7`, both optional (only `capsomer/behavior/graph` and `capsomer/behavior/system-model` import them).
 
@@ -132,7 +176,7 @@ Batch 6 of the shared-code audit, pass 2 (C54 to C63, data display): what the si
 
 No token was removed or renamed.
 
-## [0.123.0]
+## 0.123.0
 
 ### Tokens, CSS and build (shared-code audit, batch 7)
 
@@ -153,25 +197,25 @@ No token was removed or renamed.
 - **`capsomer/testing`**: `expectNoOverflow(page, widths)` and `expectShellRenders(page, paths)`; and in `capsomer/testing/page` (any page with `evaluate`, Playwright's or Puppeteer's) `CHECK_WIDTHS`, `overflowScan`, `shellState`, `runningMotion` and `loadedScripts`, with `headContractProblems(html)` (the color-scheme meta before the first stylesheet).
 - No token or class was removed or renamed.
 
-## [0.122.0]
+## 0.122.0
 
 - **germomics' palette is its site entry.** `site-germomics.css` now carries germomics' own colors in both themes (crystal violet buttons, cyan links and focus, violet-tinted neutrals), its Space Grotesk UI face, JetBrains Mono, its 60px header and its 2px ring, and goes on `<html>` on the public pages, so the site can drop its hand-made map onto Capsomer's roles and its Tailwind palette. It also sets `--surface`, `--muted` and `--accent`, the names germomics' own palette shared with Capsomer's. The cyan link, the control borders, dark muted and dim text and the dark primary hover are lifted to Capsomer's APCA floors, and prefers-contrast: more has its own values. A site entry may now set brand roles when `ownBrand` says why (two hues no family has), and may give its own `more` values. Removed: the admin's mono-only use of the entry; germomics' admin takes Capsomer's own look, mono included, and drops `data-cap-site` from its element.
 
-## [0.121.0]
+## 0.121.0
 
 - **Links: `--link-hover-decoration`, a line under the pointer.** New token (none): a text link's line on hover, drawn `--link-offset` under the text. Foxhound's entry now keeps the network's semibold link with no line at rest and shows the line on hover in place of the tint; its at-rest underline, weight and `--link-decoration` settings are removed (Dustin, 2026-11-13: "the links should not be underlined"). Removed or renamed: no token or class.
 
-## [0.120.0]
+## 0.120.0
 
 - **Links: a site's line on text links only, and `--link-offset`.** `--link-decoration` now draws on text links (no component class, or a `data-link` kind) outside a `nav`, as the tints do; every other link has no line. New token `--link-offset` (auto) sets how far the line sits under the text. Foxhound's entry sets Recova's links: underlined 2px under the text at the text's own weight, with no tint (Dustin, 2026-11-13). Its entry now also goes on `<html>` on every page but the admin. Removed or renamed: no token or class.
 
-## [0.119.0]
+## 0.119.0
 
 - **New: `capsomer/reset.css`, an opt-in element reset.** Tailwind's preflight (MIT, notice in the file) in the `cap.reset` layer, its faces read from `--face` and `--mono`: margins, padding and borders to zero, headings and lists unstyled, media as blocks, form controls inheriting the text. For a site leaving Tailwind (bsw, germomics, Foxhound) so its pages keep the same spacing, and for dustinedwards.info, which vendored the same file (`app/styles/reset.css`). `base.css` does not import it. Removed or renamed: no token or class.
 
 - **Icons: the pictograms the Tailwind sites drew with lucide-react.** 73 new names in `ICONS` (account, activity, alert, antenna, arrow-up-right, banknote, brake, bug, building, calendar-clock, captions, card, circle, cloud-upload, cut, database, disc, dna, edit, file-audio, file-check, file-up, gamepad, globe, graduation, headphones, idea, image-up, info, inspect, key, library, link, list-checks, list-ordered, list-tree, lock, megaphone, mic, music, music-note, paste, percent, phone, play, plug, podcast, quote, radio, receipt, refresh, repeat, reset, save, scale, scroll, send, share, shield, shield-check, sliders, spinner, store, trash, trending-down, trending-up, trophy, undo, upload, user, user-check, user-plus, warning, webhook), each Lucide's drawing joined into one path (pixel-identical at Lucide's stroke), so Foxhound, germomics and bsw can drop lucide-react; graduation and file-check are julieedwards.info's own drawings from its priorities. Lucide's ISC notice (and Feather's MIT one) ships as `components/icons/LICENSE-lucide.txt`. Where the set already had the meaning, a site takes the set's drawing (icons.md lists the pairs). Removed or renamed: no token or class.
 
-## [0.118.0]
+## 0.118.0
 
 Forms and inputs (shared-code audit pass 2, batch 2: C14 to C20). Nothing removed or renamed; no HTML contract changed.
 
@@ -186,30 +230,30 @@ Forms and inputs (shared-code audit pass 2, batch 2: C14 to C20). Nothing remove
 - **New: file attach** (`file-attach`). The drop zone's input as a button, its checks before sending, and the attached files listed.
 - `SlugField` uses `@drdustinedwards/site-helpers` `SLUG_PATTERN` (0.45.0 and later).
 
-## [0.117.0]
+## 0.117.0
 
 - **Site header: a letterhead with section links writes no menu button and no sheet.** Its links row is the phone's too (it swipes), so the React header leaves `.cap-site-header-menu` and `dialog.cap-site-header-sheet` out of the markup there, where CSS used to hide them; an admin's letterhead (no section links) keeps both. Removed: the CSS rule that hid the menu button in a letterhead with links. With this, dustinedwards.info renders `SiteHeader` (`hydrate={false}`, its structured panels as each section's `panel`) instead of a hand-written copy of the letterhead.
 - **Site header: the no-script theme form takes the theme's place in the letterhead.** With `themeAction` the form (`.cap-theme-form`) is the tools' item, so the letterhead's order (search, theme, extras, account, menu) now reaches it; sites no longer set its `order` themselves. Removed or renamed: no token or class.
 
-## [0.116.0]
+## 0.116.0
 
 - **New: `capsomer/links.css`, the link system's base alone.** Every link's base cues (the link color, semibold with no line, the hover and pressed tints, the visited color) move from `css/base.css` into `css/links.css`, which base.css imports, so a site that loads base.css gets the same rules as before. A Tailwind site that keeps its own reset and body styles (Foxhound) imports `capsomer/links.css` alone, as it imports `capsomer/utilities.css`, and its links are the network's links instead of hand-written underline classes. The focus ring stays in base.css. Removed or renamed: no token or class.
 
-## [0.115.0]
+## 0.115.0
 
 - **Chips: checkbox chips.** A filter in a form that works with no script: `<label class="cap-chip"><input class="cap-chip-input" type="checkbox" …> Word <span class="cap-chip-count">n</span></label>`, in a `fieldset.cap-chips` whose `legend` is the `.cap-chips-label`. The checkbox covers the chip, unseen; a checked one wears the pressed look (tick, accent edge, tint), its focus ring is the chip's, a disabled one is the dashed disabled chip, and forced colors draw it in Highlight. New class: `.cap-chip-input`. `fieldset.cap-chips` loses its frame. From dustinedwards.info's CV filters (`.cv-chip`). Removed or renamed: no token or class.
 
-## [0.114.0]
+## 0.114.0
 
 - **Card: the one-destination card wraps a `div`, not an `article`.** The markup is now `<a href><div class="cap-card">…</div></a>` (was `<a href><article class="cap-card">…</article></a>`). In Chromium a link around an `article` has no accessible name (screen readers announce a bare link, and `getByRole('link', { name })` finds nothing); a link around a `div` is named from its text, headings included. `a:has(> .cap-card)` in card.css already matched either, so no CSS changes; a site's linked cards change `<article>` to `<div>` (a card that is not inside a link, and the stretched-link and choice kinds, stay as they are). Removed or renamed: no token or class.
 
-## [0.113.0]
+## 0.113.0
 
 - **New: Save bar** (`capsomer/save-bar.css`, `capsomer/react/save-bar`, `.cap-save-bar`, `.cap-save-bar-status`): the foot of a settings form, the result of the last save beside a primary Save button, in one status region that is on the page from the start. Extracted from Foxhound's seven settings bars.
 - **New: `useShownFor(result, ms, clears?)`** in `capsomer/react/hooks`: `[shown, hide]`, a result shown for `ms` after it arrives, then gone; `clears` keeps the ones that should stay (a failure) until `hide()` or the next result. Replaces Foxhound's five self-clearing timers.
 - **`listText` writes American English lists.** `Intl.ListFormat("en-US")`, so three or more items take the serial comma: "A, B, and C" (it was "A, B and C"); two stay "A and B". Visible in the drop zone's accepted types ("JPEG, PNG, and WebP") and people-roles' "You manage ..." line. New second argument: `listText(words, "or")` gives "A, B, or C".
 
-## [0.112.0]
+## 0.112.0
 
 - **Frontmatter fields: `useTyped` and `TypedBox` exported** from `capsomer/react/frontmatter-fields` (a box that keeps what is typed while it has focus), so an app's own fields beside these stop keeping a copy.
 - **Foxing site layer: `--radius-l: 0.75rem`.** `capsomer/site-foxing.css` sets Foxing's card and panel radius (Rule 06, rounded-lg), against the 10px default, so Foxing drops its local `--radius-l` in `base.css` and its `.shared.json` exemption. The pick and call-to-action cards (`--card-shadow`, `--pad-card`, the 1rem hero radius) and the admin and social card paddings stay in Foxing: they are set on single elements, not on every card of the site.
@@ -224,7 +268,7 @@ Forms and inputs (shared-code audit pass 2, batch 2: C14 to C20). Nothing remove
 - **Tokens where literals were.** The catalog's filter tray used `--radius-lg` (no such token) and `--z-overlay, 50`; it is now `--radius-l`, `--z-overlay` (40) and `--shadow-l`. The checkbox and permission-matrix box, the link's favicon and the timeline's rail take `--radius-s` (the two boxes were 4px, the favicon and the rail 3px already), the dialog's grabber and the scroll area's thumb `--radius-full`; fourteen focus rings take `--focus-width` (still 2px). The confirm dialog's page shares the dialog's surface rule. The showcase's stand-in styles for panel, table, status, button, banner and empty are gone (the real components are loaded). No class or token is removed or renamed by this item.
 - **Prose: `--prose-item-indent` has a declared default.** `li` now reads `var(--prose-item-indent, 0)`, so the token is declared where it is used (devkit's css-vars check flags a var with no default and no declaration). The rendered output is unchanged: unset, the padding was already 0. No token, class or HTML contract changes.
 
-## [0.111.0]
+## 0.111.0
 
 - **Field: `.cap-field-row`, one layout for a row of fields and its buttons.** A flex row that wraps, lined up on the controls, `--space-3` between lines and `--space-4` between controls; `.cap-field-wide` on one field (the search) takes the room the others leave, from 16rem. Seven components had their own copy of that rule and now use it.
   - Removed classes (use `.cap-field-row`): `.cap-catalog-bar`, `.cap-media-lib-filters`, `.cap-posts-filters`, `.cap-posts-update-form`.
@@ -232,20 +276,20 @@ Forms and inputs (shared-code audit pass 2, batch 2: C14 to C20). Nothing remove
   - Changed HTML contract: `.cap-people-change`, `.cap-player-transcript-bar` and `.cap-scale-control` now also carry `cap-field-row` (React and `examples.html` updated; a hand-written copy needs the class added).
   - Spacing that moves to the shared values: the catalog's lines when its bar wraps (16px to 12px) and its search's basis (18rem to 16rem); the posts update form and the transcript bar between controls (12px to 16px); the scale control (16px by 20px to 12px by 16px). The redundant `margin: 0` on fields in these rows is gone (`.cap-field` has no margin).
 
-## [0.110.0]
+## 0.110.0
 
 - **Pagination: space and a hairline above, and 44 px controls at every width.** `.cap-pagination` now carries `margin-block-start` (`--pagination-gap`, `--space-7` by default), `padding-block-start` (`--space-4`) and a `border-block-start` hairline in `--line`, as the site's `.pager` and search pager did, so a pager no longer touches the last item above it. Pages, Previous, Next and the gap are at least 44 px (`--control-h-coarse`) on a desktop too, not only on a touch screen, as a navigation target. The controls no longer follow `data-density`, since the 44 px floor is above every density's height. New token `--pagination-gap`. Nothing is removed or renamed.
 
-## [0.109.0]
+## 0.109.0
 
 - **Site header: no divider before the tools on a phone with `data-links="right"`.** The divider rule from 0.99.1 out-ranked the phone rule that hides it, so a thin line stood left of the theme button wherever the links were folded away.
 - **Sortable list: `--sortable-add-gap`**, the space above an Add button placed right after the list (`--space-3`, as before). Nothing is removed or renamed.
 
-## [0.108.0]
+## 0.108.0
 
 - **Card: a lead.** `.cap-card-lead` as a card's first child puts one icon or one action (a podcast episode's play button) in a column of its own at the card's start, beside the header; the other regions keep to the second column. HTML contract addition only; no token or class is removed or renamed.
 
-## [0.107.0]
+## 0.107.0
 
 - **Sortable list: `renderFoot` and `removeStyle`.** `renderFoot(item, state)` adds a part of the host's own after the buttons, on its own full-width line (`.cap-sortable-foot`, the space above it `--sortable-foot-gap`, the item's gap by default): an "Edit item" disclosure that sits under an item's title and its buttons rather than beside them. `removeStyle="bordered"` draws Remove as a boxed button; `"quiet"` (bare words) stays the default. `--sortable-remove-pad-inline` sets Remove's inset (a small button's by default; `0` leaves the bare word). A card or stack item with no grip (`grip={false}`) no longer keeps an empty handle column, which set its head and fields one gap in from the content's edge. HTML contract addition only: `.cap-sortable-foot`. Nothing is removed or renamed.
 - **Empty: the sentence is balanced again**, as the title is. base.css's `text-wrap: pretty` on every `p` (0.90.0) had overridden the state's balance, so a centered sentence (an error page's, an empty list's) wrapped ragged.
@@ -254,11 +298,11 @@ Forms and inputs (shared-code audit pass 2, batch 2: C14 to C20). Nothing remove
 - **Disclosure: `--disclosure-marker-gap`**, the space between the marker and the title on every variant (default 8px, the card's 12px, as before).
 - **Error page: the space under a `hero` band and above the ways out.** The tokens `--error-page-hero-gap` (under the band) and `--error-page-body-gap` (between the sentence and the ways out), each defaulting to `--gap`. Nothing is removed or renamed.
 
-## [0.106.0]
+## 0.106.0
 
 - **Components that lay out their own rows of fields use `.cap-fields`.** The config form (`.cap-config-form`), the people add form (`.cap-people-add-fields`) and the front matter grid (`.cap-fm-grid`) no longer carry their own `grid-template-columns`; their markup now also has `cap-fields` (React and `examples.html` updated; a hand-written copy of these three needs the class added) and sets `--fields-min` and the new `--fields-gap` (default `--space-5`) to the sizes it had. Their fields now line up on their controls (`align-items: end`), as every `.cap-fields` row does. Nothing is removed or renamed.
 
-## [0.105.0]
+## 0.105.0
 
 - **Error page: a site's title band (`hero`) runs the page's width.** The band shrank to its content (about 480px on a 1280px page) because the page centers its children; with `hero` the page now stretches them and the body keeps its 48rem column, centered. New token `--error-page-body-pad-block` (default 0): the space above and below the sentence and the ways out under a `hero` band. No other token, class or HTML contract changes.
 - **Sortable list: tokens for a narrow column and a plain empty place.** `--sortable-item-wrap` (default `nowrap`) and `--sortable-body-basis` (`auto`) let a row's buttons drop under its content (`wrap` and `100%`), `--sortable-steps-gap` (`--space-1`), `--sortable-body-pad-inline` (a stack item's content inset) and `--sortable-empty-pad` and `--sortable-empty-border` (the empty place; `0` and `0` leave only its words). Every default is today's value; nothing is removed or renamed.
@@ -268,7 +312,7 @@ Forms and inputs (shared-code audit pass 2, batch 2: C14 to C20). Nothing remove
 - **Prose tables: a row header keeps the rows' hairline.** The 2px `--prose-table-rule` is on `thead th` only; a `th` in the body (a row header) had it too.
 - **Scroll-driven animations survive a minifier.** The scroll fades (tab rows, anchor bar, header links row, prose tables), the truncated label, the letterhead's header fade and 0.99.0's Reveal are written as longhands with `animation-duration: auto`. Lightning CSS, which Vite minifies with, folded the `animation` shorthand and its timeline into one with a 0s duration, which Chromium runs as finished: a wide table showed both fades at rest, and its first letters were faded.
 
-## [0.104.0]
+## 0.104.0
 
 The follow-ups from moving the sites onto shared components: the parts Carrel, Foxing, Foxhound, bsw and the Portal still drew for themselves.
 
@@ -280,16 +324,16 @@ The follow-ups from moving the sites onto shared components: the parts Carrel, F
 - **Status matrix: `glyph`** on a cell and a key item, in place of the tone's. A check that could not measure is `tone: "muted"` with `glyph: "unknown"`, a question mark, neither a pass nor a failure; the Portal's Completeness grid used the info glyph.
 - **Error page: `homeIcon`** (React), an icon after the home link's words (an `svg` with `data-icon="end"`), for a site whose buttons that go somewhere carry an arrow (bsw).
 
-## [0.103.1]
+## 0.103.1
 
 - **Enarratio 0.13 is supported.** The `enarratio` peer range is `^0.12.0 || ^0.13.0`, and the showcase site and the browser suite run on 0.13.1 (live on npm), whose charts fit a phone's drawing. No token, class or HTML contract changes.
 
-## [0.103.0]
+## 0.103.0
 
 - **New light entries for the command menu's host: `capsomer/react/command-host`** (`useCommandHost`, `LazyCommandMenu`) **and `capsomer/behavior/command-host`** (`createCommandHost`). Importing `useCommandHost` from `capsomer/react/command-menu` put the whole menu (about 6.4 KB gzip) into every route of an app that meant to load it when idle; these import nothing of the menu until the page is idle or the menu is asked for (Ctrl K, Cmd K, a button), then load it with `lazy()` or `import()`. `capsomer/react/command-menu` still exports `useCommandHost`.
 - **Command menu**: the extras 0.100.0 gave the React menu, without React. `createCommandHost(commands, opts)` (above: the menu loaded and built when the page is idle; `open`, `load`, `runWhenReady`, `menu`). `createCommandMenu` and `attach` take `recentKey` and `ask`; a command's `snippet` is built as `.cap-cmd-snippet` in its label, the typed words marked by `markSnippet` (nodes, never HTML). A menu in markup takes `data-recent-key`, `data-ask` and `data-ask-href` on the dialog. HTML contract additions only: the Recent group (`data-recent`), the Ask group (`data-ask-group`, its option `data-cap-ask`), and `data-label` on an option with a snippet. Nothing is removed or renamed.
 
-## [0.102.0]
+## 0.102.0
 
 Options for sites with their own design (bsw, julieedwards-info, txasm) on the shared site header, prose, tabs, sortable list, disclosure and time, with no change to how they look. Shared code is behavior; each site's look is its tokens and slots. Every new token defaults to today's value.
 
@@ -315,11 +359,11 @@ Options for sites with their own design (bsw, julieedwards-info, txasm) on the s
 
 No token or class was removed or renamed. HTML contract additions only: `data-scrolled` and `data-collapse` on the header, `data-sheet-icons` on the header, `commandfor` and `command` on a no-hydration menu button, `data-marker="triangle"` on a disclosure; the account slot is left out when it would be empty, and a sortable item has no grip with `grip={false}`.
 
-## [0.101.0]
+## 0.101.0
 
 - **Series nav and related links: the furniture under a post is Capsomer's** (moved from dustinedwards.info, 2026-11-11). New `components/series-nav/` (`nav.cap-series` with `.cap-series-title`, `ol.cap-series-parts` and the manual's signs as `.cap-series-steps`; React `SeriesNav`, and `seriesPlace()` in `capsomer/behavior/series-nav`): where a post sits in its series, every part with this one marked `aria-current="page"`, and the parts either side as signs. New `components/related-links/` (`.cap-related` with `data-kind="internal|external|mentions"`, `.cap-related-title`, `ul.cap-related-list`, `.cap-related-name`, `.cap-related-excerpt`, `time.cap-related-date`; React `RelatedLinks`, and `httpHref()`, `sitePath()` and `longDate()` in `capsomer/behavior/related-links`): Further reading, Linked from and Mentions in one look; a path on this site is a router link. A mention's address is re-parsed and only http and https become a link, with `rel="nofollow ugc noopener noreferrer"`. The manual's signs get a React wrapper, `Signs` in `capsomer/react/manual`. No token or class was removed or renamed.
 
-## [0.100.0]
+## 0.100.0
 
 Batch 4 of the shared-components audit (C24 to C38, without C37): the parts the sites and the Portal built for themselves, now in Capsomer. Nothing is removed or renamed; every HTML contract change below is an addition.
 
@@ -338,7 +382,7 @@ Batch 4 of the shared-components audit (C24 to C38, without C37): the parts the 
 
 Not in this release: HTML-only forms of the command menu's new extras, and pairing site-runtime's mcp-login consent style with the consent component.
 
-## [0.99.1]
+## 0.99.1
 
 - **A page that hydrates after `enhance()` no longer fails hydration for a dark-theme visitor.** On a header rendered with `hydrate={false}`, `enhance()` renames the theme button and its tip to the theme showing ("Switch to light theme"), so when such a page hydrated later (germomics' hydrate on intent) React found text that differed from the server's and threw error #418. The button and the tip's text now carry `suppressHydrationWarning` while `hydrate` is false.
 - **New: `capsomer/react/player-context`** (`PlayerProvider`, `usePlayer`). Importing the provider from `capsomer/react/player` in an app's root put the whole player (the dock, its menus and its sheet, about 50 KB gzip) into every page's first load once the dock was loaded lazily, since the bundler keeps the barrel and all it re-exports together; the root imports the provider from here and loads `PlayerDock` with `lazy()` when a track is loaded. `capsomer/react/player` still exports both.
@@ -346,7 +390,7 @@ Not in this release: HTML-only forms of the command menu's new extras, and pairi
 - **Removed: `toParagraphs` from `capsomer/player`.** The transcript groups its cues with Prelum's `toParagraphs` (`@drdustinedwards/site-helpers/vtt`, 0.47.0), the same rule (a paragraph ends at a sentence's end after 45 words, or at a pause over 2.5 seconds), so the optional peer `@drdustinedwards/site-helpers` is now `>=0.47.0`. Import `toParagraphs` from Prelum instead.
 - No token or class was removed or renamed.
 
-## [0.99.0]
+## 0.99.0
 
 Shared components from the network audit: parts each site wrote for itself, now in Capsomer so every site behaves the same.
 
@@ -373,7 +417,7 @@ Shared components from the network audit: parts each site wrote for itself, now 
 - **Save toggle keeps its list through `capsomer/behavior/hooks`** (`readStored`, `writeStored`, `subscribeStored`): where storage is blocked the button still toggles and the list lasts the page. The key and the stored JSON are unchanged.
 - **Tabs remember through `capsomer/behavior/hooks`.** The remembered tab sets keep their choice with the hooks' `readStored`, `writeStored` and `subscribeStored` instead of their own copies; the storage key and behavior are unchanged.
 
-## [0.98.0]
+## 0.98.0
 
 - **Batch 8 of the shared-components audit: specialized components** (clusters C73 to C85). Each was extracted from a site that had its own copy; the sites move onto this release and delete theirs. Every new component has a doc page, a states page and its specs.
 - **Dictionary entry** (from dustinedwards.info's named software pages). New `.cap-dictionary-entry`: a headword with its syllables, IPA and respelling, part of speech and plural, numbered senses with subject labels, and the etymology between two rules. The speaker is a link to the clip with no script and a button with it (`aria-pressed` while playing), and a clip that cannot load or play brings the link back. `capsomer/behavior/dictionary-entry` (`enhance`, `wireListen`, `listenLabel`) and `DictionaryEntry` in React. No token or class was removed or renamed.
@@ -418,12 +462,12 @@ Shared components from the network audit: parts each site wrote for itself, now 
 - **Share preview: `SerpWidthMeter`**, a Meter of a search title's or description's pixel width against the cut, on Prelum's `serpWidth`, so the editor and `prelum-audit` agree and a server render shows the number; `measure` takes an app's own (from Carrel's WidthMeter). No token or class was removed or renamed.
 - **Draft compare: `unifiedPatch(name, before, after)` and `hasChanges(patch)`**, a unified patch in jsdiff's `createTwoFilesPatch` shape from the component's own line diff, so an app no longer needs the `diff` library for DraftPatch (from Carrel's lib/patch.ts). No token or class was removed or renamed.
 
-## [0.97.0]
+## 0.97.0
 
 - **The page helpers need no test runner: `capsomer/testing/page`.** `countCssRules`, `settled`, `paintedContrast` (and its `Reading`), `focused`, `nextPost`, `ringContrast` and `rowOverflow` each run one function in the page, so they move to their own module, typed for any page with `evaluate` (`PageLike`: Playwright's or Puppeteer's). A site whose browser checks run on Puppeteer imports them without installing Playwright or axe; `capsomer/testing` still exports every one.
 - **Catalog: the search waits while an IME composes a word.** The search box fetched results on every `input` event, and an IME (Japanese, Chinese and Korean input, and many phone keyboards) sends those while a word is still being composed, so the catalog fetched half-typed syllables. It now skips an input event whose `isComposing` is true and searches on `compositionend` (UI Events, Composition Events). Found in the second shared-code audit, 2026-11-11. No token or class was removed or renamed.
 
-## [0.96.0]
+## 0.96.0
 
 Options so a site keeps its own look on the shared parts (Foxhound, moving its stat cards, badges and blog lists onto Capsomer without a visible change).
 
@@ -433,11 +477,11 @@ Options so a site keeps its own look on the shared parts (Foxhound, moving its s
 
 No token or class was removed or renamed.
 
-## [0.95.1]
+## 0.95.1
 
 - **Rich editor:** an image inserted from the editor uses the markdown editor's `defaultImageMarkdown`. The editor had its own copy, which kept a line break in the alt text and so broke the Markdown image (as Carrel fixed in its copy after 0.95.0 was cut). No token, class or HTML contract changed.
 
-## [0.95.0]
+## 0.95.0
 
 - **Rich editor (new, `components/rich-editor`)**, from Carrel's formatted editor: Tiptap 3 (MIT) over Markdown that stays byte for byte. Unchanged blocks are written as the bytes they were read from; only a changed or new block is spelled again, and checked by parsing it. Front matter, code, tables, directives, math, footnotes and images sit in labeled source blocks. It keeps the markdown editor's toolbar, keys, link palette, block menu and image step. `capsomer/react/rich-editor` (`RichEditor`), `capsomer/behavior/rich-editor` (the round trip and schema, for a server), `capsomer/rich-editor.css`. A pasted or dropped HTML fragment is parsed in an inert document under the `capsomer` Trusted Types policy and read by the schema; ProseMirror's own paste handed it to the page's default policy, which escapes markup, so formatted pastes arrived as tags. New command `capsomer-roundtrip <folder> [--plain]` checks a site's content round trips.
 - **Collab editor (new, `components/collab-editor`)**, from Carrel's file rooms: a shared Yjs copy over y-partyserver, each person's caret in their series color, Editing or Suggesting with tracked changes (who, round, when), comment threads anchored to passages, the room bar, and the suggestions and comments panels. `capsomer/react/collab-editor` (`useRoomEditing`, `useRichRoom`, `useRoom`, `RoomBar`, `SuggestionsPanel`, `CommentsPanel`), `capsomer/behavior/collab-editor` (load, patch, save and settle the copy, for the room's server), `capsomer/collab-editor.css`. The room's server, who may enter and storage stay in the app.
@@ -445,7 +489,7 @@ No token or class was removed or renamed.
 - **Markdown editor:** `GLYPH` (its toolbar icons) is exported for the rich editor. **Trusted HTML:** new `inertDocument(html)`.
 - New optional peers, at Carrel's versions: `@tiptap/core`, `@tiptap/extension-collaboration`, `@tiptap/extension-list`, `@tiptap/extensions`, `@tiptap/pm`, `@tiptap/starter-kit` (^3.31.4), `@tiptap/y-tiptap` (^3.3.0; 3.0.x is deprecated upstream because its position migrations grow shared documents, so every client in a room needs 3.1.0 or later), `@handlewithcare/prosemirror-suggest-changes` (^0.1.8), `yjs`, `y-protocols`, `y-partyserver`, and the micromark and mdast packages the round trip reads with. `micromark-extension-math` gets katex 0.19.1 by override (its own range, ^0.16, has GHSA-238p-pmpm-9mq7; the round trip reads math syntax only and never renders it). Dev: site-runtime v0.114.0 (`startPage` in the specimens). No token or class was removed or renamed.
 
-## [0.94.0]
+## 0.94.0
 
 - **Seventeen page and app widgets move into Capsomer** (the shared-code audit's item 31; Dustin, 2026-11-11: a piece of UI that is a component belongs in Capsomer, even when only one site uses it so far). Each is a component with its CSS, notes, specimen and tests, extracted from the site that had it; the sites switch to them and delete their copies next.
   - `range-slider` (two-handle range, from Foxhound's payments filter): `.cap-range-slider` and its parts, each handle a field's `input.cap-range`, `capsomer/behavior/range-slider` (`rangeFill`, `clampPair`, `formatValue`, the `cap:range-commit` event), React `RangeSlider`.
@@ -469,7 +513,7 @@ No token or class was removed or renamed.
 - **The single slider's thumb takes a 44px touch target** on a coarse pointer (the dot stays 20px inside it), and its hover ring shows only where a pointer hovers.
 - No token or class was removed or renamed, and no existing HTML contract changed.
 
-## [0.93.0]
+## 0.93.0
 
 From the sites, batch 9: an inspector, React Router bindings, a work queue with Later, a role grid and a Compare that works before the script runs.
 
@@ -486,7 +530,7 @@ No token or class was removed or renamed.
 
 - **The showcase deploy's live gate runs again.** Every devkit workflow call moves from v0.27.0 to v0.33.0, whose worker-deploy sets `DEVKIT_DIR` for the verify command; v0.27.0 never set it, so `verify:live` failed with "DEVKIT_DIR: unbound variable". No change to the package.
 
-## [0.92.0]
+## 0.92.0
 
 From the network shared-code audit, items 22 to 30 (Dustin's rule of 2026-11-11: any UI that is a component lives in Capsomer). Every site moves onto these parts and deletes its own copy.
 
@@ -498,16 +542,16 @@ From the network shared-code audit, items 22 to 30 (Dustin's rule of 2026-11-11:
 - **Stat tile, status, sortable list, time, message and disclosure.** A static stat tile (`data-variant="static"`, `StaticStatTile`, `.cap-tile-delta`, `.cap-tiles[data-layout="grid"]`); the interactive tile rules now apply only to `.cap-tile:is(a, button)`. Status gains the `muted` tone, more glyphs (queued, unknown, blocked, question, pr, report, proposal, site-down), `variant="accent"` and `.cap-pill-dot`. Sortable lists move rows between lists (`data-group`, `SortableBoard`), add and remove rows (`useRows`, `onAdd`, `onRemove`, `min`, `max`, `cap:sortable-remove`), and take `layout="stack"`, `altKeys`, `readOnly`, `busy`, `renderHead` and `empty`; the single-list React render has no wrapper. Time gains `formatDate`, `dateRange`, `utcInputValue`, `fromUtcInputValue`, `timecode`, `duration`, `span`, `until` and `relative(..., { granularity })`, `format="date"`, and `Time` props `tip` and `empty`. Message gains `useActionResult`, `<ActionResult>` and `actionResultView` for a form action's result. Disclosure gains `variant="card" size="sm"`. The menu's radio group takes `closeOnClick`.
 - No token or class was removed or renamed.
 
-## [0.91.1]
+## 0.91.1
 
 - **A chart no longer redraws 16 px tall.** With Enarratio 0.12 the figure holds the toolbar's 16 by 16 icons before the chart, and `ChartFrame` took its redraw height from the first `viewBox` it found, so every redrawn chart collapsed (seen in the Capsid Portal on 0.90.0). It now skips `enarratio-icon` drawings (`chartViewBox` in `components/chart-frame/chart-frame.ts`).
 
-## [0.91.0]
+## 0.91.0
 
 - **New: the draft compare's merge mode** (`DraftMerge`, `mergePlan`, `merged`; from Carrel's merge view). Two texts that both moved on from one version, block by block, each difference kept from either side or both, starting on the side that changed it when the base is known. Its diff is the compare's own, so it needs no diff library. New classes: `.cap-merge` and its parts (`-intro`, `-list`, `-same`, `-choice`, `-sides`, `-side`, `-text`, `-empty`, `-mark`, `-actions`). No token or class was removed or renamed.
 - **New: rich text field** (`capsomer/react/rich-text-field`, `capsomer/behavior/rich-text-field`, `capsomer/rich-text-field.css`; from txasm's abstract editor). A short text with a few inline tags and nothing else, a formatting toolbar (one tab stop) whose buttons toggle and show where the caret is, and `sanitizeRichText`, which the server runs on every save. The box is built from DOM nodes, never from a markup string, so it needs no Trusted Types policy. New classes: `.cap-rich-text`, `.cap-rich-text-bar`, `.cap-rich-text-box`, `.cap-rich-text-count`. No token or class was removed or renamed.
 
-## [0.90.0]
+## 0.90.0
 
 Fixes from a review against Chrome's Modern Web Guidance v1 (all 208 guides, 2026-11-11). Every site gets them by bumping Capsomer.
 
@@ -536,71 +580,71 @@ Fixes from a review against Chrome's Modern Web Guidance v1 (all 208 guides, 202
 - **A textarea in an input group keeps its drag handle** where the browser cannot grow it with its text (`resize: none` only under `@supports (field-sizing: content)`).
 - No token or class was removed or renamed. The removed specimen section was `#s-accordion-headings`.
 
-## [0.89.0]
+## 0.89.0
 
 - **Chart frame: the chart's toolbar is Enarratio's** (Enarratio 0.12.0, its record 0035; Dustin approved 2026-11-11). Enarratio now draws one toolbar above the chart, with Sound, Range and a Download menu ("Download CSV", then the drawing's files and Copy embed), each an icon and a word on one row that never wraps, phones included. Its data table is always visually hidden, for screen readers and AI agents, so "Show data" is gone and no table opens under a chart to push the page down. Capsomer's own Download menu is removed: `components/chart-frame/chart-downloads.ts` and `groupDownloads()` are deleted, along with the class `span.cap-chart-downloads` and the grouping in `capsomer/behavior/chart-enhance` and React's `ChartFrame`. A page with charts no longer needs `capsomer/menu.css`. `css/enarratio-tokens.css` sizes the toolbar on Capsomer's tokens (new `--enarratio-control-height`, `--enarratio-padding-control`, `--enarratio-radius-control`, `--enarratio-gap-controls`, `--enarratio-gap-icon`, `--enarratio-padding-panel`, `--enarratio-panel-shadow`), and `css/enarratio.css` takes the link system's file mark and tint off "Download CSV" in the menu. Removed rules: `.enarratio-export` in `css/base.css` and `css/enarratio.css`, and in `chart-frame.css` the "Show data" summary, the CSV link's target, the open range's row and the scrolling data table. The stat tile's and usage meter's tables (`dataTableBlock`) are hidden the same way, with no tab stop. The enarratio peer range is `^0.12.0`.
 
-## [0.88.1]
+## 0.88.1
 
 - **Buttons change under the pointer in every variant.** The hover, pressed and open states sat above the variants in `button.css`, and each variant sets `--cap-btn-bg` with the same specificity, so a primary, secondary or danger button kept its resting fill on hover and press (Foxhound's amber calls to action never moved; found in the Recova parity audit, 2026-11-10). The states now come after the variants, so each variant's own `--cap-btn-hover` and `--cap-btn-press` apply. The default button and the disabled look are unchanged. No token or class was removed or renamed.
 - **Foxhound's 404 title is set in DM Sans.** The 404 title reads `--poster` (Jost), and Foxhound loads no Jost, so its title fell back to Futura or Century Gothic. The foxhound site tokens now set `--poster` to DM Sans, like its headings. No token or class was removed or renamed.
 
-## [0.88.0]
+## 0.88.0
 
 - **Chart frame: the downloads are one Download menu** (Carrel Desk redesign, approved 2026-11-10). Once Enarratio's enhancement layer has added Download SVG, Download PNG, Download tactile SVG and Copy embed beside a figure's Download CSV link, the frame moves all five into a Download menu (Capsomer's form menu, `details.cap-menu-form` in the new `span.cap-chart-downloads`) where the link was, in React's `ChartFrame` and in `capsomer/behavior/chart-enhance`. With no script the CSV link is unchanged. A page with charts now also loads `capsomer/menu.css` for the menu's look (without it the menu is a plain disclosure). No token or class was removed or renamed.
 - **Media library: Upload is a dialog that asks each file's alt text** (Carrel Desk redesign, approved 2026-11-10). The upload form no longer sits open above the grid: Upload ends the toolbar and opens a dialog. With script and `submit` it takes several files, and each has its own Alt text field and Decorative box; it posts one `upload` per file and says the whole as one result, keeping a refused file in the dialog with the site's reason. Import from a web address moved into the same dialog. With no script, Upload links to `?upload=1` and the dialog is rendered open in the page with the one-file form. HTML contract change: `.cap-media-lib-upload` and the import disclosure are rendered only inside `dialog.cap-media-upload` (and the picker keeps its form in place); the query gains `upload` (`readMediaView` reads `upload=1`, `withMedia` closes it on any other change). New: `.cap-media-lib-upload-open`, `.cap-media-upload` and its parts, and `useIntents().show(result)` for a result a list made from several posts. No token or class was removed or renamed.
 - **A status message sits above the phone's tab bar.** On a phone with the app's tab bar, the sticky status region (`.cap-message`) lay over the bar and covered its links (axe target-size, WCAG 2.5.8). Its bottom offset now clears the bar. No token or class was removed or renamed.
 
-## [0.87.0]
+## 0.87.0
 
 - **Letterhead: a site with one name centers it and sets it at 22px.** On the headquarters site (dustinedwards.info) and its admin, the name was the second line of a two-line block under an empty spacer line, so it sat low and at 20px. The spacer is gone, the name is centered on the row beside the mark, and it is 22px (the longest admin name, "Dustin Edwards Lab bench", still clears the links). Sites with an agency line over a site name are unchanged. No token or class was removed or renamed.
 
-## [0.86.0]
+## 0.86.0
 
 - **The family page is 1440px wide** (Dustin, 2026-11-08: "extend out the width of the header"). `--page-max` goes from 1280px to 1440px (a 1408px column), so the letterhead, content and footer use more of a wide window. At 1280px and narrower nothing changes. Running text keeps `--measure`.
 - **The letterhead sits 8px below the top of the window, not 16px,** on a public page and an admin from 768px, so the band moves up and the cover under it has more of the first screen. `--header-h` is 80px (one row, from 1080px) or 128px (two rows), 8px less. No token or class was removed or renamed.
 
-## [0.85.0]
+## 0.85.0
 
 - **Layout grid: the label is opt-in.** `.cap-layout-grid` no longer draws "12 columns, 24 px baseline" ("4 columns" on a phone) at its foot; it is words beside a decoration. HTML contract change: add `data-labeled` to a `.cap-layout-grid` that should keep the label (a colophon or a page about the grid). No token or class was removed or renamed. Apps that want the old look everywhere add the attribute.
 - **Docs and comments: the NASA Graphics Standards Manual is dated 1975,** the year of the manual (the Standards Manual reissue is titled "1975 NASA Graphics Standards Manual"), not 1976. No token, class or markup changed.
 
-## [0.84.1]
+## 0.84.1
 
 - The `enarratio` peer range adds `^0.10.0`, so a site on Enarratio 0.10.0 installs Capsomer without a peer conflict (npm ERESOLVE). No token, class or HTML change.
 - The component pages' script no longer sizes an example frame before the example has marked itself shown. On a slow load the frame jumped to a 360 px fallback and back, shifting the page (CLS 0.3 live).
 
-## [0.84.0]
+## 0.84.0
 
 - **Component pages reserve each example frame's height.** The frames resized as they loaded, so a page shifted (CLS 0.1 to 0.4 on Anchor bar, Combobox and Catalog; web.dev/articles/cls says to reserve the space). `scripts/frame-heights.mjs` measures every frame at four page widths and writes `site/frame-heights.json` and `site/frame-heights.css`; each frame carries `data-h1` to `data-h4` and the page's CSS sets its height from them. The page's script only grows a frame past the reserved height. No token, class or component markup changed.
 - **`img[width][height]` takes `aspect-ratio` from its attributes in `base.css`.** Chrome's DevTools flags a lazy image whose height is `auto` and whose ratio is only the attribute-derived `auto w / h` (`LazyLoadImageIssue`); an explicit ratio clears it. The rule is `:where(...)`, so any host `aspect-ratio` wins, and it sits in `@supports` for typed `attr()`. No token or class changes.
 
-## [0.83.1]
+## 0.83.1
 
 - **Breadcrumb: long names wrap in full instead of being cut after two lines.** The two-line clamp still lost the end of a long name under a reader's own text spacing (WCAG 1.4.12). `.cap-breadcrumb-link` and `.cap-breadcrumb-page` are `display: block` with no `overflow: hidden` or line clamp. No token or class changes.
 - **Docs: the screen-reader line.** Every component doc says no manual NVDA or VoiceOver run is planned (decision of 2026-11-07) and that the automated browser checks and a front-end review stand in, instead of "Last checked by hand: not yet". No token, class or markup changed.
 
-## [0.83.1]
+## 0.83.1
 
 - **Confirm page: the form no longer carries `role="group"`.** `group` is not an allowed role for `form` (ARIA in HTML; axe `aria-allowed-role`), and it replaced the form landmark's role. The `form.cap-confirm-page` keeps its `aria-labelledby` and `aria-describedby`, so it is a named `form` landmark. HTML contract change: remove `role="group"` from `form.cap-confirm-page`. React: `ConfirmPage` and `ConfirmModal` no longer pass `role`, and `ConfirmFormProps` loses its `role` field (a `renderForm` that spreads the props needs no change; one that reads `props.role` should stop).
 - **History list: the phone specimen's hidden heading is an `h2`, not an `h3`,** so the specimen page no longer skips a level (axe `heading-order`). Specimen only; no component change.
 
-## [0.83.0]
+## 0.83.0
 
 - **Install contract: `@drdustinedwards/site-helpers` is an optional peer dependency, no longer a dependency.** Only the `capsomer` command (`states`, `site-data`) and this repository's own site import it. A git dependency inside a git dependency is refused by npm 12 (`allow-git`, EALLOWGIT) and left the lockfiles of apps stale. An app that runs the `capsomer` command declares `@drdustinedwards/site-helpers` itself (>=0.40.0), as it does `@dustinedwards/site-runtime`. No token, class or HTML changes.
 - **Lightbox doc: the Close button's size is stated as the dialog block's.** The page said 44 px; it is the icon button's own size. Docs only.
 
-## [0.82.0]
+## 0.82.0
 
 - **Family footer: the Workspace link reads "Lab Bench"**, capital B, as its accessible name does ("Lab Bench, the members' workspace (requires sign-in)"). Text only; no class, token or HTML structure changes.
 
 - **Family footer: a Legal column, and a Features link.** Privacy, Terms and Accessibility move out of the Site group into a new Legal group (`<nav aria-labelledby="cap-family-footer-legal">`, heading "Legal"), as GOV.UK's footer groups its policy links (privacy, accessibility statement, terms). The Site group is now Contact, Site map, Features and Colophon. Features links dustinedwards.info's `/features`, a page in code that is always published, so it is always listed. The footer's columns go from three to four at 48rem and wider. New export `legalLinks()` and `LEGAL_HEADING`; `familyLinks()` lists the Legal links after the Site links; `siteLinks()` no longer returns Privacy, Terms or Accessibility, so a site that read them from it reads `legalLinks()`.
 
-## [0.81.0]
+## 0.81.0
 
 - **Lightbox: `capsomer/behavior/lightbox` and `capsomer/lightbox.css`.** A link to a full-size image (`a.image-link`) or a diagram image (`img.diagram-image`) inside `data-cap="lightbox"` opens in the shared dialog and shrinks back into place. It moves here from Prelum's `enhance()` so every site has one viewer. Additive; no class, token or HTML contract changes to existing components.
 
-## [0.80.0]
+## 0.80.0
 
 - **Family footer: no hover tint behind the wordmark or the social icons.** `.cap-family-footer a:hover` no longer sets `background-color: var(--accent-soft)`; the word links and site tiles already reset it, so only the wordmark and the social icons changed. Their hover color stays. No class, token or HTML contract changes.
 
@@ -610,21 +654,21 @@ Fixes from a review against Chrome's Modern Web Guidance v1 (all 208 guides, 202
 
 - **Removed export: `escapeHtml` from `capsomer/email` and `capsomer/system-map`.** It is site-runtime's (`@dustinedwards/site-runtime/html`), which a site already has; import it from there. Same five entities, same output. No class, token or HTML contract changes.
 
-## [0.79.3]
+## 0.79.3
 
 - **No script hands a string to an injection sink.** A page that enforces Trusted Types (`require-trusted-types-for 'script'`) refuses `innerHTML`, `srcdoc` and `DOMParser` given a plain string, and Chrome logs each as a CSP issue in DevTools. Capsomer's scripts now build DOM (`createElement`, `textContent`, `replaceChildren`) wherever they can: the site header's search results, the catalog's swap of regions, filters and sort options. The remaining markup, which a visitor cannot write (icon SVG children, the catalog's own server HTML, a chart's or a comparison's SVG), goes through one policy named `capsomer` in the new `components/trusted-html/trusted-html.ts` (`trustedHtml`, `setStaticHtml`, `markup`, `copyChildren`); a page whose `trusted-types` list omits the name gets plain strings, as before. No HTML contract, class or token changes.
 
-## [0.79.2]
+## 0.79.2
 
 - **Chip: a label longer than its row wraps inside the chip.** `.cap-chip` loses `white-space: nowrap` and gains `max-width: 100%`, `overflow-wrap: anywhere` and 2px block padding, so a long subject chip (Foxing /books) no longer forces sideways scroll at 320px. Short chips look the same. No class or token changes.
 - **Tabs: choosing a tab no longer calls `scrollIntoView`.** It scrolled the page and set the browser's Tab starting point to the tab, so on a page with an initial tab set the first Tab press skipped the skip link and header. Only the tab list now scrolls, to show the chosen tab. No class, token or HTML contract changes.
 - **Site header: the search form's landmark name is the search label, not "Site"**, so it no longer shares a name with the sections `nav` (axe `landmark-unique`; screen readers listed two landmarks called Site). The form's `aria-label` changes from `Site` to the search label. No class or token changes.
 
-## [0.79.1]
+## 0.79.1
 
 - **`confirmSubmit` accepts a React mouse event** (its `nativeEvent` was typed too narrowly, so passing a button's `onClick` event failed to typecheck). Types only; no class, token or HTML contract changes.
 
-## [0.79.0]
+## 0.79.0
 
 - **Renamed export: `kindOf` in `capsomer/behavior/message` is now `messageKind`**, so devkit's overlap check no longer finds the name defined twice. Same arguments and result.
 - **Chart frame no longer imports `escapeHtml` from Enarratio** (it uses Capsomer's own, the one family-footer and site-header use), so Enarratio can stop exporting it. Same output.
@@ -634,7 +678,7 @@ Fixes from a review against Chrome's Modern Web Guidance v1 (all 208 guides, 202
 - **Confirm dialog: `confirmSubmit`** (`capsomer/behavior/confirm-dialog`), the dialog in place of `window.confirm` on a form that posts: it holds a form's submit, asks, and sends the form again with the same button once the action is chosen. Additive; no class, token or HTML contract changes.
 - **Email: `escapeHtml` is site-runtime's.** `capsomer/email` re-exports `escapeHtml` from `@dustinedwards/site-runtime/html` instead of keeping a copy; same five entities, same output. site-runtime is already a peer of every site that uses Capsomer's email and footer. No class, token or HTML contract changes.
 
-## [0.78.0]
+## 0.78.0
 
 - **Kit form: `KitForm` and `useKitSubmit`** (`capsomer/react/kit-form`). The form and the submit a React Router app hands the posts, media and mentions lists. Carrel and dustinedwards.info each had their own copy; they use these. Additive (`react-router`, already an optional peer, is needed to import it); no class, token or HTML contract changes.
 - **Error page: a 403 has its own words.** `errorWords` gives a 403 "You cannot open this page" and says the account lacks access, instead of the generic "This page cannot be shown (403)". Every other status keeps its words. No class, token or HTML contract changes.
@@ -643,7 +687,7 @@ Fixes from a review against Chrome's Modern Web Guidance v1 (all 208 guides, 202
 - **CI: one check job per pull request** (devkit v0.26.1's pr.yml in `checks.yml`): the trailer, shared-code, OSV-Scanner, workflow audit, no-bloat and reviewer checks run as `checks / Repo checks`; `review.yml`, `workflow-audit.yml` and `no-bloat.yml` are gone, the page weight report is `ci.yml`'s `weight` job, dependencies runs daily only, and the code map and Scorecard run nightly. Not in the package files.
 - **Development: Oxlint** (devkit's shared config, `oxlint.config.ts`, `npm run lint`, a Lint step in CI; not in the package files). Fixes from its first run: hydration flags read `useSyncExternalStore`, so a part drawn after hydration starts in its scripted form; state that follows a prop resets in the same render instead of an effect after paint; latest-value refs are written in layout effects; `Intents` gains `setRoot`, a callback ref for the list's root (additive); avatar initials take a word's first grapheme (`Intl.Segmenter`), so a flag or an accented capital stays whole. No class, token or HTML contract changes.
 
-## [0.77.0]
+## 0.77.0
 
 - **Mentions list: `mentionsDataOfKit` and `kitMentionsSearch`** (`capsomer/behavior/mentions-list`), with `KitMentionsData` and `KitMentionRow` typed by shape. They turn site-api's `loadMentions` answer into the list's `data` and read the kit's query from the list's address, as `mediaDataOfKit` does for the library. Carrel had them as its own; they move here so dustinedwards.info's admin draws the same page. Additive; no class, token or HTML contract changes.
 - Tabs: a malformed link fragment (like `#%`) no longer throws during setup and leaves every later tab set on the page dead; the fragment falls back to its raw text, as the link component already does. No class, token or HTML contract changes.
@@ -652,7 +696,7 @@ Fixes from a review against Chrome's Modern Web Guidance v1 (all 208 guides, 202
 - **Development: quicker CI browser tests** (no package change). Tests, not files, are shared over the workers (`fullyParallel`), so the sweep no longer holds one worker for nearly the whole run; CI records no traces; only Chromium's headless shell is installed. A pull request runs the specs and sweep entries of the components it touches and of every component that shows them (`scripts/ci-specs.mjs`, `CAPSOMER_SWEEP`); a shared change, a version bump and every push to main run the whole suite.
 - Site: the front page's network board is drawn in CSS, seven columns of alternating squares per site, where it was an SVG of 168 rects. It looks the same and still lights and squeezes a site in trouble. The board is decoration, not a chart (it plots no quantity, and the bar under it says each name and state in words), so it stays aria-hidden and out of Enarratio; as an SVG it read to Prelum's chart audit as a chart drawn outside Enarratio (area 10, rule F). No class, token or HTML contract changes in the package.
 
-## [0.76.0]
+## 0.76.0
 
 Wayfinding links line up with their lamp, icons and arrows, and the header's chevrons turn up when their panel opens (Dustin, 2026-11-06).
 
@@ -660,11 +704,11 @@ Wayfinding links line up with their lamp, icons and arrows, and the header's che
 - **Footer links and next links** (`.cap-family-footer-links a`, `a[data-link="next"]`): `display: inline-block` with the same trim, padded back out to `--target`, where they were `inline-flex` around the line box. Overpass's ascent (0.883em) stands far above its capitals (0.7em), so the line box's middle sat 0.1em under the letters' and the panel lamp, the login icons and locks, and the outbound arrow all hung about 1.5px low against the words. A site's own footer links (`center`) take the fix with no markup change.
 - **Header chevrons** (`.cap-site-header-chev`): turn 180 degrees while their button is `aria-expanded="true"`, as the combobox's do, with the turn animated unless motion is reduced.
 
-## [0.75.1]
+## 0.75.1
 
 No token, class or HTML change. The package depends on Prelum (`@drdustinedwards/site-helpers`) 0.33.0; the 0.75.0 tag still pinned 0.32.1, so an app that took it carried the old Prelum beside its own. An app on this tag resolves one Prelum.
 
-## [0.75.0]
+## 0.75.0
 
 Lighter Inter and Overpass files, so dustinedwards.info's /systems is back under its 2.5 s LCP limit (Dustin, 2026-11-05). On the check's simulated slow phone it went from a steady 2.17 s before 0.73.0 to about 2.5 s (2.6 s in CI), because the preloaded Inter was 22 KB heavier than the face it replaced and Overpass added 27 KB; with both cuts it measured 2.20 s.
 
@@ -672,16 +716,16 @@ Lighter Inter and Overpass files, so dustinedwards.info's /systems is back under
 - **Overpass** (`fonts/overpass-latin-wght-normal.woff2`) keeps plain English characters, the no-break space, the middle dot, dashes, curly quotes, the bullet, the ellipsis and arrows, with kerning, ligatures and contextual forms (27,036 to 14,824 bytes). Its `@font-face` `unicode-range` names exactly those, so any other letter (an accented title in a breadcrumb) draws in the Overpass fallback.
 - `scripts/narrow-font.py` makes every cut from the Fontsource 5.3.0 files: it narrows or pins axes and keeps a set of characters. The fallback metrics, measured again, are unchanged.
 
-## [0.74.4]
+## 0.74.4
 
 - **System map headings** (`.cap-system-map-column-name`, `-group-name`, `-place-name`, `-card-name`, `-part-name`, `-flow-name`): `--weight-heading` (Inter Medium), where they were 600, so the map's headings read as the type plan's headings on Capsid, dustinedwards.info and the showcase.
 - **Cue card titles** (`.cap-cue-title`): `--weight-heading`, where they were 700.
 
-## [0.74.3]
+## 0.74.3
 
 - **Panel and dialog titles** (`.cap-panel` header `h2`/`h3`, `.cap-dialog-title`): `--weight-heading` (Inter Medium), where they were 600 and 800, so they read as the headings the type plan sets in Medium. Smaller UI labels (alert, flag and tray titles) keep 600.
 
-## [0.74.2]
+## 0.74.2
 
 The type plan's weights where they had slipped (verifier, 2026-11-04).
 
@@ -689,7 +733,7 @@ The type plan's weights where they had slipped (verifier, 2026-11-04).
 - **Headings by default** (`css/base.css`): `h1` takes `--weight-title` (Inter Light) and `h2` to `h4` `--weight-heading` (Inter Medium), where the browser drew them bold. Carrel, Prelum's specimen and Enarratio's gallery titles were 700 for want of this. A site's or component's own weight still wins.
 - **Showcase site**: page titles take `--weight-title` (Inter Light) and headings `--weight-heading` (Inter Medium), in place of 800 and 700. The cover band's lettering and the figures stay heavy; they are display type, not titles.
 
-## [0.74.1]
+## 0.74.1
 
 Smaller font files, for faster pages: dustinedwards.info's /systems went from 2.31 s to 2.60 s Lighthouse LCP (mobile profile, CI) with 0.73.0's larger Inter and the new Overpass, past the 2.5 s limit.
 
@@ -699,7 +743,7 @@ Smaller font files, for faster pages: dustinedwards.info's /systems went from 2.
 - **Changed token: `--faa-arrow`** is now a `polygon()` clip path, not a `data:` SVG mask image: a page whose Content-Security-Policy says `img-src 'self'` (the Capsid explorer) refused the image, so the direction strip lost its arrows. The direction strip draws it with `clip-path`; a site that used `mask: var(--faa-arrow)` uses `clip-path: var(--faa-arrow)` on a 1em by 0.72em box.
 - `allowScripts` denies esbuild's and workerd's install scripts for npm 12, which asks about each one; both work without them (their binaries come from platform packages). No class, token or HTML contract changes.
 
-## [0.74.0]
+## 0.74.0
 
 Decoration for the manual theme (Dustin, 2026-11-04): the footer band becomes a cheatline, and two new parts. No token or class is removed or renamed.
 
@@ -709,7 +753,7 @@ Decoration for the manual theme (Dustin, 2026-11-04): the footer band becomes a 
 - **Changed look: family footer site tiles** no longer take the hover tint; the mark's outline alone answers the pointer.
 - Site: the front page has a network board under its figures, after Bridget Riley's Movement in Squares (1961): one checkerboard with a stretch per network site in its family color and a name bar under each. A site whose /health says warn or fail lights amber or red and its columns squeeze. The site's Worker answers `/network.json` from each site's /health, held a minute at the edge.
 
-## [0.73.0]
+## 0.73.0
 
 The network's type (Dustin approved the seven-face set, 2026-11-04): Inter replaces Schibsted Grotesk, and four faces join for jobs the UI face should not do. Sites pin the tag; the faces download only where a page uses them.
 
@@ -726,7 +770,7 @@ The network's type (Dustin approved the seven-face set, 2026-11-04): Inter repla
 - `css/fallback-fonts.css` keeps `"Inter Fallback"` for sites that host their own Inter (txasm), and adds nothing for the new faces, whose fallbacks are in `fonts.css`.
 - Site: the home page shows all seven faces, the theme builder offers Inter in place of Schibsted Grotesk (the `@fontsource/inter` static files are gone; it uses Capsomer's own Inter), and the home page preloads Inter.
 
-## [0.72.0]
+## 0.72.0
 
 Email gains the blocks a product's own mail needs, and Banner takes block content. No token or class is removed or renamed.
 
@@ -734,17 +778,17 @@ Email gains the blocks a product's own mail needs, and Banner takes block conten
 - **Banner: `body` prop** (React) for block content, rendered in `div.cap-banner-text` inside `.cap-banner-body`, with block rules for `p`, `ul` and `ol` in that div. **Changed behavior:** the React Dismiss moves focus to the main region when focus was inside the banner (the script already did; `focusMain` is now exported from `capsomer/behavior/banner`). `children` is now optional.
 - Site: the email states page has a digest sample at 320 and 600 px.
 
-## [0.70.0]
+## 0.70.0
 
 - **The hexagons draw larger.** Each group's name stands in the empty cell before its run on the outer ring, so the comb loses the ring it kept for names, and the comb may be as tall as the screen less 8rem (it was the lesser of the screen less 12rem and 52rem). In a 900 px tall window a cell goes from about 72 px wide to about 95. No class, token or HTML contract changes.
 
-## [0.69.0]
+## 0.69.0
 
 - **The hexagons' lit lines say which way each tie runs.** Their dashes move from the system that uses toward the system used, a tie both ways stays solid, and the detail line adds "Uses … Used by …" in words. Reduced motion stills the dashes. The network's detail line keeps four lines of room, so lighting no longer shifts the drawing. **Changed HTML contract:** a lit `path.cap-system-map-wire` in the comb carries `data-both` where the tie runs both ways, and the network's detail line ends with `span.cap-system-map-detail-ways` while a system is lit.
 - **Removed: the `capsomer/behaviour/*` export**, the British-spelling alias of `capsomer/behavior/*`. Import `capsomer/behavior/<name>`.
 - **Removed: `Badge` from `capsomer/react/status`**, the alias of `Pill`. Use `Pill`; it takes the same props.
 
-## [0.68.0]
+## 0.68.0
 
 The family's faces load with `font-display: optional` in place of `swap`. No class, token or HTML contract changes.
 
@@ -754,17 +798,17 @@ The family's faces load with `font-display: optional` in place of `swap`. No cla
 - **Site only: a component page no longer moves as it loads** (D5; live 0.24 on chart-frame/, 0.15 on stat-tile/ at 320 px). Long example code is written closed under View code, and Copy page is written into the title row, by the page itself instead of its script, so the code box and the title row are their final size from the first paint. Without scripts the code stays open and both buttons are hidden. The package is unchanged.
 - **Site only: an old root address such as `/#/components/button` no longer forwards to `/admin/`**, and `npm run site:release` is gone (it was `npm run site`; the deploy runs that). The package is unchanged.
 
-## [0.67.2]
+## 0.67.2
 
 React's `ChartFrame` gives a primitive's figure no `fit`, so a heat strip or timeline that spreads `fit` into its draw keeps its own height. No new or changed exports, and no class, token or HTML contract changes.
 
 - **React's `ChartFrame` no longer fits a primitive to the first drawing's height.** `shownHeight` (so `fit`) is empty for a figure Enarratio marks `data-enarratio-static` (a heat strip, timeline, sparkline, uptime strip or progress ring), and the draw keeps its own height. 0.66.0 scaled every drawing's height with its width, which is a chart's shape but not a primitive's: a heat strip drawn 640 by 20 and shown in a 300 px column would have been redrawn 300 by 9.4, not 300 by 20, and a timeline ignores `height` (its lanes set it) and shows its list, not its SVG, under 30rem. A primitive's draw can now take `fit` like a chart's, `(width, fit) => heatStrip({ ...options, width, ...fit })`, and gets its own height. No class, token or HTML contract changes.
 
-## [0.67.1]
+## 0.67.1
 
 - **The system map draws whole under a Content Security Policy that forbids inline styles.** 0.67.0 set the hexagons' text sizes and the Inside column's lane count in `style` attributes, which such a policy blocks. **Changed HTML contract:** the Inside column carries `data-places="1|2|3"` in place of `style="--cap-places: n"`, and `svg.cap-system-map-comb` no longer carries a `style`; its text sizes are in system-map.css.
 
-## [0.67.0]
+## 0.67.0
 
 The system map is a connections map (Dustin, 2026-11-03: "i want the actual connections map"). The 0.65.0 cards stay; the rule that no lines are drawn goes, and every tie is a wire.
 
@@ -773,7 +817,7 @@ The system map is a connections map (Dustin, 2026-11-03: "i want the actual conn
 - **System map, level 2: wired lanes.** Used by, Runs, Stores, Outside and Uses side by side (60rem and wider), with a wire for each line: part to part, part to the other system, and the system as a whole from its Inside heading. A part shows its name and what it runs on; what it does and its lines in words are in the detail line when it is pointed at or focused (each part is a tab stop), and for screen readers in the part. Pointing at or focusing a tie or part lights its wires; a flow's step lights the wires between its parts. A tie is one row, its verbs beside its name. Narrower, the columns stack as before and the words carry the ties.
 - **Changed HTML contract.** Both levels: new `p.cap-system-map-detail`. Level 1: `.cap-system-map-groups` is gone; the network is `.cap-system-map-network` of `.cap-system-map-graph` of `.cap-system-map-lane[data-lane]`, holding the same groups and bands. A card carries `data-wire` and `data-wires`, shows the short name, and its words move into `span.cap-system-map-card-about` (new, clipped; new `.cap-system-map-card-full`): `.cap-system-map-card-text` and `.cap-system-map-card-meta` are now spans in it. A part's `.cap-system-map-part-text` and `.cap-system-map-part-lines` move into `span.cap-system-map-part-about` (new, clipped; new `.cap-system-map-part-full`), and a part carries `tabindex="0"`. Level 2: ties, parts and the Inside heading's new `span` carry `data-wire` and `data-wires`; the Inside column carries `--cap-places`; the root carries `data-held`. New with script: `svg.cap-system-map-wires`, `.cap-system-map-wire`, `.cap-system-map-port`. The band's accent top border is gone. Level 1 also has `div.cap-tabs.cap-system-map-views` (new) holding a tab list (`.cap-system-map-switch`, new, hidden until the script runs) and two panels: `div.cap-system-map-hex` (new) with `svg.cap-system-map-comb` (`.cap-system-map-comb-cells`, `.cap-system-map-comb-lines`, `.cap-system-map-comb-group`, and a link `.cap-system-map-cell[data-id][data-ring]` per system with `.cap-system-map-cell-name`, all new), then `.cap-system-map-network`. **Removed class:** `cap-system-map-groups`. **New:** `hexLayout`, `networkLayout`, `tiePairs`, the types `HexCell` and `HexLayout`, and the types `Lane`, `NetworkBlock` and `NetworkLane`.
 
-## [0.66.0]
+## 0.66.0
 
 Charts and fonts stop moving the page when they arrive: React's `ChartFrame` redraws at the height its first drawing showed, and each measured fallback font has a bold face per weight range. New exports: `shownHeight` and the type `ChartFit` (`capsomer/react`'s chart frame), and the type `FontWidths` (`capsomer/fonts`); `fallbackFontFace` takes `widths`, `MEASURED` entries carry `widths`, `LOCAL` entries carry `bold`, and `capsomer fallback-font` takes `--weight`. `ChartFrame`'s `draw` gets a second argument, `fit`. No class, token or HTML contract changes; a fallback rule's `local()` names and weight ranges change in `fonts.css` and `fallback-fonts.css`.
 
@@ -783,7 +827,7 @@ Charts and fonts stop moving the page when they arrive: React's `ChartFrame` red
 - **React's `ChartFrame` redraws at the height its first drawing showed**, so a chart in a column narrower than its `width` no longer grows when the redraw swaps in after hydration and pushes the page down (Carrel's progress chart at 320 px: 141 px to 212 px). `draw` now gets a second argument, `fit` (`{ height }`, the first drawing's height at the frame's width, scaled down and never up, as `enarratio/redraw` does for pages drawn without React; empty on the first draw); spread it into the chart's options, `(width, fit) => barChart({ ...options, width, ...fit })`. A draw that takes only `width` still type-checks and keeps its own height, as before. New exports: `shownHeight` and the type `ChartFit`. No class, token or HTML contract changes.
 - **The showcase draws with Enarratio 0.7.3** (the devDependency, from 0.7.0; the peer range `^0.5.0 || ^0.6.0 || ^0.7.0` is unchanged). Its charts no longer move the page when the enhancement layer loads: the redraw keeps the server drawing's height, a legend entry has its button's box before it is a button, and the figure holds the controls the layer adds, inert until it arrives. `css/enarratio.css` needed no change: it restyles no legend entry or control row, and the pending downloads carry `.enarratio-export`, so they get the same 44 px touch target as the working ones. A page that uses React's `ChartFrame` with `enhance={false}`, or enhance options that turn controls off, draws its figure with Enarratio's `controls: false`. No class, token or HTML contract changes.
 
-## [0.65.0]
+## 0.65.0
 
 The system map is cards, not a capsid drawing (Dustin, 2026-11-03: yes to the card-and-drill-down design). It replaces answer 3 of capsid/rulings/system-explorer-2026-10-10.md (the hexagon drawing) and the line routing of the seat rulings on #57 and #64; answer 9 (one component for both homes) and the one-tap rule of 2026-10-18 still hold.
 
@@ -792,7 +836,7 @@ The system map is cards, not a capsid drawing (Dustin, 2026-11-03: yes to the ca
 - **Changed HTML contract, replaced whole.** New: `data-level` and, at level 2, `data-system` on the root; `.cap-system-map-network`, `.cap-system-map-groups`, `.cap-system-map-band`, `.cap-system-map-group-count`, `.cap-system-map-cards`, `.cap-system-map-card` (and its `-name`, `-text`, `-meta`, `-domain`, `-private`, `-count` and `-tie`), `data-lit` on the root and `data-tie` on a card; `.cap-system-map-columns`, `.cap-system-map-column`, `.cap-system-map-column-name`, `.cap-system-map-ties`, `.cap-system-map-tie` (`-name`, `-verbs`), `.cap-system-map-place` (`-name`), `.cap-system-map-parts`, `.cap-system-map-part` (`-name`, `-kind`, `-text`, `-lines`), `.cap-system-map-none`, `.cap-system-map-steps`, `.cap-system-map-flow-controls` and `.cap-system-map-flow-status`. Kept: `.cap-system-map`, `-head`, `-title`, `-caption`, `-group`, `-group-name`, `-flows`, `-flow`, `-flow-name`, `-flow-text`, the root's `data-flow` and `data-step`, and the event `cap:system-map-flow`. **Removed classes:** `cap-system-map-views`, `-stage`, `-layer`, `-tile`, `-name`, `-tag`, `-edge`, `-group-label`, `-box`, `-box-name`, `-box-kind`, `-wire`, `-boundary`, `-inside-title`, `-inside-name`, `-inside-text`, `-token`, `-rim`, `-rim-name`, `-detail` (and its `-name`, `-text`, `-actions`), `-list`, `-item-name`, `-item-tag`, `-item-text`, `-item-domain` and `-item-link`. **Removed attributes:** `data-view`, `data-selected`, `data-entered`, `data-zoom`, `data-circles`, `data-insides`, `data-insides-ready`, and every tile, edge, box and wire attribute. **Removed events:** `cap:system-map-select`, `cap:system-map-enter`, `cap:system-map-leave`.
 - **Removed: the export `capsomer/system-map-circles`** (`circleLayers`, `sceneOf`, `layoutScene`, `layoutKey`, `faultsOf`) and the files `system-map-circles.ts`, `system-map-circles-search.ts` and `system-map-inside.ts`. **Removed functions and constants:** `layoutMap`, `ringCells`, `seamRoute`, `hexPoints`, `spatialNext`, `linksOf`, `connectionText`, `insideScene`, `playableFlows`, `portsOf`, `rectInset`, `rectOutset`, `segmentHitsRect`, `segmentHitsBox`, `segmentFaults`, `segmentCross`, `segDist`, `segAngle`, `sideBySide`, `pointSegDist`, `tokenRoute`, `routeFrames`, `R`, `ROUTE_CLEAR`, `LINE_SEP`, `JUNCTION_END`, `SHORT_LINK` and `BEND_CLEAR`; the options `circles` and `openLabel`; the fields `short` and `tag` of a system; the controller's `select`, `enter`, `setView`. **New:** `tiesOf`, `flowsOver`, `ownerOf`, `placeOf`, `verbOf`, `count`, `VERB`, the options `system`, `only` and `flow`, the class `cap-system-map-link` on each system's name link (a card's and a tie's whole box is its target), a container's `technology` and `description` and the model's flows (each step on the ends of the line it rides; the type `ModelFlow`) kept by `modelMapData`, and the controller's `light(id)`. `controller(root)` takes no label.
 
-## [0.64.0]
+## 0.64.0
 
 The direction strip's arrow is a solid triangle, and the changes below, which were waiting under Unreleased.
 
@@ -801,18 +845,18 @@ The direction strip's arrow is a solid triangle, and the changes below, which we
 - **A scroll region's focus ring sits inside its edge.** `base.css` gives `[role="region"][tabindex="0"]:focus-visible` an inset outline (`outline-offset: calc(var(--focus-width) * -1)`), the table's and dialog's rule, so a code box or wide table inside a box that clips its overflow still shows its whole ring. Prelum's code and table regions get it too. No class, token or HTML contract changes.
 - **Showcase site: every code box can be reached and scrolled with the keyboard** (WCAG 2.1.1, area 9). The install code on the front page, each component page's Installation tabs and examples, the theme builder's output and the doc pages' code are named regions (`tabindex="0" role="region" aria-label="Code: …"`, Prelum's pattern) written by one helper, `codeRegion` in `site/markdown.ts`. The Installation and theme builder tab panels drop their own `tabindex`, since the code inside is now the stop (WAI-ARIA APG, tabs), and a closed example leaves the tab order until View code opens it. The accessibility statement no longer lists the limitation.
 
-## [0.63.1]
+## 0.63.1
 
 - **Prelum v0.32.1 as the dependency**, whose peer accepts Enarratio 0.7.0. 0.63.0 still depended on Prelum v0.31.4 (peer `^0.5.0 || ^0.6.0`), so an app with Enarratio 0.7.0 and no Prelum of its own (Capsid's dashboard) installed Capsomer with an invalid peer. No class, token or HTML contract changes.
 
-## [0.63.0]
+## 0.63.0
 
 Capsomer accepts Enarratio 0.7.0 (charts, area 10).
 
 - **Enarratio 0.7.0 as the peer** (`^0.5.0 || ^0.6.0 || ^0.7.0`), and the showcase draws with it: maps (`enarratio/map`), the tactile SVG download and the forced-colors legend swatches. The chart frame's markup and behavior are unchanged. No class, token or HTML contract changes.
 - **Showcase site: a breadcrumb list only where a trail shows.** A component page marks up Capsomer > Components > Name, which the visitor sees as Components > Name; Make, Accessibility and Search carry none. Prelum v0.31.4. No class, token or HTML contract changes.
 
-## [0.62.0]
+## 0.62.0
 
 Nothing scrolls sideways on a 320 px phone (WCAG 1.4.10 Reflow, area 9), breadcrumbs on a phone are one line, and displayed math keeps its spacing.
 
@@ -822,14 +866,14 @@ Nothing scrolls sideways on a 320 px phone (WCAG 1.4.10 Reflow, area 9), breadcr
 - **Displayed math is not clipped under text spacing** (WCAG 1.4.12, area 9). Prose blocks give `.katex-display` half an em above and below instead of a quarter: with the spacing 1.4.12 asks a page to allow, KaTeX's struts no longer hold the glyphs and the formula's bottom edge was cut off (devkit-a11y's live run on Prelum's specimen, 77 of 80 px shown). No class, token or HTML contract changes.
 - CI: devkit v0.21.0 in every workflow call and in `package.json`, and OpenSSF Scorecard (its scorecard.yml). The release runs devkit's release.yml with `build: true` (the same built release commit as before), which also attests the release's `npm pack` tarball and attaches it to the release. No package changes.
 
-## [0.61.0]
+## 0.61.0
 
 The markdown editor asks for alt text before it uploads an image, and the media library stores nothing undescribed (area 11).
 
 - **Markdown editor: an image is described before it is uploaded** (AI and MCP, area 11; changed contract). The describe step now comes first: a pasted, dropped or chosen image shows a local preview with the alt field, Insert image (once there is alt text) and Insert as decorative, and only then is the file sent. `onUpload(file)` is now `onUpload(file, image, signal)`, where `image` is `{ alt, decorative }` (new type `ImageDescription`; `alt` is `""` when decorative) and `signal` aborts if the person cancels during the upload; `imageMarkdown` also gets `decorative`. An app sends `alt` and `decorative` with the file, so a server that refuses an undescribed upload (site-api 0.19 and later) accepts it, and a cancelled image is never uploaded. A failed upload is an alert inside the step, which keeps the alt text for a retry, instead of closing it. The toolbar hint reads "Asks for alt text, then uploads the file". No class or token changes; `.cap-md-upload-error` now sits inside `.cap-md-upload-fields`.
 - **Media library: nothing is uploaded undescribed** (area 11; changed HTML contract). The upload and import forms' Alt text is `required`, and each gains a second submit, Upload as decorative and Import as decorative (`name="decorative" value="on" formnovalidate`, the picker's pattern), in a new `.cap-media-lib-upload-actions` row; with script, choosing decorative clears any typed alt, since site-api 0.19+ refuses a file that is both and one that is neither. The help no longer says a picture can be stored without alt text. A crop saved as a new file sends the alt text or decorative choice of the file it was cut from, which 0.19+ servers otherwise refused. New class only.
 
-## [0.60.0]
+## 0.60.0
 
 Each site's footer links its own accessibility statement, and the showcase serves one (links and accessibility, area 9).
 
@@ -837,7 +881,7 @@ Each site's footer links its own accessibility statement, and the showcase serve
 - **The showcase's statement** at `/accessibility/`: Prelum's `accessibilityStatement` (0.30, `capsomer: true`, `links: "marked"`), the open findings of devkit-a11y's 2026-11-01 run as its known limitations, linked from the footer and listed in the sitemap. Prelum (`@drdustinedwards/site-helpers`) is pinned at v0.30.1 for it.
 - **Pagination no longer styles the page column.** `.cap-page` names both the family page column (`css/utilities.css`) and a pagination item, so a page that loaded `capsomer/pagination.css` and wrapped its content in `.cap-page` became one unwrapping inline-flex line (dustinedwards.info's /research/phages scrolled 5,000 px sideways on a phone, failing WCAG 1.4.10 Reflow). The item's rules now apply only inside `.cap-pagination`, at the same specificity (`:where`). No class or HTML contract changes.
 
-## [0.59.0]
+## 0.59.0
 
 The footer's Lab bench link moves from `/lab` to `/lab-bench`, embeds keep each player's shape (area 4), and the shared charts accept Enarratio 0.6 and redraw on the states page (area 10).
 
@@ -846,13 +890,13 @@ The footer's Lab bench link moves from `/lab` to `/lab-bench`, embeds keep each 
 - **Embeds keep each player's shape** (writing and rendering, area 4). The player (`capsomer/player.css`) now draws Prelum 0.28's embed card (`.embed-poster`, `.embed-play`, `.embed-label` inside `a.embed-link`) with the same rules as `.cap-player-facade`, and prose blocks size it as the player it becomes, so nothing moves on the click: a video 16:9, a TikTok 9:16, a Google map 4:3, an X, Bluesky or Instagram post 4:5 at most 34rem wide, and a song or a podcast a strip at its player's height (Spotify 152 px for a track or an episode and 352 px for a list, SoundCloud 166, Apple Podcasts 175 for an episode and 450 for a show, Amazon Music 352, the height in its Share > Embed code). The player's iframe takes the same size. A video, map or post with no poster is held at the same size and names the service and title at its center, as click-to-load placeholders do. A link stored before Prelum 0.28 stays the centered card. New class rules only.
 - **Footer: the Lab bench link is `/lab-bench`.** `WORKSPACE_LINKS` points the Lab bench entry at `/lab-bench`, where dustinedwards.info now serves the lab members' workspace, so `/lab` is free for other uses. The path is one exported constant, `LAB_BENCH_PATH` (`capsomer/behavior/family-footer`), which dustinedwards.info imports so the footer and its routes cannot disagree. The link's label, name and icon are unchanged. A changed link target on one footer entry; no token or class is removed or renamed and no HTML contract changes.
 
-## [0.58.0]
+## 0.58.0
 
 Link style as tokens, so a site outside the network sets its own.
 
 - **Link style is five tokens (group `link`).** `--link-weight`, `--link-decoration`, `--link-hover-bg`, `--link-pressed-bg` and `--link-tint-pad`, read by `css/base.css` where it had literals. The defaults are the values it had, so no site changes. A site outside the network sets its own in its `SITES` entry (components/link/link.md, "A site's own links"). Added tokens only; no class or HTML contract changes.
 
-## [0.57.0]
+## 0.57.0
 
 The error page says when the database is down (area 8), and the email-change mails are one template (area 3), images and media (area 6).
 
@@ -865,7 +909,7 @@ The error page says when the database is down (area 8), and the email-change mai
   - **New component: player** (`capsomer/player.css`, `capsomer/react/player`). `Video`, `Audio` and `Embed` for JSX pages, and the markup Prelum's `:::video`, `:::audio` and `::embed` are to write: `figure.cap-player[data-kind]`; a video with its poster, width, height and `preload="none"`; audio with `preload="none"` and its transcript link (`.cap-player-transcript`); an embed as `a.cap-player-facade` with the site's own poster (`img.cap-player-poster`), a play button (`.cap-player-play`) and the service and title (`.cap-player-label`), keeping `data-embed-src` and `data-embed-title`, and the player in its place on a click. Spotify and SoundCloud (`data-service`) are a strip, not 16:9. Prose blocks keep their `.media` and `.embed-link` rules for HTML already stored. New classes only.
 - **Site: headers from site-runtime's registry, and integrity on every script** (area 2). The Worker is `staticSite({ site: capsomer })` with the TDMRep header, and `npm run site` writes `site-dist/_headers` with `site-runtime-headers --site capsomer`, so `scripts/security-headers.ts` is gone. The registry adds COEP (Report-Only) with `report-to`, `Integrity-Policy-Report-Only`, and a Report-Only policy with Trusted Types and `default-src 'none'`. Every script and modulepreload the site build writes, `theme.js` included, carries a sha384 `integrity` and `crossorigin` (site-runtime's `subresourceIntegrity()` Vite plugin). Site only: the package is unchanged.
 
-## [0.56.0]
+## 0.56.0
 
 The accessibility release (area 9 of the completeness plan, 2026-10-31).
 
@@ -931,14 +975,14 @@ The foundation's accessibility gaps from the area 9 audit (2026-10-30).
 - **Showcase site: Prelum v0.23.0** (no package change). The site's `@drdustinedwards/site-helpers` pin moves from v0.22.0 to v0.23.0, where Prelum wraps `:::chart` output in this frame (`div.cap-chart > div.cap-chart-figure`) and sets `RENDER_VERSION` to 9. The site uses Prelum only for search, head tags and icons, so no page changes.
 - **Samples and docs use neutral content instead of one site's subject matter** (no HTML contract change). The specimens, specs and doc examples of admin-shell, approval-sheet, attention-list, avatar, banner, breadcrumb, bulk-bar, button, catalog, chart-frame, chips, combobox, command-menu, confirm-dialog, detail-panel, dialog, disclosure, draft-compare, drop-zone, email, error-page, feed, field, flag-list, history-list and listbox drop phage, lab, podcast, book, payment-recovery and family-site names for example.com domains, made-up people (Alex Rivera) and neutral topics. The catalog's specimen is an article library (`fixture.ts` exports `ARTICLES` and `articleCatalog`) in place of a protocol library.
 
-## [0.55.0]
+## 0.55.0
 
 The catalog's filter tray link reaches its results (writing and rendering, area 4).
 
 - **Showcase site: the family icon set** (no package change). Prelum v0.22.0's icons, drawn from the letterhead's hexagon on the magenta family's `#752c6a` (white on it for the Apple touch and maskable icons), are in `site/public`; every page links them with `iconLinks()` and `site.webmanifest` comes from `webManifest()`. The inline data-URL favicon is gone.
 - **Catalog: the results region has its id** (`{id}-results`). The filter tray's "Show N" link pointed at `#{id}-results`, which nothing carried, so on a phone it closed the tray without moving to the results; Prelum's live check flagged it on all eight dustinedwards.info research pages. HTML contract: the results region gains `id="{id}-results"`.
 
-## [0.54.0]
+## 0.54.0
 
 A mail for every change to how a person signs in (sign-in and access, area 3: A8, E1).
 
@@ -948,7 +992,7 @@ A mail for every change to how a person signs in (sign-in and access, area 3: A8
 - **Showcase site: each page's WebPage and breadcrumb.** `site/seo.ts` builds heads with Prelum's `defineHead`, so the theme builder and every component page carry a WebPage and a Home > page BreadcrumbList, and the canonical keeps the slash the pages are served at.
 - The posts list names site-api v0.17.0, the release its Trash, rename, preview links, authors and excerpts shipped in: site-api 0.16.0 went to the 404 report first. Text only; no HTML contract changes.
 
-## [0.53.0]
+## 0.53.0
 
 Charts move to Enarratio 0.4 (the charts checklist, area 10, 2026-10-31). Enarratio now draws the whole figure, so the chart frame is a thin layout around it instead of a second figure. Needs Enarratio 0.4.0.
 
@@ -963,7 +1007,7 @@ Charts move to Enarratio 0.4 (the charts checklist, area 10, 2026-10-31). Enarra
 - **The components that use Enarratio import it**: `chart-frame.ts`, `stat-tile.react.tsx` and `usage-meter.react.tsx` need `enarratio` (0.4) installed, as every site that draws charts already has it.
 - **Showcase site.** The chart frame, uptime strip, stat tile and usage meter pages render Enarratio live when the site is built (`examples.build.ts`, filling `<!-- build:name -->` in `examples.html`) and load `enarratio/enhance`; nothing is pasted. The chart frame's page is a gallery of every kind and state, the React frame's redraw and refusal, and every family's eight series.
 
-## [0.52.0]
+## 0.52.0
 
 The posts list posts the content kit's own intent names and shows what site-api v0.17.0 adds, each only where the kit offers it, each a form post that works with no script.
 
@@ -976,31 +1020,31 @@ The posts list posts the content kit's own intent names and shows what site-api 
 - **New view data**, each optional: `PostOffers.trash`, `rename`, `previewLinks`, `filters` (`PostFilter[]`, new type), `authors`; `PostsQuery.author`, `from`, `to`, `trashed`.
 - **Media library doc**: the inspector shows a caption where the site keeps one (since site-api v0.10.0); the line that said the contract has none is fixed.
 
-## [0.51.0]
+## 0.51.0
 
 The sites' own faces swap in without moving text.
 
 - **Site layers name their fallback faces.** foxing's DM Sans, DM Mono and Fraunces stacks, julieedwards.info's Open Sans and Montserrat, and txasm's Inter now list the matching `… Fallback` face second, so a site that also imports `capsomer/fallback-fonts.css` swaps fonts without moving text. A site that does not import it gets the next face in the stack, as before. Each such layer's header says to import it. No HTML contract changes.
 
-## [0.50.0]
+## 0.50.0
 
 Font swaps no longer move text on the sites that load their own faces (the speed and caching pass, 2026-10-31).
 
 - **Fallbacks for the sites' Fontsource faces: `capsomer/fallback-fonts.css` (new export).** One @font-face fallback for each face the sites load themselves, so the swap to the face lands on the same lines: "Montserrat Fallback" and "Open Sans Fallback" (julieedwards.info; bsw's Open Sans), "Inter Fallback" (txasm), "Fraunces Fallback", "Space Grotesk Fallback" and "JetBrains Mono Fallback" (germomics; foxing's Fraunces), and the DM Sans, DM Mono and Source Serif 4 rules README listed to paste. Generated by `tokens/fonts.mjs` from `MEASURED`, which gains the six faces read with `@capsizecss/unpack` from @fontsource 5.3.0's latin 400 files (Fraunces's variable default is wght 900, so it was read at wght 400, opsz 18). `npm run check` refuses a stale file. Checked in Chromium with Liberation Sans and Mono standing in for Arial and Courier New: at 360, 600 and 840 px each fallback set a paragraph on the same lines and height as its face, where plain Arial or Courier New took fewer, except Inter at exactly 16px, whose line box rounds 1px shorter on the same lines (15, 17, 18 and 20px match). Fraunces's Georgia fallback was not checked: no Georgia or Gelasio here. No HTML contract changes.
 
-## [0.49.0]
+## 0.49.0
 
 A table between a phone and a laptop no longer scrolls sideways (Dustin, 2026-10-30).
 
 - **New reflow width: `data-reflow="medium"`.** Rows become cards below 860 px of the region, for an app table that fits a laptop but not a 1024 px tablet beside a sidebar. `""` (640 px) and `"wide"` (1100 px) are unchanged. No HTML contract changes.
 
-## [0.48.0]
+## 0.48.0
 
 The error page takes a site's own words.
 
 - **Error page.** `ErrorPage` takes `title`, `text` and `homeLabel`, which replace the default words for this error, and `as` (`"main"`, the default, or `"div"` for a Layout that already has the page's `main`). julieedwards.info's 404 words are Carrel copy in D1, so it could not use the page before. No HTML contract changes for existing markup.
 
-## [0.47.0]
+## 0.47.0
 
 One error page, theme-color tags a React Layout can use, and the axe helpers written up for sites (the shared-code audit, 2026-10-30).
 
@@ -1010,7 +1054,7 @@ One error page, theme-color tags a React Layout can use, and the axe helpers wri
 - **README: Accessibility test for a site.** How a site scans its home, a content page and its 404 in both themes with `capsomer/testing` (`eachTheme`, `expectNoAxeViolations`).
 - **Showcase site only.** Its `_headers` is written by site-runtime's `headersFile` (pin v0.32.0); the page policy moves to a second `/*` rule, the same headers on every path. Nothing in the package changes.
 
-## [0.46.0]
+## 0.46.0
 
 Hover prefetch for the hydrated React Router apps, through one shared link.
 
@@ -1018,7 +1062,7 @@ Hover prefetch for the hydrated React Router apps, through one shared link.
 - **New: `capsomer/behavior/link`.** `mayPrefetch`, the rule above, and `underPath`, the path match it uses.
 - **New optional peers**: `react-router` (^8.0.0) and `@dustinedwards/site-runtime` (>=0.29.0), needed only by these two modules. No HTML contract changes.
 
-## [0.45.0]
+## 0.45.0
 
 No dashboard needs a sideways slider (Dustin, 2026-10-30).
 
@@ -1026,35 +1070,35 @@ No dashboard needs a sideways slider (Dustin, 2026-10-30).
 - **An admin page never grows wider than the window.** `.cap-admin-page` takes `grid-template-columns: minmax(0, 1fr)`, so a wide child scrolls or reflows inside its panel; before, a table wider than the page pushed the whole page sideways. No HTML contract changes.
 - **No stray scrollbar on a tab strip.** `.cap-tabs-list` sets `overflow-y: hidden` beside its `overflow-x: auto`; the line variant's underline overhung a pixel, and Windows drew a tiny vertical scrollbar on the strip. No HTML contract changes.
 
-## [0.44.2]
+## 0.44.2
 
 - **txasm's and Foxing's faces lead with the self-hosted variable files.** Both sites now serve their fonts from Fontsource instead of the Google Fonts stylesheet, and Fontsource names a variable file with "Variable" after the family. The txasm layer's `--ui` starts with "Inter Variable"; Foxing's `--ui` and `--font-ui` start with "DM Sans Variable" and `--display` with "Fraunces Variable". The old names stay next in each stack. No token or class is removed or renamed, and no HTML contract changes.
 
-## [0.44.1]
+## 0.44.1
 
 - **A standalone app's letterhead keeps the stripe's height.** The stripe is painted in the header's own color instead of removed, so Foxhound's header, its content and the page under it sit exactly where they do in every family admin. The 0.43.0 `--header-h` override for standalone apps is gone. No HTML contract changes.
 
-## [0.44.0]
+## 0.44.0
 
 - **The account button's name tip no longer sits over its open menu, even when moving along the header's icons.** Once one tip is up, the next icon's shows at once, before the panel's own hover opened the account menu, so 0.42.0's check never ran. Opening a header panel now hides its button's tip (`wirePanel`). No HTML contract changes.
 - **View site appears once in an admin.** The letterhead's second row shows View site from 768px, where the account button sits in the bar, so the account menu leaves out the row that goes to the same address. On a phone the account is in the menu sheet, which keeps the row. No HTML contract changes.
 
-## [0.43.0]
+## 0.43.0
 
 - **Foxhound's admin takes the family letterhead, without the agency.** `FAMILY_APPS` gives Foxhound `names: ["Foxhound", "Admin"]` and the new `standalone: true`: a commercial app outside the Dustin Edwards network, whose letterhead shows "Foxhound Admin" with no "Dustin Edwards" over it and no stripe of the family color on top. The admin shell root carries `data-standalone` for such an app (new attribute).
 - **The header mark follows the strip.** The admin shell's logo takes the current app's mark from `apps` before the family default, so an app that passes its own strip mark (Foxhound's hound head) shows it in the header too. No HTML contract changes.
 
-## [0.42.0]
+## 0.42.0
 
 - **A tooltip no longer shows over its own open menu.** The shared popover skips a tip whose trigger has `aria-expanded="true"`, so the account button's name tip stays hidden while the account menu is open (the site header and the admin shell). No HTML contract changes.
 
-## [0.41.0]
+## 0.41.0
 
 A sign-in code in the magic-link mail, for a link that opens in another browser than the one that asked.
 
 - **`magicLink` takes an optional `code`.** With it, the mail says "Or enter this code on the page where you asked:" under the button, shows the code in the code block (the text part puts it on its own indented line), and the expiry and ignore lines cover the link and the code. Without it the mail is unchanged. The subject never carries the code, so a lock-screen preview does not show it. site-runtime 0.29.0's `./sign-in` sends one with every sign-in link.
 
-## [0.40.0]
+## 0.40.0
 
 The media library's ideas from site-api v0.13.0 (v0.13.1 for the rows' orientation), each shown only where the kit offers it, each a form post that works with no script.
 
@@ -1073,7 +1117,7 @@ The media library's ideas from site-api v0.13.0 (v0.13.1 for the rows' orientati
 - `MediaInspector` takes `more` (new): sections after the picture tools, built from the inspector's own form or nested group; a nested tool now also sends text areas, selects and checked boxes.
 - New classes: `.cap-media-lib-opened`, `.cap-media-lib-accept`, `.cap-media-lib-history` (with `-what`, `-facts`), `.cap-media-lib-revert`. The ended-license note is the banner stylesheet's `.cap-alert`, already needed by the picture tools.
 
-## [0.39.0]
+## 0.39.0
 
 One mapping from the content kit to the media library, so Carrel and every site admin read the kit's page the same way.
 
@@ -1083,7 +1127,7 @@ One mapping from the content kit to the media library, so Carrel and every site 
 - **A component's own list keeps its layout in a dialog.** The dialog's rules for prose lists and sheet links (`.cap-dialog-body ul`, `.cap-dialog-body nav ul`, `.cap-dialog-body nav a`) are now under `:where`, so chips and the media grid in a dialog (the image picker) are no longer stacked as full-width rows with bullets. Unclassed lists and links in a dialog look as before.
 - **An editor can move files to Trash and restore them**, as the content kit allows (site-api `Permissions.edit`: trash and restore are reversible). The bulk bar and the inspector offered them only with the delete role, so Carrel's Editors lost them; Delete for good and Replace still need it.
 
-## [0.38.0]
+## 0.38.0
 
 Media library parity with dustinedwards.info's own library, so Carrel can be the one place a site's media is managed.
 
@@ -1101,7 +1145,7 @@ Media library parity with dustinedwards.info's own library, so Carrel can be the
 - **Quick search copies an address**: each match has a Copy the address option beside the one Enter opens, and the library says it copied.
 - `useIntents` also returns `run(form)`, which runs an intent and resolves to its result (a failed result when it throws), for a host action that must wait for the outcome.
 
-## [0.37.0]
+## 0.37.0
 
 Fallback fonts for any site's faces, and scheduled updates in the posts list (site-api v0.10.0).
 
@@ -1124,7 +1168,7 @@ Fallback fonts for any site's faces, and scheduled updates in the posts list (si
 - **Banner and alert: actions that wrap start under the words**, aligned with them, instead of at the far end of the box. The glyph hangs in the box's start padding, so the words start at the content's edge, and the actions after the words drop their auto margin (the words grow to fill the line, so on one line the actions still sit at the end).
 - **Shared pins:** devkit v0.16.1 (package and workflows), site-runtime v0.26.0.
 
-## [0.36.0]
+## 0.36.0
 
 Size-matched fallback fonts, from Astro's Fonts API (MIT, credited in `tokens/fonts.mjs`).
 
@@ -1132,7 +1176,7 @@ Size-matched fallback fonts, from Astro's Fonts API (MIT, credited in `tokens/fo
 - **`css/fonts.css` is generated** by `tokens/fonts.mjs` (`npm run tokens`), and `npm run check` refuses a stale file or a font file whose bytes no longer match the metrics measured from it.
 - **One font stack.** The UI and mono stacks are written once, as `UI_STACK` and `MONO_STACK` in `tokens/palette-core.mjs`, instead of in four modules and the theme builder. New exports: `UI_STACK`, `MONO_STACK`.
 
-## [0.35.0]
+## 0.35.0
 
 Dark mode, designed rather than inverted (Dustin, 2026-10-29: "proceed" on the dark mode plan). Every family's dark theme was already its own OKLCH scale, but it was tuned to WCAG 2's ratio alone, which overrates gray on near-black: dark muted text, status words, button labels, focus rings and control borders passed at about half the APCA contrast of the light theme.
 
@@ -1147,38 +1191,38 @@ Dark mode, designed rather than inverted (Dustin, 2026-10-29: "proceed" on the d
 - **The browser bar.** `themeColorMeta(choice, { light, dark })` in `capsomer/theme-server` writes `<meta name="theme-color">` tags, and the theme switch keeps them on the chosen theme's ground.
 - **Site layer.** Foxhound's dark text, muted, dim and control border, and Foxing's dark muted and dim, are lifted to the APCA floors in their own hues (Foxhound's dark border was #4a4c44, 2.02:1; its waiver is gone). Changed: those values in `tokens/sites.mjs`.
 
-## [0.34.1]
+## 0.34.1
 
 - **A short page's letterhead sits on the same pixels as a long page's.** A page with a letterhead keeps the scrollbar's room (`scrollbar-gutter: stable`), so a page too short to scroll no longer shifts the band half a scrollbar (7px in Chrome on Windows) to the right. Dustin saw it on the dustinedwards.info admin's Drafts list (2026-10-28).
 
-## [0.34.0]
+## 0.34.0
 
 - **Home and an admin's breadcrumbs start at one place on every site** (Dustin, 2026-10-28: "The home link should be in the same location on all sites and same for the breadcrumbs"). From 1080px a letterhead's first column is at least `--header-names` (19.75rem) wide, so a public page's first link and an admin's first crumb start at x 496 at 1536px whatever the site's name. Before, the links followed the name: Home sat at x 334 on Capsid, x 344 on Capsomer and x 395 on dustinedwards.info. The links' 32px start padding is gone; the column replaces it.
 - **An admin's band is one row from 1080px, like a public page's.** The trail ("Components / Shell") sits where a public page has its links, and View site sits at its end, 36px before search. Before, both had a 48px second row. Changed: `--header-h` and `--admin-top` are 88px in an admin from 1080px (136px from 768px to 1080px, where the trail keeps its row).
 
-## [0.33.2]
+## 0.33.2
 
 - **An admin's bar reaches the top of the window in the band's color** (Dustin, 2026-10-28: "fill the gap above the stripe with the black color used below it"). The 16px above an admin's stripe was the page's ground, which read as a gap over a full-width bar.
 - **Site layer: the Portal takes the Capsid site's teal** (Dustin, 2026-10-28: "match the theme of the site"), where it was purple. Changed: `capsid-portal`'s family in `tokens/sites.mjs`; the Portal sets `data-family="teal"` on its `<html>`.
 - **Site only:** the Scaffold takes the showcase's magenta, so its stripe and accents match the public pages.
 
-## [0.33.1]
+## 0.33.1
 
 - **An app's own search keeps the search slot in the letterhead.** An admin that opens a command menu (`onSearch`, an extra with id `search`) had its search icon after the theme, in the inbox's group (the Portal's search sat at x 1240 and its theme at x 1192 at 1536px). It now sits before the theme, where a site's search form sits.
 - **An admin's names on a phone.** Under 768px the account avatar moves out of the bar into the menu's sheet, which already lists the account's rows and Sign out, and the names wrap only before the app's name: "Dustin Edwards" over "Admin" on dustinedwards.info, where it read "Dustin", "Edwards", "Admin" on three lines beside four icons.
 
-## [0.33.0]
+## 0.33.0
 
 - **An admin's letterhead keeps the public page's pixels** (Dustin, 2026-10-28: "it is full screen yet all the components need to stay in place"). The admin band still runs the full width, but from 768px its logo, names, search, theme and second row sit exactly where a public page's do: 16px down from the top, inside the 1280px page column. The inbox and the account take the two slots a public page leaves empty. Before, the logo lined up with the menu (x 64 at 1536px) and the band started at the top of the window. `--header-h` is 136px in an admin from 768px.
 - **An admin's names stack as on the public pages**: "Dustin Edwards" over the site's name in bold, then the app's name in the regular weight ("Capsid Portal", "Carrel Desk", "Capsomer Scaffold"). The dustinedwards.info admin is "Dustin Edwards Admin" under the headquarters' empty agency line, so it sits where "Dustin Edwards" does on the public site. Before, the admin showed its name on one line with no agency. New: `FamilyApp.names`.
 - **Site only:** the Scaffold (`/admin/`) uses the letterhead, with search and View site.
 
-## [0.32.0]
+## 0.32.0
 
 - **One body size for the family page: `--fs-page` (17px)** (Dustin, 2026-10-28: "pixel perfect as I move browser tab between websites"). Each site set its own body size, from 14px to 17px; `.cap-page` now sets `--fs-page` and a 1.55 leading, so text inside the page column is the same size on every site. An app's rows keep `--fs-body`. New token: `--fs-page`.
 - **The system map's caption keeps its own row.** Its `max-width` let the next item wrap up beside it, so the Capsid explorer set its own rule to undo it; the measure is now padding inside a full-width row.
 
-## [0.31.0]
+## 0.31.0
 
 - **Search is an icon, and it answers as you type** (Dustin, 2026-10-28). The letterhead's search box was a box on half the sites (the header differed from tab to tab), opened a second box on dustinedwards.info, and did nothing until Enter elsewhere. Now it is a magnifier icon beside the theme, only on a site with search. The icon links to the search page, so it works with no script; with script it, or "/", opens a field under it, focused. Pass `suggest(query, signal)` (the site's own search; `search.suggest` in React, `enhance(root, { suggest })` for `letterheadHtml` pages) and up to six matches drop down as the person types, then "All results for …". Up and Down mark one, Enter opens it (or, with none marked, the full results page), Esc closes the list and then the field. The field is a WAI-ARIA combobox with the marked match as its `aria-activedescendant`. New: `wireSearch`, `searchHtml`, `SearchHit`, `Suggest`, `SUGGEST_DELAY_MS`. Changed HTML contract: `.cap-site-header-search` now wraps the icon link (`.cap-site-header-search-button`, `data-cap-part="search-trigger"`) and its panel (`.cap-site-header-search-panel`) holding the form; the form is no longer in the band. A site that bound "/" to its own search should drop that binding.
 - **The section links sit in the top row where they fit** (Dustin, 2026-10-28). From 1080px a public page's letterhead is one 64px row, the links after the names (`--header-h` drops by 48px there); narrower, they keep their second row. An admin keeps its second row.
@@ -1189,7 +1233,7 @@ Dark mode, designed rather than inverted (Dustin, 2026-10-29: "proceed" on the d
 - **The headquarters' name matches the sites' names** (Dustin, 2026-10-28). With no site name, "Dustin Edwards" now takes the site name's size (20px), weight (700) and place, under an empty agency line, where it was the agency's 12.5px. The mark fills one 32px square on every site, so the names start at the same place whatever the mark's shape.
 - **Site only:** the header's search answers from the site's search index.
 
-## [0.30.0]
+## 0.30.0
 
 - **The letterhead sets `--header-h`** to what it covers when pinned (its stripe and two rows, 120px, and from 768px on a public page the 16px above it), and its scroll padding reads it. A site's sticky parts and anchors read the token instead of working the height out again (dustinedwards.info did).
 - **Site layer: the Capsid explorer and the Portal are two sites.** `data-cap-site="capsid"` is now the explorer (capsid.dustinedwards.info, teal): running text in the UI face, and its surface as the ground. The Portal is `data-cap-site="capsid-portal"` with `capsomer/site-capsid-portal.css` (its 13px secondary text on a phone, as before). Changed HTML contract: the Portal's root attribute.
@@ -1197,12 +1241,12 @@ Dark mode, designed rather than inverted (Dustin, 2026-10-29: "proceed" on the d
 - **The family arrow (`.cap-go`) moves to `capsomer/utilities.css`**, which `base.css` still imports, so a page that keeps its own base (dustinedwards.info) draws the footer's arrows too. It is now in the `cap.utilities` layer.
 - **Site layer: dustinedwards.info** takes its faces (the self-hosted Schibsted Grotesk, Source Serif 4 and Martian Mono), its 42rem reading line, its paper ground and its layers above its own pinned bar (`--z-sticky` 100, `--z-overlay` 800) from Capsomer, where the site had set them itself.
 
-## [0.29.0]
+## 0.29.0
 
 - **One page width for the family** (Dustin, 2026-10-28: "why are they all different widths"). The new `--page-max` token (1064px, gutters included) and `--page-gutter` (16px) set it, and the new `.cap-page` class wraps a page's content and footer in it, so every site's letterhead, content and footer sit on the same 1032px column at a wide window. The width comes from the reading line, not taste: the column is the measure (66ch, 686px at the 17px body) divided by two-thirds, GOV.UK's rule that a page's main text takes two-thirds of the column, rounded to the 8px grid. The letterhead takes its width from `--page-max`. Removed: `--header-max` (each site set its own) and `--header-gutter`.
 - **Site only:** the front page's column is `--page-max` (it was 76rem).
 
-## [0.28.1]
+## 0.28.1
 
 - **The letterhead keeps a 16px gap above it on public pages** (Dustin, 2026-10-27): from 768px the band sits 16px below the top of the window, at rest and pinned, with the page's ground covering the gap and the margins beside it, so it reads as a letterhead on the sheet. `scroll-padding-top` grows to match. The admin's band stays at the top edge.
 - **A fade under the pinned band** on public pages, as wide as the window, once the page has scrolled (a scroll timeline; none where unsupported).
@@ -1215,7 +1259,7 @@ Dark mode, designed rather than inverted (Dustin, 2026-10-29: "proceed" on the d
 - **Fix: a leader index fits a phone.** A long name or fact wraps inside its row instead of pushing the page 10px wider (Capsid's front page at 360px).
 - **Fix: the footer's first social icon names itself inside the screen.** Its name opened centered on the icon and ran off a phone's left edge; the first and last now open inward.
 
-## [0.28.0]
+## 0.28.0
 
 - **The letterhead header** (`<SiteHeader variant="letterhead">`, `data-variant="letterhead"`; Dustin, 2026-10-27). One header for the six family sites and their admins: a dark band (light in dark mode) under an 8px stripe of the site's color, a 64px top row with the logo at the left and the names beside it ("Dustin Edwards" small over the site's name), search, the theme and, in an admin, the inbox and account in the corner (their slots stay empty on the public pages, so search and the theme never move); a 48px second row with the section links, Home first, at every width. The band stays at the top of the window while the page scrolls, on public pages and in the admin. On a public page from 768px it sits inside the page's margins, at the content's width (`--header-max`, default 74rem), with the page's ground covering the margins beside it; on a phone it runs edge to edge. In an admin it runs the full width, the logo and where you are lined up with the menu's buttons. Under 480px tall (a phone held sideways, 400% zoom) it scrolls away instead. New props: `variant`, `search`, `trail`, and `agency` and `app` on the logo. New classes: `cap-site-header-names`, `-agency`, `-name`, `-app`, `-search`, `-trail`, `-view`. The default header is unchanged.
 - **`AdminShell` takes `letterhead` and `search`**: the header's second row shows where you are and View site, and the page bar drops its breadcrumb. `--admin-top` grows to match.
@@ -1225,7 +1269,7 @@ Dark mode, designed rather than inverted (Dustin, 2026-10-29: "proceed" on the d
 - **Site only: search** at `/search/` (Dustin, 2026-10-27: "we have a lot of components"). The header's search box goes there; it finds components, the headings in their docs, the front page's parts and the theme builder, and links to the heading that matched. The build writes the index (`/search.json`) with Prelum's `staticSearchIndex`, and the page ranks it in the browser with `staticSearch`. The page is noindex; the front page's JSON-LD names it as the site's SearchAction. Prelum v0.15.0.
 - **Site only: the site wears the letterhead.** Its links are Home, Color, Type, Components, Defaults, Install and Make a theme; the running head is back to the plain one, and the front page's reads "1 Overview" so it does not repeat the Home link.
 
-## [0.27.0]
+## 0.27.0
 
 - **Magenta moves from hue 330 to 334** (seed #b24fac to #b64da6; Dustin, 2026-10-26, after a search of every hue for the six public sites). Its closest neighbors were purple (CIEDE2000 11.9) and rose (14.6); now both are about 13.3. No token is renamed; magenta's values change a little.
 - **Carrel and Enarratio join the family** (Dustin, 2026-10-26). Two new families at purple's lightness and strength: olive (seed #768602, hue 118) for Carrel's public site and rose (seed #c94574, hue 2) for Enarratio's gallery (`data-family="olive"`, `data-family="rose"`; `capsomer/family-olive.css`, `capsomer/family-rose.css`, both in `capsomer/families.css`, `--family-olive` and `--family-rose` in `family-marks.css`). Every pair passes in both themes. `EmailFamily` gains both names; the theme builder has both as presets.
@@ -1263,40 +1307,40 @@ Dark mode, designed rather than inverted (Dustin, 2026-10-29: "proceed" on the d
   - A long changelog line no longer pushes a phone page sideways.
   - The Settings page, which held two paragraphs and no settings, is gone; `#/settings` opens the overview.
 
-## [0.26.2]
+## 0.26.2
 
 - **The footer's Workspace link to the members' area reads "Lab bench"** (Dustin, 2026-10-26), not "Lab", since "Lab" names other parts of dustinedwards.info.
 - **Capsomer's admin is named Scaffold** (Dustin, 2026-10-26), after the proteins that guide a capsid's assembly and leave before it is finished, as Capsid's is the Portal. In the admin shell's strip it is "Capsomer Scaffold" and goes to `/admin/` (it went to the public page). Site only: the admin's title, the footer link and llms.txt say Scaffold.
 
-## [0.26.1]
+## 0.26.1
 
 - **The family footer's strip is headed "Network"** (Dustin, 2026-10-26), not "The family". Changed HTML contract: its heading's id is `cap-family-footer-network` (was `cap-family-footer-family`).
 - **The copyright sits right under Dustin Edwards** (Dustin, 2026-10-26), not below the tallest column. Changed HTML contract: `.cap-family-footer-note` moved into the name's column, beside the logo in a new wrapper `div`.
 
-## [0.26.0]
+## 0.26.0
 
 - **The family footer is now each site's one footer** (Dustin, 2026-10-26: option 4 of the footer mocks). `familyFooterHtml()` takes `site` (a `FAMILY_SITES` id) and `center` (the site's own HTML). Under a thin stripe in the page's color: the site's own part (`.cap-family-footer-center`, `-center-name`, `-about`, `-stamp`, with `.cap-family-footer-columns` on the letterhead's columns), then the strip of the family's sites (`nav.cap-family-footer-sites`), each marked in its family's color, with the one you are on carrying a heavy top edge. Then the double stripe over Dustin Edwards, as before. Changed HTML contract: the footer's markup now opens with `.cap-family-footer-local`.
 - **`tokens/family-marks.css`**, in `tokens.css`: each family's color as `--family-<name>` (its `--on`, in both themes), so a page can mark the other families without loading their scopes. Generated by `tokens/palette.mjs` (`renderMarks`).
 - **Site only:** the public pages' footer is the family footer with Capsomer's own part; the old letterhead and link row are gone.
 
-## [0.25.0]
+## 0.25.0
 
 - **The family footer** (`components/family-footer`, Dustin, 2026-10-26: "i want them to all have the same footer"). dustinedwards.info's footer, moved here so it and the public sites of Capsid and Capsomer all end with the same one, the last two under their own footer. `familyFooterHtml({ origin, published, year })` from `capsomer/behavior/family-footer` writes it; `capsomer/family-footer.css` styles it, with `manual.css` for its band and letterhead. Its band is the page family's `--on`, so each site draws it in its own color, and it leaves off the letterhead's heavy rule (Dustin: "remove that one black line"). The links are exported as data for a site's own tests. New classes only (`.cap-family-footer` and its parts); nothing is removed or renamed.
 - **Site only:** the public pages end with the family footer, in magenta, under Capsomer's own.
 
-## [0.24.0]
+## 0.24.0
 
 - **The rest of NASA's marks in the manual theme** (Dustin, 2026-10-26: "Incorporate them all"), moved from Capsid's explorer so every public site shares one copy: the layout grid behind a page's head (`.cap-layout-grid`, twelve columns and a 24px baseline in faint red, four columns on a phone), the direction strip for a trail (`nav.cap-direction`, a dark band, arrows in the family's color, the current page lit), the livery band across the foot of a page and a card's stripe (`.cap-livery`, `[data-livery]`), the Saturn V roll blocks for steps (`ol.cap-roll`, `li[data-state="done|now|ahead"]`), the Apollo flight plan's time line (`ol.cap-timeline`, `.cap-timeline-mark`, `.cap-timeline-body`) and the Apollo cue card (`.cap-cue`, `.cap-cue-strip`, `.cap-cue-title`, `.cap-cue-lines`, `.cap-cue-name`, `.cap-cue-value`). New classes only; nothing is removed or renamed.
 - **`family-purple.css`**: purple is now scoped on `[data-family="purple"]` too, like the other families, so a page whose root is another family can still show purple. `families.css` imports it first. Purple stays the default on `:root`.
 
-## [0.23.0]
+## 0.23.0
 
 - **The manual theme, `capsomer/manual.css`, for the public pages of the dustinedwards.info sites** (Dustin, 2026-10-26: "we are just theming our public pages"). The look of the 1976 NASA Graphics Standards Manual, lifted from Capsid's explorer so dustinedwards.info, Capsid's public site, Capsomer's public site and Prelum's specimen share one copy: a running head (and its sign variant), numbered parts with the title on the left, ruled form boxes (with readings and a tone scale), an index with dotted leaders, the checklist card, plates, signs for the ways on, the mission patch (`patchSvg()` from `capsomer/behavior/manual`) and the letterhead. New classes only: `cap-running-head`, `cap-part`, `cap-form-boxes`, `cap-leader-index`, `cap-checklist`, `cap-plate`, `cap-signs`, `cap-sign`, `cap-patch`, `cap-letterhead` and their parts. Opt-in: Capsomer's components, its admin and the products do not load it. The one color is the page family's `--on`.
 - **Two new families, magenta and cerulean** (`data-family="magenta"`, `data-family="cerulean"`; `capsomer/family-magenta.css`, `capsomer/family-cerulean.css`, and both in `capsomer/families.css`). Purple's lightness and strength at hues no family had: magenta (seed #b24fac, hue 330) for Capsomer's public site, cerulean (seed #0588b4, hue 230) for Prelum's specimen. Every pair passes in both themes (1,088 pairs across eight families). `EmailFamily` gains both names.
 - **The palette code runs in a browser.** The color math, the families and the renderers moved from `tokens/palette.mjs` into `tokens/palette-core.mjs` (in the package, with types), which has no file system use; `palette.mjs` re-exports it, so nothing that imports it changes. Two new exports, `seedLch` and `darkStep9`.
 - **Any brand color makes a working theme.** A seed too dark for 3:1 on the dark surfaces (navy, black) is lightened for step 9 in dark, as amber is darkened in light (`darkStep9`), and lightness is held to 0 to 1, so a very light seed (yellow, white) no longer throws. No family's colors change.
 
-## [0.22.0]
+## 0.22.0
 
 **What the Capsid Portal and dustinedwards.info need to drop their own copies** (Dustin approved moving them onto Capsomer, 2026-10-26).
 
@@ -1307,7 +1351,7 @@ Dark mode, designed rather than inverted (Dustin, 2026-10-29: "proceed" on the d
 - **`Button` takes a `ref`** in its props type, so an app can move focus to it (the Portal's confirm dialog focuses Cancel or the action after a preview). React 19 already passed it through; only the type is new.
 - **The chart palette's color difference is Enarratio's.** `tokens/chart.mjs` kept its own copy of CIEDE2000 and the color-vision simulation. The checks now live in `tokens/chart-checks.mjs`, which uses Enarratio's `colorDifference` and is not in the package. `colorDifference`, `worstDifference`, `VISIONS`, `chartChecks` and the three thresholds are no longer exported from `tokens/chart.mjs`; no app imported them. `check()` in `tokens/palette.mjs` is now async.
 
-## [0.21.0]
+## 0.21.0
 
 **Shared server code, moved here from the sites** (Dustin, 2026-10-25: "we keep finding things that are not moved to the shared core components").
 
@@ -1323,14 +1367,14 @@ Dark mode, designed rather than inverted (Dustin, 2026-10-29: "proceed" on the d
 - **Site only: a public front page, and the dashboard moves to `/admin/`** (Dustin, 2026-10-25: "we need a capsomer admin ... and a capsomer public display"). https://capsomer.dustinedwards.info is now a plain HTML page in the Supergraphics style (Barbara Stauffacher Solomon, The Sea Ranch, 1966): each section opens with its name in flat letter tiles painted in the families, too big for the page and cut by its edge, then the six families with their twelve steps, the three faces and the type scale, every component linked to its states page, the defaults and how to install. Its only script sends an old root address such as `/#/components/button` to the same page under `/admin/`. The admin is unchanged at https://capsomer.dustinedwards.info/admin/, with its own title from `site/seo.ts` and noindex, so search shows the public page; it stays out of the sitemap and is listed in llms.txt. The package is unchanged.
 - **The showcase site's search and AI surface now comes from Prelum** (`@drdustinedwards/site-helpers` 0.8.0, a dev dependency, site tooling only), as on every family site: the front page's canonical, Open Graph and Twitter tags with a share card (`site/public/og-card.png`) and JSON-LD; the sitemap, robots.txt (the family bot policy), a new ai.txt and llms.txt, written at build from `site/seo.ts`; and `tdm-reservation: 1` in `_headers`. The 404 page says noindex. The package itself is unchanged.
 
-## [0.20.0]
+## 0.20.0
 
 **Foxhound's two asks before launch** (capsomer job_adef3dadfa88, for foxhound job_490a6bc5b957 and job_69b3fb23214b).
 
 - **AdminShell can leave the tab title to the app.** New prop `documentTitle` (default `true`, today's "<page> · <app>"). With `documentTitle={false}` the shell never writes `document.title`, so the titles an app's routes set stay; `title` still names the logo, the phone sheet and its groups. New specimen `own-title`. The default is unchanged.
 - **New stylesheet: `capsomer/utilities.css`**, Capsomer's utility classes alone (`.cap-sr-only`, `.cap-mono`, `.cap-num`, `.cap-muted`, `.cap-label`), in the `cap.utilities` layer, for an app that keeps its own reset and body styles and does not load `capsomer/base.css`. `css/base.css` now imports it, so an app that loads base.css gets the same rules as before. No class is renamed or removed.
 
-## [0.19.0]
+## 0.19.0
 
 **Foxhound's public pages, as Recova's** (Dustin, 2026-10-25: "there is still so much wrong with foxhound... as compared to recova", and "dont forget the ui/ux, and hover and active etc").
 
@@ -1342,7 +1386,7 @@ Dark mode, designed rather than inverted (Dustin, 2026-10-29: "proceed" on the d
 - **New: solid filter chips** (`data-variant="solid"` on `.cap-chips`): the pressed chip fills with the primary color without the tick, and an unpressed chip's edge turns to the accent under the pointer. Recova's product filter.
 - **Site `foxhound`** names Foxhound's metric-matched fallback faces (`"DM Sans Fallback"`, `"DM Mono Fallback"`) after DM Sans and DM Mono, and takes Recova's 12px card corners (`--radius-l`), its card shadow (a lit top edge in dark), a 4px lift and an amber edge on linked cards, and the amber sweep on the default button.
 
-## [0.18.0]
+## 0.18.0
 
 **Foxhound back to amber** (Dustin, 2026-10-25: Foxhound keeps Recova's amber and its old sizes; teal goes to capsid.dustinedwards.info).
 
@@ -1353,7 +1397,7 @@ Dark mode, designed rather than inverted (Dustin, 2026-10-29: "proceed" on the d
 - The site header's Foxhound specimens are amber.
 - **Site only:** the showcase site serves `robots.txt` (allow all, pointing to the sitemap), `sitemap.xml` and `llms.txt` (what Capsomer is and where its documentation is), so search engines and AI assistants can find it. The package is unchanged.
 
-## [0.17.0]
+## 0.17.0
 
 **Foxing's asks** (apps/web on Capsomer v0.16.0, which kept its own copy of each).
 
@@ -1378,17 +1422,17 @@ Dark mode, designed rather than inverted (Dustin, 2026-10-29: "proceed" on the d
 
 **Development: site-runtime v0.12.1** (loopback report endpoints, `nonceStyles` and `baseUriSelf`). Dev dependency only; no class, token or HTML contract changes.
 
-## [0.16.0]
+## 0.16.0
 
 **New: inside any system, in one tap** (Dustin, 2026-10-24: the Capsid explorer and dustinedwards.info should draw the map with the same code). dustinedwards.info drew every system's wiring with its own engine, beside Capsomer's map; that engine is now Capsomer's, and both sites use it. `capsomer/system-map-circles` exports `circleLayers(data, { summary?, saved? })`, which draws each system's circle at build time (its parts inside, what it works with outside and every system it connects to round the rim, searched for from fixed seeds so the same data draws the same way), with `sceneOf`, `layoutScene`, `layoutKey` and `faultsOf`. `saved` keeps the circles found, by system id under a key of what drew each (its boxes, its wires, its width and the search's own code), so a build searches again only for a circle that changed. Drawn from dustinedwards.info's model, all 23 circles are byte for byte the ones its own engine drew, the class names aside.
 
 `systemMapHtml` takes them as the new option `circles: { layers?, src?, chosen? }`: the core's inside is its circle (flows play on it), one tap on any capsomer zooms into that system's circle, a system on the rim zooms there, and Back to all systems, Escape or a tap outside returns. `src` is every circle as one JSON object, which the script fetches once the page has loaded; `chosen` delivers that system zoomed into, its lines on. New: `modelMapData(model, href?)`, Capsid's public model as the map's data with each family's word and group, the same on every host; the `ModelSystem` and `SystemModel` types; the controller's `enter(id?)`; the event `cap:system-map-leave` (`{ id }`), sent whenever the map steps out of an inside; the root's `data-circles`, `data-insides`, `data-zoom` and `data-insides-ready`; an inside layer's `data-system` and `data-shown`; a wire's `data-loose` and `data-whole`; `button[data-cap-part="out"]`; and the classes `cap-system-map-rim`, `cap-system-map-rim-name`, `cap-system-map-inside-name` and `cap-system-map-inside-text`. Without `circles`, the map is as before. New option, exports, attributes and classes only; nothing is removed or renamed.
 
-## [0.15.1]
+## 0.15.1
 
 **Fix: a pnpm install of Capsomer builds wherever the store sits.** `Pagination`, `Spinner`, `Skeleton` and `SkeletonBlock` now state their return type (`ReactElement`, and `| null` for `Pagination`). Without it, the install-time build failed with TS2883 when the package was built under a `node_modules` path, which is where pnpm's store sits by default, so Foxing's CI had to move its store. No class, token or HTML contract changes.
 
-## [0.15.0]
+## 0.15.0
 
 **System map: groups** (Dustin, 2026-10-23: like goes with like, and a stranger should read the map without a key). A system people use can carry a `group` (Websites, Apps). When any does, each group is drawn together, its systems chained in the order given, apart from every other group, and named beside it in a new `text.cap-system-map-group-label` on a new `svg.cap-system-map-layer[data-layer="labels"]`, hidden inside a system. The gaps between groups are not drawn as empty shell, and the list below is sectioned by group. `Layout` gains `labels` and `grouped`. A map with no groups is drawn as before. New field, class and layer only; nothing is removed or renamed.
 
@@ -1398,21 +1442,21 @@ Dark mode, designed rather than inverted (Dustin, 2026-10-29: "proceed" on the d
 
 **Development: the family packages at their latest.** devkit and site-runtime v0.11.0 (and the devkit workflows at v0.11.0), and Enarratio 0.3.1 from npm in place of a 0.2.0-era git commit. Dev dependencies only; no class, token or HTML contract changes.
 
-## [0.14.0]
+## 0.14.0
 
 **New: per-site hover touches** (Dustin, 2026-10-23: each site keeps its own differences in Capsomer's components). Six new tokens in `tokens/scale.css`, group `touch`, each off by default so no site changes unless its `SITES` entry sets them: `--link-rule` (the site header's section links grow an underline in under the pointer; `0px`), `--icon-radius` (the header's icon controls and the theme button; `6px`, as `--radius-m` was), `--icon-border` (their outline's width; `0px`), `--theme-turn` (the theme button turns under the pointer; `0deg`), and `--arrow-rest` and `--arrow-shift` (`1` and `0px`) for the new `.cap-arrow` class: a trailing arrow icon in a link or button that a site can hide until the pointer or focus arrives, when it slides in. The `julieedwards` site turns them all on, as its old site had them: a 1px underline, round outlined icon buttons, a 20 degree turn and arrows that slide in. New tokens and class only; nothing is removed or renamed.
 
-## [0.13.1]
+## 0.13.1
 
 **New site: `julieedwards`** (julieedwards.info onto Capsomer, 2026-10-23), exported as `capsomer/site-julieedwards.css` and in `capsomer/sites.css`, on `<html>` with `data-cap-site="julieedwards"` under the forest family: `--ui` is Open Sans (reading) and `--font-ui` Montserrat (the header and the site's headings), both of which the site self-hosts.
 
 **Site header: on a phone, the tools keep to the window's edge when the section links sit on the right.** With `data-links="right"` the hidden links' rule still set the tools' start margin to 12px, so the theme and menu buttons sat beside the logo instead of at the right. A visual fix at phone width only; the phone test now measures the menu button's edge. No class, token or HTML contract changes.
 
-## [0.13.0]
+## 0.13.0
 
 **New: the `forest` family** (Dustin, 2026-10-23: Julie's green must go with the other families). `data-family="forest"` switches an element's subtree to julieedwards.info's green, in both themes; `capsomer/families.css` now imports it, or take it alone as `capsomer/family-forest.css`. The Bluff Dale ISD green `#15532E` is the light theme's step 11 anchor (links, headings, accent text), as navy's `#002868` is. Step 9 is `#06954f`, its hue at the lightness purple, fox and navy share (oklch 0.587 0.15 153); green leaves sRGB above chroma 0.15 at that lightness, so it takes the strongest green there is. Light is its default theme. Every pair passes WCAG 2.2 in both themes, and the chart checks pass. `EmailFamily` gains `"forest"`; the site's overview counts five families. New attribute value and new exports only; nothing is removed or renamed, and no existing family changes.
 
-## [0.12.0]
+## 0.12.0
 
 **New: the `navy` family, and the `txasm` site** (the txasm-onto-Capsomer plan of 2026-10-23). `data-family="navy"` switches an element's subtree to txasm's navy, in both themes; `capsomer/families.css` now imports it, or take it alone as `capsomer/family-navy.css`. The brand navy `#002868` is too dark to be step 9 (as the focus ring it is under 3:1 on the dark surface), so it is the light theme's step 11 anchor (links, headings, accent text, as purple anchors `#4F2D7F`), and step 9 is `#3978e0`, the same hue at the lightness and strength purple and fox share (oklch 0.587 0.172 260; Dustin, 2026-10-23: the navy must go with the others). Light is its default theme. Every pair passes WCAG 2.2 in both themes, and the chart checks pass. The anchor is Dustin's to change. New site `txasm` in `SITES` (`capsomer/site-txasm.css`, `data-cap-site="txasm"` on `<html>`): the UI face stays Inter, which txasm loads. txasm's red `#a30e28` stays txasm's own, for its logo. `EmailFamily` gains `"navy"`; the site's overview counts four families. New attribute value and new exports only; no class, token or HTML contract is removed or renamed, and no existing family or site changes.
 
@@ -1431,7 +1475,7 @@ Dark mode, designed rather than inverted (Dustin, 2026-10-29: "proceed" on the d
 
 No class or HTML contract changes; one token added (`--ease-spring`), two token values changed. New: the `capsomer/behavior/button` module, the React `Button` `morph` prop, and the `data-leaving` and `data-cap-dragging` attributes these set while they run.
 
-## [0.11.2]
+## 0.11.2
 
 **Three more sites: `foxhound`, `germomics` and `capsid`** (the site-settings plan of 2026-10-23), each exported as `capsomer/site-<name>.css` and in `capsomer/sites.css`.
 
@@ -1441,21 +1485,21 @@ No class or HTML contract changes; one token added (`--ease-spring`), two token 
 
 **`tokens/sites.mjs`** gains three fields. `defaultTheme: "dark"` writes a site's dark values as the plain block and its light values only where light is pinned (`:root[data-theme="light"]`, `[data-cap-theme="light"]`), as Foxhound draws its own pages; the dark values are also written under the family's dark selectors, so they tie them. `phone` holds values for a phone, under Capsomer's 767.98px or the site's own `phoneMax`. `waive` records a WCAG pair a site's own colors already fail where it renders today, with the reason; the check refuses a waiver that no longer matches a failure. Foxhound's dark `--line-strong` (`#4a4c44`, legacy's value) is the one waiver: 2.02:1 on `--surface`, under the 3:1 a control border needs. No class, token or other HTML contract changes.
 
-## [0.11.1]
+## 0.11.1
 
 **Per-site settings win over `tokens.css` whatever order they load in.** A bundler can put the site file before `tokens.css` (dustinedwards-info's Vite build did), and with equal specificity the later `:root` defaults won, so the site's chart sizes did not apply. Each site selector now repeats its attribute (`[data-cap-site="x"][data-cap-site]`). No class, token or HTML contract changes.
 
-## [0.11.0]
+## 0.11.0
 
 **New: per-site settings** (`data-cap-site="<site>"`; the site-settings plan of 2026-10-23). `SITES` in `tokens/sites.mjs` holds what a site differs on from the family defaults (faces, neutrals, type sizes, space and radius, `--enarratio-*`), as literal values; a brand color stays a family. It generates `tokens/site-<name>.css` in the `cap.tokens` layer and the barrel `css/sites.css`, exported as `capsomer/sites.css` and `capsomer/site-<name>.css`; import after `tokens.css` and `families.css`. The selectors repeat the family files' shapes (plain, system dark, pinned dark), so dark theme and density cannot override a site value, and each also matches a `[data-family]` or `[data-density]` wrapper inside the site. `npm run tokens` writes the files; `npm run check` refuses a hand edit, a missing export, a `var()` value or a brand token, and checks the site's colors against WCAG 2.2 in both themes. The first site is `dustinedwards`, on `<html>`: its charts keep their look from before Enarratio 0.3 (title `1rem`, small text `0.875em`, and Enarratio's own spacing, shape and timing literals). New attribute `data-cap-site`; no class, token or other HTML contract changes.
 
-## [0.10.1]
+## 0.10.1
 
 **`capsomer/email`: `checkUrl` refuses a link with a user or password before the host** (`https://trusted.example@evil.example/` reads as the trusted name in a mail client but opens the other host). Every link the email renderers take goes through it, so a caller passing such a URL now gets a thrown `email:` error. No class, token or HTML contract changes.
 
 **Tooling:** a `LICENSE` file for the MIT license `package.json` names; vite 8.3.5 and wrangler 4.151.3 (dev dependencies, off advised ranges); CI fails on a high advisory in the production install.
 
-## [0.10.0]
+## 0.10.0
 
 **New: `capsomer/publish-transition`**, the publish gate's DOM-free half, so carrel and dustinedwards-info keep one copy of the post editor's transitions in place of their own `publish-transition.mjs`. `transitionsFor(state, everPublished)`, `draftForIntent(intent)` (fails closed: an unknown or missing intent is a draft), `saveInPlaceIntent(state)`, `stateOf({ draft, publishAt }, now)` (an unparseable `publish_at` is published, not scheduled), `DRAFT_BY_INTENT` (no prototype: the apps' copies answered `draftForIntent("constructor")` with `Object`, not a draft), `PUBLISH_CONFIRMED_INTENT` and `FIRST_PUBLICATION_NOTE`, with the types `PostState` and `Transition`. Pure, no DOM, safe in a server action. `capsomer/behavior/publish-gate` still exports `FIRST_PUBLICATION_NOTE`, now from this module, and its confirmed button posts `PUBLISH_CONFIRMED_INTENT`. No class, token or HTML contract changes.
 
@@ -1463,11 +1507,11 @@ No class or HTML contract changes; one token added (`--ease-spring`), two token 
 
 **Site only: the showcase site's security headers come from `@dustinedwards/site-runtime` v0.4.0** (no package change). `scripts/security-headers.ts` holds the site's list (`data:` images, test results from raw.githubusercontent.com, the Cloudflare Web Analytics beacon, styles from its own files only, its own pages framed with `frame-ancestors 'self'` and `X-Frame-Options: sameorigin`, the clipboard's write side for the Copy specimens) and the site build writes `site-dist/_headers` from it, in place of the hand-written `site/public/_headers`. The site now sends the shared standard set (HSTS, COOP, CORP, `Referrer-Policy: no-referrer`, the full Permissions-Policy) and `form-action 'self'`. Violations are reported to `/csp-report`, answered by a minimal Worker (`worker/index.ts`) that runs for that path only and logs to Workers Logs. `test/unit/security-headers.test.mjs` runs site-runtime's check on the generated `_headers` and on the report response.
 
-## [0.9.1]
+## 0.9.1
 
 **Site header and AdminShell: nothing runs past a 320px window** (WCAG 1.4.10, reflow; the Capsid Portal UX audit's M8, 2026-10-20; a visual change at narrow widths only). At 320px every AdminShell page was 335px wide and the menu button was clipped, because the logo never gave way. Now the logo (`.cap-site-header-logo`) shrinks before the controls do, and under 360px a logo with a mark shows the mark alone; the link's label keeps its name for screen readers. Under 360px the phone tab bar's count badges sit flush on the glyph's edge with 2px padding, so the last tab's "99+" stays clear of its glyph and inside the window. At 360px and wider nothing changes. Tested at 320px in both themes. No class, token or HTML contract changes.
 
-## [0.9.0]
+## 0.9.0
 
 **New: Site header** (`header.cap-site-header`, `data-cap="site-header"`; `capsomer/react/site-header`, `capsomer/behavior/site-header`; docs/design/design-site-header.md and Dustin's ten answers of 2026-10-13; a visual change that waits for Dustin's sign-off). One header across the top of every public, app and admin page in the family. Capsomer fixes the frame: 56px at every width (new token `--header-h`, 3.5rem), sticky, with `scroll-padding-top` so a focused control never lands under it, full width with the logo 24px from the window's edge (16px on a phone). The order is fixed: the logo, the switcher, the section links, then the site's extras, the theme button, and the account (the avatar menu, or Sign in) last. The section links sit where the site says: `data-links="center"`, or `"right"` before the tools after a thin divider. Each site fills its slots: the logo, its color family, the band (`--header-bg`, `--header-fg`, `--header-fg-muted`, `--header-line`, or `data-band="dark"` for a band dark in both themes, and `data-translucent`), up to two icon extras and one button, and what each panel holds. The switcher, a section with children and the account open panels: disclosure buttons (`aria-expanded`, `aria-controls`) over lists of links, not ARIA menus. A panel opens at once on hover and on click; Enter or Space opens it and focuses its first item; Up, Down, Home and End move; Esc closes it and returns focus to its button; Tab past the last item closes it. On a phone (under 768px) the header is one row: the logo, up to two of the site's icons, the theme, the avatar or Sign in, and the menu button last. The menu button opens one bottom sheet (the shared dialog) with everything else, the account rows pinned under the list so Sign out is always in view, focus on its heading; there is no second row of links. `SiteTabs` (`nav.cap-site-tabs`) is the bottom bar of a signed-in area on a phone: up to five tabs and no More. Specimens for a teal site with a dark band (Foxhound's look) and a fox site with a translucent band (Foxing's), public, signed in, a dashboard and your admin, in both themes, at desktop and phone, and a header written by hand. New HTML contract: `header.cap-site-header[data-links][data-band][data-translucent][data-sticky]` holding `a.cap-site-header-skip`, `a.cap-site-header-logo`, `div.cap-site-header-switcher` (`button.cap-site-header-switch` with `.cap-site-header-switch-tile` and `svg.cap-site-header-chev`, `span.cap-site-header-sep`), `nav.cap-site-header-sections` of `.cap-site-header-link` (`aria-current`, or `data-current` on a section button), `div.cap-site-header-tools` (`div.cap-site-header-extras` of `.cap-site-header-icon` with `.cap-site-header-badge` and `.cap-site-header-tip`, and `a.cap-site-header-cta`; the theme button; `div.cap-site-header-account` with `button.cap-site-header-avatar` and `.cap-site-header-initials`, or `a.cap-site-header-signin` with `.cap-site-header-signin-text`; `button.cap-site-header-menu`), each panel `div.cap-site-header-panel[popover="manual"][role="group"][data-align]` (`.cap-site-header-who`, `.cap-site-header-panel-label`, `ul.cap-site-header-panel-list`, `.cap-site-header-mark`, `.cap-site-header-count`, `[data-panel-close]`), and the sheet `dialog.cap-dialog.cap-site-header-sheet[data-placement="bottom"]` (`.cap-site-header-sheet-title`, `.cap-site-header-sheet-label`, `ul.cap-site-header-sheet-list`, `.cap-site-header-sheet-icon`, `.cap-site-header-sheet-name`, `a.cap-site-header-sheet-cta`, `nav.cap-site-header-sheet-account`). Behavior exports: `enhance`, `wirePanel`, `placePanel`, `closePanels`, `panelItems`, `openSheet`, `closeSheet`, `stepIndex`, `badgeText`, `HOVER_GRACE_MS`, `PHONE_QUERY`. React exports: `SiteHeader`, `SiteTabs`, `SheetGroup`, `HeaderTip`, `countName` and the types `HeaderLink`, `HeaderGroup`, `HeaderLogo`, `HeaderSwitcher`, `HeaderSection`, `HeaderExtra`, `HeaderAccount`, `HeaderAccountLink`, `SheetPart`, `SiteHeaderProps`, `LinkProps`. Tested: order, the 56px height, sticky, the logo's x, link placement, every panel's keys, the theme button, the phone row, the sheet, the tabs, and contrast on both bands in both themes.
 
@@ -1489,11 +1533,11 @@ Changed React contract: new `variant`, `logo`, `band`, `translucent`, `switchers
 
 **Tests: contrast reads color-mix() colors.** `paintedContrast` (test/helpers.ts, `capsomer/testing`) reads a color computed as `color(srgb …)`, which is what `color-mix()` gives; it read such a color as transparent before.
 
-## [0.8.1]
+## 0.8.1
 
 **System map: parts outside the core, and flows** (capsid job_b6494c838e31, slice 6 of capsid/research/design-system-explorer.md; Dustin, 2026-10-11: Agents and GitHub as external boxes outside the dashed boundary; a visual change that waits for Dustin's sign-off). A container of kind `external` is no longer drawn inside the core: it sits outside the circle, in the stage's top corners two to a band and the bottom corners for a third and fourth (four at most), on the page's ground with a plain edge, and the inside detail counts it apart ("6 parts inside, 2 outside it."). Data gains `flows`: ordered steps, each riding a line between the core's parts toward one end, with a sentence and the parts it lights. Inside the core, Play starts a flow: the step's line is lit, a token travels it from just off one box to just off the other, the part it moves toward has a heavy edge and the parts it touches a tint and a heavy edge; the detail line reads "Step n of N." and the sentence with Back, Next and Stop; the left and right arrows and the number keys step (with no modifier, so the browser keeps its shortcuts), Escape stops. Under reduced motion the token jumps. A host's `playFlow` and `step` leave focus where it is, and every way a flow ends (Stop, Escape, stepping out, choosing, the plain view, `destroy`) sends `cap:system-map-flow` with `{ id: null, step: 0 }`. The plain view opens the steps with the systems' list. Only four parts fit outside; a flow needing a part not drawn is not offered. **Inside the core, redrawn** (seat rulings on this PR; a line under a box, or a bend or crossing beside another line, reads as a false connection, Dunne and Shneiderman 2009). The boundary stays a dashed circle, now as large as the stage allows (it reaches the drawing's margin or 16 units from a part outside), named at its foot; the parts sit in rows along its chords, and the drawing is made larger when they would not fit, so no box is cut (Dustin, 2026-10-13: keep the circle, a little bigger, and the hexagons behind it). The rim stays behind it as faded shapes with no names. Every box sits inside or outside the circle with clear space. Lines leave a box at their own ports, spread along the side facing their far ends; no line runs under a box it does not end at or under the boundary's name, each keeps 8 units (over 5 px on a 320 px phone) from every other box, crosses no line near its ends nor anywhere along a short one, runs nearly parallel to none within 10 units, and bends nowhere within 12 units of another line. Capsid's own core keeps every rule; on 100 seeded random cores, far more crowded, no line crosses a box or the name and each softer rule holds for at least 19 lines in 20. A flow's token follows the line's bends. The panel's headings use the page's face (`--face`; they were `--prose`, a serif the page did not load), the fixed detail box is tighter (7.5rem, 12rem at 40rem and narrower; was 8.5rem and 13rem), and in forced colors every capsomer and part is Canvas with a CanvasText edge (stores kept their tint before) and the lines CanvasText. A flow that names a line the data lacks, goes toward neither end, or lights a part outside the core is not offered. Each flow is also an ordered list of its steps, open with no script. Changed HTML contract, additive except the wire's element (`circle.cap-system-map-boundary` is unchanged; `.cap-system-map-inside-title` now sits at the circle's foot): `g.cap-system-map-box` gains `data-id`, `data-x`, `data-y` and `data-external` (and `data-lit`, `data-at` while a flow plays); `.cap-system-map-wire` is now a `path` (was a `line`) with `data-from`, `data-to` and `data-route`, its corners (and `data-on`); new `circle.cap-system-map-token`, `details.cap-system-map-flows` of `section.cap-system-map-flow[data-flow]` (`.cap-system-map-flow-name`, `.cap-system-map-flow-text`, `ol > li[data-from][data-to][data-toward][data-lights]`); `data-flow` and `data-step` on the root; event `cap:system-map-flow`; controller `playFlow`, `step`, `stopFlow`. New pure functions `insideScene` (the circle, its name, the boxes and every routed line), `rectInset`, `rectOutset`, `portsOf`, `playableFlows`, `stepText`, `segmentHitsBox`, `segmentHitsRect`, `segmentFaults`, `segmentCross`, `segDist`, `segAngle`, `sideBySide`, `pointSegDist`, `tokenRoute`, `routeFrames`, and the constants `ROUTE_CLEAR`, `LINE_SEP`, `JUNCTION_END`, `SHORT_LINK` and `BEND_CLEAR`. **Removed: the function `insideLayout`**, replaced by `insideScene`. No class or token is removed or renamed.
 
-## [0.8.0]
+## 0.8.0
 
 **AdminShell: one shell on every admin page** (capsid job_5ebb352157e5, Dustin's review of the six admin pages, 2026-10-11; a visual change that waits for Dustin's sign-off). Every family admin app (Capsid Portal, Carrel, dustinedwards.info, germomics, Foxhound) and Capsomer's own site now get the same strip, menu and top bar, built once here.
 
@@ -1524,11 +1568,11 @@ Changed React contract: `mark` is removed (the header has no logo); `dot` is rem
 
 **Capsomer's site uses AdminShell**, so the reference matches what the apps get: the family's app strip with the collapse control at its top, the menu in two groups with the dark selected pill, the top bar with the page, test freshness and the theme switch, and `[` to collapse. The usage example shows `AdminShell`. The site marks Capsomer as the app you are in. The Overview's cards lay out from the top, so labels and numbers share a line across the row, open and collapsed; the contrast card puts its two facts on two lines ("3 color families in 2 themes", then "None failing"), and no card line wraps; the Tests card says its number once ("All passed"). A component's page shows its trail in the top bar, and the page's own breadcrumb goes. American spelling in the site's own words: "Color and contrast" (now `#/color`; `#/color` still opens it), "The color families", "Behavior".
 
-## [0.7.1]
+## 0.7.1
 
 **Fixed: the system map's detail line is a fixed box** (capsid job_5c81a4bd1baf, found by dustinedwards-info's browser checks). Choosing a system grew the detail line (88 px to 119 px on desktop, up to 191 px on a phone), so the page below moved. `.cap-system-map-detail` now has a fixed block size (8.5rem, 13rem at 40rem and narrower) and scrolls inside it when a detail is longer; the size is `!important` inside the layer, so a host's ordinary unlayered CSS cannot undo it. A browser test measures the line and the list below it through choosing, going inside and stepping out, at desktop and phone widths, with a host override injected. CSS only: `min-height: 5.5rem` is replaced by the fixed size, and no class, token or HTML contract changes. A visual change that waits for Dustin's sign-off.
 
-## [0.7.0]
+## 0.7.0
 
 **New: `capsomer/testing`, the axe and contrast helpers** (capsid job_5e26713fd175, step 3 of capsid/research/design-shared-tests.md). `test/helpers.ts` is now a public entry: `capsomer/testing` exports `eachTheme`, `visitStates`, `expectNoAxeViolations` (WCAG 2.2 A and AA, with the Base UI focus-guard and iframe exclusion), `paintedContrast` (text, border or outline as painted, SVG text by its fill over its shape), `expectContrast`, `focused`, `nextPost` and `THEMES`, built to `dist/test/helpers.js` with types, so an app stops copying them. `@playwright/test` and `@axe-core/playwright` are optional peer dependencies, needed only by an app that imports it. The helpers are now tested on their own (`test/helpers.spec.ts` in the browser suite, `test/unit/testing-export.test.mjs` for the export). No token or class is removed or renamed and no HTML contract changes.
 

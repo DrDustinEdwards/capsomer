@@ -4,8 +4,9 @@ title: Feature blocks and cards
 summary: A feature told at length (eyebrow, title, paragraph and a picture of it working) or in a card in a grid (icon, title, line).
 parts: [css, react]
 tool: native
-states: [stacked block, beside, alternating, lifted, tall preview that scrolls, card grid, card without an icon]
+states: [stacked block, beside, alternating, lifted, tall preview that scrolls, card grid, card without an icon, card with a tag]
 added: 0.132.0
+updated: 0.142.0
 source: Foxhound's FeatureBlocks (app/components/product-sections-cap.tsx), the guide's AuditScopes cards (app/components/docs/doc-widgets.tsx) and the features page's FeatureCard
 replaces:
   - 'FeatureBlocks'
@@ -57,8 +58,14 @@ A product or landing page; a guide page that names what something covers.
     <h3 class="cap-feature-card-title">Failed invoices</h3>
     <p class="cap-feature-card-text">One line.</p>
   </li>
+  <li class="cap-feature-card">                       <!-- a tag at the end of the title's line -->
+    <div class="cap-feature-card-head"><h3 class="cap-feature-card-title">Retry schedule</h3><span class="cap-feature-card-tag"><span class="cap-pill">Recovery</span></span></div>
+    <p class="cap-feature-card-text">One line.</p>
+  </li>
 </ul>
 ```
+
+A card item takes `tag` (the head and its tag are drawn for you) and `attributes`, the site's own `data-*` attributes on the `li` (a filter's hooks).
 
 React: `FeatureBlock`, `Features`, `FeatureGrid` and `FeatureCard` from `capsomer/react/feature`. Load `feature.css` and `eyebrow.css`.
 

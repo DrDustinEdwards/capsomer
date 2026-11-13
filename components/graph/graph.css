@@ -22,8 +22,8 @@
     border-radius: var(--radius-m);
 
     &:focus-visible {
-      outline: 2px solid var(--ring);
-      outline-offset: 2px;
+      outline: var(--focus-width) solid var(--ring);
+      outline-offset: var(--focus-offset);
     }
   }
   .cap-graph-svg {
@@ -31,7 +31,7 @@
     max-inline-size: 100%;
     block-size: auto;
     margin-inline: auto;
-    font: 13px / 1 var(--ui);
+    font: var(--fs-detail) / var(--leading-none) var(--ui);
   }
   .cap-graph-wire {
     fill: none;
@@ -67,15 +67,15 @@
     fill: var(--text);
   }
   .cap-graph-name {
-    font-weight: 600;
+    font-weight: var(--weight-semibold);
   }
   .cap-graph-sub {
     fill: var(--muted);
   }
   .cap-graph-ring-label {
     fill: var(--crit);
-    font-size: 12px;
-    font-weight: 600;
+    font-size: var(--fs-small);
+    font-weight: var(--weight-semibold);
   }
   .cap-graph-status {
     color: var(--muted);
@@ -91,7 +91,7 @@
     }
     & text {
       fill: currentColor;
-      font-weight: 600;
+      font-weight: var(--weight-semibold);
     }
   }
   .cap-graph a:hover .cap-graph-card {

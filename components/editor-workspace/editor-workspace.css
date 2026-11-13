@@ -36,7 +36,7 @@
   .cap-preview-pane {
     display: flex;
     overflow: hidden;
-    border: 1px solid var(--line-strong);
+    border: var(--line-w) solid var(--line-strong);
     border-radius: var(--radius-m);
 
     & iframe {
@@ -65,7 +65,7 @@
       [data-cap-layout],
       [data-cap-recede]
     ):not(:focus-within) {
-    opacity: 0.08;
+    opacity: var(--opacity-ghost);
   }
 
   /* Only the fade out is animated, and only while typing, so this never takes over the transitions

@@ -22,6 +22,14 @@ eachTheme((theme) => {
     await expect(hexes.first()).toHaveCSS("width", "67px");
   });
 
+  test("behavior: each equalizer bar takes its own height", async ({ page }) => {
+    await visitStates(page, "ambient", theme);
+    const heights = await page
+      .locator("#am-eq > span")
+      .evaluateAll((els) => new Set(els.map((e) => getComputedStyle(e).height)).size);
+    expect(heights).toBeGreaterThan(10);
+  });
+
   test("behavior: reduced motion holds every layer still", async ({ page }) => {
     await page.emulateMedia({ reducedMotion: "reduce" });
     await visitStates(page, "ambient", theme);

@@ -102,7 +102,7 @@
     /* A submenu's trigger while its submenu is open keeps the current look. */
     &[data-popup-open] {
       background: var(--accent-soft);
-      box-shadow: inset 3px 0 0 var(--accent);
+      box-shadow: inset var(--line-w-bar) 0 0 var(--accent);
     }
   }
 
@@ -126,7 +126,7 @@
     grid-column: 1 / -1;
     color: var(--muted);
     font-size: var(--fs-detail);
-    font-weight: 400;
+    font-weight: var(--weight-regular);
   }
 
   /* The form menu: a <details> of submit buttons that works with no script. Not a role="menu"
@@ -179,13 +179,13 @@
       }
       &:where(:hover, :focus-visible):not(:disabled) {
         background: var(--accent-soft);
-        box-shadow: inset 3px 0 0 var(--accent);
+        box-shadow: inset var(--line-w-bar) 0 0 var(--accent);
         outline: 0;
       }
       &[data-tone="crit"]:where(:hover, :focus-visible):not(:disabled) {
         background: var(--crit-soft);
         color: var(--crit);
-        box-shadow: inset 3px 0 0 var(--crit);
+        box-shadow: inset var(--line-w-bar) 0 0 var(--crit);
       }
     }
   }
@@ -199,8 +199,8 @@
     /* The no-script form's items show focus by a tint and an inset edge, which forced colors removes. */
     .cap-menu-item[data-popup-open],
     .cap-menu-form .cap-option.cap-menu-item:focus-visible:not(:disabled) {
-      outline: 2px solid Highlight;
-      outline-offset: -2px;
+      outline: var(--focus-width) solid Highlight;
+      outline-offset: calc(-1 * var(--focus-offset));
     }
   }
 }

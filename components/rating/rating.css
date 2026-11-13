@@ -26,8 +26,8 @@
     position: relative;
     display: inline-block;
     font-size: var(--_star, 1.1em);
-    line-height: 1;
-    letter-spacing: 0.05em;
+    line-height: var(--leading-none);
+    letter-spacing: var(--tracking-widest);
     white-space: nowrap;
     font-variant-emoji: text;
 

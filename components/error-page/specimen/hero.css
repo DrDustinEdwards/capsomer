@@ -2,7 +2,7 @@
 .specimen-hero {
   padding: var(--space-8) var(--pad-x);
   background: var(--raised);
-  border-bottom: 1px solid var(--line);
+  border-bottom: var(--line-w) solid var(--line);
   text-align: center;
 
   & h1 {

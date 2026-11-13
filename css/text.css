@@ -73,27 +73,27 @@
     font-family: var(--display);
     font-weight: var(--title-weight);
     font-size: var(--title-4);
-    line-height: 1.3;
+    line-height: var(--leading-snug);
     color: var(--text);
     &[data-size="1"] {
       font-size: var(--title-1);
-      line-height: 1.15;
+      line-height: var(--leading-tight);
     }
     &[data-size="2"] {
       font-size: var(--title-2);
-      line-height: 1.2;
+      line-height: var(--leading-tight);
     }
     &[data-size="3"] {
       font-size: var(--title-3);
-      line-height: 1.25;
+      line-height: var(--leading-tight);
     }
     &[data-size="5"] {
       font-size: var(--title-5);
-      line-height: 1.35;
+      line-height: var(--leading-snug);
     }
     &[data-size="6"] {
       font-size: var(--title-6);
-      line-height: 1.35;
+      line-height: var(--leading-snug);
     }
   }
 

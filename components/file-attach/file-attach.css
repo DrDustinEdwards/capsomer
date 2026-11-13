@@ -23,7 +23,7 @@
 
     &:has(.cap-attach-input:focus-visible) {
       outline: var(--ring-width) solid var(--ring);
-      outline-offset: 1px;
+      outline-offset: var(--focus-offset-tight);
     }
     & > .cap-btn {
       cursor: pointer;
@@ -61,7 +61,7 @@
     overflow-wrap: anywhere;
 
     & + & {
-      border-top: 1px solid var(--line);
+      border-top: var(--line-w) solid var(--line);
     }
     & > a {
       display: inline-flex;

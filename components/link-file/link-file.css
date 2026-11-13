@@ -14,7 +14,7 @@
   :where(a[data-link], a:not([class*="cap-"]))::after {
     content: var(--link-after) / var(--link-alt, "");
     margin-inline-start: 0.2em;
-    font-weight: 400;
+    font-weight: var(--weight-regular);
     font-variant-emoji: text;
   }
 
@@ -23,8 +23,8 @@
      stays the words and the meta is read after it. */
   .cap-link-meta {
     color: var(--muted);
-    font: 400 0.75em / 1 var(--mono);
-    letter-spacing: -0.01em;
+    font: var(--weight-regular) 0.75em / var(--leading-none) var(--mono);
+    letter-spacing: var(--tracking-snug);
     white-space: nowrap;
   }
 }

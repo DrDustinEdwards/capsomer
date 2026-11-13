@@ -17,7 +17,7 @@
     gap: var(--space-2);
 
     & label {
-      font-weight: 600;
+      font-weight: var(--weight-semibold);
     }
   }
 
@@ -25,7 +25,7 @@
   .cap-confirm-typed b {
     font-family: var(--mono);
     font-size: 0.95em;
-    font-weight: 600;
+    font-weight: var(--weight-semibold);
   }
 
   .cap-confirm-note {
@@ -43,7 +43,7 @@
     gap: var(--space-2);
     margin: 0 var(--pad-card) var(--pad-card);
     padding: var(--space-3) var(--space-4);
-    border: 1px solid var(--crit);
+    border: var(--line-w) solid var(--crit);
     border-radius: var(--radius-m);
     background: var(--crit-soft);
     color: var(--text);
@@ -62,7 +62,7 @@
     align-items: center;
     gap: var(--space-3);
     color: var(--crit);
-    font-weight: 600;
+    font-weight: var(--weight-semibold);
 
     & svg {
       flex: none;
