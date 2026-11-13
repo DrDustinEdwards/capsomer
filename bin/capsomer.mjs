@@ -19,6 +19,7 @@ import { stripVTControlCharacters } from "node:util";
 import { gzipSync } from "node:zlib";
 import { frontmatter } from "@drdustinedwards/site-helpers/frontmatter";
 import { walkFiles } from "@dustinedwards/devkit/node";
+import { rawValues, tokenScale } from "../tokens/token-check.mjs";
 
 const PKG = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const args = process.argv.slice(2);
@@ -90,68 +91,26 @@ function git(argsList, cwd) {
 
 // ---- token-check -------------------------------------------------------------------------
 
-function lightTokens() {
-  const css = readFileSync(join(PKG, "tokens", "color.css"), "utf8");
-  const root = css.slice(css.indexOf(":root {"), css.indexOf("}"));
-  return [...root.matchAll(/--([\w-]+):\s*(#[0-9a-f]{6})/gi)].map((m) => ({
-    name: m[1],
-    hex: m[2].toLowerCase(),
-  }));
-}
-
-const SPACES = [2, 4, 8, 12, 16, 24, 32, 48, 64];
-const hexRgb = (h) => {
-  const s = h.length === 4 ? h.replace(/^#(.)(.)(.)$/, "#$1$1$2$2$3$3") : h;
-  return [1, 3, 5].map((i) => parseInt(s.slice(i, i + 2), 16));
-};
-const dist = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1], a[2] - b[2]);
-
-// Raw colors and off-scale spacing in an app's CSS, each with the nearest token. Generated
-// files and Capsomer's own token files are skipped.
+// Raw design values in an app's CSS (tokens/token-check.mjs rawValues: every kind, with the token to use).
+// Generated files and Capsomer's own token files are skipped.
 export function tokenCheck(root, paths) {
-  const tokens = lightTokens();
+  const scale = tokenScale(readJsonFile(join(PKG, "tokens", "tokens.json")));
   const files = (
     paths.length
       ? paths.flatMap((p) => (statSync(p).isDirectory() ? walk(p, [".css"]) : [p]))
       : walk(root, [".css"])
-  ).filter((f) => !/[\\/](tokens|site-dist)[\\/]/.test(f) && !/capsomer[\\/]tokens/.test(f));
-  const items = [];
-  for (const file of files) {
-    const lines = readFileSync(file, "utf8").split(/\r?\n/);
-    lines.forEach((line, i) => {
-      const code = line.replace(/\/\*.*?\*\//g, "");
-      if (/^\s*--[\w-]+\s*:/.test(code)) return; // defining a token is the fix, not the fault
-      for (const m of code.matchAll(/#[0-9a-f]{6}\b|#[0-9a-f]{3}\b/gi)) {
-        const rgb = hexRgb(m[0].toLowerCase());
-        const near = tokens.reduce((a, t) =>
-          dist(hexRgb(t.hex), rgb) < dist(hexRgb(a.hex), rgb) ? t : a,
-        );
-        items.push({
-          file: relative(root, file).replace(/\\/g, "/"),
-          line: i + 1,
-          text: m[0],
-          kind: "color",
-          suggestion: `var(--${near.name})`,
-        });
-      }
-      for (const m of code.matchAll(
-        /\b(?:margin|padding|gap|row-gap|column-gap|inset|top|left|right|bottom)[\w-]*\s*:\s*([^;]+)/g,
-      )) {
-        for (const px of m[1].matchAll(/(?<![\w.-])(\d+(?:\.\d+)?)px\b/g)) {
-          const n = Number(px[1]);
-          if (n === 0 || n === 1 || SPACES.includes(n)) continue;
-          const near = SPACES.reduce((a, s) => (Math.abs(s - n) < Math.abs(a - n) ? s : a));
-          items.push({
-            file: relative(root, file).replace(/\\/g, "/"),
-            line: i + 1,
-            text: `${n}px`,
-            kind: "space",
-            suggestion: `var(--space-${SPACES.indexOf(near) + 1}) (${near}px)`,
-          });
-        }
-      }
-    });
-  }
+  ).filter(
+    (f) =>
+      !/[\\/](tokens|site-dist)[\\/]/.test(f) &&
+      !/capsomer[\\/]tokens/.test(f) &&
+      !/[\\/](fonts-[\w-]+|fallback-fonts)\.css$/.test(f),
+  );
+  const items = files.flatMap((file) =>
+    rawValues(readFileSync(file, "utf8"), scale).map((it) => ({
+      file: relative(root, file).replace(/\\/g, "/"),
+      ...it,
+    })),
+  );
   return { count: items.length, items };
 }
 
@@ -770,11 +729,11 @@ if (cmd === "report") {
     args.slice(1).filter((a) => !a.startsWith("--")),
   );
   for (const it of r.items.slice(0, 200))
-    console.warn(`${it.file}:${it.line}: ${it.kind} ${it.text}; nearest token ${it.suggestion}`);
+    console.warn(`${it.file}:${it.line}: ${it.kind} ${it.text}; use ${it.suggestion}`);
   console.log(
     r.count
       ? `token-check: ${r.count} warning(s). Warnings never fail a build; adding a token is the normal fix.`
-      : "token-check: no raw colors or off-scale spacing found",
+      : "token-check: no raw design values found",
   );
 } else if (cmd === "size") {
   await size();

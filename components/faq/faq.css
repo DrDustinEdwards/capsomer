@@ -24,8 +24,8 @@
     color: var(--text);
     font-family: var(--cap-faq-face, var(--ui));
     font-size: var(--cap-faq-size, var(--fs-body));
-    font-weight: 600;
-    line-height: 1.4;
+    font-weight: var(--weight-semibold);
+    line-height: var(--leading-compact);
     text-wrap: pretty;
   }
 
@@ -55,7 +55,7 @@
     display: grid;
     gap: var(--space-2);
     padding: var(--pad-card);
-    border: 1px solid var(--line);
+    border: var(--line-w) solid var(--line);
     border-radius: var(--radius-l);
     background: var(--surface);
 

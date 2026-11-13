@@ -15,7 +15,7 @@
 
   .cap-author-list-owner {
     color: var(--text);
-    font-weight: 600;
+    font-weight: var(--weight-semibold);
   }
 
   /* The summary is the disclosure's button: a whole line, at least the hit area tall. */

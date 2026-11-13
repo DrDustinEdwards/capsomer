@@ -43,7 +43,7 @@
     inset-inline: calc(50% - 50vw);
     overflow: visible;
     overflow-x: clip;
-    opacity: var(--cap-ambient-strength, 0.6);
+    opacity: var(--cap-ambient-strength, var(--opacity-muted));
 
     & > span {
       position: absolute;
@@ -69,12 +69,12 @@
   }
 
   :root[data-theme="dark"] .cap-ambient[data-variant="blobs"] {
-    opacity: var(--cap-ambient-strength-dark, 0.35);
+    opacity: var(--cap-ambient-strength-dark, var(--opacity-faint));
   }
 
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) .cap-ambient[data-variant="blobs"] {
-      opacity: var(--cap-ambient-strength-dark, 0.35);
+      opacity: var(--cap-ambient-strength-dark, var(--opacity-faint));
     }
   }
 
@@ -128,15 +128,15 @@
 
   @media (prefers-reduced-motion: no-preference) {
     .cap-ambient[data-variant="hex-field"] > span {
-      animation: cap-ambient-hex var(--d) ease-in-out var(--l) infinite;
+      animation: cap-ambient-hex var(--d) var(--ease-in-out) var(--l) infinite;
     }
 
     .cap-ambient[data-variant="blobs"] > span {
-      animation: cap-ambient-drift var(--d) ease-in-out var(--l) infinite alternate;
+      animation: cap-ambient-drift var(--d) var(--ease-in-out) var(--l) infinite alternate;
     }
 
     .cap-ambient[data-variant="equalizer"] > span {
-      animation: cap-ambient-bar var(--d) ease-in-out var(--l) infinite alternate;
+      animation: cap-ambient-bar var(--d) var(--ease-in-out) var(--l) infinite alternate;
     }
 
     /* Off screen, the module marks the layer paused (an IntersectionObserver), so nothing animates unseen. */

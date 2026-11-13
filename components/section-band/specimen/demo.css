@@ -1,13 +1,13 @@
 /* Layout for the states page only. */
 .band-demo {
   margin: 0;
-  padding: 2rem;
+  padding: var(--space-7);
   text-align: center;
-  font-size: 1.25rem;
+  font-size: var(--title-4);
 }
 .band-demo-before,
 .band-demo-after {
-  padding: 7rem 1rem;
+  padding: calc(var(--space-9) + var(--space-8)) var(--space-5);
   text-align: center;
   background: var(--sunken);
   color: var(--text);

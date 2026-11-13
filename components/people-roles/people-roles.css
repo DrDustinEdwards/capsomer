@@ -40,7 +40,7 @@
     gap: var(--space-2);
     margin: 0;
     padding: var(--pad-y) var(--pad-x);
-    border: 1px solid var(--line);
+    border: var(--line-w) solid var(--line);
     border-radius: var(--radius-l);
     color: var(--text);
 
@@ -54,13 +54,13 @@
     text-align: start;
     text-transform: none;
     letter-spacing: 0;
-    font-weight: 400;
+    font-weight: var(--weight-regular);
     color: var(--text);
   }
 
   .cap-people-name {
     display: block;
-    font-weight: 600;
+    font-weight: var(--weight-semibold);
   }
 
   .cap-people-email {
@@ -82,7 +82,7 @@
 
     &[data-soon] {
       color: var(--text);
-      font-weight: 600;
+      font-weight: var(--weight-semibold);
     }
   }
 
@@ -148,7 +148,7 @@
     display: grid;
     gap: var(--space-4);
     padding: var(--pad-card);
-    border: 1px solid var(--line);
+    border: var(--line-w) solid var(--line);
     border-radius: var(--radius-l);
     background: var(--surface);
 
@@ -172,7 +172,7 @@
     margin: 0;
     padding: 0 0 var(--space-3);
     border: 0;
-    border-bottom: 1px solid var(--line);
+    border-bottom: var(--line-w) solid var(--line);
     min-inline-size: 0;
 
     &:last-child {
@@ -183,12 +183,12 @@
     & legend {
       padding: 0;
       margin-bottom: var(--space-2);
-      font-weight: 600;
+      font-weight: var(--weight-semibold);
     }
   }
 
   .cap-people-review-who {
-    font-weight: 400;
+    font-weight: var(--weight-regular);
     color: var(--muted);
   }
 
@@ -242,7 +242,7 @@
     grid-template-columns: minmax(9rem, 12rem) 1fr auto;
     gap: var(--space-1) var(--space-4);
     padding: var(--pad-y) 0;
-    border-bottom: 1px solid var(--line);
+    border-bottom: var(--line-w) solid var(--line);
 
     &:last-child {
       border-bottom: 0;

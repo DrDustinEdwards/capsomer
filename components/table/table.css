@@ -33,23 +33,23 @@
     & caption {
       padding: var(--space-3) var(--pad-x);
       text-align: start;
-      font-weight: 600;
+      font-weight: var(--weight-semibold);
     }
 
     /* shadcn puts the caption under the table, in muted type: opt in with data-caption. */
     &[data-caption="bottom"] caption {
       caption-side: bottom;
       color: var(--muted);
-      font-weight: 400;
+      font-weight: var(--weight-regular);
     }
 
     & thead th {
       padding: calc(var(--pad-y) + var(--space-1)) var(--pad-x);
-      border-bottom: 1px solid var(--line);
+      border-bottom: var(--line-w) solid var(--line);
       color: var(--muted);
       font-size: var(--fs-label);
-      font-weight: 600;
-      letter-spacing: 0.06em;
+      font-weight: var(--weight-semibold);
+      letter-spacing: var(--tracking-widest);
       text-align: start;
       text-transform: uppercase;
       overflow-wrap: break-word;
@@ -64,7 +64,7 @@
 
     & :is(tbody, tfoot) :is(td, th) {
       padding: calc(var(--pad-y) + var(--space-1)) var(--pad-x);
-      border-bottom: 1px solid var(--line);
+      border-bottom: var(--line-w) solid var(--line);
       text-align: start;
       vertical-align: middle;
       /* Wrap rather than widen the table past its region; one long word (an email, an id)
@@ -81,10 +81,10 @@
     /* shadcn's TableFooter: a tinted band under a rule, medium weight, for totals. */
     & tfoot {
       background: color-mix(in srgb, var(--sunken) 50%, transparent);
-      font-weight: 500;
+      font-weight: var(--weight-medium);
 
       & :is(td, th) {
-        border-top: 1px solid var(--line);
+        border-top: var(--line-w) solid var(--line);
         border-bottom: 0;
         font-weight: inherit;
       }
@@ -105,14 +105,14 @@
         background: var(--sel);
 
         & > :first-child {
-          box-shadow: inset 3px 0 0 var(--accent);
+          box-shadow: inset var(--line-w-bar) 0 0 var(--accent);
         }
       }
     }
 
     /* A row header reads as an ordinary first cell, in the body's weight. */
     & tbody th {
-      font-weight: 500;
+      font-weight: var(--weight-medium);
     }
 
     & tbody tr:last-child > :is(td, th) {
@@ -179,7 +179,7 @@
       z-index: 1;
       border-bottom: 0;
       background: var(--surface);
-      box-shadow: inset 0 -1px 0 var(--line);
+      box-shadow: inset 0 calc(-1 * var(--line-w)) 0 var(--line);
     }
   }
 
@@ -236,7 +236,7 @@
     background: none;
     color: var(--text);
     font: inherit;
-    font-weight: 600;
+    font-weight: var(--weight-semibold);
     text-align: start;
     text-decoration: none;
     outline: none;
@@ -279,7 +279,7 @@
         gap: var(--space-3) var(--space-5);
         align-items: start;
         padding: var(--space-4) var(--space-5);
-        border-bottom: 1px solid var(--line);
+        border-bottom: var(--line-w) solid var(--line);
 
         &:last-child {
           border-bottom: 0;
@@ -302,8 +302,8 @@
           margin-bottom: var(--space-1);
           color: var(--dim);
           font-size: var(--fs-label);
-          font-weight: 600;
-          letter-spacing: 0.06em;
+          font-weight: var(--weight-semibold);
+          letter-spacing: var(--tracking-widest);
           text-transform: uppercase;
         }
       }
@@ -331,7 +331,7 @@
         gap: var(--space-3) var(--space-5);
         align-items: start;
         padding: var(--space-4) var(--space-5);
-        border-bottom: 1px solid var(--line);
+        border-bottom: var(--line-w) solid var(--line);
 
         &:last-child {
           border-bottom: 0;
@@ -354,8 +354,8 @@
           margin-bottom: var(--space-1);
           color: var(--dim);
           font-size: var(--fs-label);
-          font-weight: 600;
-          letter-spacing: 0.06em;
+          font-weight: var(--weight-semibold);
+          letter-spacing: var(--tracking-widest);
           text-transform: uppercase;
         }
       }
@@ -383,7 +383,7 @@
         gap: var(--space-3) var(--space-5);
         align-items: start;
         padding: var(--space-4) var(--space-5);
-        border-bottom: 1px solid var(--line);
+        border-bottom: var(--line-w) solid var(--line);
 
         &:last-child {
           border-bottom: 0;
@@ -406,8 +406,8 @@
           margin-bottom: var(--space-1);
           color: var(--dim);
           font-size: var(--fs-label);
-          font-weight: 600;
-          letter-spacing: 0.06em;
+          font-weight: var(--weight-semibold);
+          letter-spacing: var(--tracking-widest);
           text-transform: uppercase;
         }
       }
@@ -417,7 +417,7 @@
   /* A note under a column's name ("last 24 hours"): in the header's cell, not its name. */
   .cap-table-note {
     display: block;
-    font-weight: 400;
+    font-weight: var(--weight-regular);
     letter-spacing: 0;
     text-transform: none;
     color: var(--dim);
@@ -433,7 +433,7 @@
   /* A link under the table, in the panel: "All 12 sites in Sites". */
   .cap-table-foot {
     padding: var(--space-2) var(--space-4);
-    border-top: 1px solid var(--line);
+    border-top: var(--line-w) solid var(--line);
     font-size: var(--fs-detail);
 
     & a {
@@ -475,8 +475,8 @@
     }
     /* A selected row's tint and edge are a background and a shadow, which forced colors drop. */
     .cap-table tbody tr:is([data-state="selected"], [aria-selected="true"], [data-force="selected"]) {
-      outline: 2px solid Highlight;
-      outline-offset: -2px;
+      outline: var(--focus-width) solid Highlight;
+      outline-offset: calc(-1 * var(--focus-offset));
     }
   }
 }

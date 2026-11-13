@@ -89,12 +89,12 @@
     gap: var(--space-2) var(--space-4);
     margin: 0;
     font-size: var(--fs-lead);
-    font-weight: 800;
+    font-weight: var(--weight-heavy);
   }
   .cap-media-group-count {
     color: var(--muted);
     font-size: var(--fs-detail);
-    font-weight: 400;
+    font-weight: var(--weight-regular);
   }
 
   /* The grid: as many columns as fit. A browser-made layout, which is why the arrow keys read
@@ -116,7 +116,7 @@
     box-sizing: border-box;
     min-inline-size: 0;
     padding: var(--space-2);
-    border: 1px solid var(--line);
+    border: var(--line-w) solid var(--line);
     border-radius: var(--radius-l);
     background: var(--surface);
     color: var(--text);
@@ -127,7 +127,7 @@
     /* The tile the inspector shows: a thicker accent edge, and the open link says aria-current. */
     &[data-active] {
       border-color: var(--accent);
-      box-shadow: 0 0 0 1px var(--accent);
+      box-shadow: 0 0 0 var(--line-w) var(--accent);
     }
     &[data-selected] {
       background: var(--sel);
@@ -135,7 +135,7 @@
     /* The focus ring is drawn on the tile, around the link that has focus. */
     &:has(.cap-media-open:focus-visible) {
       outline: var(--ring-width) solid var(--ring);
-      outline-offset: 2px;
+      outline-offset: var(--focus-offset);
     }
   }
 
@@ -184,11 +184,11 @@
     color: var(--muted);
     font-family: var(--mono);
     font-size: var(--fs-lead);
-    font-weight: 600;
-    letter-spacing: -0.01em;
+    font-weight: var(--weight-semibold);
+    letter-spacing: var(--tracking-snug);
   }
   .cap-media-tile[data-state="binned"] .cap-media-thumb > img {
-    opacity: 0.5;
+    opacity: var(--opacity-half);
   }
 
   /* Two lines, then cut, so a name that fits still fits with a reader's text spacing. */
@@ -200,7 +200,7 @@
     -webkit-line-clamp: 2;
     line-clamp: 2;
     font-size: var(--fs-body);
-    font-weight: 600;
+    font-weight: var(--weight-semibold);
   }
   /* Proportional figures: tabular ones give the point a digit's width, so "1.8 MB" read "1 . 8 MB". */
   .cap-media-meta {
@@ -240,10 +240,10 @@
     background: var(--raised);
     box-shadow:
       var(--shadow-s),
-      0 0 0 1px var(--line-strong);
+      0 0 0 var(--line-w) var(--line-strong);
     color: var(--text);
     font-size: var(--fs-label);
-    font-weight: 600;
+    font-weight: var(--weight-semibold);
     opacity: 0;
     cursor: pointer;
 
@@ -261,7 +261,7 @@
     }
     &:has(> input:focus-visible) {
       outline: var(--ring-width) solid var(--ring);
-      outline-offset: 2px;
+      outline-offset: var(--focus-offset);
     }
   }
   .cap-media-check-box {
@@ -270,7 +270,7 @@
     place-items: center;
     inline-size: calc(var(--target) - 6px);
     block-size: calc(var(--target) - 6px);
-    border: 1.5px solid var(--muted);
+    border: var(--line-w-mid) solid var(--muted);
     border-radius: var(--radius-s);
     background: var(--surface);
     color: var(--primary-fg);
@@ -330,14 +330,14 @@
     }
     &[data-tone="crit"] {
       background: var(--crit-soft);
-      box-shadow: inset 0 0 0 1px var(--crit);
+      box-shadow: inset 0 0 0 var(--line-w) var(--crit);
     }
   }
   .cap-media-state-lead {
     display: flex;
     align-items: center;
     gap: var(--space-2);
-    font-weight: 600;
+    font-weight: var(--weight-semibold);
 
     .cap-media-state[data-tone="crit"] > & {
       color: var(--crit);
@@ -404,7 +404,7 @@
       block-size: auto;
       max-block-size: none;
       margin: 0;
-      border-width: 1px;
+      border-width: var(--line-w);
       border-radius: var(--radius-l);
       box-shadow: none;
       padding-block: 0;
@@ -473,7 +473,7 @@
     & > h3 {
       margin: 0;
       font-size: var(--fs-body);
-      font-weight: 600;
+      font-weight: var(--weight-semibold);
     }
   }
 
@@ -518,7 +518,7 @@
     margin: 0;
     color: var(--text);
     font-size: var(--fs-detail);
-    font-weight: 600;
+    font-weight: var(--weight-semibold);
 
     &:empty {
       display: none;
@@ -557,7 +557,7 @@
   }
   .cap-media-used-empty {
     margin: 0;
-    font-weight: 600;
+    font-weight: var(--weight-semibold);
   }
 
   /* The save status: idle, unsaved, saving, saved, failed. A word and a shape each. */
@@ -588,7 +588,7 @@
     }
     &[data-state="failed"] [role="alert"] {
       color: var(--crit);
-      font-weight: 600;
+      font-weight: var(--weight-semibold);
     }
   }
 
@@ -624,7 +624,7 @@
     margin-inline-start: var(--space-2);
     color: var(--muted);
     font-size: var(--fs-detail);
-    font-weight: 400;
+    font-weight: var(--weight-regular);
   }
   .cap-media-tool {
     display: grid;
@@ -637,7 +637,7 @@
     }
     & + & {
       padding-block-start: var(--space-3);
-      border-block-start: 1px solid var(--line);
+      border-block-start: var(--line-w) solid var(--line);
     }
     & .cap-media-note {
       margin: 0;
@@ -662,7 +662,7 @@
     display: block;
     inline-size: 100%;
     padding: 0;
-    border: 1px solid var(--line-strong);
+    border: var(--line-w) solid var(--line-strong);
     border-radius: var(--radius-m);
     background: var(--sunken);
     cursor: crosshair;
@@ -675,7 +675,7 @@
     }
     &:focus-visible {
       outline: var(--focus-width) solid var(--ring);
-      outline-offset: 2px;
+      outline-offset: var(--focus-offset);
     }
   }
   /* A ring in two tones, so it shows on a light picture and a dark one alike. */
@@ -686,9 +686,9 @@
     inline-size: 1.5rem;
     block-size: 1.5rem;
     translate: -50% -50%;
-    border: 2px solid var(--on-sign);
+    border: var(--line-w-thick) solid var(--on-sign);
     border-radius: var(--radius-full);
-    box-shadow: 0 0 0 2px var(--sign);
+    box-shadow: 0 0 0 var(--line-w-thick) var(--sign);
     pointer-events: none;
   }
   /* Two classes, to win over the dialog body's list rule when the inspector is a sheet. */
@@ -750,7 +750,7 @@
     inline-size: auto;
     block-size: auto;
     margin-inline: auto;
-    border: 1px solid var(--line-strong);
+    border: var(--line-w) solid var(--line-strong);
     border-radius: var(--radius-m);
     cursor: crosshair;
     touch-action: none;
@@ -799,13 +799,13 @@
       /* The active tile's thicker edge is a border, so the focus outline still shows on it. */
       &[data-active] {
         padding: calc(var(--space-2) - 1px);
-        border: 2px solid Highlight;
+        border: var(--line-w-thick) solid Highlight;
         box-shadow: none;
       }
     }
     .cap-media-check {
       box-shadow: none;
-      border: 1px solid CanvasText;
+      border: var(--line-w) solid CanvasText;
     }
     .cap-media-check-box {
       border-color: CanvasText;
@@ -816,7 +816,7 @@
     }
     .cap-media-state[data-tone="crit"] {
       box-shadow: none;
-      border: 1px solid CanvasText;
+      border: var(--line-w) solid CanvasText;
     }
   }
 

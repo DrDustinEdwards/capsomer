@@ -46,7 +46,7 @@
     display: grid;
     gap: var(--space-2);
     padding-block: var(--space-4);
-    border-block-start: 1px solid var(--line);
+    border-block-start: var(--line-w) solid var(--line);
     overflow-wrap: anywhere;
 
     &:first-child {
@@ -63,7 +63,7 @@
   .cap-search-title {
     margin: 0;
     font-size: var(--fs-lead);
-    line-height: 1.35;
+    line-height: var(--leading-snug);
 
     /* The title is the result's target: 44px tall on a touch screen (WCAG 2.5.8). */
     & > a {
@@ -98,7 +98,7 @@
       margin: 0 0 var(--space-2);
       color: var(--muted);
       font-size: var(--fs-detail);
-      font-weight: 600;
+      font-weight: var(--weight-semibold);
     }
   }
   .cap-search-empty {

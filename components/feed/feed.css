@@ -24,10 +24,10 @@
     margin: 0;
     padding: var(--space-2) var(--pad-card);
     background: var(--raised);
-    border-block: 1px solid var(--line);
+    border-block: var(--line-w) solid var(--line);
     font-size: var(--fs-label);
-    font-weight: 600;
-    letter-spacing: 0.06em;
+    font-weight: var(--weight-semibold);
+    letter-spacing: var(--tracking-widest);
     text-transform: uppercase;
     color: var(--muted);
   }
@@ -49,7 +49,7 @@
 
     /* A critical row carries the red edge, as in every list. */
     &[data-tone="crit"] {
-      box-shadow: inset 3px 0 var(--crit);
+      box-shadow: inset var(--line-w-bar) 0 var(--crit);
     }
   }
 
@@ -58,19 +58,19 @@
   .cap-feed-row:not(:last-child)::after {
     content: "";
     position: absolute;
-    inset-block: calc(var(--pad-y) + 3px + 14px + var(--space-1)) calc(-1 * (var(--pad-y) + 3px - var(--space-1)));
+    inset-block: calc(var(--pad-y) + var(--space-1-5) + 14px + var(--space-1)) calc(-1 * (var(--pad-y) + var(--space-1-5) - var(--space-1)));
     inset-inline-start: calc(var(--pad-card) + 6.5px);
     inline-size: 1px;
     background: var(--line);
     pointer-events: none;
   }
   .cap-feed-row[data-kind="condensed"]:not(:last-child)::after {
-    inset-block-start: calc(var(--space-1) + 3px + 14px + var(--space-1));
+    inset-block-start: calc(var(--space-1) + var(--space-1-5) + 14px + var(--space-1));
   }
 
   .cap-feed-glyph {
     display: block;
-    margin-top: 3px;
+    margin-top: var(--space-1-5);
     color: var(--muted);
 
     [data-tone="ok"] > & {
@@ -96,7 +96,7 @@
     overflow-wrap: anywhere;
 
     & b {
-      font-weight: 600;
+      font-weight: var(--weight-semibold);
     }
 
   }
@@ -104,7 +104,7 @@
   /* An identifier in a row (a sha, a namespace): its monospace face would otherwise stretch
      the line it sits in. From the Portal's `.frow .sub .ns`, which keeps rows one line tall. */
   .cap-feed-row .cap-mono {
-    line-height: 1;
+    line-height: var(--leading-none);
   }
 
   .cap-feed-who {
@@ -134,7 +134,7 @@
      deploy it names. Its words, not its tint, carry the link: the link says "this
      deploy" and is described by the deploy row's text. */
   .cap-feed-row[data-kind="marker"] {
-    border-inline-start: 3px solid var(--crit);
+    border-inline-start: var(--line-w-bar) solid var(--crit);
     background: var(--crit-soft);
     box-shadow: none;
 
@@ -149,7 +149,7 @@
   }
 
   .cap-feed-marker-link {
-    font-weight: 600;
+    font-weight: var(--weight-semibold);
     color: var(--crit);
 
     [data-tone="warn"] & {
@@ -178,13 +178,13 @@
 
   @media (forced-colors: active) {
     .cap-feed-row[data-tone="crit"] {
-      border-inline-start: 3px solid CanvasText;
+      border-inline-start: var(--line-w-bar) solid CanvasText;
     }
     .cap-feed-row[data-kind="marker"] {
       border-inline-start-color: CanvasText;
     }
     .cap-feed-day-title {
-      border-bottom: 1px solid CanvasText;
+      border-bottom: var(--line-w) solid CanvasText;
     }
     .cap-feed-row::after {
       background: CanvasText;

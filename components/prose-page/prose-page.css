@@ -16,10 +16,10 @@
     margin: 0 auto;
     max-inline-size: 40rem;
     font-family: var(--cap-prose-page-title-face, var(--display));
-    font-size: var(--cap-prose-page-title-size, clamp(2rem, 1.4rem + 2.4vw, 3rem));
+    font-size: var(--cap-prose-page-title-size, var(--title-display));
     font-weight: var(--cap-prose-page-title-weight, var(--weight-title));
-    line-height: 1.15;
-    letter-spacing: var(--cap-prose-page-title-tracking, -0.01em);
+    line-height: var(--leading-tight);
+    letter-spacing: var(--cap-prose-page-title-tracking, var(--tracking-snug));
     text-transform: var(--cap-prose-page-title-case, none);
     text-wrap: balance;
     overflow-wrap: anywhere;

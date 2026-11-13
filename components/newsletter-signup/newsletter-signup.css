@@ -10,7 +10,7 @@
     display: grid;
     gap: var(--space-3);
     padding: var(--pad-card);
-    border: 1px solid var(--line);
+    border: var(--line-w) solid var(--line);
     border-radius: var(--radius-l);
     background: var(--surface);
 
@@ -59,7 +59,7 @@
   .cap-newsletter-consent {
     color: var(--muted);
     font-size: var(--fs-detail);
-    line-height: 1.5;
+    line-height: var(--leading-normal);
   }
 
   .cap-newsletter-done,
@@ -76,7 +76,7 @@
       content: "\2713\00a0";
       content: "\2713\00a0" / "";
       color: var(--ok);
-      font-weight: 700;
+      font-weight: var(--weight-bold);
     }
   }
 

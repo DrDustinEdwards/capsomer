@@ -62,6 +62,6 @@
 
 @media (forced-colors: active) {
   .cap-section-band {
-    border-block: 1px solid CanvasText;
+    border-block: var(--line-w) solid CanvasText;
   }
 }

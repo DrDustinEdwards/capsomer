@@ -7,7 +7,7 @@
     margin: 0;
     padding: 0;
     list-style: none;
-    border: 1px solid var(--line);
+    border: var(--line-w) solid var(--line);
     border-radius: var(--radius-l);
     background: var(--surface);
     counter-reset: cap-rank;
@@ -23,7 +23,7 @@
     padding: var(--space-2) var(--pad-x);
 
     & + .cap-leaderboard-row {
-      border-block-start: 1px solid var(--line);
+      border-block-start: var(--line-w) solid var(--line);
     }
 
     &::before {
@@ -39,7 +39,7 @@
       background: var(--accent-soft);
 
       .cap-leaderboard-name {
-        font-weight: 700;
+        font-weight: var(--weight-bold);
       }
     }
   }
@@ -66,7 +66,7 @@
 
 @media (forced-colors: active) {
   .cap-leaderboard-row[aria-current="true"] {
-    outline: 2px solid Highlight;
-    outline-offset: -2px;
+    outline: var(--focus-width) solid Highlight;
+    outline-offset: calc(-1 * var(--focus-offset));
   }
 }
