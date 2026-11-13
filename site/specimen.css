@@ -13,7 +13,7 @@
   margin: 0;
   font-size: var(--fs-h2);
   font-weight: var(--weight-heading);
-  letter-spacing: -0.025em;
+  letter-spacing: var(--tracking-tight);
 }
 .cap-specimens > main > p {
   margin: 0;
@@ -25,7 +25,7 @@
   gap: var(--space-3);
   padding: var(--space-5);
   background: var(--surface);
-  border: 1px solid var(--line);
+  border: var(--line-w) solid var(--line);
   border-radius: var(--radius-l);
   min-width: 0;
 }
@@ -37,8 +37,8 @@
 .cap-specimen > h2 {
   margin: 0;
   font-size: var(--fs-label);
-  font-weight: 600;
-  letter-spacing: 0.07em;
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-caps);
   text-transform: uppercase;
   color: var(--muted);
 }
@@ -46,7 +46,7 @@
   display: block;
   width: min(100%, var(--frame-w, 100%));
   height: var(--frame-h, 360px);
-  border: 1px solid var(--line);
+  border: var(--line-w) solid var(--line);
   border-radius: var(--radius-m);
   background: var(--ground);
 }
@@ -61,7 +61,7 @@
     margin: 0 0 var(--space-2);
     font-size: var(--fs-h2);
     font-weight: var(--weight-heading);
-    letter-spacing: -0.025em;
+    letter-spacing: var(--tracking-tight);
   }
   & p {
     margin: 0;
