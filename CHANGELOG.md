@@ -3,6 +3,20 @@
 Each release names every removed or renamed token or class, and every changed HTML contract. A pull request adds its entry as a
 changeset (`npx changeset`, `.changeset/README.md`); the release pull request writes them here.
 
+## 0.149.0
+
+### Minor Changes
+
+- **The docs site, Release 1 of the redesign.** The site at capsomer.dustinedwards.info is rebuilt as five sections, each page in one fixed pattern of live previews: Themes (an overview and color, typography, radius, spacing and density, shadows, motion and dark mode, each a board of real components the family, theme and density controls repaint, beside its token tables), Components and Primitives (a preview, installation, usage, examples, the API reference and accessibility; a primitive shows its anatomy, data attributes and keyboard), Icons (every icon, a search, a size, a click copies the name) and Colors (every family's 12 steps in light and dark, each step's job, a click copies the value). The look is the current one. No token or class is removed or renamed and no HTML contract changes.
+  - **New export `capsomer/parts.json`:** each component's root class, parts, `data-*` variants, states and CSS variables, read from its own `cap-<name>-<part>` classes (`bin/parts.mjs`, `capsomer parts`); the API tables are made from it.
+  - **Doc files are three headings:** every `components/<name>/<name>.md` is `# Title`, `## Usage` (code only) and `## Accessibility` (the keyboard table and short points), with a one-sentence `summary` and a new `group` (`pattern` or `primitive`). `capsomer docs`, part of `npm run check`, fails a file that leaves the pattern (components/README.md, The doc page).
+  - **Site only:** the theme builder at `/make/` and the admin views at `/admin/` are removed, and so are the site's test-results panel and the `results` branch job that fed it; each run's summary stays with the run as the `test-results` artifact.
+
+### Patch Changes
+
+- Hero: the lead's type is set with longhands (`font-family`, `font-size`, `font-weight`, `line-height`). The old `font` shorthand ended in `var(--hero-lead-face, inherit)`; `inherit` is not valid inside a shorthand, so whenever a site left `--hero-lead-face` unset the browser dropped the whole declaration and the lead took the hero's own font size (40px on Foxhound's product pages). No token or class is removed or renamed and the HTML contract is unchanged; a site that worked around it by setting `--hero-lead-face` can drop the workaround or keep it.
+  `capsomer token-check` now also finds declarations the browser drops (a CSS-wide keyword such as `inherit` beside other values, written or reached through a var() fallback) and exits 1 on one. Raw-value warnings still never fail. New export: `invalidValues` from `capsomer/token-check`.
+
 ## 0.148.1
 
 ### Patch Changes
