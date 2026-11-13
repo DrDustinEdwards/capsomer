@@ -6,6 +6,7 @@ parts: [css, behavior, react]
 tool: native + React (composes media, drop zone, chips, tabs, field, disclosure, bulk bar, message, empty, confirm dialog, shortcuts and command menu)
 states: [editor with every action, the upload dialog as delivered, inspector in form mode, Trash as a list, grouped by folder at the small size, a list grouped by month sorted on the page only, reader on a limited site, picker, picker alt step with no script, empty trash, no match, delivered HTML, a site with every media idea, the media ideas as delivered HTML]
 added: 0.6.0
+updated: 0.124.0
 source: Carrel, app/routes/media.tsx, media.bulk.ts, lib/media.server.ts, components/media/library-insert.tsx (server forms on purpose, the capability gates, the refused-because-used list, cursor paging, the picker that asks for alt text); dustinedwards.info, app/routes/admin.media._index.tsx and components/admin/media-* (the library experience, already in Capsomer's media); docs/design/design-content-components.md section 2.4.2
 replaces:
   - "LibraryInsert|MediaPicker|ImageField"
@@ -57,6 +58,12 @@ Any screen where a person manages one site's files, and any editor that inserts 
   - **Shrink** (`offers.resize` and `offers.resizePass`, the delete role): the inspector offers Shrink to the site's size for a picture over it, and the Oversized lens offers Shrink all on this page, posting `resize` with every picture's id and version; the kit lists every file and asks for the count before anything is stored again. Where the site shrinks uploads, upload and import have Keep it at full size (`resize=no`).
   - **Embedded metadata** (`offers.embedded`): the upload's sentence names what the site filled from the file; the inspector shows when the picture was taken and, for a picture with a caption and no alt text, the caption as an editable starting point for the alt text.
   - **Suggestions** (`offers.suggestions`, an editor): Suggest tags and alt is a link to `suggest=1`, so the site's model is asked only when the person asks. Each suggested tag is its own button posting `tag-add` with that tag, and the suggested alt text is an editable field posting `alt`; nothing is applied unasked, and Dismiss leaves them.
+
+## Picking from the library on another page
+
+- **`MediaPicker`** (`capsomer/react/media-picker`) is "Insert from library": a button that opens the library in picker mode in a dialog, over a JSON endpoint that answers the library page's own query with `MediaData`. The library's links and search load in the dialog instead of leaving the editor; the alt step starts from the file's own alt text, and `onPick({ url, alt, caption })` gets the file's own caption too. `words` names it for its use ("Choose a share image").
+- **`ImageField`** is one chosen image (a share image, a feature image): the preview at the shape it is shown at (`ratio`, 1200 / 630 by default), the stored address, Choose or Choose another, Remove, and the host's alt text field and "Only decoration" as children. `locked` leaves the buttons out.
+- **`uploadImage(endpoint, file, { alt, decorative })`** and **`loadMediaView(endpoint, query)`** (`capsomer/behavior/media-picker`) are the two fetches: they reject only with an Error that says why, and an upload with neither alt text nor decorative is the site's to refuse (site-api 0.19). `libraryOf(endpoint)` is the page address its links point to.
 
 ## Keyboard
 
