@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { Empty } from "../empty/empty.react.tsx";
-import { ButtonLink } from "../link/link.react.tsx";
+import { buttonAttrs } from "../button/button-look.ts";
 
 // The page a React Router root ErrorBoundary renders: the failed Empty, in plain words for 404, 410
 // and everything else, with the site's own header kept so the skip link and landmarks stay. Eight
@@ -124,6 +124,12 @@ export interface ErrorPageProps {
   hero?: (words: ErrorWords) => ReactNode;
 }
 
+// The actions are plain button-styled links (ButtonLink with an href draws the same), so this page,
+// in every app's root bundle, takes neither ButtonLink nor the router; after an error a full load is
+// what the visitor wants anyway.
+const primary = buttonAttrs({ variant: "primary" }, undefined);
+const plain = buttonAttrs({}, undefined);
+
 export function ErrorPage({
   error,
   home,
@@ -149,24 +155,25 @@ export function ErrorPage({
   const withdrawn = words.status === 410;
   const action = withdrawn ? (
     <>
-      <ButtonLink variant="primary" href={gone?.href ?? home}>
+      <a {...primary} href={gone?.href ?? home}>
         {gone?.label ?? homeLabel}
         {homeIcon}
-      </ButtonLink>
+      </a>
       {actions}
     </>
   ) : (
     <>
       {server ? (
         // An empty href is this address: a reload that works before the page hydrates, and with no script.
-        <ButtonLink variant="primary" href="">
+        // oxlint-disable-next-line jsx-a11y/anchor-is-valid -- an empty href reloads this address, with no script too
+        <a {...primary} href="">
           Try again
-        </ButtonLink>
+        </a>
       ) : null}
-      <ButtonLink variant={server ? "default" : "primary"} href={home}>
+      <a {...(server ? plain : primary)} href={home}>
         {homeLabel}
         {homeIcon}
-      </ButtonLink>
+      </a>
       {actions}
     </>
   );
@@ -246,9 +253,9 @@ export function SignedOutPage({
         titleAs="h1"
         title="Signed out"
         action={
-          <ButtonLink variant="primary" href={signIn}>
+          <a {...primary} href={signIn}>
             {byChoice ? "Sign in again" : "Reload to sign in"}
-          </ButtonLink>
+          </a>
         }
       >
         {text}

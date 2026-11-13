@@ -8,6 +8,9 @@ import {
   type Ref,
 } from "react";
 import { morphFrom } from "./button.ts";
+import { buttonAttrs, type ButtonLook } from "./button-look.ts";
+
+export { buttonAttrs, type ButtonLook };
 
 export interface ButtonProps
   extends
@@ -35,36 +38,6 @@ export interface ButtonProps
   // The button element, for an app that moves focus to it (React 19 passes it through).
   ref?: Ref<HTMLButtonElement>;
   children?: ReactNode;
-}
-
-// The look Button and ButtonLink share (`.cap-btn`, button.md): variant, size, an icon alone,
-// wrapping and filling the row.
-export interface ButtonLook {
-  variant?: "default" | "primary" | "secondary" | "danger" | "quiet" | "link";
-  size?: "xs" | "sm" | "default" | "lg";
-  iconOnly?: boolean;
-  wrap?: boolean;
-  block?: boolean;
-}
-
-// The class and data attributes for a look, and the accessible name an icon alone takes (its
-// `label`, else the given aria-label), warning when an icon-only control has neither.
-export function buttonAttrs(
-  look: ButtonLook & { label?: string; "aria-label"?: string },
-  className: string | undefined,
-) {
-  const { variant = "default", size = "default", iconOnly = false, wrap = false } = look;
-  const name = iconOnly ? (look.label ?? look["aria-label"]) : look["aria-label"];
-  if (iconOnly && !name) console.warn("Capsomer: an icon-only button or link needs a label.");
-  return {
-    className: className ? `cap-btn ${className}` : "cap-btn",
-    "data-variant": variant === "default" ? undefined : variant,
-    "data-size": size === "default" ? undefined : size,
-    "data-icon-only": iconOnly ? "" : undefined,
-    "data-wrap": wrap ? "" : undefined,
-    "data-block": look.block ? "" : undefined,
-    "aria-label": name,
-  };
 }
 
 export function Button(props: ButtonProps) {

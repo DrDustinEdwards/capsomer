@@ -13,7 +13,7 @@ import {
   type PrefetchBehavior,
   type To,
 } from "react-router";
-import { buttonAttrs, type ButtonLook } from "../button/button.react.tsx";
+import { buttonAttrs, type ButtonLook } from "../button/button-look.ts";
 import { ABSOLUTE, mayPrefetch } from "./link.ts";
 
 // React Router's Link and NavLink, the same props, prefetching on hover and focus by default
