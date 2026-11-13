@@ -47,6 +47,8 @@
     "./tokens.css": "./css/tokens.css",
     "./base.css": "./css/base.css",
     "./utilities.css": "./css/utilities.css",
+    "./layout.css": "./css/layout.css",
+    "./text.css": "./css/text.css",
     "./focus.css": "./css/focus.css",
     "./print.css": "./css/print.css",
     "./catalog-all.css": "./css/catalog-all.css",
