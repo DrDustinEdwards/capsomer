@@ -2,12 +2,6 @@
 // and a percent. One module, so "3 files", "2.4 MB" and "12%" read the same on every site.
 // Plain functions, no DOM: a server route, a behavior module and a React part all import them.
 
-const GROUPED = new Intl.NumberFormat("en-US", { maximumFractionDigits: 20 });
-
-// A count as figures: whole numbers grouped by thousands ("1,234"), anything else as written.
-export function figures(n: number): string {
-  return Number.isFinite(n) ? GROUPED.format(n) : String(n);
-}
 
 // The noun alone for a count: "file" for 1, "files" for anything else (0, 2, 1.5, -1). Pass `many`
 // for an irregular plural or a phrase ("person", "people"; "check fails", "checks fail").
@@ -40,14 +34,16 @@ export function formatBytes(bytes: number): string {
   return `${sign}${shown} ${BYTE_UNITS[unit]}`;
 }
 
+// Grouped below 10,000 (as Prelum's formatCount writes a count), short above it.
+const GROUPED = new Intl.NumberFormat("en-US");
 const COMPACT = new Intl.NumberFormat("en-US", { notation: "compact", maximumFractionDigits: 1 });
 
 // A count where the room is small (a tile, a chip): exact under 10,000 ("9,999"), then short with
 // at most one decimal ("12K", "1.2M"). The exact figure belongs in the accessible name or a title
 // beside it whenever the short one stands in for it.
-export function formatCount(n: number): string {
+export function shortCount(n: number): string {
   if (!Number.isFinite(n)) return String(n);
-  return Math.abs(n) < 10_000 ? figures(n) : COMPACT.format(n);
+  return Math.abs(n) < 10_000 ? GROUPED.format(n) : COMPACT.format(n);
 }
 
 // The middle value, or the mean of the two middle values for an even count. Null for no values,

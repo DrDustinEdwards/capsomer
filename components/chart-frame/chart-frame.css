@@ -125,7 +125,7 @@
     gap: var(--space-3);
     padding: var(--pad-card);
     border: 1px solid var(--line);
-    border-radius: var(--radius-lg);
+    border-radius: var(--radius-l);
     background: var(--surface);
   }
   .cap-data-preview-heading {
