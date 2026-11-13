@@ -15,7 +15,7 @@ replaces:
 
 # Save toggle
 
-A small toggle on a post or an episode: Save, and once pressed, Saved with the bookmark filled. The list of saved ids lives in this browser's storage under the site's key; there is no account and nothing reaches the server.
+A small toggle on a post or an episode: Save, and once pressed, the chip pressed with the bookmark filled. The list of saved ids lives in this browser's storage under the site's key; there is no account and nothing reaches the server.
 
 ## When to use it
 
@@ -29,7 +29,7 @@ A reading site with no sign-in where a reader wants to come back to an item: an 
 ## The default and its reason
 
 - **A toggle button** (`aria-pressed`), not a checkbox: it acts at once and says its state.
-- **The words change with the state** (Save, Saved) as well as the icon, so the state is never in the icon alone.
+- **One label, "Save"; the state is the pressed chip**: its fill and the filled bookmark show it, and `aria-pressed` says it. A toggle that also changed its words would be heard as "Saved, toggle button, pressed" (APG button pattern: change the name or the pressed state, never both).
 - **Kept in this browser only** (localStorage, a JSON array of ids under one key per site). Reads and writes go through `capsomer/behavior/hooks`' storage: in a private window that blocks storage the button still toggles, and the list lasts the page.
 - **Every button for the same id stays in step**, in this tab and in others (the `storage` event).
 - **The server renders "Save"**, so hydration matches; the stored state follows when the page runs.
@@ -58,7 +58,7 @@ Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the a
 </button>
 ```
 
-React: `SaveToggle` from `capsomer/react/save-toggle` takes `storageKey`, `id`, `label` and `savedLabel`. A page with no React calls `enhance()` from `capsomer/behavior/save-toggle`; `savedIds(savedRaw(key))` lists what a reader saved. Load `chips.css` (the pill is a toggle chip) and `save-toggle.css`.
+React: `SaveToggle` from `capsomer/react/save-toggle` takes `storageKey`, `id` and `label`. A page with no React calls `enhance()` from `capsomer/behavior/save-toggle`; `savedIds(savedRaw(key))` lists what a reader saved. Load `chips.css` (the pill is a toggle chip) and `save-toggle.css`.
 
 ## Exceptions in production
 
