@@ -72,25 +72,38 @@ export interface FeatureCardItem {
   icon?: ReactNode;
   title: ReactNode;
   text?: ReactNode;
+  // A tag at the end of the title's line: a pill naming its product or plan.
+  tag?: ReactNode;
   id?: string;
+  // The site's own data attributes on the card (a filter's hooks, say). Only data-* names.
+  attributes?: Record<`data-${string}`, string>;
 }
 
 export function FeatureCard({
   icon,
   title,
   text,
+  tag,
+  attributes,
   headingLevel: H = "h3",
 }: FeatureCardItem & {
   headingLevel?: "h2" | "h3" | "h4" | "p";
 }) {
   return (
-    <li className="cap-feature-card">
+    <li {...attributes} className="cap-feature-card">
       {icon ? (
         <span className="cap-feature-card-icon" aria-hidden="true">
           {icon}
         </span>
       ) : null}
-      <H className="cap-feature-card-title">{title}</H>
+      {tag ? (
+        <div className="cap-feature-card-head">
+          <H className="cap-feature-card-title">{title}</H>
+          <span className="cap-feature-card-tag">{tag}</span>
+        </div>
+      ) : (
+        <H className="cap-feature-card-title">{title}</H>
+      )}
       {text ? <p className="cap-feature-card-text">{text}</p> : null}
     </li>
   );

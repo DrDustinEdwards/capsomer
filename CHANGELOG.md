@@ -11,6 +11,49 @@ Each release names every removed or renamed token or class, and every changed HT
   - `FOXHOUND_MARKS` moves to the admin shell's states page, the only place it was drawn, so it no longer ships in every admin shell. It is no longer exported from `capsomer/react/admin-shell`.
   - No class, token or HTML contract changes.
 
+- **One `dayKey`, site-runtime's.** site-runtime 0.155.0's `./time` exports the zone-aware `dayKey(at, zone?)` (a Date, epoch milliseconds or a stored time; zoneless text is UTC; the runtime's zone without one), so Capsomer's own copy and its formatter cache are gone from `time.ts`, and devkit's shared-code check stops failing on it. The time functions, history list, schedule and writing progress import it from `@dustinedwards/site-runtime/time`. **Removed exports: `dayKey` from `capsomer/behavior/time` and `capsomer/behavior/writing-progress`**: import it from `@dustinedwards/site-runtime/time`. **Peer floor raised: `@dustinedwards/site-runtime` `>=0.155.0`** (was `>=0.131.0`); a site that uses the time, history list, schedule or writing progress behavior needs site-runtime 0.155.0 or later. No token, class or HTML contract changes.
+
+## [0.142.0]
+
+The gaps the site moves onto 0.132.0's content and marketing blocks found (bsw, julieedwards.info, dei, Foxing, germomics, Foxhound). Every site can get its current look back by setting tokens or props; each default stays what 0.132.0 drew, except the fixes below. No token, class or contract is removed or renamed.
+
+**Fixes**
+
+- **FAQ: a rule between questions again.** Each question sits in its own `li`, so the disclosure's `:last-of-type` (which ends the rules between accordion sections) matched every one and no rule was drawn. The FAQ draws the rule for its items: under each but the last.
+- **Price card, poll, leaderboard: `font-family: var(--figures, ...)`.** `--figures` is a `font-variant-numeric` value, so as a face it was invalid and the text fell back to the inherited face. The price card's amount is in the mono face, as its doc said (new slot `--cap-price-face`; a site that set `--figures` to a face sets this instead); the leaderboard's score in the mono face; the poll's count keeps the face it drew (the line is removed).
+- **Ambient: the equalizer's bars take their heights.** `&:nth-child(n)` nested in the equalizer selected the layer itself, not `> span:nth-child(n)`, so no bar got its `--h`.
+- **Ambient and AI sample: React renders the HTML contract `enhance()` finds.** `Ambient` renders `data-cap="ambient"` (not `data-cap-ready`), and `AiSample` renders `data-cap="ai-sample"`, `data-ai-sample-generate` and a text `busyLabel`'s `data-busy-label`, so a server-rendered page that never hydrates can call `enhance()` on them (the off-screen pause, the generate button). Once hydrated, React marks them `data-cap-ready` itself; a layer `enhance()` already took is left to it.
+- **Ambient: one file per kind.** `ambient.css` (all three, the same rules) imports `capsomer/ambient-base.css` (what every kind shares), then `ambient-hex-field.css`, `ambient-blobs.css` and `ambient-equalizer.css`; a page that draws one kind imports the base and its kind alone. A blobs-only hero drops from 1.3 KB gzip to 0.9 KB.
+- **Poll: the count is a polite live region** (`aria-live="polite" aria-atomic="true"` on `.cap-poll-count`), so a vote that changes it is announced, as Foxing's own poll did.
+- **Poll options and the like button are in the interface face** (`--ui`), not `font: inherit` (the reading face around them on a serif page).
+- **Contact card: a phone number is a `--target` tall** (24px, 44px on a touch screen), as its doc said; it was a literal 24px, so two numbers that wrapped onto two lines were too close on a touch screen (WCAG 2.5.8, found by the sweep once a joining word made them wrap).
+- **Newsletter sign-up: `renderForm` is given `NewsletterFormProps`** (`method: "post"`, not a plain string), so React Router's `Form` takes them spread with no cast.
+
+**Tokens** (each default is the value 0.132.0 drew)
+
+- Prose page: `--cap-prose-page-title-leading` (1.15), `--cap-prose-page-title-max` (40rem), `--cap-prose-page-title-wrap` (`balance`), `--cap-prose-page-body-pad` (`--space-8`).
+- Section band: `--cap-band-pad-top` and `--cap-band-pad-bottom` (the slant's depth and `--space-6`).
+- Price card: `--cap-price-face` (`--mono`), `--cap-price-weight` (600), `--cap-price-unit-size` and `--cap-price-label-size` (`--fs-detail`), `--cap-price-label-weight` (400).
+- Contact card: `--cap-contact-card-title-face` (`--display`), `-size` (`--fs-h3`), `-weight` (`--weight-heading`), `-color` (`--text`), `-tracking` (`normal`), `-case` (`none`); `--cap-contact-way-color` (`--accent-text`, also a linked address), `--cap-contact-way-face` and `--cap-contact-way-size` (inherited); `--cap-contact-address-color` (`--muted`), `-face` and `-size` (inherited); `--cap-contact-way-min` (12rem).
+- Eyebrow: `--cap-eyebrow-size` (`--fs-label`), `--cap-eyebrow-weight` (600; mono 500), `--cap-eyebrow-color` (`--muted`), and `data-tone="dim"` (`--dim`).
+- Leaderboard: `--cap-leaderboard-name-face` (inherited). Newsletter: `--cap-newsletter-bg` (`--surface`), the card's ground apart from the field's. Sources: `--cap-source-kind-pad` (1px `--space-2`).
+- **Sites: dustinedwards.info's entry sets `--cap-eyebrow-tracking: 0.08em`**, its labels' tracking.
+
+**Props, slots and attributes** (each off or unchanged by default)
+
+- `Eyebrow`: `className`, `tone="dim"`.
+- `PlanChoice`: `className`, `hideLegend` (`<legend class="cap-sr-only">`: read, not shown, no room). A plan option: `note` (`.cap-plan-option-note`, a line under the price).
+- `PriceCard`: `name` is optional; `text` takes a list, a paragraph each (a second line).
+- `ContactWay`: `iconEnd` (an icon after the words). `ContactLine`: `join` (a word between the numbers, "or"). `ContactCard`: `wayColumns`, `data-columns="1|2|3"` on one card's `.cap-contact-ways`.
+- Annotated document: `data-hide-notes="original"` (`hideNotesInOriginal`: the original is the text alone, full width), `data-view-align="center|end"` (`viewAlign`), `data-kind="tone"` (`kind="tone"`: each note's kind in its tone's color and its icon a disc of the tone).
+- `ProsePage`: `html`, a body the server stored and sanitized as HTML, through the `capsomer` Trusted Types policy; `ProsePageHead`, the title band alone (an error page).
+- Ambient: `data-hide="phone"` on the equalizer (`hideOnPhone`) leaves it out under 48rem.
+- `SourcesList`: `markAway` marks a link to another site with the link system's ↗ (`data-link="away"`).
+- `FeatureCard`: `tag` (`.cap-feature-card-head` and `.cap-feature-card-tag`, a pill at the end of the title's line) and `attributes` (the site's own `data-*` on the card).
+- Process: a step's `end` (`.cap-process-end`), its timing and status at the end of a row's line.
+
+**Also in this release (#411)**
+
 ## [0.141.1]
 
 - **The `enarratio` peer range adds `^0.15.0`.** Enarratio 0.15.0 adds `enarratio/lite/sparkline`, so a site that wants it could not install it beside Capsomer (npm ERESOLVE). The dev dependency is 0.15.0 and the full check passes unchanged; no token, class, export or HTML contract changes.

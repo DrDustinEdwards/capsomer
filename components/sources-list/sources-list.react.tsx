@@ -23,12 +23,14 @@ export interface SourcesListProps {
   label?: string;
   // Whether an address leaves the site, for its hidden "(another site)" cue. Every absolute http(s) address by default.
   isExternal?: (url: string) => boolean;
+  // Mark a link to another site with the link system's ↗ (`data-link="away"`). Off by default.
+  markAway?: boolean;
 }
 
 const external = (url: string) => /^https?:\/\//i.test(url);
 
 // The HTML contract in sources-list.md.
-export function SourcesList({ sources, label, isExternal = external }: SourcesListProps) {
+export function SourcesList({ sources, label, isExternal = external, markAway }: SourcesListProps) {
   if (!sources.length) return null;
   return (
     <ol className="cap-sources" aria-label={label}>
@@ -36,7 +38,11 @@ export function SourcesList({ sources, label, isExternal = external }: SourcesLi
         <li className="cap-source" key={i}>
           <span className="cap-source-kind">{SOURCE_KINDS[s.type] ?? s.type}</span>
           {s.url ? (
-            <a className="cap-source-title" href={s.url}>
+            <a
+              className="cap-source-title"
+              href={s.url}
+              data-link={markAway && isExternal(s.url) ? "away" : undefined}
+            >
               {s.title}
               {isExternal(s.url) ? <span className="cap-sr-only"> (another site)</span> : null}
             </a>

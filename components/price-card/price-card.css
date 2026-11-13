@@ -57,9 +57,11 @@
 
   .cap-price-card-amount {
     color: var(--cap-price-color, var(--accent-text));
-    font-family: var(--figures, var(--mono));
+    /* The face, not --figures: that is a font-variant-numeric value, so as a font-family it was
+       invalid and the amount fell back to the inherited face. */
+    font-family: var(--cap-price-face, var(--mono));
     font-size: var(--cap-price-size, 2rem);
-    font-weight: 600;
+    font-weight: var(--cap-price-weight, 600);
     line-height: 1;
     letter-spacing: -0.02em;
     font-variant-numeric: tabular-nums;
@@ -68,12 +70,14 @@
   .cap-price-card-unit,
   .cap-price-card-label {
     color: var(--muted);
-    font-size: var(--fs-detail);
+    font-size: var(--cap-price-unit-size, var(--fs-detail));
     line-height: 1.4;
   }
 
   .cap-price-card-label {
     margin: 0;
+    font-size: var(--cap-price-label-size, var(--fs-detail));
+    font-weight: var(--cap-price-label-weight, 400);
   }
 
   .cap-price-card-text {
@@ -188,7 +192,8 @@
     font-size: var(--text-size);
   }
 
-  .cap-plan-option-price {
+  .cap-plan-option-price,
+  .cap-plan-option-note {
     color: var(--muted);
     font-size: var(--fs-detail);
     font-variant-numeric: tabular-nums;
