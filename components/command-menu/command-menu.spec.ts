@@ -263,23 +263,27 @@ eachTheme((theme) => {
     });
   }
 
-  test("behavior: the answer under the list streams into the menu, takes focus, and typing again cancels it (answer-dom)", async ({
-    page,
-  }) => {
-    await visitStates(page, "command-menu", theme, "answer-dom");
-    const input = page.getByRole("combobox", { name: "Search this site" });
-    const button = page.getByRole("button", { name: "Ask AI about this" });
-    await button.click();
-    const answer = page.getByRole("region", { name: "AI answer" });
-    await expect(answer).toBeFocused();
-    await expect(button).toBeHidden();
-    await expect(answer.locator(".cap-ask-body")).toHaveText(
-      "Field notes are kept for each spring survey, one page per plot.",
-    );
-    await expect(answer.getByRole("list", { name: "Sources" }).getByRole("link")).toHaveCount(2);
-    await expectNoAxeViolations(page);
-    await input.fill("plots");
-    await expect(answer).toHaveCount(0);
-    await expect(button).toBeVisible();
-  });
+  for (const state of ["answer", "answer-dom"]) {
+    test(`behavior: the answer under the list streams into the menu, takes focus, and typing again cancels it (${state})`, async ({
+      page,
+    }) => {
+      await visitStates(page, "command-menu", theme, state);
+      const input = page.getByRole("combobox", { name: "Search this site" });
+      // The React menu opens with nothing typed; the one without React is opened with the words.
+      if (state === "answer") await input.fill("field notes");
+      const button = page.getByRole("button", { name: "Ask AI about this" });
+      await button.click();
+      const answer = page.getByRole("region", { name: "AI answer" });
+      await expect(answer).toBeFocused();
+      await expect(button).toBeHidden();
+      await expect(answer.locator(".cap-ask-body")).toHaveText(
+        "Field notes are kept for each spring survey, one page per plot.",
+      );
+      await expect(answer.getByRole("list", { name: "Sources" }).getByRole("link")).toHaveCount(2);
+      await expectNoAxeViolations(page);
+      await input.fill("plots");
+      await expect(answer).toHaveCount(0);
+      await expect(button).toBeVisible();
+    });
+  }
 });
