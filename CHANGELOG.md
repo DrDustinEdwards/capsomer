@@ -4,6 +4,9 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+## [0.141.0]
+
+- **Manual theme: the catalog.** `capsomer/manual.css` now draws `.cap-catalog` in the manual: beside the results the facets sit in a ruled box under a dark "Filter" strip (`--sign`, `--on-sign`), the facet names, the bar's field labels and the table's head are mono capitals, and each group's heading is 1.75rem bold over a 2px rule. The phone's tray keeps its own head and a group's heading over cards keeps catalog.css's spacing. dustinedwards.info drew this in its own site-catalog.css, which this replaces. No token, class or HTML contract changes.
 - **Collab editor: `Room.doc` and `Room.provider` are `null` before the page is in the browser.** `useRoom`'s first render returned an object cast `as unknown as Room` that lacked both; the type now says so (`Y.Doc | null`, `YProvider | null`) and the cast is gone. `useRoomEditing` is unchanged (it reads them once `synced`). An app that reads `room.doc` or `room.provider` from `useRoom` directly must handle null.
 - **`MediaPicker`: a library chunk that fails to load shows "The library did not load"** (the failed `Empty`) instead of breaking the dialog.
 - **Command host: a failed menu load is no longer kept.** `load()` clears itself on failure so the next `open` or `load` fetches the chunk again; the idle warm-up and `runWhenReady` share one fire-and-forget `warm`, and `open` still rejects.
