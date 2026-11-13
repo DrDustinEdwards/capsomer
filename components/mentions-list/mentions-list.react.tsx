@@ -150,7 +150,7 @@ export function MentionsList({
     const onKey = (e: KeyboardEvent) => {
       const root = rootRef.current;
       const list = root?.querySelector<HTMLElement>(".cap-mq-list");
-      if (!root || !queueKey(e, list)) return;
+      if (!root || !list || !queueKey(e, list)) return;
       if (e.key === "Escape") {
         if (
           stateRef.current.selected.length &&
