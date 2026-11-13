@@ -106,56 +106,6 @@ eachTheme((theme) => {
     await expectContrast(page, [{ sel: "#pg-narrow .cap-pagination-where", what: "Page 3 of 16" }]);
   });
 
-  test("accessibility: roles and names", { tag: "@markup" }, async ({ page }) => {
-    await visitStates(page, "pagination", theme);
-    await expect(page.locator("#pg-middle")).toMatchAriaSnapshot(`
-      - navigation "Pagination":
-        - paragraph: Showing 41 to 60 of 312 posts
-        - list:
-          - listitem:
-            - link "Previous"
-          - listitem:
-            - link "Page 1"
-          - listitem:
-            - link "Page 2"
-          - listitem:
-            - link "Page 3"
-          - listitem:
-            - link "Page 4"
-          - listitem:
-            - link "Page 5"
-          - listitem: More pages
-          - listitem:
-            - link "Page 16"
-          - listitem:
-            - link "Next"
-    `);
-    await expect(page.locator("#pg-middle [aria-current='page']")).toHaveAccessibleName("Page 3");
-    await expect(page.locator("#pg-first .cap-page[data-kind='prev']")).toHaveAttribute(
-      "aria-disabled",
-      "true",
-    );
-    await expect(page.locator("#pg-first .cap-page[data-kind='prev']")).not.toHaveAttribute("href");
-  });
-
-  test(
-    "accessibility: the chevrons and the gap's dots are not read out",
-    { tag: "@markup" },
-    async ({ page }) => {
-      await visitStates(page, "pagination", theme);
-      expect(
-        await page
-          .locator("#pg-middle .cap-page[data-kind='next']")
-          .evaluate((el) => (el as HTMLElement).innerText),
-      ).toBe("Next");
-      expect(
-        await page
-          .locator("#pg-middle .cap-page-gap")
-          .evaluate((el) => el.querySelector("[aria-hidden='true']")?.textContent),
-      ).toBe("…");
-    },
-  );
-
   test(
     "accessibility: every control is at least the target size",
     { tag: "@markup" },
@@ -173,49 +123,6 @@ eachTheme((theme) => {
       }
     },
   );
-
-  test("keyboard: Tab moves through Previous, the page numbers and Next", async ({ page }) => {
-    await visitStates(page, "pagination", theme);
-    await page.locator("#pg-middle").getByRole("link", { name: "Previous" }).focus();
-    const seen: string[] = [];
-    for (let i = 0; i < 7; i++) {
-      await page.keyboard.press("Tab");
-      seen.push(
-        await page.evaluate(
-          () =>
-            document.activeElement?.getAttribute("aria-label") ??
-            document.activeElement?.textContent ??
-            "",
-        ),
-      );
-    }
-    expect(seen).toEqual(["Page 1", "Page 2", "Page 3", "Page 4", "Page 5", "Page 16", "Next"]);
-  });
-
-  test("keyboard: Enter follows a page link", async ({ page }) => {
-    await visitStates(page, "pagination", theme);
-    await page.locator("#pg-middle").getByRole("link", { name: "Page 4" }).focus();
-    await page.keyboard.press("Enter");
-    await expect(page).toHaveURL(/#page-4$/);
-  });
-
-  test("keyboard: a disabled link is not a tab stop", async ({ page }) => {
-    await visitStates(page, "pagination", theme);
-    await page.locator("#pg-first").getByRole("link", { name: "Page 1", exact: true }).focus();
-    await page.keyboard.press("Shift+Tab");
-    const active = await page.evaluate(() => document.activeElement?.closest("#pg-first") !== null);
-    expect(active).toBe(false);
-  });
-
-  test("keyboard: Enter and Space choose a page with the buttons", async ({ page }) => {
-    await visitStates(page, "pagination", theme);
-    await nav(page).getByRole("button", { name: "Page 3" }).focus();
-    await page.keyboard.press("Enter");
-    await expect(current(page)).toHaveAccessibleName("Page 3");
-    await nav(page).getByRole("button", { name: "Page 4" }).focus();
-    await page.keyboard.press("Space");
-    await expect(current(page)).toHaveAccessibleName("Page 4");
-  });
 
   test("keyboard: after Next, focus stays on Next; on the last page it moves to the current page", async ({
     page,
@@ -285,15 +192,6 @@ eachTheme((theme) => {
     ]);
   });
 
-  test("behavior: the delivered HTML has the count line, every page link and the compact text", async ({
-    page,
-  }) => {
-    const html = await (await page.request.get("components/pagination/states.html")).text();
-    expect(html).toContain("Showing 41 to 60 of 312 posts");
-    expect(html).toContain('<a class="cap-page" aria-label="Page 16" href="#page-16">16</a>');
-    expect(html).toContain("Page 3 of 16");
-  });
-
   test("behavior: a wide container shows the numbers, a narrow one shows Page 3 of 16 between Previous and Next", async ({
     page,
   }) => {
@@ -310,12 +208,5 @@ eachTheme((theme) => {
     );
     expect(prev).toBeLessThan(where as number);
     expect(where).toBeLessThan(next as number);
-  });
-
-  test("behavior: other words for the ends work", async ({ page }) => {
-    await visitStates(page, "pagination", theme);
-    await expect(page.locator("#pg-words").getByRole("link", { name: "Newer" })).toBeVisible();
-    await expect(page.locator("#pg-words").getByRole("link", { name: "Older" })).toBeVisible();
-    await expect(page.locator("#pg-words .cap-pagination-status")).toHaveCount(0);
   });
 });

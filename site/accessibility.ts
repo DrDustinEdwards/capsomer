@@ -3,7 +3,8 @@
 // this site's: it is built from Capsomer and draws Capsomer's links, problems go to dustinedwards.info's contact page (the
 // site has none of its own), and the limitations are the open findings of devkit-a11y's run of 2026-11-01.
 import { accessibilityStatement } from "@drdustinedwards/site-helpers/accessibility";
-import { FOOTER, header, runningHead } from "./home.ts";
+import { FOOTER, header } from "./chrome.ts";
+import { firsts, type Data } from "./content.ts";
 
 const STATEMENT = accessibilityStatement({
   siteName: "Capsomer's site",
@@ -16,7 +17,6 @@ const STATEMENT = accessibilityStatement({
   links: "marked",
   limitations: [
     "On the admin shell's page, one example's frame has an accessible name that does not begin with its visible label.",
-    "In the theme builder, the corner radius slider shows no visible focus.",
     "The page for an address that does not exist has no skip link as its first Tab stop.",
   ],
 });
@@ -27,11 +27,10 @@ export const ACCESSIBILITY_PAGE = {
   description: STATEMENT.description,
 };
 
-/** The statement in the site's letterhead, running head and footer. */
-export function renderAccessibility(version: string): string {
-  return `${header("/", "")}
+/** The statement in the site's letterhead and footer. */
+export function renderAccessibility(d: Data): string {
+  return `${header("", firsts(d))}
 <main id="main" tabindex="-1">
-${runningHead("", "Accessibility", `Release ${version}`)}
 <div class="cap-page statement-page">
   <h1 class="statement-title">${STATEMENT.title}</h1>
   ${STATEMENT.html}

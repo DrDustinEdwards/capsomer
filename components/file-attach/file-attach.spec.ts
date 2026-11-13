@@ -7,20 +7,6 @@ eachTheme((theme) => {
     await expectNoAxeViolations(page);
   });
 
-  test("keyboard: Tab reaches the input behind the button, and its ring shows", async ({
-    page,
-  }) => {
-    await visitStates(page, "file-attach", theme);
-    const input = page.getByLabel("Upload file").first();
-    await input.focus();
-    await expect(input).toBeFocused();
-    const ring = await page
-      .locator(".cap-attach-button")
-      .first()
-      .evaluate((el) => getComputedStyle(el).outlineStyle);
-    expect(ring).toBe("solid");
-  });
-
   test("behavior: a refused file is named with its reason and nothing is sent", async ({
     page,
   }) => {

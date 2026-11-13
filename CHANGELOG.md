@@ -3,6 +3,64 @@
 Each release names every removed or renamed token or class, and every changed HTML contract. A pull request adds its entry as a
 changeset (`npx changeset`, `.changeset/README.md`); the release pull request writes them here.
 
+## 0.148.0
+
+### Minor Changes
+
+- - **Breaking: the compatibility aliases are gone** (pre-launch: no aliases). **Removed:** `summarise` (authorship; use `summarize`), `analyse` (draft-compare; use `analyze`), `renderEmailColours` (palette; use `renderEmailColors`), the token `--control-h` (use `--control`; also dropped from `tokens.json`, the showcase's density presets and Foxhound's site layer; `--control-h-coarse` stays), the custom properties `--cap-run-colour` and `--cap-meter-colour` (set `--cap-run-color` and `--cap-meter-color`), the dialog placement `"centre"` (use `"center"`), the `Skeleton`, `Spinner` and `SkeletonBlock` re-exports from `capsomer/react/empty` (import them from `capsomer/react/skeleton`), the `intentForm` and `outcomesOf` re-exports from `posts-list` (import them from `capsomer/content`), the `errorText`, `isBackdropClick`, `isBusy`, `rememberOpener`, `returnFocus` and `wordMatches` re-exports from `capsomer/behavior/confirm-dialog` (the first five from `capsomer/behavior/dialog`, `wordMatches` from `capsomer/confirm-server`), and the showcase's `#/colour` address. <!-- codespell:ignore -->
+  - **Command menu: the React menu has the answer under the list.** `CommandMenu` takes `answer: { label, offer, run(query, region) }`, as `createCommandMenu` does, and renders the same `.cap-cmd-answer` (button, status, region); `offer` is read on each render (the React form of `offerAnswer`). The two share `startAnswer` and `focusAnswer` (new exports of `capsomer/behavior/command-menu`), so the load, the failed-load words, the late-answer cancel and the focus move are one code.
+  - **Frontmatter fields: `typedProps(box, locked, write)`**, from `capsomer/react/frontmatter-fields`: an `input` or `textarea`'s props from a `useTyped` box (the value, `cap-input`, read-only when locked, `done` on blur, each change kept and written). The fields' own boxes use it; Carrel's post and search fields can import it in place of their copy (`app/components/editor/post-fields.tsx`).
+  - **Chevrons come from the icon set.** The carousel, combobox, menu (trigger and submenu), tree, date picker and settings back link drew their own chevron SVGs (16- and 20-unit copies); they now draw `iconChevronLeft`, `iconChevronRight` and `iconChevronDown` (`Icon` in React, `iconSvg` in the behavior modules), each component setting `--icon-size` and `--icon-stroke` so the line keeps its weight. New icons `iconChevronsLeft` and `iconChevronsRight` (the date picker's year buttons). HTML contract: the chevron is now `<svg class="cap-icon" viewBox="0 0 24 24">` with the set's path, in the carousel's buttons, the combobox trigger, `.cap-menu-trigger`, `.cap-menu-chevron`, `.cap-tree-toggle` and `.cap-settings-back`. The showcase's previous and next arrows draw them too. The chevrons are a little narrower (the set's 12-unit span), otherwise unchanged.
+- **New scale steps the sites share, so their values become tokens without a visible change.** The network sweep onto 0.143.0's tokens found about 1,600 values with no exact token, most of them the same few sizes on Foxhound, germomics, bsw and Foxing. Dustin's ruling (2026-11-13): a value two or more sites use becomes a step; a one-off snaps to the nearest step.
+  - Spaces: `--space-4-5` (14px), `--space-5-5` (20px), `--space-6-5` (28px), `--space-7-5` (40px), `--space-8-5` (56px), `--space-9-5` (80px), `--space-10` (96px).
+  - Radii: `--radius-hair` (1px), `--radius-s-5` (4px), `--radius-m-5` (8px), `--radius-l-5` (12px), `--radius-xl-5` (16px).
+  - Type: `--display-1` to `--display-5` (4.5, 3.75, 3, 2.75 and 2.5rem) for marketing headlines; `--title-1-5` (2rem) and `--title-2-5` (1.75rem).
+  - Line heights: `--leading-tight-5` (1.25), `--leading-snug-5` (1.375), `--leading-relaxed-5` (1.625), `--leading-airy` (1.75); and a new group of line boxes as lengths, `--line-box-4` to `--line-box-10` (1rem to 2.5rem), which inherit as a length, the way a site's `line-height: 1.25rem` does.
+  - Tracking: `--tracking-spaced` (0.12em), `--tracking-spread` (0.18em). Motion: `--dur-quick` (150ms).
+  - **token-check reads a line height in rem or px correctly.** It compared a length such as `1.25rem` with the unitless leadings and suggested `1.7px`. Now a length that is a line-box step is that token (and `--fix` swaps it); any other length is reported as its ratio to the rule's own font size with the nearest leading, and is never swapped, since a ratio inherits differently from a length.
+  - **`--fix` stays pixel-exact on a site.** It no longer swaps in a step that grows under `data-density="comfortable"` (`--fs-label`, `--fs-lead`, `--gap`, `--pad-card` and the rest), or a token the stylesheet sets itself; both are still reported, marked "(grows under comfortable density)" or "(this stylesheet sets it)". Foxhound's sweep found 15 such swaps that changed its comfortable pages.
+  - No token or class is removed or renamed; no HTML contract changes.
+
+## 0.147.0
+
+### Minor Changes
+
+- - **Breaking: the plan choice's rules are `capsomer/plan-choice.css`, no longer part of `price-card.css`; the feature cards' rules are `capsomer/feature-grid.css`, no longer part of `feature.css`.** A page of price cards or feature blocks shipped the plan choice and the card grid for nothing (about 0.9 KB gzip on Foxhound's product pages). The rules are unchanged and each new file stands alone. A site that draws `PlanChoice` (`.cap-plan-choice`, `.cap-plan-choice-options`, `.cap-plan-option`, `.cap-plan-option-name`, `.cap-plan-option-price`, `.cap-plan-option-note`) adds `@import "capsomer/plan-choice.css"` (Foxing's paywall); one that draws `FeatureGrid` or `FeatureCard` (`.cap-feature-grid`, `.cap-feature-card`, `.cap-feature-card-icon`, `-head`, `-tag`, `-title`, `-text`) adds `@import "capsomer/feature-grid.css"`, and can drop `feature.css` if it draws no blocks. No token, class or HTML contract changes.
+- **React `Title`, `Text` and `Stack`.** `capsomer/react/text` exports `Title` (`size` 1 to 6, `as`) and `Text` (`size`, `tone`, `weight`, `face`, `align`, `as`), which render `.cap-title` and `.cap-text` with their data attributes; `capsomer/react/stack` exports `Stack` (`gap` 1 to 9, `as`), which renders `.cap-stack`. A page that repeats the class and data attributes on every line carries that text in its server bundle every time; a component carries it once (txasm's Worker was 5.8 KiB over its size budget from this). No CSS changes and no class or attribute renamed or removed.
+
+## 0.146.0
+
+### Minor Changes
+
+- **AI engine settings: an effort per job.** Each job's row gains an Effort column beside its model (`effort-<key>`, read back by `settingsFromForm` as `efforts`), and the spend by job can split by effort (`usage[].effort`), so a person sees what a higher effort cost. **Changed React contract: `AiEngineSettings` requires `efforts` and `effortOptions`** (the same shape as `models` and `modelOptions`). The table gains one column; no token or class changes.
+- **A chart that keeps its shape (a map) gets a phone drawing at its own height.** `narrowRedraw(wide, drawNarrow, { keepShape: true })` draws the narrow drawing at its own height instead of the wide one's, and `frameHtml(chart, { redraw, keepShape: true })` sets `--cap-narrow-height` on `.cap-chart`, which chart-frame.css uses so the wide drawing scales into a column under 30rem at the narrow drawing's height until the swap. From germomics' Soho map, which did this in its own CSS. No class renamed or removed; `--cap-narrow-height` is a new custom property on `.cap-chart`.
+  **DataPreview keeps its own text size and a heading weight.** `.cap-data-preview` sets `font-size: var(--fs-body)` and `line-height: var(--leading-relaxed)`, so the card's sentence is not drawn at the size of the article beside it, and its heading takes `--weight-heading`.
+  **One HTML escape.** Status glyphs, the graph and search results' `snippetHtml` drop their own escape tables for site-runtime's `escapeHtml`, which the rest of Capsomer already uses, so a site bundles it once. `snippetHtml` now also escapes `'` (as `&#39;`); nothing else changes in the output.
+- **`describeSeries` reads days.** A new `at: "on"` option writes "30% on Oct 3" and "most on Oct 3" for a chart over days; the default stays "in", for years and months. More than three peaks, as a daily series that held its top for weeks has, now name the first two and a count ("most on Oct 2, Oct 3 and 12 more") in place of every date. No class, token or HTML contract changes.
+
+## 0.145.1
+
+### Patch Changes
+
+- **The markdown editor's CodeMirror stays out of server bundles.** `mountMarkdownEditor` refuses before its `import()` when Vite's `import.meta.env.SSR` is set, so a server build drops the CodeMirror chunk it could never run (Carrel's Worker: about 300 KB raw). Outside Vite nothing changes. No token, class or HTML contract changes.
+
+## 0.145.0
+
+### Minor Changes
+
+- **First-load weight: four code paths that run only on a click, or only on some sites, load on demand.** Measured on the Capsid Portal's heaviest first load, 217.8 to 215.6 KB gzip.
+  - The site header's search behavior (`wireSearch`) is `site-header-search.ts`. `enhance` and the React `SiteHeader` load it through the new `wireSearchOnDemand(search, suggest)`, and only on a header that has search. Until it arrives the icon is the link to the search page it always was. `wireSearch` and `SUGGEST_DELAY_MS` are no longer exported from `capsomer/behavior/site-header`; `SearchHit` and `Suggest` still are.
+  - The shortcut sheet (`renderSheetList`, `buildSheet`, `wireSheet`, `openShortcutSheet`) is `shortcuts-sheet.ts`. It loads the first time "?" or a `[data-cap-keys-open]` button asks for it, or when `enhance` finds a sheet in the markup. Those four are no longer exported from `capsomer/behavior/shortcuts`. An app with its own sheet (`setSheetOpener`) never loads it.
+  - A sheet's drag to dismiss is `dialog-drag.ts`. `wireDialog` loads it when a bottom, left or right sheet first takes focus, which it does as it opens.
+  - `FOXHOUND_MARKS` moves to the admin shell's states page, the only place it was drawn, so it no longer ships in every admin shell. It is no longer exported from `capsomer/react/admin-shell`.
+  - No class, token or HTML contract changes.
+
+## 0.144.0
+
+### Minor Changes
+
+- **Manual theme: the catalog.** `capsomer/manual.css` now draws `.cap-catalog` in the manual: beside the results the facets sit in a ruled box under a dark "Filter" strip (`--sign`, `--on-sign`), the facet names, the bar's field labels and the table's head are mono capitals, and each group's heading is `--title-2` bold over a `--line-w-thick` rule. The phone's tray keeps its own head and a group's heading over cards keeps catalog.css's spacing. dustinedwards.info drew this in its own site-catalog.css, which this replaces. No token, class or HTML contract changes.
+
 ## 0.143.0
 
 - **Every design value in Capsomer's CSS is a token.** `capsomer token-check` checked only colors and spacing (83 warnings); it now checks every kind of design value: colors (hex, `rgb()`, `oklch()` and the rest, named colors, and var() fallbacks), spaces, font sizes (and the `font` shorthand), weights, line heights, tracking, radii, line widths, outline widths and offsets, layers, durations, easings, shadows and opacities, and names the exact token or the nearest step. The scanner is `rawValues(css, tokenScale(tokens.json))` in `capsomer/token-check`, pure over CSS text, so a site's gate can run it. `capsomer token-check --fix` (and `fixCss`) writes every value that has an exact token in place, which changes nothing on the page; the report then lists only what needs a choice. Not checked, on purpose: a component's own geometry, relative units, lengths inside `calc()` that are not a step, and print (paper is black on white). It found 1,650 raw values in components/ and css/; all are now tokens, except the error ad's two ink colors (artwork). site/ waits for the docs site rebuild (#405).

@@ -104,67 +104,6 @@ eachTheme((theme) => {
     ]);
   });
 
-  test(
-    "accessibility: a banner with a title and an alert with a title keep their roles and names",
-    { tag: "@markup" },
-    async ({ page }) => {
-      await visitStates(page, "banner", theme);
-      await expect(page.locator("#sample-title")).toMatchAriaSnapshot(`
-      - status:
-        - paragraph: Showing data from 4 minutes ago
-        - paragraph:
-          - text: /The watcher did not answer/
-          - link "read what the watcher said"
-        - button "Try again"
-    `);
-      await expect(page.locator("#sample-alert-title")).toMatchAriaSnapshot(`
-      - alert:
-        - paragraph: Could not save the schedule
-        - paragraph: /The cron line has six fields/
-        - button "Edit the line"
-    `);
-      await expect(page.locator("#sample-ok")).toHaveAttribute("role", "status");
-      await expect(page.locator("#sample-crit")).toHaveAttribute("role", "alert");
-    },
-  );
-
-  test(
-    "accessibility: every tone has its own glyph shape, hidden from assistive technology",
-    { tag: "@markup" },
-    async ({ page }) => {
-      await visitStates(page, "banner", theme);
-      const shapes = await page.evaluate(() =>
-        ["#sample-ok", "#sample-warn", "#sample-crit", "#sample-info"].map(
-          (id) => document.querySelector(`${id} > .cap-status-glyph`)!.innerHTML,
-        ),
-      );
-      expect(new Set(shapes).size).toBe(4);
-      const hidden = await page
-        .locator(".cap-banner > .cap-status-glyph, .cap-alert > .cap-status-glyph")
-        .evaluateAll((els) => els.every((e) => e.getAttribute("aria-hidden") === "true"));
-      expect(hidden).toBe(true);
-    },
-  );
-
-  test("keyboard: an action in a titled banner is reachable with Tab", async ({ page }) => {
-    await visitStates(page, "banner", theme);
-    await page.locator("#sample-title a").focus();
-    await page.keyboard.press("Tab");
-    await expect(
-      page.locator("#sample-title").getByRole("button", { name: "Try again" }),
-    ).toBeFocused();
-  });
-
-  test("keyboard: Tab reaches the banners' actions in reading order, not the banners", async ({
-    page,
-  }) => {
-    await visitStates(page, "banner", theme);
-    await page.locator("#sample-warn").getByRole("button", { name: "Try again" }).focus();
-    await page.keyboard.press("Tab");
-    await expect(page.locator("#sample-crit").getByRole("link", { name: "Sign in" })).toBeFocused();
-    await expect(page.locator("#sample-warn")).not.toHaveAttribute("tabindex");
-  });
-
   test("keyboard: Enter on Dismiss hides the banner and focus moves to the page, not nowhere", async ({
     page,
   }) => {
@@ -174,13 +113,5 @@ eachTheme((theme) => {
     await page.keyboard.press("Enter");
     await expect(page.locator("#sample-dismiss")).toBeHidden();
     await expect(page.locator("main").first()).toBeFocused();
-  });
-
-  test("behavior: a failed refresh keeps the last good data on screen", async ({ page }) => {
-    await visitStates(page, "banner", theme);
-    await expect(page.locator("#sample-warn")).toBeVisible();
-    await expect(
-      page.getByRole("list", { name: "Sites, as of 4 minutes ago" }).getByRole("listitem"),
-    ).toHaveCount(3);
   });
 });

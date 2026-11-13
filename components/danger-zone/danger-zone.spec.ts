@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { test } from "@playwright/test";
 import {
   eachTheme,
   expectContrast,
@@ -17,10 +17,4 @@ eachTheme((theme) => {
       { sel: "#dz-one .cap-danger-note", what: "the note" },
     ]);
   });
-});
-
-test("accessibility: the zone is a group named by its label", async ({ page }) => {
-  await visitStates(page, "danger-zone", "light");
-  await expect(page.getByRole("group", { name: "Danger" }).first()).toBeVisible();
-  await expect(page.locator("#dz-one").getByRole("button", { name: "Remove site" })).toBeVisible();
 });

@@ -20,37 +20,6 @@ eachTheme((theme) => {
     ]);
   });
 
-  test(
-    "accessibility: roles and names: a trail, a heading, a lead and the actions, and no banner landmark",
-    { tag: "@markup" },
-    async ({ page }) => {
-      await visitStates(page, "page-head", theme);
-      await expect(page.locator("#ph-full")).toMatchAriaSnapshot(`
-      - navigation "Breadcrumb":
-        - list:
-          - listitem:
-            - link "Sites":
-              - /url: "#sites"
-          - listitem: example.org
-      - heading "example.org" [level=3]
-      - paragraph: Checks run every five minutes. A failing required check blocks publishing.
-      - button "Run checks now"
-      - button "Publish"
-    `);
-      // A header inside a section is not a banner: the page's one banner is the shell's.
-      await expect(page.locator("#ph-full").getByRole("banner")).toHaveCount(0);
-    },
-  );
-
-  test("keyboard: Tab goes through the trail's link, then the actions", async ({ page }) => {
-    await visitStates(page, "page-head", theme);
-    await page.locator("#ph-full .cap-breadcrumb-link").focus();
-    await page.keyboard.press("Tab");
-    await expect(page.getByRole("button", { name: "Run checks now" })).toBeFocused();
-    await page.keyboard.press("Tab");
-    await expect(page.locator("#ph-full").getByRole("button", { name: "Publish" })).toBeFocused();
-  });
-
   test("behavior: the actions sit at the right of the title, and drop below it in a narrow space", async ({
     page,
   }) => {

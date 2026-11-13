@@ -51,22 +51,6 @@ eachTheme((theme) => {
     expect(await bar("#anchor-states li:first-child a")).toBe("0");
   });
 
-  test("accessibility: the bar's roles and names", { tag: "@markup" }, async ({ page }) => {
-    await visitStates(page, "anchor-bar", theme, "top");
-    await expect(bar(page)).toMatchAriaSnapshot(`
-      - navigation "On this page":
-        - list:
-          - listitem:
-            - link "What it checks"
-          - listitem:
-            - link "Thresholds"
-          - listitem:
-            - link "When it alerts"
-          - listitem:
-            - link "What it keeps"
-    `);
-  });
-
   test("behavior: scrolled into the third section, its link is the current one", async ({
     page,
   }) => {

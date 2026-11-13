@@ -5,6 +5,7 @@
 // puts the same facts in a table or list beside it, and the links are out of the tab order.
 import dagre from "@dagrejs/dagre";
 import { type Tone, glyphParts } from "../status/status.ts";
+import { escapeHtml as esc } from "@dustinedwards/site-runtime/html";
 
 export interface GraphLine {
   tone: Exclude<Tone, "info">;
@@ -45,14 +46,6 @@ const CHAR = 7.4;
 const PAD = 14;
 const LINE = 18;
 
-const ESCAPES: Record<string, string> = {
-  "&": "&amp;",
-  "<": "&lt;",
-  ">": "&gt;",
-  '"': "&quot;",
-  "'": "&#39;",
-};
-const esc = (text: string) => text.replace(/[&<>"']/g, (c) => ESCAPES[c] ?? c);
 const f = (n: number) => n.toFixed(1);
 
 interface Point {

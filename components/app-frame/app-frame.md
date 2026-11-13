@@ -1,7 +1,8 @@
 ---
 name: app-frame
 title: App frame
-summary: A window around a preview of the product, with dots and an address bar or a title bar, so the preview reads as a picture of the app.
+summary: A window with dots and an address bar around a product preview, so it reads as a picture of the app.
+group: pattern
 parts: [css, react]
 tool: native
 states: [browser, app, with a foot line, decorative with a description]
@@ -13,23 +14,7 @@ replaces:
 
 # App frame
 
-A window drawn around a preview: three dots and an address (`browser`), or a title bar (`app`), the preview below and an optional foot line in an [eyebrow](../eyebrow/eyebrow.md) ("Sample data").
-
-## When to use it
-
-A landing or product page that shows the product working: a queue, a dashboard, an editor.
-
-## When not to
-
-- **A real screenshot**: a [picture](../picture/picture.md) with its alt text; the frame is for a drawn preview.
-- **A live control on the page**: drawing a window around it says it is not one.
-
-## The default and its reason
-
-- **A preview that only illustrates is hidden from assistive tech** (`decorative`), with a sentence beside it saying what it shows, as Foxhound's queue demo does: a screen reader hears what the picture means, not 30 cells of invented numbers.
-- **The dots are drawn by CSS** from one span and two pseudo-elements, in `--line-strong`.
-
-## HTML contract
+## Usage
 
 ```html
 <p class="cap-sr-only">A picture of the queue working three sample payments.</p>   <!-- decorative only -->
@@ -43,15 +28,9 @@ A landing or product page that shows the product working: a queue, a dashboard, 
 </div>
 ```
 
-React: `AppFrame` from `capsomer/react/app-frame` takes `address`, `variant`, `foot`, `decorative` and `description`.
-
-## Keyboard
+## Accessibility
 
 Nothing to operate. A decorative frame holds nothing focusable.
 
-## Accessibility
-
 - A decorative frame is `aria-hidden` and has a text description beside it; a frame around real content is not hidden.
 - The address is `--muted` on `--surface`: in the contrast report.
-
-Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the automated browser checks and a front-end review stand in. Automated: see the site's Tests page.

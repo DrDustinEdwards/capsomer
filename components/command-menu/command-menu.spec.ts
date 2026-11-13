@@ -194,27 +194,11 @@ eachTheme((theme) => {
     await expect(page.getByRole("status")).toHaveText("Ran: Revoke deploy-agent opens its preview");
   });
 
-  test("behavior: the stops specimen shows what typing stop finds", async ({ page }) => {
-    await visitStates(page, "command-menu", theme, "stops");
-    await expect(box(page)).toHaveValue("stop");
-    await expect(shownOptions(page)).toHaveCount(2);
-  });
-
   test("behavior: a click on an option runs it", async ({ page }) => {
     await openFromButton(page, theme);
     await page.getByRole("option", { name: /Switch light and dark/ }).click();
     await expect(menu(page)).toBeHidden();
     await expect(page.getByRole("status")).toHaveText("Ran: Switch light and dark");
-  });
-
-  test("behavior: the filtered and no-match specimens show what was typed", async ({ page }) => {
-    await visitStates(page, "command-menu", theme, "filtered");
-    await expect(box(page)).toHaveValue("ck");
-    await expect(shownOptions(page)).toHaveCount(3);
-    await visitStates(page, "command-menu", theme, "nomatch");
-    await expect(menu(page).locator(".cap-listbox-empty")).toHaveText(
-      "No commands match “deploy to vercel”",
-    );
   });
 
   for (const state of ["live", "live-dom"]) {
@@ -263,23 +247,27 @@ eachTheme((theme) => {
     });
   }
 
-  test("behavior: the answer under the list streams into the menu, takes focus, and typing again cancels it (answer-dom)", async ({
-    page,
-  }) => {
-    await visitStates(page, "command-menu", theme, "answer-dom");
-    const input = page.getByRole("combobox", { name: "Search this site" });
-    const button = page.getByRole("button", { name: "Ask AI about this" });
-    await button.click();
-    const answer = page.getByRole("region", { name: "AI answer" });
-    await expect(answer).toBeFocused();
-    await expect(button).toBeHidden();
-    await expect(answer.locator(".cap-ask-body")).toHaveText(
-      "Field notes are kept for each spring survey, one page per plot.",
-    );
-    await expect(answer.getByRole("list", { name: "Sources" }).getByRole("link")).toHaveCount(2);
-    await expectNoAxeViolations(page);
-    await input.fill("plots");
-    await expect(answer).toHaveCount(0);
-    await expect(button).toBeVisible();
-  });
+  for (const state of ["answer", "answer-dom"]) {
+    test(`behavior: the answer under the list streams into the menu, takes focus, and typing again cancels it (${state})`, async ({
+      page,
+    }) => {
+      await visitStates(page, "command-menu", theme, state);
+      const input = page.getByRole("combobox", { name: "Search this site" });
+      // The React menu opens with nothing typed; the one without React is opened with the words.
+      if (state === "answer") await input.fill("field notes");
+      const button = page.getByRole("button", { name: "Ask AI about this" });
+      await button.click();
+      const answer = page.getByRole("region", { name: "AI answer" });
+      await expect(answer).toBeFocused();
+      await expect(button).toBeHidden();
+      await expect(answer.locator(".cap-ask-body")).toHaveText(
+        "Field notes are kept for each spring survey, one page per plot.",
+      );
+      await expect(answer.getByRole("list", { name: "Sources" }).getByRole("link")).toHaveCount(2);
+      await expectNoAxeViolations(page);
+      await input.fill("plots");
+      await expect(answer).toHaveCount(0);
+      await expect(button).toBeVisible();
+    });
+  }
 });

@@ -3,7 +3,8 @@
 /* A price card: one plan or tier with its name, its price and what the price is per, a line of what
    it is for, the list of what it includes, and its call to action. Cards sit in `.cap-price-grid`,
    as many columns as fit. `data-featured` raises the one to recommend. The plan choice is the same
-   offer as a radio group, for choosing a plan inside a form (a paywall, a checkout). Extracted from
+   offer as a radio group, for choosing a plan inside a form (a paywall, a checkout); its rules are
+   plan-choice.css, so a page of cards does not carry them. Extracted from
    BioScience Writers' pricing tiers, Foxhound's pricing cards and Foxing's paywall plans. */
 @layer cap.components {
   .cap-price-grid {
@@ -120,50 +121,10 @@
     margin-block-start: auto;
     padding-block-start: var(--space-2);
   }
+}
 
-  /* The plan choice: the same offers as radios, the whole card the label. */
-  .cap-plan-choice {
-    margin: 0;
-    padding: 0;
-    border: 0;
-    min-inline-size: 0;
-
-    & > legend {
-      margin-block-end: var(--space-2);
-      padding: 0;
-      color: var(--text);
-      font-weight: var(--weight-semibold);
-    }
-  }
-
-  .cap-plan-choice-options {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 9rem), 1fr));
-    gap: var(--space-2);
-  }
-
-  /* Each plan is the field's card choice (.cap-check[data-variant="card"]); its words stack. */
-  .cap-plan-option-text {
-    display: grid;
-    gap: var(--space-1);
-  }
-
-  .cap-plan-option-name {
-    color: var(--text);
-    font-weight: var(--weight-semibold);
-    font-size: var(--text-size);
-  }
-
-  .cap-plan-option-price,
-  .cap-plan-option-note {
-    color: var(--muted);
-    font-size: var(--fs-detail);
-    font-variant-numeric: tabular-nums;
-  }
-
-  @media (forced-colors: active) {
-    .cap-price-card-points > li::before {
-      background: CanvasText;
-    }
+@media (forced-colors: active) {
+  .cap-price-card-points > li::before {
+    background: CanvasText;
   }
 }

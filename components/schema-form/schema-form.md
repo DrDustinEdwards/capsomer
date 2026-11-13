@@ -1,7 +1,8 @@
 ---
 name: schema-form
 title: Schema form
-summary: A form described as data, one spec per field, drawn in Capsomer's fields and read back from a post by the same specs.
+summary: A form described as data, one spec per field, drawn in Capsomer's fields and read back from a post.
+group: pattern
 parts: [css, behavior, react]
 tool: native + own JavaScript (React)
 states: [a settings form, refused by the server, held in React state, an app's own kind]
@@ -14,39 +15,7 @@ replaces:
 
 # Schema form
 
-One `FieldSpec` per field (`key`, `label`, `kind`, `help`, `options`, `required`, `wide`, `min`, `max`, `timeZone`) is the whole form: `FieldFromSpec` draws one field, `SchemaFields` the grid, `SettingsForm` the form with its error summary and Save, and on the server `readSpecs(form, specs)` reads the post back by the same specs, with a message per field in error.
-
-Kinds: `text`, `email`, `url`, `textarea`, `lines` (one per line, a string array), `date`, `datetime` (datetime-local on the spec's time zone, a Date), `number`, `money` (dollars in the box, integer cents in the app), `checkbox`, `select`, `choice` (radios), `multi` (checkboxes, a string array), `readonly`, `json`. Any other kind is the app's: pass `renderers={{ kind: (props) => ... }}`, which may also replace a built-in one.
-
-## When to use it
-
-Settings pages and admin forms whose fields are data: a registry's declared fields, front matter, a key and value table.
-
-## When not to
-
-- A form with a designed layout of its own (sign-in, checkout): the field parts directly.
-- One field: its field part.
-
-## The default and its reason
-
-- **The specs are the one truth**, so the form cannot offer a field the action does not read, and the action's message is the one shown beside the field and in the summary.
-- **Controlled or posting.** Pass `onChange` and the fields are React state; leave it out and each is a named control with its value as the starting value, so the form works with no script.
-- **The action never falls back to empty.** `parseJsonField(raw, valid)` answers null for a missing, broken or wrong JSON field, so a broken editor cannot save `[]` over what is stored.
-- **Two columns where the form has room** (a container query), one on a phone; textareas, lines, many choices and `wide` fields take the whole row.
-- **The error summary's links land where the answer goes**: a group (a choice, a repeater) puts focus on its control in error, else its first empty one (`focusTarget`, error summary).
-- **Required is said once, by the control's `required` and the word beside the label**; a required field left empty gets "Enter display name." in the field's own words.
-
-## Keyboard
-
-Each field's own. Enter in a text field sends the form.
-
-## Accessibility
-
-Each field is Capsomer's field part, with its label, help and error tied to the control; choices are fieldsets with a legend.
-
-Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the automated browser checks and a front-end review stand in. Automated: see the site's Tests page.
-
-## Markup
+## Usage
 
 ```tsx
 import { SettingsForm } from "capsomer/react/schema-form";
@@ -70,6 +39,8 @@ import { readSpecs } from "capsomer/behavior/schema-form";
 </form>
 ```
 
-## Exceptions in production
+## Accessibility
 
-None yet.
+Each field's own. Enter in a text field sends the form.
+
+Each field is Capsomer's field part, with its label, help and error tied to the control; choices are fieldsets with a legend.

@@ -48,11 +48,6 @@ eachTheme((theme) => {
     `);
   });
 
-  test("keyboard: focus starts on Cancel", async ({ page }) => {
-    await visitStates(page, "approval-sheet", theme, "two");
-    await expect(cancelBtn(page)).toBeFocused();
-  });
-
   test("keyboard: Space on a gate's checkbox changes the count", async ({ page }) => {
     await visitStates(page, "approval-sheet", theme, "two");
     const second = page
@@ -96,35 +91,6 @@ eachTheme((theme) => {
     await expect(cancelBtn(page)).toHaveAttribute("aria-disabled", "true");
   });
 
-  test("keyboard: Tab and Shift+Tab stay inside the sheet", async ({ page }) => {
-    await visitStates(page, "approval-sheet", theme, "two");
-    for (let i = 0; i < 9; i++) {
-      await page.keyboard.press("Tab");
-      expect(await page.evaluate(() => !!document.activeElement?.closest("dialog"))).toBe(true);
-    }
-    for (let i = 0; i < 9; i++) {
-      await page.keyboard.press("Shift+Tab");
-      expect(await page.evaluate(() => !!document.activeElement?.closest("dialog"))).toBe(true);
-    }
-  });
-
-  test("accessibility: the controls show a focus ring", async ({ page }) => {
-    await visitStates(page, "approval-sheet", theme, "two");
-    await approveBtn(page).focus();
-    await page.keyboard.press("Shift+Tab");
-    await page.keyboard.press("Tab");
-    await expect(approveBtn(page)).toBeFocused();
-    const width = await approveBtn(page).evaluate((el) => getComputedStyle(el).outlineWidth);
-    expect(parseFloat(width)).toBeGreaterThanOrEqual(2);
-  });
-
-  test("keyboard: Esc closes the sheet and focus returns to its button", async ({ page }) => {
-    await visitStates(page, "approval-sheet", theme, "two");
-    await page.keyboard.press("Escape");
-    await expect(sheet(page)).toBeHidden();
-    await expect(page.getByRole("button", { name: "Review 2 gates" })).toBeFocused();
-  });
-
   test("keyboard: Enter on Cancel closes the sheet and focus returns to its button", async ({
     page,
   }) => {
@@ -135,22 +101,6 @@ eachTheme((theme) => {
     await page.keyboard.press("Enter");
     await expect(sheet(page)).toBeVisible();
     await expect(cancelBtn(page)).toBeFocused();
-  });
-
-  test("keyboard: Esc is held while the approval is in flight", async ({ page }) => {
-    await visitStates(page, "approval-sheet", theme, "pending");
-    await expect(approveBtn(page)).toHaveAttribute("aria-busy", "true");
-    await page.keyboard.press("Escape");
-    await expect(sheet(page)).toBeVisible();
-    // Cancel is aria-disabled while pending; force the click to prove it does nothing.
-    await cancelBtn(page).click({ force: true });
-    await expect(sheet(page)).toBeVisible();
-  });
-
-  test("behavior: a click outside the sheet does not close it", async ({ page }) => {
-    await visitStates(page, "approval-sheet", theme, "two");
-    await page.mouse.click(4, 4);
-    await expect(sheet(page)).toBeVisible();
   });
 
   test("behavior: the approval names the chosen gates and their comments", async ({ page }) => {

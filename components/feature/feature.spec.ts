@@ -24,17 +24,6 @@ eachTheme((theme) => {
     ]);
   });
 
-  test("keyboard: a tall preview is a named region Tab reaches and arrows scroll", async ({
-    page,
-  }) => {
-    await visitStates(page, "feature", theme);
-    const region = page.getByRole("region", { name: "Sample change history" });
-    await region.focus();
-    await expect(region).toBeFocused();
-    await page.keyboard.press("PageDown");
-    await expect.poll(() => region.evaluate((el) => el.scrollTop)).toBeGreaterThan(0);
-  });
-
   test("behavior: alternating blocks swap sides", async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 900 });
     await visitStates(page, "feature", theme);

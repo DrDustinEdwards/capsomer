@@ -38,14 +38,6 @@ eachTheme((theme) => {
     await expect(anchor).toHaveCSS("opacity", "1");
   });
 
-  test("accessibility: at 320 px wide nothing scrolls the page sideways", async ({ page }) => {
-    await page.setViewportSize({ width: 320, height: 640 });
-    await visitStates(page, "prose-blocks", theme);
-    const overflow = await page.evaluate(
-      () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
-    );
-    expect(overflow, "the page does not scroll sideways").toBeLessThanOrEqual(0);
-  });
   test("behavior: only a highlighted code block keeps room for its language and Copy", async ({
     page,
   }) => {

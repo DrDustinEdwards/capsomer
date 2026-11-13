@@ -1,0 +1,46 @@
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* The plan choice: the price card's offers as a radio group, for choosing a plan inside a form (a
+   paywall, a checkout), the whole option the label. Its own file so a page of price cards does not
+   carry it; each option is the field's card choice, so it needs field.css, not price-card.css. */
+@layer cap.components {
+  .cap-plan-choice {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    min-inline-size: 0;
+
+    & > legend {
+      margin-block-end: var(--space-2);
+      padding: 0;
+      color: var(--text);
+      font-weight: var(--weight-semibold);
+    }
+  }
+
+  .cap-plan-choice-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 9rem), 1fr));
+    gap: var(--space-2);
+  }
+
+  /* Each plan is the field's card choice (.cap-check[data-variant="card"]); its words stack. */
+  .cap-plan-option-text {
+    display: grid;
+    gap: var(--space-1);
+  }
+
+  .cap-plan-option-name {
+    color: var(--text);
+    font-weight: var(--weight-semibold);
+    font-size: var(--text-size);
+  }
+
+  .cap-plan-option-price,
+  .cap-plan-option-note {
+    color: var(--muted);
+    font-size: var(--fs-detail);
+    font-variant-numeric: tabular-nums;
+  }
+}
+
