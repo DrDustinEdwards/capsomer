@@ -6,7 +6,7 @@ parts: [css, behavior, react]
 tool: own JavaScript
 states: [ui icons, social marks, labeled, inside a button, own drawing, right to left]
 added: 0.99.0
-updated: 0.119.0
+updated: 0.125.0
 source: the sites' own inline SVGs, gathered: txasm's admin menu (admin.layout.tsx), Foxing's account panel and header (account-panel.tsx, page-shell.tsx), julieedwards.info's header (Chrome.tsx) and priorities (Sections.tsx), the germomics and bsw footers' social marks; and Lucide's drawings of the pictograms Foxhound, germomics and bsw imported from lucide-react (ISC, components/icons/LICENSE-lucide.txt)
 replaces:
   - 'from "lucide-react"'
@@ -16,7 +16,7 @@ replaces:
 
 # Icons
 
-`capsomer/icons.css`, then `Icon` from `capsomer/react/icons` or `iconSvg` from `capsomer/behavior/icons`.
+`capsomer/icons.css`, then `Icon` from `capsomer/react/icons` or `iconSvg` from `capsomer/behavior/icons`. An app that draws only its own paths imports `IconPath` from `capsomer/react/icon-path` (`<IconPath d="…" box={16} />`), the light entry: `Icon` holds the whole set, which a lookup by name cannot leave out, and IconPath holds none of it.
 
 ```tsx
 <button type="button" className="cap-btn" aria-label="Search"><Icon name="search" /></button>

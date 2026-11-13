@@ -4,6 +4,10 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+## [0.125.0]
+
+- **`capsomer/react/icon-path`: `IconPath`, an icon from its own path without the set** (`d`, `box`, `fill`, `label`, `className`; the same `<svg class="cap-icon">` as `Icon`). `Icon` from `capsomer/react/icons` looks its `name` up in `ICONS`, so every app that imported it shipped the whole set, even one that only passes `d`: 0.119.0's 73 icons put about 3.6 KB gzip on every Desk route and 11 KiB in Carrel's Worker. `Icon` now draws through `IconPath`; an app that draws only its own paths (Carrel's menu) imports `IconPath` instead. No class, token or HTML contract changes.
+
 ## [0.124.0]
 
 Batch 6 of the shared-code audit, pass 2 (C54 to C63, data display): what the sites wrote by hand for numbers, statuses, steps, charts, search results, graphs, the system map's model, catalogs and media picking, moved into components. New peers: `@dagrejs/dagre ^3.1.3` and `zod ^4.6.7`, both optional (only `capsomer/behavior/graph` and `capsomer/behavior/system-model` import them).
