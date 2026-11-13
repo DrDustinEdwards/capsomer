@@ -26,6 +26,10 @@ test("describeSeries says the span, the latest, the range and every peak", () =>
   );
   assert.equal(describeSeries({ what: "Talks", x: [2025], values: [2] }), "Talks, 2025: 2.");
   assert.equal(
+    describeSeries({ what: "Rate", x: ["Oct 2", "Oct 3"], values: [20, 30], at: "on" }),
+    "Rate, Oct 2 to Oct 3: 30 on Oct 3, from 20 to 30; most on Oct 3.",
+  );
+  assert.equal(
     describeSeries({ what: "Talks", x: [2024, 2025], values: [2, 2] }),
     "Talks, 2024 to 2025: 2 each time.",
   );

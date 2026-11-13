@@ -101,6 +101,8 @@ export interface SeriesText {
   // How a value reads ("$1,200", "12%"); default the figure.
   format?: (value: number) => string;
   formatX?: (x: string | number) => string;
+  // The word before an x: "in" (default) for years and months, "on" for days.
+  at?: "in" | "on";
   // The sentence for no values or all zero (default "<what>: none yet.").
   empty?: string;
 }
@@ -123,8 +125,9 @@ export function describeSeries(o: SeriesText): string {
   const min = Math.min(...totals);
   if (max === min) return `${span}: ${fmt(max)} each time.`;
   const peaks = o.x.filter((_, i) => totals[i] === max).map(fx);
-  const latest = `${fmt(totals.at(-1)!)} in ${fx(o.x.at(-1)!)}`;
-  return `${span}: ${latest}, from ${fmt(min)} to ${fmt(max)}; most in ${listText(peaks)}.`;
+  const at = o.at ?? "in";
+  const latest = `${fmt(totals.at(-1)!)} ${at} ${fx(o.x.at(-1)!)}`;
+  return `${span}: ${latest}, from ${fmt(min)} to ${fmt(max)}; most ${at} ${listText(peaks)}.`;
 }
 
 /**
