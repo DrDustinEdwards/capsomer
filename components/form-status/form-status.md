@@ -30,8 +30,8 @@ After a post that reloads the page with the action's answer, where the person mu
 ## The default and its reason
 
 - **The paragraph is in the page from the start**, empty and visually hidden, so the first result is heard (a live region added with its text is often missed).
-- **A new result takes focus** (`tabIndex={-1}`), so the person lands on it, as GOV.UK's error summary does. `focus={false}` keeps focus where it is.
-- **A failure is `role="alert"` in the critical tone; a success `role="status"` in ok**, each with the status glyph, so tone is never color alone.
+- **A new result takes focus** (`tabIndex={-1}`), so the person lands on it, as GOV.UK's error summary does. `focus="errors"` moves it for a failure only; `focus={false}` keeps focus where it is.
+- **A failure is said in a `role="alert"` paragraph in the critical tone; a success in a `role="status"` one in ok**, each with the status glyph, so tone is never color alone. Both paragraphs are always present and never change role (some screen readers miss a role change on a live node); the one with nothing to say is empty and visually hidden.
 - **`useActionStatus(actionData)`** reads the usual answers (`{ ok: "Saved." }`, `{ error }`, `{ ok: false, message }`) and keeps one object per post, so focus moves once.
 
 ## Keyboard
@@ -54,13 +54,19 @@ After a post that reloads the page with the action's answer, where the person mu
 </p>
 ```
 
-A success, and the empty region before a post:
+<p tabindex="-1" role="status" class="cap-sr-only cap-form-status"></p>
+```
+
+A success, and the empty regions before a post:
 
 ```html
+<p tabindex="-1" role="alert" class="cap-sr-only cap-form-status"></p>
 <p tabindex="-1" role="status" class="cap-alert cap-form-status" data-tone="ok">
   <svg class="cap-status-glyph" aria-hidden="true">...</svg>
   <span class="cap-alert-body">Your abstract was saved.</span>
 </p>
+
+<p tabindex="-1" role="alert" class="cap-sr-only cap-form-status"></p>
 <p tabindex="-1" role="status" class="cap-sr-only cap-form-status"></p>
 ```
 

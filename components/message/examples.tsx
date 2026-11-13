@@ -3,7 +3,7 @@
 // focus. The page holds the answer, as useActionData() would.
 import { StrictMode, useState } from "react";
 import { createRoot } from "react-dom/client";
-import { ActionResult } from "./message.react.tsx";
+import { FormStatus, useActionStatus } from "../form-status/form-status.react.tsx";
 
 type Answer = { error: string } | { ok: string } | { ok: true } | undefined;
 
@@ -11,7 +11,7 @@ function Form() {
   const [answer, setAnswer] = useState<Answer>(undefined);
   return (
     <div className="message-sample">
-      <ActionResult data={answer} />
+      <FormStatus status={useActionStatus(answer)} />
       <div className="message-sample-row">
         {/* A new object each time, as every action answer is, so the same words are said again. */}
         <button

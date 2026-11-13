@@ -4,7 +4,8 @@ import { Glyph } from "../status/status.react.tsx";
 // The result of a form's post, said where the form is (form-status.md). The paragraph is in the
 // page from the start (empty and visually hidden), so the first result is heard; when a new result
 // arrives focus moves to it, so a keyboard and a screen reader land on what happened before the
-// form. A failure is role="alert" in the critical tone, a success role="status" in ok.
+// form. A failure is said in a role="alert" paragraph in the critical tone, a success in a
+// role="status" one in ok.
 
 export type ActionStatus = { ok: true; message: ReactNode } | { ok: false; message: ReactNode };
 
@@ -13,7 +14,7 @@ export type ActionStatus = { ok: true; message: ReactNode } | { ok: false; messa
 export function actionStatus(data: unknown): ActionStatus | null {
   if (!data || typeof data !== "object") return null;
   const d = data as Record<string, unknown>;
-  const words = (v: unknown) => (typeof v === "string" && v ? v : null);
+  const words = (v: unknown) => (typeof v === "string" && v.trim() !== "" ? v : null);
   if (words(d.error)) return { ok: false, message: d.error as string };
   if (d.ok === false) return { ok: false, message: words(d.message) ?? "Something went wrong." };
   if (words(d.ok)) return { ok: true, message: d.ok as string };
@@ -21,35 +22,53 @@ export function actionStatus(data: unknown): ActionStatus | null {
   return null;
 }
 
+// When a new result takes focus: every one (true, the default, so a person who posted with the
+// keyboard lands on what happened, where the button may be gone or disabled), "errors" for a
+// failure only, or false to leave focus in place (autosave) and let the live region speak.
+export type FormStatusFocus = boolean | "errors";
+
 export interface FormStatusProps {
   // The status to say, or null for none. A new object is a new result and takes focus.
   status: ActionStatus | null;
-  // Move focus to a new result (default). Off for a form that keeps focus in place (autosave).
-  focus?: boolean;
+  focus?: FormStatusFocus;
   className?: string;
 }
 
+// Two regions, always in the page: an alert for a failure and a status for a success. A live
+// node never changes its role, which some screen readers miss; the one with nothing to say is
+// empty and visually hidden.
 export function FormStatus({ status, focus = true, className }: FormStatusProps) {
-  const ref = useRef<HTMLParagraphElement>(null);
+  const failRef = useRef<HTMLParagraphElement>(null);
+  const okRef = useRef<HTMLParagraphElement>(null);
   useEffect(() => {
-    if (status && focus) ref.current?.focus();
+    if (!status || focus === false || (focus === "errors" && status.ok)) return;
+    (status.ok ? okRef : failRef).current?.focus();
   }, [status, focus]);
-  const cls = status ? "cap-alert cap-form-status" : "cap-sr-only cap-form-status";
+  const region = (ok: boolean) => {
+    const shown = status !== null && status.ok === ok;
+    const cls = shown ? "cap-alert cap-form-status" : "cap-sr-only cap-form-status";
+    return (
+      <p
+        ref={ok ? okRef : failRef}
+        tabIndex={-1}
+        role={ok ? "status" : "alert"}
+        className={className ? `${cls} ${className}` : cls}
+        data-tone={shown ? (ok ? "ok" : "crit") : undefined}
+      >
+        {shown ? (
+          <>
+            <Glyph name={ok ? "ok" : "crit"} />
+            <span className="cap-alert-body">{status.message}</span>
+          </>
+        ) : null}
+      </p>
+    );
+  };
   return (
-    <p
-      ref={ref}
-      tabIndex={-1}
-      role={status && !status.ok ? "alert" : "status"}
-      className={className ? `${cls} ${className}` : cls}
-      data-tone={status ? (status.ok ? "ok" : "crit") : undefined}
-    >
-      {status ? (
-        <>
-          <Glyph name={status.ok ? "ok" : "crit"} />
-          <span className="cap-alert-body">{status.message}</span>
-        </>
-      ) : null}
-    </p>
+    <>
+      {region(false)}
+      {region(true)}
+    </>
   );
 }
 

@@ -51,7 +51,7 @@ The result of an action, said in the page: "Moved the mention to Trash", with Un
 
 ## The result of a form action
 
-A form that posts (a React Router action) answers with `{ error }` or `{ ok }`, and the person who sent it with the keyboard needs to land on the answer: the button may be disabled or gone, and the live region alone is easy to miss. `useActionResult(data)` reads the answer and, each time a new one arrives, moves focus to the line that says it; `<ActionResult data={actionData} />` is that line, drawn (txasm had six copies of a `statusRef` and an effect).
+A form that posts (a React Router action) says its answer where the form is, with focus on it: that is `form-status` (`<FormStatus status={useActionStatus(actionData)} />`, with `focus="errors"` to move focus for a failure only). The message region is for messages that are not about a form (a copied link, an undo), and never takes focus.
 
 - **The line is always rendered.** Empty, it is visually hidden (`cap-sr-only`) and present, so a screen reader hears the next answer; with words it is an alert box (`cap-alert`), `data-tone="crit"` for an error and `"ok"` for a success, `role="alert"` for an error and `"status"` otherwise. It takes focus by script (`tabindex="-1"`), never by Tab.
 - **Focus moves after every answer with words** (`focus: "always"`, the default). `focus: "errors"` moves it for a refusal only, `"never"` leaves it where it is and lets the region speak. It follows the object, not the sentence, so the same words twice are said twice.
@@ -66,7 +66,6 @@ A form that posts (a React Router action) answers with `{ error }` or `{ ok }`, 
 | Enter or Space on Undo | Runs Undo; focus moves to the control that was undone, else to that message's Dismiss |
 | Enter or Space on Dismiss | Clears that message; focus returns to the control that caused the message |
 | (a message appears) | Focus does not move |
-| (a form action answers) | Focus moves to the action's result line (`useActionResult`), unless `focus` says otherwise |
 
 ## Accessibility
 
@@ -113,7 +112,7 @@ say("Copied the link to the mention.", { clears: true });
 fail("Refresh failed: the watcher pass failed: GitHub answered 502.");
 ```
 
-An Undo that rejects keeps its message and shows the error's message under it. 0.1.0's region held one text and two buttons directly; `enhance()` removes those, and the messages replace them. In React, for a form's answer: `const result = useActionResult(useActionData())` and `<p {...result.regionProps}>{result.message}</p>`, or `<ActionResult data={actionData} focus="errors" />` (`import { ActionResult, useActionResult } from "capsomer/react/message"`). For the page's region, wrap the app in `<MessageProvider>` and call `const { say, fail } = useMessage()`; the provider renders the region after its children, or pass `region={false}` and place `<MessageRegion />` yourself. A shared component that must also work without a provider calls `useOptionalMessage()`, which returns the same API or `null`.
+An Undo that rejects keeps its message and shows the error's message under it. 0.1.0's region held one text and two buttons directly; `enhance()` removes those, and the messages replace them. For the page's region, wrap the app in `<MessageProvider>` and call `const { say, fail } = useMessage()`; the provider renders the region after its children, or pass `region={false}` and place `<MessageRegion />` yourself. A shared component that must also work without a provider calls `useOptionalMessage()`, which returns the same API or `null`.
 
 ## The shadcn component it matches
 
