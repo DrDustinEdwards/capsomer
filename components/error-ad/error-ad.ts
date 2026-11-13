@@ -18,7 +18,7 @@ export interface AdPart {
   font?: "display" | "slab" | "serif";
   size?: number;
   leading?: number;
-  // A hex color, or "ink": the page's text color for the ad, light in dark mode.
+  // A hex color, or "ink": the ad's own vintage ink (--cap-ad-ink, the navy its art is drawn in), cream in dark mode.
   fill?: string;
   stroke?: string;
   strokeWidth?: number;
