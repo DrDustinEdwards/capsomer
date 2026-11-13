@@ -56,7 +56,7 @@ Running text stays in the page's reading face (`--prose` on dustinedwards.info),
 
 ## The running head and the route handle
 
-`sectionOf(pathname, sections, fallback)` picks the section a path sits in (the longest prefix; `{ prefix, no, trail }`). A route names its folio with `export const handle = { folio: (data) => ... }` (`RunningHeadHandle`); `folioOf(useMatches())` returns the deepest one. `<RunningHead no trail folio>` (`capsomer/react/manual`) draws the head across a tracks page's wide track, hidden from screen readers.
+Prelum's `sectionOf(path, sections)` (`@drdustinedwards/site-helpers/site-map`) picks the section a path sits in; the site keeps each section's number and trail beside its id. A route names its folio with `export const handle = { folio: (data) => ... }` (`RunningHeadHandle`); `folioOf(useMatches())` returns the deepest one. `<RunningHead no trail folio>` (`capsomer/react/manual`) draws the head across a tracks page's wide track, hidden from screen readers.
 
 ## Keyboard
 

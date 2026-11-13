@@ -170,27 +170,6 @@ export function signsHtml(label: string, signs: readonly Sign[]): string {
 }
 
 /** A part of a site, for the running head: the paths it covers, its number and its trail of names. */
-export interface Section {
-  prefix: string;
-  no: string;
-  trail: readonly string[];
-}
-
-/** The section a path sits in: the longest prefix that is the path or a parent of it, else `fallback`. */
-export function sectionOf<S extends Section>(
-  pathname: string,
-  sections: readonly S[],
-  fallback: S,
-): S {
-  let best = fallback;
-  for (const section of sections) {
-    const under =
-      pathname === section.prefix || pathname.startsWith(`${section.prefix.replace(/\/$/, "")}/`);
-    if (under && section.prefix.length > best.prefix.length) best = section;
-  }
-  return best;
-}
-
 /**
  * A route's folio for the running head's right side, from its loader data: `export const handle = { folio }`. The
  * route handle contract every site's routes use.

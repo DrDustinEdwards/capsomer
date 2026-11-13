@@ -40,7 +40,7 @@ export function Patch({ id, name, foot, count, unit }: PatchOptions) {
 }
 
 export interface RunningHeadProps {
-  /** The section's number (manual.ts sectionOf). */
+  /** The section's number (the site's own, for the section Prelum's sectionOf picks). */
   no: string;
   /** The section's trail, joined with a middle dot. */
   trail: readonly string[];
