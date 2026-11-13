@@ -28,7 +28,7 @@ A reader's like of a list, a post or a review.
 
 - **The name stays the same, pressed or not** ("Like, 12"); the pressed state says whether it is on (WAI-ARIA APG, toggle button: a name that flips with the state reads as two different buttons). Foxing's name flipped between "Like" and "Remove like" and hid the count.
 - **The state is shape as well as color**: the heart fills.
-- **The page does the write** and passes `liked` and `count` back; while it runs the button is busy and cannot be pressed twice.
+- **The page does the write** and passes `liked` and `count` back; while it runs the button is busy (`aria-busy`, `aria-disabled`) and cannot be pressed twice, and it keeps focus.
 - **Signed out it is disabled** and still shows the count.
 
 ## HTML contract
@@ -36,7 +36,7 @@ A reader's like of a list, a post or a review.
 ```html
 <div class="cap-like">
   <button type="button" class="cap-like-button" aria-pressed="true">
-    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="..."/></svg>
+    <svg class="cap-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="..."/></svg>
     <span class="cap-sr-only">Like Field notes, </span><span>12</span>
   </button>
   <p class="cap-like-error" role="alert">That did not save. Try again.</p>   <!-- on failure -->

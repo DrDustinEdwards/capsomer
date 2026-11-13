@@ -18,7 +18,7 @@ replaces:
 
 The panel beside something the server turns into a file: the abstract book's PDF, a printed program, an export. It says in a word and a sentence where the file stands, offers the file with its format and size, and has the one button that makes it again.
 
-**Provenance.** EXTRACTED and REWROTE, from txasm. Extracted: the states (none, generating, ready, failed), the download link, the Generate and Regenerate words, the earlier file kept downloadable during a regenerate, and the 5 minute lock after which a run still marked generating is taken to have died (`recordGenerating`, `STALE_MS`), as the pure `fileState` and `mayStart`. Added: the stale state (the data changed after the file was made), the failure's reason, the file's size beside its link, the status glyph and word (`.cap-status`), and a disabled button while a run holds the lock. txasm drew each state as its own paragraph ("Pending", "The last generation failed"), with the Generate button live during a run; the server refused the second press, and now the button does too. The Publish to the archive action stays the app's, passed as `children` (the publish gate is the component for a publish with checks).
+**Provenance.** EXTRACTED and REWROTE, from txasm. Extracted: the states (none, generating, ready, failed), the download link, the Generate and Regenerate words, the earlier file kept downloadable during a regenerate, and the 5 minute lock after which a run still marked generating is taken to have died (`recordGenerating`, `STALE_MS`), as the pure `fileState` and `mayStart`. Added: the stale state (the data changed after the file was made), the failure's reason, the file's size beside its link, the status glyph and word (`.cap-status`), and a busy button (Button's `pending`) while a run holds the lock. txasm drew each state as its own paragraph ("Pending", "The last generation failed"), with the Generate button live during a run; the server refused the second press, and now the button does too. The Publish to the archive action stays the app's, passed as `children` (the publish gate is the component for a publish with checks).
 
 ## When to use it
 
@@ -37,7 +37,7 @@ A file a person asks the server to make, which takes long enough to need a state
 - **Out of date is its own state.** When the store passes `changedAt` (the data's last change) and it is later than the file, the file is still offered, but the panel says it was made before the latest changes. txasm had no way to say this; a chair could publish a book missing the last edits.
 - **The earlier file stays offered during a regenerate and after a failure**, since the store keeps it until the new one is in.
 - **The file link is a file link** (`data-link="file"`, `download`), with its format and size after it in `.cap-link-meta` ("PDF, 2.4 MB"), so a person knows what comes before the click.
-- **The button is disabled while a run holds the lock or the form is being sent**, and says "Generating". A primary button when the file is missing, stale or failed; a plain one when it is ready, since making it again is then not the next step.
+- **The button is busy while a run holds the lock or the form is being sent** (Button's `pending`: a spinner, `aria-busy`, presses ignored, focus kept), and says "Generating". A primary button when the file is missing, stale or failed; a plain one when it is ready, since making it again is then not the next step.
 - **The made time is exact** (`Time` with `format="exact"`): a panel has no detail to put it in.
 - **The status is `role="status"`**, so an app that polls and redraws the panel has the change read out.
 
@@ -53,7 +53,7 @@ A file a person asks the server to make, which takes long enough to need a state
 
 - A panel (`section` with a heading at `level`). The status is a live region.
 - The state is a word with its glyph, never color alone; the sentence is `--muted` (4.5:1), the size `--muted`.
-- A disabled Generate says "Generating", so the reason it is disabled is on the button.
+- A busy Generate says "Generating", so the reason it cannot be pressed is on the button.
 
 Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the automated browser checks and a front-end review stand in. Automated: see the site's Tests page.
 
@@ -86,7 +86,7 @@ Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the a
 </section>
 ```
 
-`data-state` on `.cap-generated-body` is `none`, `generating`, `ready`, `stale` or `failed`. While a run holds the lock the button is `disabled aria-busy="true"` and reads "Generating".
+`data-state` on `.cap-generated-body` is `none`, `generating`, `ready`, `stale` or `failed`. While a run holds the lock the button is `aria-busy="true"` with the spinner (Button's `pending`) and reads "Generating".
 
 Load `capsomer/generated-file.css` with `capsomer/panel.css`, `capsomer/status.css`, `capsomer/button.css` and, for the file link's mark and meta, `capsomer/link-file.css` (or the whole `capsomer/link.css`, which imports it).
 

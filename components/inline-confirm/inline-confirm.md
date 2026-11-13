@@ -30,7 +30,7 @@ Removing a member, accepting a dispute, deleting one file: a one-line question w
 - **It works with no script.** The first step is a link to the page with the question open (`openHref`, such as `?confirm=<id>`, which the page reads into `defaultOpen`), Cancel a link back (`closeHref`). With script the first step is a button that opens in place.
 - **Focus lands on Cancel**, never on the confirm, so a second Enter cannot act; Cancel puts it back on the first button. A question opened by the address takes focus on Cancel too.
 - **The confirm is described by the question**, so it is heard as "Yes, remove member, Remove Sam Lee?".
-- **While it runs** the confirm says `pendingLabel` and is `aria-disabled` (not disabled, so focus stays on it), and Cancel is withdrawn.
+- **While it runs** the confirm says `pendingLabel` and is Button's `pending` (a spinner and `aria-busy`, presses ignored, not disabled, so focus stays on it), and Cancel is withdrawn.
 - **The hidden inputs that name the action are the children**; the form is the app's (`form={Form}`, or the read-only form for a demo).
 
 ## Keyboard
