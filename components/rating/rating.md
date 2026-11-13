@@ -5,8 +5,8 @@ summary: A star rating out of five in halves - shown as an image whose name says
 parts: [css, react]
 tool: native
 states: [shown, sizes, asked for]
-added: 0.92.0
-updated: 0.92.0
+added: 0.124.0
+updated: 0.124.0
 source: Foxing routes/u-profile.tsx (Stars) and components/social/diary-form.tsx (the half-star select)
 replaces:
   - 'function Stars\('

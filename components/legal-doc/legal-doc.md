@@ -5,8 +5,8 @@ summary: A policy or terms page - the title, the date it last changed, a numbere
 parts: [css, react]
 tool: native
 states: [a policy with contents]
-added: 0.92.0
-updated: 0.92.0
+added: 0.124.0
+updated: 0.124.0
 source: Foxhound components/legal-page.tsx (privacy, terms), Foxing routes/terms.tsx and privacy.tsx
 replaces:
   - 'LegalSection|LegalBody|LegalContents'

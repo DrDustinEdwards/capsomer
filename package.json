@@ -1,6 +1,6 @@
 {
   "name": "capsomer",
-  "version": "0.123.0",
+  "version": "0.124.0",
   "description": "Capsomer: the shared design system for Dustin Edwards's apps. Tokens, components and patterns, in plain CSS with optional behavior modules and React wrappers.",
   "license": "MIT",
   "repository": {
@@ -19,6 +19,8 @@
     "tokens/palette.mjs",
     "tokens/palette-core.mjs",
     "tokens/palette-core.d.mts",
+    "tokens/token-check.mjs",
+    "tokens/token-check.d.mts",
     "tokens/chart.mjs",
     "tokens/scale.mjs",
     "tokens/enarratio-theme.mjs",
@@ -45,6 +47,18 @@
     "./tokens.css": "./css/tokens.css",
     "./base.css": "./css/base.css",
     "./utilities.css": "./css/utilities.css",
+    "./focus.css": "./css/focus.css",
+    "./print.css": "./css/print.css",
+    "./catalog-all.css": "./css/catalog-all.css",
+    "./admin-all.css": "./css/admin-all.css",
+    "./token-check": {
+      "types": "./tokens/token-check.d.mts",
+      "default": "./tokens/token-check.mjs"
+    },
+    "./build": {
+      "types": "./bin/build.d.mts",
+      "default": "./bin/build.mjs"
+    },
     "./links.css": "./css/links.css",
     "./reset.css": "./css/reset.css",
     "./fonts.css": "./css/fonts.css",
@@ -86,6 +100,10 @@
     "./publish-transition": {
       "types": "./dist/components/publish-gate/publish-transition.d.ts",
       "default": "./dist/components/publish-gate/publish-transition.js"
+    },
+    "./confirm-server": {
+      "types": "./dist/components/confirm-dialog/confirm-server.d.ts",
+      "default": "./dist/components/confirm-dialog/confirm-server.js"
     },
     "./theme-server": {
       "types": "./dist/components/theme-switch/theme-server.d.ts",
@@ -216,6 +234,7 @@
     "react": "19.3.0",
     "react-dom": "19.3.0",
     "react-router": "8.5.1",
+    "rolldown": "1.2.15",
     "typescript": "6.0.3",
     "vite": "8.3.5",
     "wrangler": "^4.151.3",
@@ -246,6 +265,7 @@
     "@tiptap/starter-kit": "^3.31.4",
     "@tiptap/y-tiptap": "^3.3.0",
     "enarratio": "^0.12.0 || ^0.13.0",
+    "lightningcss": "^1.30.0",
     "mdast-util-directive": "^3.1.1",
     "mdast-util-from-markdown": "^2.1.0",
     "mdast-util-frontmatter": "^2.0.1",
@@ -258,6 +278,7 @@
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-router": "^8.0.0",
+    "rolldown": "^1.0.0",
     "y-partyserver": "^2.2.0",
     "y-protocols": "^1.0.7",
     "yjs": "^13.6.33"
@@ -329,6 +350,9 @@
     "enarratio": {
       "optional": true
     },
+    "lightningcss": {
+      "optional": true
+    },
     "mdast-util-directive": {
       "optional": true
     },
@@ -363,6 +387,9 @@
       "optional": true
     },
     "react-router": {
+      "optional": true
+    },
+    "rolldown": {
       "optional": true
     },
     "y-partyserver": {

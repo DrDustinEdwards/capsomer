@@ -5,8 +5,8 @@ summary: A page's closing call to action - a heading, one sentence and the actio
 parts: [css, react]
 tool: native
 states: [band, quiet]
-added: 0.92.0
-updated: 0.92.0
+added: 0.124.0
+updated: 0.124.0
 source: Foxing .fx-cta, BioScience Writers' closing "ready to ..." blocks on nine service pages, Foxhound's product and pricing closing band
 replaces:
   - 'fx-cta'

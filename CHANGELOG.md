@@ -4,7 +4,7 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
-## [0.123.0]
+## [0.124.0]
 
 Second-pass shared-code audit, batch 1 (Dustin, 2026-11-11: any UI that is a component lives in Capsomer, even if one site uses it).
 
@@ -17,6 +17,27 @@ Second-pass shared-code audit, batch 1 (Dustin, 2026-11-11: any UI that is a com
 - **Family footer:** `copyright(name, since)` writes "© 2024–2026 Example Co" from the server's UTC year, for sites with their own footer (bsw, Foxhound, julieedwards.info).
 
 No token or class was removed or renamed.
+
+## [0.123.0]
+
+### Tokens, CSS and build (shared-code audit, batch 7)
+
+- **`capsomer/build`** (Node only, `bin/build.mjs`): `inlineCss(file)` (every import read in place, a layered one inside its layer, a bare specifier resolved from the file), `capsomerStylesheet({ family, site, parts, fonts, fontsUrl, prose, before, after })` (fonts, tokens, the family inside cap.tokens, base, the link system, the parts, the site layer, the site's CSS), `copyFonts(to)`, `minifyCss(css)` (Lightning CSS) and `bundleScript(entry, { format })` (Rolldown, every lazy import inlined). Carrel's www, Prelum's specimen and Capsid's explorer each had their own copy. New optional peers: `lightningcss`, `rolldown` (both come with Vite).
+- **`capsomer/catalog-all.css`** (the catalog and the field, button, table, chips, empty and pagination it is built from) and **`capsomer/admin-all.css`** (layers, tokens, base, prose and the parts every admin screen draws with, in one order), so sites stop repeating the same import lists.
+- **`[hidden]` wins over every class** (`[hidden]:where(:not([hidden="until-found"]))`, important in the lowest layer), so no site writes `.x[hidden] { display: none }` again. `hidden="until-found"` stays the browser's.
+- **`capsomer/focus.css`**: the focus policy alone (no ring for a pointer press, the 2px `--ring` outline for the keyboard, the inset ring on a scroll region), for a page that keeps its own base. base.css imports it; the rules are unchanged.
+- **`capsomer/print.css`** (imported by base.css): on paper the chrome is hidden (skip links, the site header but the letterhead, the family footer, lightbox, contents, share row, anchor bar, messages and anything marked `data-print="hide"`), the page column takes the sheet, code wraps in a rule, an outside link in prose prints its address, headings keep with what follows and figures, tables and form boxes do not split. Under `prefers-reduced-transparency` the translucent header and a dialog's blurred backdrop turn solid. Under forced colors buttons, pills, chips and status marks keep an edge, a selected or pressed part keeps an outline, and the focus ring is the system Highlight at 3px.
+- **Tokens:** `--z-raise` (10), `--z-dropdown` (50), `--z-drawer` (60), `--z-progress` (90), `--z-skip` (100) join the layer scale (the skip link now sits on `--z-skip`); `--dur-wait` (900ms, one cycle of a loading line); a `line` group: `--line-w` (1px), `--line-w-thick` (2px) and `--radius-control` (`--radius-m` by default; buttons, fields and selects now read it, so a square site sets it once); and the breakpoints `bp-sm` 40rem, `bp-md` 48rem, `bp-lg` 64rem, `bp-xl` 72rem in tokens.json (a media query cannot read a custom property). `--prose` lists `"Source Serif 4 Fallback"` second.
+- **Fonts:** Capsomer now ships Source Serif 4 (variable, normal and italic, split into latin core, latin rest, Greek and math files so a page in plain English downloads the core alone), Inter's Greek and math letters (normal and italic), and DM Sans and DM Mono (Foxhound's). From dustinedwards.info and Foxhound. OFL texts in `fonts/`. Their fallbacks stay in fallback-fonts.css too, for a site still loading its own copy.
+- **Utilities:** `.cap-meta` (the small sentence-case line beside a title) and `.cap-clamp` (`data-lines="1|2|3"`, 2 by default).
+- **New: tracks** (`.cap-tracks`, `data-rail="none|note|toc"`, `data-track="rail|wide"`, `--tracks-rail-w`, `--tracks-gap-w`) and rail facts (`.cap-rail-facts`), from dustinedwards.info's `.tracks`. **New: entry list** (`.cap-entry-list`, `.cap-entry`, `-when`, `-more`, `-mark`, `-body`, `-title`, `-kicker`, `-summary`, `-tags`), from its dated lists.
+- **Form boxes:** `data-variant="grid"` fills each row with as many boxes as fit at `--box-min` (10rem).
+- **Manual:** HTML-string builders in `capsomer/behavior/manual` (`checklistHtml`, `timelineHtml`, `formBoxesHtml`, `leaderIndexHtml`, `cueCardHtml`, `signsHtml`, beside `patchSvg`); the `RunningHeadHandle` route handle and `folioOf(matches)`; `capsomer/react/manual` with `Patch` and `RunningHead`; `.cap-running-head-trail`, `.cap-running-head-tracks` and `.cap-patched`. **PageHead** takes `patch`.
+- **Site header:** `data-logo-fill="on"` on a part of the logo's SVG draws it in the band's family color.
+- **`capsomer/confirm-server`**: the confirm page's server half, `confirmTyped(form, { word, reasonRequired })`, `countMatches(typed, count)`, `CONFIRM_FIELD` and `REASON_FIELD`. `wordMatches` moved there (confirm-dialog still exports it).
+- **`capsomer/token-check`**: a site's token gate as pure functions over CSS text: `readThemeBlocks`, `readDeclarations`, `mediaBlock` (the prefers-contrast tier), `resolveToken`, `unresolved`, `flattenMix`, `verifyFallbacks` (a hex beside its color-mix must be what the mix paints), `checkPairs`, `unmeasured` (no color token outside a measured pair), `opacityDeclarations` (the opacity ledger), and palette-core's `contrast` and `apca`.
+- **`capsomer/testing`**: `expectNoOverflow(page, widths)` and `expectShellRenders(page, paths)`; and in `capsomer/testing/page` (any page with `evaluate`, Playwright's or Puppeteer's) `CHECK_WIDTHS`, `overflowScan`, `shellState`, `runningMotion` and `loadedScripts`, with `headContractProblems(html)` (the color-scheme meta before the first stylesheet).
+- No token or class was removed or renamed.
 
 ## [0.122.0]
 

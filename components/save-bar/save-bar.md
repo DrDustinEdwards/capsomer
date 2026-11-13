@@ -6,7 +6,7 @@ parts: [css, react]
 tool: native
 states: [nothing saved yet, saving, saved, failed, no button, saves as it changes, sticky]
 added: 0.113.0
-updated: 0.123.0
+updated: 0.124.0
 source: Foxhound, app/routes/app/settings/ (notifications, email twice, account, brand-voice, disputes, audit), each a copy of Recova's SaveBar.
 ---
 
