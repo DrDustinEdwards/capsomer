@@ -4,7 +4,7 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
-## [0.124.0]
+## [0.131.0]
 
 **Content and marketing blocks** (the shared-code audit's batch 5, clusters C39-C53). Nineteen new components, a stream reader and three additions, each built once from the sites that had it, so every site gets the same block and the same behavior. New classes, exports and HTML contracts only; no token, class or contract is removed or renamed.
 
@@ -15,6 +15,52 @@ Each release names every removed or renamed token or class, and every changed HT
 - **Breadcrumb: `minItems`** (default 2) leaves the trail out when it has fewer items (germomics' SectionTrail).
 - **The peer `@dustinedwards/site-runtime` is `>=0.131.0`**: the ask panel reads frames with its `./ai-ask` and `Document` re-exports its `./deferred-scripts` `routeHydrates`.
 - **Hydrating on intent is site-runtime's** (`./deferred-scripts` and `./hydrate-on-intent`), not part of `Document`.
+
+## [0.127.0]
+
+- **New: text roles, titles and line clamps** (`css/utilities.css`). `.cap-text` sets a run of text's role with one attribute per axis: `data-size="tiny|small|lead"`, `data-tone="muted|dim|ink|accent|ok|crit"`, `data-weight="strong"`, `data-face="ui|mono|prose|display"`, `data-align="center|end"`. `.cap-title` is a title outside a component, `data-size="1"` to `"6"` (2.25rem to 1rem, the display face at `--title-weight`). `.cap-clamp` cuts text at `data-lines="1"`, `"2"` (default) or `"3"` with an ellipsis. They replace the text-role and clamp classes Foxing, the Portal and txasm each wrote. New tokens a SITES entry may set: `--text-tiny`, `--text-small`, `--text-lead` (unset by default, so they fall back at use to `--fs-label`, `--fs-detail` and `--fs-lead`), `--text-strong` (600), `--title-weight` (the heading weight), `--title-1` to `--title-6`, and `--mono-size` (0.75rem), which `.cap-mono` now reads. Foxing's entry sets its text sizes (12, 14 and 18px), its strong weight (500) and its title weight (600); the Portal's sets 13px identifiers. Removed or renamed: no token or class.
+- **Anchor bar: React finds its own sections.** `<AnchorBar />` without `sections` renders an empty, hidden bar and lets the behavior module fill, show and spy on it, as the module does for plain HTML. A `[data-section][id]` block inside another is no longer an entry: the bar names the outer sections only (from the Portal's own bar, which it replaces).
+- **Sites: txasm's entry sets `--title-weight: 600`**, its page titles' weight before they moved onto `.cap-title`.
+
+## [0.126.0]
+
+- **Layout: item helpers.** `.cap-grow` (takes the room its row leaves and may shrink below its content), `.cap-shrink` (a flex or grid item that may shrink below its content: `min-inline-size: 0`), `.cap-keep` (never shrinks), `.cap-full` (a whole row: every grid column, the full line of a cluster, the full width of a block) and `.cap-column`, a centered column for a form (42rem), with `data-width="narrow"` (28rem, a sign-in) or `"reading"` (48rem). They replace txasm's `.grow`, `.shrink`, `.span-2`, `.narrow`, `.form-page` and `.reading`, and Foxing's `.grow`, `.shrink-0`, `.min-0` and `.full`.
+- **New: site footer** (`capsomer/site-footer.css`, `.cap-site-footer`, `.cap-site-footer-links`, `.cap-site-footer-note`): a site's own plain footer for a site outside the family footer, a hairline over a links row, a mark and the small print, in the page's column; `data-tone="raised"` on the raised surface, `data-links="quiet"` for muted links. Slots `--site-footer-gap`, `--site-footer-pad`, `--site-footer-bg`, `--site-footer-fs`. From txasm's and julieedwards.info's footers.
+- **Sites: page columns in their entries.** txasm's entry sets its 72rem page column (`--page-max`), 24px sides (16px on a phone), and 16px text on a 1.5 line (`--fs-page`, `--page-leading`), so its public pages use `.cap-page` instead of their own frame. julieedwards.info's entry sets its 67.5rem column, 32px sides and 1.65 line. Removed or renamed: no token or class.
+- **Site footer links are at least `--target` tall** (24px by default, WCAG 2.2 2.5.8): the sweep found them 20px on a touch screen.
+- **Sites: dustinedwards.info's entry sets `--radius-control: 0` (its square controls) and `--z-progress: 900` (its reading-progress line over its own 800 overlay)**, which its app.css declared itself.
+- **Fonts: DM Sans declares its file's whole weight axis** (100 to 1000, was 400 to 700), as dustinedwards.info's font gate checks every face it loads.
+
+## [0.125.0]
+
+Second-pass shared-code audit, batch 1 (Dustin, 2026-11-11: any UI that is a component lives in Capsomer, even if one site uses it).
+
+- **New components:** `form-status` (a post's result, focused when it arrives, `FormStatus` and `useActionStatus`; from txasm's five copies), `filter-bar` (a GET filter form as a named search landmark with Apply, Clear and a live count (`countText` from `capsomer/content`), `withParams`, `clearedHref`, `isFiltered`, `applyVariant` and `live`, which waits out an IME composition; `onSubmit` for another router, its `Form` typed from the props it passes so React Router's `Form` fits; Foxhound, txasm, the Capsid Portal), `legal-doc` (numbered sections, contents and "Last updated" from one list; Foxhound and Foxing), `rating` (a star rating in halves, shown and asked for; Foxing), `hero` (with `children` between the lead and the actions, and `id`) and `cta-band` (with `eyebrow`, `note` and `quiet`): a landing page's first and last sections, the look from each site's tokens (Carrel, julieedwards.info, the Capsid explorer, Foxing, BioScience Writers, Foxhound).
+- **Save bar: one component for every settings form.** The 0.113.0 bar keeps its props and gains `children` (another action before Save), `disabledReason` (Save stays, unusable, and says why), `sticky` (on the window's bottom edge while a long form scrolls, `[data-sticky]`), `form`, `name` and `value` (to the button) and `className`. `saved` also takes words ("Saved.") in place of "Saved". With `button={false}` the bar is a form that saves as each control changes: it says "Saving…" while `pending`, then the result. No class or prop is removed or renamed.
+- **Table: a React part.** `capsomer/react/table` exports `Table` (the labeled region, table and caption for hand-written rows) and `DataTable` (rows from columns, sorted in React with `aria-sort`, an empty sentence, a totals row), in place of hand-written `div.cap-table-wrap` blocks (Foxhound, Carrel, txasm).
+- **Button:** `data-wrap` (`wrap`) lets a long label wrap, balanced; `data-block` (`block`) fills the row; `pendingLabel` says the pending state once from a polite live region beside the button.
+- **Link:** `ButtonLink` (a link drawn as a button, with `to` or `href`, and `away` and `newTab`; a same-site `newTab` says "(opens in a new tab)") and `AwayLink` (the `away` kind with its words, `newTab` and `sponsored`), with `awayRel()`, `awayWords()` and `NEW_TAB_WORDS`. New class `.cap-btn-away` (the ↗ in a button link).
+- **Chips:** `LinkChips` (link chips in a named nav, each with a count; `showLabel`) and `CheckChips` (React for 0.115.0's checkbox chips: `fieldset.cap-chips`, `input.cap-chip-input`). A pressed or current chip's `.cap-chip-count` now reads in the pressed word's color (it stayed `--dim`; dustinedwards.info's colophon patched it).
+- **Family footer:** `copyright(name, since)` writes "© 2024–2026 Example Co" from the server's UTC year, for sites with their own footer (bsw, Foxhound, julieedwards.info).
+
+No token or class was removed or renamed.
+
+## [0.124.0]
+
+Batch 6 of the shared-code audit, pass 2 (C54 to C63, data display): what the sites wrote by hand for numbers, statuses, steps, charts, search results, graphs, the system map's model, catalogs and media picking, moved into components. New peers: `@dagrejs/dagre ^3.1.3` and `zod ^4.6.7`, both optional (only `capsomer/behavior/graph` and `capsomer/behavior/system-model` import them).
+
+- **Format** (new, `capsomer/behavior/format`): `pluralWord`, `formatBytes` (binary, as before, now up to TB), `shortCount` (exact under 10,000, then "12.3K"; the grouped figure alone is Prelum's `formatCount`), `median`, `percentOf`, `formatPercent` and `formatBps`. Changed: `byteSize` (media) and `formatBytes` (drop-zone) are this `formatBytes`, so a size of exactly 2 MB reads "2 MB", not "2.0 MB". `describeSeries` lists peaks with `listText` (serial comma).
+- **Status:** `capsomer/behavior/status` has `statusHtml`, `glyphHtml`, `glyphParts` and `STATUS_GLYPH`, the one table of glyph shapes React's `Status` now also draws from (its markup is unchanged), and `outcomeStatus(conclusion, labels)`, one reading of a run's conclusion for every site: success and neutral are ok, skipped is no data, canceled, timed out, stale and action required are warnings, queued and in progress are running, anything else failed.
+- **Step player** (new component): Play, Pause and Play again over a set of steps, stopping at the end, on a hidden tab and when the person moves themselves (WCAG 2.2.2); slower under reduced motion. `[data-cap="step-player"]` with `enhance()`, or `stepPlayer()` over a page's own steps.
+- **Step indicator: three variants.** `data-variant="stations"` (dots on a rule, the last a stub, a filled dot when complete), `"inline"` (one wrapping line joined by a connector) and `"ordered"` (numbered rows under a top rule, with `.cap-step-number`, `.cap-step-meta`). New classes: `.cap-step-dot`, `.cap-step-meta`, `.cap-step-number`. The default is unchanged.
+- **Chart frame:** `ChartPanel` (a chart in a panel, with its no-data and "Not refreshed" states), `DataPreview` (a dataset's card beside an article), `drawWith`, `narrowRedraw`, `describeSeries` (the finding's sentence from the numbers), and `capsomer/behavior/chart-presets` with `countsByYearHtml` and `sparkHtml`. `ChartFit` and `shownHeight` move to `capsomer/behavior/chart-frame` (React re-exports them). New classes: `.cap-chart-stale`, `.cap-spark`, `.cap-data-preview` and its parts; `[data-out-of-range]` fades a bar. A server drawing with `data-enarratio-redraw` scales to its column under 30rem until the narrow drawing replaces it.
+- **Search results** (new component): `SearchResults`, `SearchResult` and `Snippet`, with facets beside the results from 52rem, the count in a live region and an empty state with something to try; `snippetHtml` and `markQuery` mark the matched words as text, never as markup.
+- **Graph** (new, `capsomer/behavior/graph`): `graphSvg` lays out boxes and wires with dagre into one SVG with status glyphs and an outside ring, for an architecture or system drawing.
+- **System map: the model.** `capsomer/behavior/system-model` has the public model's schema (`PublicModelSchema`, `parsePublicModel` with its cross-checks), `connectionsOf`, `partsOf`, `outsideOf`, `wiresOf`, `explorerHref` and `modelMarkdown`/`systemMarkdown` for the model's Markdown twin.
+- **Catalog:** a range facet (`kind: "range"`, From and To menus, overlapping spans, `?<key>-from=&<key>-to=`), `group.empty`, `summaryText`, `activeCount`, `facetCounts`, `catalogRecords` options (`id`, `url`, `keys`, `allFields`), `catalogMarkdown` and `markdownCell`, `catalogDownloads`, `catalogParams`, `catalogRedirect(..., { keepUnknown })`, and `oneOf`, `listParam`, `yearParam`. New classes: `.cap-catalog-range`, `.cap-catalog-range-ends`, `.cap-catalog-range-end`.
+- **Media library:** `MediaPicker` ("Insert from library" in a dialog) and `ImageField` (one chosen image with its preview, Choose another and Remove) in `capsomer/react/media-picker`, and `uploadImage`, `loadMediaView` and `libraryOf` in `capsomer/behavior/media-picker`. New classes: `.cap-image-field` and its parts.
+
+No token was removed or renamed.
 
 ## [0.123.0]
 

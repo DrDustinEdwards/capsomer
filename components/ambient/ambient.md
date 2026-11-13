@@ -5,7 +5,7 @@ summary: Decoration behind a hero that carries no information: drifting hexagons
 parts: [css, behavior, react]
 tool: own JavaScript
 states: [hex field, blobs, equalizer, reduced motion, paused off screen]
-added: 0.124.0
+added: 0.131.0
 source: BioScience Writers' HexField (app/components/HexField.tsx, app/islands/hex-field.ts, app.css hex-drift); germomics' HeroBackground and HeroEqualizer (app/components/content/)
 replaces:
   - 'HexField'

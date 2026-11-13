@@ -35,7 +35,7 @@
   /* Identifiers only: ids, shas, commands, paths. Times and counts are .cap-num. */
   .cap-mono {
     font-family: var(--mono);
-    font-size: 0.75rem;
+    font-size: var(--mono-size);
     letter-spacing: -0.01em;
   }
   .cap-num {
@@ -340,7 +340,9 @@
    pushed apart) and a grid (equal columns, as many as fit, at most data-cols). The gap is a space
    token step, data-gap="1".."9" (--space-1 2px to --space-9 64px). Each sets its own --layout-gap,
    so a layout nested in another never takes its parent's gap. They replace the stack, cluster,
-   spread, row and grid classes Foxing, Carrel, txasm and julieedwards.info each wrote. */
+   spread, row and grid classes Foxing, Carrel, txasm and julieedwards.info each wrote. The item
+   helpers after them (.cap-grow, .cap-shrink, .cap-keep, .cap-full, .cap-column) replace txasm's
+   and Foxing's .grow, .shrink, .span-2, .narrow and .form-page. */
 @layer cap.utilities {
   .cap-stack {
     display: flex;
@@ -446,5 +448,154 @@
   /* A readable line: 65 characters. */
   .cap-measure {
     max-inline-size: 65ch;
+  }
+  /* An item that takes the room its row leaves, and may shrink below its content (a long name
+     beside its buttons). */
+  .cap-grow {
+    flex: 1 1 0%;
+    min-inline-size: 0;
+  }
+  /* An item that may shrink below its content's width (a flex or grid item, whose floor is
+     otherwise its content), so its own text wraps or its own table scrolls instead of the page. */
+  .cap-shrink {
+    min-inline-size: 0;
+  }
+  /* An item that keeps its own size and never shrinks (a time column, a thumbnail). */
+  .cap-keep {
+    flex: none;
+  }
+  /* An item that takes a whole row: every column of a grid, the full line of a cluster, the full
+     width of a block. */
+  .cap-full {
+    grid-column: 1 / -1;
+    flex-basis: 100%;
+    inline-size: 100%;
+  }
+  /* A centered column narrower than the page: a form (42rem, the default), a sign-in or other
+     single short form (data-width="narrow", 28rem) or a reading page (data-width="reading",
+     48rem). */
+  .cap-column {
+    max-inline-size: var(--column-max, 42rem);
+    margin-inline: auto;
+    &[data-width="narrow"] {
+      --column-max: 28rem;
+    }
+    &[data-width="reading"] {
+      --column-max: 48rem;
+    }
+  }
+}
+
+/* Text roles: the size, tone, weight and face of a run of text, on any element, for the places
+   no component sets them. One class, .cap-text, and an attribute per axis, as the layouts take
+   data-gap: data-size="tiny|small|lead", data-tone="muted|dim|ink|accent|ok|crit",
+   data-weight="strong", data-face="ui|mono|prose|display", data-align="center|end". A site sets
+   its own sizes and strong weight in its SITES entry: --text-tiny (default --fs-label),
+   --text-small (--fs-detail), --text-lead (--fs-lead) and --text-strong (600). The sizes fall
+   back to the density tokens at use, so a comfortable subtree gets its own. The tones are
+   Capsomer's text roles, so each keeps its contrast on every surface. They replace Foxing's
+   .meta/.fine/.small/.lead/.error and the Portal's .faint/.small/.note. */
+@layer cap.utilities {
+  .cap-text {
+    &[data-size="tiny"] {
+      font-size: var(--text-tiny, var(--fs-label));
+    }
+    &[data-size="small"] {
+      font-size: var(--text-small, var(--fs-detail));
+    }
+    &[data-size="lead"] {
+      font-size: var(--text-lead, var(--fs-lead));
+    }
+    &[data-tone="muted"] {
+      color: var(--muted);
+    }
+    &[data-tone="dim"] {
+      color: var(--dim);
+    }
+    &[data-tone="ink"] {
+      color: var(--text);
+    }
+    &[data-tone="accent"] {
+      color: var(--accent-text);
+    }
+    &[data-tone="ok"] {
+      color: var(--ok);
+    }
+    &[data-tone="crit"] {
+      color: var(--crit);
+    }
+    &[data-weight="strong"] {
+      font-weight: var(--text-strong);
+    }
+    &[data-face="ui"] {
+      font-family: var(--ui);
+    }
+    &[data-face="mono"] {
+      font-family: var(--mono);
+    }
+    &[data-face="prose"] {
+      font-family: var(--prose);
+    }
+    &[data-face="display"] {
+      font-family: var(--display);
+    }
+    &[data-align="center"] {
+      text-align: center;
+    }
+    &[data-align="end"] {
+      text-align: end;
+    }
+  }
+
+  /* A title that is not a component's: the display face at one of six sizes, 1 the largest
+     (--title-1 to --title-6, 2.25rem to 1rem), at --title-weight (the heading weight). The size is
+     the look, the element is the outline: an h2 may wear size 1. Each step has its own leading,
+     tighter as the size grows. */
+  .cap-title {
+    margin: 0;
+    font-family: var(--display);
+    font-weight: var(--title-weight);
+    font-size: var(--title-4);
+    line-height: 1.3;
+    color: var(--text);
+    &[data-size="1"] {
+      font-size: var(--title-1);
+      line-height: 1.15;
+    }
+    &[data-size="2"] {
+      font-size: var(--title-2);
+      line-height: 1.2;
+    }
+    &[data-size="3"] {
+      font-size: var(--title-3);
+      line-height: 1.25;
+    }
+    &[data-size="5"] {
+      font-size: var(--title-5);
+      line-height: 1.35;
+    }
+    &[data-size="6"] {
+      font-size: var(--title-6);
+      line-height: 1.35;
+    }
+  }
+
+  /* At most data-lines lines (2 by default, or 3), the rest cut with an ellipsis: Baseline Widely
+     available as -webkit-line-clamp (the standard line-clamp is not yet). data-lines="1" cuts one
+     line without changing the element's display, so it also fits a flex item (with a min size of 0). */
+  .cap-clamp {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+    &[data-lines="3"] {
+      -webkit-line-clamp: 3;
+    }
+  }
+  .cap-clamp[data-lines="1"] {
+    display: revert-layer;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 }

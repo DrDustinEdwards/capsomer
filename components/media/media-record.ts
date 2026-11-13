@@ -1,4 +1,5 @@
 // The media library's records: the facts of one file and the plain functions that read them.
+import { formatBytes } from "../format/format.ts";
 
 // ---------------------------------------------------------------------------------------
 // The records, pure.
@@ -73,12 +74,9 @@ export interface MediaFields {
 export const tileId = (key: string): string =>
   `tile-${key.replace(/[^a-z0-9]+/gi, "-").toLowerCase()}`;
 
-// Decimal unit names, binary division: the site's own rule, so a size reads the same on both.
-export function byteSize(size: number): string {
-  if (size < 1024) return `${size} B`;
-  if (size < 1024 * 1024) return `${Math.round(size / 1024)} kB`;
-  return `${(size / (1024 * 1024)).toFixed(1)} MB`;
-}
+// A file's size in words: the format module's formatBytes, so a size reads the same in the
+// library, the drop zone and every site ("412 kB", "2.4 MB").
+export const byteSize = formatBytes;
 
 export const LARGE_BYTES = 1024 * 1024;
 

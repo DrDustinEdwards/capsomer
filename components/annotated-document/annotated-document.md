@@ -5,7 +5,7 @@ summary: An edited text shown as the original, the edit, or every change, beside
 parts: [css, behavior, react]
 tool: own JavaScript
 states: [simple markup, original, all markup, a note lit, hover]
-added: 0.124.0
+added: 0.131.0
 source: BioScience Writers' Precision Editing demo (app/components/EditingDemo.tsx, app/islands/editing-demo.ts, .psms-* in app/app.css)
 replaces:
   - 'psms-'

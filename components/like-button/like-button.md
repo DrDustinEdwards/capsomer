@@ -5,7 +5,7 @@ summary: A toggle button with a heart and its count, pressed when the reader has
 parts: [css, react]
 tool: native
 states: [not liked, liked, hover, signed out, saving, failed]
-added: 0.124.0
+added: 0.131.0
 source: Foxing's LikeButton (apps/web/app/components/social/like-button.tsx, .fx-like-button-* in styles/social.css and styles/clubs.css)
 replaces:
   - 'fx-like-button'

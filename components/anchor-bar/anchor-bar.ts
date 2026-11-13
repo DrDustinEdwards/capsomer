@@ -27,8 +27,12 @@ export function scrollParent(el: Element | null | undefined): HTMLElement | null
 
 // What the bar links to: the blocks of the page marked data-section with an id (a panel: its
 // data-section is the link's name), or, when there are none, its h2 headings that have one.
+// A block inside another block is not an entry: the bar names the outer sections only (the
+// Portal's Health holds whole panels inside its sections).
 export function sectionsIn(scope: ParentNode): HTMLElement[] {
-  const blocks = Array.from(scope.querySelectorAll<HTMLElement>("[data-section][id]"));
+  const blocks = Array.from(scope.querySelectorAll<HTMLElement>("[data-section][id]")).filter(
+    (b) => !b.parentElement?.closest("[data-section][id]"),
+  );
   return blocks.length ? blocks : Array.from(scope.querySelectorAll<HTMLElement>("h2[id]"));
 }
 

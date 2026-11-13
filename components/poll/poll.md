@@ -5,7 +5,7 @@ summary: A poll's options as buttons, each filled by its share of the votes, the
 parts: [css, behavior, react]
 tool: own JavaScript
 states: [open, voted, hover, closed, no votes yet]
-added: 0.124.0
+added: 0.131.0
 source: Foxing's club polls (.fx-poll-option in apps/web/app/styles/clubs.css, components/clubs/club-schedule.tsx)
 replaces:
   - 'fx-poll-option'

@@ -82,6 +82,7 @@ import { Shell } from "../dist/components/shell/shell.react.js";
 import { Keys, ShortcutSheet } from "../dist/components/shortcuts/shortcuts.react.js";
 import { Skeleton, Spinner } from "../dist/components/skeleton/skeleton.react.js";
 import { StatTile, StatTiles } from "../dist/components/stat-tile/stat-tile.react.js";
+import { DataTable } from "../dist/components/table/table.react.js";
 import { Pill, Status } from "../dist/components/status/status.react.js";
 import { SwitchWithReason } from "../dist/components/switch-reason/switch-reason.react.js";
 import { Switch } from "../dist/components/switch/switch.react.js";
@@ -522,6 +523,17 @@ const FIXTURES: Record<string, () => ReactElement> = {
   "switch-reason": () =>
     h(SwitchWithReason, { label: "Pause the queue", checked: false, onApply: later }),
   switch: () => h(Switch, { label: "Email me" }),
+  table: () =>
+    h(DataTable<{ id: string; name: string; jobs: number }>, {
+      caption: "Sites",
+      rowKey: (r) => r.id,
+      rows: [{ id: "a", name: "example.org", jobs: 4 }],
+      empty: "No sites yet.",
+      columns: [
+        { key: "name", header: "Site", cell: (r) => r.name, sortBy: (r) => r.name },
+        { key: "jobs", header: "Jobs", num: true, cell: (r) => r.jobs },
+      ],
+    }),
   "theme-switch": () =>
     h(Fragment, null, h(ThemeSwitch, { initial: "light" }), h(ThemeButton, { initial: "dark" })),
   tooltip: () =>

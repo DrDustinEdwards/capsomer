@@ -5,7 +5,7 @@ summary: The small uppercase label over a block or a section, in the interface f
 parts: [css, react]
 tool: native
 states: [muted, accent, mono, mono accent, as a section heading]
-added: 0.124.0
+added: 0.131.0
 source: Foxhound's Eyebrow (app/routes/oauth/authorize.tsx) and its 31 `font-mono text-micro uppercase` groups; dei's mono-caps label rules (styles/post-head-blocks.css, prose.css); Foxing's cap-label font groups (styles/admin.css, social.css)
 replaces:
   - 'font-mono text-micro uppercase'

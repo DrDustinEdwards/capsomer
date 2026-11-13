@@ -5,7 +5,7 @@ summary: An AI answer streamed into the page, labeled as AI and as possibly wron
 parts: [css, behavior]
 tool: own JavaScript
 states: [answered, cut off, unavailable, before asking]
-added: 0.124.0
+added: 0.131.0
 source: dei's Ask (app/styles/ask.css, app/enhance/ask.ts, lib/search/sse.mjs)
 replaces:
   - 'ask-panel'

@@ -1,0 +1,10 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* A form's result (form-status.md). The look is the alert's (banner.css); this file only
+   gives it space before the form. Focus shows the base ring. */
+@layer cap.components {
+  .cap-form-status {
+    margin-block-end: var(--space-4);
+  }
+}
