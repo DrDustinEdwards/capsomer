@@ -13,8 +13,8 @@
   .cap-ask {
     margin-block-start: var(--space-3);
     padding: var(--space-3) var(--space-4);
-    border: 1px solid var(--line);
-    border-inline-start: 3px solid var(--accent);
+    border: var(--line-w) solid var(--line);
+    border-inline-start: var(--line-w-bar) solid var(--accent);
     border-radius: var(--cap-ask-radius, var(--radius-s));
     /* A step lighter than the link tint (--link-hover-bg), so a link in the panel still shows its hover. */
     background: var(--accent-2);
@@ -35,13 +35,13 @@
   }
 
   .cap-ask-badge {
-    padding: 2px var(--space-2);
+    padding: var(--space-1) var(--space-2);
     border-radius: var(--cap-ask-radius, var(--radius-s));
     background: var(--primary);
     color: var(--primary-fg);
     font-size: var(--fs-label);
-    font-weight: 600;
-    letter-spacing: 0.04em;
+    font-weight: var(--weight-semibold);
+    letter-spacing: var(--tracking-wider);
     text-transform: uppercase;
   }
 
@@ -63,7 +63,7 @@
   .cap-ask-body {
     margin: 0;
     min-block-size: 4lh;
-    line-height: 1.65;
+    line-height: var(--leading-relaxed);
     white-space: pre-wrap;
     overflow-wrap: anywhere;
   }
@@ -100,8 +100,8 @@
     margin: 0;
     color: var(--muted);
     font-size: var(--fs-label);
-    font-weight: 600;
-    letter-spacing: 0.04em;
+    font-weight: var(--weight-semibold);
+    letter-spacing: var(--tracking-wider);
     text-transform: uppercase;
   }
 
@@ -122,6 +122,6 @@
   }
 
   .cap-ask-badge {
-    border: 1px solid CanvasText;
+    border: var(--line-w) solid CanvasText;
   }
 }

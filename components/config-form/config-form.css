@@ -14,7 +14,7 @@
   .cap-config-hint {
     margin: 0;
     padding: var(--space-3) var(--space-4);
-    border: 1px solid var(--line-strong);
+    border: var(--line-w) solid var(--line-strong);
     border-radius: var(--radius-m);
     background: var(--warn-soft);
     color: var(--text);
@@ -26,6 +26,6 @@
   }
   .cap-config-danger {
     padding-block-start: var(--gap);
-    border-block-start: 1px solid var(--line);
+    border-block-start: var(--line-w) solid var(--line);
   }
 }

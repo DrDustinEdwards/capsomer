@@ -8,8 +8,8 @@
 @layer cap.components {
   .cap-site-footer {
     margin-block-start: var(--site-footer-gap, 0);
-    padding-block: var(--site-footer-pad, 2.5rem);
-    border-block-start: 1px solid var(--line);
+    padding-block: var(--site-footer-pad, calc(var(--space-7) + var(--space-3)));
+    border-block-start: var(--line-w) solid var(--line);
     background: var(--site-footer-bg, transparent);
     font-size: var(--site-footer-fs, var(--fs-detail));
     /* The page column inside (.cap-page, a utility, so it outranks this layer) reads its size and

@@ -20,7 +20,7 @@
 
   @media (prefers-reduced-motion: no-preference) {
     .cap-ambient[data-variant="hex-field"] > span {
-      animation: cap-ambient-hex var(--d) ease-in-out var(--l) infinite;
+      animation: cap-ambient-hex var(--d) var(--ease-in-out) var(--l) infinite;
     }
   }
 

@@ -29,7 +29,7 @@
 
     /* On its own (not inside a popup that already is a surface). */
     &[data-variant="surface"] {
-      border: 1px solid var(--line);
+      border: var(--line-w) solid var(--line);
       border-radius: var(--radius-l);
       background: var(--surface);
       box-shadow: var(--shadow-s);
@@ -51,7 +51,7 @@
     padding: calc(var(--space-2) + var(--space-1)) var(--pad-x);
     color: var(--muted);
     font-size: var(--fs-detail);
-    font-weight: 500;
+    font-weight: var(--weight-medium);
   }
 
   .cap-listbox-separator {
@@ -100,7 +100,7 @@
     &[data-force="active"] {
       background: var(--accent-soft);
       color: var(--text);
-      box-shadow: inset 3px 0 0 var(--accent);
+      box-shadow: inset var(--line-w-bar) 0 0 var(--accent);
 
       & > svg,
       & .cap-option-icon {
@@ -121,7 +121,7 @@
       &[data-force="active"] {
         background: var(--crit-soft);
         color: var(--crit);
-        box-shadow: inset 3px 0 0 var(--crit);
+        box-shadow: inset var(--line-w-bar) 0 0 var(--crit);
       }
     }
 
@@ -151,7 +151,7 @@
   .cap-listbox:not([data-cap-ready], [data-controlled]) .cap-option:not([aria-disabled="true"], [data-disabled]):hover,
   .cap-option[data-force="hover"] {
     background: var(--accent-soft);
-    box-shadow: inset 3px 0 0 var(--accent);
+    box-shadow: inset var(--line-w-bar) 0 0 var(--accent);
   }
 
   /* A list that takes focus as a whole shows its current option only while it has focus. */
@@ -225,8 +225,8 @@
       &[data-highlighted],
       &[data-force="active"],
       &[data-force="hover"] {
-        outline: 2px solid Highlight;
-        outline-offset: -2px;
+        outline: var(--focus-width) solid Highlight;
+        outline-offset: calc(-1 * var(--focus-offset));
       }
       &[aria-disabled="true"],
       &[data-disabled] {

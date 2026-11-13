@@ -51,7 +51,7 @@
 
   @media (forced-colors: active) {
     .cap-lightbox > .cap-dialog-close {
-      border: 1px solid CanvasText;
+      border: var(--line-w) solid CanvasText;
     }
   }
 }

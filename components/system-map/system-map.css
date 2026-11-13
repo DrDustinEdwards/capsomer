@@ -22,7 +22,7 @@
   }
 
   .cap-system-map-title {
-    font-weight: 600;
+    font-weight: var(--weight-semibold);
   }
 
   .cap-system-map-caption {
@@ -36,13 +36,13 @@
   .cap-system-map-place-name {
     margin: 0 0 var(--space-3);
     color: var(--muted);
-    font: var(--weight-heading) 0.75rem/1.3 var(--ui);
-    letter-spacing: 0.08em;
+    font: var(--weight-heading) var(--fs-small)/ var(--leading-snug) var(--ui);
+    letter-spacing: var(--tracking-caps);
     text-transform: uppercase;
   }
 
   .cap-system-map-group-count {
-    font-weight: 400;
+    font-weight: var(--weight-regular);
     letter-spacing: 0;
   }
 
@@ -66,7 +66,7 @@
     margin: 0;
     color: var(--muted);
     font-size: var(--fs-detail);
-    line-height: 1.4;
+    line-height: var(--leading-compact);
 
     &[hidden] {
       display: none;
@@ -79,7 +79,7 @@
     & .cap-system-map-card-full,
     & .cap-system-map-part-full {
       color: var(--text);
-      font-weight: 600;
+      font-weight: var(--weight-semibold);
     }
   }
 
@@ -129,8 +129,8 @@
 
   .cap-system-map-comb-group {
     fill: var(--muted);
-    font: 600 16px/1 var(--ui);
-    letter-spacing: 0.08em;
+    font: var(--weight-semibold) var(--title-6)/ var(--leading-none) var(--ui);
+    letter-spacing: var(--tracking-caps);
     text-anchor: middle;
     text-transform: uppercase;
   }
@@ -169,7 +169,7 @@
 
   .cap-system-map-cell-name {
     fill: var(--text);
-    font: 600 18px/1 var(--ui);
+    font: var(--weight-semibold) var(--fs-h3)/ var(--leading-none) var(--ui);
     text-anchor: middle;
   }
 
@@ -189,7 +189,7 @@
          solid. Still under reduced motion: the detail line says which way each tie runs. */
       stroke-dasharray: 30 5;
       @media (prefers-reduced-motion: no-preference) {
-        animation: cap-system-map-flow 2s linear infinite;
+        animation: cap-system-map-flow var(--dur-flow) linear infinite;
         &:nth-child(3n + 1) {
           animation-delay: -0.7s;
         }
@@ -239,7 +239,7 @@
     grid-template-columns: repeat(3, minmax(0, 13rem));
     justify-content: space-between;
     align-items: center;
-    column-gap: clamp(1.5rem, 10cqi, 10rem);
+    column-gap: clamp(var(--space-6), 10cqi, 10rem);
     padding-inline: clamp(var(--space-3), 3cqi, var(--space-7));
   }
 
@@ -262,7 +262,7 @@
     padding: var(--space-2);
 
     & .cap-system-map-card-name {
-      font-size: 0.8125rem;
+      font-size: var(--fs-detail);
       overflow-wrap: anywhere;
     }
   }
@@ -351,7 +351,7 @@
     gap: var(--space-1);
     align-content: start;
     padding: var(--space-3);
-    border: 1px solid var(--line);
+    border: var(--line-w) solid var(--line);
     border-radius: var(--radius-m);
     background: var(--surface);
 
@@ -373,7 +373,7 @@
 
   .cap-system-map-card-name {
     margin: 0;
-    font: var(--weight-heading) var(--fs-lead)/1.3 var(--ui);
+    font: var(--weight-heading) var(--fs-lead)/ var(--leading-snug) var(--ui);
 
     & a {
       color: inherit;
@@ -405,7 +405,7 @@
   }
 
   .cap-system-map-card-private {
-    font-weight: 600;
+    font-weight: var(--weight-semibold);
   }
 
   /* How a lit card is tied, set on its top edge as a label, so lighting never changes a card's size
@@ -426,9 +426,9 @@
     border-radius: var(--radius-s);
     background: var(--surface);
     color: var(--accent-text);
-    font-size: 0.75rem;
-    font-weight: 600;
-    line-height: 1.3;
+    font-size: var(--fs-small);
+    font-weight: var(--weight-semibold);
+    line-height: var(--leading-snug);
     pointer-events: none;
 
     &:empty {
@@ -453,15 +453,15 @@
        alone. */
     &[data-tie] {
       border-color: var(--accent);
-      outline: 1px solid var(--accent);
-      outline-offset: -2px;
+      outline: var(--line-w) solid var(--accent);
+      outline-offset: calc(-1 * var(--focus-offset));
     }
     /* The heavier edge is an outline inside the border, so the card keeps its size. */
     &[data-tie="self"] {
       background: var(--accent-soft);
     }
     &[data-tie="self"]:not(:focus-within) {
-      outline-width: 2px;
+      outline-width: var(--focus-width);
     }
   }
 
@@ -526,7 +526,7 @@
     align-items: baseline;
     gap: 0 var(--space-3);
     padding: var(--space-2) var(--space-3);
-    border: 1px solid var(--accent);
+    border: var(--line-w) solid var(--accent);
     border-radius: var(--radius-m);
     background: var(--surface);
 
@@ -537,7 +537,7 @@
 
   /* As on a card, the name's link covers the tie, so the whole box is the target (WCAG 2.5.8). */
   .cap-system-map-tie-name {
-    font-weight: 600;
+    font-weight: var(--weight-semibold);
 
     & a {
       text-decoration: none;
@@ -553,14 +553,14 @@
 
   .cap-system-map-tie-verbs {
     color: var(--muted);
-    font-size: 0.75rem;
+    font-size: var(--fs-small);
   }
 
   .cap-system-map-column[data-column="inside"] {
     display: grid;
     row-gap: var(--space-4);
     padding: var(--space-4);
-    border: 1px solid var(--line);
+    border: var(--line-w) solid var(--line);
     border-radius: var(--radius-l);
     background: var(--surface);
 
@@ -583,7 +583,7 @@
     gap: var(--space-1);
     align-content: start;
     padding: var(--space-2) var(--space-3);
-    border: 1px solid var(--line);
+    border: var(--line-w) solid var(--line);
     border-radius: var(--radius-m);
     background: var(--ground);
 
@@ -604,13 +604,13 @@
 
   .cap-system-map-part-name {
     margin: 0;
-    font: var(--weight-heading) var(--fs-body)/1.3 var(--ui);
+    font: var(--weight-heading) var(--fs-body)/ var(--leading-snug) var(--ui);
   }
 
   .cap-system-map-part-kind {
     margin: 0;
     color: var(--muted);
-    font: 0.75rem/1.3 var(--mono);
+    font: var(--mono-size)/ var(--leading-snug) var(--mono);
   }
 
   /* In the detail line: the part's full name, what it does, then its lines in words. */
@@ -643,8 +643,8 @@
       background: var(--accent-soft);
     }
     &[data-at] {
-      outline: 1px solid var(--accent);
-      outline-offset: -2px;
+      outline: var(--line-w) solid var(--accent);
+      outline-offset: calc(-1 * var(--focus-offset));
     }
   }
 
@@ -664,7 +664,7 @@
 
   .cap-system-map-flow-name {
     margin: 0;
-    font: var(--weight-heading) var(--fs-lead)/1.3 var(--ui);
+    font: var(--weight-heading) var(--fs-lead)/ var(--leading-snug) var(--ui);
   }
 
   .cap-system-map-flow-text {
@@ -681,7 +681,7 @@
     padding-inline-start: 1.75em;
 
     & > li[aria-current="step"] {
-      font-weight: 600;
+      font-weight: var(--weight-semibold);
 
       &::marker {
         color: var(--accent-text);

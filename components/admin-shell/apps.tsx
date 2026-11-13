@@ -7,7 +7,7 @@
 // dustinedwards.info's microscope (public/dustin-edwards-logo.svg), germomics' broadcasting
 // microphone (public/brand/germomics-icon-currentcolor.svg), Foxing's placeholder fox, and Capsomer's hexagon (its site's
 // brand mark). Foxhound's own favicon is an x, which reads as close or delete; it stays as
-// Foxhound's mark until Dustin picks one of the two alternatives in FOXHOUND_MARKS.
+// Foxhound's mark until Dustin picks one of the two alternatives on the states page (examples.tsx).
 import type { ReactNode } from "react";
 
 export type FamilyAppId =
@@ -82,7 +82,7 @@ const GERMOMICS = mark(
 );
 
 // Foxhound's favicon is a lowercase x on a dark rounded square; the tile is the square here. It
-// stays until Dustin picks one of FOXHOUND_MARKS. No choice is shipped.
+// stays until Dustin picks one of the alternatives on the states page (examples.tsx). No choice is shipped.
 const FOXHOUND = mark(
   "0 0 24 24",
   <path
@@ -93,31 +93,6 @@ const FOXHOUND = mark(
     d="M7.5 9 16.5 18M16.5 9 7.5 18"
   />,
 );
-
-// Two alternatives to Foxhound's x (which reads as close or delete), each drawn on the 24 grid
-// in one color. "track": a hound's paw print, for a service that tracks down failed payments;
-// "fox": a fox's head, the name. Shown beside the x on the admin shell's states page; the one
-// Dustin picks replaces FOXHOUND and the other is deleted.
-export const FOXHOUND_MARKS = {
-  track: mark(
-    "0 0 24 24",
-    <g fill="currentColor">
-      <path d="M12 12.2c-2.6 0-5.2 2.6-5.6 5.2-.3 1.8.9 3 2.5 2.7 1.2-.2 2-.8 3.1-.8s1.9.6 3.1.8c1.6.3 2.8-.9 2.5-2.7-.4-2.6-3-5.2-5.6-5.2z" />
-      <ellipse cx="6.2" cy="10.2" rx="1.9" ry="2.4" transform="rotate(-18 6.2 10.2)" />
-      <ellipse cx="9.6" cy="6.4" rx="1.9" ry="2.5" transform="rotate(-6 9.6 6.4)" />
-      <ellipse cx="14.4" cy="6.4" rx="1.9" ry="2.5" transform="rotate(6 14.4 6.4)" />
-      <ellipse cx="17.8" cy="10.2" rx="1.9" ry="2.4" transform="rotate(18 17.8 10.2)" />
-    </g>,
-  ),
-  fox: mark(
-    "0 0 24 24",
-    <path
-      fill="currentColor"
-      fillRule="evenodd"
-      d="M3 3.5 8.6 8h6.8L21 3.5l-.9 8.2L12 20.5l-8.1-8.8zM8.4 12.2a1.2 1.2 0 1 0 0 .1zm7.2 0a1.2 1.2 0 1 0 0 .1zM10.6 15.6h2.8L12 17.2z"
-    />,
-  ),
-};
 
 // Foxing's mark: a placeholder fox's head in one color, from the header design's mockup, until
 // Dustin picks Foxing's drawn mark (docs/design/design-site-header.md, answer 8: candidates go to
@@ -164,7 +139,7 @@ export const FAMILY_APPS: readonly FamilyApp[] = [
     names: ["Dustin Edwards", "Admin"],
   },
   { id: "germomics", label: "germomics", href: "https://germomics.com/admin", logo: GERMOMICS },
-  // The x from its favicon stays until Dustin picks one of FOXHOUND_MARKS.
+  // The x from its favicon stays until Dustin picks one of the states page's alternatives.
   {
     id: "foxhound",
     label: "Foxhound",

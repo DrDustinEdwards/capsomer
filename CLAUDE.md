@@ -22,6 +22,6 @@ Capsomer is the family design system: tokens, components, the app shell and patt
 
 ## Releases and deploys
 
-- A release bumps the version and finishes the CHANGELOG entry in a PR (every removed or renamed token or class and every changed HTML contract); apps pin a tag. Merging it is the release: `.github/workflows/release.yml` tags `vX.Y.Z`, publishes the GitHub release and starts the consumer bumps. Unreleased work sits under the top CHANGELOG heading.
+- Merging and releasing are two steps (Dustin, 2026-11-13). A pull request adds a changeset (`npx changeset`; `--empty` for nothing to release) and never sets the version or writes CHANGELOG.md; its text names every removed or renamed token or class and every changed HTML contract. A release is its own pull request, `npx changeset version` on main, made when a site needs what merged; merging it is the release: `.github/workflows/release.yml` tags `vX.Y.Z`, publishes the GitHub release and starts the consumer bumps. Apps pin a tag. `.changeset/README.md`.
 - A merge to `main` deploys the site (devkit's worker-deploy in CI, DEPLOY.md).
 - `wrangler.jsonc` is committed on purpose: it holds no ids or secrets.
