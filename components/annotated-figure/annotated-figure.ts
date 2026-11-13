@@ -4,7 +4,7 @@
 // dustinedwards.info (app/components/plate-i.tsx, plate-i-geometry.ts and app/enhance/plate.ts); the
 // drawing's own shapes and coordinates stay with the site.
 
-import { reducedMotion } from "../count-up/count-up.ts";
+import { reducedMotion } from "../hooks/hooks.ts";
 
 export type Point = [x: number, y: number];
 export type Segment = [x1: number, y1: number, x2: number, y2: number];

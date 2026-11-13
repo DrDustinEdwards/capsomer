@@ -6,7 +6,7 @@
  * (@dustinedwards/site-runtime/sites, capsomer) with the TDMRep header, the set `_headers` is written from. A path with
  * no file gets site-dist/404.html with status 404 and `private, no-store`, and so does a page asked for with a cookie.
  * wrangler.jsonc runs it first for every path but /assets/*, the hashed files, which the asset server answers with the
- * immutable cache rule from `_headers`. Pages end in a slash (/make/), which the asset server's auto-trailing-slash
+ * immutable cache rule from `_headers`. Pages end in a slash (/icons/), which the asset server's auto-trailing-slash
  * redirect keeps, so there is no canonical redirect here.
  *
  * It also answers /network.json for the front page's network board (site/network-board.ts): each network site's lamp
@@ -74,7 +74,7 @@ async function network(
   return response;
 }
 
-// Each page's Markdown copy (/make.md, or Accept: text/markdown) and llms-full.txt are files `npm run site` writes with
+// Each page's Markdown copy (/icons.md, or Accept: text/markdown) and llms-full.txt are files `npm run site` writes with
 // prelum-markdown; serveMarkdownCopies answers them.
 const pages = serveMarkdownCopies(
   (request: Request, env: StaticSiteEnv) => site.fetch(request, env),

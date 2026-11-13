@@ -312,7 +312,6 @@ function canon(node) {
         out[k] = attrs[k];
     return out;
   };
-  const order = ["link", "bold", "italic", "strike", "code"];
   /** @type {any[]} */
   const content = [];
   /** @param {any} c */
@@ -363,7 +362,7 @@ function canon(node) {
     text: node.text,
     marks: (node.marks ?? [])
       .map((m) => ({ type: m.type, attrs: attrs(m.attrs) }))
-      .sort((a, b) => order.indexOf(a.type) - order.indexOf(b.type)),
+      .sort((a, b) => MARK_ORDER.indexOf(a.type) - MARK_ORDER.indexOf(b.type)),
     content,
   };
 }

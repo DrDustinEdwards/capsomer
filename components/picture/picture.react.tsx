@@ -28,18 +28,15 @@ export function Picture(
           className: props.className,
         });
   const loading = props.eager && !props.priority ? "eager" : img.loading;
-  // The ratio from the file's own size, named, so a lazy image never waits on its height and Chrome
-  // raises no LazyLoadImage issue for an auto height (web.dev/articles/cls).
+  // The width and height attributes give the box its ratio. The style is the stored placeholder and
+  // focal point only, the one style attribute a wrapper renders (picture.md says why).
   const image = (
     <img
       {...img}
       alt={img.alt}
       className={"picture" in props ? (props.className ?? img.className) : img.className}
       loading={loading}
-      style={{
-        ...(img.width && img.height ? { aspectRatio: `${img.width} / ${img.height}` } : {}),
-        ...img.style,
-      }}
+      style={img.style}
     />
   );
   if (sources.length === 0) return image;

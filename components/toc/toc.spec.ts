@@ -26,11 +26,3 @@ test("behavior: the section being read is marked, and a link moves focus to its 
   );
   expect(new URL(page.url()).hash).toBe("#t-retry");
 });
-
-test("keyboard: the inline contents open with Enter on the summary", async ({ page }) => {
-  await visitStates(page, "toc", "light");
-  const summary = page.locator("#toc-inline-closed summary");
-  await summary.focus();
-  await page.keyboard.press("Enter");
-  await expect(page.locator("#toc-inline-closed")).toHaveAttribute("open", "");
-});

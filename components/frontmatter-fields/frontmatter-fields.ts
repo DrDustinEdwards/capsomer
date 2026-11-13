@@ -4,7 +4,15 @@
 // box can say (a nested map, a block scalar, a value with a comment) is never written by a box:
 // it is edited in the raw text only. No DOM.
 
-import { readKey, readList, setBlock } from "@drdustinedwards/site-helpers/frontmatter";
+import {
+  blocks as blocksOf,
+  readKey,
+  readList,
+  setBlock,
+  splitFlow,
+  unquote,
+  withoutComment,
+} from "@drdustinedwards/site-helpers/frontmatter";
 
 // line: one line of text. text: a longer value in a textarea, still written as one line.
 // list: "a, b", written as a flow list [a, b]. lines: one item per line, written as a block list.
@@ -65,41 +73,6 @@ const BOOLEAN_FLAG: FlagWords = { on: "true", off: "false" };
 
 const KEY = /^([A-Za-z_][\w-]*):(.*)$/;
 
-interface Block {
-  key: string;
-  lines: string[];
-}
-
-// The top-level blocks: a key line and every line after it up to the next key line, cut the way
-// Prelum's setBlock cuts them so a block this reads is the block that is replaced.
-function blocksOf(front: string): Block[] {
-  const out: Block[] = [];
-  for (const line of front.split(/\r?\n/)) {
-    const m = KEY.exec(line);
-    if (m) out.push({ key: m[1] ?? "", lines: [line] });
-    else out[out.length - 1]?.lines.push(line);
-  }
-  return out;
-}
-
-// A value's text outside its quotes, so a "#" or comma inside quotes is not read as syntax.
-function outsideQuotes(v: string): string {
-  let out = "";
-  let quote = "";
-  for (let i = 0; i < v.length; i++) {
-    const c = v[i] ?? "";
-    if (quote) {
-      if (quote === '"' && c === "\\") i++;
-      else if (c === quote) quote = "";
-    } else if (c === '"' || c === "'") quote = c;
-    else out += c;
-  }
-  return out;
-}
-
-// Quotes count only where YAML starts one: at the start of a value or inside a flow list (Prelum's
-// rule), so the apostrophe in "don't # note" is a letter and the comment is still seen.
-const hasComment = (v: string) => /(^|\s)#/.test(/^["'[]/.test(v) ? outsideQuotes(v) : v);
 const ITEM = /^\s+-\s+(.*)$/;
 
 // The box a block's shape allows, or null when no box can say it. A block list or flow list whose
@@ -107,54 +80,24 @@ const ITEM = /^\s+-\s+(.*)$/;
 export function shapeOf(lines: readonly string[]): BoxKind | null {
   const first = (KEY.exec(lines[0] ?? "")?.[2] ?? "").trim();
   const rest = lines.slice(1).filter((l) => l.trim() !== "");
-  if (hasComment(first) || rest.some((l) => l.trim().startsWith("#"))) return null;
+  if (withoutComment(first) !== first || rest.some((l) => l.trim().startsWith("#"))) return null;
   if (/^[|>&*!{]/.test(first)) return null;
   if (first.startsWith("[")) {
     if (!first.endsWith("]") || rest.length) return null;
-    return readFlowItems(first).some((i) => i.includes(",")) ? "lines" : "list";
+    return splitFlow(first.slice(1, -1))
+      .map(unquote)
+      .some((i) => i.includes(","))
+      ? "lines"
+      : "list";
   }
   if (first === "" && rest.length) {
     const items = rest.map((l) => ITEM.exec(l)?.[1]);
     if (items.some((i) => i === undefined || /^[-[{|>]/.test(i.trim()))) return null;
-    return items.some((i) => unquoteItem(i ?? "").includes(",")) ? "lines" : "list";
+    return items.some((i) => unquote(i ?? "").includes(",")) ? "lines" : "list";
   }
   if (rest.length) return null;
   if (first === "true" || first === "false") return "flag";
   return "line";
-}
-
-function unquoteItem(raw: string): string {
-  const v = raw.trim();
-  if (v.length >= 2 && v.startsWith('"') && v.endsWith('"')) {
-    try {
-      return JSON.parse(v) as string;
-    } catch {
-      return v.slice(1, -1);
-    }
-  }
-  if (v.length >= 2 && v.startsWith("'") && v.endsWith("'"))
-    return v.slice(1, -1).replace(/''/g, "'");
-  return v;
-}
-
-function readFlowItems(flow: string): string[] {
-  const inside = flow.slice(1, -1);
-  const items: string[] = [];
-  let quote = "";
-  let start = 0;
-  for (let i = 0; i < inside.length; i++) {
-    const c = inside[i];
-    if (quote) {
-      if (quote === '"' && c === "\\") i++;
-      else if (c === quote) quote = "";
-    } else if (c === '"' || c === "'") quote = c;
-    else if (c === ",") {
-      items.push(inside.slice(start, i));
-      start = i + 1;
-    }
-  }
-  items.push(inside.slice(start));
-  return items.map(unquoteItem).filter(Boolean);
 }
 
 const ACRONYMS = new Set(["pov", "url", "id", "seo", "doi", "isbn", "rss"]);
@@ -274,7 +217,10 @@ export function typeFront(
   specs: readonly FieldSpec[] = [],
   options: TypeOptions = {},
 ): TypedFront {
-  const blocks = front === null ? [] : blocksOf(front);
+  // Lines before the first key (a comment) belong to no box.
+  const blocks = (front === null ? [] : blocksOf(front)).filter(
+    (b): b is { key: string; lines: string[] } => b.key !== null,
+  );
   const shapes = new Map(blocks.map((b) => [b.key, shapeOf(b.lines)] as const));
   const known = new Set(specs.map((s) => s.key));
   const asText = options.extra === "text";

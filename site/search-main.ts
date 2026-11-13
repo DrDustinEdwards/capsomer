@@ -2,8 +2,8 @@
 // wrote (/search.json) and lists what Prelum's staticSearch ranks, with the count said aloud. The
 // query's words are marked in each result, as people scan results for them (NN/g), and the header's
 // box shows the query too, so the page never holds two boxes that disagree.
-import { plural } from "../components/hooks/hooks.ts";
-import "./home-main.ts";
+import { plural } from "@drdustinedwards/site-helpers/text";
+import "./page.ts";
 import {
   searchWords,
   staticSearch,
@@ -62,7 +62,7 @@ if (input && status && list) {
         const results = staticSearch(index, query);
         list.replaceChildren(...results.map(item));
         if (results.length)
-          status.textContent = `${plural(results.length, "result", "results")} for “${query}”`;
+          status.textContent = `${plural(results.length, "result")} for “${query}”`;
         else {
           const all = document.createElement("a");
           all.href = "/#components";

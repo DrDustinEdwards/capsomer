@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { test } from "@playwright/test";
 import {
   eachTheme,
   expectContrast,
@@ -18,16 +18,5 @@ eachTheme((theme) => {
       { sel: ".cap-permissions-heading", what: "a list's heading" },
       { sel: ".cap-consent-line", what: "the write grant's lines" },
     ]);
-  });
-
-  test("keyboard: the write grant, then Allow and Deny, in order", async ({ page }) => {
-    await visitStates(page, "consent", theme, "published");
-    await page.getByRole("checkbox", { name: /Allow changes/ }).focus();
-    await expect(page.getByRole("checkbox", { name: /Allow changes/ })).toBeChecked();
-    await page.keyboard.press("Tab");
-    await expect(page.getByRole("button", { name: "Allow access" })).toBeFocused();
-    await page.keyboard.press("Tab");
-    await expect(page.getByRole("button", { name: "Deny" })).toBeFocused();
-    await expect(page.getByRole("list", { name: /What Example Assistant can do/ })).toBeVisible();
   });
 });

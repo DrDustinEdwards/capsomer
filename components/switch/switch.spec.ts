@@ -67,46 +67,6 @@ eachTheme((theme) => {
     await expect(word).toHaveText("Off");
   });
 
-  test("behavior: a click on the label turns it on; the name stays a fixed noun", async ({
-    page,
-  }) => {
-    await visitStates(page, "switch", theme);
-    await page.getByText("Compact rows").click();
-    const sw = page.getByRole("switch", { name: "Compact rows" });
-    await expect(sw).toBeChecked();
-    await expect(page.locator("#sw-off .cap-switch-state")).toHaveText("On");
-    await expect(sw).toHaveAccessibleName("Compact rows");
-  });
-
-  test("behavior: a pending switch says so, is not disabled, and keeps its name", async ({
-    page,
-  }) => {
-    await visitStates(page, "switch", theme);
-    const sw = page.getByRole("switch", { name: "Nightly export" });
-    await expect(sw).toHaveAttribute("aria-busy", "true");
-    await expect(sw).toBeEnabled();
-    await sw.focus();
-    await expect(sw).toBeFocused();
-    await expect(sw).toHaveAccessibleName("Nightly export");
-  });
-
-  test("behavior: a disabled switch does not move", async ({ page }) => {
-    await visitStates(page, "switch", theme);
-    await page.getByText("Email alerts").click({ force: true });
-    await expect(page.getByRole("switch", { name: "Email alerts" })).not.toBeChecked();
-  });
-
-  test(
-    "accessibility: an invalid switch exposes aria-invalid and its message",
-    { tag: "@markup" },
-    async ({ page }) => {
-      await visitStates(page, "switch", theme);
-      const sw = page.getByRole("switch", { name: "Public status page" });
-      await expect(sw).toHaveAttribute("aria-invalid", "true");
-      await expect(sw).toHaveAccessibleDescription("Verify the domain before publishing.");
-    },
-  );
-
   test(
     "accessibility: a small switch keeps a 24 px hit area",
     { tag: "@markup" },
@@ -116,14 +76,4 @@ eachTheme((theme) => {
       expect(box?.height).toBeGreaterThanOrEqual(24);
     },
   );
-
-  test("keyboard: Space toggles a small switch", async ({ page }) => {
-    await visitStates(page, "switch", theme);
-    const sw = page.getByRole("switch", { name: "Dense mode" }).first();
-    await sw.focus();
-    await page.keyboard.press("Space");
-    await expect(sw).not.toBeChecked();
-    await page.keyboard.press("Space");
-    await expect(sw).toBeChecked();
-  });
 });

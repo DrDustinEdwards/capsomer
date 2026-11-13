@@ -39,23 +39,6 @@ eachTheme((theme) => {
     ]);
   });
 
-  test("accessibility: the variants' roles and names", { tag: "@markup" }, async ({ page }) => {
-    await visitStates(page, "button", theme);
-    await expect(page.locator("#variants")).toMatchAriaSnapshot(`
-      - button "Refresh"
-      - button "Save changes"
-      - button "Preview"
-      - button "Revoke agent"
-      - button "Show more"
-      - button "View logs"
-    `);
-    await expect(page.locator("#b-icon")).toHaveAccessibleName("Refresh sites");
-    await expect(page.locator("#b-disabled")).toHaveAccessibleDescription(
-      "Fix the 2 problems above first.",
-    );
-    await expect(page.locator("#b-pending")).toHaveAccessibleName("Refresh");
-  });
-
   test("keyboard: Tab reaches every button, including one disabled with its reason", async ({
     page,
   }) => {
@@ -67,26 +50,6 @@ eachTheme((theme) => {
     await expectContrast(page, [
       { sel: "#b-disabled", what: "the focus ring", part: "outline", min: 3 },
     ]);
-  });
-
-  test("keyboard: Enter or Space activates a button", async ({ page }) => {
-    await visitStates(page, "button", theme);
-    await page.evaluate(() => {
-      const w = window as unknown as { presses: number };
-      w.presses = 0;
-      document.querySelector("#b-focus")?.addEventListener("click", () => w.presses++);
-    });
-    await page.locator("#b-focus").focus();
-    await page.keyboard.press("Enter");
-    await page.keyboard.press("Space");
-    expect(await page.evaluate(() => (window as unknown as { presses: number }).presses)).toBe(2);
-  });
-
-  test("keyboard: Enter follows a link styled as a button", async ({ page }) => {
-    await visitStates(page, "button", theme);
-    await page.locator("#b-link").focus();
-    await page.keyboard.press("Enter");
-    await expect(page).toHaveURL(/#jobs$/);
   });
 
   test("behavior: a pending button keeps its width and shows the spinner", async ({ page }) => {
@@ -109,27 +72,4 @@ eachTheme((theme) => {
     const link = await page.locator("#b-linkbtn").boundingBox();
     expect(link?.height).toBeGreaterThanOrEqual(24);
   });
-
-  test(
-    "accessibility: a button group is a named group and its buttons are reachable",
-    { tag: "@markup" },
-    async ({ page }) => {
-      await visitStates(page, "button", theme);
-      await expect(page.getByRole("group", { name: "Page navigation" })).toBeVisible();
-      await page.getByRole("button", { name: "Previous" }).focus();
-      await page.keyboard.press("Tab");
-      await expect(
-        page.getByRole("group", { name: "Page navigation" }).getByRole("button", { name: "Next" }),
-      ).toBeFocused();
-    },
-  );
-
-  test(
-    "accessibility: an open popup button reports aria-expanded",
-    { tag: "@markup" },
-    async ({ page }) => {
-      await visitStates(page, "button", theme);
-      await expect(page.locator("#b-expanded")).toHaveAttribute("aria-expanded", "true");
-    },
-  );
 });

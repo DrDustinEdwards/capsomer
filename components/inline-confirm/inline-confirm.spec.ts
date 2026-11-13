@@ -30,7 +30,7 @@ eachTheme((theme) => {
     await visitStates(page, "inline-confirm", theme);
     const form = page.getByRole("form", { name: /concedes the dispute/ });
     await expect(form.getByRole("button", { name: "Accepting…" })).toHaveAttribute(
-      "aria-disabled",
+      "aria-busy",
       "true",
     );
     await expect(form.getByRole("button", { name: "Cancel" })).toHaveCount(0);

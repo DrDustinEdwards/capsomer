@@ -1,3 +1,4 @@
+import { Icon, iconChevronRight } from "../icons/icons.react.tsx";
 import { isImeEnter } from "../shortcuts/shortcuts.ts";
 import {
   useId,
@@ -79,22 +80,6 @@ export interface TreeProps {
   variant?: "surface";
   className?: string;
 }
-
-const Chevron = () => (
-  <svg
-    viewBox="0 0 16 16"
-    width="16"
-    height="16"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="1.8"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    focusable="false"
-  >
-    <path d="M6 3.5 10.5 8 6 12.5" />
-  </svg>
-);
 
 function useControllable<T>(
   value: T | undefined,
@@ -308,7 +293,7 @@ export function Tree({
           >
             {branch ? (
               <span className="cap-tree-toggle" aria-hidden="true">
-                <Chevron />
+                <Icon d={iconChevronRight} />
               </span>
             ) : null}
             {node.icon != null ? <span className="cap-tree-icon">{node.icon}</span> : null}

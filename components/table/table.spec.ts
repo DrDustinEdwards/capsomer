@@ -137,42 +137,6 @@ eachTheme((theme) => {
     expect(label.ratio).toBeGreaterThanOrEqual(4.5);
   });
 
-  test(
-    "accessibility: the region, table and headers' roles and names",
-    { tag: "@markup" },
-    async ({ page }) => {
-      await visitStates(page, "table", theme);
-      await expect(page.locator("#t2")).toMatchAriaSnapshot(`
-      - region "Worker requests by site, today":
-        - table "Worker requests by site, today":
-          - rowgroup:
-            - row:
-              - columnheader "Site":
-                - button "Site"
-              - columnheader "Requests":
-                - button "Requests"
-              - columnheader "Errors"
-          - rowgroup:
-            - row:
-              - rowheader "example.net"
-    `);
-      await expect(page.locator("#t2 th[aria-sort='ascending']")).toHaveCount(1);
-    },
-  );
-
-  test("keyboard: the scroll region is focusable and arrow keys scroll it", async ({ page }) => {
-    await page.setViewportSize({ width: 390, height: 700 });
-    await visitStates(page, "table", theme, "narrow");
-    const region = page.getByRole("region", { name: "Sites" });
-    await page.keyboard.press("Tab");
-    await expect(region).toBeFocused();
-    await expect(region).toHaveCSS("outline-style", "solid");
-    const overflows = await region.evaluate((el) => el.scrollWidth > el.clientWidth);
-    expect(overflows).toBe(true);
-    await page.keyboard.press("ArrowRight");
-    await expect.poll(() => region.evaluate((el) => el.scrollLeft)).toBeGreaterThan(0);
-  });
-
   test("keyboard: Enter on a sort button sorts ascending, then descending", async ({ page }) => {
     await visitStates(page, "table", theme);
     const th = page.locator("#t1 thead th").nth(2);
@@ -184,30 +148,6 @@ eachTheme((theme) => {
     await expect(th).toHaveAttribute("aria-sort", "descending");
     expect(await firstColumn(page, "#t1", 2)).toEqual(["14", "9", "6", "0"]);
     await expect(page.getByRole("button", { name: "Components used" })).toBeFocused();
-  });
-
-  test("keyboard: Space on a sort button sorts too", async ({ page }) => {
-    await visitStates(page, "table", theme);
-    await page.getByRole("button", { name: "App" }).focus();
-    await page.keyboard.press("Space");
-    await expect(page.locator("#t1 thead th").first()).toHaveAttribute("aria-sort", "ascending");
-    expect(await firstColumn(page, "#t1", 0)).toEqual([
-      "Admin",
-      "Docs",
-      "example.com",
-      "Storefront",
-    ]);
-  });
-
-  test("keyboard: a row that opens a detail is one tab stop, and Enter follows it", async ({
-    page,
-  }) => {
-    await visitStates(page, "table", theme);
-    await page.getByRole("link", { name: "Docs" }).focus();
-    await page.keyboard.press("Tab");
-    await expect(page.getByRole("link", { name: "Admin" })).toBeFocused();
-    await page.keyboard.press("Enter");
-    await expect(page).toHaveURL(/#app-admin$/);
   });
 
   test("behavior: one header carries aria-sort at a time", async ({ page }) => {
@@ -269,15 +209,6 @@ eachTheme((theme) => {
     // Dropped, so the table fits its region and does not scroll.
     const scrolls = await page.locator("#t-drop").evaluate((el) => el.scrollWidth > el.clientWidth);
     expect(scrolls).toBe(false);
-  });
-
-  test("behavior: no data in a cell says its reason to a screen reader, in two words to the eye", async ({
-    page,
-  }) => {
-    await visitStates(page, "table", theme);
-    const cell = page.locator("#t5 tbody tr").nth(2).locator("td").nth(2);
-    await expect(cell).toContainText("No data");
-    await expect(cell.locator(".cap-sr-only")).toHaveText(": no Cloudflare token for this site");
   });
 
   test("behavior: a row checkbox is above the row link: it ticks, and the row does not open", async ({

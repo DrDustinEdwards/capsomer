@@ -21,7 +21,7 @@ import {
   zoneAt,
 } from "./tree-model.ts";
 import { uid } from "../hooks/hooks.ts";
-import { setStaticHtml } from "../trusted-html/trusted-html.ts";
+import { iconChevronRight, iconSvg } from "../icons/icons.ts";
 
 export {
   visibleRows,
@@ -97,9 +97,6 @@ const rowLabel = (row: HTMLElement) =>
     .trim()
     .replace(/\s+/g, " ");
 
-const TOGGLE =
-  '<svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M6 3.5 10.5 8 6 12.5"/></svg>';
-
 export function createTree(el: HTMLElement): Tree {
   const selection: TreeSelection = (el.dataset.selection as TreeSelection | undefined) ?? "single";
   const movable = el.hasAttribute("data-movable");
@@ -156,7 +153,7 @@ export function createTree(el: HTMLElement): Tree {
             const t = document.createElement("span");
             t.className = "cap-tree-toggle";
             t.setAttribute("aria-hidden", "true");
-            setStaticHtml(t, TOGGLE);
+            t.append(iconSvg(iconChevronRight));
             r.prepend(t);
           }
           if (p.group) {

@@ -9,7 +9,7 @@
 import type { BulkOutcome } from "../bulk-bar/bulk-bar.ts";
 import type { MediaRecord } from "../media/media.ts";
 import type { Mention, ModState, ModView } from "../moderation-queue/moderation-queue.ts";
-import { pluralWord } from "../format/format.ts";
+import { plural } from "@drdustinedwards/site-helpers/text";
 
 // ---------------------------------------------------------------------------------------
 // Shared by every list.
@@ -151,11 +151,11 @@ export function nounsOf(
 export function countText(
   shown: number,
   total: number | null | undefined,
-  { noun, plural }: { noun: string; plural: string },
+  { noun, plural: many }: { noun: string; plural: string },
 ): string {
   return total != null && total > shown
-    ? `Showing ${shown} of ${total} ${pluralWord(total, noun, plural)}`
-    : `${shown} ${pluralWord(shown, noun, plural)}`;
+    ? `Showing ${shown} of ${plural(total, noun, many)}`
+    : plural(shown, noun, many);
 }
 
 // ---------------------------------------------------------------------------------------

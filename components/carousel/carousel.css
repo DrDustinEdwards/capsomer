@@ -140,6 +140,8 @@
       & svg {
         inline-size: 1.25rem;
         block-size: 1.25rem;
+        /* The chevron (components/icons, a 24-unit drawing), its line 2px at 20px. */
+        --icon-stroke: 2.4;
       }
       /* A carousel with the controls flipped for right-to-left points its arrows the way it moves. */
       &:dir(rtl) svg {

@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { Button } from "../button/button.react.tsx";
 import { Panel } from "../panel/panel.react.tsx";
 import { Status, type Tone } from "../status/status.react.tsx";
 import { Time } from "../time/time.react.tsx";
@@ -144,15 +145,13 @@ export function GeneratedFile({
                     {Object.entries(fields ?? {}).map(([name, value]) => (
                       <input key={name} type="hidden" name={name} value={value} />
                     ))}
-                    <button
+                    <Button
                       type="submit"
-                      className="cap-btn"
-                      data-variant={state === "ready" ? undefined : "primary"}
-                      disabled={running}
-                      aria-busy={running ? true : undefined}
+                      variant={state === "ready" ? "default" : "primary"}
+                      pending={running}
                     >
                       {running ? "Generating" : label}
-                    </button>
+                    </Button>
                   </>
                 ),
               })}

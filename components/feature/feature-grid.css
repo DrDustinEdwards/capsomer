@@ -1,0 +1,87 @@
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* Feature cards: one feature each (an icon, a title and a line), in a grid of as many columns as
+   fit. Its own file so a page of feature blocks does not carry it; it needs nothing from
+   feature.css. Extracted from Foxhound's guide's scope cards. */
+@layer cap.components {
+  .cap-feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--cap-feature-card-min, 16rem)), 1fr));
+    gap: var(--space-3);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .cap-feature-card {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: var(--space-1) var(--space-3);
+    align-content: start;
+    padding: var(--pad-card);
+    border: var(--line-w) solid var(--line);
+    border-radius: var(--radius-l);
+    background: var(--surface);
+    min-inline-size: 0;
+
+    & > :not(.cap-feature-card-icon) {
+      grid-column: 2;
+    }
+
+    &:not(:has(.cap-feature-card-icon)) {
+      grid-template-columns: minmax(0, 1fr);
+
+      & > * {
+        grid-column: 1;
+      }
+    }
+  }
+
+  .cap-feature-card-icon {
+    grid-row: 1 / span 2;
+    display: inline-flex;
+    color: var(--accent-text);
+    padding-block-start: 0.15em;
+
+    & svg {
+      inline-size: 1.125rem;
+      block-size: 1.125rem;
+    }
+  }
+
+  /* A title with a tag at the end of its line. */
+  .cap-feature-card-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-3);
+    min-inline-size: 0;
+  }
+
+  .cap-feature-card-tag {
+    flex: none;
+  }
+
+  .cap-feature-card-title {
+    margin: 0;
+    color: var(--text);
+    font-size: var(--text-size);
+    font-weight: var(--weight-semibold);
+    line-height: var(--leading-snug);
+    overflow-wrap: anywhere;
+  }
+
+  .cap-feature-card-text {
+    margin: 0;
+    color: var(--muted);
+    font-size: var(--fs-detail);
+    line-height: var(--leading);
+    overflow-wrap: anywhere;
+  }
+}
+
+@media (forced-colors: active) {
+  .cap-feature-card {
+    border-color: CanvasText;
+  }
+}

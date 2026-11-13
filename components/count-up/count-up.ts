@@ -2,6 +2,7 @@
 // cubic ease out. The server renders the final figure, so the page reads right before any script
 // runs, and a reader who asks for reduced motion sees it still. Text only changes; nothing moves.
 
+import { reducedMotion } from "../hooks/hooks.ts";
 import { ratio } from "../meter/meter.ts";
 
 export const DURATION_MS = 600;
@@ -9,13 +10,6 @@ export const DURATION_MS = 600;
 export function easeOutCubic(t: number): number {
   const x = ratio(t, 1);
   return 1 - Math.pow(1 - x, 3);
-}
-
-export function reducedMotion(): boolean {
-  return (
-    typeof window !== "undefined" &&
-    !!window.matchMedia?.("(prefers-reduced-motion: reduce)").matches
-  );
 }
 
 // Calls onProgress with 0..1 (eased) on each frame until done. Returns a function that stops it.

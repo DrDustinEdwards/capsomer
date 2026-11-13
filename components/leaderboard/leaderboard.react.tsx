@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { formatCount } from "@drdustinedwards/site-helpers/text";
 
 export interface LeaderboardEntry {
   id: string | number;
@@ -22,7 +23,7 @@ export function Leaderboard({
   entries,
   label = "Leaderboard",
   empty = "No scores yet.",
-  format = (n) => n.toLocaleString("en-US"),
+  format = formatCount,
 }: LeaderboardProps) {
   if (!entries.length) return <p className="cap-leaderboard-empty">{empty}</p>;
   return (

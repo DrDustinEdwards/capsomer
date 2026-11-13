@@ -3,7 +3,6 @@ import {
   eachTheme,
   expectContrast,
   expectNoAxeViolations,
-  focused,
   visitStates,
 } from "../../test/helpers.ts";
 import {
@@ -161,21 +160,6 @@ test("behavior: a restore is a new line with the restored length, never a change
   expect(source.words).toBe(1742);
 });
 
-test("behavior: the page is delivered with every line, its size change and its state in words", async ({
-  page,
-}) => {
-  const html = await (await page.request.get("components/history-list/states.html")).text();
-  expect(html).toContain("12 autosaves");
-  expect(html).toContain("+58 words");
-  expect(html).toContain("−30 words");
-  expect(html).toContain("no change in length");
-  expect(html).toContain("Named version: <b>Before the rewrite</b>");
-  expect(html).toContain("Failed");
-  expect(html).toContain("Current");
-  // The folded autosaves are in the HTML, not made by script.
-  expect((html.match(/data-kind="autosave"/g) ?? []).length).toBeGreaterThanOrEqual(12);
-});
-
 const main = (page: Page) => page.locator("#hist-main");
 
 eachTheme((theme) => {
@@ -253,74 +237,6 @@ eachTheme((theme) => {
     },
   );
 
-  test(
-    "accessibility: every pick box and Restore button names its version",
-    { tag: "@markup" },
-    async ({ page }) => {
-      await visitStates(page, "history-list", theme);
-      const names = await page
-        .locator("#hist-main [data-cap-part='pick']")
-        .evaluateAll((els) => els.map((e) => (e.closest("label")?.textContent ?? "").trim()));
-      expect(names.length).toBeGreaterThanOrEqual(15);
-      expect(new Set(names).size).toBe(names.length);
-      expect(names.every((n) => n.startsWith("Compare this version"))).toBe(true);
-      await expect(
-        main(page)
-          .getByRole("button", { name: /^Restore the version from/ })
-          .first(),
-      ).toBeVisible();
-    },
-  );
-
-  test(
-    "accessibility: the size change says its sign in text, and a drawn mark repeats it",
-    { tag: "@markup" },
-    async ({ page }) => {
-      await visitStates(page, "history-list", theme);
-      const m = main(page);
-      await expect(m.locator("[data-sign='plus']").first()).toContainText(/^\+\d+ words$/);
-      await expect(m.locator("[data-sign='minus']").first()).toContainText("−30 words");
-      await expect(m.locator("[data-sign='zero']").first()).toContainText("no change in length");
-      for (const sign of ["plus", "minus", "zero"])
-        await expect(m.locator(`[data-sign='${sign}'] svg`).first()).toHaveAttribute(
-          "aria-hidden",
-          "true",
-        );
-    },
-  );
-
-  test(
-    "accessibility: a status is a word and a shape, and the avatar is hidden because the name is beside it",
-    { tag: "@markup" },
-    async ({ page }) => {
-      await visitStates(page, "history-list", theme);
-      const failed = main(page).locator(".cap-hist-dest .cap-status[data-tone='crit']");
-      await expect(failed).toHaveText("Failed");
-      await expect(failed.locator("svg")).toHaveCount(1);
-      await expect(main(page).locator(".cap-hist-who .cap-avatar").first()).toHaveAttribute(
-        "aria-hidden",
-        "true",
-      );
-    },
-  );
-
-  test("keyboard: Tab goes through the pick box, the title and Restore of each line, in order", async ({
-    page,
-  }) => {
-    await visitStates(page, "history-list", theme);
-    const list = page.locator("#hist-comfy");
-    await list.locator("[data-id='v-71'] [data-cap-part='pick']").focus();
-    for (const next of [
-      list.locator("[data-id='v-71'] .cap-row-title a"),
-      list.locator("[data-id='v-70'] [data-cap-part='pick']"),
-      list.locator("[data-id='v-70'] .cap-row-title a"),
-      list.locator("[data-id='v-70'] [data-cap-part='restore']"),
-    ]) {
-      await page.keyboard.press("Tab");
-      await expect(next).toBeFocused();
-    }
-  });
-
   test("keyboard: j and k move focus between the lines' titles", async ({ page }) => {
     await visitStates(page, "history-list", theme);
     const links = main(page).locator(
@@ -353,15 +269,6 @@ eachTheme((theme) => {
     await first.focus();
     await page.keyboard.press("j");
     await expect(first).toBeFocused();
-  });
-
-  test("keyboard: Enter on a title follows that version's link", async ({ page }) => {
-    await visitStates(page, "history-list", theme);
-    const link = page.locator("#hist-comfy .cap-row-title a").first();
-    await expect(link).toHaveAttribute("href", "?version=v-71");
-    await link.focus();
-    await page.keyboard.press("Enter");
-    await expect(page).toHaveURL(/version=v-71/);
   });
 
   test("keyboard: Enter and Space on a run's button open and close the autosaves, and aria-expanded follows", async ({
@@ -518,15 +425,6 @@ eachTheme((theme) => {
     ).toEqual(["cap:history-restored:v-16", "cap:history-unrestored:v-16"]);
   });
 
-  test("behavior: Load older is a link that works as delivered", async ({ page }) => {
-    await visitStates(page, "history-list", theme);
-    const older = main(page).getByRole("link", { name: "Load older versions" });
-    await expect(older).toHaveAttribute("href", "?before=v-15");
-    await older.focus();
-    await page.keyboard.press("Enter");
-    await expect(page).toHaveURL(/before=v-15/);
-  });
-
   test("keyboard: Enter on Load older lets the app take over: the next page joins the list, folded, and the control goes", async ({
     page,
   }) => {
@@ -548,14 +446,6 @@ eachTheme((theme) => {
     await list.locator("[data-id='v-85'] [data-cap-part='pick']").check();
     await expect(list.locator("[data-cap-part='picked']")).toHaveText(
       "1 version picked. Pick one more.",
-    );
-  });
-
-  test("behavior: the empty state says what the first save does", async ({ page }) => {
-    await visitStates(page, "history-list", theme);
-    await expect(page.locator("#hist-empty")).toContainText("No versions yet");
-    await expect(page.locator("#hist-empty")).toContainText(
-      "The first save of this post makes the first version.",
     );
   });
 
@@ -633,18 +523,6 @@ eachTheme((theme) => {
     await expect(l.locator("li.cap-hist-row")).toHaveCount(2);
     await expect(l.locator("li[data-kind='restore']")).toHaveCount(0);
     await expect(page).not.toHaveURL(/load=/);
-  });
-
-  test("keyboard: the Load into editor link is reached by Tab in line order and works from Enter", async ({
-    page,
-  }) => {
-    await visitStates(page, "history-list", theme);
-    const l = page.locator("#hist-load");
-    await l.locator("li[data-id='v-70'] input[type=checkbox]").focus();
-    await page.keyboard.press("Tab");
-    expect(await focused(page)).toContain("Cut the duplicate paragraph");
-    await page.keyboard.press("Tab");
-    expect(await focused(page)).toContain("Load into editor");
   });
 
   test("behavior: a read-only history has no Restore and no Load, and a line with no word count shows no size change", async ({

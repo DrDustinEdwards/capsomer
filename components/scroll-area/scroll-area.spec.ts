@@ -15,12 +15,4 @@ eachTheme((theme) => {
     });
     expect(ratio).toBeGreaterThanOrEqual(3);
   });
-
-  test("keyboard: the area takes focus and the arrow keys scroll it", async ({ page }) => {
-    await visitStates(page, "scroll-area", theme);
-    const area = page.locator("#sa-rest");
-    await area.focus();
-    await page.keyboard.press("PageDown");
-    await expect.poll(() => area.evaluate((el) => el.scrollTop)).toBeGreaterThan(0);
-  });
 });

@@ -7,7 +7,7 @@
 // attentionGroups, GROUP_CHILDREN, PROBLEM_ROWS; views/Overview.tsx: NeedsAttention),
 // made generic: the Portal's own feed types and its group table are the caller's here.
 
-import { plural } from "../hooks/hooks.ts";
+import { plural } from "@drdustinedwards/site-helpers/text";
 import { toggleGroup } from "../disclosure/disclosure.ts";
 import { attachRowList } from "../row-list/row-list.ts";
 
@@ -185,7 +185,7 @@ export function arrange(items: readonly AttentionItem[], options: ArrangeOptions
 // The sentence in the header: "3 problems", "no problems".
 export function problemCount(a: Arranged): string {
   const n = a.problems.length + a.more.length;
-  return n ? plural(n, "problem", "problems") : "No problems";
+  return n ? plural(n, "problem") : "No problems";
 }
 
 // "All 7 in CI and merges" when the group holds more than it shows, else "Open CI and merges".

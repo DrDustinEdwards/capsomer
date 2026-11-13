@@ -1,7 +1,8 @@
 ---
 name: ai-sample
 title: AI sample
-summary: A live AI call the reader runs on a marketing page, the output shown as labeled fields and marked as AI-written for a fictional person.
+summary: A live AI call the reader runs on a marketing page, shown as labeled fields marked as AI-written.
+group: pattern
 parts: [css, behavior, react]
 tool: own JavaScript
 states: [a sample, generating, failed]
@@ -14,33 +15,12 @@ replaces:
 
 # AI sample
 
-A panel where the reader picks an input, presses a button and sees what the product's model writes for it. The output is labeled fields (a subject, a body) and a note that says it was written by AI for a fictional person.
-
-## When to use it
-
-Showing a product's AI on its own marketing page, on a real call, with nothing stored passed off as live.
-
-## When not to
-
-- **An answer to the reader's question, with sources**: the [ask panel](../ask-panel/ask-panel.md).
-- **A fixed example**: write it on the page; no live badge, no button.
-
-## The default and its reason
-
-- **A form**, so the inputs are native (a [segmented control](../segmented/segmented.md) or radios) and Generate is its submit button, reached by Enter.
-- **Choosing another input clears the last sample**, so the sample on screen always matches the input that is chosen.
-- **While the call runs the button is `aria-busy`, never disabled**, so focus stays on it; a second submit is refused. The page's button says the busy label in its place; React's `Button` keeps its words under a spinner and says `busyLabel` to a screen reader. A newer call wins over a slower earlier one.
-- **The output region is polite live**, so the sample or the failure line is announced when it lands.
-- **Every write is `textContent`.** Generated text is never markup.
-- **A failure says so** ("Generation failed. Try again.") rather than showing a stored sample as a generated one.
-- **The live dot is still**: motion explains a change, and this one changes nothing.
-
-## HTML contract
+## Usage
 
 ```html
 <form class="cap-ai-sample" data-cap="ai-sample">
   <div class="cap-ai-sample-head">
-    <p class="cap-eyebrow" data-variant="mono">Live email writer</p>
+    <p class="cap-ai-sample-title">Live email writer</p>
     <span class="cap-ai-sample-live">Calls real AI</span>
   </div>
   <div class="cap-ai-sample-controls">
@@ -56,18 +36,12 @@ Showing a product's AI on its own marketing page, on a real call, with nothing s
 </form>
 ```
 
-`enhance(root, { generate })` from `capsomer/behavior/ai-sample` wires it on a page that does not hydrate; `generate(formData)` returns `{ fields: [{ label, value, mono? }], note? }` or `{ error: true }`. `drawSample(out, result)` draws one by hand. React: `AiSample` from `capsomer/react/ai-sample` draws the same markup from the page's state (`busy`, `busyLabel`, `result`, `onGenerate`, `onChange`), `data-cap="ai-sample"`, `data-ai-sample-generate` and `busyLabel`'s `data-busy-label` included, so a server-rendered page that never hydrates can call `enhance()` on it. Once hydrated, React marks it taken (`data-cap-ready`) and `enhance()` leaves it alone; a page that hydrates does not also wire it.
-
-## Keyboard
+## Accessibility
 
 | Key | Does |
 | --- | --- |
 | Arrow keys | Choose an input (native radios) |
 | Enter, Space on the button | Generate |
 
-## Accessibility
-
 - The live badge is text ("Calls real AI"), its dot decoration.
 - The failure line is `--crit` text with its words, not color alone.
-
-Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the automated browser checks and a front-end review stand in. Automated: see the site's Tests page.

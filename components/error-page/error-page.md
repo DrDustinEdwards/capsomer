@@ -1,7 +1,8 @@
 ---
 name: error-page
 title: Error page
-summary: The page a site's root ErrorBoundary shows for 404, 410 and 500, in plain words, under the site's own header.
+summary: The page a site's root ErrorBoundary shows for 404, 410 and 500, in plain words.
+group: pattern
 parts: [css, react]
 tool: native
 states: [404, 410, 410 with its own way out, a second way out, a site's own title band, signed out, session ended, 500, database down, development, phone width]
@@ -15,51 +16,7 @@ replaces:
 
 # Error page
 
-What a React Router site shows when a page is missing, gone or broke: the failed [Empty](../empty/empty.md) as the page's subject, under the site's own header.
-
-## When to use it
-
-- As the root `ErrorBoundary` in `app/root.tsx`, and in a layout route's boundary that should keep the public frame.
-- `errorTitle(error, siteName)` in the root `meta`, for the error path only: an unmatched address matches no route but the root, so without it the 404 page has no title (WCAG 2.4.2).
-
-## When not to
-
-- A part of a page that could not load, with the rest fine: the failed Empty in place (`Empty kind="failed"`), or a banner over earlier data.
-- An admin or app inside the shell: the shell's own boundary, which keeps the rail.
-
-## The default and its reason
-
-- **Plain words, one per case.** 404 "Page not found", 410 "This page is gone" (taken down on purpose, not coming back: nothing to retry), 403 "You cannot open this page" (your account does not have access; no status number shown), any other refusal "This page cannot be shown" with its status, a 503 whose statusText names the database "The site's data is unavailable" (what site-runtime's `databaseDown(error)` throws when D1 is down or reset; any other 503 is "This page is unavailable for now"), and anything else, a thrown error included, "Something went wrong", which says it is not the reader's doing. `errorWords(error)` gives the status, title and sentence. The database wording needs the thrown 503 Response, not a thrown Error: React Router replaces a thrown Error with a generic one on the client in production, so the page would change its words on hydration.
-- **The marker the live check reads.** The region's class `cap-error-page` is how devkit's ops-audit (N6) tells the shared error page from a router's default 404, with the page's `<title>` from `errorTitle`. Keep the class on the region, `as="div"` included.
-- **The way out is a link.** Go to the home page always; Try again only for a server error, as a link to the same address (`href=""`), so it works before hydration and with no script, where Foxhound's `location.reload()` button did not.
-- **Never indexed.** `<meta name="robots" content="noindex">` is rendered with the page; React hoists it into the head.
-- **The stack only in development.** `dev` (pass `import.meta.env.DEV`) shows the thrown error's message and stack; off by default, so production never shows one.
-- **The site's frame stays.** `siteHeader` and `siteFooter` are slots: the skip link, the banner and the footer landmark stay on the error page. They must read no loader data, since the error path has none.
-- **main is `#main` with `tabIndex={-1}`**, the skip link's target. The title is the page's `h1` (`Empty`'s `titleAs="h1"`). A 404's title is set in Jost Demibold (`--poster`), a missing page being a standalone poster; every other status keeps the UI face.
-- **A site's own words.** `title`, `text` and `homeLabel` replace the default words for this error, for a site whose copy is edited content (julieedwards.info's 404 is Carrel copy in D1). `as="div"` renders the region as a div when the site's Layout already has the page's one `main`.
-- **A page gone on purpose (410) is not an error.** Nothing failed and nothing will come back, so it is no alert and has no Try again: its one way out is `gone` ("Read the blog", `/blog`), else the home link.
-- **An icon after the home link's words.** `homeIcon` (an `svg` with `data-icon="end"` and `aria-hidden="true"`) follows the home link's words, or the 410's own way out, for a site whose buttons that go somewhere carry an arrow (bsw).
-- **More ways out.** `actions` adds links after the home link (a dashboard, a demo), in the same row.
-- **A site's own title band.** `hero` (a function of the page's words) draws the site's interior-page band with the `h1`; the sentence and the ways out follow it, centered. A site that keeps a client's brand uses it instead of laying out its own error page. The band runs the page's width and the body stays in a 48rem column; `--error-page-body-pad-block` (default 0) sets the space above and below the body. `--error-page-hero-gap` (default `--gap`) sets the space under the band, and `--error-page-body-gap` (default `--gap`) the space between the sentence and the ways out.
-- **Signed out is its own page.** `SignedOutPage` (`app`, `signIn`, `byChoice`, `access`) is what an app shows once its session is gone: a polite status, the heading "Signed out", and "Sign in again" (or "Reload to sign in" when the session ended on its own). Behind Access it says an open Access session may sign the person straight back in.
-- No router import: a route error is read by its shape (a numeric `status` and a string `statusText`), so the package needs no `react-router`.
-
-## Keyboard
-
-| Key | Does |
-| --- | --- |
-| Tab | The header's skip link first, then the header, then Try again (server errors) and Go to the home page |
-| Enter on the skip link | Moves to main |
-
-## Accessibility
-
-- The failed Empty's contract: shape, word and color together, `role="alert"`, the title in `--crit` at 4.5:1 in both themes.
-- One `h1`, the title; one `main`. The header's skip link and landmarks come from the site's own header.
-- The development stack is a named, focusable region, so it scrolls by keyboard on a phone.
-
-Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the automated browser checks and a front-end review stand in. Automated: see the site's Tests page.
-
-## Markup
+## Usage
 
 ```tsx
 import { ErrorPage, errorTitle } from "capsomer/react/error-page";
@@ -74,8 +31,6 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
   return <ErrorPage error={error} home="/" siteHeader={<SiteHeader />} siteFooter={<SiteFooter />} dev={import.meta.env.DEV} />;
 }
 ```
-
-It renders:
 
 ```html
 <meta name="robots" content="noindex">
@@ -92,8 +47,6 @@ It renders:
 </main>
 [the site footer]
 ```
-
-A 410 (`gone`) is not a failure, so its message is no alert: `<div class="cap-empty" data-kind="nothing-yet">`, with the one way out as its primary button. `SignedOutPage` is a polite status:
 
 ```html
 <main id="main" tabindex="-1" class="cap-error-page" data-status="signed-out">
@@ -119,8 +72,13 @@ A 410 (`gone`) is not a failure, so its message is no alert: `<div class="cap-em
 </main>
 ```
 
-`children` goes inside main under the message (dustinedwards.info's not-found help). `className` adds the site's page frame class to main.
+## Accessibility
 
-## Exceptions in production
+| Key | Does |
+| --- | --- |
+| Tab | The header's skip link first, then the header, then Try again (server errors) and Go to the home page |
+| Enter on the skip link | Moves to main |
 
-- None. Foxhound's 410 passes its heading and reason as `title` and `text` and the blog as `gone` (0.100.0).
+- The failed Empty's contract: shape, word and color together, `role="alert"`, the title in `--crit` at 4.5:1 in both themes.
+- One `h1`, the title; one `main`. The header's skip link and landmarks come from the site's own header.
+- The development stack is a named, focusable region, so it scrolls by keyboard on a phone.

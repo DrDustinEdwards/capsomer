@@ -17,7 +17,7 @@ import {
   DialogTitle,
 } from "../dialog/dialog.react.tsx";
 import { DropZone } from "../drop-zone/drop-zone.react.tsx";
-import { formatBytes } from "../drop-zone/drop-zone.ts";
+import { formatBytes } from "../format/format.ts";
 
 // The library's upload as a dialog (Desk redesign, 2026-11-10: "the library is the page; upload is an
 // action"). The toolbar's Upload opens it. With script and `submit`, it takes several files and asks,

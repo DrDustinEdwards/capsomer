@@ -17,7 +17,7 @@ test("behavior: pressing saves, both buttons for the item follow, and the id is 
   await a.click();
   await expect(a).toHaveAttribute("aria-pressed", "true");
   await expect(b).toHaveAttribute("aria-pressed", "true");
-  await expect(b).toHaveText("Saved");
+  await expect(b).toHaveText("Save");
   expect(await page.evaluate(() => localStorage.getItem("cap-specimen-saved"))).toBe(
     '["spring-update"]',
   );

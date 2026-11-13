@@ -3,6 +3,8 @@ import { Button } from "../button/button.react.tsx";
 import { useOptionalMessage } from "../message/message.react.tsx";
 import { Select } from "../select/select.react.tsx";
 import { Pill } from "../status/status.react.tsx";
+import { Table } from "../table/table.react.tsx";
+import { Time } from "../time/time.react.tsx";
 import { enhance as enhanceFields } from "../field/field.ts";
 import { confirm } from "../confirm-dialog/confirm-dialog.ts";
 import { FormMenu } from "../menu/menu.react.tsx";
@@ -23,6 +25,7 @@ import {
   tallyText,
   timeText,
   personName,
+  roleFailedText,
   roleSavedText,
   type HistoryEntry,
   type PersonRow,
@@ -696,11 +699,21 @@ function GridRow({
   const formId = `cap-roles-${useId()}`;
   const name = personName(person);
   const disabled = Boolean(person.disabledAt);
+  // The role each select last saved, so a refused save puts the select back.
+  const saved = useRef<Record<string, string>>({});
   const access = async (e: FormEvent<HTMLFormElement>) => {
     if (!onAccess) return;
     e.preventDefault();
     const intent = disabled ? "enable" : "disable";
-    await onAccess(person, intent);
+    try {
+      await onAccess(person, intent);
+    } catch (error) {
+      message?.say(`${name} could not be ${intent === "disable" ? "disabled" : "enabled"}.`, {
+        failure: true,
+      });
+      reportError(error);
+      return;
+    }
     if (intent === "disable")
       message?.say(`${name} is disabled. They are refused on their next request.`, {
         undo: () => onAccess(person, "enable"),
@@ -720,7 +733,9 @@ function GridRow({
             </Pill>
           ))}
           {person.disabledAt ? (
-            <Pill variant="secondary">Disabled {person.disabledAt.slice(0, 10)}</Pill>
+            <Pill variant="secondary">
+              Disabled <Time at={person.disabledAt} format="date" />
+            </Pill>
           ) : null}
         </span>
         {person.everyScope ? null : (
@@ -762,10 +777,22 @@ function GridRow({
                 aria-label={`${name} on ${scope.name}`}
                 defaultValue={person.roles[scope.id] ?? ""}
                 onChange={(event) => {
-                  const value = event.currentTarget.value;
+                  // Without a handler the row's Save posts the change; nothing is saved yet.
+                  if (!onRoleChange) return;
+                  const select = event.currentTarget;
+                  const value = select.value;
+                  const before = saved.current[scope.id] ?? person.roles[scope.id] ?? "";
                   const label = choices.find((c) => c.value === value)?.label ?? value;
-                  void Promise.resolve(onRoleChange?.(person, scope, value)).then(() =>
-                    message?.say(roleSavedText(name, scope.name, label)),
+                  Promise.resolve(onRoleChange(person, scope, value)).then(
+                    () => {
+                      saved.current[scope.id] = value;
+                      message?.say(roleSavedText(name, scope.name, label));
+                    },
+                    (error: unknown) => {
+                      select.value = before;
+                      message?.say(roleFailedText(name, scope.name), { failure: true });
+                      reportError(error);
+                    },
                   );
                 }}
                 options={choices}
@@ -789,42 +816,36 @@ export function RoleGrid({
   noAccess = "No access",
   ...rest
 }: RoleGridProps) {
-  const id = useId();
   const hydrated = useHydrated();
   return (
-    <div
-      className="cap-table-wrap cap-role-grid-wrap"
-      role="region"
-      aria-labelledby={id}
-      tabIndex={0}
+    <Table
+      caption={caption}
+      captionHidden
+      className="cap-role-grid-wrap"
+      tableClassName="cap-role-grid"
     >
-      <table className="cap-table cap-role-grid">
-        <caption id={id} className="cap-sr-only">
-          {caption}
-        </caption>
-        <thead>
-          <tr>
-            <th scope="col">{personHeading}</th>
-            {scopes.map((s) => (
-              <th scope="col" key={s.id}>
-                {s.name}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {people.map((p) => (
-            <GridRow
-              key={p.id}
-              person={p}
-              scopes={scopes}
-              hydrated={hydrated}
-              noAccess={noAccess}
-              {...rest}
-            />
+      <thead>
+        <tr>
+          <th scope="col">{personHeading}</th>
+          {scopes.map((s) => (
+            <th scope="col" key={s.id}>
+              {s.name}
+            </th>
           ))}
-        </tbody>
-      </table>
-    </div>
+        </tr>
+      </thead>
+      <tbody>
+        {people.map((p) => (
+          <GridRow
+            key={p.id}
+            person={p}
+            scopes={scopes}
+            hydrated={hydrated}
+            noAccess={noAccess}
+            {...rest}
+          />
+        ))}
+      </tbody>
+    </Table>
   );
 }

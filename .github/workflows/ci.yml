@@ -12,8 +12,7 @@
 # package files, this workflow) runs them all, and so does every push to main.
 #
 # On main, once the checks pass, the `deploy` job ships the site through devkit's shared deploy
-# (DEPLOY.md, rule 16). On main, this workflow also writes the run's test results to the `results` branch, even when a test
-# failed, and the deployed site reads them from there, so it shows the last run on main.
+# (DEPLOY.md, rule 16). Every run keeps its test results, summarized per component, as the `test-results` artifact.
 name: CI
 
 on:
@@ -174,7 +173,7 @@ jobs:
       - name: Size (warns only)
         if: always()
         run: npm run size
-      - name: Token check (warns only)
+      - name: Token check (raw values warn; a declaration the browser drops fails)
         if: always()
         run: npm run token-check
       - name: Fetch the shards' reports
@@ -195,7 +194,7 @@ jobs:
       - name: Merge the shards' reports
         if: always() && needs.browser.result != 'skipped'
         run: npx playwright merge-reports --config playwright.config.ts blob-reports/
-      - name: Summarize the results for the site
+      - name: Summarize the results
         if: always()
         run: node bin/capsomer.mjs site-data --results-out test-results/summary.json
       - name: Keep the results
@@ -237,36 +236,6 @@ jobs:
           mkdir -p test-results
           npm run bloat >> "$GITHUB_STEP_SUMMARY"
 
-  # The site reads https://raw.githubusercontent.com/DrDustinEdwards/capsomer/results/results.json.
-  # One file on an orphan branch, replaced on every run on main.
-  results:
-    if: always() && github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: check
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    permissions:
-      contents: write
-    steps:
-      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
-        with:
-          name: test-results
-          path: test-results/
-      - name: Write results.json to the results branch
-        env:
-          REPO: ${{ github.repository }}
-          TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SHA: ${{ github.sha }}
-        run: |
-          test -f test-results/summary.json || { echo "no summary was written"; exit 1; }
-          mkdir publish && cp test-results/summary.json publish/results.json
-          cd publish
-          git init -q -b results
-          git config user.name "capsomer-ci"
-          git config user.email "capsomer-ci@users.noreply.github.com"
-          git add results.json
-          git commit -q -m "Test results for ${SHA}"
-          git push -q --force "https://x-access-token:${TOKEN}@github.com/${REPO}.git" results
-
   # devkit's shared deploy (worker-deploy.yml), as on the D1 sites: it builds the site, deploys with DEPLOY_SHA set to
   # this commit, waits for /health (site-runtime's staticSite) to report it, checks the home page answers, and rolls the
   # deploy back if it does not. Dormant until the repo variable CF_DEPLOY is 'true' (with the secrets
@@ -277,7 +246,7 @@ jobs:
     concurrency:
       group: deploy
       cancel-in-progress: false
-    uses: DrDustinEdwards/devkit/.github/workflows/worker-deploy.yml@90efbee8e78a1b07b334d5058d19cb0e2a9828d0 # v0.48.0
+    uses: DrDustinEdwards/devkit/.github/workflows/worker-deploy.yml@d580173e5881cb589a95ef48e23c4e633233f1ac # v0.49.0
     with:
       worker-name: capsomer
       health-url: https://capsomer.dustinedwards.info/health

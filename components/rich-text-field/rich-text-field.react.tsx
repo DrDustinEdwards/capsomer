@@ -1,4 +1,4 @@
-import { plural } from "../hooks/hooks.ts";
+import { plural } from "@drdustinedwards/site-helpers/text";
 import {
   useEffect,
   useId,
@@ -154,8 +154,8 @@ export function RichTextField({
     if (!(event.ctrlKey || event.metaKey) || event.altKey || event.shiftKey) return;
     const tag = tags.find((t) => BUTTONS[t].key === event.key.toLowerCase());
     if (!tag) {
-      // The browser's own bold and underline would write tags the field does not allow.
-      if (["b", "u"].includes(event.key.toLowerCase())) event.preventDefault();
+      // The browser's own bold, italic and underline would write tags the field does not allow.
+      if (["b", "i", "u"].includes(event.key.toLowerCase())) event.preventDefault();
       return;
     }
     event.preventDefault();
@@ -247,7 +247,7 @@ export function RichTextField({
       <input type="hidden" name={name} value={value} />
       {wordCount ? (
         <p className="cap-field-help cap-rich-text-count" id={countId} aria-live="polite">
-          {plural(words, "word", "words")}
+          {plural(words, "word")}
         </p>
       ) : null}
       <p className="cap-field-error" id={errorId} hidden={!hasError}>

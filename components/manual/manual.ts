@@ -1,5 +1,5 @@
 import { clamp } from "../hooks/hooks.ts";
-import { escapeHtml } from "@dustinedwards/site-runtime/html";
+import { escapeHtml as esc } from "@dustinedwards/site-runtime/html";
 
 export interface PatchOptions {
   /** A unique id on the page, for the patch's text paths. */
@@ -32,15 +32,14 @@ export function patchSvg({ id, name, foot, count, unit }: PatchOptions): string 
   const dots = patchDots(count)
     .map(([cx, cy]) => `<circle class="cap-patch-dot" cx="${cx}" cy="${cy}" r="3.4"/>`)
     .join("");
-  const p = `cap-patch-${escapeHtml(id)}`;
-  return `<svg class="cap-patch" viewBox="0 0 140 140" aria-hidden="true" focusable="false"><defs><path id="${p}-top" d="M 22 70 A 48 48 0 0 1 118 70"/><path id="${p}-foot" d="M 27 74 A 43 43 0 0 0 113 74"/></defs><circle class="cap-patch-rim" cx="70" cy="70" r="68"/><circle class="cap-patch-field" cx="70" cy="70" r="61"/><circle class="cap-patch-disc" cx="70" cy="70" r="36"/>${dots}<text class="cap-patch-name" text-anchor="middle"><textPath href="#${p}-top" startOffset="50%">${escapeHtml(name.toUpperCase())}</textPath></text><text class="cap-patch-foot" text-anchor="middle"><textPath href="#${p}-foot" startOffset="50%">${escapeHtml(foot.toUpperCase())}</textPath></text><text class="cap-patch-count" x="70" y="77" text-anchor="middle">${count}</text><text class="cap-patch-unit" x="70" y="89" text-anchor="middle">${escapeHtml(unit.toUpperCase())}</text></svg>`;
+  const p = `cap-patch-${esc(id)}`;
+  return `<svg class="cap-patch" viewBox="0 0 140 140" aria-hidden="true" focusable="false"><defs><path id="${p}-top" d="M 22 70 A 48 48 0 0 1 118 70"/><path id="${p}-foot" d="M 27 74 A 43 43 0 0 0 113 74"/></defs><circle class="cap-patch-rim" cx="70" cy="70" r="68"/><circle class="cap-patch-field" cx="70" cy="70" r="61"/><circle class="cap-patch-disc" cx="70" cy="70" r="36"/>${dots}<text class="cap-patch-name" text-anchor="middle"><textPath href="#${p}-top" startOffset="50%">${esc(name.toUpperCase())}</textPath></text><text class="cap-patch-foot" text-anchor="middle"><textPath href="#${p}-foot" startOffset="50%">${esc(foot.toUpperCase())}</textPath></text><text class="cap-patch-count" x="70" y="77" text-anchor="middle">${count}</text><text class="cap-patch-unit" x="70" y="89" text-anchor="middle">${esc(unit.toUpperCase())}</text></svg>`;
 }
 
 // The manual's parts as HTML strings, for a page built without React (a static site's build script, a specimen, a
 // Worker's own page): the one place their markup is written, so a build script never hand-types the classes. Every
 // value is text and is escaped here; a link's href is escaped as an attribute. React pages write the same contract.
 
-const esc = escapeHtml;
 const linkOr = (text: string, href?: string, attrs = "") =>
   href ? `<a href="${esc(href)}"${attrs}>${esc(text)}</a>` : `<strong>${esc(text)}</strong>`;
 
@@ -155,21 +154,22 @@ export interface Sign {
   way?: "prev" | "next" | "forward";
   /** rel values beside the way (external, nofollow). */
   rel?: string;
+  /** The words a screen reader hears before the title ("Next part"), as React's `Signs` reads them. */
+  label?: string;
 }
 
 /** Signs: the ways on as dark panels. `label` names the nav. */
 export function signsHtml(label: string, signs: readonly Sign[]): string {
   return `<nav class="cap-signs" aria-label="${esc(label)}">${signs
-    .map(({ text, href, way, rel }) => {
+    .map(({ text, href, way, rel, label: kind }) => {
       const rels = [way === "prev" || way === "next" ? way : "", rel ?? ""]
         .filter(Boolean)
         .join(" ");
-      return `<a class="cap-sign"${way === "forward" ? ' data-variant="forward"' : ""}${rels ? ` rel="${esc(rels)}"` : ""} href="${esc(href)}">${esc(text)}</a>`;
+      return `<a class="cap-sign"${way === "forward" ? ' data-variant="forward"' : ""}${rels ? ` rel="${esc(rels)}"` : ""} href="${esc(href)}">${kind ? `<span class="cap-sr-only">${esc(kind)}: </span>` : ""}${esc(text)}</a>`;
     })
     .join("")}</nav>`;
 }
 
-/** A part of a site, for the running head: the paths it covers, its number and its trail of names. */
 /**
  * A route's folio for the running head's right side, from its loader data: `export const handle = { folio }`. The
  * route handle contract every site's routes use.

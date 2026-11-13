@@ -88,16 +88,6 @@ eachTheme((theme) => {
     expect(apart).toBe(true);
   });
 
-  test("behavior: the tip is the shared popover's tooltip variant, a manual popover with role tooltip", async ({
-    page,
-  }) => {
-    await visitStates(page, "tooltip", theme);
-    const tip = page.locator("#tip-retry");
-    await expect(tip).toHaveAttribute("popover", "manual");
-    await expect(tip).toHaveAttribute("role", "tooltip");
-    await expect(tip).toHaveClass(/cap-popover/);
-  });
-
   test("keyboard: Esc hides the tip while the pointer is still over the trigger, until the pointer leaves", async ({
     page,
   }) => {

@@ -1,0 +1,23 @@
+/* The line clamp, a part of text.css. */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+@layer cap.utilities {
+  /* At most data-lines lines (2 by default, or 3), the rest cut with an ellipsis: Baseline Widely
+     available as -webkit-line-clamp (the standard line-clamp is not yet). data-lines="1" cuts one
+     line without changing the element's display, so it also fits a flex item (with a min size of 0). */
+  .cap-clamp {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+    &[data-lines="3"] {
+      -webkit-line-clamp: 3;
+    }
+  }
+  .cap-clamp[data-lines="1"] {
+    display: revert-layer;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}

@@ -7,7 +7,7 @@
 // The page is delivered with every row in the HTML, each with its state in words; this
 // module adds only what a person's action creates. No framework; MentionsList, the React
 // component on the contract's data, uses the same helpers.
-import { plural } from "../hooks/hooks.ts";
+import { plural } from "@drdustinedwards/site-helpers/text";
 import { confirm } from "../confirm-dialog/confirm-dialog.ts";
 import { toggleGroup } from "../disclosure/disclosure.ts";
 import { ensureRegion, say } from "../message/message.ts";

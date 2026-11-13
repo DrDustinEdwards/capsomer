@@ -22,7 +22,7 @@ Every component lives in `components/<name>/` and has the parts it needs, no mor
 - Any transition or animation sits inside `@media (prefers-reduced-motion: no-preference) { ... }`. Animate opacity, color and transform only.
 - Container queries where the layout depends on the space a component has; a media query only for page-level layout.
 - Check `@media (forced-colors: active)`: nothing may be conveyed by a shadow or a background alone.
-- Hit areas at least `var(--target)`; control heights `var(--control)` (`--control-h` is an alias).
+- Hit areas at least `var(--target)`; control heights `var(--control)`.
 - Density: nothing hard-codes a size density should move. Use `--control`, `--target`, `--pad-x`, `--pad-y`, `--pad-card`, `--gap`, `--row-h`, `--fs-*` and the `--radius-*` tokens; `[data-density="compact|comfortable"]` on any element changes them for its subtree.
 
 ## Shared building blocks
@@ -92,6 +92,6 @@ eachTheme((theme) => {
 
 ## The doc page
 
-Frontmatter: `name`, `title`, `summary`, `parts`, `tool` (native, own JavaScript, Base UI), `states`, `added`, `updated` (the release that last rebuilt it), `source` (where it was extracted from, if anywhere), `replaces` (regular expressions that find an app's own copy of this component, for `capsomer report`).
+Frontmatter: `name` (the folder's name), `title`, `summary` (one sentence, the page's lead), `group` (`pattern` or `primitive`; a component leaves it out), `parts`, `tool` (native, own JavaScript, Base UI), `states`, `added`, `updated` (the release that last rebuilt it), `source` (where it was extracted from, if anywhere), `replaces` (regular expressions that find an app's own copy of this component, for `capsomer report`).
 
-Then, in this order: what it is for; when to use it; when not to (name the alternative); the default and its reason; keyboard (a table); accessibility, with its screen-reader line (the standard one: no manual run by decision, automated checks and a front-end review stand in); markup; exceptions in production. Short. No em dashes.
+The body is three headings and nothing else: `# <title>`, then `## Usage`, holding only code blocks (the HTML contract, then the React call if there is one), then `## Accessibility`: the keyboard table, then short points on roles, names, focus and forced colors. Everything else on the page is generated: the preview and examples from `examples.html`, the installation tabs, and the API tables from the React props, the behavior module's functions and `parts.json` (`bin/parts.mjs`: the parts, data attributes, states and CSS variables in the component's sheet). `node bin/capsomer.mjs docs` (part of `npm run check`) fails a doc file that leaves the pattern. No em dashes.

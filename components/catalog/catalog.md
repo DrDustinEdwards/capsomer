@@ -1,7 +1,8 @@
 ---
 name: catalog
 title: Catalog
-summary: A searchable, filterable, sortable collection with counts, removable filter chips, a table that becomes cards on a phone, and a filter tray; its state is in the address and it works with no script.
+summary: A searchable, filterable, sortable collection that keeps its state in the address with no script.
+group: pattern
 parts: [css, behavior, react]
 tool: native + own JavaScript
 states: [full width, a phone's width, tray open, filters chosen with chips, search with best match, no match, nothing yet, paged, no script]
@@ -15,70 +16,7 @@ replaces:
 
 # Catalog
 
-A collection a person searches, narrows and sorts: articles, products, people, jobs. It is a `form` that submits with GET to the page's own address, so every control works with no script and every state is a link that can be shared. The behavior then updates the page in place.
-
-## When to use it
-
-A collection of dozens to thousands of items that share fields, where a person narrows by several of them at once: an article library, a product list, a staff directory.
-
-## When not to
-
-- **Up to six values of one property**: filter chips ([chips](../chips/chips.md)), which filter a list already on the page.
-- **A short list read top to bottom**: a row list or a table.
-- **One lookup** ("find the page called X"): the command menu.
-
-## The default and its reason
-
-- **A collection declares its fields once** (`defineCatalog`): is the field searched (and its weight), a facet (one value or many, general or not), a column, sortable, and what type it is. The search box, the facets, the columns, the sort menu and the export all come from that one declaration, so a field is never described twice.
-- **The state is in the address, in one fixed order.** `?q=billing&kind=guide&topic=pricing&sort=-updated&page=2`: only what differs from the default is written, so one state has one address. The canonical stays the base page, because every filtered address is a view of it.
-- **It works with no script.** The facets are checkboxes and radios, the sort is a select, search is a search field, Apply submits the form; the chips, the sort headers and the pages are links. The behavior hides Apply and updates on every change.
-- **Counts say what choosing would give.** Each option shows how many items would match with it chosen, the search and the other filters held and the facet's own filter not (so a facet's options do not collapse as you choose in it). A chosen option with no matches stays, so it can be released.
-- **A facet with no options is not drawn**: when the search and the other filters leave a facet nothing to choose, or no item has a value for it, its heading and "Any" are left out rather than shown empty.
-- **General facets first.** Facets marked `general` are listed first; the rest follow in the order declared. Values within a facet combine with "or"; facets combine with "and". A facet of one value (kind of thing) is a radio with "Any".
-- **A span of years is a range facet** (`facet: { kind: "range", span }`): Field's `SpanField` (two native menus, From and To, each with "Any"), submitted as `?year-from=2019&year-to=2024` (or the `params` you name). An item matches when its own span overlaps the chosen one (`span(item)` returns `[start, end]`, `Infinity` for "to now", or null for an undated item, which no range matches). An inverted range is read the way it was meant, and the chip says it in words: "Year: 2019 to 2024", "Year: from 2019", "Year: 2024".
-- **Active filters are chips that are links.** Each removes only itself; "Clear all" removes them all. They are above the results, where the count is. A chip is the link system's tag pill, so a catalog page loads `capsomer/link.css` with `capsomer/catalog.css` ([link](../link/link.md)).
-- **The count is words with the total, in a live region** ("3 of 140 articles"), as the chips component's is.
-- **Search ranks while it is typed.** Every word must match; a word that starts a word of a field counts double; fields count by their weight. "Best match" is the first sort while a search is typed, and an item with no value in a sort field sorts last either way.
-- **The results are a table, and a card on a phone.** The table's own reflow (`data-reflow`): the first column across the top, every other cell under its column name. The sort is in the header links on a table and in the sort menu everywhere, because a card has no header.
-- **A phone gets a filter tray over the results.** Under 56 rem of the catalog's own width (a container query, not the window's) the filters leave the column and open as a tray over the results from a "Filters (2)" button, with no script by the tray's own address (`:target`) and with it by `data-tray`. Escape and "Show 12 articles" close it; focus returns to the button.
-- **Headings over the rows, in the default order only** (`group: { field }`). A list read by year (a news archive) shows a heading for each year while it is in its default order; a search or another sort shows the same rows flat, with the grouped field in a column (`hideWhenGrouped` leaves the column out only under headings). The heading is a row-group header (`th[scope=rowgroup]`) spanning the table, so the columns stay aligned across groups, and on a phone it is a plain heading over the cards. The group field must be the sortable field the default sort orders by, so each heading's rows are together.
-- **An empty result says which kind of empty it is**: no items at all is "nothing yet"; filters that hide everything is "no match" with Clear filters ([empty](../empty/empty.md)).
-- **Updating in place never traps a failure.** If the fetch fails for any reason the browser navigates to the address, which is what a link would have done. Changing a filter replaces the history entry instead of adding one, as the chips component does.
-- **Focus follows the change.** When the control a person used is one the swap removes (a chip, a page link), focus moves to the count line, which says what the page now shows.
-
-## Helpers around it
-
-- `group.empty` names the heading for items with no value ("Undated"); the default is "Other".
-- `catalogRecords(def, items, state, { id, url, keys: "key", allFields })` is the rows of a CSV or JSON download, the same rows the page shows; `state` may be the request's query. Write the CSV with site-runtime's `./csv`.
-- `catalogMarkdown(def, items, state, { origin, href, empty })` is the same rows as a Markdown table for the page's `.md` twin, the first column linked, every cell escaped (pipes escaped, line breaks collapsed).
-- `catalogDownloads(def, result)` is the three addresses: `<base>.csv` and `<base>.json` with this view's filters, and `<base>.md`.
-- `catalogRedirect(def, url, { keepUnknown: true })` sends a hand-typed or stale address to its one canonical form but serves a parameter the catalog does not read (a campaign tag) instead of redirecting it away.
-- For a page's own settings outside the catalog: `oneOf(value, allowed, fallback)`, `listParam(params, key, known)` (repeated or comma-separated, deduplicated) and `yearParam(raw)`.
-
-## What the catalog does not do
-
-- **It does not query.** The site gives it the items (`queryCatalog(def, items, state)` is a pure function over an array). A collection too large to hold in memory computes the same result in its own database and passes it to `Catalog`.
-- **It does not hydrate.** The behavior owns the DOM inside its regions. Do not re-render a `Catalog` with different props in the browser; render it on the server.
-
-## Keyboard
-
-| Key | Does |
-| --- | --- |
-| Tab | Search, sort, Filters (on a phone), each facet's options, then the chips, the results and the pages |
-| Type in search | Updates the results after a short pause; Enter updates at once |
-| Space on a check or radio | Chooses it; the results, counts and chips follow |
-| Enter on a chip or Clear all | Removes that filter, or all; focus moves to the count |
-| Escape, with the tray open | Closes it and returns focus to "Filters" |
-
-## Accessibility
-
-- A labeled form; each facet is a `fieldset` with a `legend`; every control has a visible label.
-- The count is a polite live region. The results region is `aria-busy` while it updates.
-- A removable chip's name says it removes ("Topic: Pricing (remove this filter)").
-- The card layout of the table is the table component's opt-in reflow; **it has not yet been checked with a screen reader**, so the catalog says so here and an app should check it before relying on it (DEFAULTS.md).
-- Forced colors: chips keep an edge.
-
-## Markup
+## Usage
 
 ```html
 <form class="cap-catalog" data-cap="catalog" data-catalog="articles" method="get" action="/library/articles" aria-labelledby="h">
@@ -113,8 +51,6 @@ A collection of dozens to thousands of items that share fields, where a person n
 </form>
 ```
 
-Use it from React (the server renders it; `queryCatalog` is the same function the page's loader calls):
-
 ```tsx
 import { Catalog } from "capsomer/react/catalog";
 import { defineCatalog, parseCatalogParams, queryCatalog } from "capsomer/behavior/catalog";
@@ -124,8 +60,18 @@ const def = defineCatalog({ id: "articles", noun: ["article", "articles"], baseP
 <Catalog definition={def} result={result} labelledBy="page-title" title={(p) => <a className="cap-table-open" href={p.path}>{p.title}</a>} />
 ```
 
-**Provenance.** MIXED. EXTRACTED from the dustinedwards.info publications list and phage table (filter by address, a count line, a sortable table) and rewritten as one component with the fields declared once. The facet counts, the ranking and the address rules are new.
+## Accessibility
 
-## Exceptions in production
+| Key | Does |
+| --- | --- |
+| Tab | Search, sort, Filters (on a phone), each facet's options, then the chips, the results and the pages |
+| Type in search | Updates the results after a short pause; Enter updates at once |
+| Space on a check or radio | Chooses it; the results, counts and chips follow |
+| Enter on a chip or Clear all | Removes that filter, or all; focus moves to the count |
+| Escape, with the tray open | Closes it and returns focus to "Filters" |
 
-None yet.
+- A labeled form; each facet is a `fieldset` with a `legend`; every control has a visible label.
+- The count is a polite live region. The results region is `aria-busy` while it updates.
+- A removable chip's name says it removes ("Topic: Pricing (remove this filter)").
+- The card layout of the table is the table component's opt-in reflow; **it has not yet been checked with a screen reader**, so the catalog says so here and an app should check it before relying on it (DEFAULTS.md).
+- Forced colors: chips keep an edge.

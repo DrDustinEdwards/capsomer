@@ -29,6 +29,24 @@ export function clampPair(
   return [lo, Math.max(hi, lo + step)];
 }
 
+// A press on the track away from the thumbs (WCAG 2.5.7: a single pointer sets a handle without a
+// drag): the value under the pointer, on a step, and the handle nearer to it, the low one on a tie
+// below the span and the high one above it. RTL tracks run from the right.
+export function trackPick(
+  track: HTMLElement,
+  clientX: number,
+  [low, high]: [number, number],
+  { min, max, step }: { min: number; max: number; step: number },
+): { which: "low" | "high"; value: number } {
+  const box = track.getBoundingClientRect();
+  const rtl = getComputedStyle(track).direction === "rtl";
+  const share = box.width > 0 ? (clientX - box.left) / box.width : 0;
+  const raw = min + Math.max(0, Math.min(1, rtl ? 1 - share : share)) * (max - min);
+  const value = Math.max(min, Math.min(max, min + Math.round((raw - min) / step) * step));
+  const which = Math.abs(value - low) < Math.abs(value - high) || value < low ? "low" : "high";
+  return { which, value };
+}
+
 // The words for a value: data-currency (whole units of a currency, in cents when data-cents),
 // with "+" on the top of the track when data-open-top says the top means "and more".
 export function formatValue(root: HTMLElement, value: number, max: number): string {
@@ -94,14 +112,32 @@ export function enhance(root: ParentNode = document): () => void {
         COMMIT_DELAY_MS,
       );
     };
+    const track = low.parentElement;
+    const press = (e: PointerEvent) => {
+      if (e.target !== track || e.button !== 0 || !track) return;
+      // No mousedown after it, whose default would take the focus off the handle again.
+      e.preventDefault();
+      const { which, value } = trackPick(
+        track,
+        e.clientX,
+        [Number(low.value), Number(high.value)],
+        bounds(),
+      );
+      const handle = which === "low" ? low : high;
+      handle.value = String(value);
+      handle.focus();
+      handle.dispatchEvent(new Event("input", { bubbles: true }));
+    };
     low.addEventListener("input", input);
     high.addEventListener("input", input);
+    track?.addEventListener("pointerdown", press);
     el.dataset.capReady = "";
     paint(el);
     off.push(() => {
       clearTimeout(timer);
       low.removeEventListener("input", input);
       high.removeEventListener("input", input);
+      track?.removeEventListener("pointerdown", press);
       delete el.dataset.capReady;
     });
   }

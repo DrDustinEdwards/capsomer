@@ -15,7 +15,6 @@
 // mode (app/enhance/run.ts).
 
 import { confirm } from "../confirm-dialog/confirm-dialog.ts";
-import { reducedMotion } from "../count-up/count-up.ts";
 import { readStored, uid, writeStored } from "../hooks/hooks.ts";
 import { copyChildren, inertDocument } from "../trusted-html/trusted-html.ts";
 import {
@@ -43,6 +42,7 @@ import {
   type StepInfo,
   type StepTimer,
 } from "./checklist-run-model.ts";
+import { reducedMotion } from "../hooks/hooks.ts";
 
 export interface RunOptions {
   // What is being run, in the controls' words: "Run this procedure". Default "checklist"; also data-run-noun.

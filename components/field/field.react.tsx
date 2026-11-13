@@ -13,14 +13,8 @@ import {
 } from "react";
 import { useOptionalMessage } from "../message/message.react.tsx";
 import { SLUG_PATTERN, slugify } from "@drdustinedwards/site-helpers/slug";
-import {
-  centsToDollars,
-  countText,
-  keyValue,
-  revealedText,
-  stepValue,
-  toDateTimeLocal,
-} from "./field.ts";
+import { moneyInputValue } from "@dustinedwards/site-runtime/money";
+import { countText, keyValue, revealedText, stepValue, toDateTimeLocal } from "./field.ts";
 import { useHydrated } from "../hooks/hooks.react.tsx";
 
 // The props Field passes to its control. Any input, textarea or select (or a component
@@ -231,28 +225,40 @@ export function InputGroupAddon(props: {
 // The words and checks every field part takes from Field.
 type FieldText = Pick<
   FieldProps,
-  "label" | "help" | "error" | "announce" | "required" | "helpPlacement" | "showRequired"
+  | "label"
+  | "labelHidden"
+  | "help"
+  | "error"
+  | "announce"
+  | "required"
+  | "helpPlacement"
+  | "showRequired"
 >;
 
-const FIELD_KEYS = [
-  "label",
-  "help",
-  "error",
-  "announce",
-  "required",
-  "helpPlacement",
-  "showRequired",
-] as const;
-
 // Splits a field part's props into the words Field takes and the rest, for the control.
-function splitField<T extends Partial<FieldText>>(props: T): [FieldText, Omit<T, keyof FieldText>] {
-  const field: Record<string, unknown> = {};
-  const rest: Record<string, unknown> = { ...props };
-  for (const k of FIELD_KEYS) {
-    if (k in rest) field[k] = rest[k];
-    delete rest[k];
-  }
-  return [field as unknown as FieldText, rest as Omit<T, keyof FieldText>];
+function splitField<T extends FieldText>(props: T) {
+  const {
+    label,
+    labelHidden,
+    help,
+    error,
+    announce,
+    required,
+    helpPlacement,
+    showRequired,
+    ...rest
+  } = props;
+  const field: FieldText = {
+    label,
+    labelHidden,
+    help,
+    error,
+    announce,
+    required,
+    helpPlacement,
+    showRequired,
+  };
+  return [field, rest] as const;
 }
 
 // A password with Show and Hide (GOV.UK Password input). The change is said in the status
@@ -827,7 +833,8 @@ export function SlugField(
 
 // Money in dollars: a text box (inputMode decimal, never type="number", which drops what it
 // cannot read) with the currency sign inside its edge. The app keeps integer cents:
-// `defaultCents` fills it, and the server reads the posted text with dollarsToCents.
+// `defaultCents` fills it (site-runtime's moneyInputValue), and the server reads the posted text
+// with site-runtime's parseMoneyInput.
 export function MoneyField(
   props: FieldText &
     Omit<InputHTMLAttributes<HTMLInputElement>, "type" | "style" | "defaultValue"> & {
@@ -854,8 +861,10 @@ export function MoneyField(
             type="text"
             inputMode="decimal"
             autoComplete={rest.autoComplete ?? "off"}
-            pattern={rest.pattern ?? "\\$?[0-9,]*(\\.[0-9]{1,2})?"}
-            defaultValue={rest.value === undefined ? centsToDollars(defaultCents) : undefined}
+            pattern={rest.pattern ?? "[0-9,]*(\\.[0-9]{1,2})?"}
+            defaultValue={
+              rest.value === undefined ? moneyInputValue(defaultCents, "usd") : undefined
+            }
           />
         </div>
       )}

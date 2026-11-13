@@ -83,11 +83,17 @@ export function start(root: HTMLElement): () => void {
     zoom.textContent = `${Math.round(scale * 100)}%`;
   };
 
+  // Each call draws the page and scale asked for when it starts; a later call supersedes it, so
+  // two getPage awaits finishing out of order never leave a stale page or scale on the canvas.
+  let wanted = 0;
   const render = async () => {
     if (!doc) return;
+    const ticket = ++wanted;
+    const at = { page, scale };
     try {
-      const p = await doc.getPage(page);
-      const viewport = p.getViewport({ scale });
+      const p = await doc.getPage(at.page);
+      if (ticket !== wanted || gone) return;
+      const viewport = p.getViewport({ scale: at.scale });
       const context = canvas.getContext("2d");
       if (!context) return;
       canvas.width = Math.floor(viewport.width);
@@ -97,8 +103,11 @@ export function start(root: HTMLElement): () => void {
       const t = p.render({ canvas, canvasContext: context, viewport });
       task = t;
       await t.promise;
-    } catch {
-      // A canceled render rejects; nothing to undo.
+    } catch (error) {
+      // A render canceled by the next one rejects with RenderingCancelledException: nothing to undo. codespell:ignore
+      if (error instanceof Error && error.name === "RenderingCancelledException") return; // pdf.js names it. codespell:ignore
+      fail();
+      reportError(error);
     }
   };
 

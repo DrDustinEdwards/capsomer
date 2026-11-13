@@ -1,6 +1,5 @@
-import { useEffect, useRef, useState, type ReactNode } from "react";
-import { listenLabel } from "./dictionary-entry.ts";
-import { useHydrated } from "../hooks/hooks.react.tsx";
+import { useEffect, useRef, type ReactNode } from "react";
+import { listenLabel, wireListen } from "./dictionary-entry.ts";
 
 /** A plain string, or a word in another language as [lang, word], set in italics with its lang. */
 export type EtymologyPart = string | [lang: string, word: string];
@@ -53,54 +52,16 @@ export function SpeakerIcon() {
   );
 }
 
-// The speaker pair as React state: the link on the server and with script off, the button once
-// mounted, the link again if the clip cannot load or play.
+// The speaker pair: the link on the server and with script off; once mounted, wireListen (the
+// behavior module's) swaps in the button and plays the clip, and brings the link back if it cannot
+// load or play. The DOM it changes (hidden, aria-pressed) is not React state, so React leaves it.
 function Listen({ src, label }: { src: string; label: string }) {
-  const mounted = useHydrated();
-  const [failed, setFailed] = useState(false);
-  const [playing, setPlaying] = useState(false);
-  const audio = useRef<HTMLAudioElement | null>(null);
   const link = useRef<HTMLAnchorElement>(null);
   const speaker = useRef<HTMLButtonElement>(null);
-  const fellBack = useRef(false);
-
-  useEffect(() => () => audio.current?.pause(), []);
-  useEffect(() => {
-    if (failed && fellBack.current) link.current?.focus();
-  }, [failed]);
-
-  const fail = () => {
-    setPlaying(false);
-    fellBack.current = document.activeElement === speaker.current;
-    setFailed(true);
-  };
-  const clip = () => {
-    if (audio.current) return audio.current;
-    const created = new Audio();
-    created.preload = "none";
-    created.src = src;
-    created.addEventListener("play", () => setPlaying(true));
-    created.addEventListener("pause", () => setPlaying(false));
-    created.addEventListener("ended", () => setPlaying(false));
-    created.addEventListener("error", fail);
-    audio.current = created;
-    return created;
-  };
-  const onClick = () => {
-    const player = clip();
-    player.currentTime = 0;
-    if (playing) {
-      player.pause();
-      setPlaying(false);
-      return;
-    }
-    setPlaying(true);
-    player.play().catch((error: unknown) => {
-      if (error instanceof DOMException && error.name === "AbortError") return setPlaying(false);
-      fail();
-    });
-  };
-  const button = mounted && !failed;
+  useEffect(
+    () => (speaker.current && link.current ? wireListen(speaker.current, link.current) : undefined),
+    [src],
+  );
   return (
     <>
       <a
@@ -109,7 +70,6 @@ function Listen({ src, label }: { src: string; label: string }) {
         href={src}
         data-cap-part="listen-link"
         aria-label={label}
-        hidden={button}
       >
         <SpeakerIcon />
       </a>
@@ -120,9 +80,8 @@ function Listen({ src, label }: { src: string; label: string }) {
         data-cap-part="listen"
         data-src={src}
         aria-label={label}
-        aria-pressed={playing}
-        hidden={!button}
-        onClick={onClick}
+        aria-pressed="false"
+        hidden
       >
         <SpeakerIcon />
       </button>
@@ -130,8 +89,8 @@ function Listen({ src, label }: { src: string; label: string }) {
   );
 }
 
-// The HTML contract in dictionary-entry.md. A React page needs no enhance() call: the speaker is
-// React state. Once hydrated the section carries data-cap-ready, set in an effect, so a later
+// The HTML contract in dictionary-entry.md. A React page needs no enhance() call: each speaker
+// wires itself with wireListen. Once hydrated the section carries data-cap-ready, set in an effect, so a later
 // enhance() call skips it; server HTML that is never hydrated (an islands page) has none, so
 // enhance() wires its speaker.
 export function DictionaryEntry(props: DictionaryEntryProps) {

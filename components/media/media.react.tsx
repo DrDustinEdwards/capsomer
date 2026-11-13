@@ -12,7 +12,7 @@ import {
   useRef,
   useState,
 } from "react";
-import type { FormComponent } from "../plain-form/plain-form.react.tsx";
+import { PlainForm, type FormComponent } from "../plain-form/plain-form.react.tsx";
 import { openDialog, wireDialog } from "../dialog/dialog.ts";
 import { isImeEnter } from "../shortcuts/shortcuts.ts";
 import { Disclosure } from "../disclosure/disclosure.react.tsx";
@@ -22,13 +22,13 @@ import {
   type MediaFields,
   type MediaRecord,
   type SaveState,
-  byteSize,
   copySnippets,
   createAutosave,
   parseTags,
 } from "./media.ts";
 import { COPIED_MS, COPY_FAILED_MS, copyText } from "../copy/copy.ts";
 import { MediaFocus, focusWords } from "./media-focus.react.tsx";
+import { formatBytes } from "../format/format.ts";
 
 // The crop editor, loaded the first time Crop is pressed, so a library page does not carry it.
 const MediaCrop = lazy(() => import("./media-crop.react.tsx"));
@@ -130,8 +130,6 @@ export interface MediaInspectorProps {
     base: string;
   }) => ReactNode;
 }
-
-const PlainForm: NonNullable<MediaInspectorProps["Form"]> = (props) => <form {...props} />;
 
 // The hidden fields every inspector form carries: what it is about and the version last seen.
 function Ident({ item, intent }: { item: MediaRecord; intent: string }) {
@@ -355,7 +353,7 @@ function InspectorBody({
   };
   const sub = [
     item.type.split("/").pop()?.toUpperCase(),
-    byteSize(item.bytes),
+    formatBytes(item.bytes),
     item.width && item.height ? `${item.width} by ${item.height}` : "",
   ]
     .filter(Boolean)
@@ -592,7 +590,7 @@ function InspectorBody({
               value={tagText}
               onChange={(e) => setTagText(e.target.value)}
               onKeyDown={(e) => {
-                // legacy-scan:keep isImeEnter (shortcuts.ts) checks isComposing and keyCode 229; the scanner cannot follow it.
+                // legacy-scan:keep ime-safe-enter-submit isImeEnter (shortcuts.ts) checks isComposing and keyCode 229; the scanner cannot follow it.
                 if ((e.key === "Enter" && !isImeEnter(e.nativeEvent)) || e.key === ",") {
                   e.preventDefault();
                   addTag(tagText);
@@ -660,7 +658,7 @@ function InspectorBody({
           <dt>Type</dt>
           <dd>{item.type || "unknown"}</dd>
           <dt>Size</dt>
-          <dd>{byteSize(item.bytes)}</dd>
+          <dd>{formatBytes(item.bytes)}</dd>
           <dt>Dimensions</dt>
           <dd>{item.width && item.height ? `${item.width} by ${item.height}` : "not measured"}</dd>
           <dt>Uploaded</dt>
