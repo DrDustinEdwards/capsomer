@@ -1,0 +1,269 @@
+// The status word as an HTML string, for pages built without React (a static explorer, a server
+// rendered table, an SVG drawing), and the one table of glyphs the React Status draws from too.
+// Escaped here, so a reason or a label can never become markup.
+const ring = {
+    cx: "8",
+    cy: "8",
+    r: "6.2",
+    fill: "none",
+    stroke: "currentColor",
+    "stroke-width": "1.6",
+};
+// A 1.5 stroke with round ends and joins: the outline marks (pr, report).
+const line = {
+    fill: "none",
+    stroke: "currentColor",
+    "stroke-width": "1.5",
+    "stroke-linecap": "round",
+    "stroke-linejoin": "round",
+};
+// The question mark of unknown and question.
+const question = {
+    d: "M6.1 6.4a1.95 1.95 0 1 1 2.9 1.7c-.6.3-1 .7-1 1.4",
+    fill: "none",
+    stroke: "currentColor",
+    "stroke-width": "1.5",
+    "stroke-linecap": "round",
+};
+const questionDot = { cx: "8", cy: "11.7", r: ".9", fill: "currentColor" };
+// No data: a ring with a dash. The quiet gray "muted" draws it too.
+const NODATA = [
+    { tag: "circle", attrs: ring },
+    {
+        tag: "path",
+        attrs: {
+            d: "M5 8h6",
+            fill: "none",
+            stroke: "currentColor",
+            "stroke-width": "1.6",
+            "stroke-linecap": "round",
+        },
+    },
+];
+// One shape per meaning, so the shape carries it without color. Marks inside a filled shape are
+// cut out (evenodd), so the glyph reads on any background, a tint included. 16 by 16.
+export const STATUS_GLYPH = {
+    crit: [
+        {
+            tag: "path",
+            attrs: {
+                fill: "currentColor",
+                "fill-rule": "evenodd",
+                d: "M5 1h6l4 4v6l-4 4H5l-4-4V5zM7.2 4h1.6v5H7.2zM7.2 10.4h1.6V12H7.2z",
+            },
+        },
+    ],
+    warn: [
+        {
+            tag: "path",
+            attrs: {
+                fill: "currentColor",
+                "fill-rule": "evenodd",
+                d: "M8 1.2 15.4 14H.6zM7.3 6h1.4v4H7.3zM7.3 11h1.4v1.4H7.3z",
+            },
+        },
+    ],
+    info: [
+        {
+            tag: "rect",
+            attrs: {
+                x: "1.5",
+                y: "1.5",
+                width: "13",
+                height: "13",
+                rx: "2",
+                fill: "none",
+                stroke: "currentColor",
+                "stroke-width": "1.6",
+            },
+        },
+        { tag: "path", attrs: { fill: "currentColor", d: "M7.2 7h1.6v5H7.2zM7.2 4h1.6v1.7H7.2z" } },
+    ],
+    ok: [
+        {
+            tag: "path",
+            attrs: {
+                fill: "currentColor",
+                "fill-rule": "evenodd",
+                d: "M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z",
+            },
+        },
+    ],
+    nodata: NODATA,
+    muted: NODATA,
+    queued: [{ tag: "circle", attrs: ring }],
+    unknown: [
+        { tag: "circle", attrs: ring },
+        { tag: "path", attrs: question },
+        { tag: "circle", attrs: questionDot },
+    ],
+    question: [
+        { tag: "circle", attrs: { ...ring, fill: "currentColor", "fill-opacity": "0.18" } },
+        { tag: "path", attrs: question },
+        { tag: "circle", attrs: questionDot },
+    ],
+    blocked: [
+        {
+            tag: "path",
+            attrs: {
+                fill: "currentColor",
+                "fill-rule": "evenodd",
+                d: "M4 1.5h8A2.5 2.5 0 0 1 14.5 4v8a2.5 2.5 0 0 1-2.5 2.5H4A2.5 2.5 0 0 1 1.5 12V4A2.5 2.5 0 0 1 4 1.5zM5.7 4.8h1.5v6.4H5.7zM8.8 4.8h1.5v6.4H8.8z",
+            },
+        },
+    ],
+    pr: [
+        { tag: "circle", attrs: { ...line, cx: "4.3", cy: "3.4", r: "1.8" } },
+        { tag: "circle", attrs: { ...line, cx: "4.3", cy: "12.6", r: "1.8" } },
+        { tag: "circle", attrs: { ...line, cx: "11.7", cy: "12.6", r: "1.8" } },
+        {
+            tag: "path",
+            attrs: {
+                ...line,
+                d: "M4.3 5.2v5.6M11.7 10.8V7.1A2.5 2.5 0 0 0 9.2 4.6H7.4M8.9 3 7.3 4.6l1.6 1.6",
+            },
+        },
+    ],
+    report: [
+        {
+            tag: "path",
+            attrs: {
+                ...line,
+                fill: "currentColor",
+                "fill-opacity": "0.18",
+                d: "M3.4 14.5V2M3.4 2.5h8.7l-1.8 3 1.8 3H3.4",
+            },
+        },
+    ],
+    proposal: [
+        {
+            tag: "path",
+            attrs: {
+                fill: "currentColor",
+                "fill-opacity": "0.18",
+                stroke: "currentColor",
+                "stroke-width": "1.5",
+                "stroke-linejoin": "round",
+                d: "M3.4 1.7h6.3l2.9 2.9v9.7H3.4z",
+            },
+        },
+        {
+            tag: "path",
+            attrs: {
+                fill: "none",
+                stroke: "currentColor",
+                "stroke-width": "1.5",
+                "stroke-linecap": "round",
+                d: "M5.7 8h4.6M5.7 10.9h4.6",
+            },
+        },
+    ],
+    "site-down": [
+        {
+            tag: "path",
+            attrs: {
+                fill: "currentColor",
+                "fill-rule": "evenodd",
+                d: "M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM7.2 4h1.6v4.1l1.5-1.5 1.1 1.1L8 11 4.6 7.7l1.1-1.1 1.5 1.5z",
+            },
+        },
+    ],
+    running: [
+        { tag: "circle", attrs: { ...ring, opacity: "0.35" } },
+        {
+            tag: "path",
+            attrs: {
+                fill: "none",
+                stroke: "currentColor",
+                "stroke-width": "1.8",
+                "stroke-linecap": "round",
+                d: "M8 1.8a6.2 6.2 0 0 1 6.2 6.2",
+            },
+        },
+    ],
+};
+const ESCAPES = {
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;",
+};
+const esc = (text) => text.replace(/[&<>"']/g, (c) => ESCAPES[c] ?? c);
+// A glyph's inner elements as markup, for a page that draws it inside its own <svg> (a box in a
+// graph at 12 px).
+export function glyphParts(name) {
+    return STATUS_GLYPH[name]
+        .map(({ tag, attrs }) => {
+        const list = Object.entries(attrs)
+            .map(([k, v]) => ` ${k}="${esc(v)}"`)
+            .join("");
+        return `<${tag}${list}/>`;
+    })
+        .join("");
+}
+// The glyph as the status draws it: hidden from assistive technology, since the word says it.
+export function glyphHtml(name) {
+    return `<svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false">${glyphParts(name)}</svg>`;
+}
+// The status word, the same markup React's Status renders: the glyph, then the word, which is
+// the accessible text and is never empty.
+export function statusHtml(tone, label, options = {}) {
+    const glyph = glyphHtml(options.running ? "running" : tone);
+    const word = esc(label.trim() || (tone === "nodata" ? "No data" : tone));
+    const reason = options.reason?.trim();
+    if (options.brief && reason)
+        return `<span class="cap-status" data-tone="${tone}" title="${esc(reason)}">${glyph}${word}<span class="cap-sr-only">: ${esc(reason)}</span></span>`;
+    const status = `<span class="cap-status" data-tone="${tone}">${glyph}${word}</span>`;
+    return reason ? `${status} <span class="cap-status-reason">${esc(reason)}</span>` : status;
+}
+// "startup_failure" as words: "Startup failure".
+const sentence = (key) => {
+    const words = key.replace(/_/g, " ");
+    return words.charAt(0).toUpperCase() + words.slice(1);
+};
+// The conclusion of a run (a CI check, a build, a backup copy, a scheduled task) as a status. The
+// words are GitHub's check-run conclusions and Cloudflare's build outcomes, which cover the rest:
+// success and neutral are ok, skipped did not run (no data), canceled and timed out stopped
+// before an answer (warning), and every other conclusion failed. No conclusion yet is running.
+// A site that words a state its own way passes `labels` ("Built", "Green").
+export function outcomeStatus(conclusion, labels = {}) {
+    const key = (conclusion ?? "")
+        .trim()
+        .toLowerCase()
+        .replace(/[\s-]+/g, "_");
+    const said = (fallback) => labels[key] ?? fallback;
+    if (key === "")
+        return { tone: "info", running: true, label: labels.running ?? "Running" };
+    switch (key) {
+        case "success":
+        case "succeeded":
+        case "passed":
+            return { tone: "ok", running: false, label: said("Passed") };
+        case "neutral":
+            return { tone: "ok", running: false, label: said("Neutral") };
+        case "skipped":
+            return { tone: "nodata", running: false, label: said("Skipped") };
+        case "cancelled": // GitHub's conclusion value. codespell:ignore
+        case "canceled":
+            return { tone: "warn", running: false, label: said("Canceled") };
+        case "timed_out":
+            return { tone: "warn", running: false, label: said("Timed out") };
+        case "stale":
+            return { tone: "warn", running: false, label: said("Stale") };
+        case "action_required":
+            return { tone: "warn", running: false, label: said("Needs action") };
+        case "queued":
+        case "pending":
+        case "in_progress":
+        case "running":
+        case "building":
+            return { tone: "info", running: true, label: said(key === "queued" ? "Queued" : "Running") };
+        default:
+            return {
+                tone: "crit",
+                running: false,
+                label: said(key === "failure" || key === "fail" || key === "failed" ? "Failed" : sentence(key)),
+            };
+    }
+}
