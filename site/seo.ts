@@ -23,7 +23,7 @@ const INDEXNOW_KEY = "7c3439c6084107d16882b2cecf775765";
 /** When security.txt lapses (RFC 9116 asks for under a year); renew it before then. */
 const SECURITY_TXT_EXPIRES = "2027-10-25T00:00:00Z";
 const DESCRIPTION =
-  "Capsomer: the shared design system for Dustin Edwards's sites and apps. Six color families, three faces, every component in every state, in plain CSS.";
+  "An open-source design system in plain CSS, with optional React wrappers: components, design tokens, themes and page patterns, checked against WCAG 2.2 AA.";
 const AUTHOR = {
   "@type": "Person",
   "@id": "https://dustinedwards.info/#person",
@@ -38,7 +38,7 @@ const head = defineHead({
     url: "/og-card.png",
     width: 1200,
     height: 630,
-    alt: "Capsomer, the family design system",
+    alt: "Capsomer, an open-source design system",
   },
   suffix: " · Capsomer",
   locale: "en_US",
@@ -98,7 +98,7 @@ function seoHead(page: Page): string {
           "@id": `${ORIGIN}/#code`,
           name: "Capsomer",
           description:
-            "Plain CSS with design tokens, web components and React wrappers, an app shell and patterns.",
+            "Plain CSS in cascade layers on design tokens, with optional behavior modules and React components, an app shell and page patterns.",
           url: ORIGIN,
           codeRepository: REPO,
           license: "https://opensource.org/licenses/MIT",
@@ -147,7 +147,7 @@ export function discoveryFiles(paths: string[]): Record<string, string> {
     "llms.txt": llmsDocument({
       title: "Capsomer",
       summary:
-        "Capsomer is Dustin Edwards's open-source (MIT) design system: plain CSS with design tokens, web components and React wrappers, an app shell and patterns, shared by his sites and apps (dustinedwards.info, the Capsid Portal, Carrel and others). No CSS framework; light and dark themes; every component tested for accessibility in every state.",
+        "Capsomer is an open-source (MIT) design system for any site or app: plain CSS in cascade layers on design tokens, with optional behavior modules and React components, an app shell and page patterns. Ten color families in light and dark; every component's states are scanned with axe against WCAG 2.2 AA; scripts work under Trusted Types. Install from a GitHub release tag (not on npm). It also runs Dustin Edwards's sites.",
       intro: [
         [
           `- Docs: ${ORIGIN}/ (Themes: every token on a live board; Components and patterns, each with live examples and its API; Primitives; Icons; Colors)`,

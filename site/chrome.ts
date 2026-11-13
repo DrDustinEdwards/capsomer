@@ -33,7 +33,7 @@ const VERSION: string = JSON.parse(
   readFileSync(new URL("../package.json", import.meta.url), "utf8"),
 ).version;
 const CENTER = `<div class="cap-family-footer-center">
-  <div><p class="cap-family-footer-center-name">Capsomer</p><p class="cap-family-footer-about">The family design system. Plain CSS, MIT licensed.</p></div>
+  <div><p class="cap-family-footer-center-name">Capsomer</p><p class="cap-family-footer-about">An open-source design system. Plain CSS, MIT licensed.</p></div>
   <div class="cap-family-footer-columns">
     <ul class="cap-family-footer-links"><li><a href="/">Themes</a></li><li><a href="/colors/">Colors</a></li><li><a href="/icons/">Icons</a></li></ul>
     <ul class="cap-family-footer-links"><li><a class="cap-go" data-go="out" href="https://github.com/DrDustinEdwards/capsomer">Source</a></li><li><a class="cap-go" data-go="out" href="https://github.com/DrDustinEdwards/capsomer/blob/main/CHANGELOG.md">Changes</a></li></ul>
