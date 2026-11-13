@@ -183,12 +183,15 @@
     border-radius: var(--tile-radius, var(--radius-l));
     box-shadow: var(--tile-shadow, none);
     cursor: default;
+    /* --tile-align: start (default), center or end, for the label, the figure and the note together. */
+    text-align: var(--tile-align, start);
 
     & > * {
       margin: 0;
     }
     & .cap-tile-label {
       display: flex;
+      justify-content: var(--tile-align, start);
       flex-direction: var(--tile-icon-flow, row);
       align-items: var(--tile-icon-align, center);
       gap: var(--tile-gap, var(--space-2));
@@ -211,6 +214,7 @@
       font-size: var(--tile-figure-size, var(--fs-h2));
     }
     & .cap-tile-line {
+      justify-content: var(--tile-align, start);
       gap: var(--space-1) var(--space-3);
     }
     & .cap-tile-detail {
@@ -234,32 +238,6 @@
       display: block;
       inline-size: 1.15em;
       block-size: 1.15em;
-    }
-  }
-  /* How the figure moved: a direction glyph and a signed amount in the tone's color, so the
-     direction is a shape and a sign as well as a color. */
-  .cap-tile-delta {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-1);
-    font-size: var(--fs-detail);
-    font-weight: 600;
-    font-variant-numeric: var(--figures);
-    color: var(--muted);
-
-    & svg {
-      flex: none;
-      inline-size: 1em;
-      block-size: 1em;
-    }
-    &[data-tone="ok"] {
-      color: var(--ok);
-    }
-    &[data-tone="warn"] {
-      color: var(--warn);
-    }
-    &[data-tone="crit"] {
-      color: var(--crit);
     }
   }
   /* The brand tone: the figure in the family's accent, for the one figure a row is about. */
