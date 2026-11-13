@@ -105,10 +105,10 @@
       border-block-start: 1px solid var(--line);
     }
   }
-}
 
-@media (forced-colors: active) {
-  .cap-process[data-layout="rows"] .cap-process-step {
-    border-color: CanvasText;
+  @media (forced-colors: active) {
+    .cap-process[data-layout="rows"] .cap-process-step {
+      border-color: CanvasText;
+    }
   }
 }

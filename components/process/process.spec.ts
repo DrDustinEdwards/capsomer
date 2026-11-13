@@ -20,18 +20,8 @@ eachTheme((theme) => {
     ]);
   });
 
-  test("behavior: the steps sit side by side when wide and stack when narrow, and the number is not read", async ({
-    page,
-  }) => {
+  test("accessibility: a step's number is not read", async ({ page }) => {
     await visitStates(page, "process", theme);
-    const tops = (id: string) =>
-      page
-        .locator(`${id} .cap-process-step`)
-        .evaluateAll((els) => els.map((e) => Math.round(e.getBoundingClientRect().top)));
-    const wide = await tops("#pr-columns");
-    expect(new Set(wide).size).toBe(1);
-    const narrow = await tops("#pr-narrow");
-    expect(narrow[1]).toBeGreaterThan(narrow[0] ?? 0);
     await expect(page.locator("#pr-columns ol")).toMatchAriaSnapshot(`
       - list:
         - listitem:

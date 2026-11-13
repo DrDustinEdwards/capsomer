@@ -138,51 +138,13 @@
     gap: var(--space-2);
   }
 
-  .cap-plan-option {
-    position: relative;
+  /* Each plan is the field's card choice (.cap-check[data-variant="card"]); its words stack. */
+  .cap-plan-option-text {
     display: grid;
     gap: var(--space-1);
-    min-block-size: var(--target);
-    padding: var(--pad-y) var(--pad-x);
-    border: 1px solid var(--line);
-    border-radius: var(--radius-m);
-    background: var(--surface);
-    cursor: pointer;
-
-    & > input {
-      position: absolute;
-      inset-block-start: var(--pad-y);
-      inset-inline-end: var(--pad-x);
-      margin: 0;
-      accent-color: var(--accent);
-    }
-
-    &:hover {
-      border-color: var(--line-strong);
-    }
-
-    &:has(input:checked) {
-      border-color: var(--accent);
-      box-shadow: 0 0 0 1px var(--accent);
-    }
-
-    &:has(input:focus-visible) {
-      outline: var(--ring-width) solid var(--ring);
-      outline-offset: var(--focus-offset);
-    }
-
-    &:has(input:disabled) {
-      cursor: default;
-      opacity: 0.6;
-    }
-
-    @media (prefers-reduced-motion: no-preference) {
-      transition: border-color var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out);
-    }
   }
 
   .cap-plan-option-name {
-    padding-inline-end: 1.5rem;
     color: var(--text);
     font-weight: 600;
     font-size: var(--text-size);
@@ -193,14 +155,14 @@
     font-size: var(--fs-detail);
     font-variant-numeric: tabular-nums;
   }
-}
 
-@media (forced-colors: active) {
-  .cap-price-card-points > li::before {
-    background: CanvasText;
-  }
+  @media (forced-colors: active) {
+    .cap-price-card-points > li::before {
+      background: CanvasText;
+    }
 
-  .cap-plan-option:has(input:checked) {
-    outline: 2px solid Highlight;
+    .cap-plan-option:has(input:checked) {
+      outline: 2px solid Highlight;
+    }
   }
 }

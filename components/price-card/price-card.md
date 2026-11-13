@@ -55,8 +55,7 @@ A pricing page or section; a paywall or checkout that asks which plan.
 <fieldset class="cap-plan-choice">
   <legend>Plan</legend>
   <div class="cap-plan-choice-options">
-    <label class="cap-plan-option"><input type="radio" name="plan" value="monthly" checked />
-      <span class="cap-plan-option-name">Monthly</span><span class="cap-plan-option-price">$5 a month</span></label>
+    <label class="cap-check" data-variant="card"><input type="radio" name="plan" value="monthly" checked /><span class="cap-plan-option-text"><span class="cap-plan-option-name">Monthly</span><span class="cap-plan-option-price">$5 a month</span></span></label>
   </div>
 </fieldset>
 ```
