@@ -6,7 +6,7 @@ parts: [css, behavior]
 tool: own JavaScript
 states: [answered, cut off, unavailable, before asking]
 added: 0.132.0
-updated: 0.133.0
+updated: 0.134.0
 source: dei's Ask (app/styles/ask.css, app/enhance/ask.ts, lib/search/sse.mjs)
 replaces:
   - 'ask-panel'
