@@ -30,6 +30,7 @@ Each release names every removed or renamed token or class, and every changed HT
 - Rating: `RatingInput` draws its select with the shared `Select` (`native`); the wrapper is now `div.cap-select-wrap[data-cap="select"][data-native]` (was a `span`).
 - **Repeater field: rows keep their keys with the sortable list's `useRows`,** move with `moveId` and are announced in `sortText`'s words ("Added Link 4. 4 in the list.", "Moved Link 2 to position 1 of 3.", "Removed Link 2. 2 left."). **Removed:** `moveRow` and `changeText` from `capsomer/behavior/repeater-field`; use `moveId` and `sortText` from `capsomer/behavior/sortable-list`.
 - **Rich editor: two editors on one page keep their own ids.** The image step's alt field and help and the link palette's field, listbox and options were fixed ids (`rich-alt`, `rich-link`, ...), so a second editor's labels and `aria-activedescendant` pointed into the first; they are prefixed with `useId()`. The block menu and link palette open with the popover's `openAt` (re-placed on scroll at the caret), and the toolbar and block menu arrows use toolbar's `rovingIndex` (right-to-left aware).
+- **Fix: rich text field reads only its own entity names.** `&constructor;` or `&toString;` decoded to a function's source text (the name table is a plain object); they now stay as written. Ctrl or Cmd+I is blocked in a field that does not allow `em`, as B and U already were, so the browser's italic never shows what the value drops.
 
 ## [0.139.1]
 
