@@ -1,6 +1,6 @@
 import { useEffect, useId, useRef, useState, type ReactNode } from "react";
 import { useHydrated } from "../hooks/hooks.react.tsx";
-import type { FormComponent } from "../read-only-form/read-only-form.react.tsx";
+import type { FormComponent } from "../plain-form/plain-form.react.tsx";
 
 export type { FormComponent };
 

@@ -12,7 +12,7 @@ import {
   useRef,
   useState,
 } from "react";
-import type { FormComponent } from "../plain-form/plain-form.react.tsx";
+import { PlainForm, type FormComponent } from "../plain-form/plain-form.react.tsx";
 import { openDialog, wireDialog } from "../dialog/dialog.ts";
 import { isImeEnter } from "../shortcuts/shortcuts.ts";
 import { Disclosure } from "../disclosure/disclosure.react.tsx";
@@ -130,8 +130,6 @@ export interface MediaInspectorProps {
     base: string;
   }) => ReactNode;
 }
-
-const PlainForm: NonNullable<MediaInspectorProps["Form"]> = (props) => <form {...props} />;
 
 // The hidden fields every inspector form carries: what it is about and the version last seen.
 function Ident({ item, intent }: { item: MediaRecord; intent: string }) {
