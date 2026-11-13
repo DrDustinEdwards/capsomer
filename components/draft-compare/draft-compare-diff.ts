@@ -64,6 +64,35 @@ export function commonSubsequence(
   return out;
 }
 
+// The steps from `a` to `b`, in order: each item of `a` kept or removed, each of `b` added, the
+// removals of a changed run before its additions. `i` is the place in `a` (kept, removed) and `j`
+// in `b` (kept, added). Past `maxEdits`, all of `a` is removed and all of `b` added.
+export interface Edit {
+  op: Op;
+  i: number;
+  j: number;
+}
+export function editScript(
+  a: readonly string[],
+  b: readonly string[],
+  maxEdits = DEFAULT_MAX_EDITS,
+): Edit[] {
+  const pairs = commonSubsequence(a, b, maxEdits) ?? [];
+  const out: Edit[] = [];
+  let i = 0;
+  let j = 0;
+  for (const [x, y] of [...pairs, [a.length, b.length] as [number, number]]) {
+    while (i < x) out.push({ op: "del", i: i++, j });
+    while (j < y) out.push({ op: "ins", i, j: j++ });
+    if (x < a.length && y < b.length) {
+      out.push({ op: "same", i: x, j: y });
+      i = x + 1;
+      j = y + 1;
+    }
+  }
+  return out;
+}
+
 function middle(
   a: readonly string[],
   b: readonly string[],
@@ -174,24 +203,17 @@ export function diffWords(a: string, b: string, options: DiffOptions = {}): Word
   const A = tokenize(a);
   const B = tokenize(b);
   const keys = (t: Token[]) => t.map((x) => x.text);
-  const pairs = commonSubsequence(keys(A), keys(B), options.maxEdits) ?? [];
   const marked: Marked[] = [];
-  let i = 0;
-  let j = 0;
-  const del = (t: Token) => marked.push({ op: "del", text: t.text, lead: t.lead });
-  const ins = (t: Token) => marked.push({ op: "ins", text: t.text, lead: t.lead });
-  for (const [mi, mj] of [...pairs, [A.length, B.length] as [number, number]]) {
-    while (i < mi) del(A[i++] as Token);
-    while (j < mj) ins(B[j++] as Token);
-    if (mi < A.length && mj < B.length) {
-      const ta = A[mi] as Token;
-      const tb = B[mj] as Token;
+  for (const { op, i, j } of editScript(keys(A), keys(B), options.maxEdits)) {
+    const ta = A[i] as Token;
+    const tb = B[j] as Token;
+    if (op === "del") marked.push({ op, text: ta.text, lead: ta.lead });
+    else if (op === "ins") marked.push({ op, text: tb.text, lead: tb.lead });
+    else {
       // A word that followed a deleted one by a space keeps that space.
       const prev = marked[marked.length - 1];
       const lead = tb.lead === "" && ta.lead !== "" && prev?.op === "del" ? ta.lead : tb.lead;
-      marked.push({ op: "same", text: tb.text, lead });
-      i = mi + 1;
-      j = mj + 1;
+      marked.push({ op, text: tb.text, lead });
     }
   }
   return fold(marked);

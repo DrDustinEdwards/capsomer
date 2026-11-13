@@ -3,12 +3,10 @@
 // steps back while someone types (editor-workspace.ts).
 
 import {
-  useCallback,
   useEffect,
   useLayoutEffect,
   useRef,
   useState,
-  useSyncExternalStore,
   type ReactNode,
 } from "react";
 import { Segmented } from "../segmented/segmented.react.tsx";
@@ -16,23 +14,17 @@ import {
   LAYOUT_KEY,
   onSaveKey,
   readLayout,
-  storeLayout,
-  storedLayout,
   typingRecede,
   type Layout,
 } from "./editor-workspace.ts";
-import { subscribeStored } from "../hooks/hooks.ts";
+import { useDebounced } from "../form-hooks/form-hooks.react.tsx";
+import { useRemembered } from "../hooks/hooks.react.tsx";
 
 // The layout remembered in this browser under `key`; Write on the server and in the render that
 // hydrates, so they agree, then the stored one.
 export function useWorkspaceLayout(key = LAYOUT_KEY): [Layout, (next: Layout) => void] {
-  const layout = useSyncExternalStore(
-    subscribeStored,
-    () => storedLayout(key) ?? "write",
-    () => "write" as Layout,
-  );
-  const choose = useCallback((next: Layout) => storeLayout(next, key), [key]);
-  return [layout, choose];
+  const [stored, remember] = useRemembered(key);
+  return [readLayout(stored), remember];
 }
 
 // Ctrl or Cmd+S calls `save` in place of the browser's save-page; `save` decides whether a save
@@ -54,17 +46,15 @@ export function useTypingRecede(surface?: string): void {
 // A stamp that changes `delay` ms after `value` stops changing: the preview's refresh, so the
 // site renders the text once the typing pauses, not on every key.
 export function usePausedStamp(value: unknown, delay = 2000, initial = ""): string {
+  const settled = useDebounced(value, delay);
   const [stamp, setStamp] = useState(initial);
   // The value the stamp was last taken for: a mount (or StrictMode's second mount) is no change.
-  const seen = useRef(value);
+  const seen = useRef(settled);
   useEffect(() => {
-    if (Object.is(seen.current, value)) return;
-    const timer = window.setTimeout(() => {
-      seen.current = value;
-      setStamp(Date.now().toString(36));
-    }, delay);
-    return () => window.clearTimeout(timer);
-  }, [value, delay]);
+    if (Object.is(seen.current, settled)) return;
+    seen.current = settled;
+    setStamp(Date.now().toString(36));
+  }, [settled]);
   return stamp;
 }
 

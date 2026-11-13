@@ -35,7 +35,7 @@ A page whose job is writing a post, a page or a chapter that a site renders: the
 - **Write first.** The server cannot know what this browser chose, so it and the first paint show Write; the remembered layout follows at once. Without script, the layout the HTML was written with stays.
 - **The preview is the site's page, sandboxed.** `sandbox=""` gives it no script, no forms and an opaque origin; its `title` says what it shows ("Preview of Spring update as example.com renders it"). It paints in the site's own light colors whatever the app's theme, on the light canvas, with an edge where the app ends.
 - **It refreshes after a pause.** `usePausedStamp(text, 2000)` gives a new stamp two seconds after the text stops changing, and `previewUrl(base, stamp)` puts it in the frame's address, so the site renders once per pause.
-- **Ctrl or Cmd+S saves in place.** The browser's save-page never opens over an editor; `save` decides whether a save may run now. The markdown editor also claims the key inside its surface (`onSave`, `cap-md-save`) and lets it reach this handler on `window`: wire one of the two, not both.
+- **Ctrl or Cmd+S saves in place.** The browser's save-page never opens over an editor; `save` decides whether a save may run now. The markdown editor also claims the key inside its surface (`onSave`, `cap-md-save`) and lets it reach this one, which goes through the shortcuts registry (listed in the "?" sheet, quiet while a modal dialog is open): wire one of the two, not both.
 - **The chrome steps back while typing.** A printable key typed in a writing surface fades the chrome to 0.08; a mouse move or focus entering it brings it back. A key typed in a dialog's field does not count. Text being read never moves or fades.
 
 ## Keyboard

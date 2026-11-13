@@ -1,7 +1,7 @@
 // Draft compare's unified-diff view: parsePatch and renderPatch (draft-compare.ts).
 
 import { plural } from "@drdustinedwards/site-helpers/text";
-import { commonSubsequence } from "./draft-compare-diff.ts";
+import { editScript } from "./draft-compare-diff.ts";
 import { escapeHtml as esc } from "@dustinedwards/site-runtime/html";
 import { sr } from "./draft-compare-render.ts";
 
@@ -235,20 +235,10 @@ interface Step {
 }
 
 function steps(a: string[], b: string[], maxEdits: number): Step[] {
-  const pairs = commonSubsequence(a, b, maxEdits) ?? [];
-  const out: Step[] = [];
-  let i = 0;
-  let j = 0;
-  for (const [x, y] of [...pairs, [a.length, b.length] as [number, number]]) {
-    while (i < x) out.push({ op: "del", line: a[i++] ?? "" });
-    while (j < y) out.push({ op: "ins", line: b[j++] ?? "" });
-    if (x < a.length && y < b.length) {
-      out.push({ op: "same", line: a[x] ?? "" });
-      i = x + 1;
-      j = y + 1;
-    }
-  }
-  return out;
+  return editScript(a, b, maxEdits).map(({ op, i, j }) => ({
+    op,
+    line: (op === "ins" ? b[j] : a[i]) ?? "",
+  }));
 }
 
 const MARK: Record<PatchOp, string> = { same: " ", ins: "+", del: "-" };
