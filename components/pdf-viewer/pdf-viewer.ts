@@ -104,8 +104,8 @@ export function start(root: HTMLElement): () => void {
       task = t;
       await t.promise;
     } catch (error) {
-      // A render canceled by the next one rejects with RenderingCancelledException: nothing to undo.
-      if (error instanceof Error && error.name === "RenderingCancelledException") return;
+      // A render canceled by the next one rejects with RenderingCancelledException: nothing to undo. codespell:ignore
+      if (error instanceof Error && error.name === "RenderingCancelledException") return; // codespell:ignore pdf.js names it
       fail();
       reportError(error);
     }

@@ -266,7 +266,9 @@ test.describe("role grid", () => {
     await visitStates(page, "people-roles", "light");
     const grid = page.locator("[data-mount='grid']");
     await grid.getByRole("button", { name: "Disable Rosa Park" }).click();
-    await expect(grid.getByRole("row", { name: /Rosa Park/ })).toContainText("Disabled October 2, 2026");
+    await expect(grid.getByRole("row", { name: /Rosa Park/ })).toContainText(
+      "Disabled October 2, 2026",
+    );
     await page.getByRole("button", { name: "Undo" }).click();
     await expect(grid.getByRole("button", { name: "Disable Rosa Park" })).toBeVisible();
   });
