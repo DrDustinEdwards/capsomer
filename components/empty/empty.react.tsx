@@ -24,6 +24,9 @@ export interface EmptyProps {
   // The title's element: a paragraph by default, a heading where the empty area is the page's
   // subject (the error page's h1).
   titleAs?: "p" | "h1" | "h2" | "h3";
+  // A polite status, for an empty area that replaces the page's content when nothing failed (the
+  // signed-out page). A failed one is always an alert.
+  role?: "status";
 }
 
 export function Empty({
@@ -34,6 +37,7 @@ export function Empty({
   icon,
   flush,
   titleAs: Title = "p",
+  role,
 }: EmptyProps) {
   let head: ReactNode;
   if (kind === "all-clear") {
@@ -58,7 +62,7 @@ export function Empty({
       className="cap-empty"
       data-kind={kind}
       data-flush={flush ? "" : undefined}
-      role={kind === "failed" ? "alert" : undefined}
+      role={kind === "failed" ? "alert" : role}
     >
       {icon ? (
         <div className="cap-empty-media" data-variant="icon" aria-hidden="true">
