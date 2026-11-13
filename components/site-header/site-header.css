@@ -148,8 +148,8 @@
         pointer-events: none;
       }
       &[data-translucent] > .cap-site-header-ground {
-        background: color-mix(in srgb, var(--header-bg) 85%, transparent);
-        backdrop-filter: blur(12px);
+        background: color-mix(in srgb, var(--header-bg) var(--header-translucent-mix), transparent);
+        backdrop-filter: blur(var(--header-blur));
       }
     }
     /* At rest the ground is hidden; stuck, it shows. Same weight in both, so the query wins. */

@@ -24,7 +24,6 @@ import {
 import { badgeText, guardForms, wireScrolled, wireSearch, wireThemeKey } from "./site-header.ts";
 
 export { countName, HeaderTip, SheetGroup } from "./site-header-parts.react.tsx";
-export { initialsOf } from "./site-header.ts";
 export type {
   HeaderLink,
   HeaderDoes,

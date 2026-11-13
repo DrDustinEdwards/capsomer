@@ -13,7 +13,7 @@ import { plural } from "../hooks/hooks.ts";
 import { closeDialog, openDialog, wireDialog } from "../dialog/dialog.ts";
 import { escapeHtml } from "@dustinedwards/site-runtime/html";
 import { place } from "../popover/popover.ts";
-import { isImeEnter, singleKeysOff } from "../shortcuts/shortcuts.ts";
+import { isImeEnter, register } from "../shortcuts/shortcuts.ts";
 import { attach as attachTip, hideTip } from "../tooltip/tooltip.ts";
 
 // A count is a glance, not a figure: past 99 it says 99+, in the header, the sheet, the bottom bar
@@ -71,24 +71,6 @@ export function placePanel(trigger: HTMLElement, panel: HTMLElement): void {
     align: panel.dataset.align === "end" ? "end" : "start",
     offset,
   });
-}
-
-// The two letters on the avatar: the first and last word's first letters ("Alex Rivera": AR),
-// the first two letters of a one-word name, else the email's first letter (Foxhound's and txasm's
-// personInitials and initials). Whole letters (graphemes), not code units, so an accented or
-// non-Latin name never shows half a letter.
-const letters = (w: string): string[] =>
-  Array.from(
-    new Intl.Segmenter(undefined, { granularity: "grapheme" }).segment(w),
-    (g) => g.segment,
-  );
-export function initialsOf(name?: string | null, email?: string | null): string {
-  const words = (name ?? "").trim().split(/\s+/).filter(Boolean);
-  const first = (w: string) => letters(w)[0] ?? "";
-  if (words.length >= 2)
-    return `${first(words[0]!)}${first(words[words.length - 1]!)}`.toUpperCase();
-  if (words.length === 1) return letters(words[0]!).slice(0, 2).join("").toUpperCase();
-  return (first((email ?? "").trim()) || "?").toUpperCase();
 }
 
 let escBound = false;
@@ -278,19 +260,19 @@ export function guardForms(root: HTMLElement): () => void {
 // (whichever form it takes), so the key keeps the choice exactly as the button does.
 export function wireThemeKey(header: HTMLElement, key: string): () => void {
   const want = key.toLowerCase();
-  const onKey = (e: KeyboardEvent) => {
-    if (e.key.toLowerCase() !== want || e.ctrlKey || e.metaKey || e.altKey || singleKeysOff())
-      return;
-    if (
-      (e.target as Element | null)?.closest?.("input, textarea, select, [contenteditable='true']")
-    )
-      return;
-    [...header.querySelectorAll<HTMLElement>(".cap-site-header-theme")]
-      .find((b) => b.getClientRects().length > 0)
-      ?.click();
-  };
-  document.addEventListener("keydown", onKey);
-  return () => document.removeEventListener("keydown", onKey);
+  const button = () =>
+    [...header.querySelectorAll<HTMLElement>(".cap-site-header-theme")].find(
+      (b) => b.getClientRects().length > 0,
+    );
+  // Through the one shortcut registry: it skips typing, a modal, a composition and a key already
+  // handled, honors the single-keys switch, and lists the key in the shortcuts sheet. Either case.
+  return register({
+    key: want === want.toUpperCase() ? want : [want, want.toUpperCase()],
+    label: "Switch the theme",
+    group: "General",
+    when: () => button() !== undefined,
+    run: () => button()?.click(),
+  });
 }
 
 // How far the page scrolls before the header is "scrolled" (data-scrolled): past a trackpad's

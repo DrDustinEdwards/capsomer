@@ -176,7 +176,7 @@ The family sites (dustinedwards.info, Capsid, Capsomer, Prelum, Carrel, Enarrati
 <nav class="cap-site-tabs" aria-label="Your reading">[up to five links: icon, label, .cap-site-header-badge]</nav>
 ```
 
-`import { enhance, wirePanel, openSheet, closeSheet, stepIndex, badgeText, guardForms, wireThemeKey, wireScrolled, initialsOf } from "capsomer/behavior/site-header"` (`enhance(root?: Document | Element)`) wires markup written by hand: each `[data-cap-part="panel-trigger"]` to the panel its `aria-controls` names, each tip, the menu button and its sheet. The theme button is theme-switch's (`enhance` from `capsomer/behavior/theme-switch`). In React, `import { SiteHeader, SiteTabs } from "capsomer/react/site-header"`:
+`import { enhance, wirePanel, openSheet, closeSheet, stepIndex, badgeText, guardForms, wireThemeKey, wireScrolled } from "capsomer/behavior/site-header"` (`enhance(root?: Document | Element)`) wires markup written by hand: each `[data-cap-part="panel-trigger"]` to the panel its `aria-controls` names, each tip, the menu button and its sheet. The theme button is theme-switch's (`enhance` from `capsomer/behavior/theme-switch`). In React, `import { SiteHeader, SiteTabs } from "capsomer/react/site-header"`:
 
 ```tsx
 <SiteHeader
@@ -207,13 +207,13 @@ A row that posts, in a panel or the sheet:
       { id: "w2", label: "Field Office", action: "/switch", fields: { workspace: "w2" } },
     ] }] }]}
   sections={[{ id: "topics", label: "Topics", panelSize: "wide", panelClassName: "site-topics", panel: <TopicsPanel /> }]}
-  account={{ name: "Alex Rivera", initials: initialsOf("Alex Rivera"), signOutAction: "/sign-out", signOutFields: { token } }}
+  account={{ name: "Alex Rivera", initials: initials("Alex Rivera"), signOutAction: "/sign-out", signOutFields: { token } }}
   themeCookie="site_theme"
   onThemeSave={signedIn ? (theme) => fetch("/api/theme", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ theme }) }) : undefined}
 />
 ```
 
-`initialsOf(name, email)` gives the avatar's letters: the first and last word's first letters, two letters of a one-word name, else the email's first letter.
+`initials(name, email)` from `capsomer/behavior/avatar` gives the avatar's letters: the first and last word's first letters, two letters of a one-word name, else the email's first letter.
 
 ### A page that does not hydrate
 

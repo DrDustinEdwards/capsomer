@@ -5,6 +5,7 @@
 import { StrictMode, useEffect, type ReactNode } from "react";
 import { createRoot } from "react-dom/client";
 import { renderToStaticMarkup } from "react-dom/server";
+import { initials } from "../avatar/avatar.ts";
 import { enhance as enhanceTheme } from "../theme-switch/theme-switch.ts";
 import { setStaticHtml } from "../trusted-html/trusted-html.ts";
 import { enhance } from "./site-header.ts";
@@ -16,7 +17,6 @@ import {
   type AdminShellProps,
 } from "../admin-shell/admin-shell.react.tsx";
 import {
-  initialsOf,
   SiteHeader,
   SiteTabs,
   type HeaderAccount,
@@ -816,7 +816,7 @@ const staticHeader: SiteHeaderProps = {
   themeKey: "T",
   account: {
     name: "Alex Rivera",
-    initials: initialsOf("Alex Rivera", "alex@example.com"),
+    initials: initials("Alex Rivera", "alex@example.com"),
     detail: "alex@example.com",
     groups: [
       {
