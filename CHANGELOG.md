@@ -27,6 +27,7 @@ Each release names every removed or renamed token or class, and every changed HT
 - **Prose: the heading tokens live in `css/prose.css`.** `--prose-heading-face`, `--prose-heading-space`, `--prose-h2-size` and `--prose-h3-size` are read where the heading face, space and sizes are set, so `prose-blocks.css` no longer sets them a second time; the values are unchanged. **Removed:** prose blocks' `.reading-progress` rules (Prelum's render/enhance draws `.cap-reading-progress`, the reading-progress component, since Prelum's breaking change).
 - **QR: `size="lg"`** on the React `Qr` sets `data-size="lg"`, the 10rem size the CSS and doc page already had.
 - **Range slider: a press on the track sets the nearer handle** (WCAG 2.5.7, a single pointer with no drag), in the behavior module and `RangeSlider`; new export `trackPick`. The fill runs from the right on a right-to-left track. DEFAULTS.md's refused-patterns row records Dustin's ruling (2026-11-13) that the range slider is built, and how it meets WCAG 2.5.7 and the APG Multi-Thumb Slider.
+- Rating: `RatingInput` draws its select with the shared `Select` (`native`); the wrapper is now `div.cap-select-wrap[data-cap="select"][data-native]` (was a `span`).
 
 ## [0.139.1]
 

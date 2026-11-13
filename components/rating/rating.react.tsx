@@ -1,4 +1,5 @@
 import { useId, useState, type ChangeEvent, type ReactNode } from "react";
+import { Select } from "../select/select.react.tsx";
 
 // A star rating out of five, in halves (rating.md). `Rating` shows one: an image whose name says
 // the value ("3.5 out of 5 stars"), the stars drawn filled to that half. `RatingInput` asks for
@@ -99,22 +100,17 @@ export function RatingInput(props: RatingInputProps) {
         {label}
       </label>
       <div className="cap-rating-control">
-        <span className="cap-select-wrap">
-          <select
-            className="cap-select"
-            id={id}
-            name={name}
-            value={shown ? String(shown) : ""}
-            onChange={change}
-          >
-            <option value="">{noneLabel}</option>
-            {ratingChoices(whole).map((v) => (
-              <option key={v} value={String(v)}>
-                {ratingWords(v)}
-              </option>
-            ))}
-          </select>
-        </span>
+        <Select
+          native
+          id={id}
+          name={name}
+          value={shown ? String(shown) : ""}
+          onChange={change}
+          options={[
+            { value: "", label: noneLabel },
+            ...ratingChoices(whole).map((v) => ({ value: String(v), label: ratingWords(v) })),
+          ]}
+        />
         <Stars value={shown} />
       </div>
     </div>
