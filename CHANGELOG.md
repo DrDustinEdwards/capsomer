@@ -3,6 +3,14 @@
 Each release names every removed or renamed token or class, and every changed HTML contract. A pull request adds its entry as a
 changeset (`npx changeset`, `.changeset/README.md`); the release pull request writes them here.
 
+## 0.148.1
+
+### Patch Changes
+
+- **The chart enhancer stays out of server bundles.** The React chart frame skips its `enarratio/enhance` import when Vite's `import.meta.env.SSR` is set, as the click-only modules did, so a server build drops a chunk it could never run. Outside Vite nothing changes. No token, class or HTML contract changes.
+- **Click-only modules stay out of server bundles.** The sheet drag (`dialog-drag`), the shortcut sheet, the header search and the React markdown editor's behavior module skip their `import()` when Vite's `import.meta.env.SSR` is set, as the CodeMirror view did in 0.145.1, so a server build drops chunks it could never run (dustinedwards.info's Worker: about 13 KiB raw, 6 KiB gzip). Outside Vite nothing changes. No token, class or HTML contract changes.
+- **`Title`, `Text` and `Stack` take any element and its own props.** `as` is any intrinsic element (a `td`, a `label`, an `h1`) and the props of that element, `ref` and `htmlFor` among them, reach it. No CSS change.
+
 ## 0.148.0
 
 ### Minor Changes
