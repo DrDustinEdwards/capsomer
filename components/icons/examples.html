@@ -19,13 +19,12 @@
 </section>
 
 <script type="module">
-  import { ICONS, SOCIAL, iconSvg } from "./icons.ts";
-  for (const [id, set] of [["ic-ui", ICONS], ["ic-social", SOCIAL]]) {
-    const list = document.getElementById(id);
-    for (const name of Object.keys(set)) {
-      const li = document.createElement("li");
-      li.append(iconSvg(name), ` ${name}`);
-      list.append(li);
-    }
+  import * as icons from "./icons.ts";
+  for (const [name, icon] of Object.entries(icons)) {
+    if (typeof icon === "function") continue;
+    const list = document.getElementById(typeof icon === "string" ? "ic-ui" : "ic-social");
+    const li = document.createElement("li");
+    li.append(typeof icon === "string" ? icons.iconSvg(icon) : icons.iconSvg(icon.d, icon), ` ${name}`);
+    list.append(li);
   }
 </script>

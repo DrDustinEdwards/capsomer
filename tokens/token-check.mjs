@@ -1,6 +1,7 @@
 // capsomer/token-check: the checks a site runs over its own CSS's tokens, written once. Pure functions over CSS text
 // (no filesystem), so a site's gate reads its stylesheets and passes the text in. The color math is palette-core's
 // (contrast, apca): one implementation for Capsomer's own palette check and every site's.
+import { normalizeHex } from "@drdustinedwards/site-helpers/text";
 import { apca, contrast } from "./palette-core.mjs";
 
 export { apca, contrast };
@@ -11,12 +12,6 @@ const DECL = /(--[a-z0-9-]+)\s*:\s*([^;]+);/g;
 /** CSS without comments and with plain newlines, as every reader here expects. */
 export function stripCss(css) {
   return css.replace(/\r\n/g, "\n").replace(/\/\*[\s\S]*?\*\//g, "");
-}
-
-/** #abc or #aabbcc as lowercase #aabbcc. */
-export function normalizeHex(hex) {
-  const h = hex.trim().toLowerCase().replace("#", "");
-  return `#${h.length === 3 ? [...h].map((c) => c + c).join("") : h}`;
 }
 
 const bytes = (hex) => {
