@@ -4,8 +4,9 @@ title: Annotated document
 summary: An edited text shown as the original, the edit, or every change, beside a rail of notes that each light the passages they are about.
 parts: [css, behavior, react]
 tool: own JavaScript
-states: [simple markup, original, all markup, a note lit, hover]
+states: [simple markup, original, all markup, a note lit, hover, kinds in their tones, original without notes, control centered]
 added: 0.132.0
+updated: 0.135.0
 source: BioScience Writers' Precision Editing demo (app/components/EditingDemo.tsx, app/islands/editing-demo.ts, .psms-* in app/app.css)
 replaces:
   - 'psms-'
@@ -62,7 +63,9 @@ Showing what an edit does to a real text: an editing service's sample, a changel
 </div>
 ```
 
-`enhance()` from `capsomer/behavior/annotated-document` adds the linking. React: `AnnotatedDocument` from `capsomer/react/annotated-document` takes the document as children and `notes`, `name`, `view` and the labels. `--cap-annotated-h` sets the height of the two scroll boxes (32rem).
+`enhance()` from `capsomer/behavior/annotated-document` adds the linking. React: `AnnotatedDocument` from `capsomer/react/annotated-document` takes the document as children and `notes`, `name`, `view`, the labels, `hideNotesInOriginal`, `viewAlign` and `kind`. `--cap-annotated-h` sets the height of the two scroll boxes (32rem).
+
+On `.cap-annotated`: `data-hide-notes="original"` shows the original as the text alone, the full width, with no notes beside it; `data-view-align="center"` or `"end"` places the view control (the start by default); `data-kind="tone"` sets each note's kind in its tone's color and its icon as a disc of the tone (the kind muted and the icon on a tint by default).
 
 ## Keyboard
 

@@ -38,6 +38,19 @@ test("behavior: the views show the original, the edit and every change from one 
   });
 });
 
+test("behavior: a view can leave the notes out, and kinds in their tones reach their contrast", async ({
+  page,
+}) => {
+  await visitStates(page, "annotated-document", "light");
+  const tone = page.locator("#ad-tone");
+  await expect(tone.locator(".cap-annotated-notes")).toBeHidden();
+  await tone.getByLabel("Simple markup").check();
+  await expect(tone.locator(".cap-annotated-notes")).toBeVisible();
+  await expectContrast(page, [
+    { sel: "#ad-tone .cap-annotated-note-kind", what: "a kind in its tone" },
+  ]);
+});
+
 test("keyboard: a note lights every passage it is about, and a second press turns it off", async ({
   page,
 }) => {

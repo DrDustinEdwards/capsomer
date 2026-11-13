@@ -22,6 +22,12 @@ export interface AnnotatedDocumentProps {
   view?: "original" | "edited" | "all";
   docLabel?: string;
   notesLabel?: string;
+  // The original shows the text alone, with no notes beside it.
+  hideNotesInOriginal?: boolean;
+  // The view control's place over the document. Omitted: the start.
+  viewAlign?: "center" | "end";
+  // "tone": each note's kind and icon take its tone's color. Omitted: the kind muted, the icon on a tint.
+  kind?: "tone";
 }
 
 const VIEWS = { original: "Original", edited: "Simple markup", all: "All markup" };
@@ -36,9 +42,18 @@ export function AnnotatedDocument({
   view = "edited",
   docLabel = "Document",
   notesLabel = "Notes",
+  hideNotesInOriginal,
+  viewAlign,
+  kind,
 }: AnnotatedDocumentProps) {
   return (
-    <div className="cap-annotated" data-cap="annotated">
+    <div
+      className="cap-annotated"
+      data-cap="annotated"
+      data-hide-notes={hideNotesInOriginal ? "original" : undefined}
+      data-view-align={viewAlign}
+      data-kind={kind}
+    >
       <fieldset className="cap-seg cap-annotated-view">
         <legend className="cap-sr-only">{label}</legend>
         <div className="cap-seg-options">

@@ -6,6 +6,7 @@ parts: [css, react]
 tool: native
 states: [accordion, accordion with the first open, cards, list]
 added: 0.132.0
+updated: 0.135.0
 source: BioScience Writers' Faq (app/components/Faq.tsx, FAQS in app/data/content.ts, the FAQPage in config/structured-data.ts); Foxhound's ProductFAQ (app/components/product-sections-cap.tsx) and pricing questions (app/routes/pricing.tsx)
 replaces:
   - 'ProductFAQ'
@@ -34,6 +35,7 @@ A product, pricing or service page's common questions.
 - **Every answer is in the HTML**, collapsed or not, and prints open, so a reader with no script, a search engine and a printout all have it.
 - **Each question is a heading inside its summary** (`h3` by default), so the questions are in the page's heading list.
 - **One open at a time** by the platform (`details name`, HTML), not a script.
+- **A rule between questions, none under the last**, drawn by the FAQ for its items (each question is in its own `li`, where the disclosure's own between-sections rule cannot see the next one).
 
 ## HTML contract
 

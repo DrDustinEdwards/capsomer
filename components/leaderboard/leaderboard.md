@@ -6,6 +6,7 @@ parts: [css, react]
 tool: native
 states: [ten entries, the reader's own entry, a long name, empty]
 added: 0.132.0
+updated: 0.135.0
 source: germomics' game leaderboard (app/routes/games.$slug.tsx, app/lib/scores.server.ts)
 replaces:
   - 'Leaderboard'
@@ -41,7 +42,7 @@ A game's or a challenge's top scores.
 <p class="cap-leaderboard-empty">No scores yet.</p>   <!-- no entries -->
 ```
 
-React: `Leaderboard` from `capsomer/react/leaderboard` takes `entries`, `label`, `empty` and `format`.
+React: `Leaderboard` from `capsomer/react/leaderboard` takes `entries`, `label`, `empty` and `format`. A name's face is `--cap-leaderboard-name-face` (the inherited face by default); scores are in the mono face.
 
 ## Keyboard
 

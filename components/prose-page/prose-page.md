@@ -6,6 +6,7 @@ parts: [css, react]
 tool: native
 states: [title only, title and lead, long title, phone]
 added: 0.132.0
+updated: 0.135.0
 source: BioScience Writers' PageHero (app/components/PageHero.tsx) and the `.page-prose` column (app/app.css), used by 21 of its 22 routes
 replaces:
   - 'PageHero'
@@ -29,7 +30,7 @@ Every interior page of a marketing or campaign site whose content is words.
 ## The default and its reason
 
 - **One frame for every such page**, so 21 pages cannot drift apart (they did on BioScience Writers: each route repeated the same two lines of classes).
-- **The band takes the site's look from tokens**: `--cap-prose-page-head-bg`, `-head-text`, `-title-face`, `-title-size`, `-title-weight`, `-title-case` (BioScience Writers' uppercase extra-bold on its slate band), `-lead-text`; the column's measure `--cap-prose-page-measure` (48rem).
+- **The band takes the site's look from tokens**: `--cap-prose-page-head-bg`, `-head-text`, `-title-face`, `-title-size`, `-title-weight`, `-title-case` (BioScience Writers' uppercase extra-bold on its slate band), `-lead-text`; the title's `-title-max` (40rem), `-title-leading` (1.15) and `-title-wrap` (`balance`); the column's measure `--cap-prose-page-measure` (48rem) and its top and bottom padding `--cap-prose-page-body-pad` (`--space-8`).
 - **The column is the prose context**, not page-specific CSS, so a policy page reads as the blog does.
 
 ## HTML contract
@@ -46,7 +47,7 @@ Every interior page of a marketing or campaign site whose content is words.
 
 The header sits inside the page's `main`, so it is not a banner landmark.
 
-React: `ProsePage` from `capsomer/react/prose-page` takes `title`, `lead`, `headExtra` and the body as children.
+React: `ProsePage` from `capsomer/react/prose-page` takes `title`, `lead`, `headExtra` and the body as children, or as `html`: a body the server stored and sanitized as HTML, set through the `capsomer` Trusted Types policy ([trusted HTML](../trusted-html/trusted-html.md)). `ProsePageHead` is the title band alone, for a page whose body is not a prose column, such as an error page.
 
 ## Keyboard
 

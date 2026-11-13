@@ -1,4 +1,4 @@
-import type { FormEvent, ReactNode } from "react";
+import { useEffect, useRef, type FormEvent, type ReactNode } from "react";
 
 import type { AiSampleResult } from "./ai-sample.ts";
 
@@ -21,7 +21,9 @@ export interface AiSampleProps {
   onChange?: () => void;
 }
 
-// The HTML contract in ai-sample.md. The page keeps the state (its fetcher); this draws it.
+// The HTML contract in ai-sample.md, its `data-cap` hooks included, so a server-rendered page that
+// never hydrates still has a form its `enhance()` wires. The page keeps the state (its fetcher);
+// this draws it.
 export function AiSample({
   title,
   live,
@@ -35,12 +37,28 @@ export function AiSample({
   onGenerate,
   onChange,
 }: AiSampleProps) {
+  const ref = useRef<HTMLFormElement>(null);
+  // Hydrated, React runs it: marked taken, so the page's enhance() leaves it alone.
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    el.dataset.capReady = "";
+    return () => {
+      delete el.dataset.capReady;
+    };
+  }, []);
   const submit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     onGenerate(new FormData(e.currentTarget));
   };
   return (
-    <form className="cap-ai-sample" onSubmit={submit} onChange={onChange}>
+    <form
+      ref={ref}
+      className="cap-ai-sample"
+      data-cap="ai-sample"
+      onSubmit={submit}
+      onChange={onChange}
+    >
       <div className="cap-ai-sample-head">
         <p className="cap-ai-sample-title">{title}</p>
         {live ? <span className="cap-ai-sample-live">{live}</span> : null}
@@ -52,6 +70,8 @@ export function AiSample({
             type="submit"
             className="cap-btn"
             data-variant="primary"
+            data-ai-sample-generate=""
+            data-busy-label={typeof busyLabel === "string" ? busyLabel : undefined}
             disabled={busy}
             aria-busy={busy ? "true" : undefined}
           >

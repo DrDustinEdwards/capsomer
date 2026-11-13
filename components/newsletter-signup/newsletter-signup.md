@@ -6,6 +6,7 @@ parts: [css, react]
 tool: native
 states: [card, plain, with an error, sent, phone]
 added: 0.132.0
+updated: 0.135.0
 source: germomics' subscribe page newsletter (app/routes/subscribe.tsx)
 replaces:
   - 'name="consent"'
@@ -51,7 +52,7 @@ A site that mails a newsletter. The action must do double opt-in: nothing is sub
 <!-- sent: the form becomes <p class="cap-newsletter-done" role="status">Almost done: check your inbox ...</p> -->
 ```
 
-Load `newsletter-signup.css`, `field.css` and `button.css`. React: `NewsletterSignup` from `capsomer/react/newsletter-signup` takes `action`, `title`, `text`, `consent`, `state` (the action's `{ ok }` or `{ ok: false, error }`), `done`, `button`, `plain` and `renderForm`.
+Load `newsletter-signup.css`, `field.css` and `button.css`. React: `NewsletterSignup` from `capsomer/react/newsletter-signup` takes `action`, `title`, `text`, `consent`, `state` (the action's `{ ok }` or `{ ok: false, error }`), `done`, `button`, `plain` and `renderForm`, which is given `NewsletterFormProps` (the class, `method: "post"`, `action`, its label and the fields), so React Router's `Form` takes them spread with no cast. The card's ground is `--cap-newsletter-bg` (`--surface`), apart from the field's own `--surface`.
 
 ## Keyboard
 
