@@ -4,9 +4,9 @@ title: Command menu
 summary: Every view, action and shortcut in one searchable list, opened with Ctrl K.
 parts: [css, behavior, react]
 tool: native + own JavaScript (the shared dialog and listbox)
-states: [closed with its button, open with every group, filtered, stops found by typing stop, no match, an option active, comfortable density, live results, live results without React, mounted when idle with recents, a snippet and Ask, the same extras without React]
+states: [closed with its button, open with every group, filtered, stops found by typing stop, no match, an option active, comfortable density, live results, live results without React, mounted when idle with recents, a snippet and Ask, the same extras without React, an answer under the list]
 added: 0.1.0
-updated: 0.103.0
+updated: 0.123.0
 source: Capsid Portal, dashboard/src/app/CommandMenu.tsx, lib/stops.ts and styles.css (.palette), as of capsid master 2026-10-01
 replaces:
   - 'className="palette"'
@@ -48,6 +48,7 @@ It is never the only way to reach something: every command is also a control on 
 - **Recent.** `recentKey` keeps the last five commands run (ids, per site, in localStorage) and lists them first, as "Recent", while nothing is typed.
 - **A search result's snippet.** A command's `snippet` is a line under its label with the typed words marked (`markQuery`), never through HTML.
 - **Ask.** `ask` adds, while words are typed, a last option "Ask about “…”" that hands them on (an assistant, a site search).
+- **An answer under the list** (without React, `createCommandMenu`, `buildMenu` and `attach` take `answer`). While words are typed, a quiet button (`label`, "Answer this" by default) sits under the list; pressing it calls `run(query, region)`, which fills the region (an AI answer, built with `capsomer/behavior/ai-answer`) and returns `{ cancel }`, or a promise of it, so its code loads only when asked. Focus moves into the answer, then the button hides. Typing again or closing cancels it and empties the region; a failed load says "… could not load. Try again." and keeps the button. With `offer: false` the button waits for `offerAnswer(true)` on each new query, for an app whose search says whether answers are on. A deliberate second action, never on each key, because an answer costs a model call. Ask, above, hands the words away instead; the two can sit in one menu. The React menu has no answer area yet.
 - **A phone gets the whole screen**, under 40rem, and the keys line is hidden there.
 - **The host is its own light entry**, so the menu stays out of every route's first load: `capsomer/react/command-host` has `useCommandHost` and `LazyCommandMenu` (`<LazyCommandMenu host={host} commands={…} />`, the menu loaded with `lazy()` once the host is ready), and imports nothing of the menu until then; Ctrl K or Cmd K before then opens it. `capsomer/react/command-menu` still exports `useCommandHost`.
 - **Without React** the same extras: `createCommandHost(commands, opts)` from `capsomer/behavior/command-host` loads and builds the menu when the page is idle and gives `open(query)`, `load()`, `runWhenReady(id)` and `menu`; Ctrl K, Cmd K or a `[data-cap-command-open]` button before then loads it at once. `navCommands` is the same function; `createCommandMenu` and `attach` take `recentKey` and `ask`, and a command's `snippet` is built as below. A menu written in markup takes `data-recent-key` and `data-ask` (its words; "Ask about" when empty) on the dialog: Ask follows `data-ask-href` with the words in `q`, or dispatches `cap-command` with `{ id: "ask", query }`.

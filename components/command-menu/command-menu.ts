@@ -160,6 +160,14 @@ export interface MenuOptions {
   // Recents and Ask, as the React menu's: see AttachOptions.
   recentKey?: string;
   ask?: AttachOptions["ask"];
+  // An answer under the list, as attach's: buildMenu reads only its label.
+  answer?: AttachOptions["answer"];
+}
+
+// What an answer under the list hands back: cancel stops it (the query changed, the menu
+// closed) and empties nothing itself; the menu empties the region.
+export interface AnswerRun {
+  cancel(): void;
 }
 
 export interface AttachOptions {
@@ -176,7 +184,21 @@ export interface AttachOptions {
   // With words typed, a last option "Ask about “…”" hands them on (an assistant, a site
   // search). In markup: data-ask (its words, "Ask about" when empty) and data-ask-href.
   ask?: { label?: string; run: (query: string) => void };
+  // An answer under the list, in the menu itself (an AI answer about the typed words): a quiet
+  // button with `label` ("Answer this" when empty), shown while words are typed and the answer
+  // is offered. Pressing it calls `run` with the words and the region to fill (it may load its
+  // code first and return a promise); focus moves into the region and the button hides. Typing
+  // again or closing cancels it and empties the region. A deliberate second action, never on
+  // each key, since an answer costs a model call. `offer: false` keeps the button hidden for each
+  // new query until the app calls `offerAnswer(true)` (when its search says answers are on).
+  answer?: {
+    label?: string;
+    offer?: boolean;
+    run: (query: string, region: HTMLElement) => AnswerRun | Promise<AnswerRun>;
+  };
 }
+
+export const ANSWER_LABEL = "Answer this";
 
 // Fills a snippet with its text, the typed words in <mark>; built from nodes, never from HTML.
 export function markSnippet(el: HTMLElement, query: string): void {
@@ -319,8 +341,32 @@ export function buildMenu(commands: Command[], opts: MenuOptions = {}): HTMLDial
   };
   foot.append(hint(["↑", "↓"], "move"), hint(["Enter"], "run"), hint(["Esc"], "close"));
 
-  d.append(search, list, empty, foot);
+  if (opts.answer) d.append(search, list, empty, buildAnswerBox(opts.answer.label), foot);
+  else d.append(search, list, empty, foot);
   return d;
+}
+
+// The answer area under the list: its button, a status for a failed load, and the region.
+function buildAnswerBox(label = ANSWER_LABEL): HTMLElement {
+  const box = document.createElement("div");
+  box.className = "cap-cmd-answer";
+  box.dataset.capPart = "answer";
+  const button = document.createElement("button");
+  button.type = "button";
+  button.className = "cap-btn";
+  button.dataset.variant = "quiet";
+  button.dataset.size = "sm";
+  button.textContent = label;
+  button.hidden = true;
+  const status = document.createElement("p");
+  status.className = "cap-cmd-answer-status";
+  status.setAttribute("role", "status");
+  const region = document.createElement("div");
+  region.className = "cap-cmd-answer-region";
+  region.tabIndex = -1;
+  region.hidden = true;
+  box.append(button, status, region);
+  return box;
 }
 
 export interface Attached {
@@ -328,6 +374,8 @@ export interface Attached {
   close: () => void;
   // Makes the option at this index among those shown the active one.
   setActive: (index: number) => void;
+  // Offers the answer under the list for the words typed now, or withdraws it (opts.answer).
+  offerAnswer: (on: boolean) => void;
   detach: () => void;
 }
 
@@ -344,7 +392,8 @@ export function attach(
   const input = dialog.querySelector<HTMLInputElement>("[role='combobox']");
   const list = dialog.querySelector<HTMLElement>("[role='listbox']");
   const empty = dialog.querySelector<HTMLElement>("[data-cap-part='empty']");
-  if (!input || !list) return { open() {}, close() {}, setActive() {}, detach: unwireBase };
+  if (!input || !list)
+    return { open() {}, close() {}, setActive() {}, offerAnswer() {}, detach: unwireBase };
   list.dataset.controlled = "";
   // A menu written for 0.1 named keywords, group and the active option another way.
   for (const o of list.querySelectorAll<HTMLElement>("[role='option']")) {
@@ -502,11 +551,69 @@ export function attach(
     stopSearch();
     setBusy(false);
   };
+
+  // The answer under the list (opts.answer).
+  const answer = opts.answer;
+  const answerBox = dialog.querySelector<HTMLElement>("[data-cap-part='answer']");
+  const answerButton = answerBox?.querySelector<HTMLButtonElement>("button");
+  const answerStatus = answerBox?.querySelector<HTMLElement>("[role='status']");
+  const answerRegion = answerBox?.querySelector<HTMLElement>(".cap-cmd-answer-region");
+  let answerRun: AnswerRun | null = null;
+  let answerLoading = false;
+  let offered = answer?.offer ?? true;
+  const showAnswerButton = () => {
+    if (answerButton) answerButton.hidden = !(offered && !answerRun && input.value.trim());
+  };
+  const resetAnswer = () => {
+    answerRun?.cancel();
+    answerRun = null;
+    answerRegion?.replaceChildren();
+    if (answerRegion) answerRegion.hidden = true;
+    if (answerStatus) answerStatus.textContent = "";
+    offered = answer?.offer ?? true;
+    showAnswerButton();
+  };
+  const runAnswer = async () => {
+    const q = input.value.trim();
+    // The button stays while the code loads, so a second press must not start a second answer.
+    if (!answer || !answerRegion || !q || answerLoading || answerRun) return;
+    answerLoading = true;
+    let started: AnswerRun;
+    try {
+      started = await answer.run(q, answerRegion);
+    } catch {
+      // The button stays, so the person can try again, and the status says so.
+      if (answerStatus)
+        answerStatus.textContent = `${answer.label ?? ANSWER_LABEL} could not load. Try again.`;
+      return;
+    } finally {
+      answerLoading = false;
+    }
+    // The words changed or the menu closed while it loaded: this answer is for nothing shown.
+    if (!dialog.open || input.value.trim() !== q) {
+      started.cancel();
+      answerRegion.replaceChildren();
+      return;
+    }
+    answerRun = started;
+    if (answerStatus) answerStatus.textContent = "";
+    answerRegion.hidden = false;
+    // Focus moves before the button hides: hiding a focused button drops focus to <body>, which in
+    // a modal dialog leaves the person nowhere (WCAG 2.4.3).
+    (answerRegion.querySelector<HTMLElement>("[tabindex='-1']") ?? answerRegion).focus();
+    showAnswerButton();
+  };
+  const onAnswerClick = () => void runAnswer();
   // After the listbox's own input listener, so its filter has run.
   if (hasExtras) input.addEventListener("input", onExtras);
   if (opts.search) {
     input.addEventListener("input", startSearch);
     dialog.addEventListener("close", onClose);
+  }
+  if (answer) {
+    input.addEventListener("input", resetAnswer);
+    dialog.addEventListener("close", resetAnswer);
+    answerButton?.addEventListener("click", onAnswerClick);
   }
   const onSelect = (e: Event) => choose((e as CustomEvent<{ option: HTMLElement }>).detail.option);
   const onKey = (e: KeyboardEvent) => {
@@ -527,6 +634,7 @@ export function attach(
     open(query = "", opener: Element | null = document.activeElement) {
       if (dialog.open) return;
       input.value = query;
+      if (answer) resetAnswer();
       if (hasExtras) extras();
       lb.filter(query);
       startSearch();
@@ -536,12 +644,20 @@ export function attach(
       closeDialog(dialog);
     },
     setActive: (i) => lb.setActive(i),
+    offerAnswer(on) {
+      offered = on;
+      showAnswerButton();
+    },
     detach() {
       list.removeEventListener("cap:option-select", onSelect);
       input.removeEventListener("keydown", onKey);
       input.removeEventListener("input", startSearch);
       input.removeEventListener("input", onExtras);
       dialog.removeEventListener("close", onClose);
+      input.removeEventListener("input", resetAnswer);
+      dialog.removeEventListener("close", resetAnswer);
+      answerButton?.removeEventListener("click", onAnswerClick);
+      resetAnswer();
       stopSearch();
       lb.detach();
       unwireBase();
@@ -582,6 +698,7 @@ export function createCommandMenu(commands: Command[], opts: MenuOptions = {}): 
     searchDelay: opts.searchDelay,
     recentKey: opts.recentKey,
     ask: opts.ask,
+    answer: opts.answer,
   });
   current = a;
   ensureShortcut();

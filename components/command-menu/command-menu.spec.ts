@@ -45,6 +45,7 @@ eachTheme((theme) => {
     "active",
     "live",
     "live-dom",
+    "answer-dom",
   ]) {
     test(`accessibility: no axe violations, ${id}`, async ({ page }) => {
       await visitStates(page, "command-menu", theme, id);
@@ -261,4 +262,24 @@ eachTheme((theme) => {
       await expect(page.getByRole("status")).toHaveText("Asked: when is the survey");
     });
   }
+
+  test("behavior: the answer under the list streams into the menu, takes focus, and typing again cancels it (answer-dom)", async ({
+    page,
+  }) => {
+    await visitStates(page, "command-menu", theme, "answer-dom");
+    const input = page.getByRole("combobox", { name: "Search this site" });
+    const button = page.getByRole("button", { name: "Ask AI about this" });
+    await button.click();
+    const answer = page.getByRole("region", { name: "AI answer" });
+    await expect(answer).toBeFocused();
+    await expect(button).toBeHidden();
+    await expect(answer.locator(".cap-ai-answer-body")).toHaveText(
+      "Field notes are kept for each spring survey, one page per plot.",
+    );
+    await expect(answer.getByRole("list", { name: "Sources" }).getByRole("link")).toHaveCount(2);
+    await expectNoAxeViolations(page);
+    await input.fill("plots");
+    await expect(answer).toHaveCount(0);
+    await expect(button).toBeVisible();
+  });
 });
