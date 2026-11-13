@@ -22,7 +22,7 @@
     gap: var(--space-3);
     min-inline-size: 0;
     padding: var(--pad-card);
-    border: 1px solid var(--line);
+    border: var(--line-w) solid var(--line);
     border-radius: var(--radius-l);
     background: var(--surface);
     box-shadow: var(--card-shadow);
@@ -30,7 +30,7 @@
 
     &[data-featured] {
       border-color: var(--accent-line);
-      box-shadow: 0 0 0 1px var(--accent-line), var(--card-shadow);
+      box-shadow: 0 0 0 var(--line-w) var(--accent-line), var(--card-shadow);
     }
   }
 
@@ -44,7 +44,7 @@
     font-family: var(--display);
     font-size: var(--fs-h3);
     font-weight: var(--weight-heading);
-    line-height: 1.3;
+    line-height: var(--leading-snug);
   }
 
   .cap-price-card-price {
@@ -57,23 +57,27 @@
 
   .cap-price-card-amount {
     color: var(--cap-price-color, var(--accent-text));
-    font-family: var(--figures, var(--mono));
-    font-size: var(--cap-price-size, 2rem);
-    font-weight: 600;
-    line-height: 1;
-    letter-spacing: -0.02em;
+    /* The face, not --figures: that is a font-variant-numeric value, so as a font-family it was
+       invalid and the amount fell back to the inherited face. */
+    font-family: var(--cap-price-face, var(--mono));
+    font-size: var(--cap-price-size, calc(var(--title-3) + var(--space-3)));
+    font-weight: var(--cap-price-weight, var(--weight-semibold));
+    line-height: var(--leading-none);
+    letter-spacing: var(--tracking-tight);
     font-variant-numeric: tabular-nums;
   }
 
   .cap-price-card-unit,
   .cap-price-card-label {
     color: var(--muted);
-    font-size: var(--fs-detail);
-    line-height: 1.4;
+    font-size: var(--cap-price-unit-size, var(--fs-detail));
+    line-height: var(--leading-compact);
   }
 
   .cap-price-card-label {
     margin: 0;
+    font-size: var(--cap-price-label-size, var(--fs-detail));
+    font-weight: var(--cap-price-label-weight, var(--weight-regular));
   }
 
   .cap-price-card-text {
@@ -91,7 +95,7 @@
     list-style: none;
     color: var(--muted);
     font-size: var(--fs-detail);
-    line-height: 1.45;
+    line-height: var(--leading-compact);
 
     & > li {
       display: grid;
@@ -128,7 +132,7 @@
       margin-block-end: var(--space-2);
       padding: 0;
       color: var(--text);
-      font-weight: 600;
+      font-weight: var(--weight-semibold);
     }
   }
 
@@ -144,7 +148,7 @@
     gap: var(--space-1);
     min-block-size: var(--target);
     padding: var(--pad-y) var(--pad-x);
-    border: 1px solid var(--line);
+    border: var(--line-w) solid var(--line);
     border-radius: var(--radius-m);
     background: var(--surface);
     cursor: pointer;
@@ -163,7 +167,7 @@
 
     &:has(input:checked) {
       border-color: var(--accent);
-      box-shadow: 0 0 0 1px var(--accent);
+      box-shadow: 0 0 0 var(--line-w) var(--accent);
     }
 
     &:has(input:focus-visible) {
@@ -173,7 +177,7 @@
 
     &:has(input:disabled) {
       cursor: default;
-      opacity: 0.6;
+      opacity: var(--opacity-muted);
     }
 
     @media (prefers-reduced-motion: no-preference) {
@@ -182,13 +186,14 @@
   }
 
   .cap-plan-option-name {
-    padding-inline-end: 1.5rem;
+    padding-inline-end: var(--space-6);
     color: var(--text);
-    font-weight: 600;
+    font-weight: var(--weight-semibold);
     font-size: var(--text-size);
   }
 
-  .cap-plan-option-price {
+  .cap-plan-option-price,
+  .cap-plan-option-note {
     color: var(--muted);
     font-size: var(--fs-detail);
     font-variant-numeric: tabular-nums;
@@ -201,6 +206,6 @@
   }
 
   .cap-plan-option:has(input:checked) {
-    outline: 2px solid Highlight;
+    outline: var(--focus-width) solid Highlight;
   }
 }

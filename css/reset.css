@@ -31,7 +31,7 @@
 
   html,
   :host {
-    line-height: 1.5;
+    line-height: var(--leading-normal);
     -webkit-text-size-adjust: 100%;
     tab-size: 4;
     font-family: var(--face);
@@ -41,7 +41,7 @@
   hr {
     height: 0;
     color: inherit;
-    border-top-width: 1px;
+    border-top-width: var(--line-w);
   }
 
   abbr:where([title]) {
@@ -161,11 +161,11 @@
   }
 
   :where(select:is([multiple], [size])) optgroup option {
-    padding-inline-start: 20px;
+    padding-inline-start: calc(var(--space-5) + var(--space-2));
   }
 
   ::file-selector-button {
-    margin-inline-end: 4px;
+    margin-inline-end: var(--space-2);
   }
 
   ::placeholder {
@@ -213,7 +213,7 @@
   }
 
   ::-webkit-calendar-picker-indicator {
-    line-height: 1;
+    line-height: var(--leading-none);
   }
 
   :-moz-ui-invalid {

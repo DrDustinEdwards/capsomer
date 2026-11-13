@@ -49,7 +49,7 @@
   .cap-authorship-text {
     font-family: var(--prose);
     font-size: var(--fs-prose);
-    line-height: 1.6;
+    line-height: var(--leading-relaxed);
     max-inline-size: var(--measure);
 
     & > :first-child {
@@ -67,7 +67,7 @@
     --cap-run-color: var(--cap-run-colour, var(--accent)); /* codespell:ignore */
     --cap-run-pattern: solid;
     border: 0 var(--cap-run-pattern) var(--cap-run-color);
-    border-inline-start-width: var(--cap-auth-rule, 4px);
+    border-inline-start-width: var(--cap-auth-rule, var(--line-w-heavy));
     padding-inline-start: var(--cap-auth-pad, var(--space-3));
     box-decoration-break: clone;
 
@@ -107,13 +107,13 @@
     color: var(--text);
     font-family: var(--ui);
     font-size: var(--fs-label);
-    font-weight: 600;
-    line-height: 1.5;
+    font-weight: var(--weight-semibold);
+    line-height: var(--leading-normal);
     vertical-align: baseline;
     white-space: nowrap;
 
     & > .cap-avatar {
-      --cap-avatar-size: 16px;
+      --cap-avatar-size: var(--title-6);
       box-shadow: none;
     }
   }
@@ -131,7 +131,7 @@
     .cap-run:is(div, p, blockquote, section, li) > .cap-run-label {
       position: absolute;
       inset-block-start: 0;
-      inset-inline-end: calc(100% + var(--space-4) + var(--cap-auth-rule, 4px) - var(--space-2));
+      inset-inline-end: calc(100% + var(--space-4) + var(--cap-auth-rule, var(--space-2)) - var(--space-2));
       margin: 0;
     }
   }
@@ -140,7 +140,7 @@
      shares read without color. Widths come from --cap-share, set through the CSSOM. */
   .cap-authorship-summary .cap-meter-bar {
     display: flex;
-    gap: 2px;
+    gap: var(--space-1);
     background: var(--sunken);
   }
   .cap-authorship-seg {
@@ -171,7 +171,7 @@
       border-color: CanvasText;
     }
     .cap-run-label {
-      border: 1px solid CanvasText;
+      border: var(--line-w) solid CanvasText;
     }
     .cap-authorship-seg {
       forced-color-adjust: none;

@@ -23,7 +23,7 @@
     padding: 0;
     gap: 0;
     margin-block-start: var(--pad-card);
-    border-block-start: 1px solid var(--line);
+    border-block-start: var(--line-w) solid var(--line);
   }
 
   /* One gate. Gates are separated by a hairline, not boxed. */
@@ -36,7 +36,7 @@
     border: 0;
 
     & + & {
-      border-block-start: 1px solid var(--line);
+      border-block-start: var(--line-w) solid var(--line);
     }
   }
   /* Floated so it leaves the fieldset's border area and becomes the gate's first grid item
@@ -46,8 +46,8 @@
     width: 100%;
     padding: 0;
     font-size: var(--fs-body);
-    font-weight: 600;
-    line-height: 1.375;
+    font-weight: var(--weight-semibold);
+    line-height: var(--leading-compact);
     color: var(--text);
   }
   .cap-approval-meta {
@@ -59,13 +59,13 @@
   .cap-approval-cmd {
     margin: 0;
     padding: var(--pad-y) var(--pad-x);
-    border: 1px solid var(--line);
+    border: var(--line-w) solid var(--line);
     border-radius: var(--radius-m);
     background: var(--sunken);
     color: var(--text);
     font-family: var(--mono);
     font-size: var(--fs-detail);
-    line-height: 1.55;
+    line-height: var(--leading-normal);
     white-space: pre-wrap;
     overflow-wrap: anywhere;
 
@@ -77,7 +77,7 @@
   .cap-approval-error {
     flex: none;
     padding: var(--pad-card);
-    border-block-start: 1px solid var(--line);
+    border-block-start: var(--line-w) solid var(--line);
   }
 
   .cap-approval-none {

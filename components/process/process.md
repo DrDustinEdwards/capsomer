@@ -5,8 +5,9 @@ summary: Numbered steps that say how something works, side by side or as a list 
 group: pattern
 parts: [css, react]
 tool: native
-states: [three columns, rows with a tag, flush rows, narrow space]
+states: [three columns, rows with a tag, flush rows, rows with an end, narrow space]
 added: 0.132.0
+updated: 0.142.0
 source: Foxhound's how it works (app/components/product-sections-cap.tsx) and its guide's ordered rows (app/components/docs/doc-widgets.tsx)
 replaces:
   - 'How it works'
@@ -24,6 +25,7 @@ replaces:
       <h3 class="cap-process-title">Connect your account</h3>
       <span class="cap-process-tag">[a pill]</span>   <!-- optional -->
       <p class="cap-process-text">One line saying what happens.</p>
+      <span class="cap-process-end">[timing, a pill]</span>   <!-- optional; at the line's end in rows -->
     </li>
   </ol>
 </div>

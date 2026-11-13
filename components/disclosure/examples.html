@@ -111,7 +111,7 @@
 
 <section class="cap-specimen" aria-labelledby="s-card">
   <h2 id="s-card">Card variant (a questions list), one open at a time</h2>
-  <ul id="card-specimen" style="display: grid; gap: 12px; margin: 0; padding: 0; list-style: none">
+  <ul id="card-specimen" style="display: grid; gap: var(--space-4); margin: 0; padding: 0; list-style: none">
     <li><details class="cap-disclosure" data-variant="card" name="card-faq" open>
       <summary>Does it change my billing settings?</summary>
       <div class="cap-disclosure-body"><p>No. It reads the account and changes nothing.</p></div>
@@ -180,7 +180,7 @@
 <section class="cap-specimen" aria-labelledby="s-card-sm">
   <h2 id="s-card-sm">Compact card, a form behind its title</h2>
   <p class="cap-muted">Small cards beside each other on an admin page: each opens in place to a form or a list ("Edit sponsor", "Add an item", "Chair (3)").</p>
-  <ul id="card-sm-specimen" style="display: grid; gap: 12px; margin: 0; padding: 0; list-style: none">
+  <ul id="card-sm-specimen" style="display: grid; gap: var(--space-4); margin: 0; padding: 0; list-style: none">
     <li><details class="cap-disclosure" data-variant="card" data-size="sm" open>
       <summary>Edit sponsor</summary>
       <div class="cap-disclosure-body">
@@ -205,7 +205,7 @@
 <section class="cap-specimen" aria-labelledby="s-own">
   <h2 id="s-own">A site's own card: the triangle marker, its spacing by token; and an inline section with it</h2>
   <p class="cap-muted">A compact card with data-marker="triangle" and the disclosure tokens set as txasm's cards were; then an inline section with the triangle.</p>
-  <ul style="display: grid; gap: 12px; margin: 0; padding: 0; list-style: none; --disclosure-pad: 12px; --disclosure-summary-pad: 0; --disclosure-summary-min-h: var(--target); --disclosure-body-pad: 0; --disclosure-body-gap: 12px">
+  <ul style="display: grid; gap: var(--space-4); margin: 0; padding: 0; list-style: none; --disclosure-pad: var(--space-4); --disclosure-summary-pad: 0; --disclosure-summary-min-h: var(--target); --disclosure-body-pad: 0; --disclosure-body-gap: var(--space-4)">
     <li><details class="cap-disclosure" data-variant="card" data-size="sm" data-marker="triangle" open>
       <summary>Session chairs (2)</summary>
       <div class="cap-disclosure-body"><ul><li>Alex Rivera</li><li>Sam Lee</li></ul></div>

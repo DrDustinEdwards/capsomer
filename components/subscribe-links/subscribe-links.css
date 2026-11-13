@@ -7,7 +7,7 @@
 @layer cap.components {
   .cap-subscribe {
     padding: var(--pad-card);
-    border: 1px solid var(--line);
+    border: var(--line-w) solid var(--line);
     border-radius: var(--radius-l);
     background: var(--raised);
   }

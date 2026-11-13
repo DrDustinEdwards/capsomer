@@ -4,8 +4,9 @@ title: Ambient layer
 summary: "Decoration behind a hero that carries no information, such as drifting hexagons or color fields."
 parts: [css, behavior, react]
 tool: own JavaScript
-states: [hex field, blobs, equalizer, reduced motion, paused off screen]
+states: [hex field, blobs, equalizer, equalizer hidden on a phone, reduced motion, paused off screen]
 added: 0.132.0
+updated: 0.142.0
 source: BioScience Writers' HexField (app/components/HexField.tsx, app/islands/hex-field.ts, app.css hex-drift); germomics' HeroBackground and HeroEqualizer (app/components/content/)
 replaces:
   - 'HexField'

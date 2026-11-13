@@ -5,8 +5,9 @@ summary: A plan's name, price, purpose, inclusions and call to action, or the of
 group: pattern
 parts: [css, react]
 tool: native
-states: [grid of three, featured with a flag, price with unit and label, plan choice, plan choice with one disabled]
+states: [grid of three, featured with a flag, price with unit and label, plan choice, plan choice with one disabled, plan note, legend hidden, two text lines]
 added: 0.132.0
+updated: 0.142.0
 source: BioScience Writers' pricing tiers (app/routes/pricing.tsx), Foxhound's pricing cards (app/routes/pricing.tsx) and ProductPricing (app/components/product-sections-cap.tsx), Foxing's paywall plans (.fx-paywall-plan in styles/account.css)
 replaces:
   - 'fx-paywall-plan'
@@ -26,6 +27,7 @@ replaces:
     <p class="cap-price-card-price"><span class="cap-price-card-amount">$0.07</span> <span class="cap-price-card-unit">/ word</span></p>
     <p class="cap-price-card-label">7 to 10 business days</p>
     <p class="cap-price-card-text">Best for manuscripts.</p>
+    <p class="cap-price-card-text">A second line.</p>                         <!-- optional -->
     <ul class="cap-price-card-points" aria-label="Included"><li>...</li></ul>
     <div class="cap-price-card-action"><a class="cap-btn" data-variant="primary" href="...">Start</a></div>
   </li>
@@ -35,7 +37,8 @@ replaces:
   <legend>Plan</legend>
   <div class="cap-plan-choice-options">
     <label class="cap-plan-option"><input type="radio" name="plan" value="monthly" checked />
-      <span class="cap-plan-option-name">Monthly</span><span class="cap-plan-option-price">$5 a month</span></label>
+      <span class="cap-plan-option-name">Monthly</span><span class="cap-plan-option-price">$5 a month</span>
+      <span class="cap-plan-option-note">Save $10</span></label>  <!-- optional -->
   </div>
 </fieldset>
 ```

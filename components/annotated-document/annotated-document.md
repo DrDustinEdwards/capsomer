@@ -5,8 +5,9 @@ summary: An edited text shown as original, edit or every change, beside a rail o
 group: pattern
 parts: [css, behavior, react]
 tool: own JavaScript
-states: [simple markup, original, all markup, a note lit, hover]
+states: [simple markup, original, all markup, a note lit, hover, kinds in their tones, original without notes, control centered]
 added: 0.132.0
+updated: 0.142.0
 source: BioScience Writers' Precision Editing demo (app/components/EditingDemo.tsx, app/islands/editing-demo.ts, .psms-* in app/app.css)
 replaces:
   - 'psms-'

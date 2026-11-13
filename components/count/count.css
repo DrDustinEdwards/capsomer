@@ -13,13 +13,13 @@
     box-sizing: border-box;
     min-inline-size: var(--space-5);
     block-size: var(--space-5);
-    padding-inline: 3px;
+    padding-inline: var(--space-1-5);
     border-radius: var(--radius-full);
     background: var(--muted);
     color: var(--ground);
-    font-size: 0.625rem;
-    font-weight: 700;
-    line-height: 1;
+    font-size: var(--fs-tiny);
+    font-weight: var(--weight-bold);
+    line-height: var(--leading-none);
     font-variant-numeric: var(--figures);
     white-space: nowrap;
 
@@ -42,7 +42,7 @@
 
   @media (forced-colors: active) {
     .cap-count {
-      border: 1px solid CanvasText;
+      border: var(--line-w) solid CanvasText;
       background: Canvas;
       color: CanvasText;
     }

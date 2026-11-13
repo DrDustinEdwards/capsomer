@@ -5,8 +5,9 @@ summary: A feature told at length with a picture, or in a card in a grid with an
 group: pattern
 parts: [css, react]
 tool: native
-states: [stacked block, beside, alternating, lifted, tall preview that scrolls, card grid, card without an icon]
+states: [stacked block, beside, alternating, lifted, tall preview that scrolls, card grid, card without an icon, card with a tag]
 added: 0.132.0
+updated: 0.142.0
 source: Foxhound's FeatureBlocks (app/components/product-sections-cap.tsx), the guide's AuditScopes cards (app/components/docs/doc-widgets.tsx) and the features page's FeatureCard
 replaces:
   - 'FeatureBlocks'
@@ -36,6 +37,10 @@ replaces:
   <li class="cap-feature-card">
     <span class="cap-feature-card-icon" aria-hidden="true"><svg>...</svg></span>
     <h3 class="cap-feature-card-title">Failed invoices</h3>
+    <p class="cap-feature-card-text">One line.</p>
+  </li>
+  <li class="cap-feature-card">                       <!-- a tag at the end of the title's line -->
+    <div class="cap-feature-card-head"><h3 class="cap-feature-card-title">Retry schedule</h3><span class="cap-feature-card-tag"><span class="cap-pill">Recovery</span></span></div>
     <p class="cap-feature-card-text">One line.</p>
   </li>
 </ul>

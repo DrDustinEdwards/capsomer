@@ -6,6 +6,7 @@ parts: [css, behavior, react]
 tool: own JavaScript
 states: [open, voted, hover, closed, no votes yet]
 added: 0.132.0
+updated: 0.142.0
 source: Foxing's club polls (.fx-poll-option in apps/web/app/styles/clubs.css, components/clubs/club-schedule.tsx)
 replaces:
   - 'fx-poll-option'
@@ -20,7 +21,7 @@ replaces:
   <li>
     <button type="button" class="cap-poll-option" data-votes="3" aria-pressed="true">
       <span class="cap-poll-label">Field notes</span>
-      <span class="cap-poll-count">3<span class="cap-sr-only"> votes</span></span>
+      <span class="cap-poll-count" aria-live="polite" aria-atomic="true">3<span class="cap-sr-only"> votes</span></span>
     </button>
   </li>
 </ul>

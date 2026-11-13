@@ -21,7 +21,7 @@
   .cap-theme-options {
     display: inline-flex;
     overflow: hidden;
-    border: 1px solid var(--line-strong);
+    border: var(--line-w) solid var(--line-strong);
     border-radius: var(--radius-m);
     background: transparent;
 
@@ -36,13 +36,13 @@
       padding-inline: var(--pad-x);
       color: var(--muted);
       font-size: var(--fs-body);
-      font-weight: 500;
+      font-weight: var(--weight-medium);
       white-space: nowrap;
       cursor: pointer;
 
       /* Items are flush; a hairline sets the second apart from the first. */
       & + label {
-        border-inline-start: 1px solid var(--line);
+        border-inline-start: var(--line-w) solid var(--line);
       }
       &:hover,
       &[data-force="hover"] {
@@ -52,12 +52,12 @@
       &:has(input:checked) {
         background: var(--accent-12);
         color: var(--ground);
-        font-weight: 600;
+        font-weight: var(--weight-semibold);
       }
       /* Inside the box, so the box's edge does not clip it. */
       &:has(input:focus-visible) {
         outline: var(--focus-width) solid var(--ring);
-        outline-offset: -2px;
+        outline-offset: calc(-1 * var(--focus-offset));
       }
       &:has(input:disabled) {
         background: none;

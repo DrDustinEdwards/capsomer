@@ -26,7 +26,7 @@
     }
 
     &[data-variant="surface"] {
-      border: 1px solid var(--line);
+      border: var(--line-w) solid var(--line);
       border-radius: var(--radius-l);
       background: var(--surface);
     }
@@ -99,8 +99,8 @@
     &[aria-selected="true"],
     &[aria-current="page"] {
       background: var(--accent-soft);
-      box-shadow: inset 3px 0 0 var(--accent);
-      font-weight: 500;
+      box-shadow: inset var(--line-w-bar) 0 0 var(--accent);
+      font-weight: var(--weight-medium);
     }
 
     &[aria-disabled="true"] {
@@ -112,8 +112,8 @@
        kept at full contrast. */
     &[data-dragging] {
       background: var(--sunken);
-      outline: 1px dashed var(--line-strong);
-      outline-offset: -1px;
+      outline: var(--line-w) dashed var(--line-strong);
+      outline-offset: calc(-1 * var(--focus-offset-tight));
     }
 
     /* Where a dragged row will land: a line above or below, or a ring when inside. */
@@ -138,7 +138,7 @@
     }
     &[data-drop="inside"]::after {
       inset: 0;
-      border: 2px solid var(--accent);
+      border: var(--line-w-thick) solid var(--accent);
       border-radius: var(--radius-m);
     }
   }
@@ -205,7 +205,7 @@
     color: var(--muted);
     font-size: var(--fs-detail);
     font-variant-numeric: var(--figures);
-    font-weight: 400;
+    font-weight: var(--weight-regular);
     white-space: nowrap;
   }
 
@@ -227,8 +227,8 @@
     .cap-tree-row {
       &[aria-selected="true"],
       &[aria-current="page"] {
-        outline: 2px solid Highlight;
-        outline-offset: -2px;
+        outline: var(--focus-width) solid Highlight;
+        outline-offset: calc(-1 * var(--focus-offset));
       }
       &[aria-disabled="true"] {
         color: GrayText;
