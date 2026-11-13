@@ -33,7 +33,7 @@ A page whose steps a person does in order, away from the keyboard, where losing 
 - **The screen is kept on** (Screen Wake Lock) while a run is open, and the bar says so when the browser refuses.
 - **A step's key is its id**, else its section and number, because numbering restarts in a second list.
 - **The scale changes in place**: the page at the new scale is fetched and each `[data-run-swap]` region is copied in (matched by name and place), so the server stays the one place amounts are computed. A failed fetch navigates to the scaled page.
-- **Stop asks first**; Discard removes the stored run.
+- **Stop asks first, in the confirm dialog** with focus on Keep going (a one-way action); Discard it removes the stored run. A page that runs checklists also loads `confirm-dialog.css` and `dialog.css`.
 - **Printing a run prints the record**: steps, checks and notes, none of the controls.
 
 ## Keyboard

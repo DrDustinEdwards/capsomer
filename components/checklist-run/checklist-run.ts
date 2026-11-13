@@ -14,7 +14,10 @@
 // page, which is what the scale form does with no script. Extracted from dustinedwards.info's run
 // mode (app/enhance/run.ts).
 
-import { copyChildren, trustedHtml } from "../trusted-html/trusted-html.ts";
+import { confirm } from "../confirm-dialog/confirm-dialog.ts";
+import { reducedMotion } from "../count-up/count-up.ts";
+import { readStored, uid, writeStored } from "../hooks/hooks.ts";
+import { copyChildren, inertDocument } from "../trusted-html/trusted-html.ts";
 import {
   clock,
   finishRun,
@@ -98,13 +101,7 @@ export function start(root: HTMLElement, options: RunOptions = {}): () => void {
 
   let run: Run | null = null;
   const VIEW_KEY = `${KEY}:view`;
-  let oneAtATime = (() => {
-    try {
-      return localStorage.getItem(VIEW_KEY) === "step";
-    } catch {
-      return false;
-    }
-  })();
+  let oneAtATime = readStored(VIEW_KEY) === "step";
   let shownKey: string | null = null;
   let storageNote = "";
   let wakeLock: WakeLockSentinel | null = null;
@@ -194,9 +191,12 @@ export function start(root: HTMLElement, options: RunOptions = {}): () => void {
     { type: "button", class: "cap-btn cap-run-start", "data-variant": "primary" },
     `Run this ${o.noun}`,
   );
+  // Ids of their own, so two runs on one page do not share them.
+  const summaryHeadingId = uid("cap-run-summary-h");
+  const summaryNoteId = uid("cap-run-summary-note");
   const summary = el("section", {
     class: "cap-run-summary",
-    "aria-labelledby": "cap-run-summary-h",
+    "aria-labelledby": summaryHeadingId,
     hidden: "",
   });
   let startNote: HTMLElement | null = null;
@@ -301,12 +301,7 @@ export function start(root: HTMLElement, options: RunOptions = {}): () => void {
 
   function setView(on: boolean) {
     oneAtATime = on;
-    try {
-      if (on) localStorage.setItem(VIEW_KEY, "step");
-      else localStorage.removeItem(VIEW_KEY);
-    } catch {
-      // Not remembered on this device; the view still changes for this visit.
-    }
+    writeStored(VIEW_KEY, on ? "step" : null);
     renderBar();
     const li = run
       ? stepItems[stepKeys.indexOf(shownStep(run, stepKeys, shownKey) ?? "")]
@@ -328,7 +323,7 @@ export function start(root: HTMLElement, options: RunOptions = {}): () => void {
   function focusStep(li: HTMLElement) {
     li.scrollIntoView({
       block: "center",
-      behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
+      behavior: reducedMotion() ? "auto" : "smooth",
     });
     li.querySelector<HTMLElement>(".cap-run-done input")?.focus({ preventScroll: true });
   }
@@ -547,7 +542,7 @@ export function start(root: HTMLElement, options: RunOptions = {}): () => void {
         credentials: "same-origin",
       });
       if (!res.ok) throw new Error(`checklist-run: ${href} answered ${res.status}`);
-      const doc = new DOMParser().parseFromString(trustedHtml(await res.text()), "text/html");
+      const doc = inertDocument(await res.text());
       // The same checklist on the fetched page: its [data-run-path] root, else its body.
       const next =
         doc.querySelector<HTMLElement>(`[data-run-path="${CSS.escape(checklist.path)}"]`) ??
@@ -616,16 +611,16 @@ export function start(root: HTMLElement, options: RunOptions = {}): () => void {
     }
   }
 
+  // One-way, so it asks in the confirm dialog, focus on Cancel (DEFAULTS.md, one-way actions).
   function stop() {
-    if (bar.querySelector(".cap-run-confirm")) return;
-    const confirmRow = el(
-      "p",
-      { class: "cap-run-confirm", role: "alert" },
-      "Discard this run and its notes? ",
-      button("Discard it", "danger", "discard", forget),
-      button("Keep going", "secondary", "keep", () => confirmRow.remove()),
-    );
-    bar.append(confirmRow);
+    void confirm({
+      title: "Discard this run?",
+      body: ["Its checks, notes and timers are removed from this device."],
+      action: "Discard it",
+      cancelLabel: "Keep going",
+      returnTo: startButton,
+      perform: async () => forget(),
+    });
   }
 
   function end() {
@@ -665,7 +660,7 @@ export function start(root: HTMLElement, options: RunOptions = {}): () => void {
     const runNote = el("textarea", {
       class: "cap-input",
       rows: "3",
-      id: "cap-run-summary-note",
+      id: summaryNoteId,
       maxlength: "4000",
     });
     runNote.value = current.note;
@@ -677,7 +672,7 @@ export function start(root: HTMLElement, options: RunOptions = {}): () => void {
         ? o.toRecord(run, stepRecords(), location.origin)
         : runRecord(run, stepRecords(), o.recordName));
     summary.replaceChildren(
-      el("h2", { id: "cap-run-summary-h" }, "Run record"),
+      el("h2", { id: summaryHeadingId }, "Run record"),
       el(
         "p",
         {},
@@ -753,6 +748,11 @@ export function enhance(scope: ParentNode = document, options: RunOptions = {}):
   for (const root of scope.querySelectorAll<HTMLElement>(
     '[data-cap="checklist-run"]:not([data-cap-ready])',
   ))
-    off.push(start(root, { noun: root.dataset.runNoun, ...options }));
+    off.push(
+      start(root, {
+        ...(root.dataset.runNoun === undefined ? {} : { noun: root.dataset.runNoun }),
+        ...options,
+      }),
+    );
   return () => off.forEach((f) => f());
 }
