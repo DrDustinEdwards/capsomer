@@ -23,7 +23,7 @@ const INDEXNOW_KEY = "7c3439c6084107d16882b2cecf775765";
 /** When security.txt lapses (RFC 9116 asks for under a year); renew it before then. */
 const SECURITY_TXT_EXPIRES = "2027-10-25T00:00:00Z";
 const DESCRIPTION =
-  "An open-source design system in plain CSS, with optional React wrappers: components, design tokens, themes and page patterns, checked against WCAG 2.2 AA.";
+  "An open-source design system in plain CSS: accessible components, design tokens, themes and page patterns, with optional React wrappers.";
 const AUTHOR = {
   "@type": "Person",
   "@id": "https://dustinedwards.info/#person",
