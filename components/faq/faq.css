@@ -50,6 +50,17 @@
     font-size: var(--cap-faq-size, inherit);
   }
 
+  /* Each question sits in its own item, so the disclosure's `:last-of-type` (which ends the rules
+     between accordion sections) matched every one and left no rule between the questions. The rule
+     is the item's: under each but the last. */
+  .cap-faq > li > .cap-disclosure[data-variant="accordion"] {
+    border-bottom-width: 1px;
+  }
+
+  .cap-faq > li:last-child > .cap-disclosure[data-variant="accordion"] {
+    border-bottom-width: 0;
+  }
+
   /* List: every answer shown, a card per question. */
   .cap-faq[data-variant="list"] > li {
     display: grid;

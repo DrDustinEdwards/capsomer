@@ -76,6 +76,34 @@
   </div>
 </section>
 
+<section class="cap-specimen" aria-labelledby="s-tone">
+  <h2 id="s-tone">Kinds in their tones, the control centered, no notes in the original</h2>
+  <div class="cap-annotated" data-cap="annotated" data-hide-notes="original" data-view-align="center" data-kind="tone" id="ad-tone">
+    <fieldset class="cap-seg cap-annotated-view">
+      <legend class="cap-sr-only">Markup view</legend>
+      <div class="cap-seg-options">
+        <label><input type="radio" name="ad-view-3" value="original" checked /> Original</label>
+        <label><input type="radio" name="ad-view-3" value="edited" /> Simple markup</label>
+        <label><input type="radio" name="ad-view-3" value="all" /> All markup</label>
+      </div>
+    </fieldset>
+    <div class="cap-annotated-layout">
+      <div class="cap-annotated-doc" role="region" aria-label="Document, in tones" tabindex="0">
+        <p>Files are kept for <mark data-note="t1" data-tone="warn"><del>a while</del><ins>30 days</ins></mark> and then deleted.</p>
+      </div>
+      <ul class="cap-annotated-notes" aria-label="Notes, in tones">
+        <li>
+          <button type="button" class="cap-annotated-note" data-note="t1" data-tone="warn">
+            <span class="cap-annotated-note-icon" aria-hidden="true">E</span>
+            <span class="cap-annotated-note-kind">Editorial</span>
+            <span class="cap-annotated-note-text">Say how long.</span>
+          </button>
+        </li>
+      </ul>
+    </div>
+  </div>
+</section>
+
 <script type="module">
   import { enhance } from "./annotated-document.ts";
   enhance();

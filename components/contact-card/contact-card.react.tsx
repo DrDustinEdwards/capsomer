@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { Fragment, type ReactNode } from "react";
 
 // A phone number as a `tel:` address: the digits and a leading +, with a country code when the number has none
 // (`country`, "1" for the US). RFC 3966: visual separators may stay, so dashes are kept.
@@ -12,6 +12,8 @@ export interface ContactWay {
   label: ReactNode;
   href: string;
   icon?: ReactNode;
+  // An icon after the words (an arrow).
+  iconEnd?: ReactNode;
 }
 
 export interface ContactLine {
@@ -19,6 +21,8 @@ export interface ContactLine {
   label: ReactNode;
   // Phone numbers as written; each becomes a tel: link.
   numbers: string[];
+  // A word between the numbers ("or"). Omitted: the numbers sit side by side.
+  join?: string;
 }
 
 export interface ContactCardProps {
@@ -28,6 +32,8 @@ export interface ContactCardProps {
   text?: ReactNode;
   // Links: an email, a profile, a booking page.
   ways?: ContactWay[];
+  // The ways' columns in this card. Omitted: as many as fit at 12rem.
+  wayColumns?: 1 | 2 | 3;
   // Labeled phone numbers.
   lines?: ContactLine[];
   // Address lines, linked to a map when `mapHref` is given.
@@ -43,6 +49,7 @@ export function ContactCard({
   headingLevel: H = "h3",
   text,
   ways,
+  wayColumns,
   lines,
   address,
   mapHref,
@@ -55,12 +62,13 @@ export function ContactCard({
       <H className="cap-contact-card-title">{title}</H>
       {text ? <p className="cap-contact-text">{text}</p> : null}
       {ways?.length ? (
-        <ul className="cap-contact-ways">
+        <ul className="cap-contact-ways" data-columns={wayColumns}>
           {ways.map((w) => (
             <li key={w.href}>
               <a className="cap-contact-way" href={w.href}>
                 {w.icon ? <span aria-hidden="true">{w.icon}</span> : null}
                 {w.label}
+                {w.iconEnd ? <span aria-hidden="true">{w.iconEnd}</span> : null}
               </a>
             </li>
           ))}
@@ -72,10 +80,11 @@ export function ContactCard({
             <div key={i}>
               <dt>{line.label}</dt>
               <dd>
-                {line.numbers.map((n) => (
-                  <a key={n} href={telHref(n, country)}>
-                    {n}
-                  </a>
+                {line.numbers.map((n, j) => (
+                  <Fragment key={n}>
+                    {j > 0 && line.join ? <span>{line.join}</span> : null}
+                    <a href={telHref(n, country)}>{n}</a>
+                  </Fragment>
                 ))}
               </dd>
             </div>
