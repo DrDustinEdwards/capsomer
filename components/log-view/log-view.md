@@ -32,7 +32,7 @@ Rows a person acts on are a row list or a table with row actions. A sortable, fi
 
 ## Accessibility
 
-A real table with column headers; the scroll box is a named region with `tabindex="0"`.
+A real table, drawn by the table component's `DataTable`: column headers, the first cell of each row its row header, and the scroll box a named region with `tabindex="0"`.
 
 Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the automated browser checks and a front-end review stand in.
 

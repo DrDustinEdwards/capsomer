@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { Status } from "../status/status.react.tsx";
+import { DataTable } from "../table/table.react.tsx";
 
 export interface LogColumn<Row> {
   key: string;
@@ -30,8 +31,8 @@ export interface LogViewProps<Row> {
   empty: ReactNode;
 }
 
-// Lines from a log or a source's top list (paths and their failures, crawlers and their hits): a
-// plain table that scrolls sideways inside its own box, mono for raw values and tabular figures
+// Lines from a log or a source's top list (paths and their failures, crawlers and their hits): the
+// table's DataTable, which scrolls sideways inside its own box, mono for raw values and tabular figures
 // for counts, a note when the source cut the list short, and a stated None when there are none.
 export function LogView<Row>({
   caption,
@@ -54,35 +55,20 @@ export function LogView<Row>({
         </p>
       ) : (
         <>
-          <div className="cap-table-wrap" role="region" aria-label={caption} tabIndex={0}>
-            <table className="cap-table" data-density="compact">
-              <caption className={showCaption ? undefined : "cap-sr-only"}>{caption}</caption>
-              <thead>
-                <tr>
-                  {columns.map((c) => (
-                    <th key={c.key} scope="col" data-num={c.num ? "" : undefined}>
-                      {c.label}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {rows.map((r) => (
-                  <tr key={rowKey(r)}>
-                    {columns.map((c) => (
-                      <td
-                        key={c.key}
-                        data-num={c.num ? "" : undefined}
-                        className={c.mono ? "cap-log-mono" : undefined}
-                      >
-                        {c.cell(r)}
-                      </td>
-                    ))}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <DataTable
+            caption={caption}
+            captionHidden={!showCaption}
+            density="compact"
+            columns={columns.map((c) => ({
+              key: c.key,
+              header: c.label,
+              num: c.num,
+              cell: c.mono ? (r: Row) => <span className="cap-log-mono">{c.cell(r)}</span> : c.cell,
+            }))}
+            rows={rows}
+            rowKey={rowKey}
+            empty={empty}
+          />
           {truncated && <p className="cap-log-note">{truncatedNote}</p>}
         </>
       )}
