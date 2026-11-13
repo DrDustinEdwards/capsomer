@@ -4,6 +4,10 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+## [0.137.0]
+
+- **`MediaPicker` and `ImageField` load the media library when the dialog opens.** `media-picker.react.tsx` imported `MediaLibrary` statically, so a page that drew only the button (an editor, a settings form) shipped the whole library: 32 KB gzip on Carrel's editor route (capsomer#408). The library is now its own chunk behind `React.lazy` and `Suspense`, showing the same "Loading media..." text while it arrives. No token, class, export or HTML contract changed.
+
 ## [0.135.0]
 
 - **Command menu: an answer under the list.** `answer: { label, offer, run(query, region) }` on `createCommandMenu`, `buildMenu` and `attach` adds `.cap-cmd-answer` (a quiet button, a status, `.cap-cmd-answer-region`) between the list and the key hints: the button shows while words are typed, `run` fills the region and returns `{ cancel }` (or a promise of it, so its code loads only when pressed), focus moves into the answer before the button hides, and typing again or closing cancels it. `ask(region, options)` from `capsomer/behavior/ask-panel` is such a `run`. `offer: false` with `Attached.offerAnswer(on)` lets a search say whether answers are on. New export `ANSWER_LABEL`, type `AnswerRun`. The React menu has no answer area yet.
