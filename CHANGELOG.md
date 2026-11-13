@@ -4,7 +4,7 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
-## [0.128.0]
+## [0.129.0]
 
 - **`capsomer/react/icon-path`: `IconPath`, an icon from its own path without the set** (`d`, `box`, `fill`, `label`, `className`; the same `<svg class="cap-icon">` as `Icon`). `Icon` from `capsomer/react/icons` looks its `name` up in `ICONS`, so every app that imported it shipped the whole set, even one that only passes `d`: 0.119.0's 73 icons put about 3.6 KB gzip on every Desk route and 11 KiB in Carrel's Worker. `Icon` now draws through `IconPath`; an app that draws only its own paths (Carrel's menu) imports `IconPath` instead. No class, token or HTML contract changes.
 - **`capsomer/token-check` no longer exports `normalizeHex`.** Prelum owns it now (one copy): import `normalizeHex` from `@drdustinedwards/site-helpers/text` (Prelum 0.55.0). The behavior is the same (`#abc` or `#aabbcc` as lowercase `#aabbcc`, space and a missing `#` tolerated); `token-check` itself imports it from there. No token or class was removed or renamed, and no HTML contract changed.
