@@ -108,13 +108,14 @@ export function enhance(root: ParentNode = document): () => void {
     const o = options(el);
     const button = document.createElement("button");
     button.type = "button";
-    button.className = "cap-btn cap-keep";
+    button.className = "cap-btn cap-offline-keep-button";
     const status = document.createElement("span");
-    status.className = "cap-keep-status";
+    status.className = "cap-offline-keep-status";
     status.setAttribute("role", "status");
+    button.textContent = "Keep on this device";
     const paint = (kept: boolean) => {
       button.setAttribute("aria-pressed", String(kept));
-      button.textContent = kept ? "Kept on this device" : "Keep on this device";
+      // One label; aria-pressed carries the state (APG button: a toggle's name never changes).
       button.title = kept
         ? "Press to remove the copy kept on this device"
         : "Keep a copy that opens with no connection";

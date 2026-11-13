@@ -44,7 +44,7 @@ A page someone works from away from a network, on a public site: a procedure, a 
 
 ## Accessibility
 
-- A toggle button (`aria-pressed`) whose words change with its state; its title says what a press will do.
+- A toggle button (`aria-pressed`) with one label, "Keep on this device"; the pressed state says whether a copy is kept (APG button pattern: a toggle never changes its name). Its title says what a press will do.
 - The result is a status line, read when it changes.
 
 Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the automated browser checks and a front-end review stand in. Automated: see the site's Tests page.
@@ -59,8 +59,8 @@ Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the a
 <span data-cap="offline-keep" data-worker="/sw.js" data-scope="/"></span>
 <!-- script fills it: -->
 <span data-cap="offline-keep" data-worker="/sw.js" data-scope="/" data-cap-ready="">
-  <button type="button" class="cap-btn cap-keep" aria-pressed="false" title="Keep a copy that opens with no connection">Keep on this device</button>
-  <span class="cap-keep-status" role="status"></span>
+  <button type="button" class="cap-btn cap-offline-keep-button" aria-pressed="false" title="Keep a copy that opens with no connection">Keep on this device</button>
+  <span class="cap-offline-keep-status" role="status"></span>
 </span>
 ```
 
