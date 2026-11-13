@@ -40,7 +40,7 @@ test("themeAction: a form post sets the cookie and goes back; a fetch gets 204; 
   assert.equal(form.status, 303);
   assert.equal(form.headers.get("location"), "/release-notes");
   assert.match(form.headers.get("set-cookie"), /^site_theme=dark; Path=\/;/);
-  assert.equal(form.headers.get("cache-control"), "no-store");
+  assert.equal(form.headers.get("cache-control"), "private, no-store");
   assert.deepEqual(saved, ["dark"]);
 
   const json = await themeAction(
