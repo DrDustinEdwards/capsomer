@@ -63,7 +63,7 @@ const SITES = {
   },
   foxhound: {
     family: "amber",
-    on: "each .fh-cap wrapper, never <html> (Foxhound's unlayered :root would beat it there) or the admin",
+    on: "<html> on every page but the admin, where Foxhound's unlayered :root keeps the neutrals it shares a name with, and each .fh-cap wrapper, which takes them all",
     note: "Foxhound's own neutrals, DM faces and Recova's sizes under the amber family's accents, dark by default",
     defaultTheme: "dark",
     // Recova's measures (Dustin, 2026-10-25: back to the old sizes): 13px secondary text and
@@ -94,6 +94,14 @@ const SITES = {
       "card-lift": "-4px",
       "card-edge": "1",
       "btn-sweep": "1",
+      // Recova's links (Dustin, 2026-11-13, "Recova's underlined links"): a line 2px under the text at
+      // the text's own weight, with no tint under the pointer.
+      "link-weight": "inherit",
+      "link-decoration": "underline",
+      "link-offset": "2px",
+      "link-hover-bg": "transparent",
+      "link-pressed-bg": "transparent",
+      "link-tint-pad": "0px",
     },
     coarse: { control: "44px", "control-h": "44px" },
     // Text, muted, dim and the control border are Foxhound's own hues lifted to Capsomer's APCA

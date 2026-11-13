@@ -4,6 +4,10 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+## [0.120.0]
+
+- **Links: a site's line on text links only, and `--link-offset`.** `--link-decoration` now draws on text links (no component class, or a `data-link` kind) outside a `nav`, as the tints do; every other link has no line. New token `--link-offset` (auto) sets how far the line sits under the text. Foxhound's entry sets Recova's links: underlined 2px under the text at the text's own weight, with no tint (Dustin, 2026-11-13). Its entry now also goes on `<html>` on every page but the admin. Removed or renamed: no token or class.
+
 ## [0.119.0]
 
 - **New: `capsomer/reset.css`, an opt-in element reset.** Tailwind's preflight (MIT, notice in the file) in the `cap.reset` layer, its faces read from `--face` and `--mono`: margins, padding and borders to zero, headings and lists unstyled, media as blocks, form controls inheriting the text. For a site leaving Tailwind (bsw, germomics, Foxhound) so its pages keep the same spacing, and for dustinedwards.info, which vendored the same file (`app/styles/reset.css`). `base.css` does not import it. Removed or renamed: no token or class.
