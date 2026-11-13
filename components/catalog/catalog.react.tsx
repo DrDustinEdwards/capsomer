@@ -1,6 +1,7 @@
 import { useEffect, useRef, type ReactNode } from "react";
 import { Empty } from "../empty/empty.react.tsx";
 import { Pagination } from "../pagination/pagination.react.tsx";
+import { SpanField } from "../field/field.react.tsx";
 import { attachCatalog } from "./catalog.ts";
 import {
   countText,
@@ -137,36 +138,17 @@ export function Catalog<T>({
             // A facet with nothing to choose (every value filtered away, or none in the collection) is left out.
             if (facet.options.length === 0) return null;
             if (facet.kind === "range" && facet.range) {
-              const r = facet.range;
-              const menu = (end: "from" | "to") => (
-                <label className="cap-field cap-catalog-range-end">
-                  <span className="cap-field-label">{end === "from" ? "From" : "To"}</span>
-                  <select
-                    className="cap-select"
-                    name={r.params[end]}
-                    defaultValue={r[end] === null ? "" : String(r[end])}
-                  >
-                    <option value="">Any</option>
-                    {facet.options.map((o) => (
-                      <option key={o.value} value={o.value}>
-                        {o.label}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-              );
               return (
-                <fieldset
-                  className="cap-field cap-catalog-facet cap-catalog-range"
+                <SpanField
                   key={facet.key}
+                  className="cap-catalog-facet"
+                  label={facet.label}
+                  names={facet.range.params}
+                  options={facet.options}
+                  from={facet.range.from}
+                  to={facet.range.to}
                   data-general={facet.general ? "" : undefined}
-                >
-                  <legend className="cap-field-label">{facet.label}</legend>
-                  <div className="cap-catalog-range-ends">
-                    {menu("from")}
-                    {menu("to")}
-                  </div>
-                </fieldset>
+                />
               );
             }
             const shown = facet.options.filter((o, i) => i < facet.limit || o.selected);

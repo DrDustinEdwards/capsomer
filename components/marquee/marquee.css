@@ -54,9 +54,9 @@
     gap: var(--space-3);
     min-block-size: var(--target);
     padding: var(--space-2) var(--space-5);
-    border: 1px solid var(--line-strong);
+    border: var(--line-w) solid var(--line-strong);
     border-radius: var(--radius-full);
-    font-weight: 600;
+    font-weight: var(--weight-semibold);
     cursor: pointer;
 
     & > input {
@@ -67,7 +67,7 @@
     }
     &:has(> input:focus-visible) {
       outline: var(--focus-width) solid var(--ring);
-      outline-offset: 2px;
+      outline-offset: var(--focus-offset);
     }
   }
 

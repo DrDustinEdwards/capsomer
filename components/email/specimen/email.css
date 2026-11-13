@@ -2,19 +2,19 @@
 .email-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 1.5rem;
+  gap: var(--space-6);
   align-items: flex-start;
 }
 .email-figure {
   margin: 0;
 }
 .email-figure figcaption {
-  font-size: 0.875rem;
+  font-size: var(--fs-body);
   color: var(--muted);
-  margin-block-end: 0.25rem;
+  margin-block-end: var(--space-2);
 }
 .email-frame {
   max-inline-size: 100%;
   block-size: 34rem;
-  border: 1px solid var(--line);
+  border: var(--line-w) solid var(--line);
 }

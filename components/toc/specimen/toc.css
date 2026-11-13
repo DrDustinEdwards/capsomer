@@ -2,15 +2,15 @@
 .toc-demo {
   display: grid;
   grid-template-columns: 14rem minmax(0, 1fr);
-  gap: 2rem;
+  gap: var(--space-7);
   block-size: 24rem;
   overflow-y: auto;
 }
 .toc-demo-post {
-  padding-block-end: 20rem;
+  padding-block-end: calc(5 * var(--space-9));
 }
 .toc-demo-post p {
-  margin-block-end: 8rem;
+  margin-block-end: calc(2 * var(--space-9));
 }
 .toc-demo .cap-toc[data-variant="sidebar"] {
   top: 0;

@@ -38,11 +38,11 @@ test("no component stylesheet puts rules outside a cap layer", () => {
     const css = readFileSync(f, "utf8")
       .replace(/\/\*[\s\S]*?\*\//g, "")
       .replace(ORDER, "")
-      // A sibling component's stylesheet it builds on (link.css takes link-file.css), checked
-      // here on its own.
-      .replace(/^\s*@import "\.\.\/([\w-]+)\/\1\.css";/gm, "")
+      // A stylesheet it builds on, a sibling component's (link.css takes link-file.css) or one of
+      // its own parts (ambient.css takes each kind's file), checked here on its own.
+      .replace(/^\s*@import "(?:\.\.\/([\w-]+)\/\1|\.\/[\w-]+)\.css";/gm, "")
       .trim();
-    if (!/^@layer cap\.(components|base|utilities) \{/.test(css)) bad.push(f);
+    if (css && !/^@layer cap\.(components|base|utilities) \{/.test(css)) bad.push(f);
   }
   assert.deepEqual(bad, []);
 });
@@ -69,4 +69,18 @@ test("every scroll-driven animation keeps duration auto after minifying", async 
   );
   const bad = rules.filter(([, body]) => !/animation-duration:auto(?![^;]*,)/.test(body));
   assert.deepEqual(bad, []);
+});
+
+// `./*.css` maps `capsomer/<name>.css` to `components/<name>/<name>.css`; a stylesheet named
+// otherwise (role-grid.css in people-roles/) needs its own export, or an import of it fails to resolve.
+test("every component stylesheet can be imported by name", () => {
+  const exports = JSON.parse(readFileSync("package.json", "utf8")).exports;
+  for (const file of cssFiles("components")) {
+    const [, dir, name] = file.split(/[\\/]/);
+    const css = name.replace(/\.css$/, "");
+    assert.ok(
+      dir === css || exports[`./${css}.css`] === `./${file.replace(/\\/g, "/")}`,
+      `${file} has no export: add "./${css}.css" to package.json`,
+    );
+  }
 });

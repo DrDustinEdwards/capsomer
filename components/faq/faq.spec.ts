@@ -32,4 +32,12 @@ eachTheme((theme) => {
     await visitStates(page, "faq", theme);
     await expect(page.locator("#faq-accordion").getByRole("heading", { level: 3 })).toHaveCount(3);
   });
+
+  test("behavior: a rule sits between questions and none under the last", async ({ page }) => {
+    await visitStates(page, "faq", theme);
+    const widths = await page
+      .locator("#faq-accordion details")
+      .evaluateAll((els) => els.map((e) => getComputedStyle(e).borderBottomWidth));
+    expect(widths).toEqual(["1px", "1px", "0px"]);
+  });
 });

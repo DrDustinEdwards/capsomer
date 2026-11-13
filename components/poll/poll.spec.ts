@@ -29,6 +29,11 @@ eachTheme((theme) => {
       .locator("#pl-open .cap-poll-option")
       .evaluateAll((els) => els.map((e) => (e as HTMLElement).style.getPropertyValue("--share")));
     expect(s).toEqual(["0.7500", "0.2500", "0.0000"]);
+    // A changed count is announced.
+    await expect(page.locator("#pl-open .cap-poll-count").first()).toHaveAttribute(
+      "aria-live",
+      "polite",
+    );
     await expect(
       page.locator("#pl-open").getByRole("button", { name: "Field notes 3 votes", pressed: true }),
     ).toBeVisible();

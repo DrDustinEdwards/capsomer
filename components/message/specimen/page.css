@@ -10,12 +10,12 @@
   align-items: center;
   gap: var(--space-4);
   padding: var(--space-3) var(--space-4);
-  border: 1px solid var(--line);
+  border: var(--line-w) solid var(--line);
   border-radius: var(--radius-m);
   background: var(--surface);
 }
 .message-sample-row b {
-  font-weight: 600;
+  font-weight: var(--weight-semibold);
 }
 .message-sample label {
   display: grid;

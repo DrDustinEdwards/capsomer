@@ -113,14 +113,14 @@
   @media (prefers-reduced-motion: no-preference) {
     .cap-skeleton-line,
     .cap-skeleton-block {
-      animation: cap-skeleton-pulse 1.6s ease-in-out infinite;
+      animation: cap-skeleton-pulse var(--dur-pulse) var(--ease-in-out) infinite;
     }
     .cap-spinner-arc {
-      animation: cap-spin 0.9s linear infinite;
+      animation: cap-spin var(--dur-wait) linear infinite;
     }
     @keyframes cap-skeleton-pulse {
       50% {
-        opacity: 0.55;
+        opacity: var(--opacity-half);
       }
     }
   }

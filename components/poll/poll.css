@@ -24,11 +24,12 @@
     min-block-size: var(--control);
     padding: var(--space-2) var(--pad-x);
     overflow: hidden;
-    border: 1px solid var(--line);
+    border: var(--line-w) solid var(--line);
     border-radius: var(--radius-m);
     background: var(--surface);
     color: var(--text);
     font: inherit;
+    font-family: var(--ui);
     font-size: var(--fs-detail);
     text-align: start;
     cursor: pointer;
@@ -51,7 +52,7 @@
 
     &[aria-pressed="true"] {
       border-color: var(--accent);
-      font-weight: 600;
+      font-weight: var(--weight-semibold);
 
       &::before {
         background: color-mix(in srgb, var(--accent) 22%, transparent);
@@ -77,7 +78,6 @@
   .cap-poll-count {
     flex: none;
     color: var(--muted);
-    font-family: var(--figures, var(--mono));
     font-variant-numeric: tabular-nums;
   }
 }
@@ -86,10 +86,10 @@
   .cap-poll-option::before {
     forced-color-adjust: none;
     background: Highlight;
-    opacity: 0.35;
+    opacity: var(--opacity-faint);
   }
 
   .cap-poll-option[aria-pressed="true"] {
-    outline: 2px solid Highlight;
+    outline: var(--focus-width) solid Highlight;
   }
 }

@@ -22,12 +22,12 @@
 </section>
 
 <section class="cap-specimen" aria-labelledby="s-flush">
-  <h2 id="s-flush">Flush rows</h2>
+  <h2 id="s-flush">Flush rows, each with its timing and status at the end</h2>
   <div class="cap-process" data-layout="rows" data-flush id="pr-flush">
     <ol class="cap-process-list">
-      <li class="cap-process-step"><h3 class="cap-process-title">Retry in four hours</h3></li>
-      <li class="cap-process-step"><h3 class="cap-process-title">Send the first reminder</h3></li>
-      <li class="cap-process-step"><h3 class="cap-process-title">Retry after three days</h3></li>
+      <li class="cap-process-step"><h3 class="cap-process-title">Retry in four hours</h3><span class="cap-process-end"><span class="cap-mono">+4h</span><span class="cap-pill" data-tone="crit">Retry failed</span></span></li>
+      <li class="cap-process-step"><h3 class="cap-process-title">Send the first reminder</h3><span class="cap-process-end"><span class="cap-mono">+1d</span><span class="cap-pill" data-variant="outline">Pending</span></span></li>
+      <li class="cap-process-step"><h3 class="cap-process-title">Retry after three days</h3><span class="cap-process-end"><span class="cap-mono">+3d</span><span class="cap-pill" data-variant="outline">Pending</span></span></li>
     </ol>
   </div>
 </section>

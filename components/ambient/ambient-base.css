@@ -1,0 +1,39 @@
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* Ambient layers: decoration behind a hero that carries no information. Each is aria-hidden, takes
+   no pointer events, holds still under prefers-reduced-motion and pauses off screen.
+   - `hex-field`: hexagons that drift, drawn by the behavior module at random once per view (so the
+     server and the browser never have to agree on the layout). BioScience Writers' hero.
+   - `blobs`: four large blurred color fields that drift, full-bleed to the window's width.
+     germomics' home hero.
+   - `equalizer`: a row of bars that rise and fall around a center line. germomics' hero shelf.
+   Colors are the site's tokens: `--cap-ambient-1` to `-4`. Positions, sizes and timings are the
+   sources' own, set as presets so no `style` attribute is needed. This file is what every kind
+   shares; a page that imports one kind's file imports this one first. */
+@layer cap.components {
+  .cap-ambient {
+    --cap-ambient-1: var(--primary);
+    --cap-ambient-2: var(--accent);
+    --cap-ambient-3: var(--info);
+    --cap-ambient-4: var(--surface);
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    /* Off screen, the module marks the layer paused (an IntersectionObserver), so nothing animates
+       unseen. One attribute more than a kind's animation rule, which comes later and resets it. */
+    .cap-ambient[data-paused][data-variant] > span {
+      animation-play-state: paused;
+    }
+  }
+}
+
+@media (forced-colors: active) {
+  .cap-ambient {
+    display: none;
+  }
+}

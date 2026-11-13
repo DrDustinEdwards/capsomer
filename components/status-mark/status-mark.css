@@ -10,7 +10,7 @@
     place-items: center;
     inline-size: 48px;
     block-size: 48px;
-    border: 1px solid var(--tone, var(--line-strong));
+    border: var(--line-w) solid var(--tone, var(--line-strong));
     border-radius: 50%;
     background: var(--tone-soft, var(--raised));
     color: var(--tone, var(--muted));
