@@ -1,0 +1,139 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* The site header's search (the magnifier, its panel and the matches), apart from site-header.css so
+   a site with no header search does not download it. Load it after site-header.css (and after
+   site-header-letterhead.css where a site has both). */
+@layer cap.components {
+  /* Search: a magnifier icon beside the theme, on the sites that have search (Dustin, 2026-10-28;
+     a box on half the sites made the header differ from tab to tab). The icon is a link to the
+     search page; with script it opens this panel under it, the field focused, and the site's
+     matches drop down under the field as the person types (site-header.ts, wireSearch). The panel
+     wears the section panels' surface. */
+  .cap-site-header-search {
+    display: contents;
+  }
+  .cap-site-header-search-panel {
+    position: fixed;
+    inset: auto;
+    top: var(--cap-popover-y, 0px);
+    left: var(--cap-popover-x, 0px);
+    box-sizing: border-box;
+    inline-size: min(26rem, 100vw - 2 * var(--page-gutter));
+    margin: 0;
+    padding: var(--space-2);
+    border: var(--line-w) solid var(--line);
+    border-radius: var(--radius-l);
+    background: var(--surface);
+    color: var(--text);
+    box-shadow: var(--shadow-l);
+    font-family: var(--font-ui, var(--ui));
+    font-size: var(--fs-body);
+    line-height: var(--leading-snug);
+
+    & > form {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      block-size: var(--control);
+      margin: 0;
+      padding-inline: var(--space-3);
+      border: var(--line-w) solid var(--line-strong);
+      border-radius: var(--radius-s);
+      background: var(--surface);
+
+      &:focus-within {
+        border-color: var(--accent);
+        outline: var(--focus-width) solid var(--ring);
+        outline-offset: var(--focus-offset);
+      }
+      & > svg {
+        flex: none;
+        inline-size: 18px;
+        block-size: 18px;
+        fill: none;
+        stroke: var(--muted);
+        stroke-width: 1.6;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+      & > input {
+        flex: 1;
+        min-inline-size: 0;
+        block-size: 100%;
+        padding: 0;
+        border: 0;
+        background: none;
+        color: var(--text);
+        font: inherit;
+
+        &::placeholder {
+          color: var(--muted);
+        }
+        &:focus-visible {
+          outline: none;
+        }
+      }
+    }
+  }
+  /* The matches: one row each, the kind small before the title, a line of detail under it. The
+     marked row (Up and Down) is --accent-soft with a 3px accent edge, as in every Capsomer list,
+     so the cue is not the tint alone. The last row opens the full results page. */
+  .cap-site-header-results {
+    margin-block-start: var(--space-2);
+
+    & > [role="listbox"] {
+      display: grid;
+      max-block-size: min(60dvh, 28rem);
+      overflow-y: auto;
+    }
+    & [role="option"] {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      column-gap: var(--space-2);
+      padding: var(--space-2) var(--space-3);
+      border-radius: var(--radius-s);
+      border-inline-start: var(--line-w-bar) solid transparent;
+      color: var(--text);
+      text-decoration: none;
+
+      &:hover {
+        background: var(--sunken);
+      }
+      &[data-highlighted] {
+        border-inline-start-color: var(--accent);
+        background: var(--accent-soft);
+      }
+    }
+    & .cap-site-header-result-kind {
+      color: var(--muted);
+      font-size: var(--fs-detail);
+      line-height: inherit;
+    }
+    & .cap-site-header-result-title {
+      grid-column: 2;
+      font-weight: var(--weight-semibold);
+      overflow-wrap: anywhere;
+    }
+    & .cap-site-header-result-detail {
+      grid-column: 2;
+      color: var(--muted);
+      font-size: var(--fs-detail);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    & .cap-site-header-result-all {
+      grid-template-columns: minmax(0, 1fr);
+      margin-block-start: var(--space-1);
+      color: var(--accent-text);
+      font-weight: var(--weight-semibold);
+    }
+    & .cap-site-header-results-empty {
+      margin: 0;
+      padding: var(--space-2) var(--space-3);
+      color: var(--muted);
+    }
+  }
+
+}

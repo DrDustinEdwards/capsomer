@@ -15,6 +15,8 @@
 @import "../components/button/button.css";
 @import "../components/theme-switch/theme-switch.css";
 @import "../components/site-header/site-header.css";
+@import "../components/site-header-letterhead/site-header-letterhead.css";
+@import "../components/site-header-search/site-header-search.css";
 @import "../components/segmented/segmented.css";
 @import "../components/field/field.css";
 @import "../components/switch/switch.css";
@@ -24,6 +26,7 @@
 @import "../components/table/table.css";
 @import "../components/tabs/tabs.css";
 @import "../components/link/link.css";
+@import "../components/link-family/link-family.css";
 /* The manual theme: the running head, numbered parts and the letterhead (the public pages only). */
 @import "../components/manual/manual.css";
 @import "../components/family-footer/family-footer.css";

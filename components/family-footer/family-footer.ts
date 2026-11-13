@@ -196,7 +196,7 @@ export const FAMILY_SITES: FamilySite[] = [
 
 /**
  * Every family site a link can name: `<a data-link="family" data-site="<id>">` draws the site's icon
- * before the name (components/link/link.css, one mask per id here). The footer's strip is the public
+ * before the name (components/link-family/link-family.css, one mask per id here). The footer's strip is the public
  * few of them (FAMILY_SITES). `icon: false` for a site whose icon Capsomer has not drawn yet (no clone
  * to take it from); its links keep the family arrow turned out.
  */
