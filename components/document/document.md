@@ -26,7 +26,8 @@ The root every site writes: `<html>` under its family and site layer, the head e
 
 ```tsx
 // app/root.tsx
-import { Document, routeHydrates } from "capsomer/react/document";
+import { routeHydrates } from "@dustinedwards/site-runtime/deferred-scripts";
+import { Document } from "capsomer/react/document";
 import { ThemeColor } from "capsomer/react/theme-switch";
 
 export function Layout({ children }: { children: React.ReactNode }) {
@@ -55,4 +56,4 @@ startSite([enhanceHeader, enhanceTabs, startIslands]);
 
 ## Not here
 
-**Hydrating on intent** (React Router's scripts held until the reader presses play) is site-runtime's `./deferred-scripts` and `./hydrate-on-intent`. `routeHydrates` is re-exported from there.
+**Hydrating on intent** (React Router's scripts held until the reader presses play) is site-runtime's `./deferred-scripts` (with `routeHydrates`) and `./hydrate-on-intent`.
