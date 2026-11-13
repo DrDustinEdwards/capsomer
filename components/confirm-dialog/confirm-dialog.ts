@@ -19,11 +19,9 @@ export {
   returnFocus,
 } from "../dialog/dialog.ts";
 
-// The typed-word guard: case-insensitive, surrounding spaces ignored. No word, no guard.
-export function wordMatches(typed: string, word: string | undefined): boolean {
-  if (!word) return true;
-  return typed.trim().toLowerCase() === word.trim().toLowerCase();
-}
+// The typed-word guard lives with the server half (confirm-server.ts), which a Worker imports without the DOM code.
+import { wordMatches } from "./confirm-server.ts";
+export { wordMatches };
 
 // The typed-word guard as an HTML `pattern`, for the page form with no script: every letter is
 // a class of both cases ("delete" gives [Dd][Ee][Ll][Ee][Tt][Ee]) and anything else is escaped,
