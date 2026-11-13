@@ -30,6 +30,8 @@ familyFooterHtml({ site: "dustinedwards", origin: "", published: PUBLISHED_PAGES
 familyFooterHtml({ site: "capsid", center, statement: "/accessibility" });
 ```
 
+A site with its own footer writes its copyright line with `copyright(name, since)`: "© 2024–2026 Example Co", the year from the server's clock in UTC. Render it on the server; never recompute the year in an effect (the old `useState(() => new Date().getFullYear())` pattern can disagree with the server at New Year).
+
 A statement speaks for one site, so a site with its own `/accessibility` (Prelum's `accessibilityStatement`) passes `statement`; the other links stay dustinedwards.info's.
 
 `center` is the site's own HTML, built from these classes:

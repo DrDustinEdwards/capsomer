@@ -101,3 +101,121 @@ export function FilterChips<V extends string>({
     </div>
   );
 }
+
+export interface LinkChip {
+  // The address with this filter applied (or released, for the current one).
+  href: string;
+  label: ReactNode;
+  // How many items this filter leaves, shown after the label.
+  count?: number;
+  current?: boolean;
+}
+
+// Filters kept in the address, as links (no script needed): a labeled list of link chips, the
+// current one marked aria-current="true" and drawn pressed, each with an optional count.
+// `renderLink` draws a router link (capsomer/react/link Link); a plain a otherwise.
+export function LinkChips({
+  label,
+  showLabel = false,
+  chips,
+  size = "default",
+  renderLink,
+}: {
+  label: string;
+  // Show the label before the chips (as FilterChips does); it then names the nav.
+  showLabel?: boolean;
+  chips: readonly LinkChip[];
+  size?: "sm" | "default" | "lg";
+  renderLink?: (props: {
+    href: string;
+    className: string;
+    "aria-current"?: "true";
+    "data-size"?: string;
+    children: ReactNode;
+  }) => ReactNode;
+}) {
+  const labelId = useId();
+  return (
+    <nav
+      aria-label={showLabel ? undefined : label}
+      aria-labelledby={showLabel ? labelId : undefined}
+      className={showLabel ? "cap-chips" : undefined}
+    >
+      {showLabel ? (
+        <span className="cap-chips-label" id={labelId}>
+          {label}
+        </span>
+      ) : null}
+      <ul className="cap-chips">
+        {chips.map((c) => {
+          const props = {
+            href: c.href,
+            className: "cap-chip",
+            "aria-current": c.current ? ("true" as const) : undefined,
+            "data-size": size === "default" ? undefined : size,
+            children: (
+              <>
+                {c.label}
+                {c.count === undefined ? null : <span className="cap-chip-count">{c.count}</span>}
+              </>
+            ),
+          };
+          return (
+            <li key={c.href}>
+              {renderLink ? (
+                renderLink(props)
+              ) : (
+                <a
+                  href={props.href}
+                  className={props.className}
+                  aria-current={props["aria-current"]}
+                  data-size={props["data-size"]}
+                >
+                  {props.children}
+                </a>
+              )}
+            </li>
+          );
+        })}
+      </ul>
+    </nav>
+  );
+}
+
+// Checkbox chips (chips.md): a filter in a form that works with no script, each chip sending
+// `name=value`, with an optional count. The fieldset's legend names the group.
+export function CheckChips({
+  legend,
+  name,
+  options,
+  checked,
+  size = "default",
+}: {
+  legend: ReactNode;
+  name: string;
+  options: ReadonlyArray<{ value: string; label: ReactNode; count?: number; disabled?: boolean }>;
+  // The values checked now (from the address).
+  checked: readonly string[];
+  size?: "sm" | "default" | "lg";
+}) {
+  const on = new Set(checked);
+  return (
+    <fieldset className="cap-chips">
+      <legend className="cap-chips-label">{legend}</legend>
+      {options.map((o) => (
+        <label key={o.value} className="cap-chip" data-size={size === "default" ? undefined : size}>
+          <input
+            className="cap-chip-input"
+            type="checkbox"
+            name={name}
+            value={o.value}
+            defaultChecked={on.has(o.value)}
+            disabled={o.disabled}
+          />
+          {o.label}
+          {o.count === undefined ? null : <span className="cap-chip-count">{o.count}</span>}
+        </label>
+      ))}
+    </fieldset>
+  );
+}

@@ -38,3 +38,20 @@
     <p role="status" class="cap-save-bar-status"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Saved</span></p>
   </div>
 </section>
+
+<section class="cap-specimen" aria-labelledby="s-autosave">
+  <h2 id="s-autosave">Saves as it changes (no button), saving</h2>
+  <div class="cap-save-bar">
+    <p role="status" class="cap-save-bar-status">Saving…</p>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-sticky">
+  <h2 id="s-sticky">Sticky, with another action and Save not yet usable</h2>
+  <div class="cap-save-bar" data-sticky="">
+    <p role="status" class="cap-save-bar-status"></p>
+    <button type="button" class="cap-btn">Check</button>
+    <button type="submit" class="cap-btn" data-variant="primary" aria-disabled="true" aria-describedby="why-save">Save changes</button>
+    <span class="cap-btn-reason" id="why-save">Turn on disputes to save these settings.</span>
+  </div>
+</section>
