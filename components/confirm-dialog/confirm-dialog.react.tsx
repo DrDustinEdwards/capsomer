@@ -1,3 +1,4 @@
+import { useCleanId } from "../hooks/hooks.react.tsx";
 import { useEffect, useId, useRef, useState, type ReactElement, type ReactNode } from "react";
 import {
   Dialog,
@@ -339,7 +340,7 @@ export function ConfirmPage({
   onCancel,
   renderForm,
 }: ConfirmPageProps) {
-  const id = useId().replace(/[^a-zA-Z0-9]/g, "");
+  const id = useCleanId();
   const Heading = headingLevel;
   const described =
     [lead ? `${id}-desc` : null, body.length ? `${id}-list` : null].filter(Boolean).join(" ") ||

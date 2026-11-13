@@ -31,8 +31,35 @@ test("no component stylesheet puts rules outside a cap layer", () => {
     const css = readFileSync(f, "utf8")
       .replace(/\/\*[\s\S]*?\*\//g, "")
       .replace(ORDER, "")
+      // A sibling component's stylesheet it builds on (link.css takes link-file.css), checked
+      // here on its own.
+      .replace(/^\s*@import "\.\.\/([\w-]+)\/\1\.css";/gm, "")
       .trim();
     if (!/^@layer cap\.(components|base|utilities) \{/.test(css)) bad.push(f);
   }
+  assert.deepEqual(bad, []);
+});
+
+// A scroll-driven animation needs animation-duration auto. Lightning CSS (Vite's minifier) folds an
+// `animation` shorthand and its timeline into one shorthand with a 0s duration, which Chromium runs
+// as finished: the table-scroll fades showed both ends at rest on dustinedwards.info's built CSS.
+// Longhands with `animation-duration: auto` survive minifying; this checks the minified output.
+test("every scroll-driven animation keeps duration auto after minifying", async () => {
+  const { transform } = await import("lightningcss");
+  const files = [...cssFiles("components"), "css/utilities.css"];
+  const rules = files.flatMap((f) => {
+    const out = transform({ filename: f, code: readFileSync(f), minify: true }).code.toString();
+    // Each run of declarations between braces; nesting only splits a rule into more runs.
+    return out
+      .split(/[{}]/)
+      .filter((body) => !body.startsWith("@"))
+      .filter((body) => /animation(?:-timeline)?:[^;]*\b(?:scroll|view)\(/.test(body))
+      .map((body) => [f, body]);
+  });
+  assert.ok(
+    rules.length >= 3,
+    "the scroll fades, the truncated label and the header fade are found",
+  );
+  const bad = rules.filter(([, body]) => !/animation-duration:auto(?![^;]*,)/.test(body));
   assert.deepEqual(bad, []);
 });

@@ -11,7 +11,6 @@ import {
   PICK_NONE,
   compareHref,
   condense,
-  countWords,
   deltaOf,
   deltaSign,
   deltaText,
@@ -70,7 +69,6 @@ test("behavior: wordDelta is the signed change in words, from two texts or two c
   expect(wordDelta(1884, 1854)).toBe(-30);
   expect(wordDelta("same words", "same words")).toBe(0);
   expect(wordDelta("", "a b")).toBe(2);
-  expect(countWords("  spaced   out \n words ")).toBe(3);
 });
 
 test("behavior: the size change is said in words with its sign as text, and no change in words", () => {

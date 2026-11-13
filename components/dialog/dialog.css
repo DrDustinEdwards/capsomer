@@ -10,6 +10,16 @@
    dialog and a short slide with a fade at 200 ms for a sheet. In Capsomer's tokens, so
    density moves the padding. */
 @layer cap.components {
+  /* The surface, shared with the confirm dialog's page (a card, not an overlay). */
+  :is(.cap-dialog, .cap-confirm-page) {
+    border: 1px solid var(--line);
+    border-radius: var(--radius-l);
+    background: var(--raised);
+    color: var(--text);
+    box-shadow: var(--shadow-l);
+    font-size: var(--fs-body);
+  }
+
   .cap-dialog {
     --cap-dialog-w: 30rem;
     --cap-dialog-gap: max(var(--space-5), env(safe-area-inset-top, 0px), env(safe-area-inset-bottom, 0px));
@@ -32,12 +42,6 @@
     margin: auto;
     padding: 0;
     overflow: hidden;
-    border: 1px solid var(--line);
-    border-radius: var(--radius-l);
-    background: var(--raised);
-    color: var(--text);
-    box-shadow: var(--shadow-l);
-    font-size: var(--fs-body);
     overscroll-behavior: contain;
 
     /* Only when open: a display value on a closed dialog would show it. */
@@ -46,7 +50,7 @@
       flex-direction: column;
     }
     &:focus-visible {
-      outline: 2px solid var(--ring);
+      outline: var(--focus-width) solid var(--ring);
       outline-offset: -2px;
     }
 
@@ -251,7 +255,7 @@
     }
     /* A scrolling body is a keyboard stop (dialog.ts gives it tabindex); it shows where it is. */
     &:focus-visible {
-      outline: 2px solid var(--ring);
+      outline: var(--focus-width) solid var(--ring);
       outline-offset: -2px;
     }
   }
@@ -371,7 +375,7 @@
       inline-size: 2.25rem;
       block-size: 4px;
       margin-block: calc(var(--pad-card) / -2) var(--space-1);
-      border-radius: 2px;
+      border-radius: var(--radius-full);
       background: var(--line-strong);
     }
     .cap-dialog[data-cap-dragging]::backdrop {

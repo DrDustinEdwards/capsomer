@@ -1,10 +1,12 @@
 // The shared listbox: options, groups, one active option, filtering, typeahead and selection,
 // over `role="listbox"` markup. Command menu, select, and any list a person picks from reuse
-// it. No framework, no imports: the pure functions below run in node as well as the browser.
+// it. No framework, and no import but hooks' id counter: the pure functions below run in node as well as the browser.
 //
 // The active option is the one a key press would act on. It is marked `data-active` and,
 // where focus stays elsewhere, named by `aria-activedescendant` on the holder. `aria-selected`
 // means one thing only: this value is chosen (single or multi selection).
+
+import { uid } from "../hooks/hooks.ts";
 
 // ---------------------------------------------------------------------------------------
 // Pure functions.
@@ -235,9 +237,6 @@ export interface Listbox {
   refresh(): void;
   detach(): void;
 }
-
-let counter = 0;
-const uid = (p: string) => `${p}-${++counter}`;
 
 const isDisabled = (o: HTMLElement) =>
   o.getAttribute("aria-disabled") === "true" || o.hasAttribute("data-disabled");

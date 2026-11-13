@@ -1,15 +1,26 @@
-/* The layer order, repeated so this file is safe whatever order an app imports it in (css/layers.css has the note). */
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
-/* The full reset, for a site whose own CSS assumes a blank page: no margins or padding, plain lists, headings at the
-   text's size, media as blocks, controls in the page's font. base.css carries only the box model and [hidden]; a site
-   that wants a blank page imports this once, before base.css: `import "capsomer/reset.css"`. It sits in cap.reset, the
-   lowest layer, so Capsomer's own layers and the site's unlayered CSS both win over it. Drawn from Tailwind's preflight
-   (MIT) and modern-normalize, with Capsomer's faces. */
+/* An element reset, opt-in: every margin, padding and border to zero, headings and lists unstyled, images and
+   media as blocks, form controls inheriting the text. For an app that leaves Tailwind (whose preflight it was) or
+   wants a clean slate; `import "capsomer/reset.css"`. In the lowest layer, so the site's own CSS and every
+   Capsomer layer win over it. The faces are the site's (--face, --mono).
+
+   Tailwind's preflight (tailwindcss 4.3, packages/tailwindcss/preflight.css), MIT License, Copyright (c) Tailwind
+   Labs, Inc. Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
+   associated documentation files (the "Software"), to deal in the Software without restriction, including without
+   limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the
+   Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+   The above copyright notice and this permission notice shall be included in all copies or substantial portions of
+   the Software. THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT
+   LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT
+   SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+   OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+   DEALINGS IN THE SOFTWARE. */
 @layer cap.reset {
   *,
-  ::before,
   ::after,
+  ::before,
   ::backdrop,
   ::file-selector-button {
     box-sizing: border-box;
@@ -17,80 +28,118 @@
     padding: 0;
     border: 0 solid;
   }
+
   html,
   :host {
     line-height: 1.5;
     -webkit-text-size-adjust: 100%;
     tab-size: 4;
-    font-family: var(--ui);
+    font-family: var(--face);
     -webkit-tap-highlight-color: transparent;
   }
+
   hr {
     height: 0;
     color: inherit;
     border-top-width: 1px;
   }
+
   abbr:where([title]) {
+    -webkit-text-decoration: underline dotted;
     text-decoration: underline dotted;
   }
-  :where(h1, h2, h3, h4, h5, h6) {
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     font-size: inherit;
     font-weight: inherit;
   }
-  :where(a) {
+
+  a {
     color: inherit;
+    -webkit-text-decoration: inherit;
     text-decoration: inherit;
   }
-  :where(b, strong) {
+
+  b,
+  strong {
     font-weight: bolder;
   }
-  :where(code, kbd, samp, pre) {
+
+  code,
+  kbd,
+  samp,
+  pre {
     font-family: var(--mono);
     font-size: 1em;
   }
-  :where(small) {
+
+  small {
     font-size: 80%;
   }
-  :where(sub, sup) {
+
+  sub,
+  sup {
     font-size: 75%;
     line-height: 0;
     position: relative;
     vertical-align: baseline;
   }
-  :where(sub) {
+
+  sub {
     bottom: -0.25em;
   }
-  :where(sup) {
+
+  sup {
     top: -0.5em;
   }
-  :where(table) {
+
+  table {
     text-indent: 0;
     border-color: inherit;
     border-collapse: collapse;
   }
+
   :-moz-focusring {
     outline: auto;
   }
-  :where(progress) {
+
+  progress {
     vertical-align: baseline;
   }
-  :where(summary) {
+
+  summary {
     display: list-item;
   }
-  :where(ol, ul, menu) {
+
+  ol,
+  ul,
+  menu {
     list-style: none;
   }
-  :where(img, svg, video, canvas, audio, iframe, embed, object) {
+
+  img,
+  svg,
+  video,
+  canvas,
+  audio,
+  iframe,
+  embed,
+  object {
     display: block;
     vertical-align: middle;
   }
-  :where(img, video) {
+
+  img,
+  video {
     max-width: 100%;
     height: auto;
   }
-  :where(fieldset) {
-    min-width: 0;
-  }
+
   button,
   input,
   select,
@@ -106,35 +155,51 @@
     background-color: transparent;
     opacity: 1;
   }
+
   :where(select:is([multiple], [size])) optgroup {
     font-weight: bolder;
   }
+
   :where(select:is([multiple], [size])) optgroup option {
     padding-inline-start: 20px;
   }
+
   ::file-selector-button {
     margin-inline-end: 4px;
   }
+
   ::placeholder {
     opacity: 1;
-    color: color-mix(in oklab, currentcolor 50%, transparent);
   }
-  :where(textarea) {
+
+  /* Only in browsers that do not crash on color-mix() with currentcolor. */
+  @supports (not (-webkit-appearance: -apple-pay-button)) or (contain-intrinsic-size: 1px) {
+    ::placeholder {
+      color: color-mix(in oklab, currentcolor 50%, transparent);
+    }
+  }
+
+  textarea {
     resize: vertical;
   }
+
   ::-webkit-search-decoration {
     -webkit-appearance: none;
   }
+
   ::-webkit-date-and-time-value {
     min-height: 1lh;
     text-align: inherit;
   }
+
   ::-webkit-datetime-edit {
     display: inline-flex;
   }
+
   ::-webkit-datetime-edit-fields-wrapper {
     padding: 0;
   }
+
   ::-webkit-datetime-edit,
   ::-webkit-datetime-edit-year-field,
   ::-webkit-datetime-edit-month-field,
@@ -146,19 +211,42 @@
   ::-webkit-datetime-edit-meridiem-field {
     padding-block: 0;
   }
+
   ::-webkit-calendar-picker-indicator {
     line-height: 1;
   }
+
   :-moz-ui-invalid {
     box-shadow: none;
   }
+
   button,
   input:where([type="button"], [type="reset"], [type="submit"]),
   ::file-selector-button {
     appearance: button;
   }
+
   ::-webkit-inner-spin-button,
   ::-webkit-outer-spin-button {
     height: auto;
+  }
+
+  /* The browser's [hidden] loses to a class rule; this one does not, so a hidden .sr-only element stays
+     out of the accessibility tree. */
+  [hidden]:where(:not([hidden="until-found"])) {
+    display: none !important;
+  }
+
+  /* Copied from Tailwind so computed values do not move. */
+  .sr-only {
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    position: absolute;
+    overflow: hidden;
   }
 }

@@ -1,0 +1,198 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* A checklist run (checklist-run.ts): the checklist a person works a page by. Everything here is
+   inert until the script adds it, so the page reads exactly as served. Phone first: the targets
+   are --target, the bar sits at the bottom where a thumb is, and a done step recedes without
+   disappearing. Needs button.css, field.css (.cap-input) and manual.css (.cap-roll, .cap-cue). Extracted
+   from dustinedwards.info's run mode (app/styles/run.css). */
+@layer cap.components {
+  .cap-run-bar {
+    position: sticky;
+    inset-block-end: 0;
+    z-index: 20;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2) var(--space-3);
+    margin-block: var(--space-6) 0;
+    padding: var(--space-3) var(--space-4);
+    border: 1px solid var(--line-strong);
+    background: var(--surface);
+    font-size: var(--fs-label);
+    &[hidden] {
+      display: none;
+    }
+  }
+  .cap-run-progress {
+    flex: 1 1 10rem;
+    margin: 0;
+    font-weight: var(--weight-heading);
+  }
+  /* The roll blocks take their own line, under the words that say the same. */
+  .cap-run-roll {
+    flex-basis: 100%;
+    order: 1;
+  }
+  .cap-run-bar [data-run="view"][aria-pressed="true"] {
+    background: var(--text);
+    color: var(--ground);
+  }
+  .cap-run-warning {
+    flex-basis: 100%;
+    margin: 0;
+    color: var(--crit);
+    font-size: var(--fs-detail);
+  }
+  .cap-run-confirm {
+    flex-basis: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2);
+    margin: 0;
+  }
+
+  [data-run="on"] :is(.cap-run-step-done, [aria-current="step"], li[data-step]) {
+    padding: var(--space-3) var(--space-3) var(--space-3) var(--space-2);
+    border-inline-start: 4px solid transparent;
+  }
+  [data-run="on"] [aria-current="step"] {
+    border-inline-start-color: var(--primary);
+    background: var(--raised);
+  }
+  [data-run="on"] .cap-run-step-done > [data-run-text] {
+    color: var(--muted);
+    text-decoration: line-through;
+    text-decoration-thickness: 1px;
+  }
+  /* A critical step is marked before it is read: its edge turns. */
+  [data-run="on"] li:has([data-run-flag="critical"]):not(.cap-run-step-done) {
+    border-inline-start-color: var(--crit);
+  }
+
+  .cap-run-tools {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2) var(--space-4);
+    margin-block-start: var(--space-3);
+    font-size: var(--fs-label);
+  }
+  .cap-run-done {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-block-size: var(--target);
+    cursor: pointer;
+    & input {
+      inline-size: 1.5rem;
+      block-size: 1.5rem;
+      accent-color: var(--primary);
+    }
+  }
+  .cap-run-timer {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2);
+  }
+  .cap-run-clock {
+    min-inline-size: 4.5ch;
+    font-family: var(--readout);
+    font-variant-numeric: tabular-nums;
+    font-weight: var(--weight-heading);
+    font-size: var(--fs-h3);
+  }
+  .cap-run-timer[data-state="done"] .cap-run-clock {
+    color: var(--crit);
+  }
+  .cap-run-timer [hidden] {
+    display: none;
+  }
+  .cap-run-note {
+    flex-basis: 100%;
+    & > summary {
+      display: flex;
+      align-items: center;
+      min-block-size: var(--target);
+      color: var(--muted);
+      cursor: pointer;
+    }
+    & textarea {
+      inline-size: 100%;
+    }
+  }
+
+  .cap-run-summary {
+    margin-block-start: var(--space-6);
+    padding: var(--pad-card);
+    border: 1px solid var(--line-strong);
+    &[hidden] {
+      display: none;
+    }
+    & h2 {
+      margin-block-start: 0;
+    }
+    & label {
+      display: block;
+      margin-block: var(--space-3) var(--space-1);
+      font-weight: var(--weight-heading);
+    }
+    & textarea {
+      inline-size: 100%;
+    }
+  }
+  .cap-run-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin-block-end: 0;
+  }
+
+  /* One step at a time: only the step being worked shows, under its section's heading, in type
+     large enough to read from across a bench. Show every step brings the rest back. */
+  [data-view="step"] > :not(:has(.cap-run-step-shown)),
+  [data-view="step"] section > :not(:is(h2, h3, h4)):not(:has(.cap-run-step-shown)),
+  [data-view="step"] li[data-step]:not(.cap-run-step-shown) {
+    display: none;
+  }
+  [data-view="step"] .cap-run-step-shown {
+    font-size: var(--fs-h3);
+    line-height: 1.5;
+    & .cap-run-tools {
+      font-size: var(--fs-body);
+    }
+    /* A cue card: the strip names the step, so the list's number goes. */
+    &.cap-cue {
+      list-style: none;
+      margin-inline-start: -1.75rem;
+      padding-block-end: var(--space-5);
+    }
+  }
+
+  /* A printed run is the record: the steps with their checks and notes, none of the controls. */
+  @media print {
+    .cap-run-start,
+    .cap-run-bar,
+    .cap-run-actions,
+    .cap-run-timer button {
+      display: none !important;
+    }
+    .cap-run-note:not([open]),
+    .cap-run-note > summary {
+      display: none;
+    }
+    .cap-run-note textarea {
+      border: 0;
+      padding: 0;
+      resize: none;
+    }
+    [data-run="on"] li[data-step] {
+      break-inside: avoid;
+    }
+    [data-run="on"] .cap-run-step-done > [data-run-text] {
+      text-decoration: none;
+    }
+  }
+}

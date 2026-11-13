@@ -1,0 +1,30 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* An author list: a byline of names in the muted ink, the owner's in the text color and semibold, so
+   the mark is weight and color together. A long list folds into a native disclosure. */
+@layer cap.components {
+  .cap-author-list {
+    margin: 0;
+    max-inline-size: var(--measure);
+    color: var(--muted);
+    font-size: var(--fs-detail);
+    line-height: var(--leading);
+    overflow-wrap: anywhere;
+  }
+
+  .cap-author-list-owner {
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  /* The summary is the disclosure's button: a whole line, at least the hit area tall. */
+  .cap-author-list-summary {
+    min-block-size: var(--target);
+    cursor: pointer;
+  }
+
+  .cap-author-list-full {
+    margin: var(--space-1) 0 0;
+  }
+}

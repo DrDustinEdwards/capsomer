@@ -4,14 +4,16 @@ title: Combobox
 summary: A labeled text box that filters a list, where only a listed value can be chosen. Base UI underneath, React only.
 parts: [css, react]
 tool: Base UI
-states: [a tag field, typing a new tag, closed, closed with a value, with a clear button, several values as chips, comfortable density, open, open with chips, open with group labels, filtered, no match, option highlighted, loading, disabled with its reason, invalid with its message]
+states: [a tag field, typing a new tag, options from a server search, free text with suggestions, closed, closed with a value, with a clear button, several values as chips, comfortable density, open, open with chips, open with group labels, filtered, no match, option highlighted, loading, disabled with its reason, invalid with its message]
 added: 0.1.0
-updated: 0.2.0
+updated: 0.99.0
 source: none (new in Capsomer; the Portal's command palette is the command menu, not this)
 replaces:
   - "<datalist"
   - "role=\"combobox\""
   - "from \"@base-ui/react/combobox\""
+  - "from \"@base-ui/react/autocomplete\""
+  - "aria-autocomplete=\"list\""
 ---
 
 # Combobox
@@ -24,7 +26,7 @@ To choose one of more than about fifteen known values (patterns.md, "Choose one"
 
 ## When not to
 
-Two to five values: a radio group or the segmented control. Up to about fifteen: a native `select` (`.cap-input`). Free text with suggestions (a search box) is not a combobox: it is a text field. Running commands from a keyboard palette is the command menu (`.cap-cmd`).
+Two to five values: a radio group or the segmented control. Up to about fifteen: a native `select` (`.cap-input`). Free text where any name is kept and a list only suggests (an institution that may not be listed yet) is `ComboboxFreeText`. Running commands from a keyboard palette is the command menu (`.cap-cmd`).
 
 ## The default and its reason
 
@@ -34,8 +36,10 @@ Two to five values: a radio group or the segmented control. Up to about fifteen:
 - **The popup wears the shared blocks**: `cap-popover` (the raised surface, hairline ring, shadow and the fade and zoom motion, with `data-flush`) around a `cap-listbox` of `cap-option`s. The highlighted option is `--accent-soft` with `--text` and a 3 px accent edge on its inline start, the same as the command menu's, so the cue is not the tint alone. DOM focus stays in the box; the option is marked `data-highlighted` and pointed to by `aria-activedescendant`. A chosen option has a check at its end.
 - **A tag field is `ComboboxMultiple` with `creatable`.** Anything typed that is not an item can be added as a value of its own, and the chips show listed and made values alike. As text is typed, a first row `Create “western blot”` offers it, highlighted, so Enter adds exactly what was typed; the box empties and keeps focus for the next tag. Text that matches an item, ignoring case and extra spaces, offers no create row and picks that item, and text that matches a tag already on the field offers nothing, so a tag is never made twice. A made value is its text (`values` is `string[]` as before, so an app stores the strings and passes them back as `values`; ones not in `items` still show as chips). Every value is posted under `name`, one input each. `createLabel(text)` changes the row's words. Backspace in the empty box and each chip's remove button take a tag away.
 - **Groups, a clear button and chips are optional.** Options with a `group` are listed under a muted label; `clearable` adds a clear button that shows while a value is chosen; `ComboboxMultiple` shows each chosen value as a chip with its own named remove button and keeps the list open for more.
+- **Options from a server**: pass `search(query, signal)` and the list shows what it returns, in place of filtering `items`. It waits `searchDelay` ms (200) after the last key and asks nothing below `minSearchLength` characters (1), saying `searchHint` instead. A newer keystroke aborts the older request through `signal`, so an answer never lands out of order; the request runs from the input's change, not from an effect. Loading reads "Searching" in the status region. A failed request says `searchFailedText`, never "no match". The chosen option is kept by the wrapper, so its label stays when later results do not hold it.
+- **Free text with suggestions is `ComboboxFreeText`** (Base UI's Autocomplete, decision 7's same library): the typed text is the value, so a name that is not listed is kept as typed. `items` filters here, or `search` asks a server as above. Picking a suggestion fills the box with its label and calls `onPick(item)` after `onValueChange`, so the fields that come with it (a city) can be filled. An option's `hint` is a short muted note beside its label.
 - **An empty result names the typed text**: "No match for “shoop”. Check the spelling, or clear the box to see every option." Pass `emptyText` to say more.
-- **Loading says so, and never says no match.** The message sits in Base UI's status region, so it is announced.
+- **Loading says so, and never says no match.** The message sits in Base UI's status region, so it is announced, with the spinner (`skeleton.css`: load it with this file) beside it.
 - **Disabled says why** in its help text. Invalid marks the box `aria-invalid`, draws its border in `--crit`, and describes it by the message beside it.
 - **The popup is as wide as the box and never taller than the room below or above it** (`--anchor-width`, `--available-height` from Base UI).
 - **Not modal.** The page keeps scrolling; Esc, Tab or a click outside closes the list.
@@ -100,7 +104,15 @@ import { ComboboxMultiple } from "capsomer/react/combobox";
 <ComboboxMultiple label="Sites to back up" items={sites} values={ids} onValuesChange={setIds} />
 ```
 
-`ComboboxProps` adds `clearable`; an option may carry `group`.
+A server search, and free text:
+
+```tsx
+import { Combobox, ComboboxFreeText } from "capsomer/react/combobox";
+<Combobox label="Reviewer" items={[]} search={(q, signal) => findPeople(q, signal)} value={id} onValueChange={setId} />
+<ComboboxFreeText label="Institution" value={name} onValueChange={setName} search={findInstitutions} minSearchLength={2} onPick={(i) => setCity(i.hint ?? "")} />
+```
+
+`ComboboxProps` adds `clearable`; an option may carry `group` and `hint`.
 
 It renders, in `.cap-combobox`: `label.cap-combobox-label`, `p.cap-combobox-help`, `.cap-combobox-group` (holding `input.cap-combobox-input`, an optional `button.cap-combobox-clear` and `button.cap-combobox-trigger`; for several values `.cap-combobox-chips` holding `.cap-combobox-chip` with `button.cap-combobox-chip-remove`, then the input), `p.cap-combobox-error`; portaled: `.cap-combobox-positioner` > `.cap-popover.cap-combobox-popup` > `.cap-combobox-status`, `.cap-listbox-empty.cap-combobox-empty`, `.cap-listbox.cap-combobox-list` > (`.cap-listbox-group` > `.cap-listbox-label`,) `.cap-option` (`.cap-option-label`, `.cap-option-indicator`).
 

@@ -36,6 +36,10 @@
   <div data-mount="fx-public"></div>
 </template>
 
+<template data-specimen="fx-rest-clear" data-title="Fox site, clear at rest: no ground or line at the top of the page, the band once it is stuck" data-height="420">
+  <div data-mount="fx-rest-clear"></div>
+</template>
+
 <template data-specimen="fx-books" data-title="Fox site, the Books panel open: the site's own panel, under its button" data-height="420">
   <div data-mount="fx-books"></div>
 </template>
@@ -148,6 +152,34 @@
       <p class="sh-lead">The behavior module wires the panel, the theme button, the tips and the sheet.</p>
     </main>
   </div>
+</template>
+
+<template data-specimen="static" data-title="Written by the server, no hydration: the React header sent as HTML and wired by the behavior module, a workspace switcher whose rows post, Guides in groups, Topics as a wide panel, Sign out a form post" data-height="420">
+  <div data-static=""></div>
+</template>
+
+<template data-specimen="static-topics" data-title="No hydration, the wide panel open: the site's own layout in a mega-menu's room" data-height="460">
+  <div data-static=".cap-site-header-sections [aria-controls$='topics']"></div>
+</template>
+
+<template data-specimen="static-switcher" data-title="No hydration, the switcher open: each workspace is a form that posts, the current one posts nothing" data-height="420">
+  <div data-static=".cap-site-header-switch"></div>
+</template>
+
+<template data-specimen="static-account" data-title="No hydration, the account menu open: the initials, the rows, Sign out a form post" data-height="460">
+  <div data-static=".cap-site-header-avatar"></div>
+</template>
+
+<template data-specimen="static-phone" data-title="Phone, no hydration: the button extra kept in the top row (data-phone=bar), the sheet holding the rest" data-height="560" data-width="390">
+  <div data-static=""></div>
+</template>
+
+<template data-specimen="own-look" data-title="A site's own look by tokens and slots: a 64px band whose bar keeps to a 72rem column, semibold links, the site's own Get a quote, no account, a hairline once the page scrolls" data-height="420" data-width="1400">
+  <div data-static="" data-own=""></div>
+</template>
+
+<template data-specimen="own-look-collapsed" data-title="The same site under 1024px (data-collapse=lg): the phone's row and its sheet, whose rows have no icons and so no icon column" data-height="560" data-width="900">
+  <div data-static=".cap-site-header-menu" data-own=""></div>
 </template>
 
 <script type="module">

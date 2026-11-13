@@ -86,6 +86,40 @@
     font-size: var(--fs-label);
   }
 
+  /* A search result's words around the match, under its label, the typed words marked. */
+  .cap-cmd-snippet {
+    display: block;
+    margin-block-start: 2px;
+    color: var(--muted);
+    font-size: var(--fs-detail);
+    font-weight: 400;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    & mark {
+      background: var(--sel, var(--info-soft));
+      color: var(--text);
+      font-weight: 600;
+    }
+  }
+
+  /* A phone: the menu takes the whole screen, so the list has the room the keyboard leaves. */
+  @media (max-width: 40rem) {
+    .cap-cmd[open] {
+      inline-size: 100vw;
+      max-inline-size: 100vw;
+      block-size: 100dvh;
+      max-block-size: 100dvh;
+      margin: 0;
+      border: 0;
+      border-radius: 0;
+    }
+    .cap-cmd-foot {
+      display: none;
+    }
+  }
+
   @media (forced-colors: active) {
     .cap-cmd-search {
       border-color: CanvasText;

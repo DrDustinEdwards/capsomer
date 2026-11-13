@@ -5,6 +5,11 @@
 
 export type MeterTone = "ok" | "warn" | "crit";
 
+// The share of a span as a whole percent, 0 to 100: an upload's progress for a meter's value and label.
+export function percent(value: number, max = 100, min = 0): number {
+  return Math.round(ratio(value, max, min) * 100);
+}
+
 // The share of the span, from 0 to 1. A missing, negative or non-finite value is 0.
 export function ratio(value: number, max: number, min = 0): number {
   const span = max - min;

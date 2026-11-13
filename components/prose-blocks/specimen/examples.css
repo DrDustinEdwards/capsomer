@@ -2,3 +2,23 @@
 .cap-specimen > article[data-context="prose"] {
   max-inline-size: 46rem;
 }
+
+/* A site's reading look, set by the prose tokens alone (the way bsw, foxhound, foxing and germomics set theirs). */
+.specimen-site-look {
+  --prose-ink: var(--muted);
+  --prose-strong-ink: var(--text);
+  --prose-heading-ink: var(--text);
+  --prose-heading-face: var(--ui);
+  --prose-heading-weight: 600;
+  --prose-flow: 1.25em;
+  --prose-marker: var(--accent-text);
+  --prose-quote-line: var(--accent);
+  --prose-quote-style: italic;
+  --prose-code-ink: var(--accent-text);
+  --prose-block-radius: var(--radius-l);
+  --prose-image-radius: var(--radius-l);
+  --prose-heading-gap: 1.1rem;
+  --prose-heading-measure: none;
+  --prose-item-space: 0.55rem;
+  --prose-link-hover-decoration: underline;
+}

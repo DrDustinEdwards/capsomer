@@ -44,6 +44,7 @@ eachTheme((theme) => {
     "nomatch",
     "active",
     "live",
+    "live-dom",
   ]) {
     test(`accessibility: no axe violations, ${id}`, async ({ page }) => {
       await visitStates(page, "command-menu", theme, id);
@@ -215,19 +216,49 @@ eachTheme((theme) => {
     );
   });
 
-  test("behavior: a live search answers as the person types; Enter runs a result", async ({
-    page,
-  }) => {
-    await visitStates(page, "command-menu", theme, "live");
-    const input = page.getByRole("combobox", { name: "Search articles" });
-    await expect(input).toBeFocused();
-    await input.pressSequentially("rele");
-    await expect(page.getByRole("option", { name: "Release notes for version 4" })).toBeVisible();
-    await expect(page.getByRole("option", { name: "Your workspace" })).toHaveCount(0);
-    await page.keyboard.press("ArrowDown");
-    await page.keyboard.press("Enter");
-    await expect(page.locator("[data-specimen-part='said']")).toHaveText(
-      "Ran: Release notes for version 4",
-    );
-  });
+  for (const state of ["live", "live-dom"]) {
+    test(`behavior: a live search answers as the person types; Enter runs a result (${state})`, async ({
+      page,
+    }) => {
+      await visitStates(page, "command-menu", theme, state);
+      const input = page.getByRole("combobox", { name: "Search articles" });
+      await expect(input).toBeFocused();
+      await input.pressSequentially("rele");
+      await expect(page.locator(".cap-cmd-list")).toHaveAttribute("aria-busy", "true");
+      await expect(page.getByRole("option", { name: "Release notes for version 4" })).toBeVisible();
+      await expect(page.getByRole("option", { name: "Your workspace" })).toHaveCount(0);
+      await page.keyboard.press("ArrowDown");
+      await page.keyboard.press("Enter");
+      await expect(page.locator("[data-specimen-part='said']")).toHaveText(
+        "Ran: Release notes for version 4",
+      );
+    });
+  }
+
+  for (const [id, key] of [
+    ["extras", "cap-cmd-specimen-recent"],
+    ["extras-dom", "cap-cmd-specimen-recent-dom"],
+  ] as const) {
+    test(`behavior: the idle host mounts the menu; pages are commands; a run command comes back as Recent; a snippet marks the words; Ask takes the rest (${id})`, async ({
+      page,
+    }) => {
+      await visitStates(page, "command-menu", theme, id);
+      await page.evaluate((k) => localStorage.removeItem(k), key);
+      if (id === "extras") await expect(page.getByText("Menu ready")).toBeVisible();
+      await page.getByRole("button", { name: "Search" }).click();
+      const input = page.getByRole("combobox");
+      await input.fill("media");
+      await page.keyboard.press("Enter");
+      await expect(page.getByRole("status")).toHaveText("Went to #media");
+      await page.getByRole("button", { name: "Search" }).click();
+      await expect(page.getByRole("group", { name: "Recent" }).getByRole("option")).toHaveText(
+        "Go to Media",
+      );
+      await input.fill("spring");
+      await expect(page.locator(".cap-cmd-snippet mark")).toHaveText("spring");
+      await input.fill("when is the survey");
+      await page.getByRole("option", { name: /Ask about/ }).click();
+      await expect(page.getByRole("status")).toHaveText("Asked: when is the survey");
+    });
+  }
 });

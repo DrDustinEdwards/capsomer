@@ -11,8 +11,14 @@ import {
 } from "react";
 import {
   FINDS_HIDDEN,
+  attachPillDrag,
+  guessPlatform,
   nextTab,
+  onRemembered,
+  pageTabHref,
+  readRemembered,
   setPanelHidden,
+  writeRemembered,
   type Activation,
   type Orientation,
 } from "./tabs.ts";
@@ -46,6 +52,11 @@ export interface TabsProps extends Omit<ComponentProps<"div">, "onChange" | "def
   // "automatic" (default): an arrow key chooses the tab it lands on. "manual": it only moves
   // focus, and Enter or Space chooses (for panels that are slow to show).
   activation?: Activation;
+  // Remembers the reader's choice on this device under this key, and follows a choice made in any
+  // other tab set with the same key (tabs.ts, readRemembered). Read after hydration, so the server's
+  // tab paints first. `rememberGuess="platform"` starts from the reader's system when nothing is kept.
+  remember?: string;
+  rememberGuess?: "platform";
 }
 
 export function Tabs({
@@ -54,6 +65,8 @@ export function Tabs({
   onValueChange,
   orientation = "horizontal",
   activation = "automatic",
+  remember,
+  rememberGuess,
   className,
   children,
   ...props
@@ -62,11 +75,30 @@ export function Tabs({
   const [own, setOwn] = useState(defaultValue);
   const chosen = value ?? own;
   const [moved, setMoved] = useState<string | null>(null);
+  const latest = useRef({ chosen, onValueChange });
+  useEffect(() => {
+    latest.current = { chosen, onValueChange };
+  });
   const choose = (v: string) => {
     setOwn(v);
     setMoved(null);
     if (v !== chosen) onValueChange?.(v);
+    if (remember) writeRemembered(remember, v);
   };
+  useEffect(() => {
+    if (!remember) return;
+    // Only a tab this set has, and one that can be chosen.
+    const apply = (v: string | null) => {
+      const tab = v ? document.getElementById(`${base}-tab-${v}`) : null;
+      if (!v || !tab || tab.getAttribute("aria-disabled") === "true") return false;
+      setOwn(v);
+      setMoved(null);
+      if (v !== latest.current.chosen) latest.current.onValueChange?.(v);
+      return true;
+    };
+    if (!apply(readRemembered(remember)) && rememberGuess === "platform") apply(guessPlatform());
+    return onRemembered(remember, apply);
+  }, [remember, rememberGuess, base]);
   return (
     <Ctx.Provider
       value={{
@@ -94,7 +126,8 @@ export function Tabs({
 export interface TabsListProps extends ComponentProps<"div"> {
   // The list needs a name: "Posts", "Settings sections".
   "aria-label": string;
-  variant?: "default" | "line";
+  // "pill": a rounded tray whose mark a pointer can drag from tab to tab (tabs.ts, attachPillDrag).
+  variant?: "default" | "line" | "pill";
   size?: "sm" | "default" | "lg";
   fill?: boolean;
 }
@@ -110,6 +143,13 @@ export function TabsList({
   ...props
 }: TabsListProps) {
   const c = useTabs();
+  const list = useRef<HTMLDivElement>(null);
+  // The pill's drag ends in a click on the tab it settles on, so the choice is the trigger's own.
+  useEffect(() => {
+    const el = list.current;
+    if (!el || variant !== "pill") return;
+    return attachPillDrag(el, (tab) => tab.click());
+  }, [variant]);
   const keys = (e: KeyboardEvent<HTMLDivElement>) => {
     onKeyDown?.(e);
     if (e.defaultPrevented || e.ctrlKey || e.metaKey || e.altKey) return;
@@ -133,10 +173,11 @@ export function TabsList({
   return (
     // oxlint-disable-next-line jsx-a11y/interactive-supports-focus -- focus goes to the tabs inside (roving tabindex), not the list
     <div
+      ref={list}
       role="tablist"
       aria-orientation={c.orientation === "vertical" ? "vertical" : undefined}
       className={className ? `cap-tabs-list ${className}` : "cap-tabs-list"}
-      data-variant={variant === "line" ? "line" : undefined}
+      data-variant={variant === "default" ? undefined : variant}
       data-size={size === "default" ? undefined : size}
       data-fill={fill ? "" : undefined}
       onKeyDown={keys}
@@ -151,8 +192,12 @@ export function TabsList({
   );
 }
 
+export type TabTone = "accent" | "info" | "ok" | "warn" | "crit";
+
 export interface TabsTriggerProps extends Omit<ComponentProps<"button">, "value"> {
   value: string;
+  // The pill variant's mark takes this tone while the tab is chosen (or under a drag).
+  tone?: TabTone;
   // A number beside the label. The accessible name reads "Open 12".
   count?: number;
   disabled?: boolean;
@@ -161,6 +206,7 @@ export interface TabsTriggerProps extends Omit<ComponentProps<"button">, "value"
 export function TabsTrigger({
   value,
   count,
+  tone,
   disabled,
   className,
   onClick,
@@ -179,6 +225,7 @@ export function TabsTrigger({
       aria-disabled={disabled ? true : undefined}
       tabIndex={c.stop === value ? 0 : -1}
       className={className ? `cap-tab ${className}` : "cap-tab"}
+      data-tone={tone}
       onClick={(e) => {
         onClick?.(e);
         if (!e.defaultPrevented && !disabled) c.choose(value);
@@ -239,7 +286,7 @@ const NavLinks = createContext<RenderTabLink | undefined>(undefined);
 
 export interface TabsNavProps extends ComponentProps<"nav"> {
   "aria-label": string;
-  variant?: "default" | "line";
+  variant?: "default" | "line" | "pill";
   size?: "sm" | "default" | "lg";
   fill?: boolean;
   // The link slot for every `TabLink` inside: how an app's router draws a link (a client-side
@@ -259,7 +306,7 @@ export function TabsNav({
   const nav = (
     <nav
       className={className ? `cap-tabs-list ${className}` : "cap-tabs-list"}
-      data-variant={variant === "line" ? "line" : undefined}
+      data-variant={variant === "default" ? undefined : variant}
       data-size={size === "default" ? undefined : size}
       data-fill={fill ? "" : undefined}
       {...props}
@@ -302,4 +349,56 @@ export function TabLink({
     children: inner,
   };
   return draw ? <>{draw(linkProps)}</> : <a {...linkProps}>{inner}</a>;
+}
+
+// Page tabs: each tab is the page's own address with ?tab=<id> (the first tab the bare address),
+// so Back, a bookmark and a reload reach it; the page's other query parameters are kept. The app
+// reads the tab from its router's search (tabParam in tabs.ts) and passes `search` and `current`;
+// `renderLink` is the router's link, as for TabsNav.
+export interface PageTab {
+  id: string;
+  label: ReactNode;
+  count?: number;
+  // A fuller name when the label and count are not enough ("Drafts, 21 posts").
+  "aria-label"?: string;
+}
+
+export interface PageTabsProps extends Omit<TabsNavProps, "children"> {
+  // The page's path, without the query: "/agents".
+  path: string;
+  // The address's query as the router has it ("?q=draft" or "q=draft"): kept on every tab.
+  search?: string;
+  tabs: ReadonlyArray<PageTab>;
+  // The id of the tab the address names.
+  current: string;
+  // The query parameter: "tab" by default.
+  param?: string;
+}
+
+export function PageTabs({
+  path,
+  search = "",
+  tabs,
+  current,
+  param = "tab",
+  variant = "line",
+  ...props
+}: PageTabsProps) {
+  const first = tabs[0]?.id;
+  return (
+    <TabsNav variant={variant} {...props}>
+      {tabs.map((t) => (
+        <TabLink
+          key={t.id}
+          href={pageTabHref(path, search, t.id, first, param)}
+          current={t.id === current}
+          count={t.count}
+          aria-label={t["aria-label"]}
+          data-tab={t.id}
+        >
+          {t.label}
+        </TabLink>
+      ))}
+    </TabsNav>
+  );
 }

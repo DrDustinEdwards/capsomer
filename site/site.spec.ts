@@ -208,7 +208,9 @@ eachTheme(() => {
     // the states page held some 20 framed specimens, though no request was open.
     const specimens = states.contentFrame().locator("iframe.cap-specimen-frame");
     for (let i = 0; i < (await specimens.count()); i++) {
-      await expect(specimens.nth(i).contentFrame().locator("html[data-specimen-ready]")).toBeAttached();
+      await expect(
+        specimens.nth(i).contentFrame().locator("html[data-specimen-ready]"),
+      ).toBeAttached();
     }
     expect(page.frames().length, "the states page and its specimens are framed").toBeGreaterThan(2);
     for (const frame of page.frames()) {

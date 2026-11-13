@@ -1,0 +1,9 @@
+/* Sample marks for the states page: a site uses its own logos. */
+.mq-mark {
+  display: inline-block;
+  padding: var(--space-3) var(--space-5);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-m);
+  font-weight: 600;
+  white-space: nowrap;
+}

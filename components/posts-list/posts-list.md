@@ -87,8 +87,8 @@ React renders it; a server renders the same HTML. The parts, in order:
     <a class="cap-tab" href="/posts?status=draft">Drafts<span class="cap-tab-count">2</span></a> ...
     <a class="cap-tab" href="/posts?trashed=1">Trash<span class="cap-tab-count">2</span></a> <!-- with offers.trash -->
   </nav>
-  <form class="cap-posts-filters" role="search" aria-label="Find posts" method="get" action="/posts">
-    <div class="cap-field cap-posts-search"><label class="cap-field-label" for="q">Search</label><input class="cap-input" type="search" id="q" name="q"></div>
+  <form class="cap-field-row" role="search" aria-label="Find posts" method="get" action="/posts">
+    <div class="cap-field cap-field-wide"><label class="cap-field-label" for="q">Search</label><input class="cap-input" type="search" id="q" name="q"></div>
     <!-- Kind (with more than one kind), Tag (when rows carry tags), Author (name="author", with offers.filters "author"), Sort by: native selects in .cap-select-wrap[data-native] -->
     <!-- Published from and to (with offers.filters "published"): .cap-field each, <input class="cap-input" type="date" name="from"> and name="to" -->
     <!-- In the Trash: <input type="hidden" name="trashed" value="1"> -->

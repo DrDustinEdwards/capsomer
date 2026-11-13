@@ -228,6 +228,12 @@ export const SCALE = {
       "none",
       'a text link\'s line at rest, hover and focus; "underline" for a site that wants one',
     ],
+    [
+      "link-hover-decoration",
+      "none",
+      'a text link\'s line under the pointer; "underline" for a site that shows one on hover (a site with a line at rest sets both)',
+    ],
+    ["link-offset", "auto", "how far a text link's line sits below the text, when it has one"],
     ["link-hover-bg", "var(--accent-soft)", 'the tint under the pointer; "transparent" for none'],
     ["link-pressed-bg", "var(--accent-5)", 'the tint while pressed; "transparent" for none'],
     [

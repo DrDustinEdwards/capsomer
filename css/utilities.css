@@ -26,6 +26,12 @@
     clip-path: inset(50%);
     white-space: nowrap;
   }
+  /* A hit area at least --target in each direction (24 px by default, WCAG 2.2 2.5.8; density
+     moves it), allowed to grow with its content. For a small control that is not a Capsomer button. */
+  .cap-tap-target {
+    min-inline-size: var(--target);
+    min-block-size: var(--target);
+  }
   /* Identifiers only: ids, shas, commands, paths. Times and counts are .cap-num. */
   .cap-mono {
     font-family: var(--mono);
@@ -39,10 +45,11 @@
     color: var(--muted);
   }
   /* The family page: one width and one body size on every site (--page-max, --fs-page), so a
-     page's content and footer line up with the letterhead above them, and with every other site's. */
+     page's content and footer line up with the letterhead above them, and with every other site's.
+     --page-leading sets its line height (1.55) for a site whose body reads looser. */
   .cap-page {
     font-size: var(--fs-page);
-    line-height: 1.55;
+    line-height: var(--page-leading, 1.55);
     box-sizing: border-box;
     inline-size: 100%;
     max-inline-size: var(--page-max);
@@ -258,9 +265,13 @@
           var(--cap-fade-start) 100% no-repeat no-clip,
         linear-gradient(to var(--cap-fade-dir), transparent, #000) var(--cap-fade-end-at) 0 /
           var(--cap-fade-end) 100% no-repeat no-clip;
-      animation:
-        cap-fade-start-in linear both,
-        cap-fade-end-out linear both;
+      /* Longhands, with duration auto: a minifier (Lightning CSS, Vite's) folds the animation
+         shorthand and the timeline into one and writes a 0s duration, which Chromium runs as
+         finished, so both fades show at rest. */
+      animation-name: cap-fade-start-in, cap-fade-end-out;
+      animation-duration: auto;
+      animation-timing-function: linear;
+      animation-fill-mode: both;
       animation-timeline: scroll(self inline);
       animation-range:
         0 var(--cap-fade),
@@ -297,7 +308,11 @@
 @layer cap.utilities {
   @supports (animation-timeline: scroll()) {
     :where(.cap-sortable-label, .cap-hist-name) {
-      animation: cap-truncated linear both;
+      /* Longhands, with duration auto (see the scroll fades above). */
+      animation-name: cap-truncated;
+      animation-duration: auto;
+      animation-timing-function: linear;
+      animation-fill-mode: both;
       animation-timeline: scroll(self inline);
     }
     @media (prefers-reduced-motion: no-preference) {
@@ -318,5 +333,118 @@
         }
       }
     }
+  }
+}
+
+/* Layout: a stack (a column with a gap), a cluster (a wrapping row of items), a spread (two ends
+   pushed apart) and a grid (equal columns, as many as fit, at most data-cols). The gap is a space
+   token step, data-gap="1".."9" (--space-1 2px to --space-9 64px). Each sets its own --layout-gap,
+   so a layout nested in another never takes its parent's gap. They replace the stack, cluster,
+   spread, row and grid classes Foxing, Carrel, txasm and julieedwards.info each wrote. */
+@layer cap.utilities {
+  .cap-stack {
+    display: flex;
+    flex-direction: column;
+    --layout-gap: var(--space-5);
+    gap: var(--layout-gap);
+  }
+  .cap-cluster {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    --layout-gap: var(--space-3) var(--space-5);
+    gap: var(--layout-gap);
+  }
+  .cap-spread {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    --layout-gap: var(--space-4);
+    gap: var(--layout-gap);
+  }
+  /* As many columns of at least --grid-min (14rem) as fit, never more than data-cols: the column's
+     floor is also the width that data-cols columns would have, so no query is needed. */
+  .cap-grid {
+    --grid-cols: 3;
+    --layout-gap: var(--space-5);
+    display: grid;
+    gap: var(--layout-gap);
+    grid-template-columns: repeat(
+      auto-fill,
+      minmax(
+        min(100%, max(var(--grid-min, 14rem), (100% - (var(--grid-cols) - 1) * var(--layout-gap)) / var(--grid-cols))),
+        1fr
+      )
+    );
+    &[data-cols="2"] {
+      --grid-cols: 2;
+    }
+    &[data-cols="4"] {
+      --grid-cols: 4;
+    }
+  }
+  :is(.cap-stack, .cap-cluster, .cap-spread, .cap-grid) {
+    &[data-gap="1"] {
+      --layout-gap: var(--space-1);
+    }
+    &[data-gap="2"] {
+      --layout-gap: var(--space-2);
+    }
+    &[data-gap="3"] {
+      --layout-gap: var(--space-3);
+    }
+    &[data-gap="4"] {
+      --layout-gap: var(--space-4);
+    }
+    &[data-gap="5"] {
+      --layout-gap: var(--space-5);
+    }
+    &[data-gap="6"] {
+      --layout-gap: var(--space-6);
+    }
+    &[data-gap="7"] {
+      --layout-gap: var(--space-7);
+    }
+    &[data-gap="8"] {
+      --layout-gap: var(--space-8);
+    }
+    &[data-gap="9"] {
+      --layout-gap: var(--space-9);
+    }
+  }
+  :is(.cap-cluster, .cap-spread) {
+    &[data-align="start"] {
+      align-items: flex-start;
+    }
+    &[data-align="end"] {
+      align-items: flex-end;
+    }
+    &[data-align="center"] {
+      align-items: center;
+    }
+    &[data-align="baseline"] {
+      align-items: baseline;
+    }
+  }
+  .cap-cluster {
+    &[data-justify="end"] {
+      justify-content: flex-end;
+    }
+    &[data-justify="center"] {
+      justify-content: center;
+    }
+  }
+  /* A button or a check straight in a stack keeps its own width, as it would in a block. */
+  .cap-stack > :is(.cap-btn, .cap-check) {
+    align-self: flex-start;
+  }
+  /* Pushes an item to the far end of its row. */
+  .cap-push {
+    margin-inline-start: auto;
+  }
+  /* A readable line: 65 characters. */
+  .cap-measure {
+    max-inline-size: 65ch;
   }
 }

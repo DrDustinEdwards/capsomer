@@ -1,0 +1,30 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* The scope chip: a list's scope (every site, or one) as a GET form with one select, so the
+   choice is in the address and works with no script. Extracted from Carrel's ScopeChip
+   (app/components/scope-chip.tsx, .app-scope in app/app.css). The select is Capsomer's. */
+@layer cap.components {
+  .cap-scope {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin: 0;
+    max-inline-size: 100%;
+    & .cap-select {
+      max-inline-size: 100%;
+    }
+  }
+  .cap-scope-label {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-inline-size: 0;
+    color: var(--muted);
+    font-size: var(--fs-label);
+  }
+  /* Script submits on change; the Show button is for a page with none. */
+  .cap-scope[data-cap-ready] .cap-scope-submit {
+    display: none;
+  }
+}

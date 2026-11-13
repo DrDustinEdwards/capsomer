@@ -9,13 +9,18 @@ import {
   type ReactElement,
   type ReactNode,
   type TextareaHTMLAttributes,
-  useSyncExternalStore,
 } from "react";
 import { useOptionalMessage } from "../message/message.react.tsx";
-import { countText, keyValue, revealedText, stepValue } from "./field.ts";
-
-// For useSyncExternalStore's hydration flag: nothing to subscribe to.
-const noSubscribe = () => () => {};
+import { SLUG_PATTERN, slugify } from "@drdustinedwards/site-helpers/slug";
+import {
+  centsToDollars,
+  countText,
+  keyValue,
+  revealedText,
+  stepValue,
+  toDateTimeLocal,
+} from "./field.ts";
+import { useHydrated } from "../hooks/hooks.react.tsx";
 
 // The props Field passes to its control. Any input, textarea or select (or a component
 // that forwards these to one) will do.
@@ -28,6 +33,11 @@ export interface FieldControlProps {
 
 export interface FieldProps {
   label: ReactNode;
+  // The control's id, for a control drawn by a function (an element child keeps its own).
+  id?: string;
+  // The label is read but not shown, for a field whose purpose the page already makes plain (a
+  // site's search box with its icon). Every other field shows its label.
+  labelHidden?: boolean;
   // Help, shown between the label and the control and read as its description.
   help?: ReactNode;
   // The message for a wrong value: what is wrong and what to do. Shown beside the control.
@@ -46,10 +56,21 @@ export interface FieldProps {
     | ((props: FieldControlProps & { id: string }) => ReactNode);
   // Shown after the control, before the error: a character count.
   after?: ReactNode;
+  // A button in the control's row, after it (Add, Check, Apply): one action on this field only.
+  action?: ReactNode;
+  // Help between the label and the control (default), or under the control.
+  helpPlacement?: "before" | "after";
+  // false keeps the control required but leaves the word "Required" off the label, for a form
+  // whose every field is required and says so once at the top.
+  showRequired?: boolean;
+  // "short": a field that needs only its control's room (a kind, a color) beside a long one, as
+  // data-size="short", which a layout reads (inline-add-form.css).
+  size?: "short";
 }
 
 export function Field({
   label,
+  labelHidden = false,
   help,
   error,
   announce = false,
@@ -57,10 +78,15 @@ export function Field({
   orientation = "vertical",
   children,
   after,
+  action,
+  helpPlacement = "before",
+  showRequired = true,
+  id,
+  size,
 }: FieldProps) {
   const base = useId();
   const own = typeof children === "function" ? {} : children.props;
-  const controlId = own.id ?? `${base}-control`;
+  const controlId = own.id ?? id ?? `${base}-control`;
   const helpId = `${base}-help`;
   const errorId = `${base}-error`;
   const hasError = error != null && error !== false && error !== "";
@@ -75,28 +101,42 @@ export function Field({
     "aria-describedby": describedBy,
     "aria-invalid": hasError ? true : undefined,
   };
-  const control = typeof children === "function" ? children(props) : cloneElement(children, props);
+  const input = typeof children === "function" ? children(props) : cloneElement(children, props);
+  const control = action ? (
+    <div className="cap-field-row">
+      {input}
+      {action}
+    </div>
+  ) : (
+    input
+  );
+  const helpText = help ? (
+    <p className="cap-field-help" id={helpId}>
+      {help}
+    </p>
+  ) : null;
 
   return (
     <div
       className="cap-field"
       data-orientation={orientation === "vertical" ? undefined : orientation}
       data-invalid={hasError ? "true" : undefined}
+      data-size={size}
     >
-      <label className="cap-field-label" htmlFor={controlId}>
+      <label
+        className={labelHidden ? "cap-field-label cap-sr-only" : "cap-field-label"}
+        htmlFor={controlId}
+      >
         {label}
-        {isRequired ? (
+        {isRequired && showRequired ? (
           <span className="cap-field-required" aria-hidden="true">
             Required
           </span>
         ) : null}
       </label>
-      {help ? (
-        <p className="cap-field-help" id={helpId}>
-          {help}
-        </p>
-      ) : null}
+      {helpPlacement === "before" ? helpText : null}
       {control}
+      {helpPlacement === "after" ? helpText : null}
       {after}
       <p
         className="cap-field-error"
@@ -188,16 +228,30 @@ export function InputGroupAddon(props: {
 }
 
 // The words and checks every field part takes from Field.
-type FieldText = Pick<FieldProps, "label" | "help" | "error" | "announce" | "required">;
+type FieldText = Pick<
+  FieldProps,
+  "label" | "help" | "error" | "announce" | "required" | "helpPlacement" | "showRequired"
+>;
 
-// False on the server and in the first render, so a button that needs script is `hidden` in
-// the HTML a page with no script shows, as in the markup on the doc page.
-function useMounted(): boolean {
-  return useSyncExternalStore(
-    noSubscribe,
-    () => true,
-    () => false,
-  );
+const FIELD_KEYS = [
+  "label",
+  "help",
+  "error",
+  "announce",
+  "required",
+  "helpPlacement",
+  "showRequired",
+] as const;
+
+// Splits a field part's props into the words Field takes and the rest, for the control.
+function splitField<T extends Partial<FieldText>>(props: T): [FieldText, Omit<T, keyof FieldText>] {
+  const field: Record<string, unknown> = {};
+  const rest: Record<string, unknown> = { ...props };
+  for (const k of FIELD_KEYS) {
+    if (k in rest) field[k] = rest[k];
+    delete rest[k];
+  }
+  return [field as unknown as FieldText, rest as Omit<T, keyof FieldText>];
 }
 
 // A password with Show and Hide (GOV.UK Password input). The change is said in the status
@@ -208,18 +262,10 @@ export function PasswordInput(
       autoComplete?: "current-password" | "new-password";
     },
 ) {
-  const {
-    label,
-    help,
-    error,
-    announce,
-    required,
-    autoComplete = "current-password",
-    className: _c,
-    ...rest
-  } = props;
+  const [field, own] = splitField(props);
+  const { autoComplete = "current-password", className: _c, ...rest } = own;
   const [shown, setShown] = useState(false);
-  const ready = useMounted();
+  const ready = useHydrated();
   const message = useOptionalMessage();
   const input = useRef<HTMLInputElement>(null);
   useEffect(() => {
@@ -229,7 +275,7 @@ export function PasswordInput(
     return () => form?.removeEventListener("submit", hide);
   }, []);
   return (
-    <Field label={label} help={help} error={error} announce={announce} required={required}>
+    <Field {...field} id={own.id}>
       {(p) => (
         <div className="cap-input-group">
           <input
@@ -277,18 +323,8 @@ export function CharacterCount(
       words?: boolean;
     },
 ) {
-  const {
-    label,
-    help,
-    error,
-    announce,
-    required,
-    value,
-    limit,
-    words = false,
-    className: _c,
-    ...rest
-  } = props;
+  const [field, own] = splitField(props);
+  const { value, limit, words = false, className: _c, ...rest } = own;
   const countId = useId();
   const { text, over } = countText(value, limit, words);
   const message = useOptionalMessage();
@@ -303,11 +339,8 @@ export function CharacterCount(
   }, [text, message]);
   return (
     <Field
-      label={label}
-      help={help}
-      error={error}
-      announce={announce}
-      required={required}
+      {...field}
+      id={own.id}
       after={
         <p className="cap-field-count" id={countId} data-over={String(over)}>
           {text}
@@ -341,33 +374,23 @@ export function NumberField(
       onChange: (value: number | null) => void;
       min?: number;
       max?: number;
-      step?: number;
+      // "any" takes any value (1.5 servings passes the browser's step check); the steppers and
+      // Page Up and Page Down then step by 1.
+      step?: number | "any";
       // The steppers' names. Default: "Decrease" and "Increase" with the label, when it is text.
       decrease?: string;
       increase?: string;
     },
 ) {
-  const {
-    label,
-    help,
-    error,
-    announce,
-    required,
-    value,
-    onChange,
-    min,
-    max,
-    step = 1,
-    decrease,
-    increase,
-    className: _c,
-    ...rest
-  } = props;
-  const ready = useMounted();
+  const [field, own] = splitField(props);
+  const { label } = field;
+  const { value, onChange, min, max, step = 1, decrease, increase, className: _c, ...rest } = own;
+  const ready = useHydrated();
   const named = typeof label === "string" ? ` ${label.toLowerCase()}` : "";
   const v = value ?? Number.NaN;
+  const unit = step === "any" ? 1 : step;
   const onKey = (e: KeyboardEvent<HTMLInputElement>) => {
-    const to = keyValue(e.key, v, step, min, max);
+    const to = keyValue(e.key, v, unit, min, max);
     if (to === null) return;
     e.preventDefault();
     onChange(to);
@@ -392,14 +415,14 @@ export function NumberField(
         hidden={!ready}
         disabled={off}
         onMouseDown={(e) => e.preventDefault()}
-        onClick={() => onChange(stepValue(v, step, by, min, max))}
+        onClick={() => onChange(stepValue(v, unit, by, min, max))}
       >
         {glyph}
       </button>
     </InputGroupAddon>
   );
   return (
-    <Field label={label} help={help} error={error} announce={announce} required={required}>
+    <Field {...field} id={own.id}>
       {(p) => (
         <div className="cap-input-group">
           {stepper(
@@ -445,7 +468,7 @@ const SEARCH_ICON = (
 // there is text, and Esc to clear. A form when `action` is given, so it works with no script;
 // otherwise a div for a filter that answers as it is typed in.
 export function SearchField(
-  props: Pick<FieldProps, "label" | "help"> &
+  props: Pick<FieldProps, "label" | "labelHidden" | "help"> &
     Omit<InputHTMLAttributes<HTMLInputElement>, "type" | "style" | "value" | "onChange"> & {
       value: string;
       onChange: (value: string) => void;
@@ -453,8 +476,18 @@ export function SearchField(
       landmark?: string;
     },
 ) {
-  const { label, help, value, onChange, action, landmark, className: _c, ...rest } = props;
-  const ready = useMounted();
+  const {
+    label,
+    labelHidden,
+    help,
+    value,
+    onChange,
+    action,
+    landmark,
+    className: _c,
+    ...rest
+  } = props;
+  const ready = useHydrated();
   const input = useRef<HTMLInputElement>(null);
   const Wrap = action ? "form" : "div";
   // The landmark is named, as in the HTML contract: `landmark`, or else the field's own label.
@@ -466,7 +499,7 @@ export function SearchField(
       action={action}
       data-cap-ready={ready ? "" : undefined}
     >
-      <Field label={label} help={help}>
+      <Field label={label} labelHidden={labelHidden} help={help}>
         {(p) => (
           <div className="cap-input-group">
             <InputGroupAddon align="inline-start">{SEARCH_ICON}</InputGroupAddon>
@@ -605,5 +638,204 @@ export function DateInput(
         {hasError ? error : null}
       </p>
     </fieldset>
+  );
+}
+
+// A text input in its field: the label, help and error, and every input attribute on the input.
+export function TextField(
+  props: FieldText &
+    Omit<InputHTMLAttributes<HTMLInputElement>, "style"> & {
+      // A button in the input's row (Field's `action`).
+      action?: ReactNode;
+    },
+) {
+  const [field, own] = splitField(props);
+  const { action, className, type = "text", ...rest } = own;
+  return (
+    <Field {...field} action={action}>
+      <input {...rest} type={type} className={className ? `cap-input ${className}` : "cap-input"} />
+    </Field>
+  );
+}
+
+// A slider in its field: the value read out beside the label (an <output> tied to the slider),
+// and words at the two ends under it. `format` writes the value the way the page shows it
+// ("$12,000"); the slider says the same words through aria-valuetext.
+export function RangeField(
+  props: Omit<FieldText, "required" | "showRequired"> &
+    Omit<
+      InputHTMLAttributes<HTMLInputElement>,
+      "type" | "style" | "value" | "onChange" | "min" | "max" | "step"
+    > & {
+      value: number;
+      onChange: (value: number) => void;
+      min?: number;
+      max?: number;
+      step?: number;
+      format?: (value: number) => string;
+      // The words under each end of the track; default the formatted min and max.
+      minLabel?: ReactNode;
+      maxLabel?: ReactNode;
+    },
+) {
+  const [field, own] = splitField(props);
+  const {
+    value,
+    onChange,
+    min = 0,
+    max = 100,
+    step = 1,
+    format = String,
+    minLabel,
+    maxLabel,
+    className: _c,
+    ...rest
+  } = own;
+  const shown = format(value);
+  return (
+    <Field
+      {...field}
+      id={own.id}
+      label={
+        <span className="cap-range-field-head">
+          {field.label}
+          <span className="cap-range-field-value" aria-hidden="true">
+            {shown}
+          </span>
+        </span>
+      }
+      after={
+        <div className="cap-range-field-ends" aria-hidden="true">
+          <span>{minLabel ?? format(min)}</span>
+          <span>{maxLabel ?? format(max)}</span>
+        </div>
+      }
+    >
+      {(p) => (
+        <Range
+          {...rest}
+          {...p}
+          min={min}
+          max={max}
+          step={step}
+          value={value}
+          aria-valuetext={shown}
+          onChange={(e) => onChange(e.target.valueAsNumber)}
+        />
+      )}
+    </Field>
+  );
+}
+
+// An address part (a slug): lower-case letters, digits and single hyphens, the one rule
+// Prelum's slugify and isSlug hold every site to. Given `from` (the title), it follows the
+// title until the person types in it, and goes back to following when they empty it.
+export function SlugField(
+  props: FieldText &
+    Omit<InputHTMLAttributes<HTMLInputElement>, "type" | "style" | "value" | "onChange"> & {
+      value: string;
+      onChange: (value: string) => void;
+      from?: string;
+      // The longest slug, cut back to a whole word (slugify's `max`).
+      max?: number;
+    },
+) {
+  const [field, own] = splitField(props);
+  const { value, onChange, from, max, className: _c, ...rest } = own;
+  const [follows, setFollows] = useState(
+    () => from !== undefined && value === slugify(from, { max }),
+  );
+  useEffect(() => {
+    if (from === undefined || !follows) return;
+    const next = slugify(from, { max });
+    if (next !== value) onChange(next);
+  }, [from, follows, max, value, onChange]);
+  return (
+    <Field {...field}>
+      <input
+        {...rest}
+        className="cap-input"
+        type="text"
+        inputMode="url"
+        autoCapitalize="none"
+        autoCorrect="off"
+        spellCheck={false}
+        pattern={SLUG_PATTERN.source.replace(/^\^|\$$/g, "")}
+        maxLength={max}
+        value={value}
+        onChange={(e) => {
+          const typed = e.target.value;
+          setFollows(from !== undefined && typed === "");
+          onChange(typed === "" && from !== undefined ? slugify(from, { max }) : typed);
+        }}
+        onBlur={(e) => {
+          const tidy = slugify(e.target.value, { max });
+          if (tidy !== value && tidy !== "") onChange(tidy);
+          rest.onBlur?.(e);
+        }}
+      />
+    </Field>
+  );
+}
+
+// Money in dollars: a text box (inputMode decimal, never type="number", which drops what it
+// cannot read) with the currency sign inside its edge. The app keeps integer cents:
+// `defaultCents` fills it, and the server reads the posted text with dollarsToCents.
+export function MoneyField(
+  props: FieldText &
+    Omit<InputHTMLAttributes<HTMLInputElement>, "type" | "style" | "defaultValue"> & {
+      defaultCents?: number | null;
+      // The sign inside the edge. Default "$".
+      symbol?: string;
+    },
+) {
+  const [field, own] = splitField(props);
+  const { defaultCents, symbol = "$", className: _c, ...rest } = own;
+  return (
+    <Field {...field} id={own.id}>
+      {(p) => (
+        <div className="cap-input-group">
+          <InputGroupAddon align="inline-start">
+            <span className="cap-input-group-text" aria-hidden="true">
+              {symbol}
+            </span>
+          </InputGroupAddon>
+          <input
+            {...rest}
+            {...p}
+            className="cap-input"
+            type="text"
+            inputMode="decimal"
+            autoComplete={rest.autoComplete ?? "off"}
+            pattern={rest.pattern ?? "\\$?[0-9,]*(\\.[0-9]{1,2})?"}
+            defaultValue={rest.value === undefined ? centsToDollars(defaultCents) : undefined}
+          />
+        </div>
+      )}
+    </Field>
+  );
+}
+
+// A date and time (datetime-local) on the wall clock of `timeZone` (default UTC, the Worker's
+// zone), which the help names, so what is typed is what is stored. The server reads the posted
+// value with fromDateTimeLocal(value, timeZone).
+export function DateTimeField(
+  props: FieldText &
+    Omit<InputHTMLAttributes<HTMLInputElement>, "type" | "style" | "defaultValue"> & {
+      defaultDate?: Date | null;
+      timeZone?: string;
+    },
+) {
+  const [field, own] = splitField(props);
+  const { defaultDate, timeZone = "UTC", className: _c, ...rest } = own;
+  return (
+    <Field {...field}>
+      <input
+        {...rest}
+        className="cap-input"
+        type="datetime-local"
+        defaultValue={rest.value === undefined ? toDateTimeLocal(defaultDate, timeZone) : undefined}
+      />
+    </Field>
   );
 }

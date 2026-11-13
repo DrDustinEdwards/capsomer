@@ -1,0 +1,6 @@
+/* A site's own look, set with the timeline's custom properties only. */
+.timeline-specimen-site {
+  --cap-timeline-node: 72px;
+  --cap-timeline-fill: linear-gradient(180deg, var(--primary), var(--ok));
+  --cap-timeline-duration: 3s;
+}

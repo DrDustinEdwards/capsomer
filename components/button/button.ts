@@ -4,8 +4,7 @@
 // reduced motion, or with no `.cap-btn-label`, the label just changes. The leaving words are a
 // copy hidden from assistive technology, so the button's name is only ever the new label.
 
-const reduced = () =>
-  typeof matchMedia === "function" && matchMedia("(prefers-reduced-motion: reduce)").matches;
+import { reducedMotion } from "../count-up/count-up.ts";
 
 // Animates a label that has already changed, from the button's width before the change and a
 // copy of the old label. The React wrapper calls it after React has written the new label.
@@ -16,7 +15,7 @@ export function morphFrom(button: HTMLElement, from: number, old: HTMLElement): 
   for (const a of button.getAnimations?.() ?? []) if (a.id === "cap-morph") a.cancel();
   for (const g of button.querySelectorAll(":scope > [data-leaving]")) g.remove();
   const to = button.offsetWidth;
-  if (!label || reduced() || typeof button.animate !== "function") return to;
+  if (!label || reducedMotion() || typeof button.animate !== "function") return to;
   const css = getComputedStyle(button);
   const ms = (name: string, fallback: number) => parseFloat(css.getPropertyValue(name)) || fallback;
   const timing = {

@@ -82,7 +82,8 @@
     gap: var(--space-3);
     box-sizing: border-box;
     min-height: var(--cap-tab-h, var(--control));
-    min-width: var(--target);
+    /* A site's fixed tab width (bsw's 160px pill) is --cap-tab-min-inline-size. */
+    min-width: var(--cap-tab-min-inline-size, var(--target));
     margin: 0;
     padding: 0 var(--pad-x);
     border: 1px solid transparent;
@@ -91,7 +92,8 @@
     color: var(--muted);
     font-family: var(--ui);
     font-size: var(--cap-tab-fs, var(--fs-body));
-    font-weight: 500;
+    /* A site whose tabs are all one weight (bsw's 600) sets --cap-tab-weight. */
+    font-weight: var(--cap-tab-weight, 500);
     line-height: 1.2;
     text-decoration: none;
     white-space: nowrap;
@@ -120,7 +122,8 @@
     &[aria-current="page"] {
       border-color: var(--accent);
       background: var(--surface);
-      color: var(--text);
+      /* The chosen tab's label: --cap-tab-ink (a pill's tone: var(--cap-tab-tone)). */
+      color: var(--cap-tab-ink, var(--text));
       font-weight: 600;
       box-shadow: var(--shadow-xs);
     }
@@ -215,6 +218,88 @@
     }
   }
 
+  /* The pill variant: a rounded tray, the chosen tab a pill inside it whose mark a pointer can drag
+     from tab to tab (tabs.ts, attachPillDrag). A site's look goes in the tray and mark properties:
+     --cap-tabs-tray (the tray's background), --cap-tab-mark (the pill's fill, a color), --cap-tab-mark-edge and
+     --cap-tab-mark-shadow. A tab's data-tone (accent, info, ok, warn, crit) colors the pill while
+     it is chosen or under the drag. */
+  .cap-tabs-list[data-variant="pill"] {
+    --_tone: var(--accent);
+    /* The chosen (or dragged-to) tab's tone, for a site's --cap-tab-ink. */
+    --cap-tab-tone: var(--_tone);
+    --_soft: var(--cap-tab-mark, var(--surface));
+    padding: 6px;
+    /* --cap-tabs-tray-radius and --cap-tab-mark-radius: a squarer tray and pill (bsw's 12px and 8px). */
+    border-radius: var(--cap-tabs-tray-radius, var(--radius-full));
+    background: var(--cap-tabs-tray, var(--sunken));
+    /* A sideways drag is the pill's; an up or down swipe still scrolls the page. */
+    touch-action: pan-y;
+
+    & > .cap-tab {
+      border-radius: var(--cap-tab-mark-radius, var(--radius-full));
+      padding-inline: calc(var(--pad-x) * 1.5);
+      &[aria-selected="true"],
+      &[aria-current="page"] {
+        border-color: var(--cap-tab-mark-edge, var(--_tone));
+        background: var(--_soft);
+        box-shadow: var(--cap-tab-mark-shadow, var(--shadow-xs));
+      }
+    }
+    /* Under a drag, the tab the pill is nearest is drawn as it will be when let go. */
+    &[data-dragging] {
+      cursor: grabbing;
+      & > .cap-tab[aria-selected="true"]:not([data-near]) {
+        border-color: transparent;
+        background: none;
+        box-shadow: none;
+        font-weight: var(--cap-tab-weight, 500);
+      }
+      & > .cap-tab[data-near] {
+        border-color: var(--cap-tab-mark-edge, var(--_tone));
+        background: var(--_soft);
+        color: var(--cap-tab-ink, var(--text));
+        font-weight: 600;
+      }
+    }
+    &:has(> .cap-tab[aria-selected="true"]) {
+      cursor: grab;
+    }
+    &:has(> :is([aria-selected="true"], [aria-current="page"], [data-near])[data-tone]) {
+      --_soft: color-mix(in srgb, var(--_tone) 14%, var(--cap-tab-mark, var(--surface)));
+    }
+    &:has(> :is([aria-selected="true"], [aria-current="page"])[data-tone="info"]),
+    &[data-dragging]:has(> [data-near][data-tone="info"]) {
+      --_tone: var(--info);
+    }
+    &:has(> :is([aria-selected="true"], [aria-current="page"])[data-tone="ok"]),
+    &[data-dragging]:has(> [data-near][data-tone="ok"]) {
+      --_tone: var(--ok);
+    }
+    &:has(> :is([aria-selected="true"], [aria-current="page"])[data-tone="warn"]),
+    &[data-dragging]:has(> [data-near][data-tone="warn"]) {
+      --_tone: var(--warn);
+    }
+    &:has(> :is([aria-selected="true"], [aria-current="page"])[data-tone="crit"]),
+    &[data-dragging]:has(> [data-near][data-tone="crit"]) {
+      --_tone: var(--crit);
+    }
+    &[data-dragging]:has(> [data-near][data-tone="accent"]) {
+      --_tone: var(--accent);
+    }
+  }
+
+  /* Progressive tabs (data-progressive): with no script every panel shows under its own name and
+     the list is links to them. Once the links are tabs, the tab names the panel and the label goes. */
+  .cap-tabs-panel-label {
+    margin: 0 0 var(--space-2);
+    color: var(--muted);
+    font-family: var(--ui);
+    font-size: var(--fs-detail);
+  }
+  .cap-tabs[data-progressive]:has(> [role="tablist"]) > .cap-tabs-panel > .cap-tabs-panel-label {
+    display: none;
+  }
+
   .cap-tabs-panel {
     min-width: 0;
     flex: 1;
@@ -276,6 +361,31 @@
           pointer-events: none;
           transition: inset var(--dur-base) var(--ease-in-out);
         }
+        /* The pill: round, in its site's mark, and settling with a little spring. Under a drag the mark
+           follows the pointer (tabs.ts sets --cap-pill-start and --cap-pill-end) and does not ease. */
+        &[data-variant="pill"]::before {
+          border-color: var(--cap-tab-mark-edge, var(--_tone));
+          border-radius: var(--cap-tab-mark-radius, var(--radius-full));
+          background: var(--_soft);
+          box-shadow: var(--cap-tab-mark-shadow, var(--shadow-xs));
+          transition:
+            inset var(--dur-slow) var(--ease-spring),
+            background-color var(--dur-base) var(--ease-out),
+            border-color var(--dur-base) var(--ease-out);
+        }
+        &[data-variant="pill"][data-dragging] {
+          & > .cap-tab[data-near] {
+            border-color: transparent;
+            background: none;
+          }
+          &::before {
+            left: var(--cap-pill-start);
+            right: var(--cap-pill-end);
+            transition:
+              background-color var(--dur-base) var(--ease-out),
+              border-color var(--dur-base) var(--ease-out);
+          }
+        }
         /* The line: a 2 px rule along the chosen tab's bottom (its inline start when vertical). */
         &[data-variant="line"] > .cap-tab:is([aria-selected="true"], [aria-current="page"]) {
           border-bottom-color: transparent;
@@ -301,7 +411,32 @@
     }
   }
 
+  /* On paper a progressive set prints every panel under its name, as with no script. */
+  @media print {
+    .cap-tabs[data-progressive] {
+      & > .cap-tabs-list {
+        display: none;
+      }
+      & > .cap-tabs-panel[hidden] {
+        display: block;
+        position: static;
+        content-visibility: visible;
+        inline-size: auto;
+        block-size: auto;
+        overflow: visible;
+      }
+      &:has(> [role="tablist"]) > .cap-tabs-panel > .cap-tabs-panel-label {
+        display: block;
+      }
+    }
+  }
+
   @media (forced-colors: active) {
+    .cap-tabs-list[data-dragging] > .cap-tab[data-near] {
+      forced-color-adjust: none;
+      border-color: Highlight;
+      color: CanvasText;
+    }
     .cap-tab:is([aria-selected="true"], [aria-current="page"]) {
       forced-color-adjust: none;
       border-color: Highlight;

@@ -1,0 +1,77 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* The PDF viewer: a bar (Previous and Next, the page, zoom) over the current page, drawn by
+   PDF.js on a canvas, and a plain link to the PDF under it. Extracted from txasm's PdfViewer
+   (app/components/pdf-viewer.tsx, islands/pdf-viewer.ts, app.css .pdf-viewer). */
+@layer cap.components {
+  .cap-pdf {
+    display: grid;
+    gap: var(--space-3);
+    padding: var(--space-3);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-l);
+    background: var(--raised);
+  }
+  .cap-pdf-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2);
+  }
+  .cap-pdf-status,
+  .cap-pdf-zoom-value {
+    margin: 0;
+    font-size: var(--fs-detail);
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+  }
+  .cap-pdf-zoom {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    margin-inline-start: auto;
+  }
+  .cap-pdf-zoom-value {
+    inline-size: 3rem;
+    text-align: center;
+  }
+  .cap-pdf-page {
+    max-block-size: 80vh;
+    overflow: auto;
+    padding: var(--space-2);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-m);
+    background: var(--surface);
+    &:focus-visible {
+      outline: var(--focus-width) solid var(--ring);
+      outline-offset: 2px;
+    }
+    & canvas {
+      display: block;
+      max-inline-size: 100%;
+      margin-inline: auto;
+    }
+    /* Until its first page is drawn, the canvas holds a US Letter page at the default scale
+       (1.2), the size most documents draw at, so the page below does not jump (CLS). */
+    & canvas:not([data-sized]) {
+      inline-size: 734px;
+      aspect-ratio: 612 / 792;
+    }
+  }
+  .cap-pdf-error {
+    padding: var(--space-5);
+    & p {
+      margin: 0 0 var(--space-2);
+    }
+  }
+  .cap-pdf-fallback a {
+    display: inline-flex;
+    align-items: center;
+    min-block-size: var(--target);
+  }
+  .cap-pdf-fallback {
+    margin: 0;
+    font-size: var(--fs-detail);
+  }
+}

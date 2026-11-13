@@ -9,7 +9,7 @@
 // written), an Undo that failed, or a failure (a refresh, a copy) stays until you dismiss
 // it, whatever happens after it: the missing audit row is the one fact that cannot be
 // found later by looking.
-import { singleKeysOff } from "../shortcuts/shortcuts.ts";
+import { isTyping, singleKeysOff } from "../shortcuts/shortcuts.ts";
 import { setStaticHtml } from "../trusted-html/trusted-html.ts";
 
 export type ReturnFocus = HTMLElement | (() => HTMLElement | null);
@@ -98,19 +98,6 @@ export function resolveFocus(f: ReturnFocus | undefined): HTMLElement | null {
   return el?.isConnected ? el : null;
 }
 
-const TEXT_INPUT =
-  /^(text|search|email|url|tel|password|number|date|datetime-local|month|week|time)$/;
-
-// True where a typed z is text, not a command: text inputs, textareas, selects, editable
-// content, and anything that says it is a text box or a combobox.
-export function isTypingTarget(target: EventTarget | null): boolean {
-  if (!(target instanceof Element)) return false;
-  if (target instanceof HTMLInputElement) return TEXT_INPUT.test(target.type || "text");
-  if (target instanceof HTMLTextAreaElement || target instanceof HTMLSelectElement) return true;
-  if (target instanceof HTMLElement && target.isContentEditable) return true;
-  return !!target.closest("[role='textbox'], [role='combobox'], [role='searchbox']");
-}
-
 // `z` alone: no Ctrl, Alt, Meta or Shift, not a held repeat, not typed into a field.
 export function isUndoKey(e: KeyboardEvent): boolean {
   return (
@@ -122,13 +109,37 @@ export function isUndoKey(e: KeyboardEvent): boolean {
     !e.shiftKey &&
     !e.repeat &&
     !e.defaultPrevented &&
-    !isTypingTarget(e.composedPath()[0] ?? e.target)
+    !isTyping(e.composedPath()[0] ?? e.target)
   );
 }
 
 // The message `z` would undo: the newest one with an Undo that is not already running.
 export function currentUndo(all: Message[]): Message | undefined {
   return all.find((m) => m.undo && !m.busy);
+}
+
+// What a form action answered, read for the page's result line: the shape a React Router action
+// returns, `{ error: "..." }` for a refusal and `{ ok: "..." }` for success. An `error` wins; an
+// `ok` that is not a sentence (`ok: true`, a move with nothing to say) has no message, so there
+// is nothing to announce or focus. Anything else (no data yet, a redirect's null) is no result.
+export interface ActionResultView {
+  // The words to show and say, or "" when there are none.
+  message: string;
+  error: string | null;
+  ok: string | null;
+  // "crit" for an error, "ok" for a sentence of success, undefined with no message.
+  tone: "crit" | "ok" | undefined;
+}
+
+export function actionResultView(data: unknown): ActionResultView {
+  const none: ActionResultView = { message: "", error: null, ok: null, tone: undefined };
+  if (typeof data !== "object" || data === null) return none;
+  const { error, ok } = data as { error?: unknown; ok?: unknown };
+  if (typeof error === "string" && error.trim() !== "")
+    return { message: error, error, ok: null, tone: "crit" };
+  if (typeof ok === "string" && ok.trim() !== "")
+    return { message: ok, error: null, ok, tone: "ok" };
+  return none;
 }
 
 // The leading glyph per kind, drawn in currentColor with the mark cut out (the same shapes
@@ -434,6 +445,17 @@ export function runUndo(): Promise<boolean> {
   const r = find();
   const m = r ? currentUndo(r.messages) : undefined;
   return r && m ? undoIn(r, m.id) : Promise.resolve(false);
+}
+
+// The page's status region for results and Undo is one; a component that needs it where the page
+// has none yet places one after `after`.
+export function ensureRegion(after: Element): void {
+  if (document.querySelector("[data-cap='message']")) return;
+  const region = document.createElement("div");
+  region.className = "cap-message";
+  region.dataset.cap = "message";
+  after.after(region);
+  enhance(region.parentNode ?? document);
 }
 
 // Attaches to every [data-cap="message"] under root not yet attached: the region is empty

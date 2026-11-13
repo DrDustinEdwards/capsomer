@@ -8,7 +8,7 @@
     "rootDir": ".",
     "types": []
   },
-  "include": ["components/**/*.ts", "components/**/*.tsx", "test/helpers.ts"],
+  "include": ["components/**/*.ts", "components/**/*.tsx", "test/helpers.ts", "test/page.ts"],
   "exclude": [
     "components/**/*.spec.ts",
     "components/**/states.ts",

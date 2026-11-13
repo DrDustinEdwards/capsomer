@@ -10,6 +10,8 @@
 // (dashboard/src/ui/anchors.tsx), which learned that mounting the bar could otherwise tip the
 // rule it was mounted by.
 
+import { reducedMotion } from "../count-up/count-up.ts";
+
 // The nearest ancestor that scrolls, or null for the window.
 export function scrollParent(el: Element | null | undefined): HTMLElement | null {
   for (
@@ -101,13 +103,11 @@ export function watchSections(
   };
 }
 
-const reduced = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
 // Scrolls a section to the top, under the bar, moves focus to it, and replaces the address's
 // hash (a click on an in-page link is not a place to go Back to). `push: true` adds an entry.
 export function goToSection(heading: HTMLElement, opts: { push?: boolean } = {}): void {
   if (!heading.hasAttribute("tabindex")) heading.tabIndex = -1;
-  heading.scrollIntoView({ block: "start", behavior: reduced() ? "auto" : "smooth" });
+  heading.scrollIntoView({ block: "start", behavior: reducedMotion() ? "auto" : "smooth" });
   heading.focus({ preventScroll: true });
   if (heading.id) {
     if (opts.push) history.pushState(null, "", `#${heading.id}`);

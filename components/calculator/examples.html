@@ -1,0 +1,56 @@
+<section class="cap-specimen" aria-labelledby="s-default">
+  <h2 id="s-default">Default: the form and its worked result, live as it is typed in</h2>
+  <div class="cap-calculator" id="calc-live" data-cap="calculator" data-calculator="transfer">
+    <form class="cap-calculator-form" method="get" action="./states.html">
+      <div class="cap-field">
+        <label class="cap-field-label" for="live-visits">Visits per month</label>
+        <p class="cap-field-help" id="live-visits-help">25000 or 2.5 x 10<sup>4</sup>.</p>
+        <input class="cap-input" id="live-visits" name="visits" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" value="25000" aria-describedby="live-visits-help" />
+      </div>
+      <div class="cap-field">
+        <label class="cap-field-label" for="live-weight">Page weight<span class="cap-calculator-unit"> (KB)</span></label>
+        <p class="cap-field-help" id="live-weight-help">Default: <a href="https://example.com/reports/page-weight">Example Co annual report</a>.</p>
+        <input class="cap-input" id="live-weight" name="weight" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" value="1800" aria-describedby="live-weight-help" />
+      </div>
+      <button type="submit" class="cap-btn" data-variant="secondary">Calculate</button>
+    </form>
+    <div class="cap-calculator-output">
+      <div class="cap-calculator-status" role="status"><p class="cap-calculator-answer">Monthly transfer: <strong>45 GB per month</strong></p></div>
+      <div class="cap-calculator-detail"><div class="cap-calculator-section"><h3>Monthly transfer</h3><ol class="cap-calculator-steps"><li>Data per month: 25,000 visits x 1,800 KB = 4.5 x 10<sup>7</sup> KB.</li><li>In gigabytes: 4.5 x 10<sup>7</sup> KB / 10<sup>6</sup> = 45 GB.</li></ol><p class="cap-calculator-note">1 GB is 10<sup>6</sup> KB here, as hosts bill it.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-error">
+  <h2 id="s-error">A value it cannot use</h2>
+  <div class="cap-calculator" id="calc-error">
+    <form class="cap-calculator-form" method="get" action="./states.html">
+      <div class="cap-field">
+        <label class="cap-field-label" for="err-visits">Visits per month</label>
+        <p class="cap-field-help" id="err-visits-help">25000 or 2.5 x 10<sup>4</sup>.</p>
+        <input class="cap-input" id="err-visits" name="visits" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" value="0" aria-describedby="err-visits-help" />
+      </div>
+      <div class="cap-field">
+        <label class="cap-field-label" for="err-weight">Page weight<span class="cap-calculator-unit"> (KB)</span></label>
+        <p class="cap-field-help" id="err-weight-help">Default: <a href="https://example.com/reports/page-weight">Example Co annual report</a>.</p>
+        <input class="cap-input" id="err-weight" name="weight" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" value="1800" aria-describedby="err-weight-help" />
+      </div>
+      <button type="submit" class="cap-btn" data-variant="secondary">Calculate</button>
+    </form>
+    <div class="cap-calculator-output">
+      <div class="cap-calculator-status" role="status"><p class="cap-calculator-error">Enter the visits per month, greater than 0.</p></div>
+      <div class="cap-calculator-detail"></div>
+    </div>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-react">
+  <h2 id="s-react">React, embedded in another page</h2>
+  <div data-mount="react"></div>
+</section>
+
+<script type="module">
+  import { enhance } from "./calculator.ts";
+  import { runTransfer } from "./specimen/transfer.ts";
+  enhance(document, { transfer: runTransfer });
+</script>

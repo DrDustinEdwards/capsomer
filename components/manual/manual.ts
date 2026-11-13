@@ -1,3 +1,4 @@
+import { clamp } from "../hooks/hooks.ts";
 import { escapeHtml } from "@dustinedwards/site-runtime/html";
 
 export interface PatchOptions {
@@ -15,7 +16,7 @@ export interface PatchOptions {
 
 /** The dots round a patch's disc, one per count (at most 24), as [cx, cy] strings: the SVG and the React patch share them. */
 export function patchDots(count: number): [string, string][] {
-  const n = Math.min(Math.max(count, 0), 24);
+  const n = clamp(count, 0, 24);
   return Array.from({ length: n }, (_, i) => {
     const a = -Math.PI / 2 + (i * 2 * Math.PI) / n;
     return [(70 + 36 * Math.cos(a)).toFixed(2), (70 + 36 * Math.sin(a)).toFixed(2)];

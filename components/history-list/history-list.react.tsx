@@ -28,6 +28,7 @@ import {
   type Run,
 } from "./history-list.ts";
 import { markup } from "../trusted-html/trusted-html.ts";
+import { useHydrated } from "../hooks/hooks.react.tsx";
 
 export type { HistoryEntry, Destination, HistoryKind } from "./history-list.ts";
 
@@ -45,8 +46,13 @@ export interface HistoryListProps {
   label?: string;
   // Who is restoring: the new line is theirs.
   user: string;
-  // The compare view's path; `?from=<older>&to=<newer>` is added.
+  // The compare view's path; `?from=<older>&to=<newer>` is added. Before the script runs the
+  // pick boxes post to it as a plain GET form (`?compare=<id>&compare=<id>`); the compare view
+  // reads either with `comparePicks`.
   compareBase?: string;
+  // The versions picked when the page is drawn (the compare view's own pair, read from its
+  // address), so a page that shows a comparison keeps the two ticked.
+  defaultPicked?: string[];
   // Where a line's title goes (the version's own page).
   versionHref?: (id: string) => string;
   // Load-into-editor mode: an earlier line's action is a "Load into editor" link to this
@@ -158,6 +164,7 @@ interface LineProps {
   current: boolean;
   picked: boolean;
   pickDisabled: boolean;
+  formId: string;
   now?: number;
   href: (id: string) => string;
   onPick: (id: string, el: HTMLInputElement) => void;
@@ -174,6 +181,7 @@ function Line({
   current,
   picked,
   pickDisabled,
+  formId,
   now,
   href,
   onPick,
@@ -204,6 +212,7 @@ function Line({
             type="checkbox"
             name="compare"
             value={e.id}
+            form={formId}
             data-cap-part="pick"
             checked={picked}
             aria-disabled={pickDisabled ? "true" : undefined}
@@ -352,6 +361,7 @@ export function HistoryList({
   label,
   user,
   compareBase = "",
+  defaultPicked,
   versionHref,
   loadHref,
   onLoad,
@@ -367,7 +377,11 @@ export function HistoryList({
 }: HistoryListProps) {
   const prefix = useId();
   const listRef = useRef<HTMLUListElement>(null);
-  const [picked, setPicked] = useState<string[]>([]);
+  const [picked, setPicked] = useState<string[]>(() =>
+    (defaultPicked ?? []).filter((id) => entries.some((e) => e.id === id)).slice(0, 2),
+  );
+  const hydrated = useHydrated();
+  const formId = `${prefix}-compare`;
   const [note, setNote] = useState<string | null>(null);
   const [open, setOpen] = useState<Record<string, boolean>>({});
   const { say } = useMessage();
@@ -444,7 +458,20 @@ export function HistoryList({
         <p className="cap-hist-picked" role="status" data-cap-part="picked">
           {text}
         </p>
-        {pair ? (
+        {/* The pick boxes belong to this form (their form attribute), so before the script
+            runs, ticking two and pressing Compare posts them as a plain GET. */}
+        <form id={formId} method="get" action={compareBase || undefined} hidden />
+        {!hydrated ? (
+          <button
+            type="submit"
+            form={formId}
+            className="cap-btn"
+            data-variant="primary"
+            data-cap-part="compare-submit"
+          >
+            Compare 2 versions
+          </button>
+        ) : pair ? (
           <a
             className="cap-btn"
             data-variant="primary"
@@ -486,6 +513,7 @@ export function HistoryList({
               current={i === 0}
               picked={picked.includes(e.id)}
               pickDisabled={picked.length >= 2 && !picked.includes(e.id)}
+              formId={formId}
               now={now}
               href={href}
               onPick={pick}

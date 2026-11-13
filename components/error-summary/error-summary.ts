@@ -28,7 +28,31 @@ function onClick(e: MouseEvent): void {
   e.preventDefault();
   const head = target.closest(".cap-field")?.querySelector(":scope > .cap-field-label") ?? target;
   head.scrollIntoView({ block: "start" });
-  target.focus({ preventScroll: true });
+  focusTarget(target).focus({ preventScroll: true });
+}
+
+const CONTROL =
+  "input:not([type='hidden']):not(:disabled), select:not(:disabled), textarea:not(:disabled)";
+
+// Where a link to a field lands. A control is itself. A group (a fieldset, a repeater, a date
+// input) lands on the control in it that is in error, else the first one left empty, else its
+// first control, so the person is put where the answer goes, not on the group's edge.
+export function focusTarget(target: HTMLElement): HTMLElement {
+  if (target.matches(CONTROL)) return target;
+  const controls = [...target.querySelectorAll<HTMLElement>(CONTROL)];
+  return (
+    controls.find((c) => c.getAttribute("aria-invalid") === "true") ??
+    controls.find(
+      (c) =>
+        (c instanceof HTMLInputElement ||
+          c instanceof HTMLTextAreaElement ||
+          c instanceof HTMLSelectElement) &&
+        !(c instanceof HTMLInputElement && (c.type === "checkbox" || c.type === "radio")) &&
+        c.value === "",
+    ) ??
+    controls[0] ??
+    target
+  );
 }
 
 export function wireSummary(summary: HTMLElement): () => void {

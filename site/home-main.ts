@@ -3,6 +3,7 @@
 // the component filter, the copy button and the live test count. A component page's: its examples'
 // frames, their code, the component list's filter, the page's sections marked as you read, Copy page.
 import { staticSearch, type StaticSearchIndex } from "@drdustinedwards/site-helpers/search";
+import { copyText } from "../components/copy/copy.ts";
 import { enhance as enhanceHeader } from "../components/site-header/site-header.ts";
 import { enhance as enhanceTabs } from "../components/tabs/tabs.ts";
 import {
@@ -94,14 +95,9 @@ const copy = document.querySelector<HTMLButtonElement>("[data-cap-part='copy']")
 if (copy && navigator.clipboard) {
   copy.hidden = false;
   const copyInstall = async () => {
-    try {
-      await navigator.clipboard.writeText(
-        document.getElementById("home-install")?.textContent ?? "",
-      );
-      copy.textContent = "Copied";
-    } catch {
-      copy.textContent = "Copy failed";
-    }
+    copy.textContent = (await copyText(document.getElementById("home-install")?.textContent ?? ""))
+      ? "Copied"
+      : "Copy failed";
     setTimeout(() => (copy.textContent = "Copy"), 2000);
   };
   copy.addEventListener("click", () => void copyInstall());
@@ -179,14 +175,9 @@ new MutationObserver(resync).observe(document.documentElement, {
 matchMedia("(prefers-color-scheme: dark)").addEventListener("change", resync);
 
 // An example's code starts closed to its first lines, with View code over it; install code stays open.
-const copyText = async (button: HTMLButtonElement, text: string) => {
+const copyCode = async (button: HTMLButtonElement, text: string) => {
   const was = button.textContent;
-  try {
-    await navigator.clipboard.writeText(text);
-    button.textContent = "Copied";
-  } catch {
-    button.textContent = "Copy failed";
-  }
+  button.textContent = (await copyText(text)) ? "Copied" : "Copy failed";
   setTimeout(() => (button.textContent = was), 2000);
 };
 for (const box of document.querySelectorAll<HTMLElement>(".comp-ex-code")) {
@@ -195,7 +186,7 @@ for (const box of document.querySelectorAll<HTMLElement>(".comp-ex-code")) {
   const code = box.querySelector("code")?.textContent ?? "";
   if (copyButton && navigator.clipboard) {
     copyButton.hidden = false;
-    copyButton.addEventListener("click", () => void copyText(copyButton, code));
+    copyButton.addEventListener("click", () => void copyCode(copyButton, code));
   }
   if (!show) continue;
   // Closed, the code cannot scroll and View code is the way in, so the box leaves the tab order until it opens. The
@@ -217,7 +208,7 @@ const md = document.querySelector<HTMLTemplateElement>("template[data-cap-part='
 // without the clipboard loses it.
 if (copyPage && !navigator.clipboard) copyPage.hidden = true;
 if (copyPage && md && navigator.clipboard) {
-  copyPage.addEventListener("click", () => void copyText(copyPage, md.content.textContent ?? ""));
+  copyPage.addEventListener("click", () => void copyCode(copyPage, md.content.textContent ?? ""));
 }
 
 // The component list's filter.

@@ -1,0 +1,89 @@
+<link rel="stylesheet" href="./specimen/search-suggest.css" />
+
+<section class="cap-specimen" aria-labelledby="s-closed">
+  <h2 id="s-closed">Closed, and with no script</h2>
+  <p>Type two letters of a field guide (try "fi" or "mo") to see suggestions; Enter with none chosen searches.</p>
+  <div class="cap-search-suggest" data-cap="search-suggest">
+    <form class="cap-search" role="search" aria-label="Search the library" action="#results">
+      <div class="cap-field">
+        <label class="cap-field-label" for="q-closed">Search the library</label>
+        <div class="cap-input-group">
+          <div class="cap-input-addon" data-align="inline-start">
+            <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><circle cx="7" cy="7" r="4.5" fill="none" stroke="currentColor" stroke-width="1.5" /><path d="M10.5 10.5L14 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" /></svg>
+          </div>
+          <input class="cap-input" id="q-closed" name="q" type="search" enterkeyhint="search" placeholder="Title or author" value="" />
+          <div class="cap-input-addon" data-align="inline-end">
+            <button type="button" class="cap-btn" data-size="xs" data-variant="quiet" data-icon-only data-cap-part="clear" aria-label="Clear search" hidden>
+              <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" /></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-hidden">
+  <h2 id="s-hidden">Label read but not shown</h2>
+  <div class="cap-search-suggest" data-cap="search-suggest">
+    <form class="cap-search" role="search" aria-label="Search books and authors" action="#results">
+      <div class="cap-field">
+        <label class="cap-field-label cap-sr-only" for="q-hidden">Search books and authors</label>
+        <div class="cap-input-group">
+          <div class="cap-input-addon" data-align="inline-start">
+            <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><circle cx="7" cy="7" r="4.5" fill="none" stroke="currentColor" stroke-width="1.5" /><path d="M10.5 10.5L14 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" /></svg>
+          </div>
+          <input class="cap-input" id="q-hidden" name="q" type="search" enterkeyhint="search" placeholder="Title or author" value="" />
+          <div class="cap-input-addon" data-align="inline-end">
+            <button type="button" class="cap-btn" data-size="xs" data-variant="quiet" data-icon-only data-cap-part="clear" aria-label="Clear search" hidden>
+              <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" /></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-open">
+  <h2 id="s-open">Open, an option active</h2>
+  <div class="cap-search-suggest">
+    <form class="cap-search" role="search" aria-label="Search the archive" action="#results">
+      <div class="cap-field">
+        <label class="cap-field-label" for="q-open">Search the archive</label>
+        <div class="cap-input-group">
+          <div class="cap-input-addon" data-align="inline-start">
+            <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><circle cx="7" cy="7" r="4.5" fill="none" stroke="currentColor" stroke-width="1.5" /><path d="M10.5 10.5L14 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" /></svg>
+          </div>
+          <input class="cap-input" id="q-open" name="q" type="search" value="field" role="combobox" aria-autocomplete="list" aria-expanded="true" aria-controls="q-open-list" aria-activedescendant="q-open-list-1" autocomplete="off" />
+        </div>
+      </div>
+    </form>
+    <div class="cap-listbox cap-search-suggest-list" data-variant="surface" role="listbox" id="q-open-list" aria-label="Suggestions">
+      <div class="cap-option" role="option" id="q-open-list-0" data-href="#field-notes"><span class="cap-option-label">Field Notes on Moss</span><span class="cap-option-keys"><span class="cap-option-hint">Ada Marsh</span></span></div>
+      <div class="cap-option" role="option" id="q-open-list-1" data-active data-force="active" data-href="#field-guide"><span class="cap-option-label">A Field Guide to Ferns</span><span class="cap-option-keys"><span class="cap-option-hint">Rowan Hale</span></span></div>
+      <div class="cap-option" role="option" id="q-open-list-2" data-href="#fieldwork"><span class="cap-option-label">Fieldwork in the Long Valley, a Survey of Three Summers</span><span class="cap-option-keys"><span class="cap-option-hint">Imre Toth</span></span></div>
+    </div>
+  </div>
+</section>
+
+<script type="module">
+  import { enhance } from "./search-suggest.ts";
+  const books = [
+    { label: "Field Notes on Moss", hint: "Ada Marsh", href: "#field-notes" },
+    { label: "A Field Guide to Ferns", hint: "Rowan Hale", href: "#field-guide" },
+    { label: "Fieldwork in the Long Valley", hint: "Imre Toth", href: "#fieldwork" },
+    { label: "Moths of the Night Garden", hint: "Lena Price", href: "#moths" },
+    { label: "Mosses and Liverworts", hint: "Ada Marsh", href: "#mosses" },
+  ];
+  enhance({
+    suggest: async (q) => {
+      const needle = q.toLowerCase();
+      return books.filter((b) => b.label.toLowerCase().includes(needle) || b.hint.toLowerCase().includes(needle));
+    },
+    go: (href) => {
+      location.hash = href;
+    },
+    delay: 0,
+  });
+</script>

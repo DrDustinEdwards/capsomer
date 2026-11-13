@@ -6,10 +6,10 @@
 // breadcrumb needs script.
 
 import { enhance as enhancePopover } from "../popover/popover.ts";
+import { uid } from "../hooks/hooks.ts";
 import { setStaticHtml } from "../trusted-html/trusted-html.ts";
 
 const READY = "data-cap-ready";
-let uid = 0;
 
 const DOTS =
   '<svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><circle cx="3" cy="8" r="1.4" fill="currentColor"/><circle cx="8" cy="8" r="1.4" fill="currentColor"/><circle cx="13" cy="8" r="1.4" fill="currentColor"/></svg>';
@@ -27,7 +27,7 @@ export function foldedLevels(count: number, max: number): number[] {
 
 // The folded item's markup, the contract in breadcrumb.md. `links` are the levels' anchors.
 function foldedItem(links: HTMLAnchorElement[]): HTMLLIElement {
-  const id = `cap-breadcrumb-more-${++uid}`;
+  const id = uid("cap-breadcrumb-more");
   const li = document.createElement("li");
   li.className = "cap-breadcrumb-item";
   li.dataset.collapsed = "";

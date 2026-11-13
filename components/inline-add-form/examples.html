@@ -1,0 +1,69 @@
+<link rel="stylesheet" href="./specimen/narrow.css" />
+
+<section class="cap-specimen" aria-labelledby="s-one">
+  <h2 id="s-one">One field and its button</h2>
+  <form class="cap-inline-add" method="post" action="#" aria-label="Add a scene">
+    <input type="hidden" name="intent" value="new-scene" />
+    <div class="cap-field">
+      <label class="cap-field-label" for="ia-scene">New scene</label>
+      <input class="cap-input" id="ia-scene" name="name" required placeholder="Scene name" autocomplete="off" />
+    </div>
+    <button type="submit" class="cap-btn">Start it</button>
+  </form>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-two">
+  <h2 id="s-two">Two fields, the second optional</h2>
+  <form class="cap-inline-add" method="post" action="#">
+    <input type="hidden" name="intent" value="new-chapter" />
+    <div class="cap-field">
+      <label class="cap-field-label" for="ia-chapter">New chapter</label>
+      <input class="cap-input" id="ia-chapter" name="name" required placeholder="Chapter name" autocomplete="off" />
+    </div>
+    <div class="cap-field">
+      <label class="cap-field-label" for="ia-first">First scene</label>
+      <input class="cap-input" id="ia-first" name="scene" placeholder="Scene name" autocomplete="off" />
+    </div>
+    <button type="submit" class="cap-btn">Start it</button>
+  </form>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-kind">
+  <h2 id="s-kind">A short select beside the name</h2>
+  <form class="cap-inline-add" method="post" action="#">
+    <div class="cap-field" data-size="short">
+      <label class="cap-field-label" for="ia-kind">New entry</label>
+      <select class="cap-select" id="ia-kind" name="kind">
+        <option value="person">Person</option>
+        <option value="place">Place</option>
+        <option value="rule">Rule</option>
+      </select>
+    </div>
+    <div class="cap-field">
+      <label class="cap-field-label" for="ia-name">Name</label>
+      <input class="cap-input" id="ia-name" name="name" required placeholder="Name" autocomplete="off" />
+    </div>
+    <button type="submit" class="cap-btn">Add it</button>
+  </form>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-narrow">
+  <h2 id="s-narrow">A narrow column: the fields wrap, the button follows</h2>
+  <div class="inline-add-narrow">
+    <form class="cap-inline-add" method="post" action="#">
+      <div class="cap-field">
+        <label class="cap-field-label" for="ia-n1">New chapter</label>
+        <input class="cap-input" id="ia-n1" name="name" placeholder="Chapter name" autocomplete="off" />
+      </div>
+      <div class="cap-field">
+        <label class="cap-field-label" for="ia-n2">First scene</label>
+        <input class="cap-input" id="ia-n2" name="scene" placeholder="Scene name" autocomplete="off" />
+      </div>
+      <button type="submit" class="cap-btn">Start it</button>
+    </form>
+  </div>
+</section>
+<script type="module">
+  // The specimens post nowhere.
+  for (const f of document.querySelectorAll(".cap-inline-add")) f.addEventListener("submit", (e) => e.preventDefault());
+</script>

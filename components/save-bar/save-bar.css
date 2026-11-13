@@ -1,0 +1,26 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* The save bar: the foot of a settings form, its result and its Save button on one line at the
+   end of the form, wrapping onto two when the column is narrow. Extracted from Foxhound's six
+   settings pages (app/routes/app/settings/*.tsx), each a copy of Recova's SaveBar. */
+@layer cap.components {
+  .cap-save-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: var(--space-3);
+    margin-block-start: var(--space-6);
+
+    & > .cap-btn {
+      flex: none;
+    }
+  }
+
+  /* The live region is always on the page, empty until a result arrives, so the result is
+     announced when it comes. */
+  .cap-save-bar-status {
+    margin: 0;
+  }
+}

@@ -724,10 +724,11 @@ function install(): void {
         el.closest("[aria-disabled='true'], [aria-hidden='true']")
       )
         continue;
-      // Inline in a sentence: WCAG 2.5.8's inline exception (a footnote's sup is part of the sentence).
-      const line = el.parentElement?.matches("sup, sub")
-        ? el.parentElement.parentElement
-        : el.parentElement;
+      // Inline in a sentence: WCAG 2.5.8's inline exception. The sentence is the block the link
+      // runs in, past any inline wrapper (a footnote's sup, a byline name's strong or span).
+      let line = el.parentElement;
+      while (line?.parentElement && getComputedStyle(line).display === "inline")
+        line = line.parentElement;
       if (
         getComputedStyle(el).display === "inline" &&
         line &&
@@ -957,6 +958,8 @@ function install(): void {
     h2: "heading",
     h3: "heading",
     h4: "heading",
+    h5: "heading",
+    h6: "heading",
     form: "form",
     main: "main",
     header: "banner",
@@ -1161,7 +1164,12 @@ for (const name of NAMES) {
     }
 
     const fixture = FIXTURES[name];
-    if (existsSync(`components/${name}/examples.tsx`) || fixture) {
+    // The parity check compares the classes a component's CSS owns. One with no CSS (json-ld's
+    // data block, which is never drawn) owns no class, so there is nothing to compare.
+    if (
+      existsSync(`components/${name}/${name}.css`) &&
+      (existsSync(`components/${name}/examples.tsx`) || fixture)
+    ) {
       test("behavior: sweep: the React wrapper renders the HTML contract's elements, roles and names", async ({
         page,
       }) => {

@@ -1,0 +1,13 @@
+/* Sample layout only: a stand-in for the app's own PDF viewer, and a phone-width column. */
+.archive-viewer {
+  display: grid;
+  place-items: center;
+  min-height: 12rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-l);
+  background: var(--raised);
+  color: var(--muted);
+}
+.archive-narrow {
+  max-width: 22rem;
+}

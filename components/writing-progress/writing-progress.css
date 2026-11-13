@@ -1,0 +1,36 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* The writing progress panel: today's words against the target (the meter), the streak, the pace a
+   deadline asks for, the last days (the chart frame) and the goal form (field, disclosure). This
+   file only stacks them and lays the writing days out in a row that wraps. Extracted from Carrel
+   (app/components/writing/progress-panel.tsx and its app-stack, app-days and app-note rules). */
+@layer cap.components {
+  .cap-progress-body {
+    display: grid;
+    gap: var(--space-4);
+    min-width: 0;
+  }
+  .cap-progress-line {
+    margin: 0;
+    font-variant-numeric: var(--figures);
+  }
+  .cap-progress-note {
+    margin: 0;
+    color: var(--muted);
+    font-size: var(--fs-detail);
+    max-width: 60ch;
+  }
+  .cap-progress-form {
+    display: grid;
+    gap: var(--space-4);
+    margin: 0;
+    padding-block-start: var(--space-3);
+  }
+  /* Monday to Sunday, as many to a line as fit. */
+  .cap-progress-days {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-5);
+  }
+}

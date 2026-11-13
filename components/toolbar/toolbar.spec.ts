@@ -45,6 +45,19 @@ eachTheme((theme) => {
     await expect(bar.getByRole("link", { name: "History" })).toBeFocused();
   });
 
+  test("keyboard: an editor's bar keeps the editor's focus on a press, and hands it back after Enter", async ({
+    page,
+  }) => {
+    await visitStates(page, "toolbar", theme);
+    const editor = page.getByRole("textbox", { name: "Draft" });
+    await editor.focus();
+    await page.getByRole("button", { name: "Bold" }).click();
+    await expect(editor).toBeFocused();
+    await page.getByRole("button", { name: "Bold" }).focus();
+    await page.keyboard.press("Enter");
+    await expect(editor).toBeFocused();
+  });
+
   test("keyboard: right to left, Left arrow moves forward", async ({ page }) => {
     await visitStates(page, "toolbar", theme);
     const bar = page.locator("#tb-rtl");
