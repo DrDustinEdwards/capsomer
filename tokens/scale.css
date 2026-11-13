@@ -27,6 +27,15 @@
   --display: "Inter", "Inter Fallback", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
   --weight-title: 300;
   --weight-heading: 500;
+  --mono-size: 0.75rem;
+  --text-strong: 600;
+  --title-weight: var(--weight-heading);
+  --title-1: 2.25rem;
+  --title-2: 1.875rem;
+  --title-3: 1.5rem;
+  --title-4: 1.25rem;
+  --title-5: 1.125rem;
+  --title-6: 1rem;
   --wayfinding: "Overpass", "Overpass Fallback", "Segoe UI", Arial, sans-serif;
   --poster: "Jost", "Jost Fallback", Futura, "Century Gothic", sans-serif;
   --drafting: "Capsomer Drafting", "Capsomer Drafting Fallback", "Segoe UI", Arial, sans-serif;

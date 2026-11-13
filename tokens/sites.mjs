@@ -32,10 +32,12 @@ const SITES = {
   dustinedwards: {
     family: "purple",
     on: "<html>",
-    note: "its paper ground, layers above its own pinned bar, and the public charts' look from before Enarratio 0.3 (Enarratio's own literals)",
+    note: "its paper ground, square controls (the manual look), layers above its own pinned bar with the reading-progress line over them, and the public charts' look from before Enarratio 0.3 (Enarratio's own literals)",
     all: {
       "z-sticky": "100",
       "z-overlay": "800",
+      "z-progress": "900",
+      "radius-control": "0",
       "enarratio-font-size": "1rem",
       "enarratio-font-size-small": "0.875em",
       "enarratio-line-height-tooltip": "1.35",
@@ -229,7 +231,10 @@ const SITES = {
   "capsid-portal": {
     family: "teal",
     on: "the Portal's <html>",
-    note: "secondary text is 13px at the least on a phone (the Portal UX audit's m4), at the Portal's own 820px",
+    note: "secondary text is 13px at the least on a phone (the Portal UX audit's m4), at the Portal's own 820px; identifiers are 13px, the detail size",
+    all: {
+      "mono-size": "0.8125rem",
+    },
     phoneMax: "820px",
     phone: {
       "fs-label": "0.8125rem",
@@ -239,9 +244,17 @@ const SITES = {
   txasm: {
     family: "navy",
     on: "<html>",
-    note: "the UI face stays Inter, which txasm self-hosts (Fontsource names the variable file Inter Variable)",
+    note: "the UI face stays Inter, which txasm self-hosts (Fontsource names the variable file Inter Variable); its public pages read at 16px on a 72rem column, 24px in from the sides (16px on a phone)",
     all: {
       ui: '"Inter Variable", "Inter", "Inter Fallback", "Segoe UI", "Helvetica Neue", Arial, sans-serif',
+      "page-max": "72rem",
+      "page-gutter": "24px",
+      "fs-page": "1rem",
+      "page-leading": "1.5",
+      "title-weight": "600",
+    },
+    phone: {
+      "page-gutter": "16px",
     },
   },
   foxing: {
@@ -254,6 +267,13 @@ const SITES = {
       mono: '"DM Mono", "DM Mono Fallback", ui-monospace, monospace',
       "radius-l": "0.75rem",
       display: '"Fraunces Variable", "Fraunces", "Fraunces Fallback", Georgia, serif',
+      // design-system.md's text roles on a 1rem body: small 14px, tiny 12px, lead 18px, strong
+      // at DM Sans Medium, titles in Fraunces SemiBold.
+      "text-tiny": "0.75rem",
+      "text-small": "0.875rem",
+      "text-lead": "1.125rem",
+      "text-strong": "500",
+      "title-weight": "600",
     },
     // Rule 05's sky blue #43a1d8 is 2.7:1 on the cream ground, under the 3:1 a checked box needs,
     // so the light theme takes Foxing's own hover blue for the fill and a step darker for hover.
@@ -289,8 +309,11 @@ const SITES = {
   julieedwards: {
     family: "forest",
     on: "<html>",
-    note: "Open Sans to read and Montserrat for the header and headings, which the site self-hosts; the old site's hover touches (Dustin, 2026-10-23)",
+    note: "Open Sans to read and Montserrat for the header and headings, which the site self-hosts; the old site's hover touches (Dustin, 2026-10-23); its 67.5rem column 32px in from the sides, on a 1.65 line",
     all: {
+      "page-max": "67.5rem",
+      "page-gutter": "32px",
+      "page-leading": "1.65",
       ui: '"Open Sans", "Open Sans Fallback", Arial, sans-serif',
       "font-ui": '"Montserrat", "Montserrat Fallback", Helvetica, Arial, sans-serif',
       "link-rule": "1px",

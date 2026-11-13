@@ -4,9 +4,39 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
-## [0.127.0]
+## [0.132.0]
 
 - **A progressive tab set prints every panel.** The print rule set `display: block` in `cap.components`, and the reset's `[hidden] { display: none !important }` in `cap.reset` beats every later layer, so the inactive panels stayed off the page. The rule is now `!important` in `cap.reset`, where its specificity wins. No token or class changed.
+
+## [0.131.0]
+
+- **Form and async hooks: `capsomer/react/form-hooks`** (shared-code audit pass 2, cluster C21). `useSaveQueue` (save on change without racing saves), `useDraftDirty`, `useDebounced` and `useDebouncedPreview` (an overtaken request is aborted), with no router or DOM; the pure parts (`createSaveQueue`, `draftAfter`, `draftDirty`, `filterParams`, `withParam`, `pagePending`) from `capsomer/behavior/form-hooks`. From Foxhound, Foxing, dustinedwards.info, Carrel and the Capsid Portal.
+- **Confirm dialog: `useConfirmAction` and `useTwoStep`** in `capsomer/react/confirm-dialog`: the subject and opener a page's confirm dialogs share, and preview-then-perform with the server's words on every failure and an expired preview dropped. From Carrel and the Capsid Portal.
+- **Route hooks: `capsomer/react/route-hooks`** (clusters C21 and C22), the ones that read the address, a fetcher or loader data: `useFetcherPromise`, `useUrlDialog`, `useUrlFilters`, `usePagePending`, `useScrollToHash`, `useParamChoice` and `createSnippetHook`.
+- **State hooks: `capsomer/react/state-hooks`** (cluster C22). `useSelection` and `indeterminate` for bulk bars and `useSinceLastVisit`; `newId` and `versionedStore` from `capsomer/behavior/state-hooks`, with no router or DOM. A media query and the browser's zone are `useMedia` and `useBrowserZone` in `capsomer/react/hooks`.
+- **Data hooks: `capsomer/react/data`** (cluster C23). `createQueryClient`, `useSeededQuery`, `useWrite` with `patch` and `patchAll`, `Answer` with `getAnswer`, `postAnswer`, `answerOf`, `ask` and `SignedOut`, `useAnswer`, `createFlag` and `useFlag`, `useLiveRoom` (reconnects with backoff and jitter; Foxing's club room did not reconnect) and `preloadedLazy`. `@tanstack/react-query` is a new optional peer (`^5.104.0`). Nothing in it touches the DOM, so Foxing's shared web and mobile client uses it.
+- No token or class was removed or renamed.
+
+## [0.130.0]
+
+- **The theme switch keeps `<meta name="color-scheme">` in step.** A choice made on the page now sets the meta's content as well as `data-theme` (`colorSchemeContent`: the choice, or `light dark`). Before, a site that wrote the meta on the server (dustinedwards.info) kept the old value until the next page, so the browser's own controls and the canvas painted before the CSS showed the other scheme (Modern Web Guidance, dark-mode-toggle). No HTML contract changes; a page without the meta is unchanged.
+- Showcase site: `theme.js` sets the meta from the stored choice before paint, and the home band's word stagger is one `sibling-index()` rule in place of seven `:nth-child` delays (a browser without it raises the words together).
+- The five Enter handlers Chrome's legacy scanner flags (confirm-dialog, markdown-editor twice, media, rich-editor) carry `legacy-scan:keep` with the reason: `isImeEnter` (shortcuts.ts) already checks `isComposing` and keyCode 229, and the scanner cannot follow a helper (devkit 0.45.0). The legacy scan's count is 0.
+
+## [0.127.0]
+
+- **New: text roles, titles and line clamps** (`css/utilities.css`). `.cap-text` sets a run of text's role with one attribute per axis: `data-size="tiny|small|lead"`, `data-tone="muted|dim|ink|accent|ok|crit"`, `data-weight="strong"`, `data-face="ui|mono|prose|display"`, `data-align="center|end"`. `.cap-title` is a title outside a component, `data-size="1"` to `"6"` (2.25rem to 1rem, the display face at `--title-weight`). `.cap-clamp` cuts text at `data-lines="1"`, `"2"` (default) or `"3"` with an ellipsis. They replace the text-role and clamp classes Foxing, the Portal and txasm each wrote. New tokens a SITES entry may set: `--text-tiny`, `--text-small`, `--text-lead` (unset by default, so they fall back at use to `--fs-label`, `--fs-detail` and `--fs-lead`), `--text-strong` (600), `--title-weight` (the heading weight), `--title-1` to `--title-6`, and `--mono-size` (0.75rem), which `.cap-mono` now reads. Foxing's entry sets its text sizes (12, 14 and 18px), its strong weight (500) and its title weight (600); the Portal's sets 13px identifiers. Removed or renamed: no token or class.
+- **Anchor bar: React finds its own sections.** `<AnchorBar />` without `sections` renders an empty, hidden bar and lets the behavior module fill, show and spy on it, as the module does for plain HTML. A `[data-section][id]` block inside another is no longer an entry: the bar names the outer sections only (from the Portal's own bar, which it replaces).
+- **Sites: txasm's entry sets `--title-weight: 600`**, its page titles' weight before they moved onto `.cap-title`.
+
+## [0.126.0]
+
+- **Layout: item helpers.** `.cap-grow` (takes the room its row leaves and may shrink below its content), `.cap-shrink` (a flex or grid item that may shrink below its content: `min-inline-size: 0`), `.cap-keep` (never shrinks), `.cap-full` (a whole row: every grid column, the full line of a cluster, the full width of a block) and `.cap-column`, a centered column for a form (42rem), with `data-width="narrow"` (28rem, a sign-in) or `"reading"` (48rem). They replace txasm's `.grow`, `.shrink`, `.span-2`, `.narrow`, `.form-page` and `.reading`, and Foxing's `.grow`, `.shrink-0`, `.min-0` and `.full`.
+- **New: site footer** (`capsomer/site-footer.css`, `.cap-site-footer`, `.cap-site-footer-links`, `.cap-site-footer-note`): a site's own plain footer for a site outside the family footer, a hairline over a links row, a mark and the small print, in the page's column; `data-tone="raised"` on the raised surface, `data-links="quiet"` for muted links. Slots `--site-footer-gap`, `--site-footer-pad`, `--site-footer-bg`, `--site-footer-fs`. From txasm's and julieedwards.info's footers.
+- **Sites: page columns in their entries.** txasm's entry sets its 72rem page column (`--page-max`), 24px sides (16px on a phone), and 16px text on a 1.5 line (`--fs-page`, `--page-leading`), so its public pages use `.cap-page` instead of their own frame. julieedwards.info's entry sets its 67.5rem column, 32px sides and 1.65 line. Removed or renamed: no token or class.
+- **Site footer links are at least `--target` tall** (24px by default, WCAG 2.2 2.5.8): the sweep found them 20px on a touch screen.
+- **Sites: dustinedwards.info's entry sets `--radius-control: 0` (its square controls) and `--z-progress: 900` (its reading-progress line over its own 800 overlay)**, which its app.css declared itself.
+- **Fonts: DM Sans declares its file's whole weight axis** (100 to 1000, was 400 to 700), as dustinedwards.info's font gate checks every face it loads.
 
 ## [0.125.0]
 

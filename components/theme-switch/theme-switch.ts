@@ -15,6 +15,7 @@
 import { readPref, writePref } from "../shell/shell.ts";
 import { attach as attachTip } from "../tooltip/tooltip.ts";
 import {
+  colorSchemeContent,
   isThemeChoice as isChoice,
   THEME_COOKIE,
   THEME_PREF,
@@ -63,6 +64,10 @@ function paintTheme(choice: ThemeChoice, animate: boolean, chosen: boolean): voi
   const paint = () => {
     pending = null;
     document.documentElement.setAttribute("data-theme", choice);
+    // The color-scheme hint (colorSchemeContent) follows the choice too, so the canvas the browser paints before the CSS
+    // and its own controls match it (Modern Web Guidance, dark-mode-toggle).
+    const scheme = document.querySelector<HTMLMetaElement>('meta[name="color-scheme"]');
+    if (scheme) scheme.content = colorSchemeContent(choice);
     // The browser bar (themeColorMeta): every theme-color tag takes the chosen theme's ground.
     const metas = document.querySelectorAll<HTMLMetaElement>('meta[name="theme-color"]');
     if (metas.length) {
