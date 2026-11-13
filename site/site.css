@@ -71,12 +71,14 @@ h3 {
   text-wrap: balance;
 }
 h1 {
-  font: var(--weight-title) clamp(var(--display-5), 5vw, var(--display-2)) / var(--leading-none) var(--ui);
+  font: var(--weight-title) clamp(var(--display-5), 5vw, var(--display-2)) / var(--leading-none)
+    var(--ui);
   /* Light needs less tightening than the 800 it replaced. */
   letter-spacing: var(--tracking-tight);
 }
 h2:not(.cap-family-footer-heading) {
-  font: var(--weight-heading) clamp(var(--title-2-5), 3.4vw, var(--display-5)) / var(--leading-none) var(--ui);
+  font: var(--weight-heading) clamp(var(--title-2-5), 3.4vw, var(--display-5)) / var(--leading-none)
+    var(--ui);
   letter-spacing: var(--tracking-tight);
 }
 h3 {
@@ -233,7 +235,7 @@ h2:not(.cap-family-footer-heading) {
     padding: var(--space-5) var(--space-9-5) var(--space-5) var(--space-5);
     overflow: auto;
     max-block-size: 28rem;
-    font: var(--fs-detail)/ var(--leading-relaxed) var(--mono);
+    font: var(--fs-detail)/var(--leading-relaxed) var(--mono);
   }
   .cap-tabs-panel & {
     border: var(--line-w) solid var(--line);
