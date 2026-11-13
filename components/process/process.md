@@ -6,7 +6,7 @@ parts: [css, react]
 tool: native
 states: [three columns, rows with a tag, flush rows, rows with an end, narrow space]
 added: 0.132.0
-updated: 0.136.0
+updated: 0.140.0
 source: Foxhound's how it works (app/components/product-sections-cap.tsx) and its guide's ordered rows (app/components/docs/doc-widgets.tsx)
 replaces:
   - 'How it works'

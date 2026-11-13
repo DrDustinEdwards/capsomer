@@ -6,7 +6,7 @@ parts: [css, react]
 tool: native
 states: [not liked, liked, hover, signed out, saving, failed]
 added: 0.132.0
-updated: 0.136.0
+updated: 0.140.0
 source: Foxing's LikeButton (apps/web/app/components/social/like-button.tsx, .fx-like-button-* in styles/social.css and styles/clubs.css)
 replaces:
   - 'fx-like-button'

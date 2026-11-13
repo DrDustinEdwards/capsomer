@@ -6,7 +6,7 @@ parts: [css, react]
 tool: native
 states: [stacked block, beside, alternating, lifted, tall preview that scrolls, card grid, card without an icon, card with a tag]
 added: 0.132.0
-updated: 0.136.0
+updated: 0.140.0
 source: Foxhound's FeatureBlocks (app/components/product-sections-cap.tsx), the guide's AuditScopes cards (app/components/docs/doc-widgets.tsx) and the features page's FeatureCard
 replaces:
   - 'FeatureBlocks'

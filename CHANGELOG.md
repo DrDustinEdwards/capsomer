@@ -4,7 +4,7 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
-## [0.136.0]
+## [0.140.0]
 
 The gaps the site moves onto 0.132.0's content and marketing blocks found (bsw, julieedwards.info, dei, Foxing, germomics, Foxhound). Every site can get its current look back by setting tokens or props; each default stays what 0.132.0 drew, except the fixes below. No token, class or contract is removed or renamed.
 
@@ -42,6 +42,10 @@ The gaps the site moves onto 0.132.0's content and marketing blocks found (bsw, 
 - `SourcesList`: `markAway` marks a link to another site with the link system's ↗ (`data-link="away"`).
 - `FeatureCard`: `tag` (`.cap-feature-card-head` and `.cap-feature-card-tag`, a pill at the end of the title's line) and `attributes` (the site's own `data-*` on the card).
 - Process: a step's `end` (`.cap-process-end`), its timing and status at the end of a row's line.
+
+## [0.137.0]
+
+- **`MediaPicker` and `ImageField` load the media library when the dialog opens.** `media-picker.react.tsx` imported `MediaLibrary` statically, so a page that drew only the button (an editor, a settings form) shipped the whole library: 32 KB gzip on Carrel's editor route (capsomer#408). The library is now its own chunk behind `React.lazy` and `Suspense`, showing the same "Loading media..." text while it arrives. No token, class, export or HTML contract changed.
 
 ## [0.135.0]
 

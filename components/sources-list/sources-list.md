@@ -6,7 +6,7 @@ parts: [css, react]
 tool: native
 states: [mixed kinds, linked and not, in a closed disclosure]
 added: 0.132.0
-updated: 0.136.0
+updated: 0.140.0
 source: germomics' episode Sources (app/components/content/EpisodeExtras.tsx, Source in app/lib/types.ts)
 replaces:
   - 'SOURCE_KIND'

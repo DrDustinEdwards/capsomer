@@ -6,7 +6,7 @@ parts: [css, react]
 tool: native
 states: [ten entries, the reader's own entry, a long name, empty]
 added: 0.132.0
-updated: 0.136.0
+updated: 0.140.0
 source: germomics' game leaderboard (app/routes/games.$slug.tsx, app/lib/scores.server.ts)
 replaces:
   - 'Leaderboard'
