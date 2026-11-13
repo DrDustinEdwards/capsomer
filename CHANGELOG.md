@@ -4,6 +4,12 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+- **Collab editor: `Room.doc` and `Room.provider` are `null` before the page is in the browser.** `useRoom`'s first render returned an object cast `as unknown as Room` that lacked both; the type now says so (`Y.Doc | null`, `YProvider | null`) and the cast is gone. `useRoomEditing` is unchanged (it reads them once `synced`). An app that reads `room.doc` or `room.provider` from `useRoom` directly must handle null.
+- **`MediaPicker`: a library chunk that fails to load shows "The library did not load"** (the failed `Empty`) instead of breaking the dialog.
+- **Command host: a failed menu load is no longer kept.** `load()` clears itself on failure so the next `open` or `load` fetches the chunk again; the idle warm-up and `runWhenReady` share one fire-and-forget `warm`, and `open` still rejects.
+- **Theme switch: optional `onError(error)`** on `ThemeSwitch`, `ThemeButton`, `enhance` and `chooseTheme`/`toggleTheme`'s memory, called when `onSave` throws or rejects. Without it the failure is let go as before.
+- **Carousel: `trackLabel`** names the scrolling track (default "Slides"), for a page in another language.
+
 ## [0.139.1]
 
 - **Fix: `capsomer/role-grid.css` resolves.** 0.139.0 added the file but the `./*.css` export maps a name to `components/<name>/<name>.css`, so `@import "capsomer/role-grid.css"` failed to resolve; it now has its own export. No class or token changes.

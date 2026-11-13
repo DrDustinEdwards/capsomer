@@ -30,11 +30,13 @@ export { THEME_COOKIE, THEME_PREF, type ThemeChoice };
 export type ThemeSave = (choice: ThemeChoice) => void | Promise<unknown>;
 
 /** Where a person's choice is kept. `key`: this browser's localStorage key (null: none). `cookie`:
- *  the site's cookie, for its server. `onSave`: the site's own save. */
+ *  the site's cookie, for its server. `onSave`: the site's own save. `onError`: told when that save
+ *  throws or rejects (the choice stands either way); without it the failure is let go. */
 export interface ThemeMemory {
   key?: string | null;
   cookie?: string;
   onSave?: ThemeSave;
+  onError?: (error: unknown) => void;
 }
 
 // What the person chose and the browser remembers, or null if they never did. A "system"
@@ -91,20 +93,22 @@ export function writeThemeCookie(choice: ThemeChoice, name = THEME_COOKIE): void
 
 // A person's choice, kept everywhere the site keeps it: painted (crossfading unless `animate` is
 // false), this browser's memory, the site's cookie, then the site's onSave. A save that throws or
-// rejects is let go; the page has switched and stays switched.
+// rejects goes to onError (let go without one); the page has switched and stays switched.
 export function chooseTheme(
   choice: ThemeChoice,
-  { key = THEME_PREF, cookie, onSave }: ThemeMemory = {},
+  { key = THEME_PREF, cookie, onSave, onError }: ThemeMemory = {},
   { animate = true }: { animate?: boolean } = {},
 ): void {
   paintTheme(choice, animate, true);
   if (key) writePref(key, choice);
   if (cookie) writeThemeCookie(choice, cookie);
   if (!onSave) return;
+  // The choice stands in this browser and the cookie whether the save fails at once or later.
+  const failed = (error: unknown) => onError?.(error);
   try {
-    void Promise.resolve(onSave(choice)).catch(() => undefined);
-  } catch {
-    // The site's save failed at once; the choice stands in this browser and the cookie.
+    void Promise.resolve(onSave(choice)).catch(failed);
+  } catch (error) {
+    failed(error);
   }
 }
 
@@ -209,7 +213,7 @@ function wireButton(el: HTMLElement, key: string, memory: ThemeMemory): () => vo
 // once and writes the cookie (data-cap-cookie names it), and the server writes the same data-theme
 // into the next page's first byte. The cookie is the memory; data-cap-pref also writes the choice
 // to that localStorage key, for a part of the site (an admin) whose shell reads it from there.
-function wireForm(form: HTMLFormElement, onSave?: ThemeSave): () => void {
+function wireForm(form: HTMLFormElement, memory: ThemeMemory): () => void {
   const detachTips = [...form.querySelectorAll<HTMLElement>(".cap-theme-tip")].map((tip) => {
     const button = tip.parentElement;
     if (!button) return () => undefined;
@@ -226,7 +230,11 @@ function wireForm(form: HTMLFormElement, onSave?: ThemeSave): () => void {
     // Painted at once, not crossfaded: the button to focus next is the one shown after the paint.
     chooseTheme(
       choice,
-      { key: form.dataset.capPref ?? null, cookie: form.dataset.capCookie ?? THEME_COOKIE, onSave },
+      {
+        ...memory,
+        key: form.dataset.capPref ?? null,
+        cookie: form.dataset.capCookie ?? THEME_COOKIE,
+      },
       { animate: false },
     );
     // preventScroll: Chrome scrolls a focused sticky-header control toward where it would sit unstuck.
@@ -249,10 +257,10 @@ function wireForm(form: HTMLFormElement, onSave?: ThemeSave): () => void {
 // following the system. A change applies and remembers; the radios follow toggleTheme(),
 // other tabs and the system. A switch with data-cap-cookie keeps the choice in that cookie too;
 // with a cookie or an onSave it starts from the server's answer (syncServedTheme). `onSave` is the site's save, handed every
-// person's choice from every switch this attaches to.
+// person's choice from every switch this attaches to; `onError` hears a save that fails.
 export function enhance(
   root: ParentNode = document,
-  { onSave }: { onSave?: ThemeSave } = {},
+  { onSave, onError }: Pick<ThemeMemory, "onSave" | "onError"> = {},
 ): () => void {
   const undo: Array<() => void> = [];
   for (const el of root.querySelectorAll<HTMLElement>(
@@ -264,9 +272,9 @@ export function enhance(
     // The server answers for a switch whose choice it keeps (a cookie, or the site's save).
     if ((cookie || onSave) && (el.dataset.variant !== "form" || el.dataset.capPref))
       syncServedTheme(key);
-    const memory: ThemeMemory = { key, cookie, onSave };
+    const memory: ThemeMemory = { key, cookie, onSave, onError };
     if (el.dataset.variant === "form" && el instanceof HTMLFormElement) {
-      const unwire = wireForm(el, onSave);
+      const unwire = wireForm(el, memory);
       undo.push(() => {
         unwire();
         delete el.dataset.capReady;
