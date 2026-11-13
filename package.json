@@ -206,12 +206,14 @@
     "weight": "node bin/capsomer.mjs weight",
     "loc": "node bin/capsomer.mjs loc",
     "bloat": "node bin/capsomer.mjs bloat --knip test-results/knip.json --jscpd test-results/jscpd/jscpd-report.json",
-    "token-check": "node bin/capsomer.mjs token-check"
+    "token-check": "node bin/capsomer.mjs token-check",
+    "changeset": "changeset"
   },
   "devDependencies": {
     "@axe-core/playwright": "4.14.0",
     "@base-ui/react": "1.8.0",
     "@capsizecss/unpack": "4.0.1",
+    "@changesets/cli": "3.0.3",
     "@codemirror/commands": "6.10.4",
     "@codemirror/lang-markdown": "6.5.1",
     "@codemirror/language": "6.12.4",
