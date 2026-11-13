@@ -1,0 +1,96 @@
+import { filterCommands as filterItems, matchesQuery as matches, step as stepIndex } from "../listbox/listbox.ts";
+export interface Command {
+    id: string;
+    label: string;
+    group: string;
+    keywords?: string[];
+    shortcut?: string | string[];
+    hint?: string;
+    snippet?: string;
+    run: () => void;
+}
+export declare function navCommands(nav: ReadonlyArray<{
+    id: string;
+    label: string;
+    href: string;
+    group?: string;
+}>, go: (href: string) => void, group?: string): Command[];
+export declare function markQuery(text: string, query: string): Array<{
+    text: string;
+    mark: boolean;
+}>;
+export declare const RECENT_MAX = 5;
+export declare function readRecent(key: string): string[];
+export declare function rememberRecent(key: string, id: string): string[];
+export declare const STOP_GROUP = "Stop";
+export declare const STOP_HINTS: {
+    readonly reason: "asks a reason";
+    readonly preview: "preview first";
+};
+export declare function stopCommand(o: {
+    id: string;
+    label: string;
+    ask: keyof typeof STOP_HINTS;
+    keywords?: string[];
+    run: () => void;
+}): Command;
+export declare const matchesQuery: typeof matches;
+export declare const filterCommands: typeof filterItems;
+export declare const step: typeof stepIndex;
+export declare function groupCommands<T extends {
+    group: string;
+}>(commands: T[]): Array<{
+    group: string;
+    items: T[];
+}>;
+export declare function emptyText(query: string): string;
+export declare const SEARCHING = "Searching\u2026";
+export interface MenuOptions {
+    label?: string;
+    placeholder?: string;
+    search?: AttachOptions["search"];
+    searchDelay?: number;
+    recentKey?: string;
+    ask?: AttachOptions["ask"];
+    answer?: AttachOptions["answer"];
+}
+export interface AnswerRun {
+    cancel(): void;
+}
+export interface AttachOptions {
+    search?: (query: string, signal: AbortSignal) => Promise<Command[]>;
+    searchDelay?: number;
+    recentKey?: string;
+    ask?: {
+        label?: string;
+        run: (query: string) => void;
+    };
+    answer?: {
+        label?: string;
+        offer?: boolean;
+        run: (query: string, region: HTMLElement) => AnswerRun | Promise<AnswerRun>;
+    };
+}
+export declare const ANSWER_LABEL = "Answer this";
+export declare function startAnswer(answer: NonNullable<AttachOptions["answer"]>, query: string, region: HTMLElement, wanted: () => boolean): Promise<{
+    run: AnswerRun;
+} | {
+    failed: string;
+} | null>;
+export declare function focusAnswer(region: HTMLElement): void;
+export declare function markSnippet(el: HTMLElement, query: string): void;
+export declare function buildMenu(commands: Command[], opts?: MenuOptions): HTMLDialogElement;
+export interface Attached {
+    open: (query?: string, opener?: Element | null) => void;
+    close: () => void;
+    setActive: (index: number) => void;
+    offerAnswer: (on: boolean) => void;
+    detach: () => void;
+}
+export declare function attach(dialog: HTMLDialogElement, run: (option: HTMLElement, found?: Command) => void, opts?: AttachOptions): Attached;
+export declare function openCommandMenu(query?: string): void;
+export interface CommandMenu extends Attached {
+    dialog: HTMLDialogElement;
+}
+export declare function createCommandMenu(commands: Command[], opts?: MenuOptions): CommandMenu;
+export declare function enhance(root?: ParentNode): () => void;
