@@ -4,6 +4,7 @@
 // `capsomer/parts.json`; the docs site's anatomy and data-attribute tables read the same function at build.
 import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
+import { inlineCss } from "./build.mjs";
 
 // Attributes that are not a component's own: the specimen hook (components/README.md) and the page-wide theme,
 // family and density, which every component follows and none owns.
@@ -46,7 +47,8 @@ export function partsOf(root) {
   const sheets = readdirSync(dir, { withFileTypes: true })
     .filter((d) => d.isDirectory() && existsSync(join(dir, d.name, `${d.name}.css`)))
     .map((d) => {
-      const css = uncomment(readFileSync(join(dir, d.name, `${d.name}.css`), "utf8"));
+      // With its imports read in place: site-header.css is its frame, letterhead and search parts.
+      const css = uncomment(inlineCss(join(dir, d.name, `${d.name}.css`)));
       const sel = preludes(css).join("\n");
       return {
         name: d.name,

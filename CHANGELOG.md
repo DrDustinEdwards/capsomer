@@ -3,6 +3,72 @@
 Each release names every removed or renamed token or class, and every changed HTML contract. A pull request adds its entry as a
 changeset (`npx changeset`, `.changeset/README.md`); the release pull request writes them here.
 
+## 0.150.0
+
+### Minor Changes
+
+- - **Removed: `plural` from `capsomer/behavior/hooks` and `pluralWord` from `capsomer/behavior/format`.** Both copied Prelum's `plural(n, one, many?, { grouped })` (`@drdustinedwards/site-helpers/text`), which every Capsomer module now imports; an app imports it from there. The not-found report's hits and probes, the markdown editor's word count and the field's character count use it (grouped where a figure can pass 999).
+  - **Media: the count reads "Showing 3 of 24 files"** (content's `countText`) when a search, filter or view hides some, where it said "3 of 24 files".
+  - **Removed: `centsToDollars` and `dollarsToCents` from `capsomer/behavior/field`.** They copied site-runtime's `moneyInputValue` and `parseMoneyInput` (`@dustinedwards/site-runtime/money`), which `MoneyField` and the schema form's `money` kind now use. The box shows two decimals ("5000.00", was "5000") and takes figures only (its `pattern` no longer allows a `$`, which the edge already shows); "12.345" rounds to the cent where it was refused.
+  - **Removed: `localValue` from `capsomer/behavior/schedule-dialog`.** It was field's `toDateTimeLocal(date, zone)`, which `ScheduleDialog` now calls with the browser's zone.
+  - **Graph: a box whose `href` has a scheme other than http(s) (`javascript:`, `data:`) is drawn without a link.** Paths and http(s) addresses are linked as before. Its escaping is site-runtime's `escapeHtml`, not a local copy.
+  - **Manual signs: one contract in both builds.** `signsHtml` signs take `label`, the words read before the title ("Next part: "), as React's `Signs` does; `Signs`' targets take `forward` (`data-variant="forward"`) and `rel` (beside prev or next), as `signsHtml` does.
+  - **Document archive: Previous and Next are the manual's signs.** `DocumentViewer` renders `Signs` (`nav.cap-signs`, load `capsomer/manual.css`) through its `renderLink`, with `prevLabel` and `nextLabel` (default "Previous", "Next") read before each title. Removed: `DocumentPager`, `DocumentPagerProps`, the `.cap-docpager*` classes and `adjacent` from `capsomer/behavior/document-archive`; series nav's `seriesPlace(list, key, keyOf)` now takes a key reader and gives `{ index, previous, next }`. `Signs` takes `renderLink` for an app without React Router.
+  - **Prelum v0.58.0 and site-runtime v0.153.0**, and the peers `>=0.58.0` and `>=0.153.0`. Frontmatter fields imports Prelum's `blocks`, `unquote`, `withoutComment` and `splitFlow` and drops its copies; the email importer reads entities and attributes with site-runtime's `unescapeHtml` and `htmlAttributes` and drops its own decoder.
+  - **Frontmatter fields: the raw text box is a `Field`** (label and help by field's contract), and its height uses hooks' `clamp`. Removed: `LIST_HINT` and `LINES_HINT` from `capsomer/react/frontmatter-fields` (import them from `capsomer/behavior/frontmatter-fields`).
+  - **Removed: `ActionResult`, `useActionResult` and their types from `capsomer/react/message`, and `actionResultView` from `capsomer/behavior/message`.** They duplicated `FormStatus` and `useActionStatus` (`capsomer/react/form-status`), which now take `focus="errors"` as well as `true` and `false`. `FormStatus` renders two paragraphs that never change role, an alert for a failure and a status for a success, the unused one empty and visually hidden (a role switched on a live node is missed by some screen readers). A blank `ok` or `error` is no status.
+  - **Removed: `COPY_ICON` and `DONE_ICON` from `capsomer/react/copy`.** The copy button draws `iconCopy` and `iconCheck` from the icon set, and the like button `iconHeart`, in place of their own drawings (the shapes change slightly).
+  - **Like button: pending keeps focus.** The button is `aria-disabled` and `aria-busy` while the write runs, not `disabled`, and ignores presses; its count is Prelum's `formatCount`, as the leaderboard's default `format` now is.
+  - **Generated file and inline confirm: the busy button is Button's `pending`** (the spinner and `aria-busy`, presses ignored, focus kept), where each hand-wrote one; Generate is no longer `disabled` during a run.
+  - **Fix: the hero's lead takes `--hero-lead-size`.** Its `font` shorthand had `var(--hero-lead-face, inherit)` in it, and an `inherit` fallback inside a shorthand makes the whole declaration invalid, so with no lead face set the lead fell back to the body size; it is now written as longhands, and shows at 1.25rem by default.
+  - **Hero and CTA band: new tokens for what sites overrode by hand**, each defaulting to today's look: `--hero-title-weight`, `--hero-title-leading`, `--hero-title-tracking`, `--hero-lead-weight`, `--hero-lead-leading`, `--hero-card-pad`, `--hero-card-radius`, `--hero-card-blur`, `--hero-card-shadow`, `--hero-card-max`; `--cta-band-align`, `--cta-band-border`, `--cta-band-pad`, `--cta-band-title-face`, `--cta-band-title-size`, `--cta-band-title-weight`, `--cta-band-title-leading`.
+  - **Removed: `.cap-hero-eyebrow` and `.cap-cta-band-eyebrow`.** The hero and the CTA band render the eyebrow component (`.cap-eyebrow[data-tone="accent"]`, load `capsomer/eyebrow.css`), as the feature block does; it is a step smaller and tracked a little wider.
+  - **Label color list: a label is the status pill with a series dot** (`<Pill series>`, `.cap-pill[data-series]`), in the list, `ColorLabelPill` and the editor's preview. Removed: `.cap-color-label`, `.cap-color-label-dot` and their `data-color` rules. New: `seriesOf(color)` in `capsomer/behavior/label-color-list`.
+  - **Log view renders through the table's `DataTable`**; the first cell of each row is now its row header.
+  - **FAQ: the accordion and cards render the `Disclosure` component**; the answer is a `.cap-faq-answer` inside `.cap-disclosure-body`, where the two classes shared one element. Same look.
+  - **Error page: the signed-out page is `Empty`** (which takes a new `role="status"` for an empty area where nothing failed), and every way out is a `ButtonLink`. Same markup.
+  - **Button and ButtonLink share one look mapper**, `buttonAttrs(look, className)` with the `ButtonLook` type in `capsomer/react/button`; the icon-only warning now reads "Capsomer: an icon-only button or link needs a label."
+  - **Newsletter sign-up is built from the family's parts**: the field's `TextField` (hidden label, the button as its row's action, the error as the field's own), `Check` for consent, and `FormStatus` for the sent line, whose region is in the page from the start and takes focus when the form goes (focus dropped to the page before). Removed: `.cap-newsletter-row`, `.cap-newsletter-error` and `.cap-newsletter-done`; the HTML contract in newsletter-signup.md is updated.
+  - **Fix: the field parts (`TextField`, `PasswordInput`, `MoneyField` and the rest) pass `labelHidden` to `Field`**; it reached the input as an unknown attribute and the label stayed visible.
+  - **Data: a refusal whose body is JSON `{ "error": "..." }` says that error**, not the raw JSON; a thrown error's words are dialog's `errorText`. **`loadMediaView(endpoint, query)` is `getAnswer` read with `ask`** (its unused `signal` argument is gone, and a signed-out session rejects with `SignedOut`).
+  - **Removed: the `createSaveQueue`, `draftAfter` and `draftDirty` re-exports from `capsomer/react/form-hooks`** (import them from `capsomer/behavior/form-hooks`, as form-hooks.md says).
+  - **Dictionary entry: the React speaker is `wireListen`**, the behavior module's, in an effect, in place of a second copy of its clip, play, pause and fallback.
+  - **Removed: the `formatBytes` re-export from `capsomer/behavior/drop-zone`, `byteSize` from `capsomer/behavior/media` (an alias of `formatBytes`), and `readPref` and `writePref` from `capsomer/behavior/shell`** (pass-throughs to `readStored` and `writeStored`). Import `formatBytes` from `capsomer/behavior/format` and `readStored`/`writeStored` from `capsomer/behavior/hooks`.
+  - **`reducedMotion()` moved from `capsomer/behavior/count-up` to `capsomer/behavior/hooks`** (removed from count-up), and the step player, theme switch, checklist run and admin shell use it in place of their own `matchMedia` checks.
+  - **One `FormComponent` type**, plain form's: read-only form and inline confirm re-export it rather than declaring a copy.
+  - **File attach and listbox reuse the family's words and checks**: the file link's new-tab words are link's `NEW_TAB_WORDS`, and the listbox's Enter-while-composing test is shortcuts' `isImeEnter`.
+  - **Image field: the frame's ratio is set through the CSSOM** (`style.setProperty`), not a `style` prop, so it holds under `style-src 'self'`.
+  - **Delta: the React figure says its words through `deltaText`**, the behavior module's.
+  - **Fix: a stored value changed or removed in another tab reads as it is now.** `readStored` and `writeStored` keep the page-long memory only where storage is refused; it no longer shadows storage that works.
+  - **`startSite` answers a promise of how many parts failed**, counting a part whose promise rejects as well as one that throws, once every part has settled (it returned the throws alone, at once).
+  - **Fix: `preloadedLazy` tries a failed chunk again** on the next render, where one failed fetch stuck until a reload.
+  - **Disclosure: `ExpandRows` always renders its detail row, `hidden` while closed**, so the button's `aria-controls` names a row that exists, and a printed page shows every detail. The redundant `.cap-expand-detail[hidden]` rule is gone (the reset's `[hidden]` does it).
+  - **Freshness: stale is shape and word as well as color.** A stale line leads with the warning glyph and "Stale" (`staleLabel`, `.cap-fresh-stale`); load `status.css` with `freshness.css`.
+  - **Filter bar: the hidden Apply of a live bar is out of the tab order** (`tabindex="-1"`), so focus never lands on a control nobody can see.
+  - **Editor workspace: Ctrl or Cmd+S goes through the shortcuts registry**, so it is listed in the "?" sheet and quiet while a modal dialog is open; `onSaveKey(save)` no longer takes a `target`. `useWorkspaceLayout` is hooks' `useRemembered`, and `usePausedStamp` form hooks' `useDebounced`.
+  - **Draft compare: the patch, the merge and the word diff walk one edit script** (`editScript` in the diff module) in place of three copies of the walk.
+  - **Error ad: two same lines no longer share a React key**, and the `"ink"` fill is documented as the ad's own navy ink (cream in dark mode), which it always was.
+  - **Sizes to tokens**: the copy tip's padding, the expand chevron's gap and the graph's focus ring use `--space-*` and `--focus-width`; the manual's patch shrinks by its head's own width (a container query), not the window's.
+  - **Removed: the `routeHydrates` re-export from `capsomer/react/document`.** Import it from `@dustinedwards/site-runtime/deferred-scripts`, as germomics does.
+  - **Collab editor: `Room.doc` and `Room.provider` are `null` before the page is in the browser.** `useRoom`'s first render returned an object cast `as unknown as Room` that lacked both; the type now says so (`Y.Doc | null`, `YProvider | null`) and the cast is gone. `useRoomEditing` is unchanged (it reads them once `synced`). An app that reads `room.doc` or `room.provider` from `useRoom` directly must handle null.
+  - **`MediaPicker`: a library chunk that fails to load shows "The library did not load"** (the failed `Empty`) instead of breaking the dialog.
+  - **Command host: a failed menu load is no longer kept.** `load()` clears itself on failure so the next `open` or `load` fetches the chunk again; the idle warm-up and `runWhenReady` share one fire-and-forget `warm`, and `open` still rejects.
+  - **Theme switch: optional `onError(error)`** on `ThemeSwitch`, `ThemeButton`, `enhance` and `chooseTheme`/`toggleTheme`'s memory, called when `onSave` throws or rejects. Without it the failure is let go as before.
+  - **Carousel: `trackLabel`** names the scrolling track (default "Slides"), for a page in another language.
+- **The layout classes and the text roles come in parts, so a site can load only what it uses.** `layout.css` and `text.css` are unchanged for the sites that load them: each now imports its parts. New stylesheets:
+  - `capsomer/layout-stack.css`: `.cap-stack`, its `data-align` and a button or check straight in a stack.
+  - `capsomer/layout-cluster.css`: `.cap-cluster`, its `data-justify`, and `.cap-push`.
+  - `capsomer/layout-spread.css`: `.cap-spread`.
+  - `capsomer/layout-grid.css`: `.cap-grid` and `data-cols`.
+  - `capsomer/layout-panes.css`: `.cap-panes`, `data-flip` and `data-even`.
+  - `capsomer/layout-items.css`: `.cap-measure`, `.cap-grow`, `.cap-shrink`, `.cap-keep`, `.cap-full` and `.cap-column`.
+  - `capsomer/layout-gap.css`: every layout's `data-gap` and a cluster's or spread's `data-align`, which a site loading the layout parts loads with them.
+  - `capsomer/text-role.css`: `.cap-text` and its attributes.
+  - `capsomer/text-title.css`: `.cap-title`.
+  - `capsomer/text-clamp.css`: `.cap-clamp`.
+    A site that uses a few loads those parts in place of `layout.css` or `text.css` (the Capsid Portal: stack, cluster, panes and the text roles). **Removed from `base.css`:** the older copy of `.cap-clamp` that `css/utilities.css` kept beside `text.css`'s since 0.127.0. A page that loads `text.css` (or `text-clamp.css`) clamps as before, and one that uses `.cap-clamp` without it now needs that import. No class is renamed and no HTML contract changes.
+- The site header's stylesheet comes in parts, so a site can skip what its header does not draw. `site-header.css` is unchanged for the sites that load it: it now imports `site-header-frame.css` (everything a header has, 8.4 KB gzip), `site-header-letterhead.css` (the family letterhead, `data-variant="letterhead"`, 5.4 KB) and `site-header-search.css` (the header's search, 1.6 KB). A site whose header is not the letterhead and has no `search` (txasm, germomics, Foxing, bsw, julieedwards.info) loads `site-header-frame.css` in place of `site-header.css` and saves about 7 KB gzip on every page. No class or HTML contract changes.
+
 ## 0.149.0
 
 ### Minor Changes
