@@ -30,7 +30,7 @@ A site that mails a newsletter. The action must do double opt-in: nothing is sub
 - **`type="email"`, `autocomplete="email"`, `inputmode="email"`, no spell check** (WCAG 1.3.5, the HTML autofill tokens).
 - **The field's label is visually hidden but present**; the placeholder is an example, not the label.
 - **Consent is a required, unticked checkbox** whose label says what the reader agrees to and links the privacy page.
-- **The answer is announced**: the sent line is `role="status"`, an error `role="alert"` and named by the field's `aria-describedby`.
+- **The answer is announced**: an error is the field's own (`role="alert"`, named by the input's `aria-describedby`); the sent line is the form status, a `role="status"` paragraph in the page from the start, which takes focus when the form it replaces goes, so focus never drops to the page.
 
 ## HTML contract
 
@@ -38,20 +38,24 @@ A site that mails a newsletter. The action must do double opt-in: nothing is sub
 <section class="cap-newsletter" aria-labelledby="nl-title">          <!-- data-variant="plain" -->
   <h2 class="cap-newsletter-title" id="nl-title">Newsletter</h2>
   <p class="cap-newsletter-text">One line.</p>
+  <p tabindex="-1" role="alert" class="cap-sr-only cap-form-status"></p>   <!-- form status, always present -->
+  <p tabindex="-1" role="status" class="cap-sr-only cap-form-status"></p>
   <form class="cap-newsletter-form" method="post" action="/subscribe" aria-labelledby="nl-title">
-    <div class="cap-newsletter-row">
-      <label class="cap-sr-only" for="nl-email">Email address</label>
-      <input id="nl-email" class="cap-input" type="email" name="email" required autocomplete="email" inputmode="email" spellcheck="false" placeholder="you@example.com" />
-      <button type="submit" class="cap-btn" data-variant="primary">Subscribe</button>
+    <div class="cap-field">                                             <!-- data-invalid="true" on error -->
+      <label class="cap-field-label cap-sr-only" for="nl-email">Email address</label>
+      <div class="cap-field-row">
+        <input id="nl-email" class="cap-input" type="email" name="email" required autocomplete="email" inputmode="email" spellcheck="false" placeholder="you@example.com" />
+        <button type="submit" class="cap-btn" data-variant="primary">Subscribe</button>
+      </div>
+      <p class="cap-field-error" id="nl-email-error" hidden></p>        <!-- on error: role="alert" with the words, named by the input's aria-describedby -->
     </div>
     <label class="cap-check cap-newsletter-consent"><input type="checkbox" name="consent" required /><span>I agree ... <a href="/privacy">privacy policy</a>.</span></label>
   </form>
-  <p class="cap-newsletter-error" id="nl-error" role="alert">Please enter a valid email address.</p>   <!-- on error -->
 </section>
-<!-- sent: the form becomes <p class="cap-newsletter-done" role="status">Almost done: check your inbox ...</p> -->
+<!-- sent: the form goes, and the status paragraph shows "Almost done: check your inbox ..." (cap-alert, data-tone="ok") and takes focus -->
 ```
 
-Load `newsletter-signup.css`, `field.css` and `button.css`. React: `NewsletterSignup` from `capsomer/react/newsletter-signup` takes `action`, `title`, `text`, `consent`, `state` (the action's `{ ok }` or `{ ok: false, error }`), `done`, `button`, `plain` and `renderForm`.
+Load `newsletter-signup.css`, `field.css`, `button.css`, `banner.css` and `form-status.css`. React: `NewsletterSignup` from `capsomer/react/newsletter-signup` takes `action`, `title`, `text`, `consent`, `state` (the action's `{ ok }` or `{ ok: false, error }`), `done`, `button`, `plain` and `renderForm`.
 
 ## Keyboard
 
@@ -64,6 +68,6 @@ Load `newsletter-signup.css`, `field.css` and `button.css`. React: `NewsletterSi
 ## Accessibility
 
 - A `section` named by its heading; the form named the same.
-- The sent line and the error are announced when they appear.
+- The error is announced when it appears; the sent line is announced and takes focus.
 
 Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the automated browser checks and a front-end review stand in. Automated: see the site's Tests page.

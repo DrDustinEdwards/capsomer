@@ -1,4 +1,7 @@
-import { useId, type FormHTMLAttributes, type ReactNode } from "react";
+import { useId, useMemo, type FormHTMLAttributes, type ReactNode } from "react";
+import { Button } from "../button/button.react.tsx";
+import { Check, TextField } from "../field/field.react.tsx";
+import { FormStatus } from "../form-status/form-status.react.tsx";
 
 export type NewsletterState = { ok: true } | { ok: false; error: string } | undefined;
 
@@ -21,7 +24,9 @@ export interface NewsletterSignupProps {
   renderForm?: (props: FormHTMLAttributes<HTMLFormElement> & { children: ReactNode }) => ReactNode;
 }
 
-// The HTML contract in newsletter-signup.md.
+// The HTML contract in newsletter-signup.md: the field's TextField with its button as the row's
+// action and the error as the field's, the consent a Check, and the answer said by FormStatus,
+// whose region is in the page from the start and takes focus when the form is replaced by it.
 export function NewsletterSignup({
   action,
   title = "Newsletter",
@@ -35,38 +40,32 @@ export function NewsletterSignup({
   headingLevel: H = "h2",
   renderForm,
 }: NewsletterSignupProps) {
-  const id = useId();
-  const titleId = `${id}-title`;
-  const errorId = `${id}-error`;
+  const titleId = `${useId()}-title`;
   const failed = state && !state.ok ? state.error : undefined;
+  const sent = useMemo(() => (state?.ok ? { ok: true as const, message: done } : null), [state, done]);
   const fields = (
     <>
-      <div className="cap-newsletter-row">
-        <label className="cap-sr-only" htmlFor={`${id}-email`}>
-          Email address
-        </label>
-        <input
-          id={`${id}-email`}
-          className="cap-input"
-          type="email"
-          name="email"
-          required
-          autoComplete="email"
-          inputMode="email"
-          spellCheck={false}
-          placeholder={placeholder}
-          aria-invalid={failed ? "true" : undefined}
-          aria-describedby={failed ? errorId : undefined}
-        />
-        <button type="submit" className="cap-btn" data-variant="primary">
-          {button}
-        </button>
-      </div>
+      <TextField
+        label="Email address"
+        labelHidden
+        showRequired={false}
+        type="email"
+        name="email"
+        required
+        autoComplete="email"
+        inputMode="email"
+        spellCheck={false}
+        placeholder={placeholder}
+        error={failed}
+        announce
+        action={
+          <Button type="submit" variant="primary">
+            {button}
+          </Button>
+        }
+      />
       {consent ? (
-        <label className="cap-check cap-newsletter-consent">
-          <input type="checkbox" name="consent" required />
-          <span>{consent}</span>
-        </label>
+        <Check className="cap-newsletter-consent" name="consent" required label={<span>{consent}</span>} />
       ) : null}
     </>
   );
@@ -86,20 +85,12 @@ export function NewsletterSignup({
         {title}
       </H>
       {text ? <p className="cap-newsletter-text">{text}</p> : null}
-      {state?.ok ? (
-        <p className="cap-newsletter-done" role="status">
-          {done}
-        </p>
-      ) : renderForm ? (
+      <FormStatus status={sent} />
+      {sent ? null : renderForm ? (
         renderForm({ ...formProps, children: fields })
       ) : (
         <form {...formProps}>{fields}</form>
       )}
-      {failed ? (
-        <p className="cap-newsletter-error" id={errorId} role="alert">
-          {failed}
-        </p>
-      ) : null}
     </section>
   );
 }

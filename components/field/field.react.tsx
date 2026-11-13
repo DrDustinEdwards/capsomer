@@ -230,28 +230,31 @@ export function InputGroupAddon(props: {
 // The words and checks every field part takes from Field.
 type FieldText = Pick<
   FieldProps,
-  "label" | "help" | "error" | "announce" | "required" | "helpPlacement" | "showRequired"
+  | "label"
+  | "labelHidden"
+  | "help"
+  | "error"
+  | "announce"
+  | "required"
+  | "helpPlacement"
+  | "showRequired"
 >;
 
-const FIELD_KEYS = [
-  "label",
-  "help",
-  "error",
-  "announce",
-  "required",
-  "helpPlacement",
-  "showRequired",
-] as const;
-
 // Splits a field part's props into the words Field takes and the rest, for the control.
-function splitField<T extends Partial<FieldText>>(props: T): [FieldText, Omit<T, keyof FieldText>] {
-  const field: Record<string, unknown> = {};
-  const rest: Record<string, unknown> = { ...props };
-  for (const k of FIELD_KEYS) {
-    if (k in rest) field[k] = rest[k];
-    delete rest[k];
-  }
-  return [field as unknown as FieldText, rest as Omit<T, keyof FieldText>];
+function splitField<T extends FieldText>(props: T) {
+  const { label, labelHidden, help, error, announce, required, helpPlacement, showRequired, ...rest } =
+    props;
+  const field: FieldText = {
+    label,
+    labelHidden,
+    help,
+    error,
+    announce,
+    required,
+    helpPlacement,
+    showRequired,
+  };
+  return [field, rest] as const;
 }
 
 // A password with Show and Hide (GOV.UK Password input). The change is said in the status

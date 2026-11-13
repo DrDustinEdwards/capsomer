@@ -1,8 +1,8 @@
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
 /* A newsletter sign-up: an email field and its button on one row (stacked on a phone), the consent
-   line under them, and the answer in place of the form once it is sent. The site's action does
-   double opt-in: the form only asks for a confirmation link. Builds on the field and the button.
+   line under them, and the answer (form status) in place of the form once it is sent. The site's action does
+   double opt-in: the form only asks for a confirmation link. Builds on the field, the button and the form status.
    Extracted from germomics' subscribe page. */
 @layer cap.components {
   .cap-newsletter {
@@ -41,18 +41,10 @@
     gap: var(--space-3);
   }
 
-  .cap-newsletter-row {
-    display: grid;
-    gap: var(--space-2);
-
-    & > .cap-input {
-      min-inline-size: 0;
-    }
-  }
-
-  @container (min-width: 28rem) {
-    .cap-newsletter-row {
-      grid-template-columns: minmax(0, 1fr) auto;
+  /* The field's row (field.css) stacks the address over its button in a narrow card. */
+  @container (width < 28rem) {
+    .cap-newsletter .cap-field-row > * {
+      flex: 1 1 100%;
     }
   }
 
@@ -60,27 +52,5 @@
     color: var(--muted);
     font-size: var(--fs-detail);
     line-height: 1.5;
-  }
-
-  .cap-newsletter-done,
-  .cap-newsletter-error {
-    margin: 0;
-    font-size: var(--text-size);
-    line-height: var(--leading);
-  }
-
-  .cap-newsletter-done {
-    color: var(--text);
-
-    &::before {
-      content: "\2713\00a0";
-      content: "\2713\00a0" / "";
-      color: var(--ok);
-      font-weight: 700;
-    }
-  }
-
-  .cap-newsletter-error {
-    color: var(--crit);
   }
 }
