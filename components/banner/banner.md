@@ -1,7 +1,7 @@
 ---
 name: banner
 title: Banner and alert
-summary: A page-level notice that keeps the last good data on screen, and an alert beside its source: glyph, title, words and an action, in five tones.
+summary: "A page-level notice that keeps the last good data on screen, and an alert beside its source."
 parts: [css, behavior, react]
 tool: native + own JavaScript
 states: [neutral, notice, ok, warning banner with an action, critical banner, banner with a title, inline alert, alert with a title, warning alert, neutral alert, banner with Dismiss, comfortable]
@@ -15,53 +15,7 @@ replaces:
 
 # Banner and alert
 
-**Provenance.** MIXED, against the Capsid Portal at master (as of 2026-10-01), `styles.css` (`.banner`, `.callout`) and `app/App.tsx` (the stale-feed banner). The banner's box is EXTRACTED: border in `--warn`, `--warn-soft` ground and `10px 12px` padding are the Portal's `.banner` (unchanged since the extraction base `366b902`), with tokens in place of literals and the radius from the scale. The glyph, the critical tone, the flex layout, `.cap-alert`, Dismiss and its focus rule are REWRITTEN from the audit (status is shape, word and color together; the Portal's banner has color alone). Nothing in the Portal's banner changed after the base (its #221 persistent warnings live in the message region, see Message). One difference is kept on purpose: the Portal marks its failed-refresh banner `role="alert"` though it retries every minute; here a warning banner is polite (`role="status"`) and only a critical one interrupts, so a banner that stays does not re-announce.
-
-Two ways to say something went wrong or needs attention, by where it belongs.
-
-- `.cap-banner`: about the whole page. "Could not refresh. Showing data from 4 minutes ago." with Try again. The data below it stays.
-- `.cap-alert`: about one thing, beside it. "Could not save the schedule: the server did not answer. Your changes are kept here; save again in a minute."
-
-## When to use it
-
-- A banner when a page read fails (keep the last good data on screen and say how old it is), when the session has ended, or for a page-wide condition the person should know before acting.
-- An alert when an action on one thing failed, beside that thing's control or panel.
-
-## When not to
-
-- The result of an action that worked is a message (`.cap-message`), and so is a failure with no control beside it to say so (a failed copy): the message region keeps it until dismissed.
-- A form field's own error is the field's `.cap-field-error`, tied to the input with `aria-describedby`.
-- An empty or failed panel with nothing to show is `.cap-empty` with `data-kind="failed"`.
-- Never replace the data with an error: a failed refresh keeps what was there.
-
-## The default and its reason
-
-- **A failed page read is a banner that keeps the last good data** (patterns.md "Error"). It states how old the data is, in words.
-- **Plain words, and what to do next.** Say what failed, what is safe, and the next step.
-- **Five tones: neutral, notice (`info`), ok, warning, critical** (`data-tone`). A banner with no tone is a warning and an alert with no tone is critical, as in 0.1. Each tone has its own glyph (shape), the words, and the tone's edge, glyph and tint (color).
-- **Anatomy as shadcn's Alert**: the glyph, a title (`.cap-banner-title`, `.cap-alert-title`, optional), the description (`.cap-banner-text`, `.cap-alert-text`) and an action (`.cap-banner-actions`, `.cap-alert-action`). Title and description go in one `.cap-banner-body` / `.cap-alert-body`; without a title the text can stand alone, as in 0.1.
-- **Warning, notice, ok and neutral banners are polite (`role="status"`); critical banners and every alert interrupt (`role="alert"`).** Change a live banner's text only when something changes for the reader (a new failure), never on a timer, or it is announced again.
-- **An alert stays until fixed or dismissed.** Point the source at it with `aria-describedby`.
-- **Shape and word with the color**: the warning triangle or the critical octagon (Status's glyphs), and the word in the text.
-- **Dismiss only for a notice that can safely be forgotten.** A stale-data banner goes when the data is fresh again, so it has no Dismiss. Dismissing moves focus to the page's main region.
-
-## Keyboard
-
-| Key | Does |
-| --- | --- |
-| Tab | Reaches the banner's actions in reading order; the banner itself takes no focus |
-| Enter on Dismiss | Hides the banner; focus moves to the main region |
-
-## Accessibility
-
-- Banner and alert text is `--text` on the tone's tint, and an alert's title is the tone's color on its tint; all 4.5:1 in both themes. The edge and glyph are 3:1 (the neutral edge is `--dim`).
-- Links in the words are semibold, so they are not told apart by color alone (WCAG F73 names weight as a cue).
-- A live region present at load is not announced; add the banner or alert when the failure happens.
-- Forced colors: the tint is removed, and the banner keeps its edge.
-
-Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the automated browser checks and a front-end review stand in. Automated: see the site's Tests page.
-
-## Markup
+## Usage
 
 ```html
 <div class="cap-banner" data-tone="warn" role="status">
@@ -101,19 +55,14 @@ Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the a
 </div>
 ```
 
-The glyphs are Status's (`.cap-status-glyph`). `import { enhance } from "capsomer/behavior/banner"` wires Dismiss. In React, `import { Banner, Alert } from "capsomer/react/banner"`: `<Banner title="Showing data from 4 minutes ago" tone="warn" actions={<button className="cap-btn" onClick={retry}>Try again</button>}>Could not refresh. Showing data from 4 minutes ago.</Banner>`; pass `onDismiss` for a Dismiss button. Dismiss moves focus to the main region itself when focus was inside the banner, as the script does, so do not move it again. For block content (a list, several paragraphs) use `body` in place of `children`; it sits in a `div.cap-banner-text`, outside any `p`, so a list stays valid HTML.
+## Accessibility
 
-## The shadcn component it matches
+| Key | Does |
+| --- | --- |
+| Tab | Reaches the banner's actions in reading order; the banner itself takes no focus |
+| Enter on Dismiss | Hides the banner; focus moves to the main region |
 
-Alert (`alert.tsx`, nova): icon, `AlertTitle`, `AlertDescription`, `AlertAction`, `default` and `destructive` variants, links underlined. Deliberately different:
-
-- **Links.** Semibold, not underlined, as every Capsomer text link is (DEFAULTS.md).
-
-- **Tones.** shadcn has two; Capsomer has five (neutral, notice, ok, warning, critical), because status is four levels plus a neutral one, each with its own shape.
-- **The tint.** shadcn's alert is a card with colored text; here the box wears the tone's tint and edge, and the text stays `--text` (title in the tone's color on an alert) so the words keep 4.5:1 on the tint.
-- **The action is in the flow**, at the end of the row, not absolutely placed at the top right: it wraps under the words on a narrow screen instead of covering them, and it keeps the 24 px hit area.
-- **The banner is its own component** for a page-level condition; shadcn has only the alert.
-
-## Exceptions in production
-
-None yet.
+- Banner and alert text is `--text` on the tone's tint, and an alert's title is the tone's color on its tint; all 4.5:1 in both themes. The edge and glyph are 3:1 (the neutral edge is `--dim`).
+- Links in the words are semibold, so they are not told apart by color alone (WCAG F73 names weight as a cue).
+- A live region present at load is not announced; add the banner or alert when the failure happens.
+- Forced colors: the tint is removed, and the banner keeps its edge.

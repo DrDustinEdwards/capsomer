@@ -1,7 +1,7 @@
 ---
 name: frontmatter-fields
 title: Frontmatter fields
-summary: A file's frontmatter as one labeled box per key (a line, a longer text, a list "separated by commas", one item per line, or a checkbox), with the raw text one disclosure away for the keys no box can say.
+summary: A file's frontmatter as one labeled box per key, with the raw text one disclosure away.
 parts: [css, behavior, react]
 tool: native + own JavaScript
 states: [typed from the values, with the app's labels and help, a flag with its own word, a list and its hint, one item per line, read-only with empty boxes hidden, keys left to the raw text, raw text open when no box shows, no frontmatter]
@@ -17,49 +17,7 @@ replaces:
 
 # Frontmatter fields
 
-A file's frontmatter (the YAML between `---` lines at the top of a post, a page or a book file) as labeled boxes, so a writer sets a title, tags or a flag without writing YAML. The app keeps the one source string; each box reads its key from it and writes only that key's block back, so every other key, comment and blank line comes back byte for byte. A key no box can say (a nested map, a block of text, a value with a comment) is never written by a box: it is edited in the raw text, which is one disclosure away and names those keys.
-
-**Provenance.** MIXED, from Carrel. EXTRACTED: the boxes and their grid (`.app-fm`, a box per key, wide boxes across the row), the "Separated by commas." and "One per line." hints, the list written back as `[a, b]` and one-per-line items as a `- "item"` block list, the flag that writes one word or removes the key, the label made from the key ("first_line" reads "First line", "pov" reads "POV"), the "Edit as text" disclosure with the raw block in a monospace textarea, and `useTyped` (a box keeps what is typed while it has focus). REWROTE: Carrel had two copies (the post's fixed field list in `frontmatter-fields.tsx`, and the book file's every-key fields in `header-fields.tsx`); here they are one component, with the app's field list as data (`fields`) and every other key typed from its value. The box for a key without a spec is chosen from its shape, not guessed: a flow or block list is a list (or one item per line when an item holds a comma, since "a, b" could not give it back), `true` or `false` is a checkbox, one line is a line, and anything else is raw. Reading and writing go through Prelum's `site-helpers/frontmatter` (`readKey`, `readList`, `setBlock`), as both of Carrel's copies did. A value keeps the quoting it had (a double-quoted title stays double-quoted); a new one is quoted only when YAML would read it as something else (`12`, `no`, `: `), so an ISO date stays bare.
-
-## When to use it
-
-Editing a file's frontmatter in a form: a post's details beside its text, a page's legal details, a scene's header in a book file.
-
-## When not to
-
-- Fields that are not stored as frontmatter: an ordinary form of Fields.
-- The search and sharing fields, which a site defines with their own rules and checks: Field boxes with the share preview's width meter.
-- A key whose value is a structure (a list of maps): the raw text, which this already gives.
-
-## The default and its reason
-
-- **One box per key, the box chosen by the value's shape.** The app passes `fields` for the keys it knows (label, box, help, flag words, order); a key it does not know gets a box from its shape and a label from its name, or, with `extra="text"`, is left to the raw text. A spec cannot force a list into a one-line box: the file's shape wins, so a box never writes away part of a value.
-- **What no box can say stays in the raw text**, and the disclosure's help names those keys ("Only here: summary, seo."). When no box shows at all, the disclosure starts open, since the text is then the editor.
-- **A box keeps what is typed while it has focus.** The stored value is trimmed and cleaned by the writer; without this the caret would jump and a comma being typed in a list would vanish. Leaving the box shows the stored value.
-- **A list is "a, b" with the hint "Separated by commas."** and is written `[a, b]`; an item that needs quotes gets them. One item per line is a textarea with "One per line." and is written as a block list.
-- **An emptied box removes its key**; a flag whose off word is `null` removes it too. A key the file lacks is added at the end.
-- **Read-only hides boxes whose key is absent and empty**, since there is nothing to read; `hideEmpty` changes it.
-- **Wide boxes span the row**: text and one-per-line boxes by default, any box with `wide`. The grid fits as many 14rem columns as the space holds.
-
-## Keyboard
-
-| Key | Does |
-| --- | --- |
-| Tab, Shift+Tab | Moves between the boxes, then the "Edit as text" summary and the raw text |
-| Space (checkbox) | Turns a flag on or off |
-| Enter or Space (summary) | Opens or closes the raw text |
-
-## Accessibility
-
-- The boxes are in a `fieldset` named by its legend; each box is a Field, its label above it and its help as its description. A flag is a `.cap-check` checkbox, its help as its description.
-- The raw text is a labeled textarea ("The frontmatter as text"), described by the line that names the keys only it holds.
-- Read-only boxes are `readonly`, so they keep focus and can be read and copied; a read-only flag is disabled.
-- Hit areas are Field's and the disclosure's, at least `--target`.
-- Forced colors: the fieldset's edge is a border, so it stays.
-
-Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the automated browser checks and a front-end review stand in. Automated: see the site's Tests page.
-
-## Markup
+## Usage
 
 ```html
 <fieldset class="cap-fm">
@@ -96,8 +54,6 @@ Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the a
 </fieldset>
 ```
 
-In React:
-
 ```tsx
 import { FrontmatterFields, type FieldSpec } from "capsomer/react/frontmatter-fields";
 
@@ -113,12 +69,16 @@ const fields: FieldSpec[] = [
 </FrontmatterFields>;
 ```
 
-Props: `source` (the whole file), `onChange(next)` (the whole file again; left out, every box is read-only), `readOnly`, `fields`, `extra` (`"fields"` or `"text"`), `legend`, `hideEmpty`, `raw` (the disclosure, on by default), `rawSummary`, `empty` (shown when the file has no frontmatter) and `children`. A `FieldSpec` is `{ key, label?, box?, help?, wide?, flag? }`; `box` is `"line"`, `"text"`, `"list"`, `"lines"` or `"flag"`, and `flag` is `{ on, off }` (default `{ on: "true", off: "false" }`; `off: null` removes the key).
+## Accessibility
 
-`capsomer/react/frontmatter-fields` also exports `useTyped(stored)`, returning `{ value, keep, done }` (type `TypedBox`): a box that keeps what is typed while it has focus, for an app's own fields beside these; and `typedProps(box, locked, write)`, the props of an `input` or `textarea` drawn from it (`cap-input`, the value, read-only when locked, `done` on blur, and each change kept and written): `<input type="text" {...typedProps(box, locked, (text) => save(text))} />`.
+| Key | Does |
+| --- | --- |
+| Tab, Shift+Tab | Moves between the boxes, then the "Edit as text" summary and the raw text |
+| Space (checkbox) | Turns a flag on or off |
+| Enter or Space (summary) | Opens or closes the raw text |
 
-`capsomer/behavior/frontmatter-fields` holds the pure core, for a server or a test: `typeFront(front, fields, { extra })` (the boxes and the keys only the raw text holds), `shapeOf(lines)`, `readBox`, `writeBox`, `setBox(front, key, box, value, flag)`, `scalarRaw` and `labelOf`, and `LIST_HINT`, `LINES_HINT`.
-
-## Exceptions in production
-
-None yet. Carrel's two copies are its source.
+- The boxes are in a `fieldset` named by its legend; each box is a Field, its label above it and its help as its description. A flag is a `.cap-check` checkbox, its help as its description.
+- The raw text is a labeled textarea ("The frontmatter as text"), described by the line that names the keys only it holds.
+- Read-only boxes are `readonly`, so they keep focus and can be read and copied; a read-only flag is disabled.
+- Hit areas are Field's and the disclosure's, at least `--target`.
+- Forced colors: the fieldset's edge is a border, so it stays.

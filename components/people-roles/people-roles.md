@@ -1,7 +1,8 @@
 ---
 name: people-roles
 title: People and roles
-summary: An app's members page. Who has access, their title, when it ends and whether Cloudflare matches, with add, change title, renew, remove, the term review and each person's history.
+summary: "An app's members page showing who has access, their title and end date, with add and remove."
+group: pattern
 parts: [css, behavior, react]
 tool: native + own JavaScript
 states: [a lead's page, review open, changing a title, one person's history, an Owner's page after adding someone, a change Cloudflare refused, nobody added yet, role grid]
@@ -14,80 +15,7 @@ replaces:
 
 # People and roles
 
-The one members page every app with staff uses: the lab, txasm, Foxing and Foxing Edu. Each app keeps its own list and its own titles; this component draws them the same way everywhere. Adding a person here is what puts their email on the app's Cloudflare Access allow list, and removing them takes it off, so nobody edits Cloudflare by hand.
-
-## When to use it
-
-For the people who run an app (lab managers and workers, a society's officers, a press's staff), each with a title that expires at the end of a term. The server decides everything with site-runtime's `./members` (`checkChange`, `defaultEndDate`) and passes the page only what the viewer may do: `manageable` on each row, `renewTo`, and the titles below the viewer's layer.
-
-## When not to
-
-For an app's users (readers, teachers, merchants, authors), who sign in through the app's own login and take no Cloudflare seat: they belong in that app's own user admin. For agents and their grants, use `permission-matrix` with `switch-reason`. To show who holds which permission without changing anything, use `permission-matrix`.
-
-## The default and its reason
-
-- **Every action is a form post with an `intent`** (`add`, `change_title`, `renew`, `remove`, `retry`, `review`), so the page works with no script, and the server answers with `result`. The script adds the confirm before a removal, the end date that follows the chosen title, and the review's running tally. With `onIntent`, React runs the same posts in place.
-- **A Cloudflare column on every row**, in words and a shape: "Ready: they can sign in", "Waiting for Cloudflare" (the running arc) with Retry, or "Cloudflare refused" with Cloudflare's own reason and Retry. A change is never shown as done before the allow list matches it (design: "a failure is shown and retried, never ignored").
-- **The end date is a date, never a countdown alone.** Within three weeks of it the row says "Ends Dec 18, 2026, in 18 days" in bold beside the warning shape, the same window that opens the review.
-- **One action on the row, the rest in its Actions menu.** The row shows Retry while Cloudflare has not caught up, otherwise Renew; Change title, History and Remove (last, after a separator) sit in the shared form menu (`menu`), so six people do not make thirty buttons. `rowActions(person)` decides which.
-- **Renew is one click** and names the date it sets ("Renew to May 14, 2027"), which the server worked out.
-- **Remove asks first** (any submit whose `intent` is `remove`, found by its submitter), saying what follows: refused on the next request, off the allow list, seat freed, row kept. The confirm is the shared confirm dialog; with no script, the post comes back as the confirm page (`ConfirmPage`) until it carries `confirmed=yes`.
-- **Change title needs a one-line reason**, recorded with the change. It opens as its own row under the person, by the address (`?change=<email>`), so the table's columns stay put and the form works with no script.
-- **The review is a checklist at the top** while one is open: Keep or Remove per person, a tally that counts what is left, and the rule in one sentence: anyone not answered loses access on the end date.
-- **Removed and expired people stay in the list, quieter**, so their runs and edits keep their name. An expired person can be renewed; a removed one is added again.
-- **The viewer's own row is marked You and has no actions**: nobody manages their own layer.
-- **The table scrolls on a phone** (DEFAULTS.md), in a labeled, focusable region.
-
-## Matches
-
-shadcn/ui `Table` (from `table`), `Field`, `Input` and `NativeSelect` (from `field` and `select`), `Badge` (the status words and the You pill, from `status`), `Button`, `Alert Dialog` (the remove confirm, from `confirm-dialog`), `RadioGroup` (the review's Keep or Remove) and `Card` (the review and the add form). shadcn has no members page; the closest is its "Team members" block, a card with a role select per person. Deliberately different: a role here changes only with a reason, and every row says whether Cloudflare has caught up.
-
-## The role grid: people by scopes
-
-An app where a person has a role on each project (Carrel: Reader, Editor or Author per project) shows `RoleGrid` beside or instead of the titled list above: people as rows, projects as columns, a role select in each cell.
-
-**Provenance.** EXTRACTED from Carrel's People page (`routes/people.tsx`, `PersonRow`, `AccessButton`, and app.css `.app-roles`): the grid, the sticky person column, save on change, Disable with Undo, the per-row Save before the script runs, the Owner's row that spans the projects. From dustinedwards.info's lab (`app/lab/members.server.ts`): the address and lead helpers. REWRITTEN: the saves and the access change are callbacks, not React Router fetchers, so the grid works in any app; the options per cell are the app's (`options(person, scope)`), since only the app knows that a reviewer is offered no Editor.
-
-- **A cell saves when it changes** (`onRoleChange`), and the message region says "Saved: Rosa Park on Letters, Reader." Before the script runs, each row has Save, which posts every scope's role at once: `intent=roles`, `person`, and `role-<scope id>` per scope.
-- **Disable is reversible, so it acts at once and offers Undo** (`onAccess(person, "disable")`, then Undo calls `onAccess(person, "enable")`). Without the script it is a form that posts `intent` and `person`. A disabled person keeps their roles and shows "Disabled" with the date.
-- **The person stays in view** while the scopes scroll sideways (a sticky row header); a select keeps its longest word whole.
-- **The Owner's row** (`everyScope`) spans the scopes with one sentence and has no Save or Disable.
-- **The address names only someone the page lists.** `personFromParam(params, "person" | "change", emails, allowed)` reads `?person=` (whose history is open) and `?change=` (whose change row is open), lower-cased, and returns nobody for an address that names a person the viewer may not see or manage. `manageLead(titles, notice)` writes the line under the heading, "You manage Lab managers and Lab workers."
-
-```tsx
-import { RoleGrid } from "capsomer/react/people-roles";
-
-<RoleGrid people={people} scopes={projects} caption="People, and their role on each project"
-  options={(person, project) => rolesFor(person, project)}
-  onRoleChange={(person, project, role) => fetcher.submit({ intent: "role", person: person.id, project: project.id, role }, { method: "post" })}
-  onAccess={(person, intent) => fetcher.submit({ intent, person: person.id }, { method: "post" })} />
-```
-
-## Keyboard
-
-| Key | Does |
-| --- | --- |
-| Tab | Moves through the review's choices and Save review, the table's scroll region, each row's inline action (Retry or Renew) and its Actions menu, then the add form |
-| Enter or ArrowDown on Actions | Opens the menu; the arrow keys move through it, Esc closes it (the form menu's own keys) |
-| Arrow keys in a review item | Move between Keep and Remove (the browser's own radios) |
-| Enter on a form's button | Posts it; on Remove, opens the confirm first |
-| Esc in the remove confirm | Cancels, focus back on the page |
-| Enter in the reason field | Changes the title; with no reason, says so beside the field and keeps focus there |
-
-## Accessibility
-
-- Every inline action carries the person's name for a screen reader ("Renew to May 14, 2027 for Rosa Park"), and each Actions menu is named for its person ("Actions for Rosa Park"), so a column of buttons is not six "Actions".
-- The person is the row header (`th scope="row"`), so each cell reads with their name.
-- Each status is a word and a shape (ok, the running arc, critical, warning), never color alone; the shapes are hidden from the accessibility tree.
-- The result line is a status region when it worked and an alert when it did not, with "Done:" or "Not done:" before the words.
-- The review's tally is a polite live region.
-- Forced colors: the cards' and the result's edges become CanvasText.
-
-Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the automated browser checks and a front-end review stand in. Automated: see the site's Tests page.
-
-## Markup
-
-The React wrapper renders the contract, and the states page is generated from it. In outline:
+## Usage
 
 ```html
 <section class="cap-people" data-cap="people-roles" aria-labelledby="pr-h">
@@ -139,10 +67,20 @@ The React wrapper renders the contract, and the states page is generated from it
 </section>
 ```
 
-In React, `import { PeopleRoles } from "capsomer/react/people-roles"` and pass `data` (`heading`, `lead`, `people`, `titles`, and when the address asks, `review`, `history`, `changing`, `result`), `action`, and optionally `onIntent(intent, fields)`, `hrefFor` and `closeHref`. In plain HTML, `import { enhance } from "capsomer/behavior/people-roles"`. The words and the row's actions come from pure functions an app can reuse: `rowActions`, `accessText`, `endsSoon`, `syncText`, `actionText`, `cloudflareText`, `endHelp`, `tallyText`, `removeBody`, `dayText`, `timeText`.
+## Accessibility
 
-What each post carries: `intent` and `email` on every row action; `title` and `reason` on `change_title`; `email`, `name`, `title` and `end_date` on `add`; `answer-<n>` (`keep` or `remove`) with `email-<n>` on `review`; `confirmed=yes` on a confirmed `remove`. The server checks every one again with `checkChange`; the page offering an action is not permission to take it.
+| Key | Does |
+| --- | --- |
+| Tab | Moves through the review's choices and Save review, the table's scroll region, each row's inline action (Retry or Renew) and its Actions menu, then the add form |
+| Enter or ArrowDown on Actions | Opens the menu; the arrow keys move through it, Esc closes it (the form menu's own keys) |
+| Arrow keys in a review item | Move between Keep and Remove (the browser's own radios) |
+| Enter on a form's button | Posts it; on Remove, opens the confirm first |
+| Esc in the remove confirm | Cancels, focus back on the page |
+| Enter in the reason field | Changes the title; with no reason, says so beside the field and keeps focus there |
 
-## Exceptions in production
-
-None yet.
+- Every inline action carries the person's name for a screen reader ("Renew to May 14, 2027 for Rosa Park"), and each Actions menu is named for its person ("Actions for Rosa Park"), so a column of buttons is not six "Actions".
+- The person is the row header (`th scope="row"`), so each cell reads with their name.
+- Each status is a word and a shape (ok, the running arc, critical, warning), never color alone; the shapes are hidden from the accessibility tree.
+- The result line is a status region when it worked and an alert when it did not, with "Done:" or "Not done:" before the words.
+- The review's tally is a polite live region.
+- Forced colors: the cards' and the result's edges become CanvasText.
