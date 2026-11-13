@@ -4,7 +4,7 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
-## [0.117.0]
+## [0.118.0]
 
 Forms and inputs (shared-code audit pass 2, batch 2: C14 to C20). Nothing removed or renamed; no HTML contract changed.
 
@@ -18,6 +18,11 @@ Forms and inputs (shared-code audit pass 2, batch 2: C14 to C20). Nothing remove
 - **New: secret reveal** (`secret-reveal`). A secret shown once, focused, with its warning and the app's copy button.
 - **New: file attach** (`file-attach`). The drop zone's input as a button, its checks before sending, and the attached files listed.
 - `SlugField` uses `@drdustinedwards/site-helpers` `SLUG_PATTERN` (0.45.0 and later).
+
+## [0.117.0]
+
+- **Site header: a letterhead with section links writes no menu button and no sheet.** Its links row is the phone's too (it swipes), so the React header leaves `.cap-site-header-menu` and `dialog.cap-site-header-sheet` out of the markup there, where CSS used to hide them; an admin's letterhead (no section links) keeps both. Removed: the CSS rule that hid the menu button in a letterhead with links. With this, dustinedwards.info renders `SiteHeader` (`hydrate={false}`, its structured panels as each section's `panel`) instead of a hand-written copy of the letterhead.
+- **Site header: the no-script theme form takes the theme's place in the letterhead.** With `themeAction` the form (`.cap-theme-form`) is the tools' item, so the letterhead's order (search, theme, extras, account, menu) now reaches it; sites no longer set its `order` themselves. Removed or renamed: no token or class.
 
 ## [0.116.0]
 

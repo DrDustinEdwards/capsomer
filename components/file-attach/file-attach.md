@@ -5,7 +5,7 @@ summary: Attach files to a record from a button, checked before anything is sent
 parts: [css, react]
 tool: native + own JavaScript (React)
 states: [files attached, none yet, uploading, full, read only with its reason, refused]
-added: 0.117.0
+added: 0.118.0
 source: Foxhound, app/components/dispute-detail-parts.tsx (EvidenceFiles)
 replaces:
   - 'type="file"[^>]*className="sr-only"'

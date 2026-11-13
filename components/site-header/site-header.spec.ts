@@ -657,6 +657,8 @@ eachTheme((theme) => {
     const header = page.locator(".cap-site-header[data-variant='letterhead']").first();
     // The links sit in the one 64px row beside the names, where they fit.
     expect(Math.round((await header.boundingBox())!.height)).toBe(72);
+    // Its links row is the phone's too, so it writes no menu button and no sheet.
+    await expect(header.locator(".cap-site-header-menu, .cap-site-header-sheet")).toHaveCount(0);
     await header.getByRole("link", { name: "Search Capsid" }).click();
     const field = page.getByRole("combobox", { name: "Search Capsid" });
     await expect(field).toBeFocused();
