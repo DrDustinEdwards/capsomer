@@ -28,8 +28,19 @@ const here = (p) => fileURLToPath(new URL(p, import.meta.url));
 export const SCALE = {
   space: [
     ["space-1", "2px", "hairline gaps: an icon beside its count"],
+    [
+      "space-1-5",
+      "3px",
+      "half a step: a hairline nudge (a chevron's margin, a control's padding less its edge)",
+    ],
     ["space-2", "4px", "inside a control: icon to label"],
+    [
+      "space-2-5",
+      "6px",
+      "half a step: the gap in a chip, a segmented control or a toolbar's tight group",
+    ],
     ["space-3", "8px", "between controls in a toolbar"],
+    ["space-3-5", "10px", "half a step: a compact panel's inner gap"],
     ["space-4", "12px", "between rows of a form, cell padding"],
     ["space-5", "16px", "panel padding, the page gutter on a phone"],
     ["space-6", "24px", "between panels, the page gutter"],
@@ -38,6 +49,7 @@ export const SCALE = {
     ["space-9", "64px", "above a page footer"],
   ],
   radius: [
+    ["radius-xs", "2px", "a mark inside text: a highlight, a lamp, a drag handle"],
     ["radius-s", "3px", "kbd, chips inside text"],
     ["radius-m", "6px", "controls"],
     ["radius-l", "10px", "panels and dialogs"],
@@ -78,6 +90,8 @@ export const SCALE = {
       "500",
       "a heading inside a page: Inter Medium, the manual's Helvetica Medium",
     ],
+    ["fs-tiny", "0.625rem", "a count badge's digits or a mark's letter; never running text"],
+    ["fs-small", "0.75rem", "small print at a fixed size: a caption, a footnote, a chart's label"],
     [
       "mono-size",
       "0.75rem",
@@ -89,6 +103,11 @@ export const SCALE = {
       "title-1",
       "2.25rem",
       'the largest title role (.cap-title data-size="1"): a page\'s one title',
+    ],
+    [
+      "title-display",
+      "clamp(2rem, 1.4rem + 2.4vw, 3rem)",
+      "a standalone page's one title, fluid from 32 to 48px: a reading page's title band, a missing page's poster",
     ],
     ["title-2", "1.875rem", "title role 2: a page title on a quieter page"],
     ["title-3", "1.5rem", "title role 3: a section title"],
@@ -125,6 +144,16 @@ export const SCALE = {
     ["dur-base", "200ms", "an overlay or a page arriving"],
     ["dur-slow", "400ms", "a spring settling (with --ease-spring); a page-level change"],
     [
+      "dur-pulse",
+      "1600ms",
+      "one breath of a resting pulse or sweep (a skeleton, a meter's indeterminate bar)",
+    ],
+    [
+      "dur-flow",
+      "2000ms",
+      "one cycle of a slow ambient loop (a flow along a map's line, a sample's glow)",
+    ],
+    [
       "dur-wait",
       "900ms",
       "one cycle of a loading line or pulse, drawn only while something is actually in flight",
@@ -140,6 +169,50 @@ export const SCALE = {
       "linear(0, 0.005 1%, 0.028 2.5%, 0.117 5.5%, 0.572 16%, 0.77 21.5%, 0.839 24%, 0.906 27%, 0.956 30%, 0.992 33%, 1.012 35.5%, 1.026 38%, 1.035 41%, 1.038 44.5%, 1.035 49.5%, 1.012 63.5%, 1.003 72.5%, 0.999 84.5%, 1)",
       "a release or a thumb settling: a damped spring, 95% at 30% of the time, 4% past; transform only, with --dur-slow",
     ],
+  ],
+  // The plain scales the semantic type tokens above draw from. A component names the step it means (a label is
+  // --weight-medium), so a site that changes one changes it everywhere; Inter is a variable font, so every step exists.
+  weight: [
+    ["weight-light", "300", "Inter Light: a title at 24px and up (--weight-title)"],
+    ["weight-regular", "400", "running text"],
+    ["weight-medium", "500", "a label, a heading inside a page (--weight-heading)"],
+    ["weight-semibold", "600", "strong text, a link, a button (--text-strong, --link-weight)"],
+    ["weight-bold", "700", "a mono label in capitals, wayfinding (Overpass at 700)"],
+    ["weight-heavy", "800", "a glyph drawn as a mark (a required asterisk, a drop zone's plus)"],
+  ],
+  leading: [
+    [
+      "leading-none",
+      "1",
+      "one line in a box sized by its own height: a badge, an icon's label, a big figure",
+    ],
+    ["leading-tight", "1.2", "a title of two or more lines"],
+    ["leading-snug", "1.3", "a row title, a card's heading, a label over a field"],
+    ["leading-compact", "1.4", "a dense row's detail line, a menu item"],
+    ["leading-normal", "1.5", "app body text (--leading in both densities)"],
+    ["leading-relaxed", "1.6", "reading text (--leading in the reading context)"],
+    ["leading-loose", "1.7", "a mono list or a small caption that needs air between its lines"],
+  ],
+  tracking: [
+    ["tracking-tighter", "-0.04em", "a big display title"],
+    ["tracking-tight", "-0.02em", "a title at 24px and up"],
+    ["tracking-snug", "-0.01em", "a heading at 18 to 22px"],
+    ["tracking-wide", "0.02em", "small text in capitals that is read, not scanned"],
+    ["tracking-wider", "0.04em", "a mono label"],
+    ["tracking-widest", "0.06em", "a label in capitals"],
+    ["tracking-caps", "0.08em", "a small label in capitals (an eyebrow, a column head)"],
+    ["tracking-sign", "0.1em", "lettering on a sign or a stencil"],
+  ],
+  opacity: [
+    ["opacity-ghost", "0.08", "a mark behind content, seen only as texture"],
+    ["opacity-faint", "0.35", "a placeholder or a mark at rest that the pointer brings forward"],
+    [
+      "opacity-half",
+      "0.5",
+      "half seen: a control that cannot be used now (never the only cue), a mark in the background",
+    ],
+    ["opacity-muted", "0.6", "a secondary mark or a struck-out choice"],
+    ["opacity-soft", "0.88", "a surface that lets a hint of the page show through"],
   ],
   layer: [
     ["z-base", "0", "the page"],
@@ -158,7 +231,15 @@ export const SCALE = {
   ],
   line: [
     ["line-w", "1px", "a hairline: a rule, a box's edge, a table's row line"],
+    [
+      "line-w-mid",
+      "1.5px",
+      "a drawn mark's stroke: a chevron, a breadcrumb's divider, a checkbox's tick",
+    ],
     ["line-w-thick", "2px", "a heavy rule: a part title's line, a selected tab's bar"],
+    ["line-w-bar", "3px", "the side bar that marks the current, chosen or failing item in a list"],
+    ["line-w-heavy", "4px", "a callout's side rule, a section's top rule"],
+    ["line-w-band", "6px", "a sign's color band (the manual's stripe, the footer's top band)"],
     [
       "radius-control",
       "var(--radius-m)",
@@ -172,6 +253,11 @@ export const SCALE = {
       "the focus outline, WCAG 2.4.13's 2 px perimeter; its color is --ring, checked at 3:1 by palette.mjs",
     ],
     ["focus-offset", "2px", "space between the control and its ring"],
+    [
+      "focus-offset-tight",
+      "1px",
+      "a ring drawn close: on a control in a dense row, or inset by it on a tile",
+    ],
     [
       "ring-width",
       "3px",
@@ -438,6 +524,10 @@ export function renderJson() {
       layout: undefined,
       type: undefined,
       line: undefined,
+      weight: "fontWeight",
+      leading: "number",
+      tracking: undefined,
+      opacity: "number",
       breakpoint: "dimension",
     })[group];
   const groups = { ...SCALE, breakpoint: BREAKPOINTS };
@@ -465,7 +555,7 @@ export function renderJson() {
         v = { value: Number.parseFloat(value), unit: value.endsWith("rem") ? "rem" : "px" };
       else if (ty === "duration") v = { value: Number(value.slice(0, -2)), unit: "ms" };
       else if (ty === "cubicBezier") v = value.match(/[\d.]+/g).map(Number);
-      else if (ty === "number") v = Number(value);
+      else if (ty === "number" || ty === "fontWeight") v = Number(value);
       out[group][name] = { ...(ty ? { $type: ty } : {}), $value: v, $description: why };
     }
   }

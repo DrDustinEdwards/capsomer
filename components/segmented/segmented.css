@@ -18,7 +18,7 @@
       padding: 0;
       margin-bottom: var(--space-2);
       color: var(--text);
-      font-weight: 600;
+      font-weight: var(--weight-semibold);
     }
   }
 
@@ -31,9 +31,9 @@
     --cap-seg-fs: var(--fs-body);
     display: inline-flex;
     flex-wrap: wrap;
-    gap: 2px;
-    padding: 2px;
-    border: 1px solid var(--line-strong);
+    gap: var(--space-1);
+    padding: var(--space-1);
+    border: var(--line-w) solid var(--line-strong);
     border-radius: var(--radius-m);
     background: var(--surface);
 
@@ -42,15 +42,15 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 6px;
+      gap: var(--space-2-5);
       min-height: var(--cap-seg-h);
       font-size: var(--cap-seg-fs);
       min-width: var(--target);
-      padding: 0 12px;
-      border: 1px solid transparent;
+      padding: 0 var(--space-4);
+      border: var(--line-w) solid transparent;
       border-radius: var(--radius-s);
       color: var(--muted);
-      font-weight: 500;
+      font-weight: var(--weight-medium);
       white-space: nowrap;
       cursor: pointer;
 
@@ -64,12 +64,12 @@
         border-color: var(--accent);
         background: var(--accent-soft);
         color: var(--text);
-        font-weight: 600;
+        font-weight: var(--weight-semibold);
         box-shadow: var(--shadow-xs);
       }
       &:has(input:focus-visible) {
         outline: var(--ring-width) solid var(--ring);
-        outline-offset: 1px;
+        outline-offset: var(--focus-offset-tight);
       }
       & > svg {
         flex: none;
@@ -126,13 +126,13 @@
         --cap-seg-tone-text: var(--accent-text);
         display: block;
         min-height: var(--target);
-        padding: 10px 12px;
-        border: 1px solid var(--line);
+        padding: var(--space-3-5) var(--space-4);
+        border: var(--line-w) solid var(--line);
         border-radius: var(--radius-m);
         background: var(--ground);
         color: var(--muted);
         font-size: var(--fs-detail);
-        line-height: 1.35;
+        line-height: var(--leading-snug);
         text-align: start;
         white-space: normal;
 
@@ -146,7 +146,7 @@
           border-color: var(--cap-seg-tone);
           background: var(--cap-seg-tone-soft);
           color: var(--cap-seg-tone-text);
-          font-weight: 500;
+          font-weight: var(--weight-medium);
           box-shadow: none;
         }
         &[data-tone="info"] {
@@ -180,7 +180,7 @@
     &:has(input[aria-invalid="true"]) {
       border-color: var(--crit);
       box-shadow:
-        inset 0 0 0 1px var(--crit),
+        inset 0 0 0 var(--line-w) var(--crit),
         0 0 0 var(--ring-width) color-mix(in srgb, var(--crit) 20%, transparent);
     }
 
@@ -226,7 +226,7 @@
           position: absolute;
           position-anchor: --cap-seg-on;
           inset: anchor(top) anchor(right) anchor(bottom) anchor(left);
-          border: 1px solid var(--accent);
+          border: var(--line-w) solid var(--accent);
           border-radius: var(--radius-s);
           background: var(--accent-soft);
           box-shadow: var(--shadow-xs);

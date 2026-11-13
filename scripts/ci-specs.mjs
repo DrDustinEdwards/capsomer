@@ -10,14 +10,15 @@
 //   node scripts/ci-specs.mjs components/button/button.css
 // A component runs its own specs and sweep entries and those of every component that writes one
 // of its classes or imports its files, and of whatever imports those in turn.
-// Pushes to main run everything; a release PR changes package.json, so it does too.
+// Pushes to main run everything. A change to package.json's version alone (the release PR) runs none: the release PR
+// carries main's code, which main's own run already tested.
 import { execFileSync } from "node:child_process";
 import { appendFileSync, existsSync, readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 
 // Paths no browser test reads. Anything not named here or under components/<name>/ runs everything.
 const UNTESTED = [
-  /^(docs|design|no-bloat|worker|\.claude)\//,
+  /^(docs|design|no-bloat|worker|\.claude|\.changeset)\//,
   /^scripts\/.*\.py$/,
   /^(LICENSE|renovate\.json|knip(\.internal)?\.json|\.jscpd\.json|\.no-bloat\.json|\.gitattributes|tsconfig\.code-map\.json|wrangler\.jsonc|components\/README\.md)$/,
 ];
@@ -118,7 +119,20 @@ function users() {
   return { importers, writers };
 }
 
-function pick(changed) {
+// package.json with only its version changed, against the base commit.
+const versionOnly = (base) => {
+  const was = (ref) => {
+    const { version: _, ...rest } = JSON.parse(
+      ref
+        ? execFileSync("git", ["show", `${ref}:package.json`], { encoding: "utf8" })
+        : read("package.json"),
+    );
+    return JSON.stringify(rest);
+  };
+  return was(base) === was(null);
+};
+
+function pick(changed, base) {
   const touched = new Set();
   let site = false;
   for (const path of changed) {
@@ -128,6 +142,7 @@ function pick(changed) {
         return { mode: "full", why: `${path}: a removed component` };
       touched.add(m[1]);
     } else if (SITE_ONLY.test(path)) site = true;
+    else if (path === "package.json" && base && versionOnly(base)) continue;
     else if (!UNTESTED.some((re) => re.test(path)))
       return { mode: "full", why: `${path} is shared` };
   }
@@ -181,7 +196,7 @@ function pick(changed) {
     : execFileSync("git", ["diff", "--name-only", base, "HEAD"], { encoding: "utf8" })
         .split("\n")
         .filter(Boolean);
-  const r = pick(changed);
+  const r = pick(changed, args.length ? null : base);
   const lines = [
     `mode=${r.mode}`,
     `specs=${(r.specs ?? []).join(" ")}`,

@@ -3,13 +3,13 @@
   border-collapse: collapse;
   & :is(th, td) {
     padding: var(--space-3) var(--space-4);
-    border-block-end: 1px solid var(--line);
+    border-block-end: var(--line-w) solid var(--line);
     text-align: start;
   }
   & thead th,
   & tbody th {
     color: var(--muted);
-    font: 500 var(--fs-detail) / 1.4 var(--mono);
+    font: var(--weight-medium) var(--fs-detail) / var(--leading-compact) var(--mono);
   }
 }
 /* A link alone in a cell is no longer in a sentence, so it takes the target height (44px on touch). */

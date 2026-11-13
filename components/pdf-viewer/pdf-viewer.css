@@ -9,7 +9,7 @@
     display: grid;
     gap: var(--space-3);
     padding: var(--space-3);
-    border: 1px solid var(--line);
+    border: var(--line-w) solid var(--line);
     border-radius: var(--radius-l);
     background: var(--raised);
   }
@@ -40,12 +40,12 @@
     max-block-size: 80vh;
     overflow: auto;
     padding: var(--space-2);
-    border: 1px solid var(--line);
+    border: var(--line-w) solid var(--line);
     border-radius: var(--radius-m);
     background: var(--surface);
     &:focus-visible {
       outline: var(--focus-width) solid var(--ring);
-      outline-offset: 2px;
+      outline-offset: var(--focus-offset);
     }
     & canvas {
       display: block;

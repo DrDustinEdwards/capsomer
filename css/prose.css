@@ -38,8 +38,8 @@
     }
     & :where(h1, h2, h3) {
       font-family: var(--prose);
-      line-height: var(--prose-heading-leading, 1.15);
-      letter-spacing: var(--prose-heading-tracking, -0.015em);
+      line-height: var(--prose-heading-leading, var(--leading-tight));
+      letter-spacing: var(--prose-heading-tracking, var(--tracking-snug));
       margin-block: 1.4em var(--prose-heading-gap, 0.5em);
       max-inline-size: var(--prose-heading-measure, 30ch);
     }

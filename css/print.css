@@ -74,15 +74,15 @@
      line (transparent: the system paints it in its own text color), and a selected or pressed part keeps an outline. */
   @media (forced-colors: active) {
     :where(.cap-btn, .cap-pill, .cap-chip, .cap-status, [data-edge="shadow"]) {
-      outline: 1px solid transparent;
+      outline: var(--line-w) solid transparent;
     }
     :where([aria-selected="true"], [aria-pressed="true"], [aria-current]:not([aria-current="false"])) {
-      outline: 1px solid transparent;
-      outline-offset: -2px;
+      outline: var(--line-w) solid transparent;
+      outline-offset: calc(-1 * var(--focus-offset));
     }
     /* The focus ring in the system's highlight, a step thicker so it reads against any system color. */
     :focus-visible {
-      outline: calc(var(--focus-width) + 1px) solid Highlight;
+      outline: calc(var(--focus-width) + var(--line-w)) solid Highlight;
     }
   }
 }

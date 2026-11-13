@@ -3,6 +3,7 @@
 // the zone is the viewer's.
 
 import { fromDateTimeLocal, toDateTimeLocal } from "../field/field.ts";
+import { dayKey } from "@dustinedwards/site-runtime/time";
 import { plural } from "../hooks/hooks.ts";
 
 export const SEC = 1000;
@@ -39,27 +40,6 @@ export function toMs(at: number | Date | string | null | undefined): number {
 export function toMsOrNull(at: number | Date | string | null | undefined): number | null {
   const t = toMs(at);
   return Number.isFinite(t) ? t : null;
-}
-
-const dayFormats = new Map<string, Intl.DateTimeFormat>();
-const dayFormat = (zone = "") => {
-  let f = dayFormats.get(zone);
-  if (!f) {
-    f = new Intl.DateTimeFormat("en-CA", {
-      timeZone: zone || undefined,
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-    });
-    dayFormats.set(zone, f);
-  }
-  return f;
-};
-
-// The calendar day of a moment in a zone, "2027-03-06" (the browser's zone without one). A
-// meeting's day is its own zone's, not the viewer's.
-export function dayKey(at: number | Date | string, zone?: string): string {
-  return dayFormat(zone).format(toMs(at));
 }
 
 // Whole calendar days from `t` to `now` in the zone: 1 is yesterday, -1 tomorrow.

@@ -4,8 +4,9 @@ title: Process steps
 summary: Numbered steps that say how something works, in order, side by side where there is room or as a list of rows.
 parts: [css, react]
 tool: native
-states: [three columns, rows with a tag, flush rows, narrow space]
+states: [three columns, rows with a tag, flush rows, rows with an end, narrow space]
 added: 0.132.0
+updated: 0.142.0
 source: Foxhound's how it works (app/components/product-sections-cap.tsx) and its guide's ordered rows (app/components/docs/doc-widgets.tsx)
 replaces:
   - 'How it works'
@@ -40,6 +41,7 @@ How a product works in three or four moves; the states a record goes through, in
       <h3 class="cap-process-title">Connect your account</h3>
       <span class="cap-process-tag">[a pill]</span>   <!-- optional -->
       <p class="cap-process-text">One line saying what happens.</p>
+      <span class="cap-process-end">[timing, a pill]</span>   <!-- optional; at the line's end in rows -->
     </li>
   </ol>
 </div>
@@ -47,7 +49,7 @@ How a product works in three or four moves; the states a record goes through, in
 
 `--cap-process-start` on the list starts the count after a number (a list continued from another).
 
-React: `ProcessSteps` from `capsomer/react/process` takes `steps` (`title`, `text`, `tag`), `layout`, `flush`, `headingLevel` and `label`.
+React: `ProcessSteps` from `capsomer/react/process` takes `steps` (`title`, `text`, `tag`, `end`), `layout`, `flush`, `headingLevel` and `label`.
 
 ## Keyboard
 

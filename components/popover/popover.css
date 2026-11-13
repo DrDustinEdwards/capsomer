@@ -39,10 +39,10 @@
     color: var(--text);
     /* The ring is a hairline (decorative); the shadow lifts it. */
     box-shadow:
-      0 0 0 1px var(--line),
+      0 0 0 var(--line-w) var(--line),
       var(--shadow-m);
     font-size: var(--fs-body);
-    line-height: 1.4;
+    line-height: var(--leading-compact);
     text-align: start;
     overflow: visible;
     transform-origin: var(--transform-origin, var(--_origin, center));
@@ -103,7 +103,7 @@
   .cap-popover-title {
     margin: 0;
     font-size: inherit;
-    font-weight: 600;
+    font-weight: var(--weight-semibold);
     color: var(--text);
   }
   .cap-popover-description {
@@ -119,31 +119,31 @@
     inline-size: 8px;
     block-size: 8px;
     background: inherit;
-    border: 1px solid transparent;
-    border-radius: 1px;
+    border: var(--line-w) solid transparent;
+    border-radius: var(--radius-xs);
     rotate: 45deg;
     pointer-events: none;
   }
   .cap-popover:is([data-side="bottom"]:not([data-placed]), [data-placed="bottom"]) > .cap-popover-arrow {
-    top: -5px;
+    top: calc(-1 * (var(--space-1-5) + var(--space-1)));
     left: var(--cap-arrow-x, 50%);
     translate: -50% 0;
     border-color: var(--_line) transparent transparent var(--_line);
   }
   .cap-popover:is([data-side="top"]:not([data-placed]), [data-placed="top"]) > .cap-popover-arrow {
-    bottom: -5px;
+    bottom: calc(-1 * (var(--space-1-5) + var(--space-1)));
     left: var(--cap-arrow-x, 50%);
     translate: -50% 0;
     border-color: transparent var(--_line) var(--_line) transparent;
   }
   .cap-popover:is([data-side="left"]:not([data-placed]), [data-side="inline-start"]:not([data-placed]), [data-placed="left"]) > .cap-popover-arrow {
-    right: -5px;
+    right: calc(-1 * (var(--space-1-5) + var(--space-1)));
     top: var(--cap-arrow-y, 50%);
     translate: 0 -50%;
     border-color: var(--_line) var(--_line) transparent transparent;
   }
   .cap-popover:is([data-side="right"]:not([data-placed]), [data-side="inline-end"]:not([data-placed]), [data-placed="right"]) > .cap-popover-arrow {
-    left: -5px;
+    left: calc(-1 * (var(--space-1-5) + var(--space-1)));
     top: var(--cap-arrow-y, 50%);
     translate: 0 -50%;
     border-color: transparent transparent var(--_line) var(--_line);
@@ -168,10 +168,10 @@
     background: var(--raised);
     color: var(--text);
     box-shadow:
-      0 0 0 1px var(--_line),
+      0 0 0 var(--line-w) var(--_line),
       var(--shadow-m);
     font-size: var(--fs-detail);
-    font-weight: 500;
+    font-weight: var(--weight-medium);
     white-space: nowrap;
 
     &:has(kbd) {
@@ -186,12 +186,12 @@
       place-items: center;
       min-inline-size: 1.6em;
       padding: 0 var(--space-2);
-      border: 1px solid var(--line-strong);
-      border-block-end-width: 2px;
+      border: var(--line-w) solid var(--line-strong);
+      border-block-end-width: var(--line-w-thick);
       border-radius: var(--radius-s);
       background: var(--surface);
       color: var(--text);
-      font: 600 var(--fs-label) / 1.5 var(--ui);
+      font: var(--weight-semibold) var(--fs-label) / var(--leading-normal) var(--ui);
     }
   }
 
@@ -312,7 +312,7 @@
   /* Forced colors drop shadows and fills: the surface keeps an edge, the arrow its lines. */
   @media (forced-colors: active) {
     .cap-popover {
-      border: 1px solid CanvasText;
+      border: var(--line-w) solid CanvasText;
       background: Canvas;
       color: CanvasText;
     }

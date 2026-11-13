@@ -1,6 +1,6 @@
 {
   "name": "capsomer",
-  "version": "0.141.0",
+  "version": "0.143.0",
   "description": "Capsomer: the shared design system for Dustin Edwards's apps. Tokens, components and patterns, in plain CSS with optional behavior modules and React wrappers.",
   "license": "MIT",
   "repository": {
@@ -129,6 +129,10 @@
       "types": "./tokens/enarratio-theme.d.mts",
       "default": "./tokens/enarratio-theme.mjs"
     },
+    "./ambient-base.css": "./components/ambient/ambient-base.css",
+    "./ambient-hex-field.css": "./components/ambient/ambient-hex-field.css",
+    "./ambient-blobs.css": "./components/ambient/ambient-blobs.css",
+    "./ambient-equalizer.css": "./components/ambient/ambient-equalizer.css",
     "./*.css": "./components/*/*.css",
     "./behavior/chart-enhance": {
       "types": "./dist/components/chart-frame/chart-enhance.d.ts",
@@ -198,12 +202,14 @@
     "weight": "node bin/capsomer.mjs weight",
     "loc": "node bin/capsomer.mjs loc",
     "bloat": "node bin/capsomer.mjs bloat --knip test-results/knip.json --jscpd test-results/jscpd/jscpd-report.json",
-    "token-check": "node bin/capsomer.mjs token-check"
+    "token-check": "node bin/capsomer.mjs token-check",
+    "changeset": "changeset"
   },
   "devDependencies": {
     "@axe-core/playwright": "4.14.0",
     "@base-ui/react": "1.8.0",
     "@capsizecss/unpack": "4.0.1",
+    "@changesets/cli": "3.0.3",
     "@codemirror/commands": "6.10.4",
     "@codemirror/lang-markdown": "6.5.1",
     "@codemirror/language": "6.12.4",
@@ -211,8 +217,8 @@
     "@codemirror/view": "6.43.7",
     "@dagrejs/dagre": "3.1.3",
     "@drdustinedwards/site-helpers": "github:DrDustinEdwards/prelum#v0.55.0",
-    "@dustinedwards/devkit": "github:DrDustinEdwards/devkit#v0.45.1",
-    "@dustinedwards/site-runtime": "github:DrDustinEdwards/site-runtime#v0.143.0",
+    "@dustinedwards/devkit": "github:DrDustinEdwards/devkit#v0.48.0",
+    "@dustinedwards/site-runtime": "github:DrDustinEdwards/site-runtime#v0.155.0",
     "@fontsource/dm-mono": "5.3.0",
     "@fontsource/dm-sans": "5.3.0",
     "@fontsource/fraunces": "5.3.0",
@@ -233,7 +239,7 @@
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
     "@vitejs/plugin-react": "6.1.1",
-    "enarratio": "0.13.1",
+    "enarratio": "0.15.0",
     "hast-util-from-html": "2.0.3",
     "hast-util-to-mdast": "10.1.2",
     "jscpd": "5.3.2",
@@ -276,7 +282,7 @@
     "@dagrejs/dagre": "^3.1.3",
     "@drdustinedwards/site-helpers": ">=0.55.0",
     "@dustinedwards/devkit": ">=0.33.0",
-    "@dustinedwards/site-runtime": ">=0.131.0",
+    "@dustinedwards/site-runtime": ">=0.155.0",
     "@handlewithcare/prosemirror-suggest-changes": "^0.1.8",
     "@lezer/highlight": "^1.2.3",
     "@playwright/test": "^1.50.0",
@@ -288,7 +294,7 @@
     "@tiptap/pm": "^3.31.4",
     "@tiptap/starter-kit": "^3.31.4",
     "@tiptap/y-tiptap": "^3.3.0",
-    "enarratio": "^0.12.0 || ^0.13.0",
+    "enarratio": "^0.12.0 || ^0.13.0 || ^0.15.0",
     "lightningcss": "^1.30.0",
     "mdast-util-directive": "^3.1.1",
     "mdast-util-from-markdown": "^2.1.0",

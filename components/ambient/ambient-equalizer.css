@@ -1,0 +1,71 @@
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+/* The ambient layer's equalizer alone (ambient.css has all three). It needs
+   ambient-base.css, the rules every kind shares, imported before it. */
+
+@layer cap.components {
+  /* Equalizer: an inline shelf, not a layer. Each bar's width comes from the count. */
+  .cap-ambient[data-variant="equalizer"] {
+    position: relative;
+    inset: auto;
+    display: flex;
+    align-items: center;
+    gap: 1px;
+    inline-size: var(--cap-ambient-width, 13rem);
+    block-size: var(--cap-ambient-height, 4rem);
+
+    & > span {
+      flex: 1;
+      block-size: var(--h);
+      border-radius: var(--radius-s);
+      background: var(--cap-ambient-2);
+      transform: scaleY(0.65);
+    }
+
+    & > span:nth-child(1) { --h: 52%; --d: 3.0s; --l: -0.40s; }
+    & > span:nth-child(2) { --h: 61%; --d: 2.6s; --l: -2.10s; }
+    & > span:nth-child(3) { --h: 44%; --d: 3.6s; --l: -2.20s; }
+    & > span:nth-child(4) { --h: 70%; --d: 3.2s; --l: -0.70s; }
+    & > span:nth-child(5) { --h: 48%; --d: 2.6s; --l: -1.20s; }
+    & > span:nth-child(6) { --h: 38%; --d: 3.8s; --l: -2.90s; }
+    & > span:nth-child(7) { --h: 58%; --d: 4.0s; --l: -3.00s; }
+    & > span:nth-child(8) { --h: 92%; --d: 2.4s; --l: -0.50s; }
+    & > span:nth-child(9) { --h: 46%; --d: 3.2s; --l: -0.60s; }
+    & > span:nth-child(10) { --h: 55%; --d: 3.4s; --l: -3.40s; }
+    & > span:nth-child(11) { --h: 40%; --d: 2.8s; --l: -1.80s; }
+    & > span:nth-child(12) { --h: 66%; --d: 4.0s; --l: -1.10s; }
+    & > span:nth-child(13) { --h: 50%; --d: 3.8s; --l: -3.60s; }
+    & > span:nth-child(14) { --h: 36%; --d: 3.0s; --l: -2.50s; }
+    & > span:nth-child(15) { --h: 62%; --d: 2.4s; --l: -1.00s; }
+    & > span:nth-child(16) { --h: 44%; --d: 3.6s; --l: -1.50s; }
+    & > span:nth-child(17) { --h: 88%; --d: 3.4s; --l: -2.60s; }
+    & > span:nth-child(18) { --h: 52%; --d: 2.6s; --l: -0.30s; }
+    & > span:nth-child(19) { --h: 41%; --d: 3.0s; --l: -1.40s; }
+    & > span:nth-child(20) { --h: 58%; --d: 4.0s; --l: -3.90s; }
+    & > span:nth-child(21) { --h: 47%; --d: 4.0s; --l: -3.20s; }
+    & > span:nth-child(22) { --h: 70%; --d: 2.8s; --l: -0.90s; }
+    & > span:nth-child(23) { --h: 39%; --d: 2.8s; --l: -0.80s; }
+    & > span:nth-child(24) { --h: 54%; --d: 3.8s; --l: -2.30s; }
+    & > span:nth-child(25) { --h: 64%; --d: 3.6s; --l: -2.00s; }
+    & > span:nth-child(26) { --h: 43%; --d: 3.2s; --l: -1.30s; }
+    & > span:nth-child(27) { --h: 57%; --d: 3.2s; --l: -1.60s; }
+    & > span:nth-child(28) { --h: 49%; --d: 2.4s; --l: -2.80s; }
+
+    /* data-hide="phone": the shelf is left out under 48rem, where it crowds the hero's words. */
+    &[data-hide="phone"] {
+      @media (max-width: 47.99rem) {
+        display: none;
+      }
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .cap-ambient[data-variant="equalizer"] > span {
+      animation: cap-ambient-bar var(--d) var(--ease-in-out) var(--l) infinite alternate;
+    }
+  }
+
+  @keyframes cap-ambient-bar {
+    from { transform: scaleY(0.3); }
+    to { transform: scaleY(1); }
+  }
+}

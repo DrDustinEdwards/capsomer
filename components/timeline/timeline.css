@@ -68,12 +68,12 @@
     flex: none;
     inline-size: var(--cap-timeline-node);
     block-size: var(--cap-timeline-node);
-    border: 3px solid var(--cap-timeline-node-line);
+    border: var(--line-w-bar) solid var(--cap-timeline-node-line);
     border-radius: 50%;
     background: var(--cap-timeline-node-bg);
     color: var(--text);
     font-size: var(--fs-h3);
-    font-weight: 700;
+    font-weight: var(--weight-bold);
     font-variant-numeric: tabular-nums;
   }
   .cap-timeline-body {
@@ -87,8 +87,8 @@
   .cap-timeline-title {
     margin: 0 0 var(--space-1);
     font-size: var(--fs-h3);
-    font-weight: 600;
-    line-height: 1.4;
+    font-weight: var(--weight-semibold);
+    line-height: var(--leading-compact);
   }
   .cap-timeline-text {
     color: var(--muted);

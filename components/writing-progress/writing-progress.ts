@@ -41,7 +41,7 @@ export const WEEKDAYS = [
 export const STREAK_HORIZON_DAYS = 400;
 
 import { plural } from "../hooks/hooks.ts";
-import { dayKey } from "../time/time.ts";
+import { dayKey } from "@dustinedwards/site-runtime/time";
 
 /** The weekday of a calendar day, 0 Sunday. Computed at noon UTC, which every zone shares as the same date. */
 export function weekdayOf(day: string): number {

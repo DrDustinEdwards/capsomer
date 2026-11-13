@@ -5,7 +5,7 @@
 }
 .media-save-row {
   padding: var(--space-3) var(--pad-card);
-  border: 1px solid var(--line);
+  border: var(--line-w) solid var(--line);
   border-radius: var(--radius-m);
   background: var(--sunken);
 }

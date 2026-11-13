@@ -132,10 +132,10 @@ function useRoute(): { view: View; detail: string | null } {
   return route;
 }
 
-// Unreleased work and the last three releases; the whole changelog is a link, not 40,000px of page.
+// The intro and the last three releases; the whole changelog is a link, not 40,000px of page.
 const recentChanges = (md: string) =>
   `${md
-    .split(/\n(?=## \[)/)
+    .split(/\n(?=## \d)/)
     .slice(0, 4)
     .join(
       "\n",

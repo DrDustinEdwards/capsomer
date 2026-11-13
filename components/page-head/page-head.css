@@ -27,8 +27,8 @@
     font-size: var(--fs-h2);
     /* 22px, a heading's size, so Medium (NASA's Helvetica Medium); Light is for titles from 24px. */
     font-weight: var(--weight-heading);
-    letter-spacing: -0.01em;
-    line-height: 1.2;
+    letter-spacing: var(--tracking-snug);
+    line-height: var(--leading-tight);
     overflow-wrap: anywhere;
     text-wrap: balance;
   }

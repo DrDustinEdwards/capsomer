@@ -24,7 +24,7 @@
     --header-cta-fg: var(--primary-fg);
     --header-avatar: var(--accent-12);
     --header-avatar-fg: var(--ground);
-    --header-fs: 14px;
+    --header-fs: var(--fs-body);
     --header-side: var(--space-6);
     /* A site that keeps the bar's contents in its content column (bsw's 72rem) sets
        --header-max-inline-size; the band still runs the full width. 100% is no column. */
@@ -32,16 +32,16 @@
     --header-inset: max(var(--header-side), (100% - var(--header-max-inline-size)) / 2 + var(--header-side));
     /* The section links' weight, and the current one's; their padding, the gap between them, and
        their chevron's size and gap. */
-    --header-link-weight: 400;
-    --header-link-current-weight: 500;
+    --header-link-weight: var(--weight-regular);
+    --header-link-current-weight: var(--weight-medium);
     --header-link-pad: 0;
     --header-links-gap: 20px;
-    --header-chev-size: 12px;
+    --header-chev-size: var(--fs-small);
     --header-link-gap: var(--space-2);
     /* The phone sheet's group labels and rows. */
     --header-sheet-label-ink: var(--muted);
     --header-sheet-label-fs: var(--fs-detail);
-    --header-sheet-label-weight: 500;
+    --header-sheet-label-weight: var(--weight-medium);
     --header-sheet-label-case: none;
     --header-sheet-label-tracking: normal;
     --header-sheet-row-fs: var(--fs-body);
@@ -69,10 +69,10 @@
     padding-inline: var(--header-inset);
     background: var(--header-bg);
     color: var(--header-fg);
-    border-block-end: 1px solid var(--header-edge);
+    border-block-end: var(--line-w) solid var(--header-edge);
     font-family: var(--font-ui, var(--ui));
     font-size: var(--header-fs);
-    line-height: 1.3;
+    line-height: var(--leading-snug);
 
     &[data-sticky="false"] {
       position: relative;
@@ -144,7 +144,7 @@
         inset: 0 0 -1px;
         z-index: -1;
         background: var(--header-bg);
-        border-block-end: 1px solid var(--header-line);
+        border-block-end: var(--line-w) solid var(--header-line);
         pointer-events: none;
       }
       &[data-translucent] > .cap-site-header-ground {
@@ -220,15 +220,15 @@
   }
   .cap-site-header-sep {
     color: var(--header-fg-muted);
-    font-size: 1.125rem;
+    font-size: var(--fs-h3);
   }
   .cap-site-header-switch {
     display: inline-flex;
     align-items: center;
     gap: var(--space-3);
     block-size: 32px;
-    padding: 0 10px;
-    border: 1px solid var(--header-line);
+    padding: 0 var(--space-3-5);
+    border: var(--line-w) solid var(--header-line);
     border-radius: var(--radius-m);
     background: none;
     color: var(--header-fg);
@@ -257,8 +257,8 @@
     border-radius: var(--radius-m);
     background: var(--header-cta);
     color: var(--header-cta-fg);
-    font-size: 0.6875rem;
-    font-weight: 600;
+    font-size: var(--fs-label);
+    font-weight: var(--weight-semibold);
 
     /* The letter is drawn, not text: the button is named by the business, and a letter in the
        HTML would be read as part of its visible label (WCAG 2.5.3). */
@@ -335,7 +335,7 @@
       content: "";
       position: absolute;
       inset-inline: 0;
-      bottom: 4px;
+      bottom: var(--space-2);
       block-size: var(--link-rule);
       background: var(--header-accent);
       scale: 0 1;
@@ -356,7 +356,7 @@
         content: "";
         position: absolute;
         inset-inline: 0;
-        bottom: 4px;
+        bottom: var(--space-2);
         block-size: 2px;
         background: var(--header-accent);
       }
@@ -447,8 +447,8 @@
     --_bubble: var(--space-5);
     position: absolute;
     top: calc(50% - 9px - var(--_bubble) / 2);
-    inset-inline-start: calc(50% + 9px + 2px);
-    box-shadow: 0 0 0 2px var(--header-bg);
+    inset-inline-start: calc(50% + 9px + var(--space-1));
+    box-shadow: 0 0 0 var(--line-w-thick) var(--header-bg);
   }
 
   /* The one button extra (Free audit, Join free). */
@@ -456,13 +456,13 @@
     display: inline-flex;
     align-items: center;
     block-size: 32px;
-    padding: 0 14px;
+    padding: 0 calc(var(--space-4) + var(--space-1));
     border: 0;
     border-radius: var(--radius-m);
     background: var(--header-cta);
     color: var(--header-cta-fg);
     font: inherit;
-    font-weight: 600;
+    font-weight: var(--weight-semibold);
     text-decoration: none;
     white-space: nowrap;
     cursor: pointer;
@@ -496,9 +496,9 @@
       border-radius: var(--radius-full);
       background: var(--header-avatar);
       color: var(--header-avatar-fg);
-      font-size: 0.75rem;
-      font-weight: 600;
-      letter-spacing: 0.02em;
+      font-size: var(--fs-small);
+      font-weight: var(--weight-semibold);
+      letter-spacing: var(--tracking-wide);
     }
     & > .cap-site-header-initials::before {
       content: attr(data-initials);
@@ -512,7 +512,7 @@
       object-fit: cover;
     }
     &:hover > .cap-site-header-initials {
-      opacity: 0.88;
+      opacity: var(--opacity-soft);
     }
   }
   .cap-site-header-signin {
@@ -560,14 +560,14 @@
     margin: 0;
     padding: var(--space-2);
     overflow: auto;
-    border: 1px solid var(--line);
+    border: var(--line-w) solid var(--line);
     border-radius: var(--radius-l);
     background: var(--surface);
     color: var(--text);
     box-shadow: var(--shadow-l);
     font-family: var(--font-ui, var(--ui));
-    font-size: var(--header-fs, 14px);
-    line-height: 1.35;
+    font-size: var(--header-fs, var(--fs-body));
+    line-height: var(--leading-snug);
   }
   /* A mega-menu's room (data-size="wide"): the site's own layout inside (a band, tiles, grouped rows),
      40rem unless the site sets --header-panel-w, and never wider than the window. */
@@ -619,11 +619,11 @@
       }
       &[aria-current] {
         background: var(--sunken);
-        font-weight: 600;
+        font-weight: var(--weight-semibold);
       }
       &:focus-visible {
         outline: var(--focus-width) solid var(--ring);
-        outline-offset: -2px;
+        outline-offset: calc(-1 * var(--focus-offset));
       }
     }
   }
@@ -631,12 +631,12 @@
     padding: var(--space-3) var(--space-4) var(--space-2);
     color: var(--muted);
     font-size: var(--fs-detail);
-    font-weight: 500;
+    font-weight: var(--weight-medium);
   }
   .cap-site-header-panel hr {
     margin: var(--space-2) var(--space-2);
     border: 0;
-    border-block-start: 1px solid var(--line);
+    border-block-start: var(--line-w) solid var(--line);
   }
   .cap-site-header-who {
     display: grid;
@@ -721,7 +721,7 @@
       &[aria-current="true"] {
         background: var(--accent-12);
         color: var(--ground);
-        font-weight: 600;
+        font-weight: var(--weight-semibold);
       }
     }
     & .cap-site-header-count {
@@ -764,13 +764,13 @@
     border-radius: var(--radius-m);
     background: var(--primary);
     color: var(--primary-fg);
-    font-weight: 600;
+    font-weight: var(--weight-semibold);
     text-decoration: none;
   }
   .cap-site-header-sheet-account {
     flex: none;
     padding: var(--space-2) var(--space-3) var(--space-3);
-    border-block-start: 1px solid var(--line);
+    border-block-start: var(--line-w) solid var(--line);
   }
 
   /* The bottom bar of a signed-in area on a phone: up to five of its top pages, and no More,
@@ -895,7 +895,7 @@
       grid-auto-columns: minmax(0, 1fr);
       padding: var(--space-2) var(--space-2) calc(var(--space-2) + env(safe-area-inset-bottom, 0px));
       background: var(--surface);
-      border-block-start: 1px solid var(--line);
+      border-block-start: var(--line-w) solid var(--line);
 
       & a {
         position: relative;
@@ -906,10 +906,10 @@
         padding: var(--space-2) 0;
         border-radius: var(--radius-m);
         color: var(--muted);
-        font-size: max(12px, var(--fs-label));
-        font-weight: 600;
+        font-size: max(var(--fs-small), var(--fs-label));
+        font-weight: var(--weight-semibold);
         text-decoration: none;
-        outline-offset: -2px;
+        outline-offset: calc(-1 * var(--focus-offset));
 
         &[aria-current="page"] {
           color: var(--accent-text);
@@ -921,7 +921,7 @@
         box-sizing: content-box;
         inline-size: 20px;
         block-size: 20px;
-        padding: 2px 14px;
+        padding: var(--space-1) calc(var(--space-4) + var(--space-1));
         border-radius: var(--radius-full);
         fill: none;
         stroke: currentColor;
@@ -935,15 +935,15 @@
       /* The badge rides the pill's top end corner, clear of the glyph. */
       & .cap-site-header-badge {
         top: 0;
-        inset-inline-start: calc(50% + 12px);
-        box-shadow: 0 0 0 2px var(--surface);
+        inset-inline-start: calc(50% + var(--space-4));
+        box-shadow: 0 0 0 var(--line-w-thick) var(--surface);
       }
       /* Under 360px a tab is 62px: the badge sits flush on the glyph's edge with tighter padding,
          so the last tab's "99+" stays clear of the glyph and inside the window. */
       @media (max-width: 359.98px) {
         & .cap-site-header-badge {
-          inset-inline-start: calc(50% + 10px);
-          padding-inline: 2px;
+          inset-inline-start: calc(50% + var(--space-3-5));
+          padding-inline: var(--space-1);
         }
       }
     }
@@ -1052,8 +1052,8 @@
       scrollbar-width: none;
       /* No hairline between the rows (Dustin, 2026-10-27): the band is one sign. */
       border-block-start: 0;
-      font-size: 0.9375rem;
-      font-weight: 500;
+      font-size: var(--fs-lead);
+      font-weight: var(--weight-medium);
 
       & > ul {
         gap: var(--space-6);
@@ -1259,25 +1259,25 @@
   .cap-site-header-names {
     display: flex;
     flex-direction: column;
-    gap: 7px;
+    gap: calc(var(--space-2) + var(--space-1-5));
     min-inline-size: 0;
   }
   .cap-site-header-agency {
     color: var(--header-fg-muted);
-    font-size: 0.7812rem;
-    line-height: 1;
+    font-size: var(--fs-small);
+    line-height: var(--leading-none);
     text-box: trim-both cap alphabetic;
   }
   .cap-site-header-name {
     color: var(--header-fg);
-    font-size: 1.25rem;
-    font-weight: 700;
-    line-height: 1;
-    letter-spacing: -0.01em;
+    font-size: var(--title-4);
+    font-weight: var(--weight-bold);
+    line-height: var(--leading-none);
+    letter-spacing: var(--tracking-snug);
     text-box: trim-both cap alphabetic;
   }
   .cap-site-header-app {
-    font-weight: 400;
+    font-weight: var(--weight-regular);
   }
   /* The headquarters site (dustinedwards.info) has no site name: "Dustin Edwards" is the only line. It is
      centered on the row beside the mark, at 22px (Dustin, 2026-11-08: alone it read small and low). Before it
@@ -1290,9 +1290,9 @@
 
     & > :is(.cap-site-header-agency, .cap-site-header-name) {
       color: var(--header-fg);
-      font-size: 1.375rem;
-      font-weight: 700;
-      letter-spacing: -0.01em;
+      font-size: var(--fs-h2);
+      font-weight: var(--weight-bold);
+      letter-spacing: var(--tracking-snug);
     }
   }
 
@@ -1300,7 +1300,7 @@
      site at its end, so the admin's band is as tall as its public pages'. */
   .cap-site-header-trail {
     gap: var(--space-4);
-    font-size: 0.9375rem;
+    font-size: var(--fs-lead);
 
     & ol {
       display: flex;
@@ -1309,17 +1309,17 @@
       margin: 0;
       padding: 0;
       list-style: none;
-      font-weight: 500;
+      font-weight: var(--weight-medium);
     }
     & li + li::before {
       content: "/";
       margin-inline-end: var(--space-3);
       color: var(--header-fg-muted);
-      font-weight: 400;
+      font-weight: var(--weight-regular);
     }
     & a {
       color: var(--header-fg-muted);
-      font-weight: 400;
+      font-weight: var(--weight-regular);
       text-decoration: none;
 
       &:hover {
@@ -1366,14 +1366,14 @@
     inline-size: min(26rem, 100vw - 2 * var(--page-gutter));
     margin: 0;
     padding: var(--space-2);
-    border: 1px solid var(--line);
+    border: var(--line-w) solid var(--line);
     border-radius: var(--radius-l);
     background: var(--surface);
     color: var(--text);
     box-shadow: var(--shadow-l);
     font-family: var(--font-ui, var(--ui));
     font-size: var(--fs-body);
-    line-height: 1.35;
+    line-height: var(--leading-snug);
 
     & > form {
       display: flex;
@@ -1382,7 +1382,7 @@
       block-size: var(--control);
       margin: 0;
       padding-inline: var(--space-3);
-      border: 1px solid var(--line-strong);
+      border: var(--line-w) solid var(--line-strong);
       border-radius: var(--radius-s);
       background: var(--surface);
 
@@ -1437,7 +1437,7 @@
       column-gap: var(--space-2);
       padding: var(--space-2) var(--space-3);
       border-radius: var(--radius-s);
-      border-inline-start: 3px solid transparent;
+      border-inline-start: var(--line-w-bar) solid transparent;
       color: var(--text);
       text-decoration: none;
 
@@ -1456,7 +1456,7 @@
     }
     & .cap-site-header-result-title {
       grid-column: 2;
-      font-weight: 600;
+      font-weight: var(--weight-semibold);
       overflow-wrap: anywhere;
     }
     & .cap-site-header-result-detail {
@@ -1471,7 +1471,7 @@
       grid-template-columns: minmax(0, 1fr);
       margin-block-start: var(--space-1);
       color: var(--accent-text);
-      font-weight: 600;
+      font-weight: var(--weight-semibold);
     }
     & .cap-site-header-results-empty {
       margin: 0;
@@ -1493,7 +1493,7 @@
       }
       & .cap-site-header-name {
         white-space: nowrap;
-        line-height: 1.1;
+        line-height: var(--leading-tight);
         text-box: none;
       }
       & .cap-site-header-app {
@@ -1559,7 +1559,7 @@
     }
     .cap-site-header-sheet-list [aria-current],
     .cap-site-tabs a[aria-current] {
-      outline: 2px solid CanvasText;
+      outline: var(--focus-width) solid CanvasText;
     }
   }
 }

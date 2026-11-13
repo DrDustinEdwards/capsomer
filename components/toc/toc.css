@@ -13,7 +13,7 @@
     margin: 0 0 var(--space-3);
     font-family: var(--readout);
     font-size: var(--fs-detail);
-    letter-spacing: 0.06em;
+    letter-spacing: var(--tracking-widest);
     text-transform: uppercase;
     color: var(--muted);
   }
@@ -46,8 +46,8 @@
     &[aria-current="location"] {
       color: var(--text);
       /* A logical edge, so it sits at the start in a right-to-left page too, and shows in forced colors. */
-      border-inline-start: 2px solid var(--accent);
-      padding-inline-start: calc(var(--space-2) - 2px);
+      border-inline-start: var(--line-w-thick) solid var(--accent);
+      padding-inline-start: calc(var(--space-2) - var(--line-w-thick));
     }
   }
   /* Sidebar: sticky beside the post, from 64rem (a page-level layout, so a media query). */
@@ -60,7 +60,7 @@
   /* Inline: a closed disclosure in a frame, above the post on a narrow screen. */
   .cap-toc[data-variant="inline"] {
     margin-block-end: var(--space-7);
-    border: 1px solid var(--line);
+    border: var(--line-w) solid var(--line);
     border-radius: var(--radius-l);
     background: var(--surface);
     & .cap-toc-title {
@@ -72,7 +72,7 @@
       padding: var(--space-2) var(--space-4);
       font-family: inherit;
       font-size: var(--fs-label);
-      font-weight: 500;
+      font-weight: var(--weight-medium);
       letter-spacing: 0;
       text-transform: none;
       color: var(--text);
@@ -91,7 +91,7 @@
     }
     & nav {
       padding: var(--space-1) var(--space-4) var(--space-3);
-      border-block-start: 1px solid var(--line);
+      border-block-start: var(--line-w) solid var(--line);
     }
   }
   @media (min-width: 64rem) {
@@ -112,7 +112,7 @@
   @media (forced-colors: active) {
     .cap-toc-link[aria-current="location"] {
       box-shadow: none;
-      border-inline-start: 2px solid LinkText;
+      border-inline-start: var(--line-w-thick) solid LinkText;
     }
   }
 }
