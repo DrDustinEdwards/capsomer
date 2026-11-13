@@ -1,7 +1,7 @@
 import type { EnhanceOptions } from "enarratio/enhance";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { type ChartFit, type Gridlines, shownHeight } from "./chart-frame.ts";
-import { Glyph } from "../status/status.react.tsx";
+import { Status } from "../status/status.react.tsx";
 import { Panel } from "../panel/panel.react.tsx";
 import { markup } from "../trusted-html/trusted-html.ts";
 
@@ -157,11 +157,7 @@ export function ChartFrame({
       <figure className={cls} data-state="nodata">
         <figcaption className="cap-chart-title">{noData.title}</figcaption>
         <p className="cap-chart-reason">
-          <span className="cap-status" data-tone="nodata">
-            <Glyph name="nodata" />
-            No data
-          </span>{" "}
-          {noData.reason}
+          <Status tone="nodata">No data</Status> {noData.reason}
         </p>
       </figure>
     );
@@ -219,11 +215,7 @@ export function ChartPanel({
     <>
       {stale ? (
         <p className="cap-chart-stale" role="status">
-          <span className="cap-status" data-tone="warn">
-            <Glyph name="warn" />
-            Not refreshed
-          </span>{" "}
-          {stale}
+          <Status tone="warn">Not refreshed</Status> {stale}
         </p>
       ) : null}
       <ChartFrame
@@ -281,7 +273,11 @@ export function DataPreview({
 }: DataPreviewProps) {
   const Heading = `h${level}` as "h2" | "h3" | "h4";
   return (
-    <aside className="cap-data-preview" id={id} aria-labelledby={id ? `${id}-heading` : undefined}>
+    <aside
+      className="cap-card cap-data-preview"
+      id={id}
+      aria-labelledby={id ? `${id}-heading` : undefined}
+    >
       <Heading className="cap-data-preview-heading" id={id ? `${id}-heading` : undefined}>
         {heading}
       </Heading>

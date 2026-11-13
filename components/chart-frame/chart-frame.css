@@ -120,14 +120,6 @@
   }
 
   /* A dataset previewed beside an article: heading, drawing, the sentence, the link, the source. */
-  .cap-data-preview {
-    display: grid;
-    gap: var(--space-3);
-    padding: var(--pad-card);
-    border: 1px solid var(--line);
-    border-radius: var(--radius-l);
-    background: var(--surface);
-  }
   .cap-data-preview-heading {
     margin: 0;
     font-family: var(--display);

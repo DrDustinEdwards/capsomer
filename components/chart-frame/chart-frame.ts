@@ -4,6 +4,7 @@
 // second head. No behavior of its own: the disclosure is Enarratio's native `details`.
 import { escapeHtml } from "@dustinedwards/site-runtime/html";
 import { listText } from "../hooks/hooks.ts";
+import { statusHtml } from "../status/status.ts";
 import { type RedrawSpec, redrawAttribute } from "enarratio/redraw";
 
 export type { RedrawSpec };
@@ -32,8 +33,7 @@ export function frameHtml(chart: string, o: FrameOptions = {}): string {
 // No data is a state with its reason, never an empty chart or a zero: the title, then the
 // reason with the no-data glyph and word, and no table.
 export function noDataHtml(title: string, reason: string): string {
-  const glyph = `<svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M5 8h6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>`;
-  return `<figure class="cap-chart" data-state="nodata"><figcaption class="cap-chart-title">${escapeHtml(title)}</figcaption><p class="cap-chart-reason"><span class="cap-status" data-tone="nodata">${glyph}No data</span> ${escapeHtml(reason)}</p></figure>`;
+  return `<figure class="cap-chart" data-state="nodata"><figcaption class="cap-chart-title">${escapeHtml(title)}</figcaption><p class="cap-chart-reason">${statusHtml("nodata", "No data")} ${escapeHtml(reason)}</p></figure>`;
 }
 
 // What a redraw keeps from the first drawing: the height it showed at the frame's width.
