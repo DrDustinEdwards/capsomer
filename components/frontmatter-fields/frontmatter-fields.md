@@ -115,7 +115,7 @@ const fields: FieldSpec[] = [
 
 Props: `source` (the whole file), `onChange(next)` (the whole file again; left out, every box is read-only), `readOnly`, `fields`, `extra` (`"fields"` or `"text"`), `legend`, `hideEmpty`, `raw` (the disclosure, on by default), `rawSummary`, `empty` (shown when the file has no frontmatter) and `children`. A `FieldSpec` is `{ key, label?, box?, help?, wide?, flag? }`; `box` is `"line"`, `"text"`, `"list"`, `"lines"` or `"flag"`, and `flag` is `{ on, off }` (default `{ on: "true", off: "false" }`; `off: null` removes the key).
 
-`capsomer/react/frontmatter-fields` also exports `useTyped(stored)`, returning `{ value, keep, done }` (type `TypedBox`): a box that keeps what is typed while it has focus, for an app's own fields beside these.
+`capsomer/react/frontmatter-fields` also exports `useTyped(stored)`, returning `{ value, keep, done }` (type `TypedBox`): a box that keeps what is typed while it has focus, for an app's own fields beside these; and `typedProps(box, locked, write)`, the props of an `input` or `textarea` drawn from it (`cap-input`, the value, read-only when locked, `done` on blur, and each change kept and written): `<input type="text" {...typedProps(box, locked, (text) => save(text))} />`.
 
 `capsomer/behavior/frontmatter-fields` holds the pure core, for a server or a test: `typeFront(front, fields, { extra })` (the boxes and the keys only the raw text holds), `shapeOf(lines)`, `readBox`, `writeBox`, `setBox(front, key, box, value, flag)`, `scalarRaw` and `labelOf`, and `LIST_HINT`, `LINES_HINT`.
 

@@ -30,6 +30,8 @@
     & svg {
       width: 16px;
       height: 16px;
+      /* The chevrons (components/icons, 24-unit drawings), their line 1.5px at 16px. */
+      --icon-stroke: 2.25;
     }
   }
 

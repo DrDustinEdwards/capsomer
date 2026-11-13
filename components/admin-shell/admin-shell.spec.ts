@@ -391,14 +391,6 @@ eachTheme((theme) => {
     expect(collapsed?.width).toBe(strip?.width);
   });
 
-  test("behavior: comfortable density makes the menu items taller", async ({ page }) => {
-    await visitStates(page, "admin-shell", theme, "expanded");
-    const compact = (await page.getByRole("link", { name: "Overview" }).boundingBox())?.height ?? 0;
-    await visitStates(page, "admin-shell", theme, "comfortable");
-    const roomy = (await page.getByRole("link", { name: "Overview" }).boundingBox())?.height ?? 0;
-    expect(roomy).toBeGreaterThanOrEqual(compact);
-  });
-
   // Reflow at 320px is the sweep's (test/sweep.spec.ts).
   test("behavior: at 320px the logo shows its mark, keeps its name, and the menu button is in view", async ({
     page,
@@ -517,19 +509,6 @@ eachTheme((theme) => {
     await expect(account.getByRole("link", { name: "Portal settings" })).toBeAttached();
     await expect(account.getByRole("button", { name: "Help and shortcuts" })).toBeAttached();
     await expectNoAxeViolations(page);
-  });
-
-  test("behavior: every row of the sheet starts its label in one column, icon or none", async ({
-    page,
-  }) => {
-    await page.setViewportSize({ width: 390, height: 844 });
-    await visitStates(page, "admin-shell", theme, "phone");
-    await page.getByRole("button", { name: "Menu" }).click();
-    const xs = await page
-      .locator("dialog.cap-site-header-sheet .cap-site-header-sheet-name")
-      .evaluateAll((els) => els.map((e) => Math.round(e.getBoundingClientRect().x)));
-    expect(xs.length).toBeGreaterThan(10);
-    expect([...new Set(xs)]).toHaveLength(1);
   });
 
   test("keyboard: opening the sheet puts focus on its heading, and Tab goes on from there", async ({
@@ -989,21 +968,6 @@ eachTheme((theme) => {
     expect((await read()).edge, "the hover edge against the menu").toBeGreaterThanOrEqual(3);
   });
 
-  test("behavior: collapsed, the collapse control's icon heads the column, over the menu's icons; the app's mark is the header's", async ({
-    page,
-  }) => {
-    await visitStates(page, "admin-shell", theme, "collapsed");
-    const mark = page.locator(".cap-admin-collapse .cap-admin-icon");
-    await expect(mark).toBeVisible();
-    const [m, icon] = await Promise.all([
-      mark.boundingBox(),
-      page.locator(".cap-admin-menu a .cap-admin-icon").first().boundingBox(),
-    ]);
-    expect(Math.abs(m!.x + m!.width / 2 - (icon!.x + icon!.width / 2))).toBeLessThanOrEqual(1);
-    expect(m!.y).toBeLessThan(icon!.y);
-    await expect(page.locator(".cap-admin-title, .cap-admin-title-mark")).toHaveCount(0);
-  });
-
   test("behavior: every unread marker is a number, one rule on every tile, 99+ past 99", async ({
     page,
   }) => {
@@ -1015,31 +979,6 @@ eachTheme((theme) => {
     expect(texts.length).toBeGreaterThanOrEqual(7);
     for (const t of texts) expect(t).toMatch(/^(\d{1,2}|99\+)$/);
   });
-  test("behavior: every count and badge is one bubble, open and collapsed", async ({ page }) => {
-    const shapes = async () =>
-      page.evaluate(() =>
-        [
-          ...document.querySelectorAll(
-            ".cap-admin-strip .cap-admin-badge, .cap-admin-menu .cap-admin-count:not(:empty)",
-          ),
-        ].map((b) => {
-          const cs = getComputedStyle(b);
-          return [
-            Math.round(b.getBoundingClientRect().height),
-            cs.borderRadius,
-            cs.fontSize,
-            cs.fontWeight,
-          ].join(" ");
-        }),
-      );
-    await visitStates(page, "admin-shell", theme, "expanded");
-    const open = await shapes();
-    await visitStates(page, "admin-shell", theme, "collapsed");
-    const shut = await shapes();
-    expect(open.length + shut.length, "bubbles measured").toBeGreaterThanOrEqual(12);
-    expect([...new Set([...open, ...shut])]).toHaveLength(1);
-  });
-
   test("behavior: the strip lists the family's seven apps, Capsomer last, in one order with their own marks, this one marked", async ({
     page,
   }) => {

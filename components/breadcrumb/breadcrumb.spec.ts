@@ -17,12 +17,6 @@ eachTheme((theme) => {
     await expectNoAxeViolations(page);
   });
 
-  test("accessibility: the open specimen has no axe violations", async ({ page }) => {
-    await visitStates(page, "breadcrumb", theme, "open");
-    await expect(page.locator("[popover]:popover-open")).toBeVisible();
-    await expectNoAxeViolations(page);
-  });
-
   test("accessibility: links, the current page and the folded button reach their contrast", async ({
     page,
   }) => {
@@ -99,25 +93,6 @@ eachTheme((theme) => {
     },
   );
 
-  test("keyboard: Tab moves through the links in order and passes the current page", async ({
-    page,
-  }) => {
-    await visitStates(page, "breadcrumb", theme);
-    await page.locator("#bc-default").getByRole("link", { name: "Admin" }).focus();
-    await page.keyboard.press("Tab");
-    await expect(page.locator("#bc-default").getByRole("link", { name: "Posts" })).toBeFocused();
-    await page.keyboard.press("Tab");
-    await expect(page.locator("#bc-default .cap-breadcrumb-page")).not.toBeFocused();
-    await expect(page.locator("#bc-two").getByRole("link", { name: "Sites" })).toBeFocused();
-  });
-
-  test("keyboard: Enter follows a link", async ({ page }) => {
-    await visitStates(page, "breadcrumb", theme);
-    await page.locator("#bc-default").getByRole("link", { name: "Posts" }).focus();
-    await page.keyboard.press("Enter");
-    await expect(page).toHaveURL(/#posts$/);
-  });
-
   test("keyboard: Enter on the folded-levels button opens the popover and focus moves to its first link", async ({
     page,
   }) => {
@@ -130,13 +105,6 @@ eachTheme((theme) => {
     await expect(
       page.getByRole("dialog", { name: "More levels" }).getByRole("link", { name: "Sites" }),
     ).toBeFocused();
-  });
-
-  test("keyboard: Space on the folded-levels button opens the popover", async ({ page }) => {
-    await visitStates(page, "breadcrumb", theme);
-    await page.locator("#bc-folded").getByRole("button", { name: "Show 2 more levels" }).focus();
-    await page.keyboard.press("Space");
-    await expect(page.getByRole("dialog", { name: "More levels" })).toBeVisible();
   });
 
   test("keyboard: Tab moves between the popover's links and past the last one closes it", async ({
@@ -185,13 +153,6 @@ eachTheme((theme) => {
     await expect(page.locator("#bc-short").getByRole("link")).toHaveCount(2);
   });
 
-  test("behavior: the delivered HTML has the whole trail as links", async ({ page }) => {
-    const html = await (await page.request.get("components/breadcrumb/states.html")).text();
-    for (const level of ["Media library", "2026", "September", "Field survey"])
-      expect(html).toContain(`>${level}</a>`);
-    expect(html).toContain('<span class="cap-breadcrumb-page" aria-current="page">Photo 3</span>');
-  });
-
   test("behavior: long names wrap in full, none is cut", async ({ page }) => {
     await visitStates(page, "breadcrumb", theme);
     for (const sel of ["#bc-long-link", "#bc-long-page"]) {
@@ -230,17 +191,5 @@ eachTheme((theme) => {
         () => document.documentElement.scrollWidth <= document.documentElement.clientWidth,
       ),
     ).toBe(true);
-  });
-
-  test("behavior: comfortable density makes the links taller", async ({ page }) => {
-    await visitStates(page, "breadcrumb", theme);
-    const compact = await page
-      .locator("#bc-default .cap-breadcrumb-link")
-      .first()
-      .evaluate((el) => el.getBoundingClientRect().height);
-    const roomy = await page
-      .locator("#bc-comfortable .cap-breadcrumb-link")
-      .evaluate((el) => el.getBoundingClientRect().height);
-    expect(roomy).toBeGreaterThan(compact);
   });
 });

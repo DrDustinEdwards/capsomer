@@ -1153,11 +1153,14 @@ for (const name of NAMES) {
                     ?.setAttribute("data-tip-open", ""),
                 misread,
               );
-            await expectNoAxeViolations(page, undefined, {
-              baseUi: true,
-              exclude: misread ? "[data-tip-open]" : undefined,
-              disableRules: ["color-contrast"],
-            });
+            // Without color-contrast, axe reads only the DOM, which the theme does not change: one
+            // theme's scan stands for both. The rings and kinds below read paint, so they run in both.
+            if (theme === "light")
+              await expectNoAxeViolations(page, undefined, {
+                baseUi: true,
+                exclude: misread ? "[data-tip-open]" : undefined,
+                disableRules: ["color-contrast"],
+              });
             found.push(...tag(s, await page.evaluate(() => window.__sweep.rings())));
             found.push(...tag(s, await page.evaluate(() => window.__sweep.kinds(true))));
             // A person's look at what no check reads: a state drawn only by a background or a

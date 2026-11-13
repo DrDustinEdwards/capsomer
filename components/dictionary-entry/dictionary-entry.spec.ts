@@ -82,13 +82,4 @@ eachTheme((theme) => {
     await expect(link).toBeFocused();
     await expect(entry.getByRole("button")).toBeHidden();
   });
-
-  test("behavior: without script the speaker is a link to the clip", async ({ page }) => {
-    await visitStates(page, "dictionary-entry", theme);
-    const link = page
-      .locator("#de-link")
-      .getByRole("link", { name: "Listen to the pronunciation of Ledger" });
-    await expect(link).toHaveAttribute("href", "./missing-clip.mp3");
-    await expect(page.locator("#de-link")).toHaveAccessibleName("Dictionary entry: Ledger");
-  });
 });

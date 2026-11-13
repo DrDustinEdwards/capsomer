@@ -112,7 +112,7 @@ A form menu, with no script (HTML, or React `FormMenu` which renders exactly thi
 
 ```html
 <details class="cap-menu-form" data-cap="menu-form">
-  <summary class="cap-btn cap-menu-trigger">Actions for example.org <svg aria-hidden="true">...</svg></summary>
+  <summary class="cap-btn cap-menu-trigger">Actions for example.org <svg class="cap-icon" aria-hidden="true">...</svg></summary>
   <form class="cap-popover cap-menu" action="/admin/sites/example-org" method="post">
     <input type="hidden" name="site" value="example-org" />
     <a class="cap-option cap-menu-item" href="/sites/example-org"><span class="cap-option-label">Open site</span></a>

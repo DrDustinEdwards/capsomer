@@ -66,7 +66,7 @@ A pricing page or section; a paywall or checkout that asks which plan.
 
 The name is optional, for a card that is the page's one offer. `<legend class="cap-sr-only">` keeps the legend for screen readers and takes no room, for a choice under its own visible title.
 
-React: `PriceCard`, `PriceGrid` and `PlanChoice` from `capsomer/react/price-card`. `PriceCard`'s `text` takes a list for more than one line; a `PlanChoice` option takes `note`, and `PlanChoice` takes `hideLegend` and `className`.
+React: `PriceCard`, `PriceGrid` and `PlanChoice` from `capsomer/react/price-card`. Cards load `price-card.css`; the plan choice loads `plan-choice.css`, which needs nothing from `price-card.css`. `PriceCard`'s `text` takes a list for more than one line; a `PlanChoice` option takes `note`, and `PlanChoice` takes `hideLegend` and `className`.
 
 ## Keyboard
 

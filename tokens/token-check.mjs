@@ -252,11 +252,12 @@ export function tokenScale(json) {
   group("focus", "line", (n) => n === "ring-width");
   group("focus", "offset", (n) => n.startsWith("focus-offset"));
   group("type", "size", (n) =>
-    /^(fs-(tiny|small|label|detail|body|lead|h2|h3)|title-\d|mono-size)$/.test(n),
+    /^(fs-(tiny|small|label|detail|body|lead|h2|h3)|title-\d(-5)?|display-\d|mono-size)$/.test(n),
   );
   group("layout", "size", (n) => n === "fs-page");
   group("weight", "weight");
   group("leading", "leading");
+  group("line-box", "line-box");
   group("tracking", "tracking");
   group("opacity", "opacity");
   out.easing = Object.keys(json.motion ?? {})
@@ -265,6 +266,11 @@ export function tokenScale(json) {
   out.shadow = Object.keys(json["color-light"] ?? {})
     .filter((n) => /^shadow-(xs|s|m|l)$/.test(n))
     .map((n) => [n, 0]);
+  // The steps whose value changes under data-density="comfortable": the same at rest, larger in a comfortable subtree.
+  const roomy = json["density-comfortable"] ?? {};
+  out.density = Object.entries(json["density-compact"] ?? {})
+    .filter(([n, t]) => JSON.stringify(t.$value) !== JSON.stringify(roomy[n]?.$value))
+    .map(([n]) => n);
   return out;
 }
 
@@ -394,19 +400,36 @@ export function invalidValues(css) {
   return items;
 }
 
+/** The font size in px declared in the same rule as the declaration at `at`, as a length or a size token; else null. */
+function ruleFontSize(css, at, scale) {
+  const open = css.lastIndexOf("{", at);
+  const close = css.indexOf("}", at);
+  if (open === -1) return null;
+  const body = css.slice(open + 1, close === -1 ? css.length : close);
+  const m = /(?:^|[;\s])font-size\s*:\s*([^;}]+)/.exec(body);
+  if (!m) return null;
+  const v = m[1].trim();
+  const len = /^(\d*\.?\d+)(px|rem)$/.exec(v);
+  if (len) return toPx(Number(len[1]), len[2]);
+  const tok = /^var\(--([\w-]+)\)$/.exec(v);
+  return tok ? ((scale.size ?? []).find((t) => t[0] === tok[1])?.[1] ?? null) : null;
+}
+
 /**
  * The raw design values in one stylesheet, each with its line, kind and the token to use: the exact token when one
  * has the value, else the nearest step of the scale and how far off it is. `scale` is tokenScale(tokens.json).
  */
 export function rawValues(css, scale) {
   const items = [];
+  // Tokens this stylesheet sets itself: there the token may not hold the scale's value, so a swap is not exact.
+  const sets = new Set([...stripCss(css).matchAll(/(--[\w-]+)\s*:/g)].map((m) => m[1].slice(2)));
   for (const [prop, raw, line, start] of declarations(css)) {
     const own = prop.startsWith("--");
     const v = bare(raw);
     const found = [];
     // [kind, text, value, unit]: value in px, em, ms or a plain number.
-    const add = (kind, text, value = 0, unit = "", inExpr = false) =>
-      found.push([kind, text, value, unit, inExpr]);
+    const add = (kind, text, value = 0, unit = "", inExpr = false, ratio = false) =>
+      found.push([kind, text, value, unit, inExpr, ratio]);
     // A length inside calc(), min(), max() or clamp() is derived from the values beside it (an icon's width, a
     // control's height), so only one the scale already has is reported there.
     const derived = new Set();
@@ -453,13 +476,18 @@ export function rawValues(css, scale) {
     } else if (kind === "leading" || prop === "line-height") {
       // 0 collapses the line box around an inline image or icon: no line at all, not a leading.
       const m = /^\s*(\d*\.?\d+)(px|rem)?\s*$/.exec(v);
-      if (m && Number(m[1]) !== 0)
-        add(
-          "leading",
-          m[0].trim(),
-          m[2] ? toPx(Number(m[1]), m[2]) : Number(m[1]),
-          m[2] ? "px" : "",
-        );
+      if (m && Number(m[1]) !== 0) {
+        if (!m[2]) add("leading", m[0].trim(), Number(m[1]));
+        else if ((scale["line-box"] ?? []).some((t) => t[1] === toPx(Number(m[1]), m[2])))
+          add("line-box", m[0].trim(), toPx(Number(m[1]), m[2]), "px");
+        else {
+          // A length is a line box, not a leading: it is the ratio to the rule's own font size that maps onto the
+          // scale. It is never swapped by --fix, because a length inherits as a length and a ratio as a ratio.
+          const fs = ruleFontSize(css, start, scale);
+          if (fs) add("leading", m[0].trim(), toPx(Number(m[1]), m[2]) / fs, "", false, true);
+          else add("leading-length", m[0].trim());
+        }
+      }
     } else if (prop === "font") {
       const w = /(?:^|\s)([1-9]\d{2})(?=\s)/.exec(v);
       if (w) add("weight", w[1], Number(w[1]));
@@ -494,18 +522,26 @@ export function rawValues(css, scale) {
         if (o !== 0 && o !== 1) add("opacity", m[0].trim(), o);
       }
     }
-    for (const [k, text, value, unit, inExpr] of found) {
+    for (const [k, text, value, unit, inExpr, ratio] of found) {
       const steps = scale[k] ?? [];
       const same = (x) => steps.find((t) => Math.abs(t[1] - x) < 1e-6);
       const exactStep = same(value) ?? (value < 0 ? same(-value) : undefined);
       const near =
         exactStep ?? nearest(steps, steps.some((t) => t[1] < 0) ? value : Math.abs(value));
-      const exact = Boolean(exactStep);
+      const exact = Boolean(exactStep) && !ratio;
       const negate = value < 0 && near && near[1] > 0;
       // A component token reports only a color or a value the scale already has.
       if ((own || inExpr) && k !== "color" && !exact) continue;
       let suggestion;
-      if (k === "color" || k === "easing" || k === "shadow")
+      if (k === "leading-length")
+        suggestion =
+          "a unitless leading token, at the ratio to the font size (no font-size in this rule)";
+      else if (ratio) {
+        const r = Number(value.toFixed(4));
+        suggestion = exactStep
+          ? `var(--${exactStep[0]}) (${r}x the rule's font size; check children that change size)`
+          : `var(--${near[0]}) (${r}x the rule's font size, off scale)`;
+      } else if (k === "color" || k === "easing" || k === "shadow")
         suggestion = steps.length
           ? steps.map((t) => `var(--${t[0]})`).join(", ")
           : k === "shadow"
@@ -516,7 +552,18 @@ export function rawValues(css, scale) {
         const tok = negate ? `calc(-1 * var(--${near[0]}))` : `var(--${near[0]})`;
         suggestion = exact ? tok : `${tok} (${near[1]}${unit}, off scale)`;
       }
-      items.push({ line, text, kind: k, suggestion, exact, start, end: start + raw.length });
+      // An exact step that is not fixed: it grows under comfortable density, or this stylesheet sets it.
+      const moves = !exactStep
+        ? undefined
+        : (scale.density ?? []).includes(exactStep[0])
+          ? "density"
+          : sets.has(exactStep[0])
+            ? "set here"
+            : undefined;
+      if (exact && moves)
+        suggestion +=
+          moves === "density" ? " (grows under comfortable density)" : " (this stylesheet sets it)";
+      items.push({ line, text, kind: k, suggestion, exact, moves, start, end: start + raw.length });
     }
   }
   return items;
@@ -524,7 +571,8 @@ export function rawValues(css, scale) {
 
 /**
  * The stylesheet with every raw value that has an exact token replaced by it (`capsomer token-check --fix`). Values off
- * the scale, colors, easings and shadows need a person's choice, so they are left for the report.
+ * the scale, colors, easings and shadows need a person's choice, so they are left for the report; so is a step that
+ * grows under comfortable density or that the stylesheet sets itself, where the swap would not draw the same.
  */
 export function fixCss(css, scale) {
   const esc = (t) => t.replace(/[.*+?^${}()|[\]\\/]/g, "\\$&");
@@ -532,7 +580,7 @@ export function fixCss(css, scale) {
   const edits = [];
   const cursor = new Map();
   for (const it of rawValues(out, scale)) {
-    if (!it.exact || ["color", "easing", "shadow"].includes(it.kind)) continue;
+    if (!it.exact || it.moves || ["color", "easing", "shadow"].includes(it.kind)) continue;
     const decl = out.slice(it.start, it.end);
     let token = it.suggestion;
     if (it.kind === "size" && token === "var(--fs-small)" && /--mono/.test(decl))

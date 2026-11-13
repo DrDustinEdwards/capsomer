@@ -12,8 +12,7 @@ import {
 } from "react";
 import { closeDialog, openDialog, setDialogBusy, wireDialog } from "./dialog.ts";
 
-/** `"centre"` is the old spelling of `"center"`, kept so existing code still type-checks; both are the default. codespell:ignore */
-export type DialogPlacement = "center" | "centre" | "right" | "left" | "bottom" | "top"; // codespell:ignore
+export type DialogPlacement = "center" | "right" | "left" | "bottom" | "top";
 export type DialogSize = "sm" | "md" | "lg";
 
 interface Ids {
