@@ -32,12 +32,11 @@ const SITES = {
   dustinedwards: {
     family: "purple",
     on: "<html>",
-    note: "its paper ground, square controls (the manual look), layers above its own pinned bar with the reading-progress line over them, and the public charts' look from before Enarratio 0.3 (Enarratio's own literals)",
+    note: "its paper ground, layers above its own pinned bar with the reading-progress line over them, and the public charts' look from before Enarratio 0.3 (Enarratio's own literals)",
     all: {
       "z-sticky": "100",
       "z-overlay": "800",
       "z-progress": "900",
-      "radius-control": "0",
       "enarratio-font-size": "1rem",
       "enarratio-font-size-small": "0.875em",
       "enarratio-line-height-tooltip": "1.35",
@@ -97,6 +96,9 @@ const SITES = {
       "card-lift": "-4px",
       "card-edge": "1",
       "btn-sweep": "1",
+      // Recova drew its icons with lucide-react at Lucide's own stroke, 2 (0.123.0: Foxhound moves onto
+      // Capsomer's set, which draws at 1.6).
+      "icon-stroke": "2",
       // Foxhound's links (Dustin, 2026-11-13: "the links should not be underlined ... underline on
       // hover"): the network's semibold amber link, which is the cue that is not color (WCAG F73), and
       // a line 2px under it on hover in place of the tint.

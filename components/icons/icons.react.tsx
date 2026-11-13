@@ -1,36 +1,32 @@
-import { ICONS, SOCIAL, type IconName, type SocialName } from "./icons.ts";
+export * from "./icons.ts";
 
-export { ICONS, SOCIAL, type IconName, type SocialName } from "./icons.ts";
-
-// One icon. Hidden from assistive technology (the button or link around it carries the name), or,
-// with `label`, an image named by it. A drawing the set lacks passes its own `d` (and `box` for a
-// grid other than 24, as Carrel's 16-unit menu).
-export function Icon(
-  props: { label?: string; className?: string } & (
-    | { name: IconName | SocialName }
-    | { d: string; box?: number; fill?: boolean }
-  ),
-) {
-  const social = "name" in props && props.name in SOCIAL;
-  const d =
-    "name" in props
-      ? social
-        ? SOCIAL[props.name as SocialName]
-        : ICONS[props.name as IconName]
-      : props.d;
-  const box = "box" in props && props.box ? props.box : 24;
-  const fill = social || ("fill" in props && props.fill);
+// One icon, drawn from its path: `<Icon d={iconSearch} />`, a social mark `<Icon {...markX} />`, or a
+// drawing the set lacks (`box` for a grid other than 24, as Carrel's 16-unit menu). Each drawing is
+// its own export of icons.ts, so an app's bundle holds only the ones it imports. Hidden from
+// assistive technology (the button or link around it carries the name), or, with `label`, an image
+// named by it. In a button, `data-icon` says which side of the label it sits on, so the button pulls
+// its padding in on that side (button.css).
+export function Icon(props: {
+  d: string;
+  box?: number;
+  fill?: boolean;
+  label?: string;
+  className?: string;
+  "data-icon"?: "start" | "end";
+}) {
+  const box = props.box || 24;
   return (
     <svg
       className={props.className ? `cap-icon ${props.className}` : "cap-icon"}
       viewBox={`0 0 ${box} ${box}`}
-      data-fill={fill ? "" : undefined}
+      data-fill={props.fill ? "" : undefined}
       role={props.label ? "img" : undefined}
       aria-label={props.label}
       aria-hidden={props.label ? undefined : true}
       focusable="false"
+      data-icon={props["data-icon"]}
     >
-      <path d={d} />
+      <path d={props.d} />
     </svg>
   );
 }
