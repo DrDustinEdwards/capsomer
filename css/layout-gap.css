@@ -1,0 +1,51 @@
+/* The gap every layout takes, data-gap="1".."9" (--space-1 2px to --space-9 64px), and the cross-axis
+   alignment of the rows, data-align on a cluster or a spread: a part of layout.css that a site
+   loading the layouts' own parts loads with them. Each layout sets its own --layout-gap, so a layout nested in another never
+   takes its parent's gap. */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+@layer cap.utilities {
+  :is(.cap-stack, .cap-cluster, .cap-spread, .cap-grid, .cap-panes) {
+    &[data-gap="1"] {
+      --layout-gap: var(--space-1);
+    }
+    &[data-gap="2"] {
+      --layout-gap: var(--space-2);
+    }
+    &[data-gap="3"] {
+      --layout-gap: var(--space-3);
+    }
+    &[data-gap="4"] {
+      --layout-gap: var(--space-4);
+    }
+    &[data-gap="5"] {
+      --layout-gap: var(--space-5);
+    }
+    &[data-gap="6"] {
+      --layout-gap: var(--space-6);
+    }
+    &[data-gap="7"] {
+      --layout-gap: var(--space-7);
+    }
+    &[data-gap="8"] {
+      --layout-gap: var(--space-8);
+    }
+    &[data-gap="9"] {
+      --layout-gap: var(--space-9);
+    }
+  }
+  :is(.cap-cluster, .cap-spread) {
+    &[data-align="start"] {
+      align-items: flex-start;
+    }
+    &[data-align="end"] {
+      align-items: flex-end;
+    }
+    &[data-align="center"] {
+      align-items: center;
+    }
+    &[data-align="baseline"] {
+      align-items: baseline;
+    }
+  }
+}
