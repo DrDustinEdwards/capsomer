@@ -203,7 +203,15 @@ eachTheme(() => {
     const specimen = states.contentFrame().locator("iframe.cap-specimen-frame").first();
     await specimen.scrollIntoViewIfNeeded();
     await expect(specimen.contentFrame().locator("body.cap-specimen-only")).toBeAttached();
-    await page.waitForLoadState("networkidle");
+    // Each specimen frame says when it is finished (data-specimen-ready, site/specimen.ts). Waiting
+    // on that, not on networkidle, which Playwright discourages and which never settled here once
+    // the states page held some 20 framed specimens, though no request was open.
+    const specimens = states.contentFrame().locator("iframe.cap-specimen-frame");
+    for (let i = 0; i < (await specimens.count()); i++) {
+      await expect(
+        specimens.nth(i).contentFrame().locator("html[data-specimen-ready]"),
+      ).toBeAttached();
+    }
     expect(page.frames().length, "the states page and its specimens are framed").toBeGreaterThan(2);
     for (const frame of page.frames()) {
       const found = await frame.evaluate(
