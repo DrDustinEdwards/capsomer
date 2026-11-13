@@ -51,9 +51,9 @@ The attention list says what is wrong with the systems. `NeedsList` is its sibli
 - **Later sets a row aside until 8 am tomorrow in the person's zone**, or sooner when the need changes. The row leaves at once (it is back if the server refused), focus moves to the next row's title (else the previous one, else the current filter tab), and the message offers Undo. The Later view lists what is set aside, with when it comes back and Bring back. The server works out the time with `laterUntil(now, zone)` from `capsomer/behavior/time`; the form sends the browser's zone, and the server's own guess stands in when the script is off.
 - **The form works as delivered.** Each row's Later is a POST form with `intent` ("later" or "back"), `need`, `title` and `zone`. `useRowForm` gives each row its own form and pending state (React Router: `useRouterRowForm` from `capsomer/react/router`), so one row leaving does not hold the list.
 - **`l` is the row's own key**: it acts only while focus is on a row (WCAG 2.1.4) and obeys `data-cap-single-keys="off"` on `<html>`, as the row list's `j` and `k` do. The keys line under the list names them, and hides them on a touch screen, where only what Later does stays.
-- **One list, with the urgency headings between the rows,** so `j` and `k` move through Blocking and Waiting alike.
-- **Counts leave out what is set aside:** `needCount(needs)` for a header badge or a tab, `needsShown(needs, show)` for a view.
-- **An inbox's severity**: `severityOf(items, waitsOnPerson)` is needs-you when any item waits on a person, failing when only a machine fault is open, none otherwise; `worstSeverity` combines apps; `severityTone` is the admin shell's badge tone (violet "need", red "crit").
+- **One row list, each urgency an item holding its heading and its own list of rows,** so `j` and `k` move through Blocking and Waiting alike and a list's count is its rows, never the headings.
+- **Counts leave out what is set aside:** `needsShown(needs, show)` for a view.
+- **An inbox's severity**: `severityOf(items, waitsOnPerson)` is needs-you when any item waits on a person, failing when only a machine fault is open, none otherwise.
 
 ```tsx
 import { NeedsList } from "capsomer/react/attention-list";

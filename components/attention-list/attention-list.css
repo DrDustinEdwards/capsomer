@@ -227,8 +227,23 @@
 
   /* A person's work queue (NeedsList): the urgency headings span the row grid between the rows,
      a row's Later form takes no box of its own, and the keys line sits under the list. */
+  /* An urgency: its heading, then its own list of rows, both on the row list's column grid. */
   .cap-need-group {
     grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: subgrid;
+    list-style: none;
+  }
+  .cap-need-head,
+  .cap-need-rows {
+    grid-column: 1 / -1;
+  }
+  .cap-need-rows {
+    display: grid;
+    grid-template-columns: subgrid;
+    row-gap: inherit;
+    margin: 0;
+    padding: 0;
     list-style: none;
   }
   .cap-need-head {
