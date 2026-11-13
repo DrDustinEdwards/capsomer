@@ -3,6 +3,12 @@
 Each release names every removed or renamed token or class, and every changed HTML contract. A pull request adds its entry as a
 changeset (`npx changeset`, `.changeset/README.md`); the release pull request writes them here.
 
+## 0.144.0
+
+### Minor Changes
+
+- **Manual theme: the catalog.** `capsomer/manual.css` now draws `.cap-catalog` in the manual: beside the results the facets sit in a ruled box under a dark "Filter" strip (`--sign`, `--on-sign`), the facet names, the bar's field labels and the table's head are mono capitals, and each group's heading is `--title-2` bold over a `--line-w-thick` rule. The phone's tray keeps its own head and a group's heading over cards keeps catalog.css's spacing. dustinedwards.info drew this in its own site-catalog.css, which this replaces. No token, class or HTML contract changes.
+
 ## 0.143.0
 
 - **Every design value in Capsomer's CSS is a token.** `capsomer token-check` checked only colors and spacing (83 warnings); it now checks every kind of design value: colors (hex, `rgb()`, `oklch()` and the rest, named colors, and var() fallbacks), spaces, font sizes (and the `font` shorthand), weights, line heights, tracking, radii, line widths, outline widths and offsets, layers, durations, easings, shadows and opacities, and names the exact token or the nearest step. The scanner is `rawValues(css, tokenScale(tokens.json))` in `capsomer/token-check`, pure over CSS text, so a site's gate can run it. `capsomer token-check --fix` (and `fixCss`) writes every value that has an exact token in place, which changes nothing on the page; the report then lists only what needs a choice. Not checked, on purpose: a component's own geometry, relative units, lengths inside `calc()` that are not a step, and print (paper is black on white). It found 1,650 raw values in components/ and css/; all are now tokens, except the error ad's two ink colors (artwork). site/ waits for the docs site rebuild (#405).
