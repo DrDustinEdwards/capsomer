@@ -28,7 +28,7 @@ On an episode or a post page of a site that publishes a feed or a show, after th
 ## The default and its reason
 
 - **Each destination is a link** with its own name ("Spotify"), so the list reads as places, not icons. The app's mark is decoration (`aria-hidden`).
-- **A link to another site carries the away mark** (`data-link="away"`, `rel="external"`) from the link system.
+- **A link to another site carries the away mark** (`data-link="away"`, `rel="external noopener noreferrer"`) and its words, "(opens another site)", from the link system (`AwayLink`). The heading's id is generated unless `headingId` names one, so two cards on a page never share it.
 - **The site's own feed and its "more ways" page** sit last; "more" is quieter, so the apps lead.
 - **The destinations are the site's data** (its `show_config`): the component draws what it is given and nothing when it is given none.
 
@@ -51,7 +51,7 @@ Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the a
 <section class="cap-subscribe" aria-labelledby="subscribe">
   <h2 class="cap-subscribe-title" id="subscribe">Listen and subscribe</h2>
   <ul class="cap-subscribe-list">
-    <li><a class="cap-chip cap-subscribe-link" data-size="sm" href="https://podcasts.example.com/show" rel="external" data-link="away"><svg aria-hidden="true">...</svg>Example Podcasts</a></li>
+    <li><a class="cap-chip cap-subscribe-link" data-size="sm" href="https://podcasts.example.com/show" data-link="away" rel="external noopener noreferrer"><svg aria-hidden="true">...</svg>Example Podcasts<span class="cap-sr-only"> (opens another site)</span></a></li>
     <li><a class="cap-chip cap-subscribe-link" data-size="sm" href="/feed/podcast/"><svg aria-hidden="true">...</svg>RSS</a></li>
     <li><a class="cap-subscribe-more" href="/subscribe">More ways to listen</a></li>
   </ul>

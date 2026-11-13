@@ -27,7 +27,7 @@ Under an episode, a post or a data page: what it cites and the credits its licen
 ## The default and its reason
 
 - **Always in the HTML.** Put it in a closed [disclosure](../disclosure/disclosure.md) to keep the page short, never load it on open: a CC BY attribution must be on the page.
-- **A link leaving the site says so** to a screen reader ("(another site)"), the network's external-link rule.
+- **A link leaving the site says so** to a screen reader ("(opens another site)", `AwayLink`), with the link system's away mark.
 - **An `ol`**: sources are cited in an order.
 
 ## HTML contract
@@ -39,7 +39,7 @@ Under an episode, a post or a data page: what it cites and the credits its licen
     <ol class="cap-sources">
       <li class="cap-source">
         <span class="cap-source-kind">Article</span>
-        <a class="cap-source-title" href="https://example.org/paper">Title<span class="cap-sr-only"> (another site)</span></a>
+        <a class="cap-source-title" href="https://example.org/paper" data-link="away" rel="external noopener noreferrer">Title<span class="cap-sr-only"> (opens another site)</span></a>
         <span>Alex Rivera, Sam Lee</span><span>Example Press</span>
         <span class="cap-source-license">CC BY 4.0</span><span class="cap-source-note">Read in 2024</span>
       </li>

@@ -27,7 +27,7 @@ eachTheme((theme) => {
     await expect(
       page
         .locator("#sl-mixed")
-        .getByRole("link", { name: "A field guide to field notes (another site)" }),
+        .getByRole("link", { name: "A field guide to field notes (opens another site)" }),
     ).toBeVisible();
   });
 });

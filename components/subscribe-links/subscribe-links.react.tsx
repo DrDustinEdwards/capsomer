@@ -1,4 +1,5 @@
-import type { ReactNode } from "react";
+import { useId, type ReactNode } from "react";
+import { AwayLink } from "../link/link.react.tsx";
 
 export interface SubscribeLink {
   href: string;
@@ -25,30 +26,34 @@ export interface SubscribeLinksProps {
 // The HTML contract in subscribe-links.md. Nothing renders without a link.
 export function SubscribeLinks({
   title = "Listen and subscribe",
-  headingId = "subscribe",
+  headingId,
   level: H = "h2",
   links,
   more,
   renderLink,
 }: SubscribeLinksProps) {
+  const ownId = useId();
+  const id = headingId ?? ownId;
   if (!links.length) return null;
   return (
-    <section className="cap-subscribe" aria-labelledby={headingId}>
-      <H className="cap-subscribe-title" id={headingId}>
+    <section className="cap-subscribe" aria-labelledby={id}>
+      <H className="cap-subscribe-title" id={id}>
         {title}
       </H>
       <ul className="cap-subscribe-list">
         {links.map((l) => (
           <li key={l.href}>
-            <a
-              className="cap-chip cap-subscribe-link"
-              data-size="sm"
-              href={l.href}
-              {...(l.away ? { rel: "external", "data-link": "away" } : {})}
-            >
-              {l.icon}
-              {l.label}
-            </a>
+            {l.away ? (
+              <AwayLink className="cap-chip cap-subscribe-link" data-size="sm" href={l.href}>
+                {l.icon}
+                {l.label}
+              </AwayLink>
+            ) : (
+              <a className="cap-chip cap-subscribe-link" data-size="sm" href={l.href}>
+                {l.icon}
+                {l.label}
+              </a>
+            )}
           </li>
         ))}
         {more ? (

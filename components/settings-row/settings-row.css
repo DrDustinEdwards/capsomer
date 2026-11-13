@@ -55,14 +55,10 @@
     color: var(--muted);
     font-size: var(--fs-detail);
     text-decoration: none;
+    border-radius: var(--radius-s);
 
     &:hover {
       color: var(--text);
-    }
-    &:focus-visible {
-      outline: var(--ring-width) solid var(--ring);
-      outline-offset: 2px;
-      border-radius: var(--radius-s);
     }
   }
   /* The settings menu shows beside the page from 48rem; the back link is for narrower. */

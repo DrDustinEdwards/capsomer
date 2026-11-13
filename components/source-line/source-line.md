@@ -38,7 +38,7 @@ A chart's source is the chart frame's own `source`. A panel's data source and fr
 
 ## Accessibility
 
-The arrow is hidden; "(opens the source)" is read after the words.
+The link system's away arrow is hidden; "(opens another site)" is read after the words (`AwayLink`).
 
 Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the automated browser checks and a front-end review stand in. Automated: see the site's Tests page.
 
