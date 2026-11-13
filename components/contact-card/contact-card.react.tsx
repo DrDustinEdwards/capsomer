@@ -51,7 +51,7 @@ export function ContactCard({
 }: ContactCardProps) {
   const addressLines = address?.map((line, i) => <span key={i}>{line}</span>);
   return (
-    <div className="cap-contact-card">
+    <div className="cap-card cap-contact-card">
       <H className="cap-contact-card-title">{title}</H>
       {text ? <p className="cap-contact-text">{text}</p> : null}
       {ways?.length ? (
