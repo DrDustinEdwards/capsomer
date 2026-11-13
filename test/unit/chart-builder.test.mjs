@@ -7,7 +7,6 @@ import {
   chartDirective,
   chartReady,
   chooseColumns,
-  csvFileProblem,
 } from "../../components/chart-builder/chart-builder.ts";
 
 test("chooseColumns: keeps a choice that is still a column, else x first and every numeric after it", () => {
@@ -54,15 +53,3 @@ test("chartDirective: Prelum's block, attributes escaped on one line, a fence in
   assert.ok(captioned.endsWith("```\nSource: Example Co\n:::"));
 });
 
-test("csvFileProblem: too large or not a CSV, in words", () => {
-  assert.equal(csvFileProblem({ name: "data.csv", size: 10, type: "" }), null);
-  assert.equal(csvFileProblem({ name: "data", size: 10, type: "text/csv" }), null);
-  assert.equal(
-    csvFileProblem({ name: "notes.txt", size: 10, type: "text/plain" }),
-    "notes.txt is not a CSV file.",
-  );
-  assert.match(
-    csvFileProblem({ name: "big.csv", size: 300 * 1024, type: "" }),
-    /300 KB; .* under 200 KB/,
-  );
-});

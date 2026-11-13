@@ -79,9 +79,9 @@ import { ChartBuilder } from "capsomer/react/chart-builder";
 />;
 ```
 
-Props: `onInsert(block)`, `types` (`{ value, label }[]`, default bar, line, area, dot), `write(fields)` (default `chartDirective`), `check(block, drawable)` (resolves `{ findings: { message }[], suggestion? }`), `draw(fields, width, fit)` (Enarratio's figure as a string, drawn in the chart frame), `preview` (`{ action, name?, source? }`: the block, wrapped by `source`, posted as `name`, default `"source"`, into a sandboxed frame), `initial` (the fields it starts with), `maxBytes` (default 200 KB), `label` (the button's words), `buttonVariant`, `buttonSize`. `ChartFields` is `{ type, x, y, title, alt, caption, csv }`.
+Props: `onInsert(block)`, `types` (`{ value, label }[]`, default bar, line, area, dot), `write(fields)` (default `chartDirective`), `check(block, drawable)` (resolves `{ findings: { message }[], suggestion? }`; a rejection shows its error in a warning alert), `draw(fields, width, fit)` (Enarratio's figure as a string, drawn in the chart frame), `preview` (`{ action, name?, source? }`: the block, wrapped by `source`, posted as `name`, default `"source"`, into a sandboxed frame), `initial` (the fields it starts with), `maxBytes` (default 200 KB), `label` (the button's words), `buttonVariant`, `buttonSize`. `ChartFields` is `{ type, x, y, title, alt, caption, csv }`.
 
-`capsomer/behavior/chart-builder` holds the pure core: `CHART_TYPES`, `csvColumns(csv)`, `chooseColumns(columns, current)`, `chartReady(fields)`, `csvFileProblem(file, maxBytes)`, `MAX_CSV_BYTES` and `chartDirective(fields)`.
+`capsomer/behavior/chart-builder` holds the pure core: `CHART_TYPES`, `csvColumns(csv)`, `chooseColumns(columns, current)`, `chartReady(fields)`, `MAX_CSV_BYTES` and `chartDirective(fields)`.
 
 ## Exceptions in production
 
