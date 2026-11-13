@@ -5,7 +5,7 @@ summary: How to reach someone, by kind: links (email, profiles, a map) or labele
 parts: [css, react]
 tool: native
 states: [cards with ways, labeled numbers, address, plain with a rule between]
-added: 0.92.0
+added: 0.123.0
 source: BioScience Writers' contact page (app/routes/contact-us.tsx); julieedwards.info's Contact section (app/components/Sections.tsx), whose grid was placed by inline styles
 replaces:
   - 'function Tel\('

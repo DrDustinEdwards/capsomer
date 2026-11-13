@@ -16,6 +16,7 @@
 
 import { serveMarkdownCopies } from "@drdustinedwards/site-helpers/llms";
 import { TDM_RESERVATION_HEADERS } from "@drdustinedwards/site-helpers/robots";
+import { jsonResponse } from "@dustinedwards/site-runtime/http";
 import { capsomer } from "@dustinedwards/site-runtime/sites";
 import { staticSite, type StaticSiteEnv } from "@dustinedwards/site-runtime/static-site";
 import { FAMILY_SITES } from "../components/family-footer/family-footer.ts";
@@ -64,15 +65,10 @@ async function network(
   const lamps = await Promise.all(
     FAMILY_SITES.map(async (s) => [s.id, await lamp(s.href, url, request, env)] as const),
   );
-  const response = new Response(
-    JSON.stringify({ sites: Object.fromEntries(lamps), time: new Date().toISOString() }),
-    {
-      headers: {
-        "content-type": "application/json; charset=utf-8",
-        "cache-control": `public, max-age=${HOLD_SECONDS}`,
-        "x-robots-tag": "noindex",
-      },
-    },
+  const response = jsonResponse(
+    { sites: Object.fromEntries(lamps), time: new Date().toISOString() },
+    200,
+    { "cache-control": `public, max-age=${HOLD_SECONDS}`, "x-robots-tag": "noindex" },
   );
   if (cache) ctx?.waitUntil(cache.put(key, response.clone()));
   return response;

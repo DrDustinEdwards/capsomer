@@ -1,0 +1,115 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* The timeline: a process as numbered steps down a line, each a round node beside its title
+   and words. The line fills from the first node to the last once the timeline scrolls into view.
+   Extracted from bsw's process timeline (app/components/Timeline.tsx, islands/timeline.ts,
+   app.css .vertical-timeline). A site sets the look with the custom properties below. */
+@layer cap.components {
+  .cap-timeline {
+    --cap-timeline-node: 64px;
+    --cap-timeline-node-bg: var(--surface);
+    --cap-timeline-node-line: var(--line-strong);
+    --cap-timeline-track: var(--line);
+    --cap-timeline-fill: var(--primary);
+    --cap-timeline-duration: 1.2s;
+    --cap-timeline-gap: var(--space-7);
+    container-type: inline-size;
+    position: relative;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    /* The line runs from the middle of the first node to the middle of the last. */
+    &::before,
+    &::after {
+      content: "";
+      position: absolute;
+      inset-inline-start: calc(var(--cap-timeline-node) / 2 - 1.5px);
+      inset-block: calc(var(--cap-timeline-node) / 2);
+      inline-size: 3px;
+      border-radius: var(--radius-s);
+    }
+    &::before {
+      background: var(--cap-timeline-track);
+    }
+    &::after {
+      background: var(--cap-timeline-fill);
+      transform-origin: top;
+    }
+  }
+  /* Script draws it empty until it is seen; with no script it stays full. */
+  .cap-timeline[data-cap-ready]:not([data-shown])::after {
+    scale: 1 0;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .cap-timeline::after {
+      transition: scale var(--cap-timeline-duration) var(--ease-in-out);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .cap-timeline[data-cap-ready]:not([data-shown])::after {
+      scale: 1;
+    }
+  }
+  .cap-timeline-step {
+    position: relative;
+    display: flex;
+    gap: var(--space-6);
+    & + & {
+      margin-block-start: var(--cap-timeline-gap);
+    }
+  }
+  .cap-timeline-node {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    place-items: center;
+    flex: none;
+    inline-size: var(--cap-timeline-node);
+    block-size: var(--cap-timeline-node);
+    border: 3px solid var(--cap-timeline-node-line);
+    border-radius: 50%;
+    background: var(--cap-timeline-node-bg);
+    color: var(--text);
+    font-size: var(--fs-h3);
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+  .cap-timeline-body {
+    flex: 1;
+    min-inline-size: 0;
+  }
+  .cap-timeline-icon {
+    display: block;
+    margin-block-end: var(--space-2);
+  }
+  .cap-timeline-title {
+    margin: 0 0 var(--space-1);
+    font-size: var(--fs-h3);
+    font-weight: 600;
+    line-height: 1.4;
+  }
+  .cap-timeline-text {
+    color: var(--muted);
+    & > :first-child {
+      margin-block-start: 0;
+    }
+    & > :last-child {
+      margin-block-end: 0;
+    }
+  }
+  /* A narrow space: smaller nodes, closer steps. */
+  @container (max-width: 30rem) {
+    .cap-timeline-step {
+      gap: var(--space-4);
+    }
+  }
+  @media (forced-colors: active) {
+    .cap-timeline::after {
+      background: CanvasText;
+    }
+    .cap-timeline::before {
+      background: GrayText;
+    }
+  }
+}

@@ -4,9 +4,9 @@ title: Filter chips
 summary: Filter a list by up to six values with toggle chips; the filter lives in the address and a live count says what is left.
 parts: [css, behavior, react]
 tool: native + own JavaScript
-states: [link chips with the current one, none pressed, some pressed with the count, hover, pressed and hovered, keyboard focus, disabled, small and large, with a count or an icon, an empty result, solid]
+states: [link chips with the current one, checkbox chips in a form, none pressed, some pressed with the count, hover, pressed and hovered, keyboard focus, disabled, small and large, with a count or an icon, an empty result, solid]
 added: 0.1.0
-updated: 0.2.0
+updated: 0.115.0
 source: Capsid Portal, dashboard/src/styles.css (.chip)
 replaces:
   - 'class="(?:[^"]*\s)?chip[\s"]'
@@ -84,6 +84,16 @@ group.addEventListener("cap:filter-change", (e) => {
 `readParam` and `writeParam` read and write the address for a router; values must not contain commas.
 
 A filter that is a link (a server's list whose filter is in the address, such as the media library's tags) uses link chips: `<a class="cap-chip" href="?tag=release" aria-current="true">`. The current one wears the pressed look (the tick, the accent edge and tint), and `aria-current` says it, since a link has no pressed state. Put them in a labeled `nav` with a list.
+
+A filter in a form that must work with no script (a search page's facets, submitted with the rest of the form) uses checkbox chips: each chip is a `label.cap-chip` holding an `input.cap-chip-input` checkbox first, then its word and any `.cap-chip-count`. The checkbox covers the chip, unseen, so a click anywhere on the chip, Space, the focus ring and the screen reader's "checkbox, checked" are the browser's own; a checked one wears the pressed look. Put them in a `fieldset` whose `legend` names the group. They need no behavior script, and `enhance()` leaves them alone.
+
+```html
+<fieldset class="cap-chips">
+  <legend class="cap-chips-label">Type</legend>
+  <label class="cap-chip"><input class="cap-chip-input" type="checkbox" name="type" value="grant" checked> Grants <span class="cap-chip-count">43</span></label>
+  <label class="cap-chip"><input class="cap-chip-input" type="checkbox" name="type" value="talk"> Invited talks <span class="cap-chip-count">14</span></label>
+</fieldset>
+```
 
 In React, `import { FilterChips } from "capsomer/react/chips"` (controlled):
 

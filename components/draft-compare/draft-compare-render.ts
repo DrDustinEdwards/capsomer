@@ -1,5 +1,6 @@
 // Draft compare's renderer: renderCompare returns the HTML string for every view (draft-compare.ts).
 
+import { plural } from "../hooks/hooks.ts";
 import { exact, parse } from "../time/time.ts";
 import {
   type Analysis,
@@ -66,9 +67,6 @@ const RUN_LABEL: Record<RunKind, string> = { you: "You", ai: "AI", quoted: "Quot
 
 import { escapeHtml as esc } from "@dustinedwards/site-runtime/html";
 
-export { esc };
-
-export const plural = (n: number, one: string, many: string) => `${n} ${n === 1 ? one : many}`;
 export const sr = (s: string) => `<span class="cap-sr-only"> ${s} </span>`;
 
 function markup(parts: WordPart[], show: "before" | "after" | "both"): string {

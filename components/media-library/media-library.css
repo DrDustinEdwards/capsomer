@@ -13,21 +13,6 @@
     min-inline-size: 0;
   }
 
-  .cap-media-lib-filters {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: end;
-    gap: var(--space-3) var(--space-4);
-
-    & > .cap-field {
-      margin: 0;
-    }
-  }
-  .cap-media-lib-search {
-    flex: 1 1 16rem;
-    min-inline-size: 0;
-  }
-
   /* The tag chips and a host's lenses, each a labeled list of link chips. */
   .cap-media-lib-chips {
     display: grid;

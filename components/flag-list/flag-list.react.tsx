@@ -1,3 +1,4 @@
+import { plural } from "../hooks/hooks.ts";
 import {
   useEffect,
   useId,
@@ -410,13 +411,13 @@ export function FlagList({
     const quoted = (s: string) => `“${s}”`;
     const n = todo.length;
     await confirm({
-      title: `Apply ${n} suggestion${n === 1 ? "" : "s"}?`,
+      title: `Apply ${plural(n, "suggestion")}?`,
       lead: "This rewrites the draft. Each replacement is listed; nothing else changes.",
       body: todo.map(
         (f) =>
           `${quoted(f.anchor?.quote ?? "")} becomes ${quoted(f.suggestion?.replacement ?? "")}`,
       ),
-      action: `Apply ${n} suggestion${n === 1 ? "" : "s"}`,
+      action: `Apply ${plural(n, "suggestion")}`,
       perform: async () => {
         let next = text;
         const done: FlagData[] = [];
@@ -434,7 +435,7 @@ export function FlagList({
         set(list);
         const skipped = todo.length - done.length;
         announce(
-          `Applied ${done.length} suggestion${done.length === 1 ? "" : "s"} to the draft.${skipped ? ` ${skipped} skipped: the passage changed.` : ""}`,
+          `Applied ${plural(done.length, "suggestion")} to the draft.${skipped ? ` ${skipped} skipped: the passage changed.` : ""}`,
           {
             undo: () => {
               let back = next;
@@ -544,7 +545,7 @@ export function FlagList({
             hidden={!batchApplicable || n === 0}
             onClick={() => void applyAll()}
           >
-            Apply {n} suggestion{n === 1 ? "" : "s"}
+            Apply {plural(n, "suggestion")}
           </button>
           <p className="cap-flags-note" data-cap-part="owner-note" hidden={owner || n === 0}>
             {n} suggestion{n === 1 ? " is" : "s are"} waiting for the owner

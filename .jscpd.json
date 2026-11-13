@@ -1,5 +1,17 @@
 {
-  "path": ["components", "site", "bin", "tokens", "css", "test"],
+  "path": [
+    "components",
+    "site",
+    "bin",
+    "tokens",
+    "css",
+    "test",
+    "scripts",
+    "worker",
+    "oxfmt.config.ts",
+    "oxlint.config.ts",
+    "playwright.config.ts"
+  ],
   "format": ["typescript", "tsx", "javascript", "css", "markup"],
   "ignore": [
     "**/node_modules/**",

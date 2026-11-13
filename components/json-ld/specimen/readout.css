@@ -1,0 +1,6 @@
+/* Sample layout only: the parsed data wraps, so the readout never scrolls. */
+#read-node,
+#read-hostile {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}

@@ -1,0 +1,51 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* Frontmatter fields: a file's frontmatter as labeled boxes in a grid that fits the space it has,
+   and the raw text one disclosure away. The boxes are Field's (.cap-field, .cap-input, .cap-check). */
+@layer cap.components {
+  .cap-fm {
+    container-type: inline-size;
+    display: grid;
+    gap: var(--gap);
+    min-inline-size: 0;
+    margin: 0;
+    padding: var(--pad-card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-m);
+  }
+
+  .cap-fm-legend {
+    padding: 0 var(--space-2);
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .cap-fm-grid {
+    --fields-min: 14rem;
+    --fields-gap: var(--gap);
+    min-inline-size: 0;
+
+    &:empty {
+      display: none;
+    }
+  }
+
+  .cap-fm-field {
+    min-inline-size: 0;
+
+    &[data-wide] {
+      grid-column: 1 / -1;
+    }
+
+    & textarea {
+      resize: vertical;
+    }
+  }
+
+  .cap-fm-raw-text {
+    font-family: var(--mono);
+    font-size: var(--fs-detail);
+    resize: vertical;
+  }
+}

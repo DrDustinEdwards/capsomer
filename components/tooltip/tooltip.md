@@ -74,6 +74,8 @@ The tip is the popover's `.cap-popover`; `data-side`, `data-align`, `data-offset
 </Tooltip>
 ```
 
+Inside running text (a `<p>`, a table cell's phrase) pass `as="span"`: the tip is then a `<span>`, valid phrasing content, and holds phrasing content only. `Time tip` renders its tip this way.
+
 ## Matches shadcn
 
 Tooltip (Base UI flavor, nova): the inverted surface (`bg-foreground`, `text-background`), `rounded-md`, `px-3 py-1.5`, `text-xs`, the arrow, a key cap inside it, fade and zoom-in-95 with a 2 px slide from the trigger's side at 100 ms, above the trigger by default.

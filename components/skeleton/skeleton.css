@@ -116,16 +116,11 @@
       animation: cap-skeleton-pulse 1.6s ease-in-out infinite;
     }
     .cap-spinner-arc {
-      animation: cap-spinner-turn 0.9s linear infinite;
+      animation: cap-spin 0.9s linear infinite;
     }
     @keyframes cap-skeleton-pulse {
       50% {
         opacity: 0.55;
-      }
-    }
-    @keyframes cap-spinner-turn {
-      to {
-        transform: rotate(1turn);
       }
     }
   }

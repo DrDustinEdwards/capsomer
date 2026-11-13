@@ -1,5 +1,7 @@
 // The tree's rows, keys and moves, pure (tree.ts).
 
+import { clamp } from "../hooks/hooks.ts";
+
 // ---------------------------------------------------------------------------------------
 // Pure functions, over plain nodes. A node with `children` (even an empty list) is a
 // branch and can hold others; a node without is a leaf.
@@ -268,7 +270,7 @@ export function applyMove<T extends TreeNodeLike>(nodes: readonly T[], move: Tre
   const insert = (list: readonly T[], parent: string | null): T[] => {
     if (parent === move.to.parent) {
       const out = [...list];
-      out.splice(Math.max(0, Math.min(out.length, move.to.index)), 0, node);
+      out.splice(clamp(move.to.index, 0, out.length), 0, node);
       return out;
     }
     return list.map((n) =>

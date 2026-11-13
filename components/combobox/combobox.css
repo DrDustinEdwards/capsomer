@@ -243,25 +243,6 @@
     }
   }
 
-  .cap-combobox-spinner {
-    flex: none;
-    width: var(--space-5);
-    height: var(--space-5);
-    border: 2px solid var(--line-strong);
-    border-top-color: var(--accent);
-    border-radius: 50%;
-  }
-  @media (prefers-reduced-motion: no-preference) {
-    .cap-combobox-spinner {
-      animation: cap-combobox-spin 0.8s linear infinite;
-    }
-    @keyframes cap-combobox-spin {
-      to {
-        transform: rotate(360deg);
-      }
-    }
-  }
-
   @media (forced-colors: active) {
     .cap-combobox-group,
     .cap-combobox-chips {

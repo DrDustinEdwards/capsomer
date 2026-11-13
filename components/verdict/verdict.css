@@ -1,0 +1,35 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* A verdict: the answer in one line, the status word first, then what it covers or the problems
+   by name, as links. Wraps as a sentence on a phone. */
+@layer cap.components {
+  .cap-verdict {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--space-1) var(--space-3);
+    margin: 0;
+    font-size: var(--fs-lead);
+    line-height: 1.5;
+
+    & .cap-status {
+      font-size: inherit;
+      font-weight: 600;
+    }
+  }
+  .cap-verdict-note {
+    color: var(--muted);
+  }
+  .cap-verdict-list {
+    overflow-wrap: anywhere;
+  }
+  /* Each problem named is a link of its own, so on touch it is a full target (WCAG 2.5.8). */
+  @media (pointer: coarse) {
+    .cap-verdict-list a {
+      display: inline-flex;
+      align-items: center;
+      min-block-size: var(--target);
+    }
+  }
+}

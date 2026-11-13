@@ -4,14 +4,16 @@ title: Theme switch
 summary: Light or Dark, following the system until the person chooses, then remembered in this browser.
 parts: [css, behavior, react]
 tool: native + own JavaScript
-states: [first visit follows the system, light selected, dark selected, hover, keyboard focus, disabled, comfortable density, phone width, the button form]
+states: [first visit follows the system, light selected, dark selected, hover, keyboard focus, disabled, comfortable density, phone width, the button form, kept by the site in its cookie and its save]
 added: 0.1.0
-updated: 0.9.0
+updated: 0.92.0
 source: Capsid Portal, dashboard/src/lib/prefs.ts (applySavedTheme, toggleTheme, setThemeChoice) and the top bar's theme button
 replaces:
   - 'wf-theme'
   - 'applySavedTheme'
   - 'name="theme"'
+  - "useThemeCookie|useThemeMemory|watchThemeChoice|rememberServerTheme|data-theme-toggle"
+  - "safeReturnTo|THEME_BOOT"
 ---
 
 # Theme switch
@@ -36,7 +38,7 @@ One icon button, `data-variant="button"`: a moon while the page is light, a sun 
 </button>
 ```
 
-`enhance()` wires it; `themeButtonLabel(showing)` gives its name. In React, `<ThemeButton prefKey shortcut />`.
+`enhance()` wires it; `themeButtonLabel(showing)` gives its name. In React, `<ThemeButton prefKey shortcut cookie onSave initial />`; on a page React never runs on in the browser, `hydrate={false}` writes it for `enhance()` (its key and cookie as `data-cap-pref` and `data-cap-cookie`), so a site no longer deletes `data-cap-ready` by hand.
 
 ## When not to
 
@@ -55,6 +57,34 @@ A public reading page may leave the choice to the system and show no control.
 - **The chosen segment has one marker, a fill**: the dark fill of the admin menu's selected page (`--accent-12`, its word in `--ground` and set heavier), over 3:1 against the ground in both themes, so no second mark (an underline) is needed (Dustin, 2026-10-11: one marker). The control's edge is `--line-strong`, which reaches 3:1 and APCA Lc 30 on the ground, the surface and the raised surface (the dark mode plan, 2026-10-29).
 - **Density**: the segments are one control tall (`--control`, 44 px on a touch screen), so `data-density="comfortable"` on the top bar or the root makes them larger.
 
+## One theme behavior (0.92.0)
+
+Every site keeps the theme the same way; only the cookie's name and the save are its own.
+
+1. **The choice is a cookie** (`themeCookie` on the site header, `cookie` on `ThemeButton` and `ThemeSwitch`, `data-cap-cookie` in markup). The server reads it (`readThemeCookie`) and writes `data-theme` into the first byte, so nothing flashes. The site keeps its cookie's name (txasm's `txasm_theme`, Foxhound's `fh_theme`), so the choice its visitors made survives.
+2. **The server's answer comes first.** Where the server keeps the choice (a switch with a cookie or an `onSave`), the switch copies the `data-theme` the server wrote (or its absence) into this browser's memory before it reads it (`syncServedTheme`), so an older choice in this browser never overrules the server's (an account's choice made on another device).
+3. **A person's choice** (`chooseTheme`; the button, the switch, the form, `toggleTheme` and the header's key all call it) is painted, remembered in this browser (`cap-theme` or the site's key), written to the cookie, then handed to the site's **`onSave`** (`onThemeSave` on the site header; `enhance(root, { onSave })` on a page that does not hydrate), which saves it to the signed-in account. The save is fire and forget: the page has switched and stays switched if it fails; the next page reconciles. A site that keeps a signed-in person's choice only in their account (Foxhound) passes the cookie while signed out and `onSave` while signed in. The `cap-theme` event's `detail.chosen` is true for a person's choice, false for a restored or synced one.
+4. **The pre-paint script is `themeScript`**, inline in the head and allowed by its hash. With `{ cookie }` it leaves a server's `data-theme` alone and otherwise applies the cookie's choice, else this browser's, so a page from a cache or a static build still opens in the person's theme. With no options it is the 0.1.0 script, byte for byte.
+5. **The theme route is `themeAction`** (`capsomer/theme-server`): `POST /theme` from the no-script form or a fetch. It reads `theme` (a form field or JSON, at most 1 KB), runs the site's `save`, sets the cookie (`cookie: false` for none), and answers 303 back to the page it came from (`themeReturnTo`: the Referer, only when it is this site's own, never `//host`) or 204 for a fetch; a bad choice is 400; all `no-store`. The site checks the origin first (site-runtime's `refuseCrossSite`).
+
+```ts
+// app/routes/theme.ts
+export async function action({ request }) {
+  const refused = refuseCrossSite(request);
+  if (refused) return refused;
+  const user = await signedIn(request);
+  return themeAction(request, {
+    cookie: user ? false : "site_theme",
+    save: user ? (theme) => saveAccountTheme(user.id, theme) : undefined,
+  });
+}
+```
+
+```tsx
+<SiteHeader themeCookie="site_theme" themeInitial={theme} onThemeSave={signedIn ? saveTheme : undefined} … />
+<script dangerouslySetInnerHTML={markup(themeScript("site-theme", { cookie: "site_theme" }))} />
+```
+
 ## A server-rendered site
 
 `capsomer/theme-server` is the switch's server half, with no DOM, for a Worker or Node:
@@ -64,7 +94,8 @@ A public reading page may leave the choice to the system and show no control.
 - `colorSchemeContent(choice)`: the `<meta name="color-scheme">` content, the choice or `light dark`.
 - `themeColorMeta(choice, { light, dark })`: the `<meta name="theme-color">` tags, so a phone's browser bar takes the page's ground: one tag for a choice, one per scheme with its media query when there is none. Pass the site's `--ground` in each theme. The switch updates every theme-color tag to the chosen theme's ground when the person switches.
 - `themeColorTags(choice, { light, dark })`: the same tags as descriptors, `{ name, content, media }[]`, for a React Layout or a `meta()`. React: `<ThemeColor choice={theme} ground={{ light: "#fdfdfe", dark: "#0e0c12" }} />` from `capsomer/react/theme-switch`, in the Layout's head, instead of a hand-written pair. `themeColorMeta` is these tags as HTML.
-- `themeScript(key = "cap-theme")`: the inline pre-paint script below, as text, so a site hashes exactly what it sends.
+- `themeScript(key = "cap-theme", { cookie })`: the inline pre-paint script below, as text, so a site hashes exactly what it sends; with `cookie`, the server's `data-theme` stands and the cookie comes before this browser's memory.
+- `themeAction(request, { cookie, secure, save })`, `readThemeChoice(request)` and `themeReturnTo(request)`: the theme route (above).
 
 A site keeps its own cookie name (txasm's `txasm_theme`, Foxhound's `fh_theme`) by passing it; the choice its visitors made survives.
 
@@ -107,7 +138,7 @@ Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the a
 </fieldset>
 ```
 
-`enhance()` applies the remembered choice (or, with none, the one checked in the markup, which is how a server that read a cookie says it), else checks the system's theme without applying anything, and applies and remembers each change. `applyTheme(choice)`, `readTheme()`, `effectiveTheme()`, `applyStoredTheme()` and `toggleTheme()` are exported; `themeChoice()` and the `"system"` choice are gone. In React, `<ThemeSwitch />`, with `initial` set from the cookie where the server reads one.
+`enhance(root, { onSave })` applies the remembered choice (or, with none, the one checked in the markup, which is how a server that read a cookie says it), else checks the system's theme without applying anything, and applies and remembers each change. `applyTheme(choice)`, `chooseTheme(choice, { key, cookie, onSave })`, `syncServedTheme(key)`, `writeThemeCookie(choice, name)`, `readTheme()`, `effectiveTheme()`, `applyStoredTheme()` and `toggleTheme(key, { cookie, onSave })` are exported; `themeChoice()` and the `"system"` choice are gone. In React, `<ThemeSwitch />`, with `initial` set from the cookie where the server reads one.
 
 ## Matches shadcn
 

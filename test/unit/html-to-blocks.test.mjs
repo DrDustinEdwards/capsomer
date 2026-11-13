@@ -1,5 +1,5 @@
 // htmlToBlocks: the email body reader's tricky cases (entities, implied end tags, hidden content, links in sentences).
-// Moved from Foxhound's test/email-shell-j02.test.ts with the reader in 0.92.0.
+// Moved from Foxhound's test/email-shell-j02.test.ts with the reader in 0.123.0.
 import assert from "node:assert/strict";
 import { suite, test } from "node:test";
 import { htmlToBlocks } from "../../components/email/html-to-blocks.ts";

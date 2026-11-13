@@ -1,0 +1,70 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* Related links: what sits under a post and points elsewhere. Further reading, the posts that
+   link here, the mentions other sites sent. One look for all three: a hairline over the block,
+   a quiet label, and the links as ruled rows in the page's face; a mention adds the sender's
+   words and the date. Extracted from dustinedwards.info (app/components/post-backlinks.tsx,
+   post-mentions.tsx, routes/blog.$slug.tsx further reading; styles/post-shell.css and
+   post-enhancements.css) and Foxhound (routes/blog/post.tsx, Further reading). */
+@layer cap.components {
+  .cap-related {
+    max-inline-size: 44rem;
+    margin-block-start: var(--space-7);
+    padding-block-start: var(--space-5);
+    border-block-start: 1px solid var(--line-strong);
+    color: var(--text);
+  }
+
+  .cap-related-title {
+    margin: 0 0 var(--space-3);
+    color: var(--muted);
+    font: 400 0.9375rem / 1.5 var(--ui);
+  }
+
+  .cap-related-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+    > li {
+      display: grid;
+      gap: var(--space-2);
+      padding-block: 0.625rem;
+      border-block-end: 1px solid var(--line);
+      /* The face is the page's: the reading face under a post. */
+      font-size: 1.0625rem;
+      line-height: 1.4;
+    }
+  }
+
+  .cap-related-name {
+    justify-self: start;
+    overflow-wrap: anywhere;
+  }
+
+  /* An excerpt can be 280 characters with no spaces; anywhere keeps it in the column. */
+  .cap-related-excerpt {
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+  }
+
+  .cap-related-date {
+    color: var(--muted);
+    font: 400 0.75rem / 1.5 var(--mono);
+  }
+
+  /* On paper the block takes the page's width, and ways to other pages on this site are no use. */
+  @media print {
+    .cap-related {
+      max-inline-size: none;
+    }
+
+    .cap-related[data-kind="internal"] {
+      display: none;
+    }
+  }
+}

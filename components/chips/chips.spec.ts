@@ -23,6 +23,14 @@ async function recordChanges(page: Page): Promise<void> {
   });
 }
 
+/** A chip's edge, fill and tick, to compare one chip's look with another's. */
+function chipLook(page: Page, sel: string): Promise<string[]> {
+  return page.locator(sel).evaluate((el) => {
+    const cs = getComputedStyle(el);
+    return [cs.borderColor, cs.backgroundColor, getComputedStyle(el, "::before").content];
+  });
+}
+
 eachTheme((theme) => {
   test("accessibility: no axe violations", async ({ page }) => {
     await visitStates(page, "chips", theme);
@@ -54,17 +62,34 @@ eachTheme((theme) => {
     page,
   }) => {
     await visitStates(page, "chips", theme);
-    const look = (sel: string) =>
-      page.locator(sel).evaluate((el) => {
-        const cs = getComputedStyle(el);
-        return [cs.borderColor, cs.backgroundColor, getComputedStyle(el, "::before").content];
-      });
+    const look = (sel: string) => chipLook(page, sel);
     expect(await look("#chip-link-current")).toEqual(await look("#chip-pressed"));
     expect(await look("#chip-link")).toEqual(await look("#chip-unpressed"));
     await expectContrast(page, [
       { sel: "#chip-link-current", what: "a current link chip's word on its tint" },
       { sel: "#chip-link-current", what: "a current link chip's edge", part: "border" },
     ]);
+  });
+
+  test("behavior: a checkbox chip toggles by click and Space, wears the pressed look when checked, and submits", async ({
+    page,
+  }) => {
+    await visitStates(page, "chips", theme);
+    const look = (sel: string) => chipLook(page, sel);
+    expect(await look("#chip-box-checked")).toEqual(await look("#chip-pressed"));
+    expect(await look("#chip-box")).toEqual(await look("#chip-unpressed"));
+    const talks = page.getByRole("checkbox", { name: /Invited talks/ });
+    await page.locator("#chip-box").click({ position: { x: 6, y: 6 } });
+    await expect(talks).toBeChecked();
+    await page.mouse.move(0, 0);
+    const pressed = await look("#chip-pressed");
+    await expect.poll(() => look("#chip-box")).toEqual(pressed);
+    await page.keyboard.press("Space");
+    await expect(talks).not.toBeChecked();
+    const sent = await page
+      .locator("#chips-boxes-form")
+      .evaluate((f) => new FormData(f as HTMLFormElement).getAll("type"));
+    expect(sent).toEqual(["grant"]);
   });
 
   test("accessibility: roles, names and pressed states", { tag: "@markup" }, async ({ page }) => {

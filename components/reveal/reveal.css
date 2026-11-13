@@ -1,0 +1,50 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* Reveal: a section fades and settles into place as it scrolls into view. All CSS: each element is
+   its own view timeline and the animation runs over its entry, on the compositor, with no
+   IntersectionObserver and no class to add. Content is never hidden by default: without
+   scroll-driven animations, or with less motion asked for, it simply stands where it is. That is
+   the rule the site copies broke (bsw, Foxhound, julieedwards.info hid content until a script ran). */
+
+@layer cap.components {
+  @keyframes cap-reveal-in {
+    from {
+      opacity: 0;
+      translate: 0 var(--reveal-distance, 1.5rem);
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    @supports (animation-timeline: view()) {
+      .cap-reveal,
+      .cap-reveal-stack > * {
+        /* Longhands with duration auto: a minifier (Lightning CSS) folds the shorthand and the timeline
+           into one with a 0s duration, which Chromium runs as finished. */
+        animation-name: cap-reveal-in;
+        animation-duration: auto;
+        animation-timing-function: linear;
+        animation-fill-mode: both;
+        animation-timeline: view(block);
+        animation-range: entry 10% entry 90%;
+      }
+      /* From above: settles downward into place. */
+      :is(.cap-reveal, .cap-reveal-stack)[data-from="above"] {
+        --reveal-distance: -1.5rem;
+      }
+      /* A stack's children follow one another a little apart, by their place among their siblings. */
+      @supports (animation-range: entry calc(sibling-index() * 1%) entry 100%) {
+        .cap-reveal-stack > * {
+          animation-range: entry calc(10% + (sibling-index() - 1) * 8%) entry calc(70% + (sibling-index() - 1) * 8%);
+        }
+      }
+    }
+  }
+
+  @media print {
+    .cap-reveal,
+    .cap-reveal-stack > * {
+      animation: none;
+    }
+  }
+}

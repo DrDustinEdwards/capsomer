@@ -1,6 +1,6 @@
 {
   "name": "capsomer",
-  "version": "0.92.0",
+  "version": "0.123.0",
   "description": "Capsomer: the shared design system for Dustin Edwards's apps. Tokens, components and patterns, in plain CSS with optional behavior modules and React wrappers.",
   "license": "MIT",
   "repository": {
@@ -8,7 +8,8 @@
     "url": "git+https://github.com/DrDustinEdwards/capsomer.git"
   },
   "bin": {
-    "capsomer": "./bin/capsomer.mjs"
+    "capsomer": "./bin/capsomer.mjs",
+    "capsomer-roundtrip": "./bin/roundtrip.mjs"
   },
   "files": [
     "css",
@@ -26,6 +27,8 @@
     "tokens/fallback-fonts.d.mts",
     "components/*/*.css",
     "components/*/*.md",
+    "components/*/*-sw.js",
+    "components/icons/LICENSE-lucide.txt",
     "dist",
     "bin",
     "DEFAULTS.md"
@@ -42,6 +45,8 @@
     "./tokens.css": "./css/tokens.css",
     "./base.css": "./css/base.css",
     "./utilities.css": "./css/utilities.css",
+    "./links.css": "./css/links.css",
+    "./reset.css": "./css/reset.css",
     "./fonts.css": "./css/fonts.css",
     "./fallback-fonts.css": "./css/fallback-fonts.css",
     "./fonts/*": "./fonts/*",
@@ -90,6 +95,10 @@
       "types": "./dist/test/helpers.d.ts",
       "default": "./dist/test/helpers.js"
     },
+    "./testing/page": {
+      "types": "./dist/test/page.d.ts",
+      "default": "./dist/test/page.js"
+    },
     "./fonts": {
       "types": "./tokens/fallback-fonts.d.mts",
       "default": "./tokens/fallback-fonts.mjs"
@@ -103,9 +112,27 @@
       "types": "./dist/components/chart-frame/chart-enhance.d.ts",
       "default": "./dist/components/chart-frame/chart-enhance.js"
     },
+    "./behavior/checklist-run-model": {
+      "types": "./dist/components/checklist-run/checklist-run-model.d.ts",
+      "default": "./dist/components/checklist-run/checklist-run-model.js"
+    },
+    "./push-sw.js": "./components/web-push/push-sw.js",
+    "./offline-sw.js": "./components/offline-keep/offline-sw.js",
+    "./behavior/command-host": {
+      "types": "./dist/components/command-menu/command-host.d.ts",
+      "default": "./dist/components/command-menu/command-host.js"
+    },
     "./behavior/*": {
       "types": "./dist/components/*/*.d.ts",
       "default": "./dist/components/*/*.js"
+    },
+    "./react/player-context": {
+      "types": "./dist/components/player/player-context.react.d.ts",
+      "default": "./dist/components/player/player-context.react.js"
+    },
+    "./react/command-host": {
+      "types": "./dist/components/command-menu/command-host.react.d.ts",
+      "default": "./dist/components/command-menu/command-host.react.js"
     },
     "./react/*": {
       "types": "./dist/components/*/*.react.d.ts",
@@ -144,28 +171,45 @@
     "@codemirror/language": "6.12.4",
     "@codemirror/state": "6.7.1",
     "@codemirror/view": "6.43.7",
-    "@drdustinedwards/site-helpers": "github:DrDustinEdwards/prelum#v0.41.3",
-    "@dustinedwards/devkit": "github:DrDustinEdwards/devkit#v0.30.0",
-    "@dustinedwards/site-runtime": "github:DrDustinEdwards/site-runtime#v0.109.0",
+    "@drdustinedwards/site-helpers": "github:DrDustinEdwards/prelum#v0.49.0",
+    "@dustinedwards/devkit": "github:DrDustinEdwards/devkit#v0.43.0",
+    "@dustinedwards/site-runtime": "github:DrDustinEdwards/site-runtime#v0.132.0",
     "@fontsource-variable/source-serif-4": "5.3.0",
     "@fontsource/dm-mono": "5.3.0",
     "@fontsource/dm-sans": "5.3.0",
     "@fontsource/fraunces": "5.3.0",
     "@fontsource/montserrat": "5.3.0",
     "@fontsource/open-sans": "5.3.0",
+    "@handlewithcare/prosemirror-suggest-changes": "0.1.8",
     "@lezer/highlight": "1.2.3",
     "@playwright/test": "1.63.0",
+    "@tiptap/core": "3.31.4",
+    "@tiptap/extension-collaboration": "3.31.4",
+    "@tiptap/extension-list": "3.31.4",
+    "@tiptap/extensions": "3.31.4",
+    "@tiptap/pm": "3.31.4",
+    "@tiptap/starter-kit": "3.31.4",
+    "@tiptap/y-tiptap": "3.3.0",
     "@types/node": "24.19.0",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
     "@vitejs/plugin-react": "6.1.1",
-    "enarratio": "0.12.1",
+    "enarratio": "0.13.1",
     "hast-util-from-html": "2.0.3",
     "hast-util-to-mdast": "10.1.2",
     "jscpd": "5.3.2",
     "knip": "6.38.0",
+    "lightningcss": "1.33.0",
+    "mdast-util-directive": "3.1.1",
+    "mdast-util-from-markdown": "2.1.0",
+    "mdast-util-frontmatter": "2.0.1",
     "mdast-util-gfm": "3.1.0",
+    "mdast-util-math": "3.0.0",
     "mdast-util-to-markdown": "2.2.0",
+    "micromark-extension-directive": "4.0.0",
+    "micromark-extension-frontmatter": "2.0.0",
+    "micromark-extension-gfm": "3.0.0",
+    "micromark-extension-math": "3.1.0",
     "oxfmt": "0.77.0",
     "oxlint": "1.92.0",
     "oxlint-tsgolint": "7.0.2006",
@@ -174,7 +218,10 @@
     "react-router": "8.5.1",
     "typescript": "6.0.3",
     "vite": "8.3.5",
-    "wrangler": "^4.151.3"
+    "wrangler": "^4.151.3",
+    "y-partyserver": "2.2.0",
+    "y-protocols": "1.0.7",
+    "yjs": "13.6.33"
   },
   "peerDependencies": {
     "@axe-core/playwright": "^4.13.0",
@@ -185,14 +232,35 @@
     "@codemirror/language": "^6.12.4",
     "@codemirror/state": "^6.7.1",
     "@codemirror/view": "^6.43.7",
-    "@drdustinedwards/site-helpers": ">=0.40.0",
-    "@dustinedwards/site-runtime": ">=0.29.0",
+    "@drdustinedwards/site-helpers": ">=0.49.0",
+    "@dustinedwards/devkit": ">=0.33.0",
+    "@dustinedwards/site-runtime": ">=0.113.0",
+    "@handlewithcare/prosemirror-suggest-changes": "^0.1.8",
     "@lezer/highlight": "^1.2.3",
     "@playwright/test": "^1.50.0",
-    "enarratio": "^0.12.0",
+    "@tiptap/core": "^3.31.4",
+    "@tiptap/extension-collaboration": "^3.31.4",
+    "@tiptap/extension-list": "^3.31.4",
+    "@tiptap/extensions": "^3.31.4",
+    "@tiptap/pm": "^3.31.4",
+    "@tiptap/starter-kit": "^3.31.4",
+    "@tiptap/y-tiptap": "^3.3.0",
+    "enarratio": "^0.12.0 || ^0.13.0",
+    "mdast-util-directive": "^3.1.1",
+    "mdast-util-from-markdown": "^2.1.0",
+    "mdast-util-frontmatter": "^2.0.1",
+    "mdast-util-gfm": "^3.1.0",
+    "mdast-util-math": "^3.0.0",
+    "micromark-extension-directive": "^4.0.0",
+    "micromark-extension-frontmatter": "^2.0.0",
+    "micromark-extension-gfm": "^3.0.0",
+    "micromark-extension-math": "^3.1.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
-    "react-router": "^8.0.0"
+    "react-router": "^8.0.0",
+    "y-partyserver": "^2.2.0",
+    "y-protocols": "^1.0.7",
+    "yjs": "^13.6.33"
   },
   "peerDependenciesMeta": {
     "@axe-core/playwright": {
@@ -222,7 +290,13 @@
     "@drdustinedwards/site-helpers": {
       "optional": true
     },
+    "@dustinedwards/devkit": {
+      "optional": true
+    },
     "@dustinedwards/site-runtime": {
+      "optional": true
+    },
+    "@handlewithcare/prosemirror-suggest-changes": {
       "optional": true
     },
     "@lezer/highlight": {
@@ -231,7 +305,55 @@
     "@playwright/test": {
       "optional": true
     },
+    "@tiptap/core": {
+      "optional": true
+    },
+    "@tiptap/extension-collaboration": {
+      "optional": true
+    },
+    "@tiptap/extension-list": {
+      "optional": true
+    },
+    "@tiptap/extensions": {
+      "optional": true
+    },
+    "@tiptap/pm": {
+      "optional": true
+    },
+    "@tiptap/starter-kit": {
+      "optional": true
+    },
+    "@tiptap/y-tiptap": {
+      "optional": true
+    },
     "enarratio": {
+      "optional": true
+    },
+    "mdast-util-directive": {
+      "optional": true
+    },
+    "mdast-util-from-markdown": {
+      "optional": true
+    },
+    "mdast-util-frontmatter": {
+      "optional": true
+    },
+    "mdast-util-gfm": {
+      "optional": true
+    },
+    "mdast-util-math": {
+      "optional": true
+    },
+    "micromark-extension-directive": {
+      "optional": true
+    },
+    "micromark-extension-frontmatter": {
+      "optional": true
+    },
+    "micromark-extension-gfm": {
+      "optional": true
+    },
+    "micromark-extension-math": {
       "optional": true
     },
     "react": {
@@ -242,11 +364,24 @@
     },
     "react-router": {
       "optional": true
+    },
+    "y-partyserver": {
+      "optional": true
+    },
+    "y-protocols": {
+      "optional": true
+    },
+    "yjs": {
+      "optional": true
     }
   },
   "overrides": {
+    "@cloudflare/workers-types": "5.20261031.1",
     "@drdustinedwards/site-helpers": {
       "enarratio": "$enarratio"
+    },
+    "micromark-extension-math": {
+      "katex": "0.19.1"
     }
   },
   "engines": {

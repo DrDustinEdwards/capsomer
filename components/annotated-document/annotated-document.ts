@@ -1,15 +1,15 @@
 // The annotated document's linking: a note lights the passages it is about and brings the first into view in the
 // document; a passage clicked lights its note and brings it into view in the rail. Changing the view clears it. The
 // views themselves are CSS over the segmented control's radios and need no script.
-// Extracted from BioScience Writers' editing demo island (app/islands/editing-demo.ts) in 0.92.0.
+// Extracted from BioScience Writers' editing demo island (app/islands/editing-demo.ts) in 0.123.0.
 
-const reduced = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
+import { reducedMotion } from "../count-up/count-up.ts";
 
 // Scrolls `box` (a scroll container) so `target` sits near its top, without moving the page.
 function bring(box: HTMLElement, target: HTMLElement, margin: number) {
   const top =
     target.getBoundingClientRect().top - box.getBoundingClientRect().top + box.scrollTop - margin;
-  box.scrollTo({ top, behavior: reduced() ? "auto" : "smooth" });
+  box.scrollTo({ top, behavior: reducedMotion() ? "auto" : "smooth" });
 }
 
 export function enhance(root: ParentNode = document): () => void {

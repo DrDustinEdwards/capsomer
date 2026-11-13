@@ -71,11 +71,11 @@
       background: var(--raised);
       color: var(--text);
     }
-    &:focus-visible {
+    &:is(:focus-visible, :has(> .cap-chip-input:focus-visible)) {
       outline: var(--ring-width) solid var(--ring);
       outline-offset: 1px;
     }
-    &:is(:disabled, [aria-disabled="true"]) {
+    &:is(:disabled, [aria-disabled="true"], :has(> .cap-chip-input:disabled)) {
       border-style: dashed;
       background: var(--surface);
       color: var(--muted);
@@ -84,7 +84,11 @@
 
     /* Pressed: a tick as well as the accent edge, the tint and the darker word. A link chip (a
        filter kept in the address) that is the current one wears the same. */
-    &:is([aria-pressed="true"], a[aria-current]:not([aria-current="false"])) {
+    &:is(
+        [aria-pressed="true"],
+        a[aria-current]:not([aria-current="false"]),
+        :has(> .cap-chip-input:checked)
+      ) {
       border-color: var(--accent);
       background: var(--accent-soft);
       color: var(--text);
@@ -126,11 +130,39 @@
     }
   }
 
+  /* Checkbox chips (a filter in a form that works with no script): the label is the chip, and its
+     checkbox stays in the page over the whole chip, unseen, so the click target, the keyboard and the
+     screen reader's checkbox are the browser's own. */
+  label.cap-chip:has(> .cap-chip-input) {
+    position: relative;
+  }
+  .cap-chip-input {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    opacity: 0;
+    cursor: inherit;
+  }
+
   /* Link chips in a list (a filter kept in the address): the list's own marks and indent go. */
   ul.cap-chips {
     margin: 0;
     padding: 0;
     list-style: none;
+  }
+  /* Checkbox chips in a fieldset: its frame goes; the legend stays above the chips as the label. */
+  fieldset.cap-chips {
+    min-inline-size: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+
+    & > legend {
+      margin-block-end: var(--space-3);
+      padding: 0;
+    }
   }
 
   /* How many results the filter leaves: "3 of 14 jobs". */
@@ -150,7 +182,11 @@
   }
 
   @media (forced-colors: active) {
-    .cap-chip:is([aria-pressed="true"], a[aria-current]:not([aria-current="false"])) {
+    .cap-chip:is(
+        [aria-pressed="true"],
+        a[aria-current]:not([aria-current="false"]),
+        :has(> .cap-chip-input:checked)
+      ) {
       forced-color-adjust: none;
       border-color: Highlight;
       background: Highlight;

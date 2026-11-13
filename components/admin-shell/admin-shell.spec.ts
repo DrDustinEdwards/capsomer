@@ -23,13 +23,17 @@ eachTheme((theme) => {
       // The tile whose tip is open: axe-core 4.14 reads the open tip's words and key caps as the
       // tile's visible label, but a tip describes its trigger (role tooltip), it does not label
       // it. The tile is scanned closed in every other state.
-      if (only === "tip")
+      // The tip opens after the specimen mounts, so wait for it: marking it before it opens
+      // left it unexcluded about one run in twenty.
+      if (only === "tip") {
+        await page.locator(".cap-admin-tip:popover-open").waitFor();
         await page.evaluate(() =>
           document
             .querySelector(".cap-admin-tip:popover-open")
             ?.closest(".cap-admin-tile")
             ?.setAttribute("data-tip-open", ""),
         );
+      }
       await expectNoAxeViolations(
         page,
         undefined,
@@ -236,6 +240,12 @@ eachTheme((theme) => {
     const control2 = await toggle.boundingBox();
     expect(control2?.x).toBe(control?.x);
     expect(control2?.y).toBe(control?.y);
+    // The shell binds `[` itself: it expands and collapses the menu from anywhere but a field.
+    await page.locator("#cap-main").focus();
+    await page.keyboard.press("[");
+    await expect(page.locator(".cap-admin")).not.toHaveAttribute("data-menu", "collapsed");
+    await page.keyboard.press("[");
+    await expect(page.locator(".cap-admin")).toHaveAttribute("data-menu", "collapsed");
     await page.reload();
     await expect(page.locator(".cap-admin")).toHaveAttribute("data-menu", "collapsed");
     await toggle.focus();
@@ -962,14 +972,21 @@ eachTheme((theme) => {
     await visitStates(page, "admin-shell", theme, "collapsed");
     const link = page.getByRole("link", { name: "Activity 99+, 120" });
     await link.hover();
-    const r = await link.evaluate((el) => {
-      const cs = getComputedStyle(el);
-      const menu = getComputedStyle(el.closest(".cap-admin-menu")!).backgroundColor;
-      const edge = cs.boxShadow.match(/rgba?\([^)]*\)/)?.[0] ?? menu;
-      return { fill: window.capRatio(cs.backgroundColor, menu), edge: window.capRatio(edge, menu) };
-    });
-    expect(r.fill, "the hover fill against the menu").toBeGreaterThanOrEqual(1.2);
-    expect(r.edge, "the hover edge against the menu").toBeGreaterThanOrEqual(3);
+    const read = () =>
+      link.evaluate((el) => {
+        const cs = getComputedStyle(el);
+        const menu = getComputedStyle(el.closest(".cap-admin-menu")!).backgroundColor;
+        const edge = cs.boxShadow.match(/rgba?\([^)]*\)/)?.[0] ?? menu;
+        return {
+          fill: window.capRatio(cs.backgroundColor, menu),
+          edge: window.capRatio(edge, menu),
+        };
+      });
+    // The hover fill fades in, so read it once the transition has ended.
+    await expect
+      .poll(async () => (await read()).fill, { message: "the hover fill against the menu" })
+      .toBeGreaterThanOrEqual(1.2);
+    expect((await read()).edge, "the hover edge against the menu").toBeGreaterThanOrEqual(3);
   });
 
   test("behavior: collapsed, the collapse control's icon heads the column, over the menu's icons; the app's mark is the header's", async ({

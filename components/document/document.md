@@ -5,7 +5,7 @@ summary: The page's root: its family and site layer from the first byte, which r
 parts: [behavior, react]
 tool: own JavaScript
 states: []
-added: 0.92.0
+added: 0.123.0
 source: bsw and julieedwards-info root.tsx, germomics root.tsx and app/lib/hydration.ts, txasm root.tsx and app/site.ts, Foxhound's hand-set data-cap-site wrappers
 replaces:
   - 'data-cap-site="'

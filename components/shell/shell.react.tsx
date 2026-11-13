@@ -167,7 +167,11 @@ export function Shell(props: ShellProps) {
               {e.icon}
               {e.label}
               {e.count ? " " : null}
-              {e.count ? <span className="cap-shell-badge">{e.count}</span> : null}
+              {e.count ? (
+                <span className="cap-count cap-shell-badge" data-tone="crit">
+                  {e.count}
+                </span>
+              ) : null}
             </>
           ) : (
             <>

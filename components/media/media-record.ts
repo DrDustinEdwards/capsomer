@@ -68,6 +68,11 @@ export interface MediaFields {
   tags: string[];
 }
 
+// A tile's id from its file's key, "tile-2026-09-a-png": the markup a server draws and the one a page
+// builds must agree.
+export const tileId = (key: string): string =>
+  `tile-${key.replace(/[^a-z0-9]+/gi, "-").toLowerCase()}`;
+
 // Decimal unit names, binary division: the site's own rule, so a size reads the same on both.
 export function byteSize(size: number): string {
   if (size < 1024) return `${size} B`;

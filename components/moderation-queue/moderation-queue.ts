@@ -7,12 +7,13 @@
 // The page is delivered with every row in the HTML, each with its state in words; this
 // module adds only what a person's action creates. No framework; MentionsList, the React
 // component on the contract's data, uses the same helpers.
+import { plural } from "../hooks/hooks.ts";
 import { confirm } from "../confirm-dialog/confirm-dialog.ts";
 import { toggleGroup } from "../disclosure/disclosure.ts";
-import { enhance as enhanceMessage, say } from "../message/message.ts";
+import { ensureRegion, say } from "../message/message.ts";
 import { isTypingKey, listOwnsKeys, moveRowFocus, singleKeysOff } from "../row-list/row-list.ts";
 import { enhance as enhanceShortcuts, register } from "../shortcuts/shortcuts.ts";
-import { enhance as enhanceTime, parse } from "../time/time.ts";
+import { enhance as enhanceTime, nowFor } from "../time/time.ts";
 import {
   ACTION_KEY,
   DELETE_KEY,
@@ -31,7 +32,6 @@ import {
   countStates,
   decide,
   decidedText,
-  h,
   inView,
   mentionsWord,
   statusEl,
@@ -111,26 +111,6 @@ export function mentionOf(
     host: row.dataset.host ?? "",
     expiring: row.hasAttribute("data-expiring"),
   };
-}
-
-function nowOf(root: Element): number {
-  const fixed = root.closest<HTMLElement>("[data-cap-now]")?.dataset.capNow;
-  return fixed ? parse(fixed) : Date.now();
-}
-
-// The page's status region for results and Undo is one; where there is none, one goes after
-// the queue.
-function ensureRegion(after: Element): void {
-  if (document.querySelector("[data-cap='message']")) return;
-  const region = h("div", {
-    class: "cap-message",
-    "data-cap": "message",
-    role: "status",
-    "aria-label": "Results and failures",
-    "aria-atomic": "false",
-  });
-  after.after(region);
-  enhanceMessage(region.parentNode ?? document);
 }
 
 // Paints one row for its state: the status, the buttons that apply.
@@ -343,7 +323,7 @@ export function decideRows(
   const moved: HTMLLIElement[] = [];
   const from: UndoEntry["from"] = {};
   const to: Record<string, ModState> = {};
-  const decidedAt = new Date(nowOf(root)).toISOString();
+  const decidedAt = new Date(nowFor(root).now).toISOString();
   // Focus is on one of these rows, or on the bulk bar's button that was just pressed (which is
   // rebuilt): either way it moves to the next row.
   const hadFocus =
@@ -444,7 +424,7 @@ export async function run(
   const n = rows.filter((r) => actionsFor(mentionOf(r).state, true).length === 0).length;
   const note =
     n > 0
-      ? `${n} ${n === 1 ? "was" : "were"} left as ${n === 1 ? "it was" : "they were"}: there is nothing to decide about a mention not yet checked or whose source was not found.`
+      ? `${plural(n, "was", "were")} left as ${n === 1 ? "it was" : "they were"}: there is nothing to decide about a mention not yet checked or whose source was not found.`
       : undefined;
   const moved = decideRows(root, rows, action, { note });
   if (moved.length === 0 && note) say(note);
@@ -472,7 +452,9 @@ export const QUEUE_SHORTCUTS = [
 
 // Attaches to every [data-cap="moderation-queue"] under root not yet attached. Returns a
 // function that detaches them.
-export function enhance(root: ParentNode = document): () => void {
+// The root is Element | Document | DocumentFragment, not ParentNode: under @cloudflare/workers-types
+// an HTMLFormElement does not type as a ParentNode, so a site could not pass its form.
+export function enhance(root: Element | Document | DocumentFragment = document): () => void {
   const undo: Array<() => void> = [];
   for (const el of root.querySelectorAll<HTMLElement>("[data-cap='moderation-queue']")) {
     if (el.hasAttribute(READY)) continue;

@@ -6,7 +6,7 @@ parts: [ts]
 tool: own JavaScript
 states: [magic link, verification, reset, email change, alert, notice, digest, security notice]
 added: 0.5.0
-updated: 0.92.0
+updated: 0.123.0
 source: design/email-templates.md (D7.2); the senders in Foxhound, Foxing, TXASM, Carrel and dustinedwards-info are unverified, this driver could not read them
 replaces: []
 ---
@@ -74,7 +74,7 @@ const { subject, html, text } = renderEmail(magicLink, {
 
 ## A body written as HTML
 
-`htmlToBlocks(html)` (from `capsomer/email`) reads a body someone wrote in HTML, a sender's template or a model's draft, into Blocks, keeping the words and their order: `p`, `div`, `li`, `td`, `th` and `blockquote` are paragraphs (a `br` starts a new one), `h1` to `h6` headings, a link that is a block of its own a button, a link inside a sentence its words plus a button after the paragraph, a whole `small` block fine print. It drops `script`, `style`, `head` and `title` with their content, comments, anything hidden (`hidden`, `aria-hidden="true"`, `display:none`, `visibility:hidden`) and images (their alt text stays). A link `checkUrl` would refuse keeps its words and makes no button, so a stored body never fails a send on every retry. It is a small reader with HTML's implied end tags (`p`, `li`, `td` and the rest), not a general parser, and needs no DOM. Moved from Foxhound in 0.92.0.
+`htmlToBlocks(html)` (from `capsomer/email`) reads a body someone wrote in HTML, a sender's template or a model's draft, into Blocks, keeping the words and their order: `p`, `div`, `li`, `td`, `th` and `blockquote` are paragraphs (a `br` starts a new one), `h1` to `h6` headings, a link that is a block of its own a button, a link inside a sentence its words plus a button after the paragraph, a whole `small` block fine print. It drops `script`, `style`, `head` and `title` with their content, comments, anything hidden (`hidden`, `aria-hidden="true"`, `display:none`, `visibility:hidden`) and images (their alt text stays). A link `checkUrl` would refuse keeps its words and makes no button, so a stored body never fails a send on every retry. It is a small reader with HTML's implied end tags (`p`, `li`, `td` and the rest), not a general parser, and needs no DOM. Moved from Foxhound in 0.123.0.
 
 ## How a product keeps its own copy
 

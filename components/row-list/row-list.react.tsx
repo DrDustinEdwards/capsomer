@@ -1,4 +1,14 @@
-import { useEffect, useId, useRef, type ReactNode } from "react";
+import {
+  useEffect,
+  useId,
+  useRef,
+  useState,
+  type ComponentProps,
+  type ComponentType,
+  type FormHTMLAttributes,
+  type ReactNode,
+} from "react";
+import { isImeEnter } from "../shortcuts/shortcuts.ts";
 import { attachRowList } from "./row-list.ts";
 
 export interface RowListProps {
@@ -41,7 +51,8 @@ export interface RowLinkProps {
 export interface RowProps {
   title: ReactNode;
   // The row opens its detail by following href (a link), or by calling onOpen (a button)
-  // when the detail opens in place, such as a side panel.
+  // when the detail opens in place, such as a side panel. With neither, the row is read, not
+  // opened (a checklist step, a fact): its title is plain text, and only its actions are controls.
   href?: string;
   onOpen?: () => void;
   // A status (.cap-status: glyph, word and color), shown first.
@@ -66,6 +77,9 @@ export interface RowProps {
   className?: string;
   // A router's link component; a plain <a> by default.
   renderLink?: (props: RowLinkProps) => ReactNode;
+  // A reply opened in the row (an answer to a question, a note that unblocks a job): a RowReply,
+  // shown under the row's text across the row, above the stretched link.
+  reply?: ReactNode;
 }
 
 const plainLink = ({ children, ...props }: RowLinkProps) => <a {...props}>{children}</a>;
@@ -87,6 +101,7 @@ export function Row({
   controls,
   className,
   renderLink = plainLink,
+  reply,
 }: RowProps) {
   const id = useId();
   // The link's name is the title; the status and the detail are its description, so a
@@ -101,6 +116,7 @@ export function Row({
       data-tone={tone}
       data-variant={variant}
       data-size={size}
+      data-static={href == null && onOpen == null && expanded === undefined ? "" : undefined}
     >
       {media != null && (
         <span className="cap-row-media" data-variant={mediaVariant}>
@@ -115,6 +131,8 @@ export function Row({
       <div className="cap-row-title">
         {href != null ? (
           renderLink({ href, "aria-describedby": described, children: title })
+        ) : onOpen == null && expanded === undefined ? (
+          <span className="cap-row-text">{title}</span>
         ) : (
           <button
             type="button"
@@ -139,6 +157,125 @@ export function Row({
         </span>
       )}
       {actions != null && <div className="cap-row-actions">{actions}</div>}
+      {reply != null && <div className="cap-row-reply">{reply}</div>}
     </li>
   );
+}
+
+export interface RowReplyProps {
+  // What the words are for, as the box's label: "Your answer, sent to its driver".
+  label: string;
+  // Sends the words; return a string to show why they were not sent ("Write what you did first").
+  onSend: (text: string) => string | void | Promise<string | void>;
+  onCancel: () => void;
+  sendLabel?: string;
+  // Shown when Send is pressed with nothing written.
+  emptyHint?: string;
+  defaultValue?: string;
+  rows?: number;
+}
+
+// A reply inside a row: a labeled box that takes focus when it opens, Send and Cancel, a hint
+// that is announced when the words cannot be sent, Ctrl or Cmd+Enter to send and Esc to cancel.
+export function RowReply({
+  label,
+  onSend,
+  onCancel,
+  sendLabel = "Send",
+  emptyHint = "Write something first.",
+  defaultValue = "",
+  rows = 3,
+}: RowReplyProps) {
+  const id = useId();
+  const [text, setText] = useState(defaultValue);
+  const [hint, setHint] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+  const box = useRef<HTMLTextAreaElement>(null);
+  useEffect(() => box.current?.focus(), []);
+  const send = async () => {
+    if (busy) return;
+    if (!text.trim()) {
+      setHint(emptyHint);
+      return;
+    }
+    setBusy(true);
+    try {
+      const refused = await onSend(text.trim());
+      if (typeof refused === "string") setHint(refused);
+    } finally {
+      setBusy(false);
+    }
+  };
+  return (
+    <form
+      className="cap-row-reply-form"
+      aria-busy={busy || undefined}
+      onSubmit={(e) => {
+        e.preventDefault();
+        void send();
+      }}
+    >
+      <label className="cap-field-label" htmlFor={`${id}-text`}>
+        {label}
+      </label>
+      <textarea
+        ref={box}
+        className="cap-input"
+        id={`${id}-text`}
+        rows={rows}
+        value={text}
+        aria-invalid={hint ? true : undefined}
+        aria-describedby={hint ? `${id}-hint` : undefined}
+        onChange={(e) => {
+          setText(e.target.value);
+          setHint(null);
+        }}
+        onKeyDown={(e) => {
+          if (e.key === "Escape") {
+            e.preventDefault();
+            onCancel();
+          } else if (e.key === "Enter" && (e.ctrlKey || e.metaKey) && !isImeEnter(e.nativeEvent)) {
+            e.preventDefault();
+            void send();
+          }
+        }}
+      />
+      {hint && (
+        <p className="cap-field-error" id={`${id}-hint`} role="alert">
+          {hint}
+        </p>
+      )}
+      <div className="cap-row-reply-actions">
+        <button type="submit" className="cap-btn" data-variant="primary" disabled={busy}>
+          {sendLabel}
+        </button>
+        <button type="button" className="cap-btn" onClick={onCancel}>
+          Cancel
+        </button>
+      </div>
+    </form>
+  );
+}
+
+// What a row action needs from the app's router: a form that posts without leaving the page,
+// and whether its post is under way (the row hides itself until the server answers). Each row
+// calls the hook once, so each row has its own (React Router: useRouterRowForm in
+// capsomer/react/router).
+export interface RowForm {
+  Form: ComponentType<
+    Omit<FormHTMLAttributes<HTMLFormElement>, "method"> & {
+      method?: "post" | "get";
+      children?: ReactNode;
+    }
+  >;
+  pending: boolean;
+}
+
+function PlainForm({ method = "post", ...props }: ComponentProps<"form">) {
+  return <form method={method} {...props} />;
+}
+
+// The default: a plain form that posts and loads the page the server answers with.
+export function usePlainRowForm(): RowForm {
+  return { Form: PlainForm as RowForm["Form"], pending: false };
 }
