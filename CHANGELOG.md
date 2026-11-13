@@ -9,6 +9,11 @@ Each release names every removed or renamed token or class, and every changed HT
 - **Field: `SpanField`, a span chosen from two menus (From and To).** It was Catalog's range facet, which only a Catalog could draw, so a page with its own filters (dustinedwards.info's CV) had to keep its own year menus. It is now a part of Field, in `field.css`, and Catalog's range facet renders it. A page that draws it loads `field.css` and `select.css` (its menus are `select.cap-select`), not the catalog's stylesheet.
 - **Removed classes: `.cap-catalog-range`, `.cap-catalog-range-ends`, `.cap-catalog-range-end`.** They are `.cap-span-field-ends` and `.cap-span-field-end` (in `field.css`); the facet's fieldset keeps `.cap-field.cap-catalog-facet`. HTML contract: the range facet's ends are `div.cap-span-field-ends > div.cap-span-field-end`, each a `label` (for its menu's id) and the `select.cap-select`; the From and To labels take the date input's part-label look (detail size, weight 500) in place of the field label's.
 - **`catalog-all.css` imports `select.css`.** The range facet's menus are `select.cap-select`, which only `select.css` draws, so on a page that loaded `catalog-all.css` alone they were the browser's plain menus.
+- **Collab editor: `Room.doc` and `Room.provider` are `null` before the page is in the browser.** `useRoom`'s first render returned an object cast `as unknown as Room` that lacked both; the type now says so (`Y.Doc | null`, `YProvider | null`) and the cast is gone. `useRoomEditing` is unchanged (it reads them once `synced`). An app that reads `room.doc` or `room.provider` from `useRoom` directly must handle null.
+- **`MediaPicker`: a library chunk that fails to load shows "The library did not load"** (the failed `Empty`) instead of breaking the dialog.
+- **Command host: a failed menu load is no longer kept.** `load()` clears itself on failure so the next `open` or `load` fetches the chunk again; the idle warm-up and `runWhenReady` share one fire-and-forget `warm`, and `open` still rejects.
+- **Theme switch: optional `onError(error)`** on `ThemeSwitch`, `ThemeButton`, `enhance` and `chooseTheme`/`toggleTheme`'s memory, called when `onSave` throws or rejects. Without it the failure is let go as before.
+- **Carousel: `trackLabel`** names the scrolling track (default "Slides"), for a page in another language.
 
 ## [0.139.0]
 
