@@ -49,6 +49,7 @@
     "./base.css": "./css/base.css",
     "./utilities.css": "./css/utilities.css",
     "./layout.css": "./css/layout.css",
+    "./layout-gap.css": "./css/layout-gap.css",
     "./layout-stack.css": "./css/layout-stack.css",
     "./layout-cluster.css": "./css/layout-cluster.css",
     "./layout-spread.css": "./css/layout-spread.css",

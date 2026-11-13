@@ -1,6 +1,5 @@
 /* The panes, a part of layout.css: two panels side by side. */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
-@import "./layout-gap.css";
 
 @layer cap.utilities {
   /* Two panes side by side, the first the wider (3:2): a list and the tools beside it, a record

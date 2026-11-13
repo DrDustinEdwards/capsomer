@@ -1,8 +1,7 @@
 /* The stack, a part of layout.css: a column with a gap. A site that uses only some layouts imports
-   their parts (layout-stack.css, layout-cluster.css, layout-spread.css, layout-grid.css,
-   layout-panes.css, layout-items.css) in place of layout.css. */
+   layout-gap.css (every layout's data-gap) and their parts (layout-stack.css, layout-cluster.css,
+   layout-spread.css, layout-grid.css, layout-panes.css, layout-items.css) in place of layout.css. */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
-@import "./layout-gap.css";
 
 @layer cap.utilities {
   .cap-stack {

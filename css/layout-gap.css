@@ -1,6 +1,6 @@
 /* The gap every layout takes, data-gap="1".."9" (--space-1 2px to --space-9 64px), and the cross-axis
-   alignment of the rows, data-align on a cluster or a spread: a part of layout.css that each layout's
-   own stylesheet imports. Each layout sets its own --layout-gap, so a layout nested in another never
+   alignment of the rows, data-align on a cluster or a spread: a part of layout.css that a site
+   loading the layouts' own parts loads with them. Each layout sets its own --layout-gap, so a layout nested in another never
    takes its parent's gap. */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 

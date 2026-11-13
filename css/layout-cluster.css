@@ -1,7 +1,6 @@
 /* The cluster, a part of layout.css: a wrapping row of items, and .cap-push, which pushes an item
    to the far end of its row. */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
-@import "./layout-gap.css";
 
 @layer cap.utilities {
   .cap-cluster {

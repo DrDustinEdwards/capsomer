@@ -11,8 +11,9 @@
    julieedwards.info each wrote, and the Portal's .grid2 and Carrel's .app-split. The item
    helpers after them (.cap-grow, .cap-shrink, .cap-keep, .cap-full, .cap-column) replace txasm's
    and Foxing's .grow, .shrink, .span-2, .narrow and .form-page. Each is its own part, so a site
-   that uses a few imports those parts in place of this file; the items come last, so .cap-full
-   wins over a pane's flex. */
+   that uses a few imports layout-gap.css and those parts in place of this file; the items come
+   last, so .cap-full wins over a pane's flex. */
+@import "./layout-gap.css";
 @import "./layout-stack.css";
 @import "./layout-cluster.css";
 @import "./layout-spread.css";

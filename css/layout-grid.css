@@ -1,6 +1,5 @@
 /* The grid, a part of layout.css: equal columns, as many as fit, at most data-cols. */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
-@import "./layout-gap.css";
 
 @layer cap.utilities {
   /* As many columns of at least --grid-min (14rem) as fit, never more than data-cols: the column's
