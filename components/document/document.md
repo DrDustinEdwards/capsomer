@@ -19,7 +19,7 @@ The root every site writes: `<html>` under its family and site layer, the head e
 
 - **A page sends no React unless a route asks to hydrate** (`handle = { hydrate: true }`, or a function of the loader data). Reading a page needs no app; its menus, theme button and tabs run from the site's script, wiring the markup the server rendered.
 - **The family and site layer are on `<html>`**, so the first paint is in the site's colors and faces, with no flash.
-- **`startSite` runs each part on its own.** One part that throws is reported and the rest still run, so a broken island never takes the header with it.
+- **`startSite` runs each part on its own.** One part that throws or rejects is reported and the rest still run, so a broken island never takes the header with it. It answers a promise of how many failed, once every async part has settled.
 - **The site's script is same-origin and deferred**, so `script-src 'self'` allows it with no nonce.
 
 ## Use
