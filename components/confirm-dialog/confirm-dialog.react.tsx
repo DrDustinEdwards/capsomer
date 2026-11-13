@@ -10,6 +10,7 @@ import {
   DialogBody,
 } from "../dialog/dialog.react.tsx";
 import { errorText, wordMatches, wordPattern } from "./confirm-dialog.ts";
+import { CONFIRM_FIELD, REASON_FIELD } from "./confirm-server.ts";
 
 const ERROR_GLYPH = (
   <path
@@ -390,7 +391,7 @@ export function ConfirmPage({
               <textarea
                 className="cap-input"
                 id={`${id}-reason`}
-                name="reason"
+                name={REASON_FIELD}
                 rows={3}
                 required
                 aria-describedby={`${id}-reason-note`}
@@ -408,7 +409,7 @@ export function ConfirmPage({
               <input
                 className="cap-input"
                 id={`${id}-typed`}
-                name="confirm"
+                name={CONFIRM_FIELD}
                 required
                 pattern={wordPattern(typeToConfirm)}
                 title={`Type ${typeToConfirm}`}

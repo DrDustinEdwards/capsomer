@@ -6,7 +6,7 @@ parts: [css]
 tool: native
 states: [current step in the middle, the first step, the last step with the rest done, five steps in a narrow column, stations, inline, ordered]
 added: 0.56.0
-updated: 0.123.0
+updated: 0.124.0
 source: USWDS Step indicator; GOV.UK's question pages, one thing per page
 replaces:
   - 'class="[^"]*\b(stepper|steps|step-indicator)\b'

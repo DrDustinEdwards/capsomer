@@ -6,7 +6,7 @@ parts: [css, behavior, react]
 tool: native + own JavaScript
 states: [full width, a phone's width, tray open, filters chosen with chips, search with best match, no match, nothing yet, paged, no script]
 added: 0.4.0
-updated: 0.123.0
+updated: 0.124.0
 source: The site's publications filters and phage table (app/routes/publications.tsx, app/enhance/phages.ts in dustinedwards-info), generalized; Capsomer's chips, table, pagination and empty components underneath.
 replaces:
   - 'class="(?:[^"]*\s)?(facet|facets|filter-panel|catalog)[\s"]'

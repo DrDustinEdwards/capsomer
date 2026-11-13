@@ -23,7 +23,7 @@
   --fs-prose: clamp(1.0625rem, 1rem + 0.25vw, 1.1875rem);
   --fs-prose-h2: clamp(1.375rem, 1.2rem + 1.2vw, 1.875rem);
   --fs-input-coarse: max(1rem, 16px);
-  --prose: "Source Serif 4", "Iowan Old Style", Charter, Georgia, serif;
+  --prose: "Source Serif 4", "Source Serif 4 Fallback", "Iowan Old Style", Charter, Georgia, serif;
   --display: "Inter", "Inter Fallback", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
   --weight-title: 300;
   --weight-heading: 500;
@@ -35,16 +35,26 @@
   --dur-fast: 100ms;
   --dur-base: 200ms;
   --dur-slow: 400ms;
+  --dur-wait: 900ms;
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
   --ease-spring: linear(0, 0.005 1%, 0.028 2.5%, 0.117 5.5%, 0.572 16%, 0.77 21.5%, 0.839 24%, 0.906 27%, 0.956 30%, 0.992 33%, 1.012 35.5%, 1.026 38%, 1.035 41%, 1.038 44.5%, 1.035 49.5%, 1.012 63.5%, 1.003 72.5%, 0.999 84.5%, 1);
   /* layer */
   --z-base: 0;
+  --z-raise: 10;
   --z-sticky: 20;
   --z-tabbar: 30;
   --z-overlay: 40;
+  --z-dropdown: 50;
+  --z-drawer: 60;
   --z-message: 70;
   --z-tip: 80;
+  --z-progress: 90;
+  --z-skip: 100;
+  /* line */
+  --line-w: 1px;
+  --line-w-thick: 2px;
+  --radius-control: var(--radius-m);
   /* focus */
   --focus-width: 2px;
   --focus-offset: 2px;

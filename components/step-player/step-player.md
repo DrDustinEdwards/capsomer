@@ -5,7 +5,7 @@ summary: A Play button that walks a set of steps on its own, stops at the end, o
 parts: [behavior]
 tool: own JavaScript
 states: [playing a flow, at the end, taken over by a step link]
-added: 0.123.0
+added: 0.124.0
 source: the Capsid explorer's autoplay (explorer/src/explorer.js), generalized
 replaces:
   - 'function autoplay\('

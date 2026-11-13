@@ -25,7 +25,7 @@
     min-height: var(--control);
     margin: 0;
     border: 1px solid var(--cap-input-edge);
-    border-radius: var(--radius-m);
+    border-radius: var(--radius-control);
     background-color: var(--surface);
     color: var(--text);
     font-family: var(--ui);

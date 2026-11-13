@@ -1,6 +1,6 @@
 {
   "baseline": {
-    "measured_at": "3425b1f",
+    "measured_at": "3dcfc1b",
     "knip": {},
     "jscpd": {
       "clones": 85,
@@ -13,13 +13,13 @@
       "lines": 0
     },
     "tests": {
-      "files": 220,
-      "cases": 1912
+      "files": 218,
+      "cases": 1909
     },
     "comments": {
-      "lines": 13308,
-      "code": 149288,
-      "percentage": 8.18
+      "lines": 13258,
+      "code": 148327,
+      "percentage": 8.2
     }
   }
 }
