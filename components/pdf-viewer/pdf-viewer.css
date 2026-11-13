@@ -43,10 +43,6 @@
     border: 1px solid var(--line);
     border-radius: var(--radius-m);
     background: var(--surface);
-    &:focus-visible {
-      outline: var(--focus-width) solid var(--ring);
-      outline-offset: 2px;
-    }
     & canvas {
       display: block;
       max-inline-size: 100%;
