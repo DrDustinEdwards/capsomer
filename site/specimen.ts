@@ -5,6 +5,8 @@ import "../css/fonts.css";
 import "@fontsource-variable/source-serif-4/index.css";
 import "../css/tokens.css";
 import "../css/base.css";
+import "../css/layout.css";
+import "../css/text.css";
 import "../css/prose.css";
 import "./specimen.css";
 
