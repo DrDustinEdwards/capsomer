@@ -7,7 +7,7 @@ parts: [css, behavior, react]
 tool: native + React (composes table, select, panel, field, row list, status and empty)
 states: [both engines ready with spend, the API for a few days with the subscription not connected and nothing spent]
 added: 0.98.0
-updated: 0.98.0
+updated: 0.146.0
 source: Carrel, app/routes/ai.tsx (the status line, the engine table, the spend panel and the action that reads the form) and app/lib/ai-engine.server.ts (FEATURES, the settings' shape); site-runtime ai-engine.mjs (EngineSettings, the engines and the prices).
 replaces:
   - 'className="app-engine-(status|table)[ "]'
@@ -26,10 +26,12 @@ import { settingsFromForm } from "capsomer/behavior/ai-engine-settings";
   models={models}
   jobs={FEATURES}
   modelOptions={MODELS}
+  efforts={efforts}
+  effortOptions={EFFORTS}
   ready={{ subscription: !routineMissing, api: !apiKeyMissing }}
   readyNote="Both are secrets, set where the app is deployed."
   spentMicros={spent}
-  usage={usage.map((u) => ({ job: u.feature, calls: u.calls, micros: u.micros }))}
+  usage={usage.map((u) => ({ job: u.feature, effort: u.effort, calls: u.calls, micros: u.micros }))}
   Form={Form}
   pending={busy}
 />

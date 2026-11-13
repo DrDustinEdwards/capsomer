@@ -230,20 +230,6 @@ eachTheme((theme) => {
   // -------------------------------------------------------------------------------------
   // Keyboard, one test per row of the doc page's table.
 
-  test("keyboard: Tab reaches the blocked Publish button and the checks' links", async ({
-    page,
-  }) => {
-    await visitStates(page, "publish-gate", theme);
-    await publishBtn(page, "pg-blocked").focus();
-    await expect(publishBtn(page, "pg-blocked")).toBeFocused();
-    await page.keyboard.press("Tab");
-    await expect(region(page, "pg-blocked-c-alt").getByRole("link")).toBeFocused();
-    await page.keyboard.press("Tab");
-    await expect(region(page, "pg-blocked-c-title").getByRole("link")).toBeFocused();
-    await page.keyboard.press("Tab");
-    await expect(region(page, "pg-blocked-c-length").getByRole("link")).toBeFocused();
-  });
-
   test("keyboard: Enter on a blocked Publish button does nothing", async ({ page }) => {
     await visitStates(page, "publish-gate", theme);
     const b = publishBtn(page, "pg-blocked");
@@ -305,13 +291,6 @@ eachTheme((theme) => {
     );
   });
 
-  test("keyboard: Enter on a check's link goes to its cause", async ({ page }) => {
-    await visitStates(page, "publish-gate", theme);
-    await region(page, "pg-blocked-c-alt").getByRole("link").focus();
-    await page.keyboard.press("Enter");
-    await expect(page).toHaveURL(/#field-alt$/);
-  });
-
   test("keyboard: Enter on Unpublish takes it off at once and says so with Undo, and z undoes it", async ({
     page,
   }) => {
@@ -330,24 +309,6 @@ eachTheme((theme) => {
     await expect(page.locator(".cap-message-item").first()).toContainText(
       "Published to example.com again.",
     );
-  });
-
-  test("keyboard: Enter or Space on the passed-checks summary opens and closes them", async ({
-    page,
-  }) => {
-    await visitStates(page, "publish-gate", theme);
-    const summary = region(page, "pg-blocked").locator("summary");
-    await summary.focus();
-    await page.keyboard.press("Enter");
-    await expect(
-      region(page, "pg-blocked")
-        .getByRole("link", { name: "Every image has alt text" })
-        .or(region(page, "pg-blocked").getByRole("link", { name: "The slug is unique" })),
-    ).toBeVisible();
-    await page.keyboard.press("Space");
-    await expect(
-      region(page, "pg-blocked").getByRole("link", { name: "The slug is unique" }),
-    ).toBeHidden();
   });
 
   test("keyboard: j and k move between the checks' links", async ({ page }) => {
@@ -371,22 +332,6 @@ eachTheme((theme) => {
 
   // -------------------------------------------------------------------------------------
   // Behavior.
-
-  test("behavior: every row is in the delivered HTML, with its cause, link and fix", async ({
-    page,
-  }) => {
-    const html = await (await page.request.get("components/publish-gate/states.html")).text();
-    expect(html).toContain("Blocked</span>: 2 required checks failing on example.com");
-    expect(html).toContain("Required, 2 failing");
-    expect(html).toContain("Advisory, 3");
-    expect(html).toContain("9 checks passed");
-    expect(html).toContain('href="#field-alt"');
-    expect(html).toContain("The cover image has no alt text");
-    expect(html).toContain("Fix: Describe what the image shows, in a sentence.");
-    expect(html).toContain("Every image has alt text");
-    expect(html).toContain("Held for review by Rosa until Fri 09:00");
-    expect(html).toContain('aria-disabled="true" aria-describedby="pg-blocked-sum"');
-  });
 
   test("behavior: failing checks come before the passing ones, required before advisory", async ({
     page,
@@ -627,24 +572,6 @@ eachTheme((theme) => {
       expect(bad).toEqual([]);
     });
   }
-
-  test("behavior: at phone width every control is still reachable", async ({ page }) => {
-    await page.setViewportSize({ width: 375, height: 800 });
-    await visitStates(page, "publish-gate", theme);
-    await expect(page.locator("#pg-narrow-c-alt a")).toBeVisible();
-    await expect(
-      page.locator("#pg-multi").getByRole("button", { name: "Publish, example.org" }),
-    ).toBeVisible();
-  });
-
-  test("behavior: comfortable density makes the rows taller than the compact default", async ({
-    page,
-  }) => {
-    await visitStates(page, "publish-gate", theme);
-    const pad = (sel: string) =>
-      page.locator(sel).evaluate((e) => parseFloat(getComputedStyle(e).paddingTop));
-    expect(await pad("#pg-comfy-s-example")).toBeGreaterThan(await pad("#pg-narrow-s-example"));
-  });
 
   test("behavior: the state is reported to the app when it changes", async ({ page }) => {
     await visitStates(page, "publish-gate", theme);

@@ -32,12 +32,12 @@ import {
   isCollapseKey,
   jumpTarget,
 } from "./admin-shell.ts";
-import { FAMILY_APPS, FIRST_PAGE, FOXHOUND_MARKS, OWNER, type FamilyAppId } from "./apps.tsx";
+import { FAMILY_APPS, FIRST_PAGE, OWNER, type FamilyAppId } from "./apps.tsx";
 
 export type { LinkProps, FamilyAppId, HeaderExtra, HeaderLogo, HeaderSwitcher };
 export { ACCESS_LOGOUT, currentEntryId, startPageTransition } from "./admin-shell.ts";
 export { AdminErrorView, type AdminErrorViewProps } from "./admin-error.react.tsx";
-export { FAMILY_APPS, FIRST_PAGE, FOXHOUND_MARKS, OWNER };
+export { FAMILY_APPS, FIRST_PAGE, OWNER };
 
 // One of the current app's pages. `group` puts consecutive entries under one label.
 export interface AdminEntry {

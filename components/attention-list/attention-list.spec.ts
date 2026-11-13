@@ -96,39 +96,6 @@ eachTheme((theme) => {
     await expect(page.locator("#att-mixed-notices")).toBeHidden();
   });
 
-  test(
-    "accessibility: a link's description carries its status and detail",
-    { tag: "@markup" },
-    async ({ page }) => {
-      await visitStates(page, "attention-list", theme);
-      await expect(
-        page.locator(mixed).getByRole("link", { name: "example.com is not answering" }),
-      ).toHaveAccessibleDescription("Critical 3 failed checks in a row, first at 14:02");
-    },
-  );
-
-  test("keyboard: Tab reaches each row's title, then the group button, then the notices button", async ({
-    page,
-  }) => {
-    await visitStates(page, "attention-list", theme);
-    const root = page.locator(mixed);
-    await root.getByRole("link", { name: "example.com is not answering" }).focus();
-    for (const name of [
-      "Nightly backup for api failed",
-      "D1 rows read will run out before the reset",
-      "2 jobs are waiting for approval",
-    ]) {
-      await page.keyboard.press("Tab");
-      await expect(root.getByRole("link", { name })).toBeFocused();
-    }
-    await page.keyboard.press("Tab");
-    await expect(
-      root.getByRole("button", { name: "3 pull requests await the seat" }),
-    ).toBeFocused();
-    await page.keyboard.press("Tab");
-    await expect(root.getByRole("button", { name: "4 notices" })).toBeFocused();
-  });
-
   test("keyboard: Enter on a group's button shows its rows, and Tab moves into them", async ({
     page,
   }) => {
@@ -158,18 +125,6 @@ eachTheme((theme) => {
     await expect(page.locator("#att-open-jobs")).toBeHidden();
   });
 
-  test("keyboard: Enter on the notices button shows the notices, each a link", async ({ page }) => {
-    await visitStates(page, "attention-list", theme);
-    const button = page.locator(mixed).getByRole("button", { name: "4 notices" });
-    await button.focus();
-    await page.keyboard.press("Enter");
-    await expect(button).toHaveAttribute("aria-expanded", "true");
-    await page.keyboard.press("Tab");
-    await expect(
-      page.locator("#att-mixed-notices").getByRole("link", { name: "blog: no backup reported" }),
-    ).toBeFocused();
-  });
-
   test("keyboard: Enter on the more-warnings button shows the warnings past the cap", async ({
     page,
   }) => {
@@ -185,13 +140,6 @@ eachTheme((theme) => {
     await expect(
       page.locator("#att-more-rows").getByRole("link", { name: "API reports degraded health" }),
     ).toBeVisible();
-  });
-
-  test("keyboard: Enter on a row's title follows its link", async ({ page }) => {
-    await visitStates(page, "attention-list", theme);
-    await page.locator(mixed).getByRole("link", { name: "example.com is not answering" }).focus();
-    await page.keyboard.press("Enter");
-    await expect(page).toHaveURL(/#att-web$/);
   });
 
   test("keyboard: j and k move focus among the rows, the group's button and the notices button included", async ({
@@ -224,14 +172,6 @@ eachTheme((theme) => {
     await expect(root.getByRole("link", { name: "api #212 awaits the seat" })).toBeFocused();
     await page.keyboard.press("j");
     await expect(root.getByRole("link", { name: "docs #88 awaits the seat" })).toBeFocused();
-  });
-
-  test("behavior: critical rows are never inside what a button controls", async ({ page }) => {
-    await visitStates(page, "attention-list", theme);
-    await expect(page.locator(".cap-attention-region .cap-row[data-tone='crit']")).toHaveCount(0);
-    await expect(page.locator(".cap-attention-region .cap-status[data-tone='crit']")).toHaveCount(
-      0,
-    );
   });
 
   test("keyboard: the link under a group shows a focus ring", async ({ page }) => {

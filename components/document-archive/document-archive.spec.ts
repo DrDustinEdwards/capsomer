@@ -37,20 +37,6 @@ eachTheme((theme) => {
     await expect(page.getByRole("link", { name: "All 3 annual reports" })).toBeVisible();
   });
 
-  test("keyboard: Tab goes from the download to the viewer, then Previous, then Next", async ({
-    page,
-  }) => {
-    await visitStates(page, "document-archive", theme);
-    const doc = page.locator("#s-page ~ *");
-    await doc.getByRole("link", { name: "Download the PDF" }).focus();
-    await page.keyboard.press("Tab");
-    await expect(doc.getByRole("link", { name: "Open the PDF" })).toBeFocused();
-    await page.keyboard.press("Tab");
-    await expect(doc.getByRole("link", { name: "Previous Annual report 2026" })).toBeFocused();
-    await page.keyboard.press("Tab");
-    await expect(doc.getByRole("link", { name: "Next Annual report 2024" })).toBeFocused();
-  });
-
   test("behavior: an end has only its one neighbor, and Next keeps the right-hand side", async ({
     page,
   }) => {

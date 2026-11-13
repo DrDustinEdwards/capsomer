@@ -1207,3 +1207,48 @@
     }
   }
 }
+
+/* A catalog in the manual (capsomer/catalog.css): beside the results, the facets sit in a ruled box under a dark
+   strip named "Filter", as the checklist card names itself; the facet names, the bar's field labels and the
+   table's head are mono capitals, as the form boxes' labels; each group's heading is large over a heavy rule. On a
+   phone the facets are the catalog's tray, which keeps its own head, and a group's heading over cards keeps
+   catalog.css's compact spacing. Each selector is more specific than the catalog.css rule it changes, so it wins
+   in the same layer whatever order the two files load in. */
+@layer cap.components {
+  @container cap-catalog (min-width: 56rem) {
+    .cap-catalog .cap-catalog-filters {
+      padding: var(--space-5);
+      border: var(--line-w) solid var(--text);
+    }
+
+    .cap-catalog .cap-catalog-filters::before {
+      content: "Filter" / "";
+      margin: calc(-1 * var(--space-5)) calc(-1 * var(--space-5)) 0;
+      padding: var(--space-3) var(--space-5);
+      background: var(--sign);
+      color: var(--on-sign);
+      font: var(--weight-bold) var(--mono-size) / var(--leading-compact) var(--mono);
+      letter-spacing: var(--tracking-sign);
+      text-transform: uppercase;
+    }
+  }
+
+  .cap-catalog :is(.cap-catalog-facet > legend, .cap-catalog-bar .cap-field-label, .cap-table thead th) {
+    color: var(--muted);
+    font: var(--weight-medium) var(--fs-label) / var(--leading-relaxed) var(--mono);
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+  }
+
+  .cap-catalog .cap-table thead th {
+    border-block-end: var(--line-w-thick) solid var(--text);
+  }
+
+  .cap-catalog .cap-catalog-body .cap-table tbody tr.cap-catalog-group > th {
+    padding-block-start: var(--space-8);
+    border-block-end: var(--line-w-thick) solid var(--text);
+    font-size: var(--title-2);
+    font-weight: var(--weight-bold);
+    letter-spacing: var(--tracking-tight);
+  }
+}

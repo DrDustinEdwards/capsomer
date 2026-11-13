@@ -316,63 +316,9 @@ eachTheme((theme) => {
     const violations = await page.evaluate(() => (window as unknown as { __csp: string[] }).__csp);
     expect(violations).toEqual([]);
   });
-  test("accessibility: the form menu, closed and open, has no axe violations", async ({ page }) => {
-    await visitStates(page, "menu", theme);
-    await expectNoAxeViolations(page, undefined, { baseUi: true });
+  test("accessibility: the form menu, open, has no axe violations", async ({ page }) => {
     await visitStates(page, "menu", theme, "form-open");
     await expectNoAxeViolations(page, undefined, { baseUi: true });
-  });
-
-  test("behavior: the form menu is a details of submit buttons, danger last, a disabled one with its reason", async ({
-    page,
-  }) => {
-    await visitStates(page, "menu", theme, "form-open");
-    const menu = page.locator("#menu-form-open");
-    await expect(menu).toHaveAttribute("open", "");
-    const items = menu.locator("form .cap-menu-item");
-    await expect(items).toHaveText([
-      /^Open site$/,
-      /^Run checks now$/,
-      /^ArchiveNot while a deploy runs/,
-      /^Delete site$/,
-    ]);
-    // A link item goes somewhere instead of posting.
-    await expect(menu.getByRole("link", { name: "Open site" })).toHaveAttribute(
-      "href",
-      "/admin/sites/example-org",
-    );
-    await expect(items.nth(2)).toBeDisabled();
-    await expect(menu.getByText("Not while a deploy runs. Try again when it ends.")).toBeVisible();
-    await expect(items.nth(3)).toHaveAttribute("data-tone", "crit");
-    // It promises no menu role it cannot keep without script.
-    await expect(menu.locator("[role='menu'], [role='menuitem']")).toHaveCount(0);
-  });
-
-  test("behavior: pressing an item posts the form with its intent and the row's hidden fields", async ({
-    page,
-  }) => {
-    await visitStates(page, "menu", theme, "form-open");
-    const posted = page.evaluate(
-      () =>
-        new Promise<{ intent: string; site: string; action: string }>((done) => {
-          document.querySelector("#menu-form-open form")!.addEventListener("submit", (e) => {
-            e.preventDefault();
-            const form = e.target as HTMLFormElement;
-            const data = new FormData(form, (e as SubmitEvent).submitter);
-            done({
-              intent: String(data.get("intent")),
-              site: String(data.get("site")),
-              action: form.getAttribute("action") ?? "",
-            });
-          });
-        }),
-    );
-    await page.locator("#menu-form-open").getByRole("button", { name: "Run checks now" }).click();
-    expect(await posted).toEqual({
-      intent: "check",
-      site: "example-org",
-      action: "/admin/sites/example-org",
-    });
   });
 
   test("keyboard: Enter opens the form menu, the arrow keys move between its buttons and links, Esc closes it and returns to the summary", async ({

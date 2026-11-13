@@ -24,6 +24,14 @@ const MODELS = [
   { value: "standard", label: "Standard ($3 in / $15 out per million tokens)" },
   { value: "deep", label: "Deep ($15 in / $75 out per million tokens)" },
 ];
+const EFFORTS = [
+  { value: "", label: "The job's own default" },
+  { value: "low", label: "Low" },
+  { value: "medium", label: "Medium" },
+  { value: "high", label: "High" },
+  { value: "xhigh", label: "Extra high" },
+  { value: "max", label: "Max" },
+];
 const Quiet: FormComponent = (props) => <form {...props} onSubmit={(e) => e.preventDefault()} />;
 
 const mounts: Record<string, () => ReactElement> = {
@@ -38,11 +46,15 @@ const mounts: Record<string, () => ReactElement> = {
       models={{ social: "fast" }}
       jobs={JOBS}
       modelOptions={MODELS}
+      efforts={{ continue: "high" }}
+      effortOptions={EFFORTS}
       ready={{ subscription: true, api: true }}
       spentMicros={4_180_000}
       usage={[
         { job: "social", calls: 42, micros: 3_900_000 },
         { job: "seo", calls: 3, micros: 280_000 },
+        { job: "continue", effort: "high", calls: 2, micros: 610_000 },
+        { job: "continue", effort: "max", calls: 1, micros: 940_000 },
       ]}
       Form={Quiet}
     />
@@ -58,6 +70,8 @@ const mounts: Record<string, () => ReactElement> = {
       models={{}}
       jobs={JOBS.slice(0, 1)}
       modelOptions={MODELS}
+      efforts={{}}
+      effortOptions={EFFORTS}
       ready={{ subscription: false, api: true }}
       readyNote="Until the subscription's routine is connected, Subscription drafts nothing and Automatic uses the API."
       spentMicros={0}

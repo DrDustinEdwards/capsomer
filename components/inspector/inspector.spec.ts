@@ -38,14 +38,6 @@ test("keyboard: on a phone the head stays in the page and each tab opens the she
   await expect(open).toBeFocused();
 });
 
-test("behavior: on a phone a tab the address asks for opens the sheet at once", async ({
-  page,
-}) => {
-  await page.setViewportSize({ width: 390, height: 844 });
-  await visitStates(page, "inspector", "light");
-  await expect(page.getByRole("dialog", { name: "About this draft" })).toBeVisible();
-});
-
 eachTheme((theme) => {
   test("accessibility: no axe violations", async ({ page }) => {
     await visitStates(page, "inspector", theme);

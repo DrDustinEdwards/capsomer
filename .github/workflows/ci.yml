@@ -30,9 +30,14 @@ concurrency:
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
-  check:
+  # Which browser tests to run (scripts/ci-specs.mjs): every one on main, and on a pull request the ones its change reaches.
+  pick:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 5
+    outputs:
+      mode: ${{ steps.pick.outputs.mode }}
+      specs: ${{ steps.pick.outputs.specs }}
+      sweep: ${{ steps.pick.outputs.sweep }}
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
@@ -42,11 +47,116 @@ jobs:
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version-file: .node-version
+      - name: Pick the browser tests
+        id: pick
+        env:
+          EVENT: ${{ github.event_name }}
+        run: |
+          if [ "$EVENT" = pull_request ]; then node scripts/ci-specs.mjs; else echo "mode=full" | tee -a "$GITHUB_OUTPUT"; fi
+
+  # The keyboard and accessibility tests and the sweep, in four shards run side by side
+  # (playwright.dev/docs/test-sharding). Each shard repeats about a minute of setup (install, build, browser); the full
+  # run took 15 to 22 minutes in one job. fullyParallel (playwright.config.ts) splits by test, so the shards are even.
+  # Each writes a blob report, which `check` merges into the one results.json the site reads.
+  browser:
+    needs: pick
+    if: needs.pick.outputs.mode != 'none'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3, 4]
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version-file: .node-version
+          cache: npm
+      - name: Install
+        # Scripts run (no --ignore-scripts) so npm builds Enarratio's dist, which comes from GitHub (not yet on npm).
+        run: npm ci
+      - name: Build the behavior modules and wrappers
+        run: npm run build
+      - name: Build the site and every states page
+        run: npm run site
+      # Headless runs use Chromium's headless shell, so only it is installed (playwright.dev/docs/browsers,
+      # --only-shell). Not cached and no container: Playwright's CI guide advises against caching the
+      # browsers (restoring takes about as long as downloading, and the system dependencies cannot be
+      # cached), and its image (mcr.microsoft.com/playwright, about 950 MB compressed, every browser)
+      # pulls slower than this step's 20 s download.
+      - name: Install Chromium
+        # --with-deps installs Chromium's system packages through apt. When the Ubuntu mirror is unreachable
+        # (2026-11-11: security.ubuntu.com did not resolve for hours), the browser alone is installed: the
+        # ubuntu-latest image already carries Chrome's libraries and its own fonts.
+        run: |
+          npx playwright install --with-deps --only-shell chromium || {
+            echo "::warning::apt could not install Chromium's system packages; installing the browser alone"
+            npx playwright install --only-shell chromium
+          }
+      - name: Keyboard and accessibility tests and the sweep, both themes (shard ${{ matrix.shard }} of 4)
+        env:
+          SPECS: ${{ needs.pick.outputs.specs }}
+          CAPSOMER_SWEEP: ${{ needs.pick.outputs.sweep }}
+          SHARD: ${{ matrix.shard }}
+        run: |
+          # SPECS is a space-separated list of paths (empty runs every spec), split on purpose. A small pick can leave
+          # a shard with no test, which passes.
+          # shellcheck disable=SC2086
+          npx playwright test --workers=100% --shard="$SHARD/4" --pass-with-no-tests --reporter=list,blob $SPECS
+      - name: Keep the shard's report
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: blob-report-${{ matrix.shard }}
+          path: blob-report/
+          retention-days: 1
+      - name: Keep the shard's forced-colors screenshots
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: forced-colors-${{ matrix.shard }}
+          path: test-results/forced-colors/
+          retention-days: 1
+          if-no-files-found: ignore
+
+  # The checks that need no browser, then the shards' reports merged into test-results/results.json. It fails when a
+  # shard failed, so this one job stands for the whole run.
+  check:
+    needs: [pick, browser]
+    # Runs when a shard failed or was skipped, to report and fail; not when the run was canceled (a newer push).
+    if: ${{ !cancelled() }} # codespell:ignore (GitHub Actions function name)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+          # The merge commit and its base-branch parent, which the changeset step diffs.
+          fetch-depth: 2
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version-file: .node-version
           cache: npm
       - name: Install
         # Scripts run (no --ignore-scripts) so npm builds Enarratio's dist, which comes from GitHub
         # (not yet on npm) and is a dev dependency for test/unit/enarratio-theme.test.mjs only.
         run: npm ci
+      # Merging and releasing are two steps (.changeset/README.md): a pull request adds a changeset and leaves the version
+      # alone; the release pull request sets the version and uses up every changeset. Renovate's bumps release nothing.
+      - name: A changeset, or the release itself
+        if: github.event_name == 'pull_request' && !startsWith(github.head_ref, 'renovate/')
+        run: |
+          was=$(git show HEAD^1:package.json | node -p 'JSON.parse(require("fs").readFileSync(0, "utf8")).version')
+          now=$(node -p 'require("./package.json").version')
+          if [ "$was" = "$now" ]; then
+            npx changeset status --since=HEAD^1
+          else
+            left=$(find .changeset -name '*.md' ! -name README.md)
+            [ -z "$left" ] || { echo "::error::The version moved from $was to $now, but changesets are left: $left. A release is \`npx changeset version\` on main, alone."; exit 1; }
+          fi
       - name: No high advisory in what the package installs
         run: npm audit --omit=dev --audit-level=high
       - name: Palette, scales, unit tests, types
@@ -60,47 +170,30 @@ jobs:
         run: npm run palette-report -- --summary
       - name: Build the behavior modules and wrappers
         run: npm run build
-      - name: Build the site and every states page
-        run: npm run site
-      - name: Pick the browser tests
-        id: pick
-        env:
-          EVENT: ${{ github.event_name }}
-        run: |
-          if [ "$EVENT" = pull_request ]; then node scripts/ci-specs.mjs; else echo "mode=full" | tee -a "$GITHUB_OUTPUT"; fi
-      # Headless runs use Chromium's headless shell, so only it is installed (playwright.dev/docs/browsers,
-      # --only-shell). Not cached and no container: Playwright's CI guide advises against caching the
-      # browsers (restoring takes about as long as downloading, and the system dependencies cannot be
-      # cached), and its image (mcr.microsoft.com/playwright, about 950 MB compressed, every browser)
-      # pulls slower than this step's 17 s download.
-      - name: Install Chromium
-        if: steps.pick.outputs.mode != 'none'
-        # --with-deps installs Chromium's system packages through apt. When the Ubuntu mirror is unreachable
-        # (2026-11-11: security.ubuntu.com did not resolve for hours), the browser alone is installed: the
-        # ubuntu-latest image already carries Chrome's libraries and its own fonts.
-        run: |
-          npx playwright install --with-deps --only-shell chromium || {
-            echo "::warning::apt could not install Chromium's system packages; installing the browser alone"
-            npx playwright install --only-shell chromium
-          }
-      # One worker per vCPU, with tests, not files, shared out (fullyParallel, playwright.config.ts).
-      # Not sharded (playwright.dev/docs/test-sharding): each shard would repeat about a minute of
-      # setup (install, build, browser) and a merge job, for a full run now estimated at 10 to 13 minutes.
-      - name: Keyboard and accessibility tests and the sweep, both themes
-        if: steps.pick.outputs.mode != 'none'
-        env:
-          SPECS: ${{ steps.pick.outputs.specs }}
-          CAPSOMER_SWEEP: ${{ steps.pick.outputs.sweep }}
-        run: |
-          # SPECS is a space-separated list of paths (empty runs every spec), split on purpose.
-          # shellcheck disable=SC2086
-          npx playwright test --workers=100% $SPECS
       - name: Size (warns only)
         if: always()
         run: npm run size
       - name: Token check (warns only)
         if: always()
         run: npm run token-check
+      - name: Fetch the shards' reports
+        if: always() && needs.browser.result != 'skipped'
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          pattern: blob-report-*
+          path: blob-reports/
+          merge-multiple: true
+      - name: Fetch the shards' forced-colors screenshots
+        if: always() && needs.browser.result != 'skipped'
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          pattern: forced-colors-*
+          path: test-results/forced-colors/
+          merge-multiple: true
+      # The config's reporters (list, and json into test-results/results.json) over every shard's results.
+      - name: Merge the shards' reports
+        if: always() && needs.browser.result != 'skipped'
+        run: npx playwright merge-reports --config playwright.config.ts blob-reports/
       - name: Summarize the results
         if: always()
         run: node bin/capsomer.mjs site-data --results-out test-results/summary.json
@@ -111,6 +204,13 @@ jobs:
           name: test-results
           path: test-results/
           retention-days: 30
+      - name: Every browser shard passed
+        env:
+          PICK: ${{ needs.pick.result }}
+          BROWSER: ${{ needs.browser.result }}
+        run: |
+          echo "pick: $PICK, browser: $BROWSER"
+          [ "$PICK" = success ] && { [ "$BROWSER" = success ] || [ "$BROWSER" = skipped ]; }
 
   # Capsomer's own page weight and line counts against no-bloat/baseline.json (no-bloat/README.md), a report that never
   # fails. Its own job because the ruleset requires a check named `weight`; Knip and jscpd are pr.yml's ratchet
@@ -146,7 +246,7 @@ jobs:
     concurrency:
       group: deploy
       cancel-in-progress: false
-    uses: DrDustinEdwards/devkit/.github/workflows/worker-deploy.yml@90efbee8e78a1b07b334d5058d19cb0e2a9828d0 # v0.48.0
+    uses: DrDustinEdwards/devkit/.github/workflows/worker-deploy.yml@d580173e5881cb589a95ef48e23c4e633233f1ac # v0.49.0
     with:
       worker-name: capsomer
       health-url: https://capsomer.dustinedwards.info/health
@@ -177,5 +277,7 @@ jobs:
           origin=https://capsomer.dustinedwards.info
           key=$(sed -n 's/^const INDEXNOW_KEY = "\(.*\)";$/\1/p' site/seo.ts)
           curl -sf "$origin/sitemap.xml" -o "$RUNNER_TEMP/sitemap.xml"
-          prelum=$(node -p "const p = require('./package.json'); (p.dependencies ?? {})['@drdustinedwards/site-helpers'] ?? p.devDependencies['@drdustinedwards/site-helpers']")
-          npx -y -p "$prelum" prelum-indexnow --origin "$origin" --key "$key" --sitemap "$RUNNER_TEMP/sitemap.xml"
+          pin() { node -p "const p = require('./package.json'); (p.dependencies ?? {})['$1'] ?? p.devDependencies['$1']"; }
+          # Prelum's peer site-runtime is on GitHub, not npm: npx would look for it on the registry (404), so it is
+          # installed from Capsomer's own pin beside Prelum.
+          npx -y -p "$(pin @dustinedwards/site-runtime)" -p "$(pin @drdustinedwards/site-helpers)" prelum-indexnow --origin "$origin" --key "$key" --sitemap "$RUNNER_TEMP/sitemap.xml"
