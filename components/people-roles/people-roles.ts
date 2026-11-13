@@ -5,7 +5,7 @@
 // allowed) live in the app's server, in site-runtime's `./members`; this module only shows
 // what the server already decided.
 
-import { plural } from "../hooks/hooks.ts";
+import { plural } from "@drdustinedwards/site-helpers/text";
 import { confirm } from "../confirm-dialog/confirm-dialog.ts";
 import { enhance as enhanceFields } from "../field/field.ts";
 import { enhance as enhanceMenus } from "../menu/menu.ts";

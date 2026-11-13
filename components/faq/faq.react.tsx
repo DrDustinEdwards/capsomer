@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { Disclosure } from "../disclosure/disclosure.react.tsx";
 
 // The shape Prelum's faqPage(faqs) takes, so one list feeds the page and its FAQPage JSON-LD.
 export interface FaqItem {
@@ -48,19 +49,16 @@ export function Faq({
     <ul className="cap-faq" data-variant={variant === "cards" ? "cards" : undefined}>
       {items.map((item, i) => (
         <li key={item.id ?? item.question} id={item.id}>
-          <details
-            className="cap-disclosure"
-            data-variant={variant === "cards" ? "card" : "accordion"}
+          <Disclosure
+            variant={variant === "cards" ? "card" : "accordion"}
             name={name}
-            open={openFirst && i === 0 ? true : undefined}
+            defaultOpen={openFirst && i === 0}
+            summary={<H className="cap-faq-question">{item.question}</H>}
           >
-            <summary>
-              <H className="cap-faq-question">{item.question}</H>
-            </summary>
-            <div className="cap-disclosure-body cap-faq-answer">
+            <div className="cap-faq-answer">
               <Answer answer={item.answer} />
             </div>
-          </details>
+          </Disclosure>
         </li>
       ))}
     </ul>

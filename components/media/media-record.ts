@@ -74,10 +74,6 @@ export interface MediaFields {
 export const tileId = (key: string): string =>
   `tile-${key.replace(/[^a-z0-9]+/gi, "-").toLowerCase()}`;
 
-// A file's size in words: the format module's formatBytes, so a size reads the same in the
-// library, the drop zone and every site ("412 kB", "2.4 MB").
-export const byteSize = formatBytes;
-
 export const LARGE_BYTES = 1024 * 1024;
 
 // The state of a file's alt text. Missing and decorative are different: missing is a to-do,
@@ -124,7 +120,7 @@ export function describeRecord(
   if (r.state === "uploading")
     return `${kind}, uploading${r.progress != null ? ` ${Math.round(r.progress)} percent` : ""}`;
   if (r.state === "failed") return `${kind}, upload failed${r.error ? `: ${r.error}` : ""}`;
-  return `${kind}, ${byteSize(r.bytes)}`;
+  return `${kind}, ${formatBytes(r.bytes)}`;
 }
 
 // The three things a person copies: the address, the Markdown, the HTML. An image goes in as an

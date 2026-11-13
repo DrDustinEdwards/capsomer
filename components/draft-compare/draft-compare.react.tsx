@@ -1,5 +1,5 @@
 import { useCleanId } from "../hooks/hooks.react.tsx";
-import { plural } from "../hooks/hooks.ts";
+import { plural } from "@drdustinedwards/site-helpers/text";
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
   enhance,
@@ -185,7 +185,7 @@ const MERGE_LABELS: MergeLabels = {
 export function mergeCountsText(plan: MergePlan): string {
   const choices = choicesOf(plan);
   const both = choices.filter((c) => c.changedBy === null).length;
-  const n = plural(choices.length, "difference", "differences");
+  const n = plural(choices.length, "difference");
   return plan.hasBase ? `${n}, ${both} changed on both` : n;
 }
 
@@ -258,7 +258,7 @@ export function DraftMerge({ plan, onApply, pending = false, labels, level = 3 }
           if (s.kind === "same") {
             return (
               <li key={i} className="cap-merge-same">
-                {plural(s.blocks.length, "passage", "passages")} the same on both
+                {plural(s.blocks.length, "passage")} the same on both
               </li>
             );
           }

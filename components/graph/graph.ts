@@ -4,8 +4,10 @@
 // dashed ring that marks it (a module in an import cycle). The drawing is aria-hidden: the page
 // puts the same facts in a table or list beside it, and the links are out of the tab order.
 import dagre from "@dagrejs/dagre";
-import { type Tone, glyphParts } from "../status/status.ts";
 import { escapeHtml as esc } from "@dustinedwards/site-runtime/html";
+import { ABSOLUTE } from "../link/link.ts";
+import { httpHref } from "../related-links/related-links.ts";
+import { type Tone, glyphParts } from "../status/status.ts";
 
 export interface GraphLine {
   tone: Exclude<Tone, "info">;
@@ -46,6 +48,14 @@ const CHAR = 7.4;
 const PAD = 14;
 const LINE = 18;
 
+// A box's address as the browser will read it (leading controls and spaces dropped, tabs and line
+// breaks removed, as the URL parser does), kept when it is a path or an http(s) address; null for
+// any other scheme (javascript:, data:), which draws the box without a link.
+function boxHref(href: string): string | null {
+  // oxlint-disable-next-line no-control-regex -- matching the control characters is the point: the URL parser drops them.
+  const bare = href.replace(/^[\u0000-\u0020]+/, "").replace(/[\t\n\r]/g, "");
+  return ABSOLUTE.test(bare) ? httpHref(bare) : bare;
+}
 const f = (n: number) => n.toFixed(1);
 
 interface Point {
@@ -131,7 +141,9 @@ export function graphSvg(o: GraphOptions): string {
     const ringWord = b.ring
       ? `<text class="cap-graph-ring-label" x="${f(x + n.width - 2)}" y="${f(y - 8)}" text-anchor="end">${esc(o.ringLabel ?? "cycle")}</text>`
       : "";
-    return `<a href="${esc(b.href)}" tabindex="-1"><g class="cap-graph-box" data-tone="${lines[0]?.tone ?? "nodata"}"${b.ring ? " data-ring" : ""}>${ring}<rect class="cap-graph-card" x="${f(x)}" y="${f(y)}" width="${n.width}" height="${n.height}" rx="6"/><text class="cap-graph-name" x="${f(x + PAD)}" y="${f(y + PAD + 9)}">${esc(b.label)}</text>${sub}${text}${ringWord}</g></a>`;
+    const box = `<g class="cap-graph-box" data-tone="${lines[0]?.tone ?? "nodata"}"${b.ring ? " data-ring" : ""}>${ring}<rect class="cap-graph-card" x="${f(x)}" y="${f(y)}" width="${n.width}" height="${n.height}" rx="6"/><text class="cap-graph-name" x="${f(x + PAD)}" y="${f(y + PAD + 9)}">${esc(b.label)}</text>${sub}${text}${ringWord}</g>`;
+    const href = boxHref(b.href);
+    return href === null ? box : `<a href="${esc(href)}" tabindex="-1">${box}</a>`;
   });
   // The frame is every box and every wire's points with a margin: dagre can route a wire outside
   // the size it reports.

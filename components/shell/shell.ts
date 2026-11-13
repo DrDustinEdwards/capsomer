@@ -1,21 +1,11 @@
 // The shell's behavior: the rail's collapse button, the remembered choice, the More sheet,
 // the density choice, and Esc to dismiss a collapsed rail's label (WCAG 1.4.13). No framework;
-// the React wrapper uses the same functions. readPref and writePref are shared with the theme
-// switch and the shortcuts, so they stay exported.
+// the React wrapper uses the same functions. Choices are kept with hooks' readStored and
+// writeStored.
 import { closeDialog, openDialog, wireDialog } from "../dialog/dialog.ts";
 import { readStored, writeStored } from "../hooks/hooks.ts";
 
 export const DEFAULT_PREF = "cap-rail";
-
-// A preference kept in this browser, through hooks.ts' storage: where storage is refused the
-// choice lasts for this page only.
-export function readPref(key: string): string | null {
-  return readStored(key);
-}
-
-export function writePref(key: string, value: string): void {
-  writeStored(key, value);
-}
 
 // Collapses or expands the rail of one shell, and keeps its toggle's state and name true.
 export function setRail(shell: HTMLElement, collapsed: boolean, remember = true): void {
@@ -28,7 +18,7 @@ export function setRail(shell: HTMLElement, collapsed: boolean, remember = true)
     if (label) label.textContent = collapsed ? "Expand menu" : "Collapse menu";
   }
   if (remember)
-    writePref(shell.dataset.capPref ?? DEFAULT_PREF, collapsed ? "collapsed" : "expanded");
+    writeStored(shell.dataset.capPref ?? DEFAULT_PREF, collapsed ? "collapsed" : "expanded");
 }
 
 export function toggleRail(shell: HTMLElement): void {
@@ -61,7 +51,7 @@ const isDensity = (v: string | null | undefined): v is Density =>
   v === "compact" || v === "comfortable";
 
 export function readDensity(key = DENSITY_PREF): Density | null {
-  const v = readPref(key);
+  const v = readStored(key);
   return isDensity(v) ? v : null;
 }
 
@@ -70,7 +60,7 @@ export function applyDensity(
   opts: { key?: string; remember?: boolean } = {},
 ): void {
   document.documentElement.setAttribute("data-density", choice);
-  if (opts.remember !== false) writePref(opts.key ?? DENSITY_PREF, choice);
+  if (opts.remember !== false) writeStored(opts.key ?? DENSITY_PREF, choice);
   document.dispatchEvent(new CustomEvent("cap-density", { detail: { choice } }));
 }
 
@@ -88,7 +78,7 @@ export function enhance(root: ParentNode = document): () => void {
     "[data-cap='shell']:not([data-cap-ready])",
   )) {
     shell.dataset.capReady = "";
-    const pref = readPref(shell.dataset.capPref ?? DEFAULT_PREF);
+    const pref = readStored(shell.dataset.capPref ?? DEFAULT_PREF);
     if (pref) setRail(shell, pref === "collapsed", false);
 
     const more = shell.querySelector<HTMLDialogElement>("dialog.cap-shell-more");

@@ -2,33 +2,17 @@
 // MediaData the library page renders), and one image uploaded with what the person said about it.
 // Both resolve or reject with an Error whose message says why, so the caller shows it as it is.
 import type { MediaData } from "../content/content.ts";
+import { ask, getAnswer } from "../data/data.ts";
+import { errorText } from "../dialog/dialog.ts";
 
 // The library page's own address for a JSON endpoint: "/projects/7/media/api" is the endpoint of
 // "/projects/7/media". Its links and its search form point there; the picker loads them in place.
 export const libraryOf = (endpoint: string): string => endpoint.replace(/\/api\/?$/, "");
 
-// One view of the library (`query` is the page's own "?q=...&tag=..."), as MediaData.
-export async function loadMediaView(
-  endpoint: string,
-  query = "",
-  signal?: AbortSignal,
-): Promise<MediaData> {
-  let response: Response;
-  try {
-    response = await fetch(`${endpoint}${query}`, {
-      headers: { accept: "application/json" },
-      signal,
-    });
-  } catch (thrown) {
-    throw new Error(thrown instanceof Error ? thrown.message : String(thrown));
-  }
-  const body = (await response.json().catch(() => null)) as
-    | (MediaData & { error?: undefined })
-    | { error?: string }
-    | null;
-  if (response.ok && body && "rows" in body) return body;
-  throw new Error((body && body.error) || `The library answered ${response.status}.`);
-}
+// One view of the library (`query` is the page's own "?q=...&tag=..."), as MediaData: data's
+// getAnswer read with ask, so a refusal rejects with the site's own words.
+export const loadMediaView = (endpoint: string, query = ""): Promise<MediaData> =>
+  ask(() => getAnswer<MediaData>(`${endpoint}${query}`));
 
 export interface UploadedImage {
   // What the content stores: the site's own address for the file (/media/<key>).
@@ -53,7 +37,7 @@ export async function uploadImage(
     else form.set("alt", image.alt);
     response = await fetch(endpoint, { method: "POST", body: form, signal });
   } catch (thrown) {
-    throw new Error(`Upload failed: ${thrown instanceof Error ? thrown.message : String(thrown)}`);
+    throw new Error(`Upload failed: ${errorText(thrown)}`);
   }
   const body = (await response.json().catch(() => ({}))) as {
     url?: string;

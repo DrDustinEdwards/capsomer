@@ -25,7 +25,7 @@ replaces:
   <li>
     <details class="cap-disclosure" data-variant="accordion" name="faq">
       <summary><h3 class="cap-faq-question">How long does an edit take?</h3></summary>
-      <div class="cap-disclosure-body cap-faq-answer"><p>Five business days.</p></div>
+      <div class="cap-disclosure-body"><div class="cap-faq-answer"><p>Five business days.</p></div></div>
     </details>
   </li>
 </ul>

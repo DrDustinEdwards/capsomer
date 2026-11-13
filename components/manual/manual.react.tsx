@@ -1,3 +1,4 @@
+import { Fragment, type ReactNode } from "react";
 import { patchDots, type PatchOptions } from "./manual.ts";
 import { Link } from "../link/link.react.tsx";
 
@@ -73,12 +74,31 @@ export interface SignTarget {
   href: string;
   title: string;
   label: string;
+  // Next's look on a first step that is not "next" (`data-variant="forward"`), as signsHtml's way.
+  forward?: boolean;
+  // rel values beside the way (external, nofollow).
+  rel?: string;
 }
 
 type Ways = SignTarget | readonly SignTarget[] | null | undefined;
 
 const list = (ways: Ways): readonly SignTarget[] =>
   Array.isArray(ways) ? ways : ways ? [ways as SignTarget] : [];
+
+// What a sign's link is given, for an app that draws its own links (no React Router).
+export interface SignLinkProps {
+  href: string;
+  className: string;
+  rel: string;
+  "data-variant"?: "forward";
+  children: ReactNode;
+}
+
+const routerSign = ({ href, children, ...rest }: SignLinkProps) => (
+  <Link to={href} {...rest}>
+    {children}
+  </Link>
+);
 
 export interface SignsProps {
   // The nav's name ("Parts of Field notes", "More in Guides").
@@ -87,19 +107,31 @@ export interface SignsProps {
   prev?: Ways;
   next?: Ways;
   className?: string;
+  // Draws each link. Default React Router's Link, with Capsomer's prefetch.
+  renderLink?: (props: SignLinkProps) => ReactNode;
 }
 
 // The manual's signs (`nav.cap-signs` of `a.cap-sign`, manual.md): a sign shows only the title,
 // and its kind is read, not shown, since the arrow says it. Renders nothing with no way on.
-export function Signs({ label, prev, next, className }: SignsProps) {
+export function Signs({ label, prev, next, className, renderLink = routerSign }: SignsProps) {
   const back = list(prev);
   const on = list(next);
   if (back.length === 0 && on.length === 0) return null;
   const sign = (target: SignTarget, rel: "prev" | "next") => (
-    <Link key={`${rel}:${target.href}`} className="cap-sign" rel={rel} to={target.href}>
-      <span className="cap-sr-only">{target.label}: </span>
-      {target.title}
-    </Link>
+    <Fragment key={`${rel}:${target.href}`}>
+      {renderLink({
+        href: target.href,
+        className: "cap-sign",
+        rel: target.rel ? `${rel} ${target.rel}` : rel,
+        ...(target.forward ? { "data-variant": "forward" as const } : {}),
+        children: (
+          <>
+            <span className="cap-sr-only">{target.label}: </span>
+            {target.title}
+          </>
+        ),
+      })}
+    </Fragment>
   );
   return (
     <nav className={className ? `cap-signs ${className}` : "cap-signs"} aria-label={label}>

@@ -8,12 +8,12 @@ import {
   type Direction,
   type MediaRecord,
   bands,
-  byteSize,
   describeRecord,
   flagsFor,
   nextTile,
   tileId,
 } from "./media.ts";
+import { formatBytes } from "../format/format.ts";
 
 // ---------------------------------------------------------------------------------------
 // MediaTile: one file. Renders exactly the contract in the doc page: the open link (the tile's
@@ -66,7 +66,7 @@ export function MediaTile({
       ? "Uploading"
       : item.state === "failed"
         ? "Not uploaded"
-        : [kind, byteSize(item.bytes)].filter(Boolean).join(" · ");
+        : [kind, formatBytes(item.bytes)].filter(Boolean).join(" · ");
   const body = (
     <>
       <span className="cap-media-thumb">

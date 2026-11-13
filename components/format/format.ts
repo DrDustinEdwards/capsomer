@@ -2,12 +2,6 @@
 // and a percent. One module, so "3 files", "2.4 MB" and "12%" read the same on every site.
 // Plain functions, no DOM: a server route, a behavior module and a React part all import them.
 
-// The noun alone for a count: "file" for 1, "files" for anything else (0, 2, 1.5, -1). Pass `many`
-// for an irregular plural or a phrase ("person", "people"; "check fails", "checks fail").
-export function pluralWord(n: number, one: string, many: string = `${one}s`): string {
-  return n === 1 ? one : many;
-}
-
 const BYTE_UNITS = ["kB", "MB", "GB", "TB"] as const;
 
 // A file size. Binary division (1 kB is 1,024 bytes), as Windows states a size and as every copy in

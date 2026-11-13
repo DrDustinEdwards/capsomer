@@ -1,6 +1,7 @@
 // htmlToBlocks: a body written as HTML (a sender's template, a model's draft) read into the email's Blocks, the only
 // shape renderEmail draws. Extracted from Foxhound (app/lib/email/templates.ts) in 0.132.0, so any site that lets
 // someone write an email body in HTML gets the same reader. Pure: no DOM, so it runs in a Worker.
+import { htmlAttributes, unescapeHtml } from "@dustinedwards/site-runtime/html";
 import { checkUrl, type Block } from "./email.ts";
 
 // A small reader for the HTML a site's senders and a model write, not a
@@ -90,104 +91,13 @@ const VOID_TAGS = new Set([
   "track",
 ]);
 const TAG = /<(\/?)([a-zA-Z][a-zA-Z0-9-]*)((?:[^>"']|"[^"]*"|'[^']*')*?)(\/?)>/g;
-const ATTR = /([^\s"'=<>/`]+)(?:\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'=<>`]+)))?/g;
-
-// ---- entities --------------------------------------------------------------------
-
-const LATIN1_A0 =
-  "nbsp iexcl cent pound curren yen brvbar sect uml copy ordf laquo not shy reg macr " +
-  "deg plusmn sup2 sup3 acute micro para middot cedil sup1 ordm raquo frac14 frac12 frac34 iquest " +
-  "Agrave Aacute Acirc Atilde Auml Aring AElig Ccedil Egrave Eacute Ecirc Euml Igrave Iacute Icirc Iuml " +
-  "ETH Ntilde Ograve Oacute Ocirc Otilde Ouml times Oslash Ugrave Uacute Ucirc Uuml Yacute THORN szlig " +
-  "agrave aacute acirc atilde auml aring aelig ccedil egrave eacute ecirc euml igrave iacute icirc iuml " +
-  "eth ntilde ograve oacute ocirc otilde ouml divide oslash ugrave uacute ucirc uuml yacute thorn yuml";
-
-const NAMED: Record<string, string> = {
-  amp: "&",
-  AMP: "&",
-  lt: "<",
-  LT: "<",
-  gt: ">",
-  GT: ">",
-  quot: '"',
-  QUOT: '"',
-  apos: "'",
-  COPY: "\u00a9",
-  REG: "\u00ae",
-  trade: "\u2122",
-  lsquo: "\u2018",
-  rsquo: "\u2019",
-  sbquo: "\u201a",
-  ldquo: "\u201c",
-  rdquo: "\u201d",
-  bdquo: "\u201e",
-  lsaquo: "\u2039",
-  rsaquo: "\u203a",
-  ndash: "\u2013",
-  mdash: "\u2014",
-  minus: "\u2212",
-  hellip: "\u2026",
-  bull: "\u2022",
-  dagger: "\u2020",
-  Dagger: "\u2021",
-  permil: "\u2030",
-  prime: "\u2032",
-  Prime: "\u2033",
-  euro: "\u20ac",
-  ensp: "\u2002",
-  emsp: "\u2003",
-  thinsp: "\u2009",
-  zwnj: "\u200c",
-  zwj: "\u200d",
-  larr: "\u2190",
-  rarr: "\u2192",
-  uarr: "\u2191",
-  darr: "\u2193",
-  check: "\u2713",
-  OElig: "\u0152",
-  oelig: "\u0153",
-  Scaron: "\u0160",
-  scaron: "\u0161",
-  Yuml: "\u0178",
-  fnof: "\u0192",
-  circ: "\u02c6",
-  tilde: "\u02dc",
-};
-LATIN1_A0.split(" ").forEach((name, i) => {
-  NAMED[name] = String.fromCodePoint(0xa0 + i);
-});
-
-/** Decode numeric references (decimal and hex) and the named set above. An
- *  unknown or invalid reference is left exactly as written. */
-function decodeEntities(s: string): string {
-  return s.replace(/&(#[xX][0-9a-fA-F]+|#\d+|[a-zA-Z][a-zA-Z0-9]*);/g, (whole, ref: string) => {
-    if (ref[0] === "#") {
-      const hex = ref[1] === "x" || ref[1] === "X";
-      const code = parseInt(ref.slice(hex ? 2 : 1), hex ? 16 : 10);
-      const valid = code > 0 && code <= 0x10ffff && !(code >= 0xd800 && code <= 0xdfff);
-      return valid ? String.fromCodePoint(code) : whole;
-    }
-    return Object.hasOwn(NAMED, ref) ? (NAMED[ref] ?? whole) : whole;
-  });
-}
 
 // ---- attributes and hiding -------------------------------------------------------
 
-/** Attribute names (lower case) to decoded values, quoted or unquoted. A bare
- *  name has the value "". The first of a repeated name wins, as in HTML. */
-function parseAttrs(raw: string): Map<string, string> {
-  const out = new Map<string, string>();
-  for (const m of raw.matchAll(ATTR)) {
-    const name = (m[1] ?? "").toLowerCase();
-    if (!out.has(name)) out.set(name, decodeEntities(m[2] ?? m[3] ?? m[4] ?? ""));
-  }
-  return out;
-}
-
-function isHidden(attrs: Map<string, string>): boolean {
-  if (attrs.has("hidden")) return true;
-  if ((attrs.get("aria-hidden") ?? "").trim().toLowerCase() === "true") return true;
-  const style = (attrs.get("style") ?? "").replace(/\s+/g, "").toLowerCase();
+function isHidden(attrs: Record<string, string | undefined>): boolean {
+  if ("hidden" in attrs) return true;
+  if ((attrs["aria-hidden"] ?? "").trim().toLowerCase() === "true") return true;
+  const style = (attrs.style ?? "").replace(/\s+/g, "").toLowerCase();
   return style.includes("display:none") || style.includes("visibility:hidden");
 }
 
@@ -316,7 +226,7 @@ export function htmlToBlocks(html: string): Block[] {
   };
 
   const addText = (raw: string): void => {
-    const text = decodeEntities(raw);
+    const text = unescapeHtml(raw);
     if (link) {
       link.label += text;
       return;
@@ -383,7 +293,7 @@ export function htmlToBlocks(html: string): Block[] {
       addText(between);
     }
 
-    const attrs = parseAttrs(rawAttrs);
+    const attrs = htmlAttributes(rawAttrs);
     if (!closing && isHidden(attrs)) {
       // A hidden block element still ends the block before it.
       if (BLOCK_TAGS.has(name)) {
@@ -399,13 +309,13 @@ export function htmlToBlocks(html: string): Block[] {
       // A second <a> before the first one closed ends the first, words kept.
       closeLink();
       if (!closing) {
-        const url = acceptedUrl((attrs.get("href") ?? "").trim());
+        const url = acceptedUrl((attrs.href ?? "").trim());
         if (url) link = { url, label: "" };
       }
       continue;
     }
     if (name === "img") {
-      const alt = attrs.get("alt");
+      const alt = attrs.alt;
       if (alt && alt.trim()) addText(` ${alt} `);
       continue;
     }

@@ -3,7 +3,7 @@
 // can be switched off and the choice is remembered (WCAG 2.1.4); shortcuts with Ctrl, Cmd
 // or Alt always work. The choice lives on <html> as data-cap-single-keys, the one switch every
 // component's own single keys read. No framework; the React wrapper uses the same registry.
-import { readPref, writePref } from "../shell/shell.ts";
+import { readStored, writeStored } from "../hooks/hooks.ts";
 
 export interface Shortcut {
   // "r", "?", "g o" (a sequence: g, then o within 1200 ms), "Mod+k" (Ctrl, or Cmd on a
@@ -103,7 +103,7 @@ export function singleKeysOff(): boolean {
 // Turns single-key shortcuts on or off, here and in every component. Remembered in this browser
 // unless remember is false (a specimen, a test).
 export function setSingleKeys(on: boolean, opts: { remember?: boolean } = {}): void {
-  if (opts.remember !== false) writePref(SINGLE_KEYS_PREF, on ? "on" : "off");
+  if (opts.remember !== false) writeStored(SINGLE_KEYS_PREF, on ? "on" : "off");
   pending = null;
   if (typeof document === "undefined") return;
   document.documentElement.dataset.capSingleKeys = on ? "on" : "off";
@@ -114,7 +114,7 @@ export function setSingleKeys(on: boolean, opts: { remember?: boolean } = {}): v
 if (
   typeof document !== "undefined" &&
   !document.documentElement.dataset.capSingleKeys &&
-  readPref(SINGLE_KEYS_PREF) === "off"
+  readStored(SINGLE_KEYS_PREF) === "off"
 ) {
   document.documentElement.dataset.capSingleKeys = "off";
 }

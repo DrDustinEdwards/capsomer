@@ -4,12 +4,12 @@
 // the pending and error states and the approval event. No framework; the React wrapper uses
 // the same pure functions.
 
-import { plural } from "../hooks/hooks.ts";
+import { plural } from "@drdustinedwards/site-helpers/text";
 import { isBusy, openDialog, setDialogBusy, wireDialog } from "../dialog/dialog.ts";
 
 // "Approve 2 gates", "Approve 1 gate"; while in flight, "Approving 2 gates".
 export function approveLabel(n: number, pending = false): string {
-  return `${pending ? "Approving" : "Approve"} ${plural(n, "gate", "gates")}`;
+  return `${pending ? "Approving" : "Approve"} ${plural(n, "gate")}`;
 }
 
 // The sheet's title: "2 gates are waiting", "1 gate is waiting".

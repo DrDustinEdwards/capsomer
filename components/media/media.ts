@@ -6,7 +6,7 @@
 // status that never loses typed text. No framework; the React wrapper uses the same pure
 // functions.
 
-import { plural } from "../hooks/hooks.ts";
+import { countText } from "../content/content.ts";
 import { enhance as enhanceMeters, percent } from "../meter/meter.ts";
 import { openDialog, wireDialog } from "../dialog/dialog.ts";
 import { fail } from "../message/message.ts";
@@ -424,9 +424,7 @@ export function attachMedia(root: HTMLElement, options: MediaOptions = {}): Medi
       count.textContent =
         v === "bin"
           ? `${matchable} in Trash`
-          : matchable === total
-            ? plural(matchable, "file", "files")
-            : `${matchable} of ${total} files`;
+          : countText(matchable, total, { noun: "file", plural: "files" });
     }
     if (active && (active.hidden || active.closest("[hidden]"))) {
       const first = successor(active);

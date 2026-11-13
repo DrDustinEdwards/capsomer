@@ -8,7 +8,7 @@
 import { toParagraphs, type Cue } from "@drdustinedwards/site-helpers/vtt";
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { useCopy } from "../copy/copy.react.tsx";
-import { reducedMotion } from "../count-up/count-up.ts";
+import { reducedMotion } from "../hooks/hooks.ts";
 import { SearchField } from "../field/field.react.tsx";
 import {
   TRANSCRIPT_TRACK_LABEL,

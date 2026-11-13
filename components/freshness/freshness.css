@@ -24,6 +24,14 @@
       }
     }
   }
+  /* Stale is shape and word as well as color: the warning glyph and "Stale", before the age. */
+  .cap-fresh-stale {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    gap: var(--space-1);
+    font-weight: var(--weight-medium);
+  }
   .cap-fresh-ring {
     flex: none;
     inline-size: 16px;
