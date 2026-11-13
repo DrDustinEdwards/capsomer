@@ -82,7 +82,7 @@ It renders a panel (`.cap-panel.cap-progress`) holding `.cap-progress-body`: the
 
 Props: `entries` (`{ at, typed, removed }[]`), `goal` (`{ mode, dailyTarget, writingDays, allowNegative }`), `projectTarget`, `deadline`, `wordsNow`, `zone`, `canEdit`, `action`, `Form`, `error`, `saved`, `goalNote`, `note`, `source`, `title`, `days` (default 7), `now`.
 
-`capsomer/behavior/writing-progress`, pure, for the panel and the server: `dayKey`, `knownZone`, `dayTotals`, `writingDaysBetween`, `pace`, `targetFor`, `streak`, `recentDays`, `parseWritingDays`, `parseDailyTarget`, `goalFromForm`, `untypedCount`, `untypedTally`, `paceLine`, `weekSentence`, `weekdayName`, and `DEFAULT_GOAL`, `WEEKDAYS`, `STREAK_HORIZON_DAYS`, `MAX_DAILY_TARGET`.
+`capsomer/behavior/writing-progress`, pure, for the panel and the server: `knownZone`, `dayTotals`, `writingDaysBetween`, `pace`, `targetFor`, `streak`, `recentDays`, `parseWritingDays`, `parseDailyTarget`, `goalFromForm`, `untypedCount`, `untypedTally`, `paceLine`, `weekSentence`, `weekdayName`, and `DEFAULT_GOAL`, `WEEKDAYS`, `STREAK_HORIZON_DAYS`, `MAX_DAILY_TARGET`.
 
 ## Exceptions in production
 
