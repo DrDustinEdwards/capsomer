@@ -11,6 +11,8 @@ Each release names every removed or renamed token or class, and every changed HT
 - **New export `capsomer/parts.json`:** each component's root class, parts, `data-*` variants, states and CSS variables, read from its own `cap-<name>-<part>` classes (`bin/parts.mjs`, `capsomer parts`); the API tables are made from it.
 - **Doc files are three headings:** every `components/<name>/<name>.md` is `# Title`, `## Usage` (code only) and `## Accessibility` (the keyboard table and short points), with a one-sentence `summary` and a new `group` (`pattern` or `primitive`). `capsomer docs`, part of `npm run check`, fails a file that leaves the pattern (components/README.md, The doc page).
 - **Site only:** the theme builder at `/make/` and the admin views at `/admin/` are removed, and so are the site's test-results panel and the `results` branch job that fed it; each run's summary stays with the run as the `test-results` artifact.
+- Showcase site: every page carries `<meta name="color-scheme" content="light dark">`, so `theme.js` and the theme switch have a meta to set before paint, and `<meta name="text-scale" content="scale">`, so the site follows the reader's system text size (Modern Web Guidance, respect-os-text-scale). They come from `siteHead()` (site/seo.ts); the states pages already had both. Nothing in the package changes.
+
 
 ## [0.132.0]
 
