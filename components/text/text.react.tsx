@@ -1,26 +1,26 @@
-import { createElement, type ComponentPropsWithRef } from "react";
+import { createElement, type HTMLAttributes, type Ref } from "react";
 
-// The element's own props pass through (a ref, tabIndex, htmlFor, scope, an aria or data attribute, a handler). `as` is any
-// intrinsic element: the element is the outline, the role is the look.
-type Own<Tag extends keyof React.JSX.IntrinsicElements> = Omit<
-  ComponentPropsWithRef<Tag>,
-  "color"
-> & { as?: Tag };
-
-export type TitleProps = Own<"h2"> & {
-  // The look, 1 the largest to 6; 4 when omitted. The heading level is `as` (h2 when omitted).
-  size?: 1 | 2 | 3 | 4 | 5 | 6;
+// The props of any element the roles are put on: its global and ARIA attributes, handlers, a ref, and the few element-specific
+// ones a heading, label or table cell takes. `as` is any intrinsic element: the element is the outline, the role is the look.
+export type ElementProps = HTMLAttributes<HTMLElement> & {
+  ref?: Ref<HTMLElement>;
   as?: keyof React.JSX.IntrinsicElements;
+  htmlFor?: string;
+  scope?: "col" | "row";
+  colSpan?: number;
 };
 
-export type TextProps = Own<"p"> & {
+export type TitleProps = ElementProps & {
+  // The look, 1 the largest to 6; 4 when omitted. The heading level is `as` (h2 when omitted).
+  size?: 1 | 2 | 3 | 4 | 5 | 6;
+};
+
+export type TextProps = ElementProps & {
   size?: "tiny" | "small" | "lead";
   tone?: "muted" | "dim" | "ink" | "accent" | "ok" | "crit";
   weight?: "strong";
   face?: "ui" | "mono" | "prose" | "display";
   align?: "center" | "end";
-  // The element: a paragraph when omitted.
-  as?: keyof React.JSX.IntrinsicElements;
 };
 
 // The HTML contract in text.md.

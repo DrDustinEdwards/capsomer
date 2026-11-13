@@ -1,9 +1,9 @@
-import { createElement, type ComponentPropsWithRef } from "react";
+import { createElement } from "react";
+import type { ElementProps } from "../text/text.react.tsx";
 
-export type StackProps = ComponentPropsWithRef<"div"> & {
+export type StackProps = ElementProps & {
   // The space between the children, on the spacing scale (1 to 9); the layout's own gap when omitted.
   gap?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
-  as?: keyof React.JSX.IntrinsicElements;
 };
 
 // The HTML contract in stack.md. The element's own props pass through.
