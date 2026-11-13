@@ -23,6 +23,7 @@ import { gzipSync } from "node:zlib";
 import { frontmatter } from "@drdustinedwards/site-helpers/frontmatter";
 import { walkFiles } from "@dustinedwards/devkit/node";
 import { fixCss, invalidValues, rawValues, tokenScale } from "../tokens/token-check.mjs";
+import { inlineCss } from "./build.mjs";
 
 const PKG = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const args = process.argv.slice(2);
@@ -69,7 +70,7 @@ function components(root) {
       const css = join(dir, d.name, `${d.name}.css`);
       // The component's root class is the first cap- class its CSS styles.
       const rootClass = existsSync(css)
-        ? (readFileSync(css, "utf8").match(/\.(cap-[\w-]+)/)?.[1] ?? null)
+        ? (inlineCss(css).match(/\.(cap-[\w-]+)/)?.[1] ?? null)
         : null;
       return {
         name: d.name,
@@ -298,7 +299,7 @@ async function size() {
     for (const c of components(PKG)) {
       const f = join(c.dir, `${c.name}.css`);
       if (!existsSync(f)) continue;
-      const n = gz(readFileSync(f));
+      const n = gz(inlineCss(f));
       all += n;
       rows.push(["css", c.name, n]);
     }
@@ -355,7 +356,7 @@ function writeComponentSizes() {
     const src = join(c.dir, `${c.name}.ts`);
     const js = existsSync(built) ? built : existsSync(src) ? src : null;
     const entry = {
-      css: existsSync(css) ? gz(readFileSync(css)) : 0,
+      css: existsSync(css) ? gz(inlineCss(css)) : 0,
       js: js ? gz(readFileSync(js)) : 0,
       jsFrom: js ? (js === built ? "dist" : "source") : null,
     };
