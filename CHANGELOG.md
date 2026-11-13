@@ -4,6 +4,12 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+## [0.124.0]
+
+- **Layout: item helpers.** `.cap-grow` (takes the room its row leaves and may shrink below its content), `.cap-shrink` (a flex or grid item that may shrink below its content: `min-inline-size: 0`), `.cap-keep` (never shrinks), `.cap-full` (a whole row: every grid column, the full line of a cluster, the full width of a block) and `.cap-column`, a centered column for a form (42rem), with `data-width="narrow"` (28rem, a sign-in) or `"reading"` (48rem). They replace txasm's `.grow`, `.shrink`, `.span-2`, `.narrow`, `.form-page` and `.reading`, and Foxing's `.grow`, `.shrink-0`, `.min-0` and `.full`.
+- **New: site footer** (`capsomer/site-footer.css`, `.cap-site-footer`, `.cap-site-footer-links`, `.cap-site-footer-note`): a site's own plain footer for a site outside the family footer, a hairline over a links row, a mark and the small print, in the page's column; `data-tone="raised"` on the raised surface, `data-links="quiet"` for muted links. Slots `--site-footer-gap`, `--site-footer-pad`, `--site-footer-bg`, `--site-footer-fs`. From txasm's and julieedwards.info's footers.
+- **Sites: page columns in their entries.** txasm's entry sets its 72rem page column (`--page-max`), 24px sides (20px on a phone), and 16px text on a 1.5 line (`--fs-page`, `--page-leading`), so its public pages use `.cap-page` instead of their own frame. julieedwards.info's entry sets its 67.5rem column, 32px sides and 1.65 line. Removed or renamed: no token or class.
+
 ## [0.122.0]
 
 - **germomics' palette is its site entry.** `site-germomics.css` now carries germomics' own colors in both themes (crystal violet buttons, cyan links and focus, violet-tinted neutrals), its Space Grotesk UI face, JetBrains Mono, its 60px header and its 2px ring, and goes on `<html>` on the public pages, so the site can drop its hand-made map onto Capsomer's roles and its Tailwind palette. It also sets `--surface`, `--muted` and `--accent`, the names germomics' own palette shared with Capsomer's. The cyan link, the control borders, dark muted and dim text and the dark primary hover are lifted to Capsomer's APCA floors, and prefers-contrast: more has its own values. A site entry may now set brand roles when `ownBrand` says why (two hues no family has), and may give its own `more` values. Removed: the admin's mono-only use of the entry; germomics' admin takes Capsomer's own look, mono included, and drops `data-cap-site` from its element.

@@ -1,0 +1,49 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* A site's own plain footer: a hairline over a row of links, a mark and a line of small print,
+   in the page's column (.cap-page inside it). For a site outside dustinedwards.info's family
+   footer (txasm, julieedwards.info). The slots set its look: --site-footer-gap (above it),
+   --site-footer-pad (inside it, top and bottom), --site-footer-bg, --site-footer-fs. */
+@layer cap.components {
+  .cap-site-footer {
+    margin-block-start: var(--site-footer-gap, 0);
+    padding-block: var(--site-footer-pad, 2.5rem);
+    border-block-start: 1px solid var(--line);
+    background: var(--site-footer-bg, transparent);
+    font-size: var(--site-footer-fs, var(--fs-detail));
+
+    /* On the raised surface, as a band closing the page. */
+    &[data-tone="raised"] {
+      --site-footer-bg: var(--raised);
+    }
+  }
+
+  /* The links row: it wraps, 8px between rows and 24px between links. */
+  .cap-site-footer-links {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3) var(--space-6);
+
+    /* Quiet links: the muted text color, turning the link color under the pointer, with no tint. */
+    &[data-links="quiet"] a {
+      color: var(--muted);
+      background: none;
+      &:hover {
+        color: var(--accent-text);
+      }
+    }
+  }
+
+  /* The small print: the copyright, a note on who runs the site. */
+  .cap-site-footer-note {
+    color: var(--muted);
+  }
+
+  @media (forced-colors: active) {
+    .cap-site-footer {
+      border-block-start-color: CanvasText;
+    }
+  }
+}
