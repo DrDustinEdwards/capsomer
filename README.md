@@ -1,6 +1,33 @@
-# capsomer
+# Capsomer
 
-Capsomer: the shared design system for Dustin Edwards's apps: tokens, components and patterns.
+Capsomer is an open-source design system for websites and web apps. It is plain CSS built on design tokens, so it works with any framework or none, and most components also come with an optional behavior module and React component. It covers what most products need, from buttons, forms, dialogs and data tables to an app shell, editors, charts and marketing blocks, in light and dark themes. Documentation, with live examples of every component, is at https://capsomer.dustinedwards.info. MIT licensed.
+
+- **Design tokens.** Color, type, spacing, radius, shadow, motion and density as CSS custom properties, also published as `capsomer/tokens.json`. Color comes in ten ready families, each a 12-step OKLCH scale for light and dark; `renderScoped` in `capsomer/palette` builds a matching family from your own brand color.
+- **Plain CSS in cascade layers.** Every rule sits in Capsomer's own layers, so a site's own CSS wins without specificity fights. No Tailwind or other CSS framework.
+- **Import only what a page uses.** One folder per component: its CSS, its documentation and, where it needs them, a behavior module and a React component.
+- **Accessibility checked in every state.** Each component's states are scanned with axe against WCAG 2.2 A and AA in light and dark, and the build refuses a color pair below WCAG contrast. `capsomer/testing` runs the same scan on a site's own pages (below).
+- **Works under Trusted Types.** The scripts hand markup to the page only through one Trusted Types policy, so they keep working on a site that enforces it.
+
+It began as the shared parts of Dustin Edwards's sites and still runs them, from https://dustinedwards.info to Foxing and TXASM, each with its own brand color.
+
+## Install
+
+Capsomer installs from a release tag on GitHub; it is not on the npm registry. It needs Node.js 24.14.1 or later. Pick the newest tag from the [releases](https://github.com/DrDustinEdwards/capsomer/releases):
+
+```sh
+npm install github:DrDustinEdwards/capsomer#vX.Y.Z
+```
+
+```js
+import "capsomer/tokens.css"; // once, before any component CSS
+import "capsomer/base.css";
+import "capsomer/button.css"; // each component's CSS by its name
+import { Button } from "capsomer/react/button"; // optional: React
+```
+
+Without React, write the HTML: `<button class="cap-btn" data-variant="primary">Save</button>`. Every peer dependency is optional; install one only for the component that names it. Capsomer is before 1.0, so pin a tag and read `CHANGELOG.md` before moving to a newer one.
+
+## How it is organized
 
 Components live in `components/<name>/`; how one is built, including its `examples.html` (the generated states page's source) and the shared dialog, listbox, popover and meter blocks, is in `components/README.md`. Tokens, density and the color families are in `tokens/`. Each release's breaking changes are in `CHANGELOG.md`; the defaults and their reasons are in `DEFAULTS.md`.
 

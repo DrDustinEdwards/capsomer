@@ -1,8 +1,9 @@
 {
   "name": "capsomer",
   "version": "0.141.1",
-  "description": "Capsomer: the shared design system for Dustin Edwards's apps. Tokens, components and patterns, in plain CSS with optional behavior modules and React wrappers.",
+  "description": "An open-source design system in plain CSS: design tokens, themes, components and page patterns, with optional behavior modules and React wrappers, checked against WCAG 2.2 AA.",
   "license": "MIT",
+  "homepage": "https://capsomer.dustinedwards.info",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/DrDustinEdwards/capsomer.git"
