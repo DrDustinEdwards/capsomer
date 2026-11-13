@@ -239,7 +239,7 @@ const SITES = {
   txasm: {
     family: "navy",
     on: "<html>",
-    note: "the UI face stays Inter, which txasm self-hosts (Fontsource names the variable file Inter Variable); its public pages read at 16px on a 72rem column, 24px in from the sides (20px on a phone)",
+    note: "the UI face stays Inter, which txasm self-hosts (Fontsource names the variable file Inter Variable); its public pages read at 16px on a 72rem column, 24px in from the sides (16px on a phone)",
     all: {
       ui: '"Inter Variable", "Inter", "Inter Fallback", "Segoe UI", "Helvetica Neue", Arial, sans-serif',
       "page-max": "72rem",
@@ -248,7 +248,7 @@ const SITES = {
       "page-leading": "1.5",
     },
     phone: {
-      "page-gutter": "20px",
+      "page-gutter": "16px",
     },
   },
   foxing: {

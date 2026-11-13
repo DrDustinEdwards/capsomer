@@ -12,6 +12,10 @@
     border-block-start: 1px solid var(--line);
     background: var(--site-footer-bg, transparent);
     font-size: var(--site-footer-fs, var(--fs-detail));
+    /* The page column inside (.cap-page, a utility, so it outranks this layer) reads its size and
+       leading from these, so it keeps the footer's. */
+    --fs-page: var(--site-footer-fs, var(--fs-detail));
+    --page-leading: var(--leading);
 
     /* On the raised surface, as a band closing the page. */
     &[data-tone="raised"] {
