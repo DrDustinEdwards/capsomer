@@ -1,4 +1,4 @@
-// The document's root: the attributes that put a page under its family and site layer, which routes hydrate, and the
+// The document's root: the attributes that put a page under its family and site layer, and the
 // start of a page that does not. One home for what every site's root.tsx and site.ts wrote by hand.
 // Extracted from bsw, julieedwards-info, germomics and txasm (root.tsx, app/site.ts, germomics app/lib/hydration.ts)
 // in 0.123.0.
@@ -19,19 +19,6 @@ export function documentAttrs({ family, site, theme }: DocumentScope): Record<st
   if (site) attrs["data-cap-site"] = site;
   if (theme === "light" || theme === "dark") attrs["data-theme"] = theme;
   return attrs;
-}
-
-type HydrateHandle = { hydrate?: boolean | ((data: unknown) => boolean) };
-
-// True when a matched route hydrates: its handle says `hydrate: true`, or a function of its loader data says so.
-// Every other page sends no React and runs from the site's own script (startSite).
-export function routeHydrates(
-  matches: readonly { handle?: unknown; loaderData?: unknown }[],
-): boolean {
-  return matches.some((match) => {
-    const hydrate = (match.handle as HydrateHandle | undefined)?.hydrate;
-    return typeof hydrate === "function" ? hydrate(match.loaderData) : hydrate === true;
-  });
 }
 
 export type Starter = () => unknown;

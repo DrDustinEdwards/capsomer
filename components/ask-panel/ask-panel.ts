@@ -4,7 +4,9 @@
 // Extracted from dei's Ask (enhance/ask.ts) in 0.123.0. What the site's stream means (which event carries the sources,
 // how its follow-up is marked) stays the site's, through `read` and `split`.
 
-import { completionDelta, jsonData, readSse, type SseEvent } from "../sse/sse.ts";
+import { answerDelta } from "@dustinedwards/site-runtime/ai-ask";
+
+import { jsonData, readSse, type SseEvent } from "../sse/sse.ts";
 
 export interface AskSource {
   url: string;
@@ -67,7 +69,7 @@ export interface AskHandle {
   done: Promise<void>;
 }
 
-const defaultRead = (e: SseEvent): AskRead => ({ delta: completionDelta(jsonData(e)) });
+const defaultRead = (e: SseEvent): AskRead => ({ delta: answerDelta(jsonData(e)) });
 const sameOrigin = (url: string) => url.startsWith("/") && !url.startsWith("//");
 
 function el<K extends keyof HTMLElementTagNameMap>(

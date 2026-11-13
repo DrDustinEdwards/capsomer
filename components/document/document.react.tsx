@@ -3,13 +3,9 @@ import { Links, Meta, Scripts, ScrollRestoration } from "react-router";
 
 import { documentAttrs, type DocumentScope } from "./document.ts";
 
-export {
-  documentAttrs,
-  routeHydrates,
-  startSite,
-  type DocumentScope,
-  type Starter,
-} from "./document.ts";
+// Which routes hydrate is site-runtime's (./deferred-scripts, with hydrate-on-intent), re-exported for the Layout.
+export { routeHydrates } from "@dustinedwards/site-runtime/deferred-scripts";
+export { documentAttrs, startSite, type DocumentScope, type Starter } from "./document.ts";
 
 export interface DocumentProps extends DocumentScope {
   children: ReactNode;

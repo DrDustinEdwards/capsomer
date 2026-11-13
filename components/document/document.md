@@ -55,4 +55,4 @@ startSite([enhanceHeader, enhanceTabs, startIslands]);
 
 ## Not here
 
-**Hydrating on intent** (germomics: React Router's scripts held inert until the reader presses play) is not part of this. Germomics does it by writing script text into the page (`innerHTML` and `script.textContent`), which Trusted Types refuses, so it waits for its own design.
+**Hydrating on intent** (React Router's scripts held until the reader presses play) is site-runtime's `./deferred-scripts` and `./hydrate-on-intent`. `routeHydrates` is re-exported from there.
