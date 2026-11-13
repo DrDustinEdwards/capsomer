@@ -10,13 +10,16 @@
     --header-h: calc(3.75rem + 1px);
     --ring-width: 2px;
     --ground: #fbfafd;
+    --surface: #f4f1fa;
+    --muted: #6b6577;
+    --accent: #0e7490;
     --raised: #ffffff;
     --sunken: #f4f1fa;
     --text: #14101f;
     --dim: #6b6577;
     --line: #e2dcec;
-    --line-strong: #958f9f;
-    --accent-text: #05708c;
+    --line-strong: #8f8a99;
+    --accent-text: #01647e;
     --accent-hover: #14101f;
     --accent-soft: #e2eef2;
     --accent-line: #0e7490;
@@ -36,13 +39,16 @@
     :root:not([data-theme="light"])[data-cap-site="germomics"][data-cap-site],
     :root:not([data-theme="light"])[data-cap-site="germomics"][data-cap-site] :is([data-family], [data-density]) {
       --ground: #120b1f;
+      --surface: #1e1630;
+      --muted: #bdb1d4;
+      --accent: #22d3ee;
       --raised: #181125;
       --sunken: #1e1630;
       --text: #edeaf5;
       --dim: #baaed1;
       --line: #2c2440;
-      --line-strong: #7d7394;
-      --accent-text: #38dffa;
+      --line-strong: #7e7495;
+      --accent-text: #39e0fb;
       --accent-hover: #edeaf5;
       --accent-soft: #19283d;
       --accent-line: #22d3ee;
@@ -66,13 +72,16 @@
   [data-cap-theme="dark"][data-cap-site="germomics"][data-cap-site],
   [data-cap-theme="dark"][data-cap-site="germomics"][data-cap-site] :is([data-family], [data-density]) {
     --ground: #120b1f;
+    --surface: #1e1630;
+    --muted: #bdb1d4;
+    --accent: #22d3ee;
     --raised: #181125;
     --sunken: #1e1630;
     --text: #edeaf5;
     --dim: #baaed1;
     --line: #2c2440;
-    --line-strong: #7d7394;
-    --accent-text: #38dffa;
+    --line-strong: #7e7495;
+    --accent-text: #39e0fb;
     --accent-hover: #edeaf5;
     --accent-soft: #19283d;
     --accent-line: #22d3ee;
@@ -89,21 +98,21 @@
   @media (prefers-contrast: more) {
     [data-cap-site="germomics"][data-cap-site],
     [data-cap-site="germomics"][data-cap-site] :is([data-family], [data-density]) {
+      --muted: #5b5667;
       --dim: #605a6c;
-      --line: #e0daea;
-      --accent-text: #02485d;
-      --sel: #e8f2f5;
+      --line: #d7d2e1;
+      --accent-text: #033a4b;
     }
     @media (prefers-color-scheme: dark) {
       :root:not([data-theme="light"]) [data-cap-site="germomics"][data-cap-site],
       :root:not([data-theme="light"]) [data-cap-site="germomics"][data-cap-site] :is([data-family], [data-density]),
       :root:not([data-theme="light"])[data-cap-site="germomics"][data-cap-site],
       :root:not([data-theme="light"])[data-cap-site="germomics"][data-cap-site] :is([data-family], [data-density]) {
-        --dim: #d5c8ec;
-        --line-strong: #9c92b4;
-        --line: #595070;
-        --accent-text: #a8f1ff;
-        --sel: #182337;
+        --muted: #d7caee;
+        --dim: #d4c8eb;
+        --line-strong: #9d93b5;
+        --line: #5a5271;
+        --accent-text: #abf1ff;
         --primary: #d5c1fe;
         --primary-hover: #d7c0ff;
       }
@@ -116,11 +125,11 @@
     [data-cap-theme="dark"] [data-cap-site="germomics"][data-cap-site] :is([data-family], [data-density]),
     [data-cap-theme="dark"][data-cap-site="germomics"][data-cap-site],
     [data-cap-theme="dark"][data-cap-site="germomics"][data-cap-site] :is([data-family], [data-density]) {
-      --dim: #d5c8ec;
-      --line-strong: #9c92b4;
-      --line: #595070;
-      --accent-text: #a8f1ff;
-      --sel: #182337;
+      --muted: #d7caee;
+      --dim: #d4c8eb;
+      --line-strong: #9d93b5;
+      --line: #5a5271;
+      --accent-text: #abf1ff;
       --primary: #d5c1fe;
       --primary-hover: #d7c0ff;
     }
