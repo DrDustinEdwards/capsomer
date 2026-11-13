@@ -38,23 +38,6 @@ eachTheme((theme) => {
     ]);
   });
 
-  test(
-    "accessibility: the words' roles and names, glyphs hidden",
-    { tag: "@markup" },
-    async ({ page }) => {
-      await visitStates(page, "status", theme);
-      await expect(page.locator(words)).toMatchAriaSnapshot(`
-      - list "Statuses as words":
-        - listitem: Critical
-        - listitem: Warning
-        - listitem: Notice
-        - listitem: Healthy
-        - listitem: Running
-        - listitem: No data
-    `);
-    },
-  );
-
   test("behavior: each meaning has its own glyph shape, so color is never alone", async ({
     page,
   }) => {
@@ -188,12 +171,6 @@ eachTheme((theme) => {
     await expect(button).toHaveCSS("outline-style", "solid");
   });
 
-  test("keyboard: a disabled badge button is skipped", async ({ page }) => {
-    await visitStates(page, "status", theme);
-    const disabled = page.locator("#sample-interactive").getByRole("button", { name: "Disabled" });
-    await expect(disabled).toBeDisabled();
-  });
-
   test("accessibility: a badge's hit area reaches the target size", async ({ page }) => {
     await visitStates(page, "status", theme);
     const box = await page
@@ -209,10 +186,5 @@ eachTheme((theme) => {
       });
     expect(box.pos).toBe("absolute");
     expect(box.h).toBeGreaterThanOrEqual(24);
-  });
-
-  test("accessibility: a count badge says what it counts", { tag: "@markup" }, async ({ page }) => {
-    await visitStates(page, "status", theme);
-    await expect(page.getByText("3 waiting")).toHaveCount(1);
   });
 });

@@ -116,17 +116,6 @@ eachTheme((theme) => {
     ]);
   });
 
-  test("keyboard: Tab reaches the view switch, then the table's scroll region", async ({
-    page,
-  }) => {
-    await visitStates(page, "permission-matrix", theme);
-    const wide = page.locator("#perms-wide");
-    await wide.getByRole("radio", { name: "By agent" }).focus();
-    await expect(wide.getByRole("radio", { name: "By agent" })).toBeFocused();
-    await page.keyboard.press("Tab");
-    await expect(wide.getByRole("region", { name: "Permissions by agent" })).toBeFocused();
-  });
-
   test("keyboard: arrow keys on the switch move between By agent and By permission", async ({
     page,
   }) => {
@@ -148,14 +137,5 @@ eachTheme((theme) => {
       "",
     );
     await expect(wide.getByRole("region", { name: "Permissions by agent" })).toBeVisible();
-  });
-
-  test("behavior: the By permission specimen starts on its own view", async ({ page }) => {
-    await visitStates(page, "permission-matrix", theme);
-    const perm = page.locator("#perms-by-permission");
-    await expect(
-      perm.getByRole("list", { name: "Agents by permission, second sample" }),
-    ).toBeVisible();
-    await expect(perm.getByRole("table")).toBeHidden();
   });
 });

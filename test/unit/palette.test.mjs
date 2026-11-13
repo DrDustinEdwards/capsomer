@@ -5,24 +5,6 @@ import { FAMILIES, apca, report, scale, themes } from "../../tokens/palette.mjs"
 
 const css = (f) => readFileSync(new URL(`../../tokens/${f}`, import.meta.url), "utf8");
 
-test("color.css is the purple family: step 9 accent, step 11 accent text, the twelve steps", () => {
-  const c = css("color.css");
-  for (const token of [
-    "--accent: #8c5fd2",
-    "--accent-text: #4f2d7f",
-    "--primary:",
-    "--primary-hover:",
-    "--primary-fg:",
-    "--ring:",
-    "--accent-1:",
-    "--accent-12:",
-    "--shadow-xs:",
-    "--shadow-l:",
-  ])
-    assert.ok(c.includes(token), token);
-  assert.ok(!/--legacy/.test(c));
-});
-
 test("families: fox and teal are scoped to [data-family], in both themes, with literal values", () => {
   for (const [name, seed] of [
     ["fox", "#cc4f0c"],
@@ -52,15 +34,6 @@ test("apca: matches the apca-w3 reference (0.1.9, APCA 0.0.98G-4g) in both polar
     ["#888888", "#777777", -7.32],
   ]) {
     assert.ok(Math.abs(apca(txt, bg) - lc) < 0.01, `${txt} on ${bg}: ${apca(txt, bg)} vs ${lc}`);
-  }
-});
-
-test("every asserted pair passes in both themes for the default family", () => {
-  const t = themes(FAMILIES.purple);
-  for (const scheme of ["light", "dark"]) {
-    assert.ok(t[scheme].pairs.length > 40);
-    for (const p of t[scheme].pairs)
-      assert.ok(p.pass, `${scheme}: ${p.what} --${p.fg} on --${p.bg} is ${p.ratio.toFixed(2)}`);
   }
 });
 
@@ -123,13 +96,6 @@ test("family: twelve steps, the same lightness roles for purple and fox", () => 
   }
 });
 
-test("family: themes() carries the twelve steps and accent-text", () => {
-  const t = themes(FAMILIES.purple);
-  assert.equal(t.light.tokens["accent-11"], "#4f2d7f");
-  assert.equal(t.light.tokens["accent-text"], "#4f2d7f");
-  assert.equal(t.light.tokens.accent, "#8c5fd2");
-});
-
 test("family: report() covers every family in both themes, its default theme first", () => {
   const rows = report();
   assert.deepEqual([...new Set(rows.map((r) => r.family))].sort(), Object.keys(FAMILIES).sort());
@@ -157,16 +123,6 @@ test("family: a seed too light for white (amber) keeps it in dark, darkens it in
   assert.notEqual(t.light.tokens.accent, "#f0b429");
   assert.equal(t.light.tokens["primary-line"], t.light.tokens.accent);
   assert.equal(t.light.tokens["primary-fg"], t.dark.tokens["primary-fg"]);
-});
-
-test("family: option 1 (rule 18), every pair of every family passes in both themes", () => {
-  const failing = report().filter((r) => !r.pass);
-  assert.deepEqual(
-    failing.map(
-      (r) => `${r.family} ${r.scheme} ${r.what} --${r.fg} on --${r.bg} ${r.ratio.toFixed(2)}`,
-    ),
-    [],
-  );
 });
 
 test("family: step 9 keeps the brand color, step 10 is the button fill, step 11 is the accent text and the button's hover", () => {

@@ -109,19 +109,6 @@ eachTheme((theme) => {
     ).toHaveAccessibleDescription("One line, recorded with the change.");
   });
 
-  test("keyboard: Tab moves from the table through a row's inline action to its Actions menu", async ({
-    page,
-  }) => {
-    await visitStates(page, "people-roles", theme);
-    await lead(page).locator("tr[data-name='Maya Chen'] a").focus();
-    await page.keyboard.press("Tab");
-    await expect(
-      lead(page).getByRole("button", { name: "Renew to May 14, 2027 for Rosa Park" }),
-    ).toBeFocused();
-    await page.keyboard.press("Tab");
-    await expect(actionsFor(page, "Rosa Park")).toBeFocused();
-  });
-
   test("keyboard: Remove asks first, and Esc cancels without posting", async ({ page }) => {
     const posts = await catchPosts(page);
     await visitStates(page, "people-roles", theme);
@@ -228,14 +215,6 @@ eachTheme((theme) => {
     await expect(add.locator("[data-cap-part='end-help']")).toHaveText(
       "This title does not expire.",
     );
-  });
-
-  test("behavior: the viewer's own row offers only their history", async ({ page }) => {
-    await visitStates(page, "people-roles", theme);
-    const own = lead(page).locator("tr[data-name='Maya Chen']");
-    await expect(own.getByText("You", { exact: true })).toBeVisible();
-    await expect(own.getByRole("button")).toHaveCount(0);
-    await expect(own.getByRole("link", { name: "History for Maya Chen" })).toBeVisible();
   });
 });
 

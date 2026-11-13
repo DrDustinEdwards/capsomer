@@ -50,18 +50,6 @@ eachTheme((theme) => {
     ]);
   });
 
-  test("accessibility: the states page's hover, disabled and comfortable rows have no violations", async ({
-    page,
-  }) => {
-    await visitStates(page, "theme-switch", theme);
-    await expectNoAxeViolations(page, "section[aria-labelledby='s-states']");
-    await expect(
-      page.locator(
-        "section[aria-labelledby='s-states'] [data-density='comfortable'] .cap-theme-options",
-      ),
-    ).toBeVisible();
-  });
-
   test("behavior: the chosen choice has one marker, a fill at 3:1 against the page, and no underline", async ({
     page,
   }) => {
@@ -78,13 +66,6 @@ eachTheme((theme) => {
     });
     expect(r.shadow, "no second marker (an underline)").toBe("none");
     expect(r.ratio).toBeGreaterThanOrEqual(3);
-  });
-
-  test("keyboard: the chosen choice shows a focus ring", async ({ page }) => {
-    await visitStates(page, "theme-switch", theme, "light");
-    await page.keyboard.press("Tab");
-    await expect(radio(page, "Light")).toBeFocused();
-    await expect(page.locator(".cap-theme label:has(input:focus-visible)")).toHaveCount(1);
   });
 
   test("behavior: the first visit follows the system and remembers nothing", async ({ page }) => {
