@@ -179,7 +179,7 @@ const FACES = [
     family: "DM Sans",
     file: "dm-sans-variable.woff2",
     sha256: "9fea608a947e67020c33cad9a6fe3d60c54119dfb8cff87768a8117a15ed7543",
-    weight: "400 700",
+    weight: "100 1000",
     use: "Foxhound's face (its SITES entry names it), variable",
   },
   {
