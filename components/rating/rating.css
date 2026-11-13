@@ -1,0 +1,96 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* A star rating (rating.md). Two rows of five glyphs on one line: the outlines, and the filled
+   stars clipped to the value in halves (data-half 0..10, so no inline style is needed). The fill
+   is the accent; the outline is the 3:1 line color, so the empty stars still show their shape. */
+@layer cap.components {
+  .cap-rating {
+    --_star: 1.1em;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-3);
+
+    &[data-size="sm"] {
+      --_star: 0.9em;
+    }
+    &[data-size="lg"] {
+      --_star: 1.5em;
+    }
+  }
+  .cap-rating-img {
+    display: inline-flex;
+  }
+  .cap-rating-stars {
+    --_fill: 0%;
+    position: relative;
+    display: inline-block;
+    font-size: var(--_star, 1.1em);
+    line-height: 1;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+    font-variant-emoji: text;
+
+    &[data-half="0"] {
+      --_fill: 0%;
+    }
+    &[data-half="1"] {
+      --_fill: 10%;
+    }
+    &[data-half="2"] {
+      --_fill: 20%;
+    }
+    &[data-half="3"] {
+      --_fill: 30%;
+    }
+    &[data-half="4"] {
+      --_fill: 40%;
+    }
+    &[data-half="5"] {
+      --_fill: 50%;
+    }
+    &[data-half="6"] {
+      --_fill: 60%;
+    }
+    &[data-half="7"] {
+      --_fill: 70%;
+    }
+    &[data-half="8"] {
+      --_fill: 80%;
+    }
+    &[data-half="9"] {
+      --_fill: 90%;
+    }
+    &[data-half="10"] {
+      --_fill: 100%;
+    }
+  }
+  .cap-rating-empty {
+    color: var(--line-strong);
+  }
+  .cap-rating-fill {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    color: var(--accent);
+    clip-path: inset(0 calc(100% - var(--_fill)) 0 0);
+  }
+  .cap-rating-note {
+    color: var(--muted);
+    font-size: var(--fs-detail);
+  }
+  .cap-rating-control {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-4);
+  }
+  @media (forced-colors: active) {
+    .cap-rating-fill {
+      color: CanvasText;
+    }
+    .cap-rating-empty {
+      color: GrayText;
+    }
+  }
+}
