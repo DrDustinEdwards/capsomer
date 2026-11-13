@@ -54,9 +54,11 @@
     margin-block-start: var(--space-4);
     font-size: var(--fs-body);
 
+    /* Numbers inside, flush with the text above; set here because a site's reset may clear them. */
     & ol {
       margin: 0;
-      padding-inline-start: 1.5em;
+      padding: 0;
+      list-style: decimal inside;
     }
     & li + li {
       margin-block-start: var(--space-2);
