@@ -28,7 +28,8 @@
   /* The browser's [hidden] loses to any class that sets display; this one does not, so no site writes
      `.x[hidden] { display: none }` again. until-found stays the browser's (it must stay findable). An !important in the
      lowest layer outranks every rule in every layer and in unlayered CSS, !important or not (important declarations
-     run the layers in reverse), so nothing can show a hidden element, print included: drop the attribute instead. */
+     run the layers in reverse), so nothing outside cap.reset can show a hidden element: drop the attribute instead. A rule inside cap.reset with more
+     specificity can (the progressive tabs print every panel that way). */
   [hidden]:where(:not([hidden="until-found"])) {
     display: none !important;
   }
