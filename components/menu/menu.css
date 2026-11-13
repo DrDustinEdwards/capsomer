@@ -20,6 +20,8 @@
     & svg {
       flex: none;
       color: var(--muted);
+      /* The chevron (components/icons, a 24-unit drawing), its line 1.8px at 16px. */
+      --icon-stroke: 2.7;
     }
   }
   @media (prefers-reduced-motion: no-preference) {
@@ -109,6 +111,9 @@
     display: grid;
     place-items: center;
     color: var(--muted);
+    /* An Icon (a 24-unit drawing) at 16px, its line 1.8px. */
+    --icon-size: var(--space-5);
+    --icon-stroke: 2.7;
 
     &:dir(rtl), :where([dir="rtl"]) & {
       transform: scaleX(-1);

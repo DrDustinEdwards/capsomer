@@ -9,6 +9,7 @@ Each release names every removed or renamed token or class, and every changed HT
 - **Command host: a failed menu load is no longer kept.** `load()` clears itself on failure so the next `open` or `load` fetches the chunk again; the idle warm-up and `runWhenReady` share one fire-and-forget `warm`, and `open` still rejects.
 - **Theme switch: optional `onError(error)`** on `ThemeSwitch`, `ThemeButton`, `enhance` and `chooseTheme`/`toggleTheme`'s memory, called when `onSave` throws or rejects. Without it the failure is let go as before.
 - **Carousel: `trackLabel`** names the scrolling track (default "Slides"), for a page in another language.
+- **Chevrons come from the icon set.** The carousel, combobox, menu (trigger and submenu), tree, date picker and settings back link drew their own chevron SVGs (16- and 20-unit copies); they now draw `iconChevronLeft`, `iconChevronRight` and `iconChevronDown` (`Icon` in React, `iconSvg` in the behavior modules), each component setting `--icon-size` and `--icon-stroke` so the line keeps its weight. New icons `iconChevronsLeft` and `iconChevronsRight` (the date picker's year buttons). HTML contract: the chevron is now `<svg class="cap-icon" viewBox="0 0 24 24">` with the set's path, in the carousel's buttons, the combobox trigger, `.cap-menu-trigger`, `.cap-menu-chevron`, `.cap-tree-toggle` and `.cap-settings-back`. The chevrons are a little narrower (the set's 12-unit span), otherwise unchanged.
 
 ## [0.139.0]
 

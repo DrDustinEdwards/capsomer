@@ -1,5 +1,6 @@
 import { Menu as Base } from "@base-ui/react/menu";
 import { Fragment, useEffect, useId, useRef, type MouseEvent, type ReactNode } from "react";
+import { Icon, iconChevronDown, iconChevronRight } from "../icons/icons.react.tsx";
 import { enhance } from "./menu.ts";
 
 export interface MenuAction {
@@ -83,32 +84,6 @@ export interface MenuProps {
   // For specimens and tests: open on mount.
   defaultOpen?: boolean;
 }
-
-const Chevron = () => (
-  <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
-    <path
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.8"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      d="m3.5 6 4.5 4.5L12.5 6"
-    />
-  </svg>
-);
-
-const ChevronEnd = () => (
-  <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
-    <path
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.8"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      d="m6 3.5 4.5 4.5L6 12.5"
-    />
-  </svg>
-);
 
 const Check = () => (
   <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
@@ -278,7 +253,7 @@ function Entries({
               {e.icon ? <span className="cap-option-icon">{e.icon}</span> : null}
               <span className="cap-option-label">{e.label}</span>
               <span className="cap-menu-chevron" aria-hidden="true">
-                <ChevronEnd />
+                <Icon d={iconChevronRight} />
               </span>
             </Base.SubmenuTrigger>
             <Base.Portal container={container ?? undefined}>
@@ -317,7 +292,7 @@ export function Menu({
     <Base.Root modal={false} disabled={disabled} defaultOpen={defaultOpen}>
       <Base.Trigger className="cap-btn cap-menu-trigger" aria-label={rest["aria-label"]}>
         {label}
-        <Chevron />
+        <Icon d={iconChevronDown} />
       </Base.Trigger>
       <Base.Portal container={container ?? undefined}>
         <Base.Positioner className="cap-menu-positioner" sideOffset={4} align="start">
@@ -442,7 +417,7 @@ export function FormMenu({
         aria-label={rest["aria-label"]}
       >
         {label}
-        <Chevron />
+        <Icon d={iconChevronDown} />
       </summary>
       {form ? (
         <div className="cap-popover cap-menu">{entries}</div>

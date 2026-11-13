@@ -55,6 +55,9 @@
     color: var(--muted);
     font-size: var(--fs-detail);
     text-decoration: none;
+    /* The chevron (components/icons, a 24-unit drawing) at 16px, its line 1.5px. */
+    --icon-size: var(--space-5);
+    --icon-stroke: 2.25;
 
     &:hover {
       color: var(--text);

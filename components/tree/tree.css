@@ -163,6 +163,9 @@
 
     & svg {
       display: block;
+      /* The chevron (components/icons, a 24-unit drawing) at 16px, its line 1.8px. */
+      --icon-size: var(--space-5);
+      --icon-stroke: 2.7;
     }
 
     &:hover {
