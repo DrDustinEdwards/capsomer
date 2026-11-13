@@ -10,6 +10,10 @@ Each release names every removed or renamed token or class, and every changed HT
 - **Stacks take `data-align`** (`start`, `center`, `end`): every item keeps its own width, lined up on that side, as clusters already could. It replaces the Portal's `.mt4` and `.mt8` notes under a status and its stacked button cells. Removed or renamed: no token or class.
 - Showcase site: every page carries `<meta name="color-scheme" content="light dark">`, so `theme.js` and the theme switch have a meta to set before paint, and `<meta name="text-scale" content="scale">`, so the site follows the reader's system text size (Modern Web Guidance, respect-os-text-scale). They come from `siteHead()` (site/seo.ts); the states pages already had both. Nothing in the package changes.
 
+## [0.133.0]
+
+- **A progressive tab set prints every panel.** The print rule set `display: block` in `cap.components`, and the reset's `[hidden] { display: none !important }` in `cap.reset` beats every later layer, so the inactive panels stayed off the page. The rule is now `!important` in `cap.reset`, where its specificity wins. No token or class changed.
+
 ## [0.132.0]
 
 **Content and marketing blocks** (the shared-code audit's batch 5, clusters C39-C53). Nineteen new components, a stream reader and three additions, each built once from the sites that had it, so every site gets the same block and the same behavior. New classes, exports and HTML contracts only; no token, class or contract is removed or renamed.

@@ -418,7 +418,6 @@
         display: none;
       }
       & > .cap-tabs-panel[hidden] {
-        display: block;
         position: static;
         content-visibility: visible;
         inline-size: auto;
@@ -460,6 +459,16 @@
     }
     .cap-tab:is([aria-disabled="true"], :disabled) {
       color: GrayText;
+    }
+  }
+}
+
+/* The reset's [hidden] is display: none !important in cap.reset (and cap.base), and a layered !important beats every
+   later layer, so the panels above print only if this rule is !important in cap.reset, where its specificity wins. */
+@layer cap.reset {
+  @media print {
+    .cap-tabs[data-progressive] > .cap-tabs-panel[hidden] {
+      display: block !important;
     }
   }
 }

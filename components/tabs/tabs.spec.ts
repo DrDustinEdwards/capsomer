@@ -447,6 +447,16 @@ eachTheme((theme) => {
     await context.close();
   });
 
+  test("behavior: on paper a progressive set prints every panel, the hidden ones too", async ({
+    page,
+  }) => {
+    await visitStates(page, "tabs", theme);
+    await page.emulateMedia({ media: "print" });
+    const hidden = page.locator("#tabs-progressive > .cap-tabs-panel[hidden]");
+    expect(await hidden.count()).toBeGreaterThan(0);
+    for (const panel of await hidden.all()) await expect(panel).toBeVisible();
+  });
+
   test("behavior: dragging the pill moves it to the tab it is let go nearest, and a click still chooses", async ({
     page,
   }) => {
