@@ -4,10 +4,19 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
-## [0.133.0]
+## [0.132.0]
 
-- **New layout: panes** (`css/utilities.css`). `.cap-panes` sets two panels side by side, the first the wider (3:2); `data-flip` makes the second the wider (2:3) and `data-even` halves the row. The gap is `data-gap` like the other layouts (default `--space-6`). The panes stack when the row is narrower than `--panes-break` (50rem), measured on the row itself rather than the window, so they also stack inside a narrow shell or a drawer, with no media query. Tops line up and a short pane does not stretch. It replaces the Portal's `.grid2` and Carrel's `.app-split`.
+- **New layout: panes** (`css/utilities.css`). `.cap-panes` sets two panels side by side, the first the wider (3:2); `data-flip` makes the second the wider (2:3) and `data-even` halves the row. The gap is `data-gap` like the other layouts (default `--space-6`). The panes stack when the row is narrower than `--panes-break` (50rem), measured on the row itself rather than the window, so they also stack inside a narrow shell or a drawer, with no media query. Tops line up and a short pane does not stretch; a third panel takes a row of its own. It replaces the Portal's `.grid2` and Carrel's `.app-split`.
 - **Stacks take `data-align`** (`start`, `center`, `end`): every item keeps its own width, lined up on that side, as clusters already could. It replaces the Portal's `.mt4` and `.mt8` notes under a status and its stacked button cells. Removed or renamed: no token or class.
+
+## [0.131.0]
+
+- **Form and async hooks: `capsomer/react/form-hooks`** (shared-code audit pass 2, cluster C21). `useSaveQueue` (save on change without racing saves), `useDraftDirty`, `useDebounced` and `useDebouncedPreview` (an overtaken request is aborted), with no router or DOM; the pure parts (`createSaveQueue`, `draftAfter`, `draftDirty`, `filterParams`, `withParam`, `pagePending`) from `capsomer/behavior/form-hooks`. From Foxhound, Foxing, dustinedwards.info, Carrel and the Capsid Portal.
+- **Confirm dialog: `useConfirmAction` and `useTwoStep`** in `capsomer/react/confirm-dialog`: the subject and opener a page's confirm dialogs share, and preview-then-perform with the server's words on every failure and an expired preview dropped. From Carrel and the Capsid Portal.
+- **Route hooks: `capsomer/react/route-hooks`** (clusters C21 and C22), the ones that read the address, a fetcher or loader data: `useFetcherPromise`, `useUrlDialog`, `useUrlFilters`, `usePagePending`, `useScrollToHash`, `useParamChoice` and `createSnippetHook`.
+- **State hooks: `capsomer/react/state-hooks`** (cluster C22). `useSelection` and `indeterminate` for bulk bars and `useSinceLastVisit`; `newId` and `versionedStore` from `capsomer/behavior/state-hooks`, with no router or DOM. A media query and the browser's zone are `useMedia` and `useBrowserZone` in `capsomer/react/hooks`.
+- **Data hooks: `capsomer/react/data`** (cluster C23). `createQueryClient`, `useSeededQuery`, `useWrite` with `patch` and `patchAll`, `Answer` with `getAnswer`, `postAnswer`, `answerOf`, `ask` and `SignedOut`, `useAnswer`, `createFlag` and `useFlag`, `useLiveRoom` (reconnects with backoff and jitter; Foxing's club room did not reconnect) and `preloadedLazy`. `@tanstack/react-query` is a new optional peer (`^5.104.0`). Nothing in it touches the DOM, so Foxing's shared web and mobile client uses it.
+- No token or class was removed or renamed.
 
 ## [0.130.0]
 

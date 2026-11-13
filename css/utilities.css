@@ -391,7 +391,8 @@
      and its history. data-flip makes the second the wider (2:3), data-even halves the row. They
      stack when the row is narrower than --panes-break (50rem), whatever the window: each pane's
      floor is its share of that width, so the row wraps exactly there with no media query, and a
-     pane in a narrow shell or a drawer stacks too. Tops line up; a short pane does not stretch. */
+     pane in a narrow shell or a drawer stacks too. Tops line up; a short pane does not stretch; a
+     third panel takes a row of its own. */
   .cap-panes {
     --panes-a: 3;
     --panes-b: 2;
