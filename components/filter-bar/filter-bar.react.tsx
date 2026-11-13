@@ -8,7 +8,7 @@ import {
 } from "react";
 import { liveSubmit, SEARCH_DELAY_MS } from "./filter-bar.ts";
 
-export { clearedHref, hasFilters, withParams, type Params } from "./filter-bar.ts";
+export { clearedHref, isFiltered, withParams, type Params } from "./filter-bar.ts";
 
 // A list's filters in the address (filter-bar.md): a GET form named as a search landmark, its
 // fields, Apply and Clear, and the count of what is shown in a polite live region. With no script

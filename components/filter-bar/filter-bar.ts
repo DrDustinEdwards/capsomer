@@ -26,7 +26,7 @@ export function clearedHref(path: string, params: Params, keep: readonly string[
 }
 
 // True when any of `keys` has a value in `params` that differs from its default.
-export function hasFilters(
+export function isFiltered(
   params: Params,
   keys: readonly string[],
   defaults: Params = {},
