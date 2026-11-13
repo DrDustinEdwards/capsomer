@@ -216,14 +216,6 @@ const SITES = {
       },
     },
   },
-  "germomics-admin": {
-    family: "purple",
-    on: "the admin's [data-cap-theme] element",
-    note: "the admin's numbers keep the site's JetBrains Mono",
-    all: {
-      mono: '"JetBrains Mono", ui-monospace, Menlo, monospace',
-    },
-  },
   capsid: {
     family: "teal",
     on: "the explorer's <html> (capsid.dustinedwards.info)",
