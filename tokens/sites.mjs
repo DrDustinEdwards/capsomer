@@ -8,8 +8,9 @@
 // What goes in: only what a site differs on (faces, the display face, neutrals, the on state,
 // type sizes, space and radius, the hover touches in scale.mjs's `touch` group, --enarratio-*), as literal values, never a var() chain, so the file works on <html> or on
 // any wrapper. A brand color is never a site setting: it is a family (FAMILIES in
-// palette.mjs), which the site keeps choosing with data-family. A site on the defaults has no
-// entry. The selectors repeat the family files' shapes (plain, system dark, pinned dark), so a
+// palette.mjs), which the site keeps choosing with data-family, unless the site's look is its own
+// in a way no family can draw (two hues): then `ownBrand` says why, and its brand roles are
+// checked by the same pairs. A site on the defaults has no entry. The selectors repeat the family files' shapes (plain, system dark, pinned dark), so a
 // site rule ties a family rule on specificity and wins on order, and each also matches a
 // [data-family] or [data-density] wrapper inside the site, so css/enarratio-tokens.css's wrapper
 // block cannot put Capsomer's own values back there.
@@ -19,7 +20,7 @@ import { FAMILIES, failures, fitNeutrals, themes } from "./palette.mjs";
 import { UI_STACK } from "./palette-core.mjs";
 
 // site -> { family (whose tokens the colors are checked against), on (where the attribute
-// goes), note, all (both themes), light, dark, defaultTheme, phone, phoneMax, coarse }. A site whose
+// goes), note, ownBrand (why it sets brand roles), more (its own values under prefers-contrast: more), all (both themes), light, dark, defaultTheme, phone, phoneMax, coarse }. A site whose
 // defaultTheme is "dark" (as its family's is) gets its dark values in the plain block and its
 // light values only where light is pinned (data-theme="light" on the root, or
 // data-cap-theme="light"); its dark values are also written under the family's dark selectors,
@@ -134,7 +135,82 @@ const SITES = {
       "card-shadow": "0 1px 3px 0 rgb(0 0 0 / 8%), 0 1px 2px 0 rgb(0 0 0 / 5%)",
     },
   },
+  // germomics' own look (Dustin, 2026-10-04: the best-designed site in the network, which keeps
+  // its look on Capsomer): crystal violet buttons, cyan links, focus and now-playing, and
+  // violet-tinted neutrals, as its app.css drew them before the Tailwind move. Two hues, which no
+  // family has, so it sets its brand roles (ownBrand). The 55% and 12% mixes are the ones its
+  // site.css made with color-mix, written out.
   germomics: {
+    family: "purple",
+    on: "<html> on the public pages",
+    note: "its crystal violet and cyan on violet-tinted neutrals, Space Grotesk for the UI and JetBrains Mono for numbers, and its 60px header",
+    ownBrand:
+      "germomics keeps its own look (Dustin, 2026-10-04): violet buttons with cyan links and focus, two hues no family has",
+    all: {
+      ui: '"Space Grotesk", "Space Grotesk Fallback", ui-sans-serif, system-ui, sans-serif',
+      mono: '"JetBrains Mono", "JetBrains Mono Fallback", ui-monospace, Menlo, monospace',
+      "header-h": "calc(3.75rem + 1px)",
+      "ring-width": "2px",
+    },
+    light: {
+      ground: "#fbfafd",
+      raised: "#ffffff",
+      sunken: "#f4f1fa",
+      text: "#14101f",
+      dim: "#6b6577",
+      line: "#e2dcec",
+      "line-strong": "#958f9f",
+      "accent-text": "#05708c",
+      "accent-hover": "#14101f",
+      "accent-soft": "#e2eef2",
+      "accent-line": "#0e7490",
+      sel: "#e7f1f4",
+      primary: "#4f2d7f",
+      "primary-hover": "#402567",
+      "primary-fg": "#ffffff",
+      "primary-line": "#4f2d7f",
+      on: "#4f2d7f",
+      "on-hover": "#402567",
+      ring: "#0e7490",
+      "link-hover-bg": "#f4f1fa",
+    },
+    dark: {
+      ground: "#120b1f",
+      raised: "#181125",
+      sunken: "#1e1630",
+      text: "#edeaf5",
+      dim: "#baaed1",
+      line: "#2c2440",
+      "line-strong": "#7d7394",
+      "accent-text": "#38dffa",
+      "accent-hover": "#edeaf5",
+      "accent-soft": "#19283d",
+      "accent-line": "#22d3ee",
+      sel: "#192439",
+      primary: "#c4aef0",
+      "primary-hover": "#bca4e3",
+      "primary-fg": "#120b1f",
+      "primary-line": "#c4aef0",
+      on: "#c4aef0",
+      "on-hover": "#b29ad9",
+      ring: "#22d3ee",
+      "link-hover-bg": "#1e1630",
+    },
+    // Under prefers-contrast: more, its own colors lifted to Capsomer's more floors.
+    more: {
+      light: { "accent-text": "#02485d", line: "#e0daea", sel: "#e8f2f5", dim: "#605a6c" },
+      dark: {
+        dim: "#d5c8ec",
+        "accent-text": "#a8f1ff",
+        line: "#595070",
+        sel: "#182337",
+        "line-strong": "#9c92b4",
+        primary: "#d5c1fe",
+        "primary-hover": "#d7c0ff",
+      },
+    },
+  },
+  "germomics-admin": {
     family: "purple",
     on: "the admin's [data-cap-theme] element",
     note: "the admin's numbers keep the site's JetBrains Mono",
@@ -258,6 +334,7 @@ function moreValues(site) {
     const merged = { ...t[`${scheme}More`].tokens, ...own };
     for (const [k, v] of Object.entries(fitNeutrals(merged, scheme, "more")))
       if (k in own && v !== own[k]) out[scheme][k] = v;
+    Object.assign(out[scheme], site.more?.[scheme]);
   }
   return out;
 }
@@ -347,7 +424,7 @@ function check() {
       ...site.phone,
       ...site.coarse,
     })) {
-      if (BRAND.test(k))
+      if (BRAND.test(k) && !site.ownBrand)
         problems.push(`${name}: --${k} is a brand color; add a family in palette.mjs instead`);
       if (/var\(/.test(v)) problems.push(`${name}: --${k} must be a literal, not ${v}`);
     }
