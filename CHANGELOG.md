@@ -4,7 +4,7 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
-## [0.126.0]
+## [0.127.0]
 
 - **Form and async hooks: `capsomer/react/form-hooks`** (shared-code audit pass 2, cluster C21). `useSaveQueue` (save on change without racing saves), `useDraftDirty`, `useDebounced` and `useDebouncedPreview` (an overtaken request is aborted), with no router or DOM; the pure parts (`createSaveQueue`, `draftAfter`, `draftDirty`, `filterParams`, `withParam`, `pagePending`) from `capsomer/behavior/form-hooks`. From Foxhound, Foxing, dustinedwards.info, Carrel and the Capsid Portal.
 - **Confirm dialog: `useConfirmAction` and `useTwoStep`** in `capsomer/react/confirm-dialog`: the subject and opener a page's confirm dialogs share, and preview-then-perform with the server's words on every failure and an expired preview dropped. From Carrel and the Capsid Portal.
@@ -12,6 +12,15 @@ Each release names every removed or renamed token or class, and every changed HT
 - **State hooks: `capsomer/react/state-hooks`** (cluster C22). `useSelection` and `indeterminate` for bulk bars and `useSinceLastVisit`; `newId` and `versionedStore` from `capsomer/behavior/state-hooks`, with no router or DOM. A media query and the browser's zone are `useMedia` and `useBrowserZone` in `capsomer/react/hooks`.
 - **Data hooks: `capsomer/react/data`** (cluster C23). `createQueryClient`, `useSeededQuery`, `useWrite` with `patch` and `patchAll`, `Answer` with `getAnswer`, `postAnswer`, `answerOf`, `ask` and `SignedOut`, `useAnswer`, `createFlag` and `useFlag`, `useLiveRoom` (reconnects with backoff and jitter; Foxing's club room did not reconnect) and `preloadedLazy`. `@tanstack/react-query` is a new optional peer (`^5.104.0`). Nothing in it touches the DOM, so Foxing's shared web and mobile client uses it.
 - No token or class was removed or renamed.
+
+## [0.126.0]
+
+- **Layout: item helpers.** `.cap-grow` (takes the room its row leaves and may shrink below its content), `.cap-shrink` (a flex or grid item that may shrink below its content: `min-inline-size: 0`), `.cap-keep` (never shrinks), `.cap-full` (a whole row: every grid column, the full line of a cluster, the full width of a block) and `.cap-column`, a centered column for a form (42rem), with `data-width="narrow"` (28rem, a sign-in) or `"reading"` (48rem). They replace txasm's `.grow`, `.shrink`, `.span-2`, `.narrow`, `.form-page` and `.reading`, and Foxing's `.grow`, `.shrink-0`, `.min-0` and `.full`.
+- **New: site footer** (`capsomer/site-footer.css`, `.cap-site-footer`, `.cap-site-footer-links`, `.cap-site-footer-note`): a site's own plain footer for a site outside the family footer, a hairline over a links row, a mark and the small print, in the page's column; `data-tone="raised"` on the raised surface, `data-links="quiet"` for muted links. Slots `--site-footer-gap`, `--site-footer-pad`, `--site-footer-bg`, `--site-footer-fs`. From txasm's and julieedwards.info's footers.
+- **Sites: page columns in their entries.** txasm's entry sets its 72rem page column (`--page-max`), 24px sides (16px on a phone), and 16px text on a 1.5 line (`--fs-page`, `--page-leading`), so its public pages use `.cap-page` instead of their own frame. julieedwards.info's entry sets its 67.5rem column, 32px sides and 1.65 line. Removed or renamed: no token or class.
+- **Site footer links are at least `--target` tall** (24px by default, WCAG 2.2 2.5.8): the sweep found them 20px on a touch screen.
+- **Sites: dustinedwards.info's entry sets `--radius-control: 0` (its square controls) and `--z-progress: 900` (its reading-progress line over its own 800 overlay)**, which its app.css declared itself.
+- **Fonts: DM Sans declares its file's whole weight axis** (100 to 1000, was 400 to 700), as dustinedwards.info's font gate checks every face it loads.
 
 ## [0.125.0]
 

@@ -32,10 +32,12 @@ const SITES = {
   dustinedwards: {
     family: "purple",
     on: "<html>",
-    note: "its paper ground, layers above its own pinned bar, and the public charts' look from before Enarratio 0.3 (Enarratio's own literals)",
+    note: "its paper ground, square controls (the manual look), layers above its own pinned bar with the reading-progress line over them, and the public charts' look from before Enarratio 0.3 (Enarratio's own literals)",
     all: {
       "z-sticky": "100",
       "z-overlay": "800",
+      "z-progress": "900",
+      "radius-control": "0",
       "enarratio-font-size": "1rem",
       "enarratio-font-size-small": "0.875em",
       "enarratio-line-height-tooltip": "1.35",
@@ -239,9 +241,16 @@ const SITES = {
   txasm: {
     family: "navy",
     on: "<html>",
-    note: "the UI face stays Inter, which txasm self-hosts (Fontsource names the variable file Inter Variable)",
+    note: "the UI face stays Inter, which txasm self-hosts (Fontsource names the variable file Inter Variable); its public pages read at 16px on a 72rem column, 24px in from the sides (16px on a phone)",
     all: {
       ui: '"Inter Variable", "Inter", "Inter Fallback", "Segoe UI", "Helvetica Neue", Arial, sans-serif',
+      "page-max": "72rem",
+      "page-gutter": "24px",
+      "fs-page": "1rem",
+      "page-leading": "1.5",
+    },
+    phone: {
+      "page-gutter": "16px",
     },
   },
   foxing: {
@@ -289,8 +298,11 @@ const SITES = {
   julieedwards: {
     family: "forest",
     on: "<html>",
-    note: "Open Sans to read and Montserrat for the header and headings, which the site self-hosts; the old site's hover touches (Dustin, 2026-10-23)",
+    note: "Open Sans to read and Montserrat for the header and headings, which the site self-hosts; the old site's hover touches (Dustin, 2026-10-23); its 67.5rem column 32px in from the sides, on a 1.65 line",
     all: {
+      "page-max": "67.5rem",
+      "page-gutter": "32px",
+      "page-leading": "1.65",
       ui: '"Open Sans", "Open Sans Fallback", Arial, sans-serif',
       "font-ui": '"Montserrat", "Montserrat Fallback", Helvetica, Arial, sans-serif',
       "link-rule": "1px",
