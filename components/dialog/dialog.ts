@@ -9,7 +9,7 @@
 import { reducedMotion } from "../count-up/count-up.ts";
 
 // ---------------------------------------------------------------------------------------
-// Helpers every overlay shares.
+// Helpers every overlay shares (confirm-dialog.ts re-exports the first six for 0.1 imports).
 
 const openers = new WeakMap<HTMLDialogElement, Element | null>();
 
