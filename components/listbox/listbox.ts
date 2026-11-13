@@ -7,6 +7,7 @@
 // means one thing only: this value is chosen (single or multi selection).
 
 import { uid } from "../hooks/hooks.ts";
+import { isImeEnter } from "../shortcuts/shortcuts.ts";
 
 // ---------------------------------------------------------------------------------------
 // Pure functions.
@@ -481,7 +482,7 @@ export function createListbox(el: HTMLElement, opts: ListboxOptions = {}): Listb
     if (
       e.defaultPrevented ||
       e.isComposing ||
-      (e.key === "Enter" && e.keyCode === 229) ||
+      isImeEnter(e) ||
       e.ctrlKey ||
       e.metaKey ||
       e.altKey

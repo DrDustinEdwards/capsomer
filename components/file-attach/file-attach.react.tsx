@@ -2,6 +2,7 @@ import { useEffect, useId, useRef, useState, type ReactNode } from "react";
 import { useHydrated } from "../hooks/hooks.react.tsx";
 import { acceptLabel, validateFiles } from "../drop-zone/drop-zone.ts";
 import { formatBytes } from "../format/format.ts";
+import { NEW_TAB_WORDS } from "../link/link.react.tsx";
 
 export interface AttachedFile {
   id: string;
@@ -60,7 +61,7 @@ export function FileAttach({
   unavailable,
   renderRemove,
   emptyText = "No files uploaded.",
-  newTabText = "(opens in a new tab)",
+  newTabText = NEW_TAB_WORDS,
 }: FileAttachProps) {
   const ready = useHydrated();
   const inputId = useId();
@@ -150,7 +151,7 @@ export function FileAttach({
               {f.href ? (
                 <a href={f.href} target="_blank" rel="noopener noreferrer">
                   {f.name}
-                  <span className="cap-sr-only"> {newTabText}</span>
+                  <span className="cap-sr-only"> {newTabText.trimStart()}</span>
                 </a>
               ) : (
                 <span>{f.name}</span>
