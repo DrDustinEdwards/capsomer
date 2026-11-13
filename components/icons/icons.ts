@@ -69,6 +69,7 @@ export const iconEdit =
   "M13 21h8M15 5l4 4M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z";
 export const iconExternal =
   "M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5";
+export const iconFastForward = "M21 12a9 9 0 1 1-3-6.7L21 8M21 3v5h-5";
 export const iconFileAudio =
   "M4 6.835V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.706.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2h-.343M14 2v5a1 1 0 0 0 1 1h5M2 19a2 2 0 0 1 4 0v1a2 2 0 0 1-4 0v-4a6 6 0 0 1 12 0v4a2 2 0 0 1-4 0v-1a2 2 0 0 1 4 0";
 export const iconFileCheck =
@@ -100,6 +101,7 @@ export const iconKey =
   "m2 21 9.6-9.6M7.5 15.5l2.3 2.3a1 1 0 0 1 0 1.4l-2.1 2.1a1 1 0 0 1-1.4 0L4 19M10 7.5a5.5 5.5 0 1 0 11 0a5.5 5.5 0 1 0-11 0";
 export const iconLibrary = "m16 6 4 14M12 6v14M8 8v12M4 4v16";
 export const iconLink = "M9 17H7A5 5 0 0 1 7 7h2M15 7h2a5 5 0 1 1 0 10h-2M8 12L16 12";
+export const iconList = "M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01";
 export const iconListChecks = "M13 5h8M13 12h8M13 19h8M3 17l2 2 4-4M3 7l2 2 4-4";
 export const iconListOrdered =
   "M11 5h10M11 12h10M11 19h10M4 4h1v5M4 9h2M6.5 20H3.4c0-1 2.6-1.925 2.6-3.5a1.5 1.5 0 0 0-2.6-1.02";
@@ -116,9 +118,11 @@ export const iconMoon = "M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z";
 export const iconMusic =
   "M21 16V3a1 1 0 0 0-1.28-.96l-10 2.917a1 1 0 0 0-.72.96V19M15 16a3 3 0 1 0 6 0a3 3 0 1 0-6 0M3 19a3 3 0 1 0 6 0a3 3 0 1 0-6 0";
 export const iconMusicNote = "m19 6-5.2-3.9a.5.5 0 0 0-.8.4V18M5 18a4 4 0 1 0 8 0a4 4 0 1 0-8 0";
+export const iconMute = "M11 5 6 9H2v6h4l5 4zM22 9l-6 6M16 9l6 6";
 export const iconOverview = "M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z";
 export const iconPaste =
   "M11 14h10M16 4h2a2 2 0 0 1 2 2v1.344M17 18l4-4-4-4M8 4H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 1.793-1.113M9 2h6a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-6a1 1 0 0 1-1-1v-2a1 1 0 0 1 1-1z";
+export const iconPause = "M7 4h3.5v16H7zM13.5 4H17v16h-3.5z";
 export const iconPeople =
   "M9 4.5a3.5 3.5 0 1 0 0 7a3.5 3.5 0 1 0 0-7zM2.5 19.5c.8-3.5 3.3-5.5 6.5-5.5s5.7 2 6.5 5.5M15.5 4.8a3.5 3.5 0 0 1 0 6.4M18 14.5c1.8.8 3 2.5 3.5 5";
 export const iconPercent =
@@ -143,6 +147,7 @@ export const iconRefresh =
 export const iconRepeat =
   "m17 2 4 4-4 4M3 11v-1a4 4 0 0 1 4-4h14M7 22l-4-4 4-4M21 13v1a4 4 0 0 1-4 4H3";
 export const iconReset = "M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8M3 3v5h5";
+export const iconRewind = "M3 12a9 9 0 1 0 3-6.7L3 8M3 3v5h5";
 export const iconRoles =
   "M10 4.5a3.5 3.5 0 1 0 0 7a3.5 3.5 0 1 0 0-7zM3.5 19.5c.8-3.5 3.3-5.5 6.5-5.5 1.5 0 2.8.4 3.9 1.2M15 18l2 2 4-4";
 export const iconRss = "M5 5a14 14 0 0 1 14 14M5 11a8 8 0 0 1 8 8M5.5 18.5h.01";
@@ -165,6 +170,7 @@ export const iconShield =
   "M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z";
 export const iconShieldCheck =
   "M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1zM9 12l2 2 4-4";
+export const iconSkipNext = "M5 4.5v15l10-7.5zM19 5v14";
 export const iconSliders = "M10 5H3M12 19H3M14 3v4M16 17v4M21 12h-9M21 19h-5M21 5h-7M8 10v4M8 12H3";
 export const iconSpinner = "M21 12a9 9 0 1 1-6.219-8.56";
 export const iconStar =
@@ -176,6 +182,7 @@ export const iconSun =
   "M12 8a4 4 0 1 0 0 8a4 4 0 1 0 0-8zM12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4";
 export const iconTag = "M3.5 3.5h8l9 9-8 8-9-9zM8 7.5h.01";
 export const iconTicket = "M3.5 7.5h17v3a1.5 1.5 0 0 0 0 3v3h-17v-3a1.5 1.5 0 0 0 0-3zM14.5 7.5v9";
+export const iconTimer = "M10 2h4M12 14l3-3M12 22a8 8 0 1 0 0-16 8 8 0 0 0 0 16z";
 export const iconTrash =
   "M10 11v6M14 11v6M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2";
 export const iconTrendingDown = "M16 17h6v-6M22 17l-8.5-8.5-5 5L2 7";
@@ -189,6 +196,7 @@ export const iconUserCheck =
   "m16 11 2 2 4-4M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M5 7a4 4 0 1 0 8 0a4 4 0 1 0-8 0";
 export const iconUserPlus =
   "M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M5 7a4 4 0 1 0 8 0a4 4 0 1 0-8 0M19 8L19 14M22 11L16 11";
+export const iconVolume = "M11 5 6 9H2v6h4l5 4zM15.5 8.5a5 5 0 0 1 0 7M19 5a10 10 0 0 1 0 14";
 export const iconWarning =
   "m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3M12 9v4M12 17h.01";
 export const iconWebhook =

@@ -5,25 +5,16 @@
 //   narrow screen keeps speed, sleep, chapters and the transcript in a bottom sheet (the dialog).
 // - PlayerSurface: the player on a track's page: a waveform over the scrubber, the transport, and
 //   the settings. It tells the provider when it is on screen, so the dock steps aside.
-import {
-  lazy,
-  Suspense,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-  type ReactNode,
-} from "react";
+import { lazy, Suspense, useEffect, useRef, useState, type ReactNode } from "react";
+import { useIsoLayoutEffect } from "../hooks/hooks.react.tsx";
 import { Dialog, DialogBody, DialogHeader, DialogTitle } from "../dialog/dialog.react.tsx";
+import { Icon, iconAlert, iconChevronUp, iconClose, iconSpinner } from "../icons/icons.react.tsx";
 import { plainLink } from "../shell/shell.react.tsx";
 import { activeChapterIndex } from "./player.ts";
 import { usePlayer } from "./player-context.react.tsx";
 import {
-  AlertIcon,
   ChapterOptions,
   ChaptersControl,
-  ChevronUpIcon,
-  CloseIcon,
   NextButton,
   PlayPauseButton,
   PlayerStatus,
@@ -33,7 +24,6 @@ import {
   SleepOptions,
   SpeedControl,
   SpeedOptions,
-  SpinnerIcon,
   TranscriptLink,
   VolumeControl,
   type RenderLink,
@@ -128,11 +118,11 @@ export function PlayerDock({
               <span className="cap-player-meta" data-tone={p.errored ? "crit" : undefined}>
                 {p.errored ? (
                   <>
-                    <AlertIcon /> Error
+                    <Icon d={iconAlert} className="cap-player-icon" /> Error
                   </>
                 ) : p.buffering ? (
                   <>
-                    <SpinnerIcon /> Buffering
+                    <Icon d={iconSpinner} className="cap-player-icon cap-player-spin" /> Buffering
                   </>
                 ) : (
                   <span className="cap-player-meta-text">{chapter ? chapter.title : idle}</span>
@@ -161,7 +151,7 @@ export function PlayerDock({
               aria-label="More player controls"
               onClick={() => setSheet(true)}
             >
-              <ChevronUpIcon />
+              <Icon d={iconChevronUp} className="cap-player-icon" />
             </button>
             <button
               type="button"
@@ -170,7 +160,7 @@ export function PlayerDock({
               aria-label="Close player"
               onClick={p.dismiss}
             >
-              <CloseIcon />
+              <Icon d={iconClose} className="cap-player-icon" />
             </button>
           </div>
         </div>
@@ -201,8 +191,6 @@ export function PlayerDock({
 
 // The layout effect runs before paint on the client, so a surface already on screen hides the dock
 // with no flash; on the server it is a plain effect (never run).
-const useIsoLayoutEffect = typeof window === "undefined" ? useEffect : useLayoutEffect;
-
 const LazyWaveform = lazy(() =>
   import("./player-waveform.react.tsx").then((m) => ({ default: m.Waveform })),
 );

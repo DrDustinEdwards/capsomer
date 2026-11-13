@@ -104,7 +104,7 @@ A site with episodes or recordings keeps one `<audio>` element playing while the
 
 **The surface** (`PlayerSurface`): the player on a track's page, a waveform (pointer only, `aria-hidden`; the scrubber is the seek control, WCAG 2.5.7) over the scrubber, then play, back, forward and the settings. It acts on its own track without taking over another that is playing, and tells the provider when it is on screen.
 
-**The transcript** (`PlayerTranscript`): takes cues already parsed (Prelum's WebVTT parser) with their `speaker` and `nonVerbal`, groups them into paragraphs, and follows the browser's own TextTrack (a hidden metadata track on the player's element, `cuechange`). A press on a cue plays from there. The active cue scrolls into view inside the box, never the page, and only while the box is on screen; a reader who scrolls away gets Jump to current. Search filters it; Copy with link copies the selection with `attribution(title, shareUrl(seconds))`.
+**The transcript** (`PlayerTranscript`): takes cues already parsed (Prelum's WebVTT parser) with their `speaker` and `nonVerbal`, groups them into paragraphs, and follows the browser's own TextTrack (a hidden metadata track on the player's element, `cuechange`). A press on a cue plays from there; the keyboard reaches each paragraph by its time button, and the cues take no tab stop, so a long transcript is not hundreds of stops. The active cue scrolls into view inside the box, never the page, and only while the box is on screen; a reader who scrolls away gets Jump to current. Search filters it; Copy with link copies the selection with `attribution(title, shareUrl(seconds))`.
 
 **Around it**: `ChapterList`, `KeyMoments` (a jump says where it went in a status line under the list, not a toast), `Hosts` (the shared avatar, or the site's own `avatar`), `PlayTrackButton` for listings, and `WaveformPreview` for an editor. Peaks are computed once, at upload: `computePeaks(channels)` (plain, for a Node script too) or `decodePeaks(arrayBuffer)` in the browser; the stored contract is 400 integers from 0 to 100.
 
@@ -127,7 +127,7 @@ A small speaker inside running text that plays a short clip, a pronunciation. Wi
 
 ## Accessibility (the audio player)
 
-- Play and pause change the button's name ("Play", "Pause") and carry no `aria-pressed` (APG Button: one or the other). A listing's `PlayTrackButton` names the track and does carry `aria-pressed`, as germomics' did.
+- Play and pause change the button's name ("Play", "Pause") and carry no `aria-pressed` (APG Button: one or the other). A listing's `PlayTrackButton` names the track the same way ("Play The title", "Pause The title"), with no `aria-pressed` either.
 - The scrubber is a native range with `aria-valuetext` ("1 minute 5 seconds of 2 minutes"); the waveform never is the only way to seek.
 - Speed and sleep are radios in a fieldset in the sheet and the speed popover (one tab stop, arrows choose); in the dock and on the surface, sleep and chapters are the shared menu's radio items.
 - The player's state is said politely ("Playing, Field notes", "Buffering", "Error loading audio") from one live region, outside the hidden dock.

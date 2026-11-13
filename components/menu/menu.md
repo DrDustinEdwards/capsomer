@@ -28,7 +28,7 @@ One or two actions: show them as buttons (`.cap-btn`). Moving between pages: lin
 ## The default and its reason
 
 - **Base UI's Menu does the hard part** (decision 7): the `menu` and `menuitem` roles, focus moving into the menu and back to the trigger, arrow keys, typeahead and positioning.
-- **The trigger is a `.cap-btn`** with a chevron, and is named by what the menu acts on ("Actions for example.org").
+- **The trigger is a `.cap-btn`** with a chevron (`chevron={false}` leaves it out for an icon trigger that says what it opens), and is named by what the menu acts on ("Actions for example.org").
 - **Danger items come last, after a separator, in `--crit`** (Primer's rule). The menu moves them there whatever order the app passes, so a destructive action is never between two routine ones. A danger item opens the confirm dialog; it never acts at once.
 - **A disabled item stays in the menu and reachable by the arrow keys**, with its reason under it and read as its description. A hidden action leaves a person wondering where it went.
 - **A shortcut is shown at the item's end and set as `aria-keyshortcuts`**; the visible key is hidden from the item's name so the name stays the action.
