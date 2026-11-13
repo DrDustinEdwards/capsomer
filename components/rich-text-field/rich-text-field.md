@@ -5,7 +5,7 @@ summary: A short text with a few inline tags (italic, superscript, subscript and
 parts: [css, behavior, react]
 tool: own JavaScript
 states: [title with italic only, body with superscript and subscript, word count, help and required, invalid, every tag a field may allow, a pressed toggle where the caret is]
-added: 0.117.0
+added: 0.91.0
 source: txasm's app/components/rich-editor.tsx and app/lib/richtext.ts (abstract titles and sections)
 replaces:
   - 'className="(?:[^"]*\s)?rich-input[\s"]'
