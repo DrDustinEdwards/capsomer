@@ -16,7 +16,7 @@
     --cap-btn-h: var(--control);
     --cap-btn-fs: var(--fs-body);
     --cap-btn-icon: 16px;
-    --cap-btn-gap: 6px;
+    --cap-btn-gap: var(--space-2-5);
     position: relative;
     display: inline-flex;
     flex-shrink: 0;
@@ -28,15 +28,15 @@
     min-width: var(--target);
     margin: 0;
     padding: 0 var(--pad-x);
-    border: 1px solid var(--cap-btn-line);
+    border: var(--line-w) solid var(--cap-btn-line);
     border-radius: var(--radius-control);
     background: var(--cap-btn-bg);
     background-clip: padding-box;
     color: var(--cap-btn-fg);
     font-family: var(--ui);
     font-size: var(--cap-btn-fs);
-    font-weight: 500;
-    line-height: 1.2;
+    font-weight: var(--weight-medium);
+    line-height: var(--leading-tight);
     text-decoration: none;
     white-space: nowrap;
     vertical-align: middle;
@@ -51,14 +51,14 @@
       pointer-events: none;
     }
     & kbd {
-      margin-inline-start: 2px;
+      margin-inline-start: var(--space-1);
     }
     /* An icon beside the label pulls the padding in on its side, as shadcn's data-icon does. */
     &:has(> svg[data-icon="start"]) {
-      padding-inline-start: calc(var(--pad-x) - 3px);
+      padding-inline-start: calc(var(--pad-x) - var(--space-1-5));
     }
     &:has(> svg[data-icon="end"]) {
-      padding-inline-end: calc(var(--pad-x) - 3px);
+      padding-inline-end: calc(var(--pad-x) - var(--space-1-5));
     }
 
     /* Sizes. xs and sm never go under the target; on a touch screen --control and --target are 44. */
@@ -66,13 +66,13 @@
       --cap-btn-h: max(var(--target), calc(var(--control) - 8px));
       --cap-btn-fs: var(--fs-detail);
       --cap-btn-icon: 12px;
-      --cap-btn-gap: 4px;
-      padding-inline: calc(var(--pad-x) - 3px);
+      --cap-btn-gap: var(--space-2);
+      padding-inline: calc(var(--pad-x) - var(--space-1-5));
     }
     &[data-size="sm"] {
       --cap-btn-h: max(var(--target), calc(var(--control) - 4px));
       --cap-btn-icon: 14px;
-      --cap-btn-gap: 4px;
+      --cap-btn-gap: var(--space-2);
       padding-inline: calc(var(--pad-x) - 1px);
     }
     &[data-size="lg"] {
@@ -96,7 +96,7 @@
 
     /* A link to another site drawn as a button (ButtonLink away): the away mark after the words. */
     & .cap-btn-away {
-      font-weight: 400;
+      font-weight: var(--weight-regular);
       font-variant-emoji: text;
     }
 
@@ -109,7 +109,7 @@
       --cap-btn-line: var(--primary-line);
       --cap-btn-hover: var(--primary-hover);
       --cap-btn-press: var(--primary-hover);
-      font-weight: 600;
+      font-weight: var(--weight-semibold);
     }
 
     /* A tinted fill in the accent, for the second action beside a primary. shadcn "secondary".
@@ -131,10 +131,10 @@
       --cap-btn-line: var(--crit);
       --cap-btn-hover: var(--crit-soft);
       --cap-btn-press: var(--sunken);
-      font-weight: 600;
+      font-weight: var(--weight-semibold);
 
       &:where(:hover, [data-force="hover"]) {
-        box-shadow: inset 0 0 0 1px var(--crit);
+        box-shadow: inset 0 0 0 var(--line-w) var(--crit);
       }
     }
 
@@ -193,10 +193,10 @@
     /* The shared ring: an opaque 3 px in the accent (a 50% ring could not reach 3:1). */
     &:focus-visible {
       outline: var(--ring-width) solid var(--ring);
-      outline-offset: 1px;
+      outline-offset: var(--focus-offset-tight);
     }
     &[data-variant="primary"]:focus-visible {
-      outline-offset: 2px;
+      outline-offset: var(--focus-offset);
     }
 
     /* Disabled, with its reason beside it (aria-describedby). It stays focusable so the
@@ -207,7 +207,7 @@
       --cap-btn-line: var(--line-strong);
       border-style: dashed;
       box-shadow: none;
-      font-weight: 500;
+      font-weight: var(--weight-medium);
       text-decoration: none;
       cursor: not-allowed;
     }
@@ -235,7 +235,7 @@
         width: 14px;
         height: 14px;
         margin: auto;
-        border: 2px solid currentColor;
+        border: var(--line-w-thick) solid currentColor;
         border-right-color: transparent;
         border-radius: 50%;
       }
@@ -287,7 +287,7 @@
     background: none;
     color: var(--accent-text);
     font: inherit;
-    font-weight: 600;
+    font-weight: var(--weight-semibold);
     cursor: pointer;
 
     &:hover,
@@ -296,7 +296,7 @@
     }
     &:focus-visible {
       outline: var(--ring-width) solid var(--ring);
-      outline-offset: 1px;
+      outline-offset: var(--focus-offset-tight);
     }
     &:is(:disabled, [aria-disabled="true"]) {
       color: var(--dim);
@@ -345,16 +345,16 @@
   .cap-btn-group-text {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
+    gap: var(--space-2-5);
     box-sizing: border-box;
     min-height: var(--control);
     padding: 0 var(--pad-x);
-    border: 1px solid var(--line-strong);
+    border: var(--line-w) solid var(--line-strong);
     border-radius: var(--radius-control);
     background: var(--sunken);
     color: var(--text);
     font-size: var(--fs-body);
-    font-weight: 500;
+    font-weight: var(--weight-medium);
     white-space: nowrap;
   }
   .cap-btn-group > .cap-btn-group-text:not(:first-child) {
@@ -387,7 +387,7 @@
       transition: color var(--dur-fast) var(--ease-out);
     }
     .cap-btn[aria-busy="true"] > .cap-btn-spinner {
-      animation: cap-spin 0.8s linear infinite;
+      animation: cap-spin var(--dur-wait) linear infinite;
     }
   }
 

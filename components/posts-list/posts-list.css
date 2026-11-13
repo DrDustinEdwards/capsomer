@@ -71,7 +71,7 @@
     gap: 0 var(--space-3);
     color: var(--muted);
     font-size: var(--fs-detail);
-    font-weight: 400;
+    font-weight: var(--weight-regular);
   }
   .cap-posts-path {
     overflow-wrap: anywhere;
@@ -83,7 +83,7 @@
     margin-block-start: var(--space-1);
     color: var(--muted);
     font-size: var(--fs-detail);
-    font-weight: 400;
+    font-weight: var(--weight-regular);
   }
   .cap-posts-notes {
     display: flex;
@@ -166,7 +166,7 @@
         font-size: inherit;
         letter-spacing: 0;
         text-transform: none;
-        font-weight: 400;
+        font-weight: var(--weight-regular);
         color: var(--muted);
       }
     }
@@ -207,13 +207,13 @@
   .cap-posts-update-side {
     margin: 0;
     padding-block-end: var(--space-2);
-    border-bottom: 1px solid var(--line);
+    border-bottom: var(--line-w) solid var(--line);
     font-size: var(--fs-body);
-    font-weight: 600;
+    font-weight: var(--weight-semibold);
   }
   .cap-posts-update-side-when {
     color: var(--muted);
-    font-weight: 400;
+    font-weight: var(--weight-regular);
 
     & .cap-time {
       color: inherit;
@@ -231,7 +231,7 @@
     display: grid;
     gap: var(--space-2);
     padding: var(--pad-card);
-    border: 1px solid var(--line);
+    border: var(--line-w) solid var(--line);
     border-radius: var(--radius-m);
 
     &:empty {
@@ -278,8 +278,8 @@
      the preview box a border, the authors and the Trash note text. */
   @media (forced-colors: active) {
     .cap-posts-table tbody tr[data-selected] {
-      outline: 2px solid Highlight;
-      outline-offset: -2px;
+      outline: var(--focus-width) solid Highlight;
+      outline-offset: calc(-1 * var(--focus-offset));
     }
   }
 }

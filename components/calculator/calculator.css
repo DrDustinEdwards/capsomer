@@ -41,7 +41,7 @@
   }
 
   .cap-calculator-unit {
-    font-weight: 400;
+    font-weight: var(--weight-regular);
     color: var(--muted);
   }
 
@@ -51,7 +51,7 @@
 
   .cap-calculator-status {
     padding-block-end: var(--space-4);
-    border-block-end: 1px solid var(--line);
+    border-block-end: var(--line-w) solid var(--line);
   }
 
   .cap-calculator-answer {
@@ -68,9 +68,9 @@
   .cap-calculator-error {
     margin: 0;
     padding-inline-start: var(--space-4);
-    border-inline-start: 3px solid var(--crit);
+    border-inline-start: var(--line-w-bar) solid var(--crit);
     color: var(--crit);
-    font-weight: 600;
+    font-weight: var(--weight-semibold);
   }
 
   .cap-calculator-section h3 {
@@ -80,11 +80,11 @@
 
   .cap-calculator-steps {
     margin: 0;
-    padding-inline-start: 1.75rem;
+    padding-inline-start: calc(var(--space-6) + var(--space-2));
     list-style: decimal;
     font-family: var(--mono);
     font-size: var(--fs-body);
-    line-height: 1.6;
+    line-height: var(--leading-relaxed);
     font-variant-numeric: tabular-nums;
     overflow-wrap: anywhere;
 

@@ -60,7 +60,7 @@
 
   @media (prefers-reduced-motion: no-preference) {
     .cap-ambient[data-variant="equalizer"] > span {
-      animation: cap-ambient-bar var(--d) ease-in-out var(--l) infinite alternate;
+      animation: cap-ambient-bar var(--d) var(--ease-in-out) var(--l) infinite alternate;
     }
   }
 
