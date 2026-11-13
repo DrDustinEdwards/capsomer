@@ -4,6 +4,8 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+- Showcase site: every page carries `<meta name="color-scheme" content="light dark">`, so `theme.js` and the theme switch have a meta to set before paint, and `<meta name="text-scale" content="scale">`, so the site follows the reader's system text size (Modern Web Guidance, respect-os-text-scale). They come from `siteHead()` (site/seo.ts); the states pages already had both. Nothing in the package changes.
+
 ## [0.132.0]
 
 **Content and marketing blocks** (the shared-code audit's batch 5, clusters C39-C53). Nineteen new components, a stream reader and three additions, each built once from the sites that had it, so every site gets the same block and the same behavior. New classes, exports and HTML contracts only; no token, class or contract is removed or renamed.
