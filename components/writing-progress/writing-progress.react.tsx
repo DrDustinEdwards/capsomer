@@ -9,8 +9,8 @@ import { Check, Field } from "../field/field.react.tsx";
 import { Meter } from "../meter/meter.react.tsx";
 import { Panel } from "../panel/panel.react.tsx";
 import { Status } from "../status/status.react.tsx";
+import { dayKey } from "../time/time.ts";
 import {
-  dayKey,
   dayTotals,
   pace,
   paceLine,
@@ -20,6 +20,7 @@ import {
   WEEKDAYS,
   weekdayName,
   weekSentence,
+  weekdayOf,
   type Goal,
   type SaveEntry,
 } from "./writing-progress.ts";
@@ -146,7 +147,7 @@ export function WritingProgress({
     writingDays: goal.writingDays,
   });
   const target = targetFor(goal, today, paced);
-  const dayOff = !goal.writingDays.includes(new Date(`${today}T12:00:00Z`).getUTCDay());
+  const dayOff = !goal.writingDays.includes(weekdayOf(today));
   const run = streak(totals, today, target, goal.writingDays);
   const met = target !== null && wordsToday >= target;
   const recent = recentDays(totals, today, dayCount, goal.writingDays);
@@ -166,7 +167,7 @@ export function WritingProgress({
           />
         ) : (
           <p className="cap-progress-line">
-            <strong>{n(wordsToday)}</strong> word{wordsToday === 1 ? "" : "s"} typed today.{" "}
+            <strong>{n(wordsToday)}</strong> {wordsToday === 1 ? "word" : "words"} typed today.{" "}
             <span className="cap-muted">
               {dayOff
                 ? "A day off: no target today."
@@ -178,7 +179,7 @@ export function WritingProgress({
         )}
         {met ? <Status tone="ok">Target met</Status> : null}
         <p className="cap-progress-line">
-          Streak: <strong>{run}</strong> day{run === 1 ? "" : "s"} in a row at the target.
+          Streak: <strong>{run}</strong> {run === 1 ? "day" : "days"} in a row at the target.
           {target === null ? <span className="cap-muted"> A streak needs a target.</span> : null}
         </p>
         {goal.mode === "deadline" || deadline || projectTarget ? (
@@ -186,13 +187,11 @@ export function WritingProgress({
         ) : null}
         <ChartFrame draw={weekChart(recent, target, source, chartId)} width={360} />
         {note ? <p className="cap-progress-note">{note}</p> : null}
-        {error ? (
-          <Alert tone="crit">{error}</Alert>
-        ) : saved ? (
-          <p className="cap-progress-line" role="status">
-            Your target is saved.
-          </p>
-        ) : null}
+        {error ? <Alert tone="crit">{error}</Alert> : null}
+        {/* Mounted from the start, so the saved line is read when it appears. */}
+        <p className="cap-progress-line" role="status">
+          {saved && !error ? "Your target is saved." : null}
+        </p>
         {canEdit ? (
           <Disclosure summary="Your target" defaultOpen={Boolean(error)}>
             <Form method="post" action={action} className="cap-progress-form">
