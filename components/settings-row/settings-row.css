@@ -13,7 +13,7 @@
     padding-block: var(--space-4);
 
     & + & {
-      border-top: 1px solid var(--line);
+      border-top: var(--line-w) solid var(--line);
     }
   }
   .cap-settings-row-text {
@@ -24,7 +24,7 @@
   }
   .cap-settings-row-label {
     color: var(--text);
-    font-weight: 600;
+    font-weight: var(--weight-semibold);
   }
   .cap-settings-row-help {
     margin: 0;
@@ -61,7 +61,7 @@
     }
     &:focus-visible {
       outline: var(--ring-width) solid var(--ring);
-      outline-offset: 2px;
+      outline-offset: var(--focus-offset);
       border-radius: var(--radius-s);
     }
   }

@@ -8,8 +8,8 @@
   .cap-dictionary-entry {
     margin: var(--space-3) 0 var(--space-7);
     padding: var(--space-5) 0 var(--space-5);
-    border-block-start: 2px solid var(--text);
-    border-block-end: 1px solid var(--line);
+    border-block-start: var(--line-w-thick) solid var(--text);
+    border-block-end: var(--line-w) solid var(--line);
     font-family: var(--prose);
     color: var(--text);
   }
@@ -23,10 +23,10 @@
   }
 
   .cap-dictionary-entry-word {
-    font-size: 1.75rem;
+    font-size: var(--title-2);
     font-style: normal;
-    font-weight: 700;
-    line-height: 1.2;
+    font-weight: var(--weight-bold);
+    line-height: var(--leading-tight);
     color: var(--text);
   }
 
@@ -42,13 +42,13 @@
 
   .cap-dictionary-entry-ipa {
     font-family: var(--prose);
-    font-size: 1.0625rem;
+    font-size: var(--fs-page);
     color: var(--text);
   }
 
   .cap-dictionary-entry-respell {
     font-family: var(--ui);
-    letter-spacing: 0.02em;
+    letter-spacing: var(--tracking-wide);
   }
 
   /* The speaker: a link without script, the button with it. The same round box either way, so the
@@ -61,7 +61,7 @@
     inline-size: max(var(--control), var(--target));
     block-size: max(var(--control), var(--target));
     padding: 0;
-    border: 1px solid var(--line-strong);
+    border: var(--line-w) solid var(--line-strong);
     border-radius: var(--radius-full);
     background: transparent;
     color: var(--accent-text);
@@ -99,10 +99,10 @@
 
   .cap-dictionary-entry-senses {
     margin: 0 0 var(--space-5);
-    padding-inline-start: 1.75rem;
+    padding-inline-start: calc(var(--space-6) + var(--space-2));
     list-style: decimal;
-    font-size: 1.0625rem;
-    line-height: 1.6;
+    font-size: var(--fs-page);
+    line-height: var(--leading-relaxed);
 
     & li {
       margin-block-end: var(--space-2);
@@ -110,7 +110,7 @@
     }
     & li::marker {
       font-family: var(--ui);
-      font-weight: 600;
+      font-weight: var(--weight-semibold);
       color: var(--muted);
     }
   }
@@ -123,15 +123,15 @@
   .cap-dictionary-entry-ety {
     margin: 0;
     font-size: var(--fs-body);
-    line-height: 1.5;
+    line-height: var(--leading-normal);
     color: var(--muted);
   }
 
   .cap-dictionary-entry-ety-label {
     font-family: var(--ui);
     font-size: var(--fs-detail);
-    font-weight: 600;
-    letter-spacing: 0.06em;
+    font-weight: var(--weight-semibold);
+    letter-spacing: var(--tracking-widest);
     text-transform: uppercase;
   }
 
@@ -143,10 +143,10 @@
         color var(--dur-fast) var(--ease-out);
     }
     .cap-dictionary-entry-listen[aria-pressed="true"] .cap-dictionary-entry-wave {
-      animation: cap-dictionary-entry-wave 900ms var(--ease-in-out) infinite;
+      animation: cap-dictionary-entry-wave var(--dur-wait) var(--ease-in-out) infinite;
     }
     .cap-dictionary-entry-listen[aria-pressed="true"] .cap-dictionary-entry-wave + .cap-dictionary-entry-wave {
-      animation-delay: 180ms;
+      animation-delay: calc(var(--dur-wait) / 5);
     }
   }
 
@@ -167,7 +167,7 @@
       color: ButtonText;
     }
     .cap-dictionary-entry-listen[aria-pressed="true"] {
-      border-width: 3px;
+      border-width: var(--line-w-bar);
       border-color: Highlight;
       color: Highlight;
     }

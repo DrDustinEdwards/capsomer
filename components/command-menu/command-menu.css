@@ -16,7 +16,7 @@
     margin: var(--space-3) var(--space-3) 0;
     padding-inline: var(--pad-x);
     min-block-size: var(--control);
-    border: 1px solid var(--line-strong);
+    border: var(--line-w) solid var(--line-strong);
     border-radius: var(--radius-l);
     background: var(--surface);
     color: var(--muted);
@@ -26,7 +26,7 @@
     &:has(.cap-cmd-input:focus-visible) {
       border-color: var(--accent);
       outline: var(--focus-width) solid var(--ring);
-      outline-offset: 1px;
+      outline-offset: var(--focus-offset-tight);
     }
     & > svg {
       flex: none;
@@ -80,7 +80,7 @@
     flex-wrap: wrap;
     gap: var(--space-4);
     padding: var(--space-3) var(--pad-card);
-    border-block-start: 1px solid var(--line);
+    border-block-start: var(--line-w) solid var(--line);
     background: var(--sunken);
     color: var(--muted);
     font-size: var(--fs-label);
@@ -89,10 +89,10 @@
   /* A search result's words around the match, under its label, the typed words marked. */
   .cap-cmd-snippet {
     display: block;
-    margin-block-start: 2px;
+    margin-block-start: var(--space-1);
     color: var(--muted);
     font-size: var(--fs-detail);
-    font-weight: 400;
+    font-weight: var(--weight-regular);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -100,7 +100,7 @@
     & mark {
       background: var(--sel, var(--info-soft));
       color: var(--text);
-      font-weight: 600;
+      font-weight: var(--weight-semibold);
     }
   }
 
@@ -126,7 +126,7 @@
 
     &:focus-visible {
       outline: var(--focus-width) solid var(--ring);
-      outline-offset: 2px;
+      outline-offset: var(--focus-offset);
     }
   }
 

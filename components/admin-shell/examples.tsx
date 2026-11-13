@@ -7,11 +7,41 @@ import {
   AdminShell,
   FAMILY_APPS,
   FIRST_PAGE,
-  FOXHOUND_MARKS,
   startPageTransition,
   type AdminEntry,
   type AdminShellProps,
 } from "./admin-shell.react.tsx";
+
+const logo = (viewBox: string, body: ReactNode) => (
+  <svg className="cap-admin-logo" viewBox={viewBox} aria-hidden="true" focusable="false">
+    {body}
+  </svg>
+);
+
+// Two alternatives to Foxhound's x (which reads as close or delete), each drawn on the 24 grid
+// in one color. "track": a hound's paw print, for a service that tracks down failed payments;
+// "fox": a fox's head, the name. Shown beside the x here only; the one Dustin picks replaces
+// FOXHOUND in apps.tsx and the other is deleted.
+const FOXHOUND_MARKS = {
+  track: logo(
+    "0 0 24 24",
+    <g fill="currentColor">
+      <path d="M12 12.2c-2.6 0-5.2 2.6-5.6 5.2-.3 1.8.9 3 2.5 2.7 1.2-.2 2-.8 3.1-.8s1.9.6 3.1.8c1.6.3 2.8-.9 2.5-2.7-.4-2.6-3-5.2-5.6-5.2z" />
+      <ellipse cx="6.2" cy="10.2" rx="1.9" ry="2.4" transform="rotate(-18 6.2 10.2)" />
+      <ellipse cx="9.6" cy="6.4" rx="1.9" ry="2.5" transform="rotate(-6 9.6 6.4)" />
+      <ellipse cx="14.4" cy="6.4" rx="1.9" ry="2.5" transform="rotate(6 14.4 6.4)" />
+      <ellipse cx="17.8" cy="10.2" rx="1.9" ry="2.4" transform="rotate(18 17.8 10.2)" />
+    </g>,
+  ),
+  fox: logo(
+    "0 0 24 24",
+    <path
+      fill="currentColor"
+      fillRule="evenodd"
+      d="M3 3.5 8.6 8h6.8L21 3.5l-.9 8.2L12 20.5l-8.1-8.8zM8.4 12.2a1.2 1.2 0 1 0 0 .1zm7.2 0a1.2 1.2 0 1 0 0 .1zM10.6 15.6h2.8L12 17.2z"
+    />,
+  ),
+};
 
 const svg = (d: string) => (
   <svg className="cap-admin-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">

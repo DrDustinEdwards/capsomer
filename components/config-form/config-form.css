@@ -18,6 +18,6 @@
   }
   .cap-config-danger {
     padding-block-start: var(--gap);
-    border-block-start: 1px solid var(--line);
+    border-block-start: var(--line-w) solid var(--line);
   }
 }

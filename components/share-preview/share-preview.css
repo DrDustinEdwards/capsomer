@@ -9,7 +9,7 @@
   .cap-og-card {
     box-sizing: border-box;
     min-inline-size: 0;
-    border: 1px solid var(--line);
+    border: var(--line-w) solid var(--line);
     border-radius: var(--radius-l);
     background: var(--surface);
     color: var(--text);
@@ -34,11 +34,11 @@
   .cap-serp-title {
     color: var(--accent-text);
     font-size: var(--fs-lead);
-    line-height: 1.3;
+    line-height: var(--leading-snug);
   }
   .cap-serp-description {
     font-size: var(--fs-body);
-    line-height: 1.5;
+    line-height: var(--leading-normal);
   }
   .cap-serp-note,
   .cap-og-card-note {
@@ -71,17 +71,17 @@
     display: grid;
     gap: var(--space-1);
     padding: var(--space-3);
-    border-block-start: 1px solid var(--line);
+    border-block-start: var(--line-w) solid var(--line);
   }
   .cap-og-card-host {
     color: var(--muted);
     font-size: var(--fs-label);
-    letter-spacing: 0.04em;
+    letter-spacing: var(--tracking-wider);
     text-transform: uppercase;
   }
   .cap-og-card-title {
-    font-weight: 600;
-    line-height: 1.3;
+    font-weight: var(--weight-semibold);
+    line-height: var(--leading-snug);
   }
   .cap-og-card-description {
     color: var(--muted);
@@ -92,8 +92,8 @@
   /* The image's place is a tint until it loads, which forced colors drop: an edge keeps its shape. */
   @media (forced-colors: active) {
     .cap-og-card-image {
-      outline: 1px solid CanvasText;
-      outline-offset: -1px;
+      outline: var(--line-w) solid CanvasText;
+      outline-offset: calc(-1 * var(--focus-offset-tight));
     }
   }
 }

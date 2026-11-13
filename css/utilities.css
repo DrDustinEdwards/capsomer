@@ -9,7 +9,7 @@
      image with its own dark version uses <picture> with a (prefers-color-scheme: dark) source,
      which follows the system setting rather than the switch. */
   .cap-img-flat {
-    border: 1px solid var(--line);
+    border: var(--line-w) solid var(--line);
     filter: var(--img-filter);
   }
 
@@ -36,7 +36,7 @@
   .cap-mono {
     font-family: var(--mono);
     font-size: var(--mono-size);
-    letter-spacing: -0.01em;
+    letter-spacing: var(--tracking-snug);
   }
   .cap-num {
     font-variant-numeric: var(--figures-column);
@@ -49,7 +49,7 @@
      --page-leading sets its line height (1.55) for a site whose body reads looser. */
   .cap-page {
     font-size: var(--fs-page);
-    line-height: var(--page-leading, 1.55);
+    line-height: var(--page-leading, var(--leading-normal));
     box-sizing: border-box;
     inline-size: 100%;
     max-inline-size: var(--page-max);
@@ -58,15 +58,15 @@
   }
   .cap-label {
     font-size: var(--fs-label);
-    font-weight: 600;
-    letter-spacing: 0.07em;
+    font-weight: var(--weight-semibold);
+    letter-spacing: var(--tracking-caps);
     text-transform: uppercase;
     color: var(--muted);
   }
   /* The small line beside or under a title: a date, a count, a byline. Sentence case, unlike .cap-label. */
   .cap-meta {
     font-size: var(--fs-detail);
-    line-height: 1.4;
+    line-height: var(--leading-compact);
     color: var(--muted);
   }
   /* A title or summary cut to a number of lines with an ellipsis: data-lines="1|2|3" (2 by default). The whole text
@@ -121,7 +121,7 @@
   /* "Back" and "next" are wayfinding: the airport sign face (Overpass, --wayfinding), bold. */
   .cap-go:is([data-go="back"], [data-go="next"]) {
     font-family: var(--wayfinding);
-    font-weight: 700;
+    font-weight: var(--weight-bold);
   }
   .cap-go[data-go="back"] {
     &::after {
@@ -174,13 +174,13 @@
   :is(.cap-family-footer-links a, a[data-link="next"])::before {
     content: "";
     position: absolute;
-    inset-inline-start: -13px;
+    inset-inline-start: calc(-1 * (var(--space-4) + var(--line-w)));
     inset-block-start: calc(50% - 3.5px);
     inline-size: 7px;
     block-size: 7px;
-    border-radius: 1px;
+    border-radius: var(--radius-xs);
     background: var(--on);
-    box-shadow: 0 0 6px var(--on);
+    box-shadow: 0 0 var(--space-2-5) var(--on);
     opacity: 0;
     pointer-events: none;
   }
@@ -217,7 +217,7 @@
     background: var(--primary);
     color: var(--primary-fg);
     box-shadow: var(--shadow-m);
-    font-weight: 600;
+    font-weight: var(--weight-semibold);
     text-decoration: none;
 
     &:not(:focus-visible) {
@@ -325,8 +325,8 @@
           margin-inline-start: 100%;
           translate: calc(1px - 100%);
           transition:
-            margin-inline-start 2s ease-in,
-            translate 2s ease-in;
+            margin-inline-start var(--dur-flow) var(--ease-in-out),
+            translate var(--dur-flow) var(--ease-in-out);
         }
         :where(.cap-sortable-item, .cap-hist-row):is(:hover, :has(:focus-visible)) :where(.cap-sortable-label, .cap-hist-name):dir(rtl) > span {
           translate: calc(100% - 1px);

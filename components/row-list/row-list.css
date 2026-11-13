@@ -42,7 +42,7 @@
     align-items: center;
     min-height: max(var(--target), var(--row-h));
     padding: var(--pad-y) var(--pad-card);
-    border: 1px solid transparent;
+    border: var(--line-w) solid transparent;
     border-radius: var(--radius-l);
     color: var(--text);
 
@@ -94,7 +94,7 @@
     /* Critical rows only: a red left edge, beside the status word and its glyph. An inset
        shadow, so it is flush with the row's edge and clipped to its rounded corners. */
     &[data-tone="crit"] {
-      box-shadow: inset 3px 0 0 var(--crit);
+      box-shadow: inset var(--line-w-bar) 0 0 var(--crit);
     }
   }
 
@@ -153,7 +153,7 @@
       background: none;
       color: var(--text);
       font: inherit;
-      font-weight: 600;
+      font-weight: var(--weight-semibold);
       text-align: start;
       text-decoration: none;
       overflow-wrap: anywhere;
@@ -230,10 +230,10 @@
     flex: none;
     width: 7px;
     height: 7px;
-    margin-block: 0 2px;
-    margin-inline: 6px 3px;
-    border-right: 1.5px solid currentColor;
-    border-bottom: 1.5px solid currentColor;
+    margin-block: 0 var(--space-1);
+    margin-inline: var(--space-2-5) var(--space-1-5);
+    border-right: var(--line-w-mid) solid currentColor;
+    border-bottom: var(--line-w-mid) solid currentColor;
     transform: rotate(-45deg);
 
     /* Right to left, mirrored: closed, it points to the inline end there too. */
@@ -314,7 +314,7 @@
   @media (forced-colors: active) {
     /* Forced colors drop shadows: the edge is a border there. */
     .cap-row[data-tone="crit"] {
-      border-inline-start: 3px solid CanvasText;
+      border-inline-start: var(--line-w-bar) solid CanvasText;
     }
   }
 

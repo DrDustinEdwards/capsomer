@@ -13,7 +13,7 @@
   .cap-family-footer {
     margin-block-start: var(--space-8);
     padding-block-end: var(--space-6);
-    font: 400 var(--fs-body) / 1.5 var(--ui);
+    font: var(--weight-regular) var(--fs-body) / var(--leading-normal) var(--ui);
 
     --family-footer-name: minmax(0, 20rem);
 
@@ -38,7 +38,7 @@
   /* The site's own part: under the thin stripe, on the same columns as the letterhead below. */
   .cap-family-footer-local {
     padding-block-start: var(--space-6);
-    border-block-start: 6px solid var(--on);
+    border-block-start: var(--line-w-band) solid var(--on);
   }
 
   .cap-family-footer-center {
@@ -53,14 +53,14 @@
   }
 
   .cap-family-footer-center-name {
-    font: 700 2.25rem / 0.95 var(--display);
-    letter-spacing: -0.04em;
+    font: var(--weight-bold) var(--title-1) / var(--leading-none) var(--display);
+    letter-spacing: calc(-1 * var(--tracking-wider));
   }
 
   .cap-family-footer-about {
     margin-block-start: var(--space-3) !important;
     color: var(--muted);
-    font-size: 0.875rem;
+    font-size: var(--fs-body);
   }
 
   /* A line of facts about the site's build, as a plate's small print. */
@@ -70,8 +70,8 @@
     flex-wrap: wrap;
     gap: var(--space-2) var(--space-6);
     color: var(--muted);
-    font: 500 0.6875rem / 1.6 var(--mono);
-    letter-spacing: 0.08em;
+    font: var(--weight-medium) var(--fs-label) / var(--leading-relaxed) var(--mono);
+    letter-spacing: var(--tracking-caps);
     text-transform: uppercase;
   }
 
@@ -79,7 +79,7 @@
      edge in it, so the double stripe below stays the one strong mark. */
   .cap-family-footer-sites {
     padding-block: var(--space-5) var(--space-7);
-    border-block-start: 1px solid var(--line);
+    border-block-start: var(--line-w) solid var(--line);
 
     /* With no site part above it, the stripe is the strip's only top edge. */
     &:first-child {
@@ -113,8 +113,8 @@
       display: grid;
       align-content: center;
       min-block-size: var(--target);
-      padding: calc(var(--space-3) + 3px) var(--space-4) var(--space-3) calc(var(--space-4) + 14px);
-      border: 1px solid var(--line);
+      padding: calc(var(--space-3) + var(--space-1-5)) var(--space-4) var(--space-3) calc(var(--space-4) + 14px);
+      border: var(--line-w) solid var(--line);
       background: linear-gradient(var(--mark), var(--mark)) var(--space-4) 50% / 6px calc(100% - 2 * var(--space-4)) no-repeat;
     }
 
@@ -128,7 +128,7 @@
     & a[aria-current] {
       padding-block-start: var(--space-3);
       border-color: var(--mark);
-      border-block-start-width: 4px;
+      border-block-start-width: var(--line-w-heavy);
     }
   }
 
@@ -140,14 +140,14 @@
   [data-family-mark="rose"] { --mark: var(--family-rose); }
 
   .cap-family-footer-site-name {
-    font-weight: 600;
-    font-size: 0.9375rem;
+    font-weight: var(--weight-semibold);
+    font-size: var(--fs-lead);
   }
 
   .cap-family-footer-site-role {
     color: var(--muted);
-    font: 500 0.6875rem / 1.5 var(--mono);
-    letter-spacing: 0.08em;
+    font: var(--weight-medium) var(--fs-label) / var(--leading-normal) var(--mono);
+    letter-spacing: var(--tracking-caps);
     text-transform: uppercase;
   }
 
@@ -206,11 +206,11 @@
     inset-block-start: 100%;
     inset-inline-start: 50%;
     translate: -50% var(--space-2);
-    padding: 2px var(--space-3);
-    border: 1px solid var(--line);
+    padding: var(--space-1) var(--space-3);
+    border: var(--line-w) solid var(--line);
     background: var(--ground);
     color: var(--text);
-    font-size: 0.75rem;
+    font-size: var(--fs-small);
     white-space: nowrap;
     pointer-events: none;
     clip-path: inset(50%);
@@ -245,8 +245,8 @@
   .cap-family-footer-heading {
     margin: 0 0 var(--space-3);
     color: var(--muted);
-    font: 500 0.6875rem / 1.6 var(--mono);
-    letter-spacing: 0.08em;
+    font: var(--weight-medium) var(--fs-label) / var(--leading-relaxed) var(--mono);
+    letter-spacing: var(--tracking-caps);
     text-transform: uppercase;
   }
 
@@ -267,7 +267,7 @@
       padding-block: calc((var(--target) - 1cap) / 2);
       min-block-size: var(--target);
       position: relative;
-      font: 600 0.875rem / 1.5 var(--wayfinding);
+      font: var(--weight-semibold) var(--fs-body) / var(--leading-normal) var(--wayfinding);
       text-box: trim-both cap alphabetic;
     }
 
@@ -309,8 +309,8 @@
   .cap-family-footer-note {
     margin: var(--space-3) 0 0;
     color: var(--muted);
-    font: 500 0.6875rem / 1.6 var(--mono);
-    letter-spacing: 0.08em;
+    font: var(--weight-medium) var(--fs-label) / var(--leading-relaxed) var(--mono);
+    letter-spacing: var(--tracking-caps);
     text-transform: uppercase;
   }
 

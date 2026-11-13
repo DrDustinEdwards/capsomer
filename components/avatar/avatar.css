@@ -22,13 +22,13 @@
     color: var(--muted);
     font-family: var(--face);
     font-size: calc(var(--cap-avatar-size) * 0.4);
-    font-weight: 600;
-    line-height: 1;
+    font-weight: var(--weight-semibold);
+    line-height: var(--leading-none);
     user-select: none;
     vertical-align: middle;
 
     &[data-size="sm"] {
-      --cap-avatar-size: 24px;
+      --cap-avatar-size: var(--title-3);
     }
     &[data-size="lg"] {
       --cap-avatar-size: 40px;
@@ -53,7 +53,7 @@
     height: 100%;
     border-radius: inherit;
     object-fit: cover;
-    box-shadow: inset 0 0 0 1px var(--line);
+    box-shadow: inset 0 0 0 var(--line-w) var(--line);
   }
   .cap-avatar[data-state="error"] .cap-avatar-image {
     display: none;
@@ -84,7 +84,7 @@
     border-radius: var(--radius-full);
     background: var(--primary);
     color: var(--primary-fg);
-    box-shadow: 0 0 0 2px var(--surface);
+    box-shadow: 0 0 0 var(--line-w-thick) var(--surface);
     font-size: calc(var(--cap-avatar-size) * 0.22);
 
     & > svg {
@@ -112,10 +112,10 @@
     isolation: isolate;
 
     & > .cap-avatar {
-      box-shadow: 0 0 0 2px var(--surface);
+      box-shadow: 0 0 0 var(--line-w-thick) var(--surface);
     }
     & > .cap-avatar + .cap-avatar {
-      margin-inline-start: -8px;
+      margin-inline-start: calc(-1 * var(--space-3));
     }
   }
 
@@ -128,20 +128,20 @@
     justify-content: center;
     min-width: var(--cap-avatar-size);
     height: var(--cap-avatar-size);
-    margin-inline-start: -8px;
+    margin-inline-start: calc(-1 * var(--space-3));
     padding-inline: var(--space-3);
     border-radius: var(--radius-full);
     background: var(--sunken);
-    box-shadow: 0 0 0 2px var(--surface);
+    box-shadow: 0 0 0 var(--line-w-thick) var(--surface);
     color: var(--muted);
     font-size: var(--fs-detail);
-    font-weight: 600;
+    font-weight: var(--weight-semibold);
   }
 
   @media (forced-colors: active) {
     .cap-avatar,
     .cap-avatar-count {
-      border: 1px solid CanvasText;
+      border: var(--line-w) solid CanvasText;
     }
   }
 }

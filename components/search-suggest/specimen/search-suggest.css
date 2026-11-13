@@ -1,4 +1,4 @@
 /* Room under the open specimen for its list, which overlays what follows it on a page. */
 .cap-specimen:has(#q-open) {
-  padding-block-end: 12rem;
+  padding-block-end: calc(3 * var(--space-9));
 }

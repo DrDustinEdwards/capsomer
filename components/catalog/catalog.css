@@ -50,7 +50,7 @@
   }
   .cap-catalog-count:focus-visible {
     outline: var(--focus-width) solid var(--ring);
-    outline-offset: 2px;
+    outline-offset: var(--focus-offset);
   }
   .cap-catalog-actions {
     display: flex;
@@ -80,18 +80,6 @@
   .cap-catalog-facet .cap-check {
     width: 100%;
   }
-  /* A range facet: From and To side by side, each a native menu at full width of its half. */
-  .cap-catalog-range-ends {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--space-2);
-  }
-  .cap-catalog-range-end {
-    min-width: 0;
-  }
-  .cap-catalog-range-end .cap-select {
-    width: 100%;
-  }
   .cap-catalog-more > summary {
     color: var(--muted);
     font-size: var(--fs-detail);
@@ -115,12 +103,12 @@
   .cap-catalog-chip:focus-visible,
   .cap-catalog-clear:focus-visible {
     outline: var(--focus-width) solid var(--ring);
-    outline-offset: 2px;
+    outline-offset: var(--focus-offset);
   }
   .cap-catalog-clear {
     color: var(--muted);
     font-size: var(--fs-detail);
-    font-weight: 600;
+    font-weight: var(--weight-semibold);
   }
 
   /* A table sort that is a link: the table's sort look, on a link. */
@@ -128,7 +116,7 @@
     text-decoration: none;
   }
   .cap-catalog [data-catalog-region="results"][aria-busy="true"] {
-    opacity: 0.6;
+    opacity: var(--opacity-muted);
   }
 
   /* The phone's tray controls are for narrow catalogs only. */
@@ -176,7 +164,7 @@
       overflow-y: auto;
       padding: var(--space-5);
       background: var(--surface);
-      border: 1px solid var(--line-strong);
+      border: var(--line-w) solid var(--line-strong);
       border-radius: var(--radius-l);
       box-shadow: var(--shadow-l);
     }
@@ -191,11 +179,11 @@
       margin: calc(var(--space-5) * -1) calc(var(--space-5) * -1) 0;
       padding: var(--space-4) var(--space-5);
       background: var(--surface);
-      border-bottom: 1px solid var(--line);
+      border-bottom: var(--line-w) solid var(--line);
     }
     .cap-catalog-tray-title {
       margin: 0;
-      font-weight: 600;
+      font-weight: var(--weight-semibold);
     }
   }
 
@@ -203,10 +191,10 @@
      so the columns stay aligned across groups. On a phone, where rows are cards, it is a plain heading over them. */
   .cap-catalog .cap-table tbody tr.cap-catalog-group > th {
     padding: var(--space-6) var(--pad-x) var(--space-2);
-    border-bottom: 1px solid var(--line-strong);
+    border-bottom: var(--line-w) solid var(--line-strong);
     color: var(--text);
     font-size: var(--fs-lead);
-    font-weight: 650;
+    font-weight: var(--weight-semibold);
     text-align: start;
   }
   @container cap-table (max-width: 639px) {
@@ -223,7 +211,7 @@
 
   @media (prefers-reduced-motion: no-preference) {
     .cap-catalog [data-catalog-region="results"] {
-      transition: opacity 100ms linear;
+      transition: opacity var(--dur-fast) linear;
     }
   }
 }

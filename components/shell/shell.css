@@ -46,9 +46,9 @@
     min-width: calc(var(--rail-w) - var(--space-5));
     min-height: var(--target);
     color: var(--text);
-    font-weight: 800;
+    font-weight: var(--weight-heavy);
     font-size: var(--fs-lead);
-    letter-spacing: -0.02em;
+    letter-spacing: calc(-1 * var(--tracking-wide));
     text-decoration: none;
     white-space: nowrap;
 
@@ -60,7 +60,7 @@
     }
     & small {
       font-family: var(--mono);
-      font-weight: 400;
+      font-weight: var(--weight-regular);
       font-size: var(--fs-label);
       letter-spacing: 0;
       color: var(--muted);
@@ -168,7 +168,7 @@
     & a[aria-current="page"] {
       background: var(--accent-soft);
       color: var(--accent-text);
-      font-weight: 500;
+      font-weight: var(--weight-medium);
     }
   }
 
@@ -191,7 +191,7 @@
     padding-inline: var(--space-2);
     border-radius: var(--radius-m);
     font-size: var(--fs-label);
-    font-weight: 500;
+    font-weight: var(--weight-medium);
     color: var(--muted);
     font-variant-numeric: var(--figures);
     white-space: nowrap;
@@ -202,12 +202,12 @@
     &[data-tone="crit"] {
       background: var(--crit-soft);
       color: var(--crit);
-      font-weight: 600;
+      font-weight: var(--weight-semibold);
     }
     &[data-tone="warn"] {
       background: var(--warn-soft);
       color: var(--warn);
-      font-weight: 600;
+      font-weight: var(--weight-semibold);
     }
   }
 
@@ -227,7 +227,7 @@
     padding-inline: var(--space-3);
     color: var(--muted);
     font-size: var(--fs-detail);
-    font-weight: 500;
+    font-weight: var(--weight-medium);
   }
 
   /* Below the entries: the shortcut hints, then the collapse button. */
@@ -333,8 +333,8 @@
       background: var(--text);
       color: var(--ground);
       font-size: var(--fs-detail);
-      font-weight: 400;
-      line-height: 1.4;
+      font-weight: var(--weight-regular);
+      line-height: var(--leading-compact);
       white-space: nowrap;
       opacity: 0;
       clip-path: inset(50%);
@@ -343,12 +343,12 @@
         content: "";
         position: absolute;
         top: 50%;
-        inset-inline-start: -3px;
+        inset-inline-start: calc(-1 * var(--space-1-5));
         width: 8px;
         height: 8px;
         translate: 0 -50%;
         rotate: 45deg;
-        border-radius: 2px;
+        border-radius: var(--radius-xs);
         background: var(--text);
       }
     }
@@ -369,7 +369,7 @@
     & .cap-shell-group + .cap-shell-group {
       margin-block-start: var(--space-3);
       padding-block-start: var(--space-3);
-      border-block-start: 1px solid var(--line);
+      border-block-start: var(--line-w) solid var(--line);
     }
     & .cap-shell-count {
       position: absolute;
@@ -385,18 +385,18 @@
 
       &[data-tone="crit"] {
         background: var(--crit);
-        box-shadow: 0 0 0 2px var(--ground);
+        box-shadow: 0 0 0 var(--line-w-thick) var(--ground);
       }
       &[data-tone="warn"] {
         background: var(--warn);
-        box-shadow: 0 0 0 2px var(--ground);
+        box-shadow: 0 0 0 var(--line-w-thick) var(--ground);
       }
     }
     /* A current entry's dot sits on the tint, so its ring takes the tint. */
     & .cap-shell-rail a[aria-current="page"] .cap-shell-count {
       &[data-tone="crit"],
       &[data-tone="warn"] {
-        box-shadow: 0 0 0 2px var(--accent-soft);
+        box-shadow: 0 0 0 var(--line-w-thick) var(--accent-soft);
       }
     }
     & kbd {
@@ -436,7 +436,7 @@
       &[aria-current="page"] {
         background: var(--accent-soft);
         color: var(--accent-text);
-        font-weight: 500;
+        font-weight: var(--weight-medium);
       }
     }
     & .cap-shell-icon {
@@ -485,7 +485,7 @@
       z-index: var(--z-tabbar);
       padding: var(--space-2) var(--space-2) calc(var(--space-2) + env(safe-area-inset-bottom, 0px));
       background: var(--surface);
-      border-top: 1px solid var(--line);
+      border-top: var(--line-w) solid var(--line);
 
       & :is(a, button) {
         position: relative;
@@ -500,10 +500,10 @@
         background: none;
         font: inherit;
         font-size: var(--fs-label);
-        font-weight: 600;
+        font-weight: var(--weight-semibold);
         color: var(--muted);
         text-decoration: none;
-        outline-offset: -2px;
+        outline-offset: calc(-1 * var(--focus-offset));
 
         &:hover,
         &[data-force="hover"] {
@@ -545,7 +545,7 @@
        offset, not a transform, so it slides from the rail in both directions with no :dir()
        (which a build may lower to :lang() and miss a page that sets only dir). */
     .cap-shell[data-rail="collapsed"] .cap-shell-label {
-      inset-inline-start: calc(100% + var(--space-3) - 8px);
+      inset-inline-start: calc(100% + var(--space-3) - var(--space-3));
       transition:
         opacity var(--dur-fast) var(--ease-out),
         inset-inline-start var(--dur-fast) var(--ease-out),
@@ -561,13 +561,13 @@
     .cap-shell-rail a[aria-current="page"],
     .cap-shell-settings[aria-current="page"],
     .cap-shell-more-list a[aria-current="page"] {
-      outline: 2px solid CanvasText;
+      outline: var(--focus-width) solid CanvasText;
     }
     .cap-shell-tabs :is(a, button)[aria-current] {
       text-decoration: underline;
     }
     .cap-shell[data-rail="collapsed"] .cap-shell-label {
-      border: 1px solid CanvasText;
+      border: var(--line-w) solid CanvasText;
     }
     .cap-shell[data-rail="collapsed"] .cap-shell-count:not(:empty) {
       forced-color-adjust: none;

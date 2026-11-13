@@ -21,7 +21,13 @@ import {
   part,
   plainLink,
 } from "./site-header-parts.react.tsx";
-import { badgeText, guardForms, wireScrolled, wireSearch, wireThemeKey } from "./site-header.ts";
+import {
+  badgeText,
+  guardForms,
+  wireScrolled,
+  wireSearchOnDemand,
+  wireThemeKey,
+} from "./site-header.ts";
 
 export { countName, HeaderTip, SheetGroup } from "./site-header-parts.react.tsx";
 export { initialsOf } from "./site-header.ts";
@@ -126,7 +132,7 @@ export function SiteHeader(props: SiteHeaderProps) {
   const suggest = search?.suggest;
   useEffect(() => {
     if (!hydrate || !searchBox.current) return;
-    return wireSearch(searchBox.current, suggest);
+    return wireSearchOnDemand(searchBox.current, suggest);
   }, [hydrate, suggest]);
 
   // In the letterhead an app's own search (an extra with id "search", say a command menu) takes the
