@@ -45,6 +45,8 @@ export interface FilterBarProps {
   live?: boolean;
   delay?: number;
   applyLabel?: string;
+  // "primary" when Apply is the view's main action (a search page); the default button otherwise.
+  applyVariant?: "default" | "primary";
   clearLabel?: string;
   // The link Clear renders, for a router link (capsomer/react/link Link); a plain a otherwise.
   renderLink?: (props: { href: string; className: string; children: ReactNode }) => ReactNode;
@@ -65,6 +67,7 @@ export function FilterBar(props: FilterBarProps) {
     live = false,
     delay = SEARCH_DELAY_MS,
     applyLabel = "Apply",
+    applyVariant = "default",
     clearLabel = "Clear filters",
     renderLink,
     onSubmit,
@@ -89,7 +92,11 @@ export function FilterBar(props: FilterBarProps) {
       <div className="cap-filter-bar-fields">{children}</div>
       <div className="cap-filter-bar-actions">
         {/* Kept for no script and for Enter; hidden from sight when live, still a submit. */}
-        <button type="submit" className={live ? "cap-sr-only" : "cap-btn"}>
+        <button
+          type="submit"
+          className={live ? "cap-sr-only" : "cap-btn"}
+          data-variant={live || applyVariant === "default" ? undefined : applyVariant}
+        >
           {applyLabel}
         </button>
         {clear}
