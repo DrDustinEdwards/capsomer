@@ -18,6 +18,13 @@ export interface ButtonProps extends Omit<
   // In flight: the label stays (so the width and the name stay) and a spinner covers it.
   // Clicks are ignored until it settles.
   pending?: boolean;
+  // Said once to a screen reader when `pending` turns on ("Connecting to Stripe"), from a polite
+  // live region beside the button that is always in the page, so the change is heard.
+  pendingLabel?: string;
+  // A long label wraps onto more lines (a narrow column, a phone).
+  wrap?: boolean;
+  // Fills its row.
+  block?: boolean;
   // Disabled, with the reason written beside the button. The button stays focusable and
   // the reason is its description; clicks are ignored.
   disabledReason?: ReactNode;
@@ -37,6 +44,9 @@ export function Button(props: ButtonProps) {
     variant = "default",
     size = "default",
     pending = false,
+    pendingLabel,
+    wrap = false,
+    block = false,
     disabledReason,
     iconOnly = false,
     label,
@@ -85,6 +95,8 @@ export function Button(props: ButtonProps) {
       data-variant={variant === "default" ? undefined : variant}
       data-size={size === "default" ? undefined : size}
       data-icon-only={iconOnly ? "" : undefined}
+      data-wrap={wrap ? "" : undefined}
+      data-block={block ? "" : undefined}
       aria-label={iconOnly ? (label ?? rest["aria-label"]) : rest["aria-label"]}
       aria-disabled={disabled ? true : undefined}
       aria-describedby={describedBy}
@@ -102,13 +114,22 @@ export function Button(props: ButtonProps) {
     </button>
   );
 
-  if (!disabled) return button;
+  const live =
+    pendingLabel === undefined ? null : (
+      <span className="cap-sr-only" role="status">
+        {pending ? pendingLabel : ""}
+      </span>
+    );
+  if (!disabled && !live) return button;
   return (
     <>
       {button}
-      <span className="cap-btn-reason" id={reasonId}>
-        {disabledReason}
-      </span>
+      {live}
+      {disabled ? (
+        <span className="cap-btn-reason" id={reasonId}>
+          {disabledReason}
+        </span>
+      ) : null}
     </>
   );
 }

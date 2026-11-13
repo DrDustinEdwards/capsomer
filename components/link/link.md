@@ -6,7 +6,7 @@ parts: [css, ts, react]
 tool: own JavaScript
 states: [rest, hover, pressed, visited, focus, away, family, file, jump, email, phone, lang, footnote, xref, address, next, title, tag]
 added: 0.45.0
-updated: 0.99.0
+updated: 0.125.0
 source: site-runtime's ./prefetch (NEVER_PREFETCH, FILE_EXTENSIONS), which this rule follows for client navigation
 replaces:
   - '\{[^}]*\b(Nav)?Link\b[^}]*\} from "react-router(-dom)?"'
@@ -128,6 +128,19 @@ import { Link, LinkPrefetch, NavLink } from "capsomer/react/link";
 Every Capsomer part that draws links (the shell, the site header, the admin shell, the row and attention lists) takes a `renderLink`. `routerRenderLink` is that adapter, React Router's `Link` with this prefetch, so no site writes its own: `<SiteHeader renderLink={routerRenderLink} />`.
 
 Without React: `mayPrefetch({ href, from, exclude, reloadDocument, target, download })` from `capsomer/behavior/link` gives the same answer.
+
+## AwayLink and ButtonLink
+
+`capsomer/react/link` also exports:
+
+- `AwayLink`: the `away` kind written for you, `data-link="away"`, `rel="external noopener noreferrer"` and the words inside the link. `newTab` adds `target="_blank"` and says "(opens another site in a new tab)"; `sponsored` adds `rel="sponsored"` for a paid or affiliate link (Foxing's Bookshop.org and Amazon links). `awayRel()` and `awayWords()` give the same values to code that writes its own `a`.
+- `ButtonLink`: a link drawn as a button (button.md).
+
+```tsx
+<AwayLink href="https://bookshop.org/a/1" sponsored newTab>Bookshop.org</AwayLink>
+<ButtonLink to="/settings" size="sm">Settings</ButtonLink>
+<ButtonLink href="https://dashboard.example.com" away newTab>Open the dashboard</ButtonLink>
+```
 
 ## Exceptions in production
 

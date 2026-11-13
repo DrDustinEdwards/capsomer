@@ -45,6 +45,8 @@ eachTheme((theme) => {
     await visitStates(page, "select", theme);
     await page.getByRole("combobox", { name: /^Owner/ }).click();
     await expect(page.getByRole("listbox", { name: /^Owner/ })).toBeVisible();
+    // The popover's toggle event, which marks the current option, is queued after it shows.
+    await expect(page.locator(".cap-select-popup .cap-option[data-active]")).toBeVisible();
     await expectContrast(page, [
       { sel: ".cap-select-popup .cap-listbox-label", what: "a group's label" },
       { sel: ".cap-select-popup .cap-option:not([aria-disabled])", what: "an option" },

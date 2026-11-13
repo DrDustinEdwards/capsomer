@@ -6,7 +6,7 @@ parts: [css, behavior, react]
 tool: native + own JavaScript (the shared dialog)
 states: [the confirm page, the confirm page after the server refused, open, busy, failed with Try again, reason required and empty, typed-word guard not typed, typed-word guard matched]
 added: 0.1.0
-updated: 0.125.0
+updated: 0.126.0
 source: Capsid Portal, dashboard/src/app/ConfirmDialog.tsx and styles.css (.help), as of capsid master 2026-10-01; dustinedwards.info app/components/admin/confirm-dialog.tsx for the typed word
 replaces:
   - 'className="(help )?confirm'
@@ -182,7 +182,7 @@ Alert Dialog (Base UI flavor, nova): the centered alert dialog with the blurred 
 
 None yet.
 
-## Hooks (0.125.0)
+## Hooks (0.126.0)
 
 - `useConfirmAction<T>()`: `{ subject, ask(subject, event.currentTarget), close, props }`. Keeps what a page's confirm dialogs ask about and the control that asked; spread `props` (`returnTo`, `onClose`) into each `ConfirmDialog` and set `open` from `subject`, so focus goes back to the opener.
 - `useTwoStep({ preview, perform, onDone, onSignedOut })`: `{ preview, pending, busy, error, setError, runPreview, runPerform }`. Preview writes nothing and answers a token; perform carries it out. Every press ends in something the person can see; a perform refused because its preview expired drops the preview, so the next press previews again. The requests answer `capsomer/react/data`'s `Answer`.
