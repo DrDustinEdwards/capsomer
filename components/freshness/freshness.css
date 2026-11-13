@@ -15,7 +15,7 @@
     white-space: nowrap;
     & b {
       color: var(--text);
-      font-weight: 500;
+      font-weight: var(--weight-medium);
     }
     &[data-stale] {
       color: var(--warn);

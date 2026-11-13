@@ -30,7 +30,7 @@
     --admin-menu-collapsed: calc(var(--rail-w-collapsed) + var(--space-6));
     /* One inset for a menu row in both states: the 16px icon sits at the same x open and
        collapsed, centered in the collapsed column ((80 - 2 * 8 - 16) / 2 = 24). */
-    --admin-row-pad: calc((var(--admin-menu-collapsed) - 2 * var(--space-3) - 16px) / 2);
+    --admin-row-pad: calc((var(--admin-menu-collapsed) - 2 * var(--space-3) - var(--space-5)) / 2);
     /* Hover: a fill a clear step off the ground in both themes, and an edge at 3:1. */
     --admin-hover: color-mix(in srgb, var(--ground), var(--text) 10%);
     --admin-hover-edge: var(--line-strong);
@@ -105,7 +105,7 @@
     gap: var(--space-4);
     padding: var(--space-4) 0;
     background: var(--admin-strip-bg);
-    border-inline-end: 1px solid var(--line);
+    border-inline-end: var(--line-w) solid var(--line);
   }
   .cap-admin-strip-group {
     display: flex;
@@ -136,12 +136,12 @@
     font: inherit;
     text-decoration: none;
     cursor: pointer;
-    outline-offset: 2px;
+    outline-offset: var(--focus-offset);
 
     &:hover,
     &[data-force="hover"] {
       background: var(--admin-hover);
-      box-shadow: inset 0 0 0 1px var(--admin-hover-edge);
+      box-shadow: inset 0 0 0 var(--line-w) var(--admin-hover-edge);
       color: var(--text);
     }
     &:active,
@@ -163,9 +163,9 @@
   /* An app: a neutral tile holding the product's mark. The current app is the dark filled one. */
   .cap-admin-tile {
     background: var(--surface);
-    border: 1px solid var(--line);
+    border: var(--line-w) solid var(--line);
     color: var(--accent-text);
-    font-weight: 700;
+    font-weight: var(--weight-bold);
     font-size: var(--fs-body);
 
     &[data-mono] {
@@ -201,8 +201,8 @@
     --_gw: 20px;
     position: absolute;
     top: calc(50% - var(--_gw) / 2 - var(--_bubble) / 2);
-    inset-inline-start: calc(var(--_gx) + var(--_gw) + 2px);
-    box-shadow: 0 0 0 2px var(--admin-strip-bg);
+    inset-inline-start: calc(var(--_gx) + var(--_gw) + var(--space-1));
+    box-shadow: 0 0 0 var(--line-w-thick) var(--admin-strip-bg);
   }
   .cap-admin-btn > .cap-admin-badge {
     --_gx: calc(50% - 9px);
@@ -231,7 +231,7 @@
     overflow-y: auto;
     scrollbar-width: thin;
     background: var(--ground);
-    border-inline-end: 1px solid var(--line);
+    border-inline-end: var(--line-w) solid var(--line);
 
     & :is(a, .cap-admin-collapse) {
       position: relative;
@@ -244,14 +244,14 @@
       border-radius: var(--radius-m);
       color: var(--muted);
       font-size: var(--fs-body);
-      font-weight: 500;
+      font-weight: var(--weight-medium);
       text-decoration: none;
       outline-offset: 0;
 
       &:hover,
       &[data-force="hover"] {
         background: var(--admin-hover);
-        box-shadow: inset 0 0 0 1px var(--admin-hover-edge);
+        box-shadow: inset 0 0 0 var(--line-w) var(--admin-hover-edge);
         color: var(--text);
       }
       &:active,
@@ -265,7 +265,7 @@
       &[aria-current="page"] {
         background: var(--admin-pill);
         color: var(--admin-pill-fg);
-        font-weight: 600;
+        font-weight: var(--weight-semibold);
       }
     }
     /* Two lines at most per row: a long name is cut, and its full text is the link's name. */
@@ -288,7 +288,7 @@
     background: none;
     font: inherit;
     font-size: var(--fs-detail);
-    font-weight: 500;
+    font-weight: var(--weight-medium);
     text-align: start;
     cursor: pointer;
 
@@ -297,10 +297,10 @@
       place-items: center;
       min-inline-size: 1.6em;
       padding: 0 var(--space-2);
-      border: 1px solid var(--line-strong);
+      border: var(--line-w) solid var(--line-strong);
       border-radius: var(--radius-s);
       color: var(--muted);
-      font: 500 var(--fs-label) / 1.5 var(--ui);
+      font: var(--weight-medium) var(--fs-label) / var(--leading-normal) var(--ui);
     }
   }
   /* Groups are one even step apart: a short heading band open, the same band holding a thin
@@ -321,7 +321,7 @@
     padding-inline: var(--admin-row-pad);
     color: var(--muted);
     font-size: var(--fs-detail);
-    font-weight: 500;
+    font-weight: var(--weight-medium);
   }
 
   .cap-admin-menu a[aria-current="page"] .cap-admin-count:not([data-tone]) {
@@ -363,7 +363,7 @@
         position: absolute;
         inset-inline: var(--admin-row-pad);
         top: 50%;
-        border-block-start: 1px solid var(--line);
+        border-block-start: var(--line-w) solid var(--line);
       }
     }
     & .cap-admin-collapse + .cap-admin-group > .cap-admin-group-label::after {
@@ -374,21 +374,21 @@
       --_gw: 16px;
       position: absolute;
       top: calc(50% - var(--_gw) / 2 - var(--_bubble) / 2);
-      inset-inline-start: calc(var(--_gx) + var(--_gw) + 2px);
-      box-shadow: 0 0 0 2px var(--ground);
+      inset-inline-start: calc(var(--_gx) + var(--_gw) + var(--space-1));
+      box-shadow: 0 0 0 var(--line-w-thick) var(--ground);
     }
     & a:is(:hover, [data-force="hover"]) .cap-admin-count {
-      box-shadow: 0 0 0 2px var(--admin-hover);
+      box-shadow: 0 0 0 var(--line-w-thick) var(--admin-hover);
     }
     & a[aria-current="page"] .cap-admin-count {
-      box-shadow: 0 0 0 2px var(--admin-pill);
+      box-shadow: 0 0 0 var(--line-w-thick) var(--admin-pill);
     }
   }
   .cap-admin-letter {
     justify-self: center;
-    font-weight: 700;
+    font-weight: var(--weight-bold);
     font-size: var(--fs-detail);
-    line-height: 1;
+    line-height: var(--leading-none);
   }
 
   .cap-admin-main {
@@ -445,7 +445,7 @@
     }
     & [aria-current="page"] {
       color: var(--text);
-      font-weight: 600;
+      font-weight: var(--weight-semibold);
     }
   }
   .cap-admin-actions {
@@ -519,7 +519,7 @@
   @media (forced-colors: active) {
     .cap-admin-menu a[aria-current="page"],
     .cap-admin-tile[aria-current="true"] {
-      outline: 2px solid CanvasText;
+      outline: var(--focus-width) solid CanvasText;
     }
     .cap-admin-badge,
     .cap-admin-count {

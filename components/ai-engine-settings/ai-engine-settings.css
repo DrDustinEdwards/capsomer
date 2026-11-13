@@ -44,7 +44,7 @@
     max-width: 40ch;
     color: var(--muted);
     font-size: var(--fs-detail);
-    font-weight: 400;
+    font-weight: var(--weight-regular);
   }
   .cap-ai-engine-table td > * {
     min-inline-size: 12rem;

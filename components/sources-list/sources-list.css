@@ -14,7 +14,7 @@
     list-style: none;
     color: var(--muted);
     font-size: var(--fs-detail);
-    line-height: 1.5;
+    line-height: var(--leading-normal);
   }
 
   .cap-source {
@@ -32,7 +32,7 @@
     color: var(--muted);
     font-family: var(--mono);
     font-size: var(--fs-label);
-    letter-spacing: 0.06em;
+    letter-spacing: var(--tracking-widest);
     text-transform: uppercase;
   }
 
@@ -42,9 +42,9 @@
 
     /* Inline padding raises the title link to a 24px target (WCAG 2.5.8) without changing the line. */
     &:is(a) {
-      padding-block: 2px;
+      padding-block: var(--space-1);
       color: var(--accent-text);
-      font-weight: 500;
+      font-weight: var(--weight-medium);
     }
 
     /* Marked as a kind of link (data-link="away"), it keeps the text link's visited color. */

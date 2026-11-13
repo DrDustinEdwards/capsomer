@@ -17,7 +17,7 @@
     gap: var(--space-2);
     min-block-size: var(--target);
     padding: 0 var(--pad-x);
-    border: 1px solid var(--line);
+    border: var(--line-w) solid var(--line);
     border-radius: var(--radius-full);
     background: var(--surface);
     color: var(--muted);
@@ -52,7 +52,7 @@
 
     &:disabled {
       cursor: default;
-      opacity: 0.7;
+      opacity: var(--opacity-muted);
     }
 
     &[aria-busy="true"] {

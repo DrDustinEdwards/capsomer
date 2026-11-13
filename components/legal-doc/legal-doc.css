@@ -58,8 +58,8 @@
   .cap-legal-contents-title {
     margin: 0 0 var(--space-3);
     color: var(--muted);
-    font: 600 var(--fs-detail) / 1.3 var(--ui);
-    letter-spacing: 0.06em;
+    font: var(--weight-semibold) var(--fs-detail) / var(--leading-snug) var(--ui);
+    letter-spacing: var(--tracking-widest);
     text-transform: uppercase;
   }
   .cap-legal-sections {

@@ -40,7 +40,7 @@
     min-height: var(--target);
     margin: 0;
     padding: calc(var(--pad-y) + var(--space-1)) var(--pad-x);
-    border: 1px solid var(--line);
+    border: var(--line-w) solid var(--line);
     border-radius: var(--radius-l);
     background: var(--surface);
     color: var(--text);
@@ -85,13 +85,13 @@
     align-items: baseline;
     gap: 0 var(--space-2);
     font-size: var(--fs-lead);
-    font-weight: 600;
-    letter-spacing: -0.01em;
+    font-weight: var(--weight-semibold);
+    letter-spacing: var(--tracking-snug);
     font-variant-numeric: var(--figures);
 
     & small {
       font-size: var(--fs-detail);
-      font-weight: 400;
+      font-weight: var(--weight-regular);
       letter-spacing: 0;
       color: var(--muted);
     }
@@ -106,10 +106,10 @@
   .cap-tile-word {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
+    gap: var(--space-2-5);
     margin-inline-start: var(--space-2);
     font-size: var(--fs-detail);
-    font-weight: 600;
+    font-weight: var(--weight-semibold);
     color: var(--ok);
 
     & svg {
@@ -205,7 +205,7 @@
     & .cap-tile-figure {
       font-family: var(--tile-figure-face, inherit);
       font-size: var(--tile-figure-size, var(--fs-h3));
-      font-weight: var(--tile-figure-weight, 600);
+      font-weight: var(--tile-figure-weight, var(--weight-semibold));
     }
     &[data-size="lg"] .cap-tile-figure {
       font-size: var(--tile-figure-size, var(--fs-h2));
@@ -243,7 +243,7 @@
     align-items: center;
     gap: var(--space-1);
     font-size: var(--fs-detail);
-    font-weight: 600;
+    font-weight: var(--weight-semibold);
     font-variant-numeric: var(--figures);
     color: var(--muted);
 
