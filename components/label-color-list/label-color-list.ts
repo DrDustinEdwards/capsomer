@@ -22,6 +22,14 @@ export const COLORS = COLOR_NAMES.length;
 export const MAX_LABELS = 12;
 export const MAX_LABEL_LENGTH = 40;
 
+const SERIES = [1, 2, 3, 4, 5, 6, 7, 8] as const;
+
+// A label's color as the series number a pill's dot takes (Pill's `series`): 1 to 8, a color past
+// 8 round again, and anything that is not a number the first.
+export function seriesOf(color: number): (typeof SERIES)[number] {
+  return SERIES[(((Math.round(color) - 1) % COLORS) + COLORS) % COLORS] ?? 1;
+}
+
 // A starting list: each label takes the next color, round the eight.
 export function colorLabels(...labels: string[]): ColorLabel[] {
   return labels.map((label, i) => ({ label, color: (i % COLORS) + 1 }));

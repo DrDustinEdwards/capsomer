@@ -56,19 +56,19 @@ Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the a
 
 ```html
 <ul class="cap-color-label-list" aria-label="Stages, in order">
-  <li><span class="cap-color-label" data-color="3"><span class="cap-color-label-dot" aria-hidden="true"></span>Drafting</span></li>
+  <li><span class="cap-pill" data-series="3"><span class="cap-pill-dot" aria-hidden="true"></span>Drafting</span></li>
 </ul>
 
 <ol class="cap-color-label-edit">
   <li>
     <div class="cap-field"><label class="cap-field-label" for="l1">Label 1</label><input class="cap-input" id="l1" name="label" value="Idea" maxlength="40"></div>
     <div class="cap-field"><label class="cap-field-label" for="c1">Color 1</label><select class="cap-select" id="c1" name="color">...</select></div>
-    <span class="cap-color-label" data-color="1" aria-hidden="true"><span class="cap-color-label-dot"></span></span>
+    <span class="cap-pill" data-series="1"><span class="cap-pill-dot" aria-hidden="true"></span></span>
   </li>
 </ol>
 ```
 
-`data-color` is 1 to 8, for `--series-1` to `--series-8`.
+Each label is the status pill with a series dot (`.cap-pill[data-series]`, status.css): `data-series` is 1 to 8, for `--series-1` to `--series-8` (`seriesOf(color)` maps a stored color onto it).
 
 ```tsx
 import { ColorLabelPill, LabelColorList } from "capsomer/react/label-color-list";
