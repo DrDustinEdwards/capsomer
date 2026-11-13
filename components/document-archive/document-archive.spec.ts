@@ -12,9 +12,7 @@ eachTheme((theme) => {
     await expectNoAxeViolations(page);
   });
 
-  test("accessibility: the subtitle and sizes reach their contrast", async ({
-    page,
-  }) => {
+  test("accessibility: the subtitle and sizes reach their contrast", async ({ page }) => {
     await visitStates(page, "document-archive", theme);
     await expectContrast(page, [
       { sel: ".cap-docview-sub", what: "a document's subtitle" },

@@ -5,7 +5,8 @@ import { toDateTimeLocal } from "../../components/field/field.ts";
 import { checkSchedule } from "../../components/schedule-dialog/schedule-dialog.ts";
 
 // The value the dialog's field holds: the instant on this machine's own wall clock.
-const here = (at) => toDateTimeLocal(new Date(at), Intl.DateTimeFormat().resolvedOptions().timeZone);
+const here = (at) =>
+  toDateTimeLocal(new Date(at), Intl.DateTimeFormat().resolvedOptions().timeZone);
 
 test("checkSchedule: no time, a past time and a future time, measured at the time chosen", () => {
   const now = Date.parse("2026-11-12T12:00:00Z");

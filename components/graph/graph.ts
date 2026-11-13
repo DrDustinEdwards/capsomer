@@ -48,7 +48,6 @@ const CHAR = 7.4;
 const PAD = 14;
 const LINE = 18;
 
-
 // A box's address as the browser will read it (leading controls and spaces dropped, tabs and line
 // breaks removed, as the URL parser does), kept when it is a path or an http(s) address; null for
 // any other scheme (javascript:, data:), which draws the box without a link.

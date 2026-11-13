@@ -2,13 +2,7 @@
 // sandboxed preview, the preview's refresh once typing pauses, Ctrl or Cmd+S, and the chrome that
 // steps back while someone types (editor-workspace.ts).
 
-import {
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-  type ReactNode,
-} from "react";
+import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
 import { Segmented } from "../segmented/segmented.react.tsx";
 import {
   LAYOUT_KEY,

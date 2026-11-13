@@ -42,7 +42,10 @@ export function NewsletterSignup({
 }: NewsletterSignupProps) {
   const titleId = `${useId()}-title`;
   const failed = state && !state.ok ? state.error : undefined;
-  const sent = useMemo(() => (state?.ok ? { ok: true as const, message: done } : null), [state, done]);
+  const sent = useMemo(
+    () => (state?.ok ? { ok: true as const, message: done } : null),
+    [state, done],
+  );
   const fields = (
     <>
       <TextField
@@ -65,7 +68,12 @@ export function NewsletterSignup({
         }
       />
       {consent ? (
-        <Check className="cap-newsletter-consent" name="consent" required label={<span>{consent}</span>} />
+        <Check
+          className="cap-newsletter-consent"
+          name="consent"
+          required
+          label={<span>{consent}</span>}
+        />
       ) : null}
     </>
   );

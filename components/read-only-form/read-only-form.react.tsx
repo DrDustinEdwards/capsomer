@@ -1,9 +1,4 @@
-import {
-  useState,
-  type FormHTMLAttributes,
-  type ReactNode,
-  type Ref,
-} from "react";
+import { useState, type FormHTMLAttributes, type ReactNode, type Ref } from "react";
 import { Banner } from "../banner/banner.react.tsx";
 import type { FormComponent } from "../plain-form/plain-form.react.tsx";
 

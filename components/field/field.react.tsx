@@ -13,13 +13,7 @@ import {
 import { useOptionalMessage } from "../message/message.react.tsx";
 import { SLUG_PATTERN, slugify } from "@drdustinedwards/site-helpers/slug";
 import { moneyInputValue } from "@dustinedwards/site-runtime/money";
-import {
-  countText,
-  keyValue,
-  revealedText,
-  stepValue,
-  toDateTimeLocal,
-} from "./field.ts";
+import { countText, keyValue, revealedText, stepValue, toDateTimeLocal } from "./field.ts";
 import { useHydrated } from "../hooks/hooks.react.tsx";
 
 // The props Field passes to its control. Any input, textarea or select (or a component
@@ -242,8 +236,17 @@ type FieldText = Pick<
 
 // Splits a field part's props into the words Field takes and the rest, for the control.
 function splitField<T extends FieldText>(props: T) {
-  const { label, labelHidden, help, error, announce, required, helpPlacement, showRequired, ...rest } =
-    props;
+  const {
+    label,
+    labelHidden,
+    help,
+    error,
+    announce,
+    required,
+    helpPlacement,
+    showRequired,
+    ...rest
+  } = props;
   const field: FieldText = {
     label,
     labelHidden,
@@ -812,7 +815,9 @@ export function MoneyField(
             inputMode="decimal"
             autoComplete={rest.autoComplete ?? "off"}
             pattern={rest.pattern ?? "[0-9,]*(\\.[0-9]{1,2})?"}
-            defaultValue={rest.value === undefined ? moneyInputValue(defaultCents, "usd") : undefined}
+            defaultValue={
+              rest.value === undefined ? moneyInputValue(defaultCents, "usd") : undefined
+            }
           />
         </div>
       )}

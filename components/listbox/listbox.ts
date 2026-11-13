@@ -479,14 +479,7 @@ export function createListbox(el: HTMLElement, opts: ListboxOptions = {}): Listb
   };
 
   const handleKey = (e: KeyboardEvent): boolean => {
-    if (
-      e.defaultPrevented ||
-      e.isComposing ||
-      isImeEnter(e) ||
-      e.ctrlKey ||
-      e.metaKey ||
-      e.altKey
-    )
+    if (e.defaultPrevented || e.isComposing || isImeEnter(e) || e.ctrlKey || e.metaKey || e.altKey)
       return false;
     const k = e.key;
     const roving = mode === "roving";

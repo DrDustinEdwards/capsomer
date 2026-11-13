@@ -215,7 +215,9 @@ export function syncTile(tile: HTMLElement): void {
         ? "Uploading"
         : r.state === "failed"
           ? "Not uploaded"
-          : [r.type.split("/").pop()?.toUpperCase(), formatBytes(r.bytes)].filter(Boolean).join(" · ");
+          : [r.type.split("/").pop()?.toUpperCase(), formatBytes(r.bytes)]
+              .filter(Boolean)
+              .join(" · ");
   let flags = tile.querySelector<HTMLElement>(".cap-media-flags");
   if (!flags) {
     flags = document.createElement("span");

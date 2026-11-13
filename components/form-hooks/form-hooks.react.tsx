@@ -8,7 +8,6 @@ import {
   type SaveQueue,
 } from "./form-hooks.ts";
 
-
 // No router and no DOM here, so a React Native app's shared client uses these too. The hooks that
 // read the address, a fetcher or loader data are capsomer/react/route-hooks.
 export type { DraftEvent, DraftState, SaveQueue } from "./form-hooks.ts";

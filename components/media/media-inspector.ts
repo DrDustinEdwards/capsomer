@@ -1,12 +1,7 @@
 // The media inspector's fields: reading them, writing a record into them, the tags and the save status.
 // Plain functions of the inspector element; the controller in media.ts owns when they run.
 
-import {
-  copySnippets,
-  parseTags,
-  type MediaFields,
-  type MediaRecord,
-} from "./media-record.ts";
+import { copySnippets, parseTags, type MediaFields, type MediaRecord } from "./media-record.ts";
 import type { SaveState } from "./media-autosave.ts";
 import { glyph, part } from "./media-tile.ts";
 import { formatBytes } from "../format/format.ts";

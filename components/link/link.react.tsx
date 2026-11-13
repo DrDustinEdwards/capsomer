@@ -172,24 +172,14 @@ export function ButtonLink(props: ButtonLinkProps) {
   if (typeof rest.href === "string") {
     const anchor = rest as AnchorHTMLAttributes<HTMLAnchorElement>;
     return (
-      <a
-        {...anchor}
-        {...attrs}
-        target={target ?? anchor.target}
-        rel={rel ?? anchor.rel}
-      >
+      <a {...anchor} {...attrs} target={target ?? anchor.target} rel={rel ?? anchor.rel}>
         {body}
       </a>
     );
   }
   const link = rest as ComponentProps<typeof RouterLink>;
   return (
-    <Link
-      {...link}
-      {...attrs}
-      target={target ?? link.target}
-      rel={rel ?? link.rel}
-    >
+    <Link {...link} {...attrs} target={target ?? link.target} rel={rel ?? link.rel}>
       {body}
     </Link>
   );
