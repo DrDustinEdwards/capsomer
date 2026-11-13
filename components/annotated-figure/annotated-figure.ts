@@ -75,7 +75,14 @@ export function nextPin(pinned: string | null, id: string): string | null {
 // Each leader grows from its start with `transform: scale()`, which looks like the line being drawn
 // and, unlike a stroke-dashoffset draw, runs on the compositor. The plain `transform` property:
 // Chrome does not composite the individual transform properties on SVG. Values go through the CSSOM.
+// The timing is the motion tokens: each leader's long leg draws in --dur-slow, its short leg in
+// --dur-base once the long one is drawn, the leaders --dur-base apart, on the arriving --ease-out.
 export function drawLeaders(svg: Element): void {
+  const css = getComputedStyle(svg);
+  const ms = (name: string, fallback: number) => parseFloat(css.getPropertyValue(name)) || fallback;
+  const base = ms("--dur-base", 200);
+  const slow = ms("--dur-slow", 400);
+  const easing = css.getPropertyValue("--ease-out").trim() || "ease-out";
   svg.querySelectorAll(".cap-annotated-figure-leader").forEach((leader, i) => {
     leader.querySelectorAll<SVGLineElement>("line").forEach((line, j) => {
       line.style.setProperty("transform-box", "view-box");
@@ -84,9 +91,9 @@ export function drawLeaders(svg: Element): void {
         `${line.getAttribute("x1")}px ${line.getAttribute("y1")}px`,
       );
       line.animate([{ transform: "scale(0)" }, { transform: "scale(1)" }], {
-        duration: j === 0 ? 600 : 260,
-        delay: i * 260 + (j === 0 ? 200 : 800),
-        easing: "cubic-bezier(0.16, 1, 0.3, 1)",
+        duration: j === 0 ? slow : base,
+        delay: i * base + base + (j === 0 ? 0 : slow),
+        easing,
         fill: "backwards",
       });
     });
