@@ -1,0 +1,95 @@
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* A poll: its options as buttons, each filled from the start by its share of the votes, the
+   reader's own vote pressed. Closed, the options cannot be pressed and the shares stay. The share
+   is set through the CSSOM (`--share`, 0 to 1), never a style attribute. Extracted from Foxing's
+   club polls (.fx-poll-option in styles/clubs.css, components/clubs/club-schedule.tsx). */
+@layer cap.components {
+  .cap-poll {
+    display: grid;
+    gap: var(--space-2);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .cap-poll-option {
+    position: relative;
+    isolation: isolate;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    inline-size: 100%;
+    min-block-size: var(--control);
+    padding: var(--space-2) var(--pad-x);
+    overflow: hidden;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-m);
+    background: var(--surface);
+    color: var(--text);
+    font: inherit;
+    font-size: var(--fs-detail);
+    text-align: start;
+    cursor: pointer;
+
+    /* The share: a bar behind the words, from the start edge. */
+    &::before {
+      content: "";
+      position: absolute;
+      inset-block: 0;
+      inset-inline-start: 0;
+      z-index: -1;
+      inline-size: calc(var(--share, 0) * 100%);
+      background: var(--accent-soft);
+    }
+
+    &:hover:not(:disabled),
+    &[data-force="hover"] {
+      border-color: var(--line-strong);
+    }
+
+    &[aria-pressed="true"] {
+      border-color: var(--accent);
+      font-weight: 600;
+
+      &::before {
+        background: color-mix(in srgb, var(--accent) 22%, transparent);
+      }
+    }
+
+    &:disabled {
+      cursor: default;
+    }
+
+    @media (prefers-reduced-motion: no-preference) {
+      &::before {
+        transition: inline-size var(--dur-slow) var(--ease-out);
+      }
+    }
+  }
+
+  .cap-poll-label {
+    min-inline-size: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .cap-poll-count {
+    flex: none;
+    color: var(--muted);
+    font-family: var(--figures, var(--mono));
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+@media (forced-colors: active) {
+  .cap-poll-option::before {
+    forced-color-adjust: none;
+    background: Highlight;
+    opacity: 0.35;
+  }
+
+  .cap-poll-option[aria-pressed="true"] {
+    outline: 2px solid Highlight;
+  }
+}
