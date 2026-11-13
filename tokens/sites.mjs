@@ -432,8 +432,26 @@ function files() {
 
 const path = (rel) => fileURLToPath(new URL(`../${rel}`, import.meta.url));
 
+// Every stylesheet Capsomer ships but the site layers themselves: a site value that none of them
+// reads changes nothing, so the check refuses it (a misspelt or retired name).
+function shippedCss() {
+  const read = (dir, keep) =>
+    readdirSync(path(dir), { withFileTypes: true }).flatMap((d) =>
+      d.isDirectory()
+        ? read(`${dir}/${d.name}`, keep)
+        : keep(d.name)
+          ? [readFileSync(path(`${dir}/${d.name}`), "utf8")]
+          : [],
+    );
+  const css = (name) => name.endsWith(".css");
+  // The generated site layers (tokens/site-*.css) set the values; they never read them.
+  const notLayer = (name) => css(name) && !name.startsWith("site-");
+  return [...read("css", css), ...read("tokens", notLayer), ...read("components", css)].join("\n");
+}
+
 function check() {
   const problems = [];
+  const shipped = shippedCss();
   const exports = JSON.parse(readFileSync(path("package.json"), "utf8")).exports;
   if (exports["./sites.css"] !== "./css/sites.css")
     problems.push(`package.json needs "./sites.css": "./css/sites.css" in exports`);
@@ -450,6 +468,8 @@ function check() {
       if (BRAND.test(k) && !site.ownBrand)
         problems.push(`${name}: --${k} is a brand color; add a family in palette.mjs instead`);
       if (/var\(/.test(v)) problems.push(`${name}: --${k} must be a literal, not ${v}`);
+      if (!shipped.includes(`var(--${k}`) && !shipped.includes(`--${k}:`))
+        problems.push(`${name}: --${k} is read by no Capsomer stylesheet, so it changes nothing`);
     }
     for (const k of Object.keys(site.light ?? {}))
       if (!(k in (site.dark ?? {})))
