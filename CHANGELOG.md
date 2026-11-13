@@ -4,6 +4,10 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+## [0.137.0]
+
+- **`MediaPicker` and `ImageField` load the media library when the dialog opens.** `media-picker.react.tsx` imported `MediaLibrary` statically, so a page that drew only the button (an editor, a settings form) shipped the whole library: 32 KB gzip on Carrel's editor route (capsomer#408). The library is now its own chunk behind `React.lazy` and `Suspense`, showing the same "Loading media..." text while it arrives. No token, class, export or HTML contract changed.
+
 ## [0.134.0]
 
 - **Sites: dustinedwards.info's entry no longer sets `--radius-control: 0`.** 0.126.0 carried it over from the site's app.css, but before Capsomer 0.123.0 no control read that token, so the live site's buttons and fields have always been rounded; with it, they turned square. Its controls keep Capsomer's `--radius-m`.
