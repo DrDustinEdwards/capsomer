@@ -43,6 +43,14 @@ The gaps the site moves onto 0.132.0's content and marketing blocks found (bsw, 
 - `FeatureCard`: `tag` (`.cap-feature-card-head` and `.cap-feature-card-tag`, a pill at the end of the title's line) and `attributes` (the site's own `data-*` on the card).
 - Process: a step's `end` (`.cap-process-end`), its timing and status at the end of a row's line.
 
+**Also in this release (#411)**
+
+- **Collab editor: `Room.doc` and `Room.provider` are `null` before the page is in the browser.** `useRoom`'s first render returned an object cast `as unknown as Room` that lacked both; the type now says so (`Y.Doc | null`, `YProvider | null`) and the cast is gone. `useRoomEditing` is unchanged (it reads them once `synced`). An app that reads `room.doc` or `room.provider` from `useRoom` directly must handle null.
+- **`MediaPicker`: a library chunk that fails to load shows "The library did not load"** (the failed `Empty`) instead of breaking the dialog.
+- **Command host: a failed menu load is no longer kept.** `load()` clears itself on failure so the next `open` or `load` fetches the chunk again; the idle warm-up and `runWhenReady` share one fire-and-forget `warm`, and `open` still rejects.
+- **Theme switch: optional `onError(error)`** on `ThemeSwitch`, `ThemeButton`, `enhance` and `chooseTheme`/`toggleTheme`'s memory, called when `onSave` throws or rejects. Without it the failure is let go as before.
+- **Carousel: `trackLabel`** names the scrolling track (default "Slides"), for a page in another language.
+
 ## [0.139.0]
 
 - **Breaking: the layout classes and the text roles are their own stylesheets, no longer part of `base.css`.** `base.css` imported `utilities.css`, which since 0.126.0 carried the layout classes (`.cap-stack`, `.cap-cluster`, `.cap-spread`, `.cap-grid`, the panes and the item helpers, 1.98 KB gzip) and the text roles (`.cap-text`, `.cap-title`, `.cap-clamp`, 1.22 KB gzip), so every site shipped about 3.2 KB gzip it might not use (txasm's public routes grew 2.9 KB gzip, the Portal's CSS went over its budget). They are now `capsomer/layout.css` and `capsomer/text.css` (`css/layout.css`, `css/text.css`). **A site that uses those classes adds `import "capsomer/layout.css";` and `import "capsomer/text.css";` beside `capsomer/base.css`** (Foxing, Carrel and the Portal use both); a site that does not, changes nothing and loses the weight. `capsomer/utilities.css` keeps everything else. No class, token or attribute is renamed or removed, and no HTML contract changes.

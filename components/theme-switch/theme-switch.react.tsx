@@ -29,6 +29,8 @@ export interface ThemeSwitchProps {
   // the signed-in account. With `cookie` the switch starts from the server's answer.
   cookie?: string;
   onSave?: ThemeSave;
+  // Told when onSave throws or rejects; the choice stands either way.
+  onError?: (error: unknown) => void;
 }
 
 const Sun = () => (
@@ -54,6 +56,7 @@ export function ThemeSwitch({
   initial,
   cookie,
   onSave,
+  onError,
 }: ThemeSwitchProps) {
   const name = useId();
   const [choice, setChoice] = useState<ThemeChoice | null>(initial ?? null);
@@ -91,7 +94,7 @@ export function ThemeSwitch({
               checked={choice === c.value}
               onChange={() => {
                 setChoice(c.value);
-                chooseTheme(c.value, { key: prefKey, cookie, onSave });
+                chooseTheme(c.value, { key: prefKey, cookie, onSave, onError });
               }}
             />
             {c.icon}
@@ -115,6 +118,8 @@ export interface ThemeButtonProps {
   initial?: ThemeChoice;
   cookie?: string;
   onSave?: ThemeSave;
+  // Told when onSave throws or rejects; the choice stands either way.
+  onError?: (error: unknown) => void;
   // False on a page React never runs on in the browser: the button is written for the behavior
   // module's enhance() to wire (its key and cookie as data-cap-pref and data-cap-cookie).
   hydrate?: boolean;
@@ -193,6 +198,7 @@ export function ThemeButton({
   initial,
   cookie,
   onSave,
+  onError,
   hydrate = true,
 }: ThemeButtonProps) {
   const [showing, setShowing] = useState<ThemeChoice>(initial ?? "light");
@@ -239,7 +245,9 @@ export function ThemeButton({
       // enhance() names the button for the theme showing, so a page that hydrates later (germomics'
       // hydrate on intent) finds a dark visitor's name and tip changed from the server's.
       suppressHydrationWarning={!hydrate}
-      onClick={hydrate ? () => setShowing(toggleTheme(prefKey, { cookie, onSave })) : undefined}
+      onClick={
+        hydrate ? () => setShowing(toggleTheme(prefKey, { cookie, onSave, onError })) : undefined
+      }
     >
       {BUTTON_MOON}
       {BUTTON_SUN}

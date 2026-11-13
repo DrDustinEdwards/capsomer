@@ -86,3 +86,5 @@ import { Carousel } from "capsomer/react/carousel";
   {quotes.map((q) => <Quote key={q.id} {...q} />)}
 </Carousel>
 ```
+
+Names default to English: `slideLabel`, `markerLabel`, `prevLabel`, `nextLabel`, and `trackLabel` (the scrolling track's name, "Slides"). Pass them in the page's language.
