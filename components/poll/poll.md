@@ -6,6 +6,7 @@ parts: [css, behavior, react]
 tool: own JavaScript
 states: [open, voted, hover, closed, no votes yet]
 added: 0.132.0
+updated: 0.142.0
 source: Foxing's club polls (.fx-poll-option in apps/web/app/styles/clubs.css, components/clubs/club-schedule.tsx)
 replaces:
   - 'fx-poll-option'
@@ -27,9 +28,10 @@ A vote among a few options inside a page: a club choosing its next book.
 ## The default and its reason
 
 - **Buttons with `aria-pressed`**: each press is an action that saves at once (a vote), not a field in a form.
-- **The count is read with its word** ("3 votes"); the share bar is decoration behind the words.
+- **The count is read with its word** ("3 votes"), from a polite live region, so a vote that changes it is announced (Foxing's own poll had it); the share bar is decoration behind the words.
 - **The share goes through the CSSOM** (`--share`, set from each option's `data-votes` by `setShares`), never a style attribute.
 - **The bar grows** under no-preference motion only.
+- **The options are in the interface face** (`--ui`), as every control is, not the reading face around them.
 
 ## HTML contract
 
@@ -38,7 +40,7 @@ A vote among a few options inside a page: a club choosing its next book.
   <li>
     <button type="button" class="cap-poll-option" data-votes="3" aria-pressed="true">
       <span class="cap-poll-label">Field notes</span>
-      <span class="cap-poll-count">3<span class="cap-sr-only"> votes</span></span>
+      <span class="cap-poll-count" aria-live="polite" aria-atomic="true">3<span class="cap-sr-only"> votes</span></span>
     </button>
   </li>
 </ul>
