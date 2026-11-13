@@ -1,0 +1,82 @@
+/* The layout repeated so this file is safe whatever order an app imports it in (css/layers.css has the note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* Tracks: the columns inside a page column (.cap-page): the reading line, a rail beside it and the wide track. Every
+   child sits on the reading line; data-track="rail" puts one in the rail where a rail is open, data-track="wide" across both. At narrow
+   widths the 1fr track is zero and the rail is 0 wide, so a phone needs no media query. data-rail picks the rail:
+   none (the default), note (a narrow rail for dates and marks, from 48rem) or toc (a wide rail for contents and facts,
+   from 48rem). --tracks-rail-w and --tracks-gap-w size the rail; --measure is the reading line, in the element's own
+   face, so a page sets its reading face on the tracks element. */
+@layer cap.components {
+  .cap-tracks {
+    --tracks-rail-w: 7.5rem;
+    --tracks-gap-w: 1.5rem;
+    --tracks-rail: 0rem;
+    --tracks-gap: 0rem;
+
+    display: grid;
+    grid-template-columns:
+      [wide-start rail-start] var(--tracks-rail) [rail-end] var(--tracks-gap)
+      [text-start] min(var(--measure), 100% - var(--tracks-rail) - var(--tracks-gap))
+      [text-end] minmax(0, 1fr) [wide-end];
+
+    > * {
+      grid-column: text;
+    }
+    > [data-track="wide"] {
+      grid-column: wide;
+    }
+
+    /* Grid does not collapse margins, so only start margins: a flow of blocks, a heading opening more room above it
+       and less below. */
+    > * + * {
+      margin-block-start: var(--space-7);
+    }
+    > h2,
+    > figure {
+      margin-block-start: var(--space-8);
+    }
+    > :is(h1, h2, h3) + * {
+      margin-block-start: var(--space-6);
+    }
+
+    &[data-rail="toc"] {
+      --tracks-rail-w: 12rem;
+      --tracks-gap-w: 3rem;
+    }
+    @media (min-width: 48rem) {
+      &:is([data-rail="note"], [data-rail="toc"]) {
+        --tracks-rail: var(--tracks-rail-w);
+        --tracks-gap: var(--tracks-gap-w);
+      }
+      /* Only where the rail is open: a child left in a 0-wide track would paint over the text. The page sets the
+         rows a rail child shares with the text (grid-row), since that is the page's own order. */
+      &:is([data-rail="note"], [data-rail="toc"]) > [data-track="rail"] {
+        grid-column: rail;
+      }
+    }
+  }
+
+  /* Rail facts: a document's particulars in the rail, each a small mono label over its value (a post's words and
+     reading time, a paper's journal and DOI). A <p> or <dl>; in a <p> each label is a <b>. */
+  .cap-rail-facts {
+    margin: 0;
+    color: var(--muted);
+    font: 400 0.75rem / 1.7 var(--ui);
+
+    :is(b, dt) {
+      display: block;
+      color: var(--text);
+      font-family: var(--mono);
+      font-weight: 500;
+    }
+    b + b,
+    dd + dt {
+      margin-block-start: 0.875rem;
+    }
+    dd {
+      margin: 0;
+      overflow-wrap: anywhere;
+    }
+  }
+}

@@ -1,4 +1,6 @@
 import type { ReactNode } from "react";
+import type { PatchOptions } from "../manual/manual.ts";
+import { Patch } from "../manual/manual.react.tsx";
 import {
   Breadcrumb,
   type BreadcrumbItem,
@@ -19,6 +21,8 @@ export interface PageHeadProps {
   // The title's level: the page's one h1, or lower where the page already has one (a states
   // page's specimen, a view inside another page).
   headingLevel?: "h1" | "h2" | "h3";
+  // A round patch beside the title (manual.md, Patch), for a page that is one of its part's members.
+  patch?: PatchOptions;
 }
 
 // The HTML contract in page-head.md.
@@ -29,12 +33,21 @@ export function PageHead({
   lead,
   actions,
   headingLevel: H = "h1",
+  patch,
 }: PageHeadProps) {
+  const heading = <H className="cap-page-head-title">{title}</H>;
   return (
     <header className="cap-page-head">
       <div className="cap-page-head-text">
         {crumbs && crumbs.length > 1 ? <Breadcrumb items={crumbs} renderLink={renderLink} /> : null}
-        <H className="cap-page-head-title">{title}</H>
+        {patch ? (
+          <div className="cap-patched">
+            {heading}
+            <Patch {...patch} />
+          </div>
+        ) : (
+          heading
+        )}
         {lead ? <p className="cap-page-head-lead">{lead}</p> : null}
       </div>
       {actions ? <div className="cap-page-head-actions">{actions}</div> : null}

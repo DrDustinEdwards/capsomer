@@ -1,0 +1,78 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in (css/layers.css has the note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* What every site does on paper, under a bright light and with the system's own colors, in one place (base.css imports
+   it), so no site keeps its own print block or per-component forced-colors edges. */
+@layer cap.base {
+  @media print {
+    :root {
+      --print-rule: #999;
+    }
+    /* Chrome and controls have no use on paper. A site marks its own with data-print="hide". */
+    :is(
+      [data-print="hide"],
+      .cap-skip,
+      .cap-shell-skip,
+      .cap-site-header-skip,
+      .cap-site-header:not([data-variant="letterhead"]),
+      .cap-family-footer,
+      .cap-lightbox,
+      .cap-toc,
+      .cap-share-row,
+      .cap-anchor-bar,
+      .cap-message,
+      dialog:not([open])
+    ) {
+      display: none !important;
+    }
+    .cap-page {
+      max-inline-size: none;
+      padding-inline: 0;
+    }
+    :where(pre) {
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      border: 1px solid var(--print-rule);
+    }
+    /* An outside link carries its address, which paper cannot follow. */
+    :where([data-context="prose"], .cap-prose) a[href^="http"]::after {
+      content: " (" attr(href) ")";
+      font-size: 9pt;
+      overflow-wrap: anywhere;
+    }
+    :where(h2, h3, h4) {
+      break-after: avoid;
+    }
+    :where(figure, pre, table, img, .cap-form-boxes) {
+      break-inside: avoid;
+    }
+  }
+
+  /* A glass surface (the translucent site header, a dialog's blurred backdrop) turns solid for someone who asked for
+     less transparency, so text never sits on whatever scrolls behind it. */
+  @media (prefers-reduced-transparency: reduce) {
+    .cap-site-header[data-translucent] {
+      background: var(--header-bg);
+      backdrop-filter: none;
+    }
+    dialog::backdrop {
+      backdrop-filter: none;
+    }
+  }
+
+  /* Forced colors paint no shadow and no background image, so an edge drawn with one of them comes back as a real
+     line (transparent: the system paints it in its own text color), and a selected or pressed part keeps an outline. */
+  @media (forced-colors: active) {
+    :where(.cap-btn, .cap-pill, .cap-chip, .cap-status, [data-edge="shadow"]) {
+      outline: 1px solid transparent;
+    }
+    :where([aria-selected="true"], [aria-pressed="true"], [aria-current]:not([aria-current="false"])) {
+      outline: 1px solid transparent;
+      outline-offset: -2px;
+    }
+    /* The focus ring in the system's highlight, a step thicker so it reads against any system color. */
+    :focus-visible {
+      outline: calc(var(--focus-width) + 1px) solid Highlight;
+    }
+  }
+}
