@@ -127,8 +127,8 @@ jobs:
   # shard failed, so this one job stands for the whole run.
   check:
     needs: [pick, browser]
-    # Runs when a shard failed or was skipped, to report and fail; not when the run was cancelled (a newer push).
-    if: ${{ !cancelled() }}
+    # Runs when a shard failed or was skipped, to report and fail; not when the run was canceled (a newer push).
+    if: ${{ !cancelled() }} # codespell:ignore (GitHub Actions function name)
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
