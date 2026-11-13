@@ -5,7 +5,8 @@ import {
   expectNoAxeViolations,
   visitStates,
 } from "../../test/helpers.ts";
-import { wordMatches, wordPattern } from "./confirm-dialog.ts";
+import { wordPattern } from "./confirm-dialog.ts";
+import { wordMatches } from "./confirm-server.ts";
 
 const revoke = (page: Page) => page.getByRole("button", { name: "Revoke deploy-agent…" });
 const dialog = (page: Page, name = "Revoke deploy-agent?") =>

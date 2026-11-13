@@ -29,13 +29,3 @@ export function confirmTyped(
   if (reasonRequired && !reason) return { ok: false, problem: "Give a reason." };
   return { ok: true, reason };
 }
-
-/**
- * A count typed to confirm a bulk delete ("type 3 to delete 3 items"), checked against the count read in this
- * request, never one the form carried. String-equal on purpose: Number() would accept "03", "+3", "3.0" and "" for
- * zero. A count that is not a positive integer never confirms.
- */
-export function countMatches(typed: unknown, count: number): boolean {
-  if (!Number.isInteger(count) || count <= 0) return false;
-  return text(typed).trim() === String(count);
-}
