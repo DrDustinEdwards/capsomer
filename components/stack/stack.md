@@ -5,8 +5,8 @@ summary: A React Stack for the column layout with a gap, so a page does not repe
 parts: [react]
 tool: native
 states: []
-added: 0.146.0
-updated: 0.146.0
+added: 0.147.0
+updated: 0.147.0
 source: txasm (more than 200 `cap-stack` containers in its server bundle)
 replaces:
   - 'className="cap-stack"'
