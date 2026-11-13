@@ -1,0 +1,118 @@
+/* Capsomer's text roles, alone: a site that uses .cap-text and its data attributes imports `capsomer/text.css`. A site that
+   does not use them does not load them (they were part of base.css from 0.126.0 to 0.137.0, about 1.2 KB gzip for every
+   site). The layer order is repeated so it is safe in any order. */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* Text roles: the size, tone, weight and face of a run of text, on any element, for the places
+   no component sets them. One class, .cap-text, and an attribute per axis, as the layouts take
+   data-gap: data-size="tiny|small|lead", data-tone="muted|dim|ink|accent|ok|crit",
+   data-weight="strong", data-face="ui|mono|prose|display", data-align="center|end". A site sets
+   its own sizes and strong weight in its SITES entry: --text-tiny (default --fs-label),
+   --text-small (--fs-detail), --text-lead (--fs-lead) and --text-strong (600). The sizes fall
+   back to the density tokens at use, so a comfortable subtree gets its own. The tones are
+   Capsomer's text roles, so each keeps its contrast on every surface. They replace Foxing's
+   .meta/.fine/.small/.lead/.error and the Portal's .faint/.small/.note. */
+@layer cap.utilities {
+  .cap-text {
+    &[data-size="tiny"] {
+      font-size: var(--text-tiny, var(--fs-label));
+    }
+    &[data-size="small"] {
+      font-size: var(--text-small, var(--fs-detail));
+    }
+    &[data-size="lead"] {
+      font-size: var(--text-lead, var(--fs-lead));
+    }
+    &[data-tone="muted"] {
+      color: var(--muted);
+    }
+    &[data-tone="dim"] {
+      color: var(--dim);
+    }
+    &[data-tone="ink"] {
+      color: var(--text);
+    }
+    &[data-tone="accent"] {
+      color: var(--accent-text);
+    }
+    &[data-tone="ok"] {
+      color: var(--ok);
+    }
+    &[data-tone="crit"] {
+      color: var(--crit);
+    }
+    &[data-weight="strong"] {
+      font-weight: var(--text-strong);
+    }
+    &[data-face="ui"] {
+      font-family: var(--ui);
+    }
+    &[data-face="mono"] {
+      font-family: var(--mono);
+    }
+    &[data-face="prose"] {
+      font-family: var(--prose);
+    }
+    &[data-face="display"] {
+      font-family: var(--display);
+    }
+    &[data-align="center"] {
+      text-align: center;
+    }
+    &[data-align="end"] {
+      text-align: end;
+    }
+  }
+
+  /* A title that is not a component's: the display face at one of six sizes, 1 the largest
+     (--title-1 to --title-6, 2.25rem to 1rem), at --title-weight (the heading weight). The size is
+     the look, the element is the outline: an h2 may wear size 1. Each step has its own leading,
+     tighter as the size grows. */
+  .cap-title {
+    margin: 0;
+    font-family: var(--display);
+    font-weight: var(--title-weight);
+    font-size: var(--title-4);
+    line-height: var(--leading-snug);
+    color: var(--text);
+    &[data-size="1"] {
+      font-size: var(--title-1);
+      line-height: var(--leading-tight);
+    }
+    &[data-size="2"] {
+      font-size: var(--title-2);
+      line-height: var(--leading-tight);
+    }
+    &[data-size="3"] {
+      font-size: var(--title-3);
+      line-height: var(--leading-tight);
+    }
+    &[data-size="5"] {
+      font-size: var(--title-5);
+      line-height: var(--leading-snug);
+    }
+    &[data-size="6"] {
+      font-size: var(--title-6);
+      line-height: var(--leading-snug);
+    }
+  }
+
+  /* At most data-lines lines (2 by default, or 3), the rest cut with an ellipsis: Baseline Widely
+     available as -webkit-line-clamp (the standard line-clamp is not yet). data-lines="1" cuts one
+     line without changing the element's display, so it also fits a flex item (with a min size of 0). */
+  .cap-clamp {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+    &[data-lines="3"] {
+      -webkit-line-clamp: 3;
+    }
+  }
+  .cap-clamp[data-lines="1"] {
+    display: revert-layer;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
