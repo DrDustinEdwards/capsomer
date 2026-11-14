@@ -3,6 +3,18 @@
 Each release names every removed or renamed token or class, and every changed HTML contract. A pull request adds its entry as a
 changeset (`npx changeset`, `.changeset/README.md`); the release pull request writes them here.
 
+## 0.151.3
+
+### Patch Changes
+
+- RatingInput draws `NativeSelect` (components/select/select-native.react.tsx), the select markup without select.ts, so a page with a rating no longer ships the custom select's script it never runs. `Select` renders `NativeSelect` and adds the popup; its props and HTML contract are unchanged.
+  Admin shell icons set `--icon-stroke: 1.6` on themselves. Since 0.151.0, settings-row.css imports icons.css after admin-shell.css, so `.cap-icon`'s `var(--icon-stroke)` won and a site that sets `--icon-stroke: 2` (Foxhound) drew its admin menu icons at 2.
+- The optional peer `@tanstack/react-query` is `^5.90.21`, not `^5.104.0`. 5.104.0 was the version installed when
+  `capsomer/react/data` was added, not the lowest it works with: the data hooks typecheck against 5.90.21. The higher
+  floor made npm refuse any app that also installs EmDash (whose admin pins 5.90.21), which kept the astro repo's demo from
+  taking a Capsomer update. The showcase's own hast-util-from-html moves to 2.1.0, the floor Prelum's markdown copy now
+  asks for, so Capsomer's lockfile can take the current Prelum. No token, class or HTML contract changes.
+
 ## 0.151.2
 
 ### Patch Changes
