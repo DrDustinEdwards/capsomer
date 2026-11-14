@@ -26,6 +26,8 @@ export const SINGLE_KEYS_NOTE =
 export const SEQUENCE_MS = 1200;
 
 const entries: Shortcut[] = [];
+// listening: the keydown listener is on. installed: "?" opens the sheet too.
+let listening = false;
 let installed = false;
 let pending: { step: string; at: number } | null = null;
 // The built-in sheet (shortcuts-sheet.ts) loads the first time it is asked for, so a page that never
@@ -216,11 +218,18 @@ function onKeyDown(e: KeyboardEvent): void {
   }
 }
 
+// The one keydown listener, without the "?" sheet.
+function listen(): void {
+  if (listening || typeof document === "undefined") return;
+  listening = true;
+  document.addEventListener("keydown", onKeyDown);
+}
+
 // Installs the one listener and the "?" shortcut. Called by register(); safe to call again.
 export function start(): void {
+  listen();
   if (installed || typeof document === "undefined") return;
   installed = true;
-  document.addEventListener("keydown", onKeyDown);
   entries.unshift({
     key: "?",
     label: "Show keyboard shortcuts",
@@ -246,6 +255,7 @@ export function modifiedShortcutFor(e: KeyboardEvent): Shortcut | undefined {
 // Removes the listener and every shortcut.
 export function stop(): void {
   if (typeof document !== "undefined") document.removeEventListener("keydown", onKeyDown);
+  listening = false;
   installed = false;
   entries.length = 0;
   pending = null;
@@ -254,6 +264,16 @@ export function stop(): void {
 // Adds a shortcut. Returns a function that removes it.
 export function register(s: Shortcut): () => void {
   start();
+  return registerKey(s);
+}
+
+// Adds a shortcut without offering the "?" sheet, for a key a page has whether or not it lists
+// its shortcuts (the site header's theme key). It is listed when something else on the page
+// offers the sheet. The sheet is not part of a bundle that reaches the registry only through
+// this: a classic /site.js inlines the sheet's lazy import, so a page with no other shortcut
+// would carry it to list one key.
+export function registerKey(s: Shortcut): () => void {
+  listen();
   entries.push(s);
   return () => {
     const i = entries.indexOf(s);

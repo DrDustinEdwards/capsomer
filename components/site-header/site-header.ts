@@ -12,7 +12,7 @@
 import { closeDialog, openDialog, wireDialog } from "../dialog/dialog.ts";
 import { escapeHtml } from "@dustinedwards/site-runtime/html";
 import { place } from "../popover/popover.ts";
-import { register } from "../shortcuts/shortcuts.ts";
+import { registerKey } from "../shortcuts/shortcuts.ts";
 import { attach as attachTip, hideTip } from "../tooltip/tooltip.ts";
 
 // A count is a glance, not a figure: past 99 it says 99+, in the header, the sheet, the bottom bar
@@ -269,8 +269,9 @@ export function wireThemeKey(header: HTMLElement, key: string): () => void {
       (b) => b.getClientRects().length > 0,
     );
   // Through the one shortcut registry: it skips typing, a modal, a composition and a key already
-  // handled, honors the single-keys switch, and lists the key in the shortcuts sheet. Either case.
-  return register({
+  // handled, honors the single-keys switch, and is listed in the shortcuts sheet when the page
+  // offers one. Either case.
+  return registerKey({
     key: want === want.toUpperCase() ? want : [want, want.toUpperCase()],
     label: "Switch the theme",
     group: "General",
