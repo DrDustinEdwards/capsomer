@@ -22,7 +22,9 @@
     }
 
     &[data-cut="slant"] {
-      padding-block: calc(var(--cap-band-rise) + var(--space-6)) calc(var(--cap-band-fall) + var(--space-6));
+      padding-block:
+        var(--cap-band-pad-top, calc(var(--cap-band-rise) + var(--space-6)))
+        var(--cap-band-pad-bottom, calc(var(--cap-band-fall) + var(--space-6)));
       background: var(--cap-band-ghost, color-mix(in srgb, var(--cap-band-bg, var(--accent-12)) 50%, transparent));
       clip-path: polygon(
         0 var(--cap-band-rise),
@@ -48,7 +50,7 @@
     }
 
     &[data-overlap] {
-      z-index: var(--z-base, 1);
+      z-index: var(--z-base);
       margin-block: calc(-1 * var(--cap-band-rise)) calc(-1 * var(--cap-band-fall));
     }
 
@@ -58,10 +60,10 @@
       --cap-band-fall: 2.5rem;
     }
   }
-}
 
-@media (forced-colors: active) {
-  .cap-section-band {
-    border-block: 1px solid CanvasText;
+  @media (forced-colors: active) {
+    .cap-section-band {
+      border-block: var(--line-w) solid CanvasText;
+    }
   }
 }

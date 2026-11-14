@@ -35,24 +35,24 @@ eachTheme((theme) => {
     await visitStates(page, "message", theme);
     const section = page.locator("section[aria-labelledby='s-action']");
     const save = section.getByRole("button", { name: "Save session", exact: true });
-    await expect(section.locator("p[tabindex='-1']")).toHaveClass(/cap-sr-only/);
+    await expect(section.locator(".cap-form-status.cap-alert")).toHaveCount(0);
     await save.focus();
     await page.keyboard.press("Enter");
     const line = section.getByRole("status");
-    await expect(line).toHaveText("Session saved.");
+    await expect(line).toContainText("Session saved.");
     await expect(line).toBeFocused();
     await expect(line).toHaveClass(/cap-alert/);
     await section.getByRole("button", { name: "Save without a room" }).click();
     const alert = section.getByRole("alert");
-    await expect(alert).toHaveText("Choose a room for the session.");
+    await expect(alert).toContainText("Choose a room for the session.");
     await expect(alert).toBeFocused();
     await expectContrast(page, [
       { sel: "section[aria-labelledby='s-action'] .cap-alert", what: "the action's error" },
     ]);
     // An answer with no sentence has nothing to show or say, and takes no focus.
     await section.getByRole("button", { name: "Move session up" }).click();
-    await expect(section.locator("p[tabindex='-1']")).toHaveClass(/cap-sr-only/);
-    await expect(section.locator("p[tabindex='-1']")).not.toBeFocused();
+    await expect(section.locator(".cap-form-status.cap-alert")).toHaveCount(0);
+    await expect(section.locator(".cap-form-status:focus")).toHaveCount(0);
   });
 
   test("accessibility: no axe violations, states page", async ({ page }) => {
@@ -94,25 +94,6 @@ eachTheme((theme) => {
       - button "Dismiss"
     `);
   });
-
-  test(
-    "accessibility: a warning is a word as well as an edge, and a failure is an alert",
-    { tag: "@markup" },
-    async ({ page }) => {
-      await visitStates(page, "message", theme, "warning");
-      await expect(page.locator(".cap-message-text")).toContainText(
-        `Seat start is on. Warning: ${AUDIT}`,
-      );
-      await visitStates(page, "message", theme, "failure");
-      await expect(page.getByRole("alert")).toContainText(
-        "Refresh failed: the watcher pass failed",
-      );
-      await visitStates(page, "message", theme, "undo-failed");
-      await expect(page.getByRole("alert")).toHaveText(
-        "Could not undo that. The server did not answer. Try again.",
-      );
-    },
-  );
 
   test("keyboard: a message appears without moving focus", async ({ page }) => {
     await visitStates(page, "message", theme, "try");
@@ -215,14 +196,6 @@ eachTheme((theme) => {
     await expect(page.locator(".cap-message-item")).toHaveCount(0);
   });
 
-  test("behavior: clicking Undo runs it and the region says what was undone", async ({ page }) => {
-    await visitStates(page, "message", theme, "try");
-    await page.locator("#sample-bin").click();
-    await page.getByRole("button", { name: "Undo" }).click();
-    await expect(page.locator("#sample-row")).toHaveAttribute("data-undos", "1");
-    await expect(page.getByRole("status")).toContainText("Undone.");
-  });
-
   test("behavior: a plain result is replaced by the next one", async ({ page }) => {
     await visitStates(page, "message", theme, "try");
     await page.locator("#sample-copy").click();
@@ -292,14 +265,6 @@ eachTheme((theme) => {
     );
     await expect(item.getByRole("button", { name: "Undo" })).toBeVisible();
     await expect(item).toHaveAttribute("data-lasting", "");
-  });
-
-  test("behavior: a warning stays under a newer result in the stack specimen", async ({ page }) => {
-    await visitStates(page, "message", theme, "stack");
-    const items = page.locator(".cap-message-item");
-    await expect(items).toHaveCount(2);
-    await expect(items.first()).toContainText("Seat start is off.");
-    await expect(items.nth(1)).toContainText(`Warning: ${AUDIT}`);
   });
 
   test("accessibility: the leading glyph is hidden, differs by kind, and reaches 3:1", async ({

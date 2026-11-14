@@ -12,7 +12,7 @@
 // saves it to the signed-in account. Where the cookie is the memory, the server's answer (the
 // data-theme it wrote) is copied into this browser's memory first (syncServedTheme), so an older
 // choice here never overrules it. The pre-paint script is themeScript (theme-server.ts).
-import { readPref, writePref } from "../shell/shell.ts";
+import { readStored, reducedMotion, writeStored } from "../hooks/hooks.ts";
 import { attach as attachTip } from "../tooltip/tooltip.ts";
 import {
   colorSchemeContent,
@@ -42,7 +42,7 @@ export interface ThemeMemory {
 // What the person chose and the browser remembers, or null if they never did. A "system"
 // remembered by 0.1.0 reads as no choice: the system's setting applies, as it did.
 export function readTheme(key = THEME_PREF): ThemeChoice | null {
-  const v = readPref(key);
+  const v = readStored(key);
   return isChoice(v) ? v : null;
 }
 
@@ -57,7 +57,7 @@ export function applyTheme(
   opts: { key?: string; remember?: boolean } = {},
 ): void {
   paintTheme(choice, opts.remember !== false, opts.remember !== false);
-  if (opts.remember !== false) writePref(opts.key ?? THEME_PREF, choice);
+  if (opts.remember !== false) writeStored(opts.key ?? THEME_PREF, choice);
 }
 
 // Paints a choice (crossfading when `animate`, motion allowed and the browser has view
@@ -77,8 +77,7 @@ function paintTheme(choice: ThemeChoice, animate: boolean, chosen: boolean): voi
       if (ground) for (const m of metas) m.content = ground;
     }
   };
-  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  if (!animate || reduce || !document.startViewTransition) paint();
+  if (!animate || reducedMotion() || !document.startViewTransition) paint();
   else {
     pending = choice;
     document.startViewTransition(paint);
@@ -100,7 +99,7 @@ export function chooseTheme(
   { animate = true }: { animate?: boolean } = {},
 ): void {
   paintTheme(choice, animate, true);
-  if (key) writePref(key, choice);
+  if (key) writeStored(key, choice);
   if (cookie) writeThemeCookie(choice, cookie);
   if (!onSave) return;
   // The choice stands in this browser and the cookie whether the save fails at once or later.
@@ -117,12 +116,7 @@ export function chooseTheme(
 // it, so the two agree. With no answer the memory is cleared and the page follows the system.
 export function syncServedTheme(key = THEME_PREF): void {
   const served = document.documentElement.getAttribute("data-theme");
-  try {
-    if (isChoice(served)) localStorage.setItem(key, served);
-    else localStorage.removeItem(key);
-  } catch {
-    // Storage blocked: the switches read <html data-theme>.
-  }
+  writeStored(key, isChoice(served) ? served : null);
 }
 
 // Applies the remembered choice, if there is one. Run it before first paint, or the page

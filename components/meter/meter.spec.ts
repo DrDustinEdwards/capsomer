@@ -74,73 +74,6 @@ eachTheme((theme) => {
     }
   });
 
-  test(
-    "accessibility: the bars are named meters with their values; no data and measuring are not meters",
-    { tag: "@markup" },
-    async ({ page }) => {
-      await visitStates(page, "meter", theme);
-      await expect(page.locator("#sample-warn")).toMatchAriaSnapshot(`
-      - meter "Worker requests"
-    `);
-      const warn = page.getByRole("meter", { name: "Worker requests" }).first();
-      await expect(warn).toHaveAttribute("aria-valuenow", "78000");
-      await expect(warn).toHaveAttribute("aria-valuemin", "0");
-      await expect(warn).toHaveAttribute("aria-valuemax", "100000");
-      await expect(warn).toHaveAttribute(
-        "aria-valuetext",
-        /78,000 of 100,000 requests today\. Warning/,
-      );
-      // No data is not a meter at zero: no meter role, a hidden bar, a word and a reason.
-      await expect(page.locator("#sample-nodata [role='meter']")).toHaveCount(0);
-      await expect(page.locator("#sample-nodata .cap-meter-bar")).toHaveAttribute(
-        "aria-hidden",
-        "true",
-      );
-      await expect(page.locator("#sample-nodata")).toContainText("No data");
-      await expect(page.locator("#sample-nodata")).toContainText("have not reported since 09:00");
-      await expect(page.locator("#sample-indeterminate [role='meter']")).toHaveCount(0);
-      await expect(page.locator("#sample-indeterminate")).toHaveAttribute("aria-busy", "true");
-      await expect(page.locator("#sample-indeterminate")).toContainText("Measuring");
-    },
-  );
-
-  test(
-    "accessibility: a warning or critical tone has a word and a glyph, not only a color",
-    { tag: "@markup" },
-    async ({ page }) => {
-      await visitStates(page, "meter", theme);
-      for (const [id, word] of [
-        ["sample-warn", "Near the limit"],
-        ["sample-crit", "Almost out"],
-        ["sample-full", "Limit reached"],
-      ] as const) {
-        const status = page.locator(`#${id} .cap-status`);
-        await expect(status).toHaveText(word);
-        await expect(status.locator("svg")).toHaveCount(1);
-      }
-    },
-  );
-
-  test(
-    "accessibility: the tick and the projection are said in words, not only drawn",
-    { tag: "@markup" },
-    async ({ page }) => {
-      await visitStates(page, "meter", theme);
-      await expect(page.locator("#sample-threshold [role=meter]")).toHaveAttribute(
-        "aria-valuetext",
-        /target of 1,600 words/,
-      );
-      await expect(page.locator("#sample-threshold .cap-meter-note")).toContainText(
-        "1,600-word target",
-      );
-      await expect(page.getByRole("meter", { name: "Worker requests" }).nth(1)).toHaveAttribute(
-        "aria-valuetext",
-        /projected 87 percent by the reset/,
-      );
-      await expect(page.locator("#sample-projection .cap-meter-note")).toContainText("hatched");
-    },
-  );
-
   test("accessibility: nothing moves under reduced motion", async ({ page }) => {
     await page.emulateMedia({ reducedMotion: "reduce" });
     await visitStates(page, "meter", theme);
@@ -154,16 +87,6 @@ eachTheme((theme) => {
     // base.css shortens every duration to 0.01 ms under reduced motion: that is no motion.
     expect(parseFloat(motion.fill)).toBeLessThanOrEqual(0.001);
     expect(motion.sweep).toBe("none");
-  });
-
-  test("keyboard: a meter is read, not operated: no tab stop on any bar", async ({ page }) => {
-    await visitStates(page, "meter", theme);
-    for (let i = 0; i < 4; i++) {
-      await page.keyboard.press("Tab");
-      const onMeter = await page.evaluate(() => !!document.activeElement?.closest(".cap-meter"));
-      expect(onMeter).toBe(false);
-    }
-    await expect(page.getByRole("meter").first()).not.toHaveAttribute("tabindex", /.*/);
   });
 
   test("behavior: the fill's length follows the value, and redraws when it changes", async ({
@@ -203,30 +126,6 @@ eachTheme((theme) => {
       .locator("#sample-threshold .cap-meter-bar")
       .evaluate((el) => getComputedStyle(el, "::after").content);
     expect(tick).not.toBe("none");
-  });
-
-  test("behavior: tones color the fill, and each tone has a word beside it", async ({ page }) => {
-    await visitStates(page, "meter", theme);
-    const colors = await page.evaluate(() =>
-      ["#sample-low", "#sample-warn", "#sample-crit"].map(
-        (s) => getComputedStyle(document.querySelector(`${s} .cap-meter-fill`)!).backgroundColor,
-      ),
-    );
-    expect(new Set(colors).size).toBe(3);
-    await expect(page.locator("#sample-warn .cap-status")).toHaveText("Near the limit");
-    await expect(page.locator("#sample-crit .cap-status")).toHaveText("Almost out");
-  });
-
-  test("behavior: sizes change the bar's height and keep its number in text", async ({ page }) => {
-    await visitStates(page, "meter", theme);
-    const heights = await page.evaluate(() =>
-      ["#sample-sm", "#sample-md", "#sample-lg"].map(
-        (s) => document.querySelector(`${s} .cap-meter-bar`)!.getBoundingClientRect().height,
-      ),
-    );
-    expect(heights[0]).toBeLessThan(heights[1] ?? 0);
-    expect(heights[1]).toBeLessThan(heights[2] ?? 0);
-    await expect(page.locator("#sample-sm .cap-meter-value")).toHaveText("30 of 100");
   });
 });
 

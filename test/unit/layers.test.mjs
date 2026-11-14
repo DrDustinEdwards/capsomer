@@ -18,13 +18,19 @@ function cssFiles(dir) {
   });
 }
 
+// layout.css and text.css, and the parts each imports (layout-stack.css, text-role.css).
+function partFiles() {
+  return readdirSync("css")
+    .filter((f) => /^(layout|text)(-[\w-]+)?\.css$/.test(f))
+    .map((f) => join("css", f));
+}
+
 test("every component and base stylesheet states the layer order", () => {
   const files = [
     ...cssFiles("components"),
     "css/base.css",
     "css/utilities.css",
-    "css/layout.css",
-    "css/text.css",
+    ...partFiles(),
     "css/prose.css",
   ];
   assert.ok(files.length > 20);
@@ -38,11 +44,11 @@ test("no component stylesheet puts rules outside a cap layer", () => {
     const css = readFileSync(f, "utf8")
       .replace(/\/\*[\s\S]*?\*\//g, "")
       .replace(ORDER, "")
-      // A sibling component's stylesheet it builds on (link.css takes link-file.css), checked
-      // here on its own.
-      .replace(/^\s*@import "\.\.\/([\w-]+)\/\1\.css";/gm, "")
+      // A stylesheet it builds on, a sibling component's (link.css takes link-file.css) or one of
+      // its own parts (ambient.css takes each kind's file), checked here on its own.
+      .replace(/^\s*@import "(?:\.\.\/([\w-]+)\/\1|\.\/[\w-]+)\.css";/gm, "")
       .trim();
-    if (!/^@layer cap\.(components|base|utilities) \{/.test(css)) bad.push(f);
+    if (css && !/^@layer cap\.(components|base|utilities) \{/.test(css)) bad.push(f);
   }
   assert.deepEqual(bad, []);
 });
@@ -53,7 +59,7 @@ test("no component stylesheet puts rules outside a cap layer", () => {
 // Longhands with `animation-duration: auto` survive minifying; this checks the minified output.
 test("every scroll-driven animation keeps duration auto after minifying", async () => {
   const { transform } = await import("lightningcss");
-  const files = [...cssFiles("components"), "css/utilities.css", "css/layout.css", "css/text.css"];
+  const files = [...cssFiles("components"), "css/utilities.css", ...partFiles()];
   const rules = files.flatMap((f) => {
     const out = transform({ filename: f, code: readFileSync(f), minify: true }).code.toString();
     // Each run of declarations between braces; nesting only splits a rule into more runs.

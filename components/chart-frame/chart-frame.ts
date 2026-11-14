@@ -4,6 +4,7 @@
 // second head. No behavior of its own: the disclosure is Enarratio's native `details`.
 import { escapeHtml } from "@dustinedwards/site-runtime/html";
 import { listText } from "../hooks/hooks.ts";
+import { statusHtml } from "../status/status.ts";
 import { type RedrawSpec, redrawAttribute } from "enarratio/redraw";
 
 export type { RedrawSpec };
@@ -20,20 +21,25 @@ export interface FrameOptions {
   // What behavior/chart-enhance draws the chart again from at the frame's width (Enarratio's
   // enarratio/redraw): a light chart and its options. Without it the server's drawing scales.
   redraw?: RedrawSpec;
+  // The redraw's narrow drawing keeps the chart's shape (a map; narrowRedraw's `keepShape`), so
+  // until it is swapped in the wide drawing scales into the column at the narrow one's height.
+  keepShape?: boolean;
 }
 
 // Enarratio's figure (trusted markup: a chart or a primitive's figure) in the frame.
 export function frameHtml(chart: string, o: FrameOptions = {}): string {
   const grid = o.gridlines ? ` data-gridlines="${o.gridlines}"` : "";
   const redraw = o.redraw ? ` ${redrawAttribute(o.redraw)}` : "";
-  return `<div class="cap-chart"${o.inline ? ' data-head="inline"' : ""}${grid}${redraw}><div class="cap-chart-figure">${chart}</div>${o.after ?? ""}</div>`;
+  const box =
+    o.keepShape && o.redraw && "narrow" in o.redraw ? chartViewBox(o.redraw.narrow) : undefined;
+  const shape = box ? ` style="--cap-narrow-height: ${box.h}px"` : "";
+  return `<div class="cap-chart"${o.inline ? ' data-head="inline"' : ""}${grid}${redraw}${shape}><div class="cap-chart-figure">${chart}</div>${o.after ?? ""}</div>`;
 }
 
 // No data is a state with its reason, never an empty chart or a zero: the title, then the
 // reason with the no-data glyph and word, and no table.
 export function noDataHtml(title: string, reason: string): string {
-  const glyph = `<svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M5 8h6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>`;
-  return `<figure class="cap-chart" data-state="nodata"><figcaption class="cap-chart-title">${escapeHtml(title)}</figcaption><p class="cap-chart-reason"><span class="cap-status" data-tone="nodata">${glyph}No data</span> ${escapeHtml(reason)}</p></figure>`;
+  return `<figure class="cap-chart" data-state="nodata"><figcaption class="cap-chart-title">${escapeHtml(title)}</figcaption><p class="cap-chart-reason">${statusHtml("nodata", "No data")} ${escapeHtml(reason)}</p></figure>`;
 }
 
 // What a redraw keeps from the first drawing: the height it showed at the frame's width.
@@ -83,12 +89,16 @@ export function drawWith<O extends object>(
 // The drawing a phone shows for a chart drawn on a server (enarratio/redraw's `{ narrow }` spec),
 // drawn at the phone's width and at the height the wide drawing shows there, so swapping it in
 // does not move the page. The spec carries markup, not options, so a chart whose options hold a
-// function (a formatter) still follows the frame's width.
+// function (a formatter) still follows the frame's width. With `keepShape` (a map, whose height
+// follows its width) the narrow drawing takes its own height, and frameHtml's `keepShape` scales the
+// wide drawing into that height until the swap.
 export function narrowRedraw(
   wide: string,
   drawNarrow: (width: number, fit: ChartFit) => string,
+  o: { keepShape?: boolean } = {},
 ): RedrawSpec {
-  return { narrow: drawNarrow(NARROW_WIDTH, { height: shownHeight(wide, NARROW_WIDTH) }) };
+  const fit = o.keepShape ? {} : { height: shownHeight(wide, NARROW_WIDTH) };
+  return { narrow: drawNarrow(NARROW_WIDTH, fit) };
 }
 
 export interface SeriesText {
@@ -101,6 +111,8 @@ export interface SeriesText {
   // How a value reads ("$1,200", "12%"); default the figure.
   format?: (value: number) => string;
   formatX?: (x: string | number) => string;
+  // The word before an x: "in" (default) for years and months, "on" for days.
+  at?: "in" | "on";
   // The sentence for no values or all zero (default "<what>: none yet.").
   empty?: string;
 }
@@ -123,8 +135,14 @@ export function describeSeries(o: SeriesText): string {
   const min = Math.min(...totals);
   if (max === min) return `${span}: ${fmt(max)} each time.`;
   const peaks = o.x.filter((_, i) => totals[i] === max).map(fx);
-  const latest = `${fmt(totals.at(-1)!)} in ${fx(o.x.at(-1)!)}`;
-  return `${span}: ${latest}, from ${fmt(min)} to ${fmt(max)}; most in ${listText(peaks)}.`;
+  const at = o.at ?? "in";
+  const latest = `${fmt(totals.at(-1)!)} ${at} ${fx(o.x.at(-1)!)}`;
+  // A long flat top (a daily series that held its peak for weeks) names the first two and a count.
+  const most =
+    peaks.length > 3
+      ? `${peaks.slice(0, 2).join(", ")} and ${peaks.length - 2} more`
+      : listText(peaks);
+  return `${span}: ${latest}, from ${fmt(min)} to ${fmt(max)}; most ${at} ${most}.`;
 }
 
 /**

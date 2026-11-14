@@ -66,18 +66,6 @@ export function chartReady(f: Pick<ChartFields, "x" | "y" | "csv">): boolean {
 // Larger than any chart a post should inline; Prelum and Enarratio set their own limits under it.
 export const MAX_CSV_BYTES = 200 * 1024;
 
-// Why a chosen file cannot be the data, in words, or null when it can.
-export function csvFileProblem(
-  file: { name: string; size: number; type: string },
-  maxBytes = MAX_CSV_BYTES,
-): string | null {
-  if (file.size > maxBytes)
-    return `${file.name} is ${Math.ceil(file.size / 1024)} KB; a chart's data must be under ${Math.floor(maxBytes / 1024)} KB.`;
-  if (!/\.csv$/i.test(file.name) && file.type !== "text/csv")
-    return `${file.name} is not a CSV file.`;
-  return null;
-}
-
 // A directive attribute is double-quoted on one line; a quote or an ampersand in it is written as
 // a character reference, which the directive parser reads back.
 const attr = (value: string) => escapeHtml(value.replace(/\s+/g, " ").trim());

@@ -1,5 +1,6 @@
 import { useState, type ReactNode } from "react";
-import { NumberField } from "../field/field.react.tsx";
+import { Button } from "../button/button.react.tsx";
+import { Field, NumberField } from "../field/field.react.tsx";
 import { Select, type SelectOption } from "../select/select.react.tsx";
 
 export interface ScaleControlProps {
@@ -56,22 +57,14 @@ export function ScaleControl(props: ScaleControlProps) {
         step={step}
       />
       {units ? (
-        <div className="cap-field">
-          <label className="cap-field-label" htmlFor={`${name}-${units.name}`}>
-            {units.label}
-          </label>
-          <Select
-            id={`${name}-${units.name}`}
-            name={units.name}
-            options={units.options}
-            defaultValue={units.value}
-          />
-        </div>
+        <Field label={units.label}>
+          <Select name={units.name} options={units.options} defaultValue={units.value} />
+        </Field>
       ) : null}
       {children}
-      <button type="submit" className="cap-btn" data-variant="secondary">
+      <Button type="submit" variant="secondary">
         {submitLabel}
-      </button>
+      </Button>
     </form>
   );
 }

@@ -40,13 +40,11 @@ export const WEEKDAYS = [
 /** How far back a streak is followed; the loader sends this many days of saves. */
 export const STREAK_HORIZON_DAYS = 400;
 
-import { plural } from "../hooks/hooks.ts";
-import { dayKey } from "../time/time.ts";
-
-export { dayKey, knownZone } from "../time/time.ts";
+import { plural } from "@drdustinedwards/site-helpers/text";
+import { dayKey } from "@dustinedwards/site-runtime/time";
 
 /** The weekday of a calendar day, 0 Sunday. Computed at noon UTC, which every zone shares as the same date. */
-function weekdayOf(day: string): number {
+export function weekdayOf(day: string): number {
   return new Date(`${day}T12:00:00Z`).getUTCDay();
 }
 

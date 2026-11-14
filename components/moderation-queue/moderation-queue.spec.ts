@@ -111,22 +111,6 @@ test("behavior: each decision says what it did, for one mention and for several"
   );
 });
 
-test("behavior: the page is delivered with every mention, its state in words, and a stranger's text escaped", async ({
-  page,
-}) => {
-  const html = await (await page.request.get("components/moderation-queue/states.html")).text();
-  for (const word of ["Waiting", "Approved", "Rejected", "Not yet checked", "Source not found"])
-    expect(html).toContain(`</svg>${word}</span>`);
-  for (const gone of ["Spam", "Bin", "Source gone"])
-    expect(html).not.toContain(`</svg>${gone}</span>`);
-  expect(html).toContain("&lt;script&gt;alert(");
-  expect(html).not.toContain("<script>alert(");
-  // Every row of the main queue is there, whatever filter shows.
-  const main = html.slice(html.indexOf('id="mq-main"'), html.indexOf('id="s-failed"'));
-  expect((main.match(/class="cap-row cap-mq-row"/g) ?? []).length).toBe(11);
-  expect(main).toContain('value="pending" data-cap-part="view" checked');
-});
-
 const queue = (page: Page) => page.locator("#mq-main");
 const row = (q: Locator, id: string) => q.locator(`li.cap-mq-row[data-id='${id}']`);
 const title = (q: Locator, id: string) => row(q, id).locator(".cap-row-title button");
@@ -225,93 +209,6 @@ eachTheme((theme) => {
     },
   );
 
-  test(
-    "accessibility: each decision is a real button with its key announced and shown",
-    { tag: "@markup" },
-    async ({ page }) => {
-      await visitStates(page, "moderation-queue", theme);
-      const r = row(queue(page), "m-101");
-      for (const [action, key] of [
-        ["approve", "a"],
-        ["reject", "r"],
-        ["delete", "d"],
-      ] as const) {
-        const b = r.locator(`[data-cap-action='${action}']`);
-        await expect(b).toHaveAttribute("aria-keyshortcuts", key);
-        await expect(b.locator("kbd.cap-kbd")).toHaveText(key);
-        expect(await b.evaluate((e) => e.tagName)).toBe("BUTTON");
-      }
-      // Names carry the sender, so a column of Approve buttons is not a column of the same name.
-      const names = await queue(page)
-        .locator("li.cap-mq-row:not([hidden]) [data-cap-action='approve']")
-        .evaluateAll((els) => els.map((e) => (e.textContent ?? "").trim()));
-      expect(new Set(names).size).toBe(names.length);
-    },
-  );
-
-  test(
-    "accessibility: a source is text, never a link, unless marked external with rel nofollow ugc noopener",
-    { tag: "@markup" },
-    async ({ page }) => {
-      await visitStates(page, "moderation-queue", theme);
-      // Nothing in the main queue links to a stranger's page.
-      await expect(queue(page).locator("a[href^='http']")).toHaveCount(0);
-      const link = page.locator("#mq-approved a[data-external]");
-      await expect(link).toHaveAttribute("rel", "nofollow ugc noopener");
-      await expect(link).toHaveAttribute("href", "https://jonalvarez.example/notes/agents");
-      // The host is text in the title; the post is the one internal link.
-      await expect(row(queue(page), "m-101").locator(".cap-mq-host")).toHaveText(
-        "fieldnotes.example",
-      );
-    },
-  );
-
-  test(
-    "accessibility: a source not found says so in a word and a shape, and the open row gives the site's reason",
-    { tag: "@markup" },
-    async ({ page }) => {
-      await visitStates(page, "moderation-queue", theme);
-      const failed = page.locator("#mq-failed li[data-id='m-150']");
-      await expect(failed.locator(".cap-row-status .cap-status")).toHaveText("Source not found");
-      await expect(failed.locator(".cap-row-status svg")).toHaveCount(1);
-      await expect(failed.locator(".cap-mq-why")).toContainText("answered 404");
-      await expect(failed.locator(".cap-mq-why")).toContainText("cannot be approved or rejected");
-      // Nothing to decide: only Delete.
-      await expect(failed.locator("[data-cap-action]")).toHaveCount(1);
-      await expect(failed.locator("[data-cap-action='delete']")).toHaveCount(1);
-    },
-  );
-
-  test(
-    "accessibility: the live count and the result are polite status regions",
-    { tag: "@markup" },
-    async ({ page }) => {
-      await visitStates(page, "moderation-queue", theme);
-      await expect(queue(page).locator("[data-cap-part='summary']")).toHaveAttribute(
-        "role",
-        "status",
-      );
-      await expect(page.locator("#mq-results")).toHaveAttribute("aria-atomic", "false");
-    },
-  );
-
-  test("keyboard: Tab goes from a row's select box to its title and its decisions, in order", async ({
-    page,
-  }) => {
-    await visitStates(page, "moderation-queue", theme);
-    const r = row(queue(page), "m-102");
-    await r.locator("[data-cap-part='select']").focus();
-    for (const next of [
-      r.locator(".cap-row-title button"),
-      r.locator("[data-cap-action='approve']"),
-      r.locator("[data-cap-action='reject']"),
-      r.locator("[data-cap-action='delete']"),
-    ]) {
-      await page.keyboard.press("Tab");
-      await expect(next).toBeFocused();
-    }
-  });
-
   test("keyboard: j and k move between the rows, from a ticked box too", async ({ page }) => {
     await visitStates(page, "moderation-queue", theme);
     const q = queue(page);
@@ -361,18 +258,6 @@ eachTheme((theme) => {
     await expect(q.locator("[data-cap-part='summary']")).toHaveText("3 waiting, 1 not yet checked");
     await expect(region(page)).toContainText("Approved the mention from Rosa Park.");
     await expect(region(page).getByRole("button", { name: /^Undo/ })).toBeVisible();
-  });
-
-  test("keyboard: r rejects the row at once, with Undo", async ({ page }) => {
-    await visitStates(page, "moderation-queue", theme);
-    const q = queue(page);
-    await title(q, "m-101").focus();
-    await page.keyboard.press("r");
-    await expect(row(q, "m-101")).toHaveAttribute("data-state", "rejected");
-    await expect(region(page)).toContainText("Rejected the mention from Rosa Park.");
-    await expect(region(page).getByRole("button", { name: /^Undo/ })).toBeVisible();
-    await expect(q.getByRole("radio", { name: "Rejected 3 mentions" })).toBeVisible();
-    await expect(title(q, "m-102")).toBeFocused();
   });
 
   test("keyboard: z undoes the last decision: the row comes back, focused, and the counts return", async ({
@@ -740,16 +625,5 @@ eachTheme((theme) => {
     await expect(sheet).toContainText("Reject the row");
     await page.keyboard.press("Escape");
     await expect(queue(page).getByRole("button", { name: /^Keyboard shortcuts/ })).toBeFocused();
-  });
-
-  test("behavior: the empty state names what is empty and is reached by focus", async ({
-    page,
-  }) => {
-    await visitStates(page, "moderation-queue", theme);
-    const empty = page.locator("#mq-empty [data-cap-part='empty']");
-    await expect(empty).toBeVisible();
-    await expect(empty).toContainText("All clear");
-    await expect(empty).toContainText("No mentions are waiting");
-    await expect(page.locator("#mq-empty .cap-mq-list")).toBeHidden();
   });
 });

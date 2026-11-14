@@ -9,13 +9,13 @@
     align-items: baseline;
     gap: 0.25em;
     font-size: var(--fs-detail);
-    font-weight: 600;
+    font-weight: var(--weight-semibold);
     font-variant-numeric: var(--figures);
     white-space: nowrap;
     color: var(--muted);
 
     &[data-kind="unchanged"] {
-      font-weight: 400;
+      font-weight: var(--weight-regular);
     }
     &[data-tone="good"] {
       color: var(--ok);

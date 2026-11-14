@@ -14,6 +14,10 @@
   .cap-progress-line {
     margin: 0;
     font-variant-numeric: var(--figures);
+    /* The status line, kept mounted while it has nothing to say: it takes no row. */
+    &[role="status"]:empty {
+      position: absolute;
+    }
   }
   .cap-progress-note {
     margin: 0;

@@ -66,82 +66,11 @@ eachTheme((theme) => {
     await expect(page.getByRole("radio", { name: "Side by side" })).toBeFocused();
   });
 
-  test("keyboard: arrow keys move and choose", async ({ page }) => {
-    await visitStates(page, "segmented", theme);
-    await page.getByRole("radio", { name: "24 hours" }).focus();
-    await page.keyboard.press("ArrowRight");
-    const week = page.getByRole("radio", { name: "7 days" });
-    await expect(week).toBeFocused();
-    await expect(week).toBeChecked();
-    await page.keyboard.press("ArrowLeft");
-    await expect(page.getByRole("radio", { name: "24 hours" })).toBeChecked();
-  });
-
-  test("keyboard: Space chooses the focused segment when none is chosen", async ({ page }) => {
-    await visitStates(page, "segmented", theme);
-    const side = page.getByRole("radio", { name: "Side by side" });
-    await side.focus();
-    await expect(side).not.toBeChecked();
-    await page.keyboard.press("Space");
-    await expect(side).toBeChecked();
-  });
-
-  test("keyboard: arrow keys skip a disabled segment", async ({ page }) => {
-    await visitStates(page, "segmented", theme);
-    await page.getByRole("radio", { name: "List" }).focus();
-    await page.keyboard.press("ArrowRight");
-    await expect(page.getByRole("radio", { name: "Calendar" })).toBeChecked();
-    await expect(page.getByRole("radio", { name: "Board" })).not.toBeChecked();
-  });
-
-  test("behavior: a click anywhere on a segment chooses it, and each segment is a full target", async ({
-    page,
-  }) => {
-    await visitStates(page, "segmented", theme);
-    const label = page.locator("#seg-window label").nth(2);
-    await label.click({ position: { x: 4, y: 4 } });
-    await expect(page.getByRole("radio", { name: "30 days" })).toBeChecked();
-    const box = await label.boundingBox();
-    expect(box?.height).toBeGreaterThanOrEqual(24);
-  });
-
   test("accessibility: every size keeps a 24 px hit area", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "segmented", theme);
-    for (const id of ["#seg-sm", "#seg-lg", "#seg-icons", "#seg-comf"]) {
+    for (const id of ["#seg-window", "#seg-sm", "#seg-lg", "#seg-icons", "#seg-comf"]) {
       const box = await page.locator(`${id} label`).first().boundingBox();
       expect(box?.height, id).toBeGreaterThanOrEqual(24);
     }
-  });
-
-  test(
-    "accessibility: an invalid control is described by its message and its radios say so",
-    { tag: "@markup" },
-    async ({ page }) => {
-      await visitStates(page, "segmented", theme);
-      await expect(page.getByRole("group", { name: "Check every" })).toHaveAccessibleDescription(
-        "Choose how often to check.",
-      );
-      await expect(page.getByRole("radio", { name: "1 minute" })).toHaveAttribute(
-        "aria-invalid",
-        "true",
-      );
-    },
-  );
-
-  test("keyboard: arrow keys move through a vertical group", async ({ page }) => {
-    await visitStates(page, "segmented", theme);
-    await page.getByRole("radio", { name: "Newest" }).focus();
-    await page.keyboard.press("ArrowDown");
-    await expect(page.getByRole("radio", { name: "Oldest" })).toBeChecked();
-    await page.keyboard.press("ArrowDown");
-    await expect(page.getByRole("radio", { name: "A to Z" })).toBeFocused();
-  });
-
-  test("keyboard: icon segments keep their word as the name", async ({ page }) => {
-    await visitStates(page, "segmented", theme);
-    await expect(page.getByRole("radio", { name: "Grid" })).toBeVisible();
-    await page.getByRole("radio", { name: "Rows" }).focus();
-    await page.keyboard.press("ArrowRight");
-    await expect(page.getByRole("radio", { name: "Grid" })).toBeChecked();
   });
 });

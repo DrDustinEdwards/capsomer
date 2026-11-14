@@ -1,21 +1,13 @@
 import {
   useState,
+  type ComponentProps,
   type ComponentType,
   type FormHTMLAttributes,
   type ReactNode,
   type Ref,
 } from "react";
 import { Banner } from "../banner/banner.react.tsx";
-
-// The app's form component, such as React Router's Form: any component whose action, method and
-// encType take these values fits.
-export type FormComponent = ComponentType<
-  Omit<FormHTMLAttributes<HTMLFormElement>, "action" | "method" | "encType"> & {
-    action?: string;
-    method?: "get" | "post";
-    encType?: "application/x-www-form-urlencoded" | "multipart/form-data" | "text/plain";
-  }
->;
+import { PlainForm, type FormComponent } from "../plain-form/plain-form.react.tsx";
 
 // A form that a read-only visitor (a demo, a viewer without the right) can press but not send:
 // the submit stays in the browser and the reason shows under the form, in place, where an
@@ -24,7 +16,7 @@ export type FormComponent = ComponentType<
 export function ReadOnlyForm({
   readOnly,
   message,
-  form = "form",
+  form: Form = PlainForm,
   onSubmit,
   className,
   children,
@@ -37,15 +29,15 @@ export function ReadOnlyForm({
   readOnly: boolean;
   // Why nothing was sent ("This is a demo: changes are not saved.").
   message: ReactNode;
-  form?: FormComponent | "form";
+  // The app's form (React Router's Form); a plain form by default. It is given the ref.
+  form?: ComponentType<ComponentProps<FormComponent> & { ref?: Ref<HTMLFormElement> }>;
   ref?: Ref<HTMLFormElement>;
 }) {
   const [refused, setRefused] = useState(false);
-  const Form = form as FormComponent;
   return (
     <Form
       {...rest}
-      {...({ ref } as object)}
+      ref={ref}
       className={className ? `cap-read-only-form ${className}` : "cap-read-only-form"}
       onSubmit={(event) => {
         if (readOnly) {

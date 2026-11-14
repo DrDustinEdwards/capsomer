@@ -1,6 +1,7 @@
 import { useId } from "react";
+import { isHttpUrl, isSameOriginPath } from "@dustinedwards/site-runtime/url";
 import { Link } from "../link/link.react.tsx";
-import { httpHref, longDate, sitePath } from "./related-links.ts";
+import { Time } from "../time/time.react.tsx";
 
 export interface RelatedItem {
   // A path on this site ("/writing/getting-started") or an http(s) address elsewhere. A mention's
@@ -40,12 +41,14 @@ export function RelatedLinks({ title, kind, items }: RelatedLinksProps) {
       </h2>
       <ul className="cap-related-list">
         {items.map((item, i) => {
-          const local = kind !== "mentions" && sitePath(item.href);
-          const href = local ? item.href : httpHref(item.href);
-          const date = kind === "mentions" ? longDate(item.date) : null;
+          // A stranger's address passes only as an absolute http(s) URL; a site path passes the
+          // same check a redirect's Location does, so "/\t/host" (a browser reads "//host") is refused.
+          const href = item.href ?? "";
+          const local = kind !== "mentions" && isSameOriginPath(href);
+          const linked = local || isHttpUrl(href);
           return (
             <li key={`${i}:${item.href ?? item.title}`}>
-              {!href ? (
+              {!linked ? (
                 <span className="cap-related-name">{item.title}</span>
               ) : local ? (
                 <Link className="cap-related-name" to={href}>
@@ -63,10 +66,10 @@ export function RelatedLinks({ title, kind, items }: RelatedLinksProps) {
               {kind === "mentions" && item.excerpt ? (
                 <p className="cap-related-excerpt">{item.excerpt}</p>
               ) : null}
-              {date ? (
-                <time className="cap-related-date" dateTime={date.iso}>
-                  {date.text}
-                </time>
+              {kind === "mentions" && item.date ? (
+                <span className="cap-related-date">
+                  <Time at={item.date} format="date" />
+                </span>
               ) : null}
             </li>
           );

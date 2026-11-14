@@ -18,7 +18,7 @@
     padding: var(--pad-card);
     background: var(--surface);
     color: var(--text);
-    border: 1px solid var(--line);
+    border: var(--line-w) solid var(--line);
     border-radius: var(--radius-l);
     box-shadow: var(--card-shadow);
 
@@ -60,7 +60,7 @@
     & > :is(hgroup, header) > :is(h2, h3, h4) {
       margin: 0;
       font-size: var(--fs-card-title, var(--fs-h3));
-      line-height: 1.3;
+      line-height: var(--leading-snug);
       text-wrap: balance;
     }
     & > :is(hgroup, header) > :not(h2, h3, h4) {
@@ -206,7 +206,7 @@
     }
     & :is(a:not(.cap-card-link), button, input, select, textarea, summary, label) {
       position: relative;
-      z-index: 1;
+      z-index: var(--z-raise);
     }
     &:has(a.cap-card-link:is(:hover, [data-force="hover"])) {
       border-color: color-mix(in srgb, var(--primary) calc(var(--card-edge) * 100%), var(--line-strong));
@@ -214,7 +214,7 @@
     }
     &:has(a.cap-card-link:focus-visible) {
       outline: var(--focus-width) solid var(--ring);
-      outline-offset: 2px;
+      outline-offset: var(--focus-offset);
     }
   }
 
@@ -224,7 +224,7 @@
     cursor: pointer;
     grid-template-columns: auto minmax(0, 1fr);
     column-gap: var(--space-4);
-    border-width: 1px;
+    border-width: var(--line-w);
 
     & > :is(input[type="radio"], input[type="checkbox"]) {
       grid-row: 1 / span 3;
@@ -242,16 +242,19 @@
     }
     &:has(> :checked) {
       border-color: var(--primary);
-      outline: 1px solid var(--primary);
-      outline-offset: -2px;
+      outline: var(--line-w) solid var(--primary);
+      outline-offset: calc(-1 * var(--focus-offset));
     }
     &:has(> :focus-visible) {
       outline: var(--focus-width) solid var(--ring);
-      outline-offset: 2px;
+      outline-offset: var(--focus-offset);
     }
+    /* Disabled as a field's control is: a dashed edge, the sunken ground and muted words. */
     &:has(> :disabled) {
       cursor: not-allowed;
-      opacity: 0.6;
+      border-style: dashed;
+      background: var(--sunken);
+      color: var(--muted);
     }
   }
 
@@ -269,7 +272,7 @@
       border-color: CanvasText;
     }
     label.cap-card:has(> :checked) {
-      outline: 3px solid Highlight;
+      outline: var(--line-w-bar) solid Highlight;
     }
     a:has(> .cap-card):is(:hover, :focus-visible) > .cap-card,
     .cap-card:has(a.cap-card-link:hover) {

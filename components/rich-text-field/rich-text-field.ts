@@ -95,7 +95,8 @@ export function decodeEntities(text: string): string {
         ? String.fromCodePoint(code)
         : "�";
     }
-    return NAMED[ref] ?? whole;
+    // Own names only: a plain object also answers &constructor; and &toString; from its prototype.
+    return Object.hasOwn(NAMED, ref) ? (NAMED[ref] as string) : whole;
   });
 }
 

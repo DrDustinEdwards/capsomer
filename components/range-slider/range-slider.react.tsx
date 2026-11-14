@@ -1,5 +1,5 @@
 import { useEffect, useId, useRef, useState } from "react";
-import { COMMIT_DELAY_MS, clampPair, rangeFill } from "./range-slider.ts";
+import { COMMIT_DELAY_MS, clampPair, rangeFill, trackPick } from "./range-slider.ts";
 
 export interface RangeSliderProps {
   label: string;
@@ -37,6 +37,7 @@ export function RangeSlider({
   const id = useId();
   const root = useRef<HTMLDivElement>(null);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const handles = useRef<Array<HTMLInputElement | null>>([]);
   const [lo, setLo] = useState(low);
   const [hi, setHi] = useState(high);
   // New values from the page move the handles (React's "storing information from previous renders").
@@ -84,10 +85,28 @@ export function RangeSlider({
           {format(lo, "low")} – {format(hi, "high")}
         </output>
       </div>
-      <div className="cap-range-slider-track">
+      <div
+        className="cap-range-slider-track"
+        // A press on the track away from the thumbs moves the nearer handle there (WCAG 2.5.7);
+        // the keyboard has each handle's own keys, so the track itself takes no focus.
+        onPointerDown={(e) => {
+          if (e.target !== e.currentTarget || e.button !== 0) return;
+          e.preventDefault();
+          const { which, value } = trackPick(e.currentTarget, e.clientX, [lo, hi], {
+            min,
+            max,
+            step,
+          });
+          move(value, which);
+          handles.current[which === "low" ? 0 : 1]?.focus();
+        }}
+      >
         {(["low", "high"] as const).map((which, i) => (
           <input
             key={which}
+            ref={(el) => {
+              handles.current[i] = el;
+            }}
             type="range"
             className="cap-range cap-range-slider-input"
             name={names[i]}

@@ -3,10 +3,10 @@
 // views themselves are CSS over the segmented control's radios and need no script.
 // Extracted from BioScience Writers' editing demo island (app/islands/editing-demo.ts) in 0.132.0.
 
-import { reducedMotion } from "../count-up/count-up.ts";
+import { reducedMotion } from "../hooks/hooks.ts";
 
 // Scrolls `box` (a scroll container) so `target` sits near its top, without moving the page.
-function bring(box: HTMLElement, target: HTMLElement, margin: number) {
+export function bring(box: HTMLElement, target: HTMLElement, margin: number) {
   const top =
     target.getBoundingClientRect().top - box.getBoundingClientRect().top + box.scrollTop - margin;
   box.scrollTo({ top, behavior: reducedMotion() ? "auto" : "smooth" });

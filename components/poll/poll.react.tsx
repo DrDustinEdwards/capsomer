@@ -1,4 +1,5 @@
-import { useLayoutEffect, useRef } from "react";
+import { useRef } from "react";
+import { useIsoLayoutEffect } from "../hooks/hooks.react.tsx";
 import { setShares } from "./poll.ts";
 
 export interface PollOption {
@@ -16,8 +17,6 @@ export interface PollProps {
   pending?: boolean;
   label?: string;
 }
-
-const useIsoLayoutEffect = typeof document === "undefined" ? () => {} : useLayoutEffect;
 
 // The HTML contract in poll.md.
 export function Poll({ options, mine = [], onVote, closed, pending, label }: PollProps) {
@@ -39,7 +38,7 @@ export function Poll({ options, mine = [], onVote, closed, pending, label }: Pol
             onClick={() => onVote?.(o.id)}
           >
             <span className="cap-poll-label">{o.label}</span>
-            <span className="cap-poll-count">
+            <span className="cap-poll-count" aria-live="polite" aria-atomic="true">
               {o.votes}
               <span className="cap-sr-only">{o.votes === 1 ? " vote" : " votes"}</span>
             </span>

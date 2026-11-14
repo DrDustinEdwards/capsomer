@@ -11,7 +11,7 @@
       inset-inline-start: 0;
       z-index: 1;
       background: var(--surface);
-      font-weight: 500;
+      font-weight: var(--weight-medium);
       white-space: nowrap;
     }
     & thead th {
@@ -19,7 +19,7 @@
       text-align: center;
       vertical-align: bottom;
       white-space: normal;
-      line-height: 1.2;
+      line-height: var(--leading-tight);
     }
     & td {
       text-align: center;
@@ -39,7 +39,7 @@
   }
   .cap-matrix-none {
     color: var(--muted);
-    font-weight: 700;
+    font-weight: var(--weight-bold);
   }
   .cap-matrix-key {
     display: flex;
@@ -50,13 +50,17 @@
     list-style: none;
     font-size: var(--fs-detail);
   }
-  @media (max-width: 52rem) {
+  /* Narrow: the row headers wrap and the columns tighten, by the room the matrix has. */
+  .cap-matrix {
+    container: cap-matrix / inline-size;
+  }
+  @container cap-matrix (max-width: 52rem) {
     .cap-matrix {
       & th[scope="row"] {
         min-inline-size: 7.5rem;
         max-inline-size: 9rem;
         white-space: normal;
-        line-height: 1.25;
+        line-height: var(--leading-tight);
       }
       & thead th {
         min-inline-size: 2.75rem;

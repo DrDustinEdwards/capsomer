@@ -2,12 +2,12 @@ import { useEffect, useId, useRef, useState, type ReactNode, useLayoutEffect } f
 import {
   acceptedText,
   dragHasFiles,
-  formatBytes,
   rejectedLead,
   setInputFiles,
   validateFiles,
   type Rejection,
 } from "./drop-zone.ts";
+import { formatBytes } from "../format/format.ts";
 
 export interface DropZoneProps {
   // The same list an input's accept attribute takes: "image/*,.pdf".

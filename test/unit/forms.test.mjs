@@ -1,27 +1,10 @@
-// The form values that are easy to get wrong: money read as a string, wall-clock times across a
+// The form values that are easy to get wrong: wall-clock times across a
 // clock change, a repeater's rows from either kind of post, and a spec's checks.
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import {
-  centsToDollars,
-  dollarsToCents,
-  fromDateTimeLocal,
-  toDateTimeLocal,
-} from "../../components/field/field.ts";
-import { moveRow, rowsFromForm } from "../../components/repeater-field/repeater-field.ts";
+import { fromDateTimeLocal, toDateTimeLocal } from "../../components/field/field.ts";
+import { rowsFromForm } from "../../components/repeater-field/repeater-field.ts";
 import { parseJsonField, readSpecs } from "../../components/schema-form/schema-form.ts";
-
-test("money goes from cents to the box and back without a float", () => {
-  assert.equal(centsToDollars(500000), "5000");
-  assert.equal(centsToDollars(1250), "12.50");
-  assert.equal(centsToDollars(null), "");
-  assert.equal(dollarsToCents("1,250.5"), 125050);
-  assert.equal(dollarsToCents("$3"), 300);
-  assert.equal(dollarsToCents("0.07"), 7);
-  for (const bad of ["1.005", "-2", "12,34", "", "$", "1e3", null])
-    assert.equal(dollarsToCents(bad), null, String(bad));
-  assert.equal(dollarsToCents("-2", { allowNegative: true }), -200);
-});
 
 test("a wall-clock time reads back on its zone, across a clock change", () => {
   const at = new Date("2026-07-01T17:00:00Z");
@@ -60,7 +43,6 @@ test("repeater rows come back from JSON or from indexed fields, empty rows dropp
   const broken = new FormData();
   broken.append("links", "{not json");
   assert.equal(rowsFromForm(broken, "links", ["label"]), null);
-  assert.deepEqual(moveRow(["a", "b", "c"], 2, 0), ["c", "a", "b"]);
 });
 
 test("specs read a post back, with the field's own words for what is wrong", () => {

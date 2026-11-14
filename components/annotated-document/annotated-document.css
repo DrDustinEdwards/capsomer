@@ -19,6 +19,15 @@
     gap: var(--space-4);
   }
 
+  /* The view control's place over the document: start by default, data-view-align="center" or "end". */
+  .cap-annotated[data-view-align="center"] > .cap-annotated-view {
+    justify-self: center;
+  }
+
+  .cap-annotated[data-view-align="end"] > .cap-annotated-view {
+    justify-self: end;
+  }
+
   @container (min-width: 48rem) {
     .cap-annotated-layout {
       grid-template-columns: minmax(0, 1fr) minmax(16rem, 22rem);
@@ -30,7 +39,7 @@
     max-block-size: var(--cap-annotated-h);
     overflow-y: auto;
     overscroll-behavior: contain;
-    border: 1px solid var(--line);
+    border: var(--line-w) solid var(--line);
     border-radius: var(--radius-m);
     background: var(--raised);
 
@@ -73,17 +82,23 @@
     --cap-annotated-tone: var(--accent);
     --cap-annotated-soft: var(--accent-soft);
     padding-inline: 1px;
-    border-radius: 2px;
+    border-radius: var(--radius-xs);
     background: var(--cap-annotated-soft);
     color: inherit;
-    box-shadow: inset 0 -2px 0 var(--cap-annotated-tone);
+    box-shadow: inset 0 calc(-1 * var(--line-w-thick)) 0 var(--cap-annotated-tone);
     cursor: pointer;
-    transition: box-shadow var(--dur-fast) var(--ease-out);
 
     &[data-lit] {
       box-shadow:
-        inset 0 -2px 0 var(--cap-annotated-tone),
-        0 0 0 2px var(--cap-annotated-tone);
+        inset 0 calc(-1 * var(--line-w-thick)) 0 var(--cap-annotated-tone),
+        0 0 0 var(--line-w-thick) var(--cap-annotated-tone);
+    }
+  }
+
+  /* The ring around a lit passage fades in, unless motion is reduced. */
+  @media (prefers-reduced-motion: no-preference) {
+    .cap-annotated-doc mark {
+      transition: box-shadow var(--dur-fast) var(--ease-out);
     }
   }
 
@@ -104,12 +119,23 @@
     }
   }
 
+  /* data-hide-notes="original": the original is the text alone, the document the whole width. */
+  .cap-annotated[data-hide-notes="original"]:has(.cap-annotated-view input[value="original"]:checked) {
+    & .cap-annotated-notes {
+      display: none;
+    }
+
+    & .cap-annotated-layout {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
   /* Every change: insertions underlined in the accent, deletions struck through. */
   .cap-annotated:has(.cap-annotated-view input[value="all"]:checked) .cap-annotated-doc {
     & ins {
       color: var(--accent-text);
       text-decoration: underline;
-      text-decoration-thickness: 2px;
+      text-decoration-thickness: var(--line-w-thick);
       text-underline-offset: 0.18em;
     }
 
@@ -117,7 +143,7 @@
       display: inline;
       color: var(--crit);
       text-decoration: line-through;
-      text-decoration-thickness: 2px;
+      text-decoration-thickness: var(--line-w-thick);
     }
 
     /* Most screen readers say nothing for ins and del, so the marked view says where each starts and ends
@@ -167,8 +193,8 @@
     inline-size: 100%;
     min-block-size: var(--target);
     padding: var(--space-3);
-    border: 1px solid var(--line);
-    border-inline-start: 3px solid var(--cap-annotated-tone);
+    border: var(--line-w) solid var(--line);
+    border-inline-start: var(--line-w-bar) solid var(--cap-annotated-tone);
     border-radius: var(--radius-m);
     background: var(--raised);
     color: var(--text);
@@ -188,7 +214,7 @@
 
     &[aria-pressed="true"] {
       border-color: var(--cap-annotated-tone);
-      box-shadow: 0 0 0 1px var(--cap-annotated-tone);
+      box-shadow: 0 0 0 var(--line-w) var(--cap-annotated-tone);
     }
   }
 
@@ -204,8 +230,8 @@
     grid-column: 2;
     color: var(--muted);
     font-size: var(--fs-label);
-    font-weight: 600;
-    letter-spacing: 0.04em;
+    font-weight: var(--weight-semibold);
+    letter-spacing: var(--tracking-wider);
     text-transform: uppercase;
   }
 
@@ -219,12 +245,24 @@
     background: var(--cap-annotated-soft, var(--accent-soft));
     color: var(--text);
     font-size: var(--fs-label);
-    font-weight: 700;
+    font-weight: var(--weight-bold);
   }
 
   .cap-annotated-note-text {
     grid-column: 2;
     font-size: var(--fs-detail);
+  }
+
+  /* data-kind="tone": each note's kind in its tone's color and its icon a disc of the tone. */
+  .cap-annotated[data-kind="tone"] {
+    & .cap-annotated-note-kind {
+      color: var(--cap-annotated-tone);
+    }
+
+    & .cap-annotated-note-icon {
+      background: var(--cap-annotated-tone);
+      color: var(--ground);
+    }
   }
 
   /* Tones: a kind of note, the same on its passages and its card. */
@@ -257,12 +295,12 @@
       color: MarkText;
 
       &[data-lit] {
-        outline: 2px solid Highlight;
+        outline: var(--focus-width) solid Highlight;
       }
     }
 
     .cap-annotated-note[aria-pressed="true"] {
-      outline: 2px solid Highlight;
+      outline: var(--focus-width) solid Highlight;
     }
   }
 }

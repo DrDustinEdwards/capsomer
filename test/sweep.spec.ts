@@ -2,6 +2,7 @@ import { existsSync, mkdirSync, readFileSync, readdirSync } from "node:fs";
 import { expect, test, type Page } from "@playwright/test";
 import { Fragment, createElement as h, type ReactElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
+import { inlineCss } from "../bin/build.mjs";
 import { THEMES, expectNoAxeViolations, settled, visitStates } from "./helpers.ts";
 // The wrappers as the package ships them (npm run build): Playwright rewrites the JSX of a .tsx
 // file a spec imports, so the source cannot be rendered here (catalog.spec.ts says the same).
@@ -1153,11 +1154,14 @@ for (const name of NAMES) {
                     ?.setAttribute("data-tip-open", ""),
                 misread,
               );
-            await expectNoAxeViolations(page, undefined, {
-              baseUi: true,
-              exclude: misread ? "[data-tip-open]" : undefined,
-              disableRules: ["color-contrast"],
-            });
+            // Without color-contrast, axe reads only the DOM, which the theme does not change: one
+            // theme's scan stands for both. The rings and kinds below read paint, so they run in both.
+            if (theme === "light")
+              await expectNoAxeViolations(page, undefined, {
+                baseUi: true,
+                exclude: misread ? "[data-tip-open]" : undefined,
+                disableRules: ["color-contrast"],
+              });
             found.push(...tag(s, await page.evaluate(() => window.__sweep.rings())));
             found.push(...tag(s, await page.evaluate(() => window.__sweep.kinds(true))));
             // A person's look at what no check reads: a state drawn only by a background or a
@@ -1185,7 +1189,8 @@ for (const name of NAMES) {
       test("behavior: sweep: the React wrapper renders the HTML contract's elements, roles and names", async ({
         page,
       }) => {
-        const css = readFileSync(`components/${name}/${name}.css`, "utf8");
+        // With its imports read in: site-header.css is its frame, letterhead and search parts.
+        const css = inlineCss(`components/${name}/${name}.css`);
         const own = [...new Set([...css.matchAll(/\.(cap-[\w-]+)/g)].map((m) => m[1] as string))];
         const md = readFileSync(`components/${name}/${name}.md`, "utf8");
         const contract = [

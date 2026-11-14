@@ -15,7 +15,7 @@
     white-space: nowrap;
     & b {
       color: var(--text);
-      font-weight: 500;
+      font-weight: var(--weight-medium);
     }
     &[data-stale] {
       color: var(--warn);
@@ -23,6 +23,14 @@
         color: var(--warn);
       }
     }
+  }
+  /* Stale is shape and word as well as color: the warning glyph and "Stale", before the age. */
+  .cap-fresh-stale {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    gap: var(--space-1);
+    font-weight: var(--weight-medium);
   }
   .cap-fresh-ring {
     flex: none;

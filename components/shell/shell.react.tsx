@@ -1,6 +1,7 @@
 import { Fragment, useCallback, useEffect, useId, useRef, useState, type ReactNode } from "react";
 import { Dialog, DialogBody, DialogHeader, DialogTitle } from "../dialog/dialog.react.tsx";
-import { DEFAULT_PREF, readPref, writePref } from "./shell.ts";
+import { readStored, writeStored } from "../hooks/hooks.ts";
+import { DEFAULT_PREF } from "./shell.ts";
 
 export interface ShellEntry {
   id: string;
@@ -103,10 +104,10 @@ export function useCollapsedPref(
 ): [boolean, (next: boolean) => void] {
   const [own, setOwn] = useState(false);
   // oxlint-disable-next-line react/set-state-in-effect -- the stored preference is read after mount, so the server and the first client render agree
-  useEffect(() => setOwn(readPref(prefKey) === "collapsed"), [prefKey]);
+  useEffect(() => setOwn(readStored(prefKey) === "collapsed"), [prefKey]);
   const setCollapsed = useCallback(
     (next: boolean) => {
-      writePref(prefKey, next ? "collapsed" : "expanded");
+      writeStored(prefKey, next ? "collapsed" : "expanded");
       setOwn(next);
       onChange?.(next);
     },

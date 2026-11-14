@@ -7,7 +7,13 @@
 import { openDialog, wireDialog } from "../dialog/dialog.ts";
 import { uid } from "../hooks/hooks.ts";
 import { dateFrom, setValue } from "../field/field.ts";
-import { setStaticHtml } from "../trusted-html/trusted-html.ts";
+import {
+  iconChevronLeft,
+  iconChevronRight,
+  iconChevronsLeft,
+  iconChevronsRight,
+  iconSvg,
+} from "../icons/icons.ts";
 
 const DAY = 86_400_000;
 
@@ -58,10 +64,10 @@ function today(): Date {
 }
 
 const ICONS = {
-  "prev-year": "M9 4L5 8l4 4M13 4L9 8l4 4",
-  "prev-month": "M10 4L6 8l4 4",
-  "next-month": "M6 4l4 4-4 4",
-  "next-year": "M3 4l4 4-4 4M7 4l4 4-4 4",
+  "prev-year": iconChevronsLeft,
+  "prev-month": iconChevronLeft,
+  "next-month": iconChevronRight,
+  "next-year": iconChevronsRight,
 };
 const NAMES = {
   "prev-year": "Previous year",
@@ -91,10 +97,7 @@ function navButton(part: keyof typeof ICONS): HTMLButtonElement {
       "aria-label": NAMES[part],
     },
   );
-  setStaticHtml(
-    b,
-    `<svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="${ICONS[part]}" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
-  );
+  b.append(iconSvg(ICONS[part]));
   return b;
 }
 

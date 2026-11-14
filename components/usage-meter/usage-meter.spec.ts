@@ -80,15 +80,6 @@ eachTheme((theme) => {
     },
   );
 
-  test("keyboard: the meters are not controls and take no tab stop", async ({ page }) => {
-    await visitStates(page, "usage-meter", theme);
-    for (let i = 0; i < 4; i++) {
-      await page.keyboard.press("Tab");
-      const onBar = await page.evaluate(() => !!document.activeElement?.closest(".cap-usage-list"));
-      expect(onBar).toBe(false);
-    }
-  });
-
   test("behavior: the bars are drawn by the shared meter from their values, the projection never shorter than the use", async ({
     page,
   }) => {

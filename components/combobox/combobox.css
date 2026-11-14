@@ -19,7 +19,7 @@
   }
 
   .cap-combobox-label {
-    font-weight: 600;
+    font-weight: var(--weight-semibold);
     color: var(--text);
   }
 
@@ -51,7 +51,7 @@
     align-items: center;
     min-width: 0;
     min-height: var(--control);
-    border: 1px solid var(--line-strong);
+    border: var(--line-w) solid var(--line-strong);
     border-radius: var(--radius-m);
     background: var(--surface);
     color: var(--text);
@@ -68,7 +68,7 @@
     /* Invalid: the edge thickens as well as turning red; the message beside it says why. */
     &:has(.cap-combobox-input[aria-invalid="true"]) {
       border-color: var(--crit);
-      box-shadow: inset 0 0 0 1px var(--crit);
+      box-shadow: inset 0 0 0 var(--line-w) var(--crit);
     }
     &[data-disabled],
     &:has(.cap-combobox-input:disabled) {
@@ -134,6 +134,9 @@
     }
     & svg {
       display: block;
+      /* The chevron (components/icons, a 24-unit drawing) at 16px, its line 1.8px. */
+      --icon-size: var(--space-5);
+      --icon-stroke: 2.7;
     }
   }
   @media (prefers-reduced-motion: no-preference) {
@@ -169,13 +172,13 @@
     background: var(--sunken);
     color: var(--text);
     font-size: var(--fs-detail);
-    font-weight: 500;
+    font-weight: var(--weight-medium);
     white-space: nowrap;
 
     &[data-highlighted],
     &:focus-visible {
       outline: var(--focus-width) solid var(--ring);
-      outline-offset: 1px;
+      outline-offset: var(--focus-offset-tight);
     }
   }
   .cap-combobox-chip:not(:has(.cap-combobox-chip-remove)) {
@@ -249,7 +252,7 @@
       border-color: CanvasText;
     }
     .cap-combobox-chip {
-      border: 1px solid CanvasText;
+      border: var(--line-w) solid CanvasText;
     }
   }
 }

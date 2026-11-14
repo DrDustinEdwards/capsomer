@@ -6,7 +6,8 @@
 // navigates away. Every file is checked and each refusal named. No framework; the React wrapper uses the same pure functions.
 import { formatBytes } from "../format/format.ts";
 
-import { listText, plural } from "../hooks/hooks.ts";
+import { plural } from "@drdustinedwards/site-helpers/text";
+import { listText } from "../hooks/hooks.ts";
 
 const READY = "data-cap-ready";
 
@@ -79,6 +80,7 @@ const KIND_NAMES: Record<string, string> = {
   "audio/*": "audio",
   "text/plain": "text",
   "text/markdown": "Markdown",
+  "text/csv": "CSV",
 };
 
 // The accept list as a person would say it: "images and PDF", "JPEG, PNG and WebP".
@@ -91,16 +93,13 @@ export function acceptLabel(accept: string | null | undefined): string {
   return names.length === 0 ? "any file" : listText(names);
 }
 
-// A size as a person reads it: the format module's, re-exported for the drop zone's callers.
-export { formatBytes };
-
 export function rejectionMessage(file: FileLike, reason: RejectReason, rules: DropRules): string {
   if (reason === "type")
     return `${file.name}: type not allowed. This takes ${acceptLabel(rules.accept)}.`;
   if (reason === "size")
     return `${file.name}: too big at ${formatBytes(file.size)}. The limit is ${formatBytes(rules.maxBytes ?? 0)}.`;
   const n = rules.maxFiles ?? 0;
-  return `${file.name}: too many files. The limit is ${plural(n, "file", "files")} at a time, so this one was left out.`;
+  return `${file.name}: too many files. The limit is ${plural(n, "file")} at a time, so this one was left out.`;
 }
 
 // Checks every file, in order. A file is refused for its type first, then its size; the files

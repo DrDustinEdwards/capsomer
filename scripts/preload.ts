@@ -10,7 +10,7 @@ import { preloads } from "@dustinedwards/site-runtime/preload";
 
 const FACES = [
   /\/assets\/inter-latin-wght-normal-[\w-]+\.woff2/,
-  /\/assets\/source-serif-4-latin-wght-normal-[\w-]+\.woff2/,
+  /\/assets\/source-serif-4-latin-core-normal-[\w-]+\.woff2/,
 ];
 
 /** The `Link` header value for the home page in `outDir`. */

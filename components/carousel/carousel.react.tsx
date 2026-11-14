@@ -1,4 +1,5 @@
 import { Children, useEffect, useRef, type ReactNode } from "react";
+import { Icon, iconChevronLeft, iconChevronRight } from "../icons/icons.react.tsx";
 import { attach, partsOf } from "./carousel.ts";
 
 // The carousel's HTML contract (carousel.md), wired by carousel.ts once mounted. Each child is one
@@ -40,6 +41,9 @@ export function Carousel({
     <section
       ref={root}
       className="cap-carousel"
+      data-cap="carousel"
+      // React wires it (below); a page's enhance() leaves it alone.
+      data-cap-ready=""
       aria-roledescription="carousel"
       aria-label={label}
       data-per-view={perView}
@@ -50,10 +54,10 @@ export function Carousel({
       <div className="cap-carousel-viewport">
         <div className="cap-carousel-controls">
           <button type="button" data-cap-dir="prev" aria-label={prevLabel}>
-            <Chevron back />
+            <Icon d={iconChevronLeft} />
           </button>
           <button type="button" data-cap-dir="next" aria-label={nextLabel}>
-            <Chevron />
+            <Icon d={iconChevronRight} />
           </button>
         </div>
         {/* oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- a scrollable region takes focus so the keyboard can scroll it (WCAG 2.1.1). */}
@@ -77,13 +81,5 @@ export function Carousel({
         ))}
       </nav>
     </section>
-  );
-}
-
-function Chevron({ back }: { back?: boolean }) {
-  return (
-    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-      <path d={back ? "M12.5 4.5 7 10l5.5 5.5" : "M7.5 4.5 13 10l-5.5 5.5"} />
-    </svg>
   );
 }

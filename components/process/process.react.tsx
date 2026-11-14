@@ -5,6 +5,8 @@ export interface ProcessStep {
   text?: ReactNode;
   // A small mark beside the step (a status pill), drawn between the title and the text.
   tag?: ReactNode;
+  // What sits at the row's end: its timing, its status. At the end of the line in rows, after the text in columns.
+  end?: ReactNode;
   // A stable key when titles repeat.
   id?: string;
 }
@@ -20,7 +22,7 @@ export interface ProcessStepsProps {
   label?: string;
 }
 
-// The HTML contract in steps.md.
+// The HTML contract in process.md.
 export function ProcessSteps({
   steps,
   layout = "columns",
@@ -40,6 +42,7 @@ export function ProcessSteps({
             <H className="cap-process-title">{step.title}</H>
             {step.tag ? <span className="cap-process-tag">{step.tag}</span> : null}
             {step.text ? <p className="cap-process-text">{step.text}</p> : null}
+            {step.end ? <span className="cap-process-end">{step.end}</span> : null}
           </li>
         ))}
       </ol>

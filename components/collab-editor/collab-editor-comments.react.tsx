@@ -6,6 +6,7 @@
 import type { Editor } from "@tiptap/core";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "../button/button.react.tsx";
+import { ConfirmDialog } from "../confirm-dialog/confirm-dialog.react.tsx";
 import { Panel } from "../panel/panel.react.tsx";
 import { Time } from "../time/time.react.tsx";
 
@@ -66,6 +67,7 @@ function Comment({
 }) {
   const [editing, setEditing] = useState(false);
   const [body, setBody] = useState(c.body);
+  const [deleting, setDeleting] = useState(false);
   return (
     <li className="cap-collab-comment">
       <p className="cap-collab-comment-meta">
@@ -104,15 +106,31 @@ function Comment({
       {!editing && (c.personId === me.id || canDelete) ? (
         <div className="cap-collab-actions">
           {c.personId === me.id ? (
-            <Button size="xs" variant="quiet" onClick={() => setEditing(true)}>
+            <Button
+              size="xs"
+              variant="quiet"
+              onClick={() => {
+                // From the comment as it is now: a collaborator may have changed it since.
+                setBody(c.body);
+                setEditing(true);
+              }}
+            >
               Edit
             </Button>
           ) : null}
-          <Button size="xs" variant="quiet" onClick={() => send({ t: "comment-delete", id: c.id })}>
+          <Button size="xs" variant="quiet" onClick={() => setDeleting(true)}>
             Delete
           </Button>
         </div>
       ) : null}
+      <ConfirmDialog
+        open={deleting}
+        title="Delete this comment?"
+        body={[`${c.name}'s comment is removed for everyone in the room.`]}
+        action="Delete comment"
+        perform={async () => send({ t: "comment-delete", id: c.id })}
+        onClose={() => setDeleting(false)}
+      />
     </li>
   );
 }

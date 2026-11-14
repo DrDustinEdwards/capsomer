@@ -90,26 +90,24 @@ const SPECIMENS: Record<string, () => ReactNode> = {
       isEmpty={false}
       empty={null}
       reflow
+      caption="The audit log, newest first."
     >
-      <table className="cap-table">
-        <caption className="cap-sr-only">The audit log, newest first.</caption>
-        <thead>
-          <tr>
-            <th scope="col">Actor</th>
-            <th scope="col">Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td data-label="Actor">Alex Rivera</td>
-            <td data-label="Action">Paused live sends</td>
-          </tr>
-          <tr>
-            <td data-label="Actor">Sam Lee</td>
-            <td data-label="Action">Ran the backup job</td>
-          </tr>
-        </tbody>
-      </table>
+      <thead>
+        <tr>
+          <th scope="col">Actor</th>
+          <th scope="col">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td data-label="Actor">Alex Rivera</td>
+          <td data-label="Action">Paused live sends</td>
+        </tr>
+        <tr>
+          <td data-label="Actor">Sam Lee</td>
+          <td data-label="Action">Ran the backup job</td>
+        </tr>
+      </tbody>
     </TablePanel>
   ),
   "table-empty": () => (
@@ -117,6 +115,7 @@ const SPECIMENS: Record<string, () => ReactNode> = {
       title="Operator actions"
       headingId="rs-empty"
       isEmpty
+      caption="The audit log, newest first."
       empty={
         <Empty kind="nothing-yet" flush title="No audit log entries yet.">
           Every admin action that changes how the site runs writes an entry here.

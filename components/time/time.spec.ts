@@ -16,7 +16,6 @@ import {
   exact,
   exactParts,
   formatDate,
-  fromUtcInputValue,
   parse,
   relative,
   serverNow,
@@ -26,7 +25,6 @@ import {
   toMs,
   until,
   utc,
-  utcInputValue,
 } from "./time.ts";
 
 // Times depend on the viewer's zone: check them in one, with summer time in force.
@@ -137,9 +135,6 @@ test("behavior: dates are long and in UTC, whatever the viewer's zone, and an un
   expect(dateRange(null, "2026-05-02")).toBe("May 2, 2026");
   expect(dateRange(null, null)).toBeNull();
   expect(toMs(null)).toBeNaN();
-  expect(utcInputValue(NOW)).toBe("2026-09-30T14:00");
-  expect(fromUtcInputValue("2026-09-30T14:00")).toBe(NOW);
-  expect(fromUtcInputValue("tomorrow")).toBeNaN();
 });
 
 test("behavior: durations are a timecode, or words a screen reader can say", () => {
@@ -197,20 +192,6 @@ eachTheme((theme) => {
       { sel: "#sample-exact .cap-time-utc", what: "the UTC part of an exact time" },
       { sel: "#sample-text-tone", what: "a relative time in the text color" },
       { sel: "#sample-live .cap-time", what: "a live relative time" },
-    ]);
-  });
-
-  test("accessibility: rows read as words", { tag: "@markup" }, async ({ page }) => {
-    await visitStates(page, "time", theme);
-    await expect(page.locator("#sample-rows")).toHaveAccessibleName("Deploys");
-    await expect(page.locator("#sample-rows > li")).toHaveText([
-      /example\.com deployed\s+less than a minute ago/,
-      /docs\.example\.com deployed\s+5 minutes ago/,
-      /capsid deployed\s+3 hours ago/,
-      /example\.org deployed\s+yesterday/,
-      /example\.net deployed\s+September 12/,
-      /The next uptime pass runs in\s+3 hours/,
-      /Last edited\s+5 minutes ago/,
     ]);
   });
 

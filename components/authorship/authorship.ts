@@ -39,9 +39,6 @@ export interface Summary {
 }
 
 // Word counts per kind, as percentages that add up to 100, and the sentence that says them.
-/** @deprecated The British spelling, kept so existing imports work; use `summarize`. */
-export const summarise = (runs: readonly RunInput[]): Summary => summarize(runs); // codespell:ignore
-
 export function summarize(runs: readonly RunInput[]): Summary {
   const words: Record<Kind, number> = { you: 0, ai: 0, quoted: 0 };
   for (const r of runs) {

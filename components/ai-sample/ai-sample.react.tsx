@@ -1,4 +1,5 @@
-import type { FormEvent, ReactNode } from "react";
+import { useEffect, useRef, type FormEvent, type ReactNode } from "react";
+import { Button } from "../button/button.react.tsx";
 
 import type { AiSampleResult } from "./ai-sample.ts";
 
@@ -11,7 +12,8 @@ export interface AiSampleProps {
   // The inputs: a segmented control, radios, a select. Their names are the form's fields.
   children: ReactNode;
   button: ReactNode;
-  busyLabel?: ReactNode;
+  // Said to a screen reader while the call runs; the button keeps its words under a spinner.
+  busyLabel?: string;
   // The line under the button: what the call is run on.
   hint?: ReactNode;
   busy?: boolean;
@@ -21,7 +23,9 @@ export interface AiSampleProps {
   onChange?: () => void;
 }
 
-// The HTML contract in ai-sample.md. The page keeps the state (its fetcher); this draws it.
+// The HTML contract in ai-sample.md, its `data-cap` hooks included, so a server-rendered page that
+// never hydrates still has a form its `enhance()` wires. The page keeps the state (its fetcher);
+// this draws it.
 export function AiSample({
   title,
   live,
@@ -35,28 +39,48 @@ export function AiSample({
   onGenerate,
   onChange,
 }: AiSampleProps) {
+  const ref = useRef<HTMLFormElement>(null);
+  // Hydrated, React runs it: marked taken, so the page's enhance() leaves it alone.
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    el.dataset.capReady = "";
+    return () => {
+      delete el.dataset.capReady;
+    };
+  }, []);
   const submit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    onGenerate(new FormData(e.currentTarget));
+    if (!busy) onGenerate(new FormData(e.currentTarget));
   };
   return (
-    <form className="cap-ai-sample" onSubmit={submit} onChange={onChange}>
+    <form
+      ref={ref}
+      className="cap-ai-sample"
+      data-cap="ai-sample"
+      onSubmit={submit}
+      onChange={onChange}
+    >
       <div className="cap-ai-sample-head">
-        <p className="cap-ai-sample-title">{title}</p>
+        <p className="cap-eyebrow" data-variant="mono">
+          {title}
+        </p>
         {live ? <span className="cap-ai-sample-live">{live}</span> : null}
       </div>
       <div className="cap-ai-sample-controls">
         {children}
         <div className="cap-ai-sample-action">
-          <button
+          {/* Busy is aria-busy, never disabled, so the focused button keeps focus. */}
+          <Button
             type="submit"
-            className="cap-btn"
-            data-variant="primary"
-            disabled={busy}
-            aria-busy={busy ? "true" : undefined}
+            variant="primary"
+            pending={busy}
+            pendingLabel={busyLabel}
+            data-ai-sample-generate=""
+            data-busy-label={busyLabel}
           >
-            {busy ? <span className="cap-btn-label">{busyLabel}</span> : button}
-          </button>
+            {button}
+          </Button>
           {hint ? <p className="cap-ai-sample-hint">{hint}</p> : null}
         </div>
       </div>
@@ -66,7 +90,11 @@ export function AiSample({
         ) : (
           <div className="cap-ai-sample-result">
             {result.fields.flatMap((f) => [
-              <p key={`${f.label}-l`} className="cap-ai-sample-label">
+              <p
+                key={`${f.label}-l`}
+                className="cap-eyebrow cap-ai-sample-label"
+                data-variant="mono"
+              >
                 {f.label}
               </p>,
               <div

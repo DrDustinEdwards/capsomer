@@ -1,5 +1,5 @@
 import { useEffect, useId, useRef, type ReactNode } from "react";
-import { MIN_ITEMS, enhance } from "./toc.ts";
+import { MIN_ITEMS, attach } from "./toc.ts";
 
 export interface TocItem {
   id: string;
@@ -22,7 +22,8 @@ export interface TocProps {
 export function Toc({ items, variant, title = "Contents", min = MIN_ITEMS }: TocProps) {
   const ref = useRef<HTMLElement>(null);
   const id = useId();
-  useEffect(() => (ref.current ? enhance(ref.current.parentElement ?? document) : undefined), []);
+  // This list only: a sibling's own effect attaches the sibling.
+  useEffect(() => (ref.current ? attach(ref.current) : undefined), []);
   if (items.length < min) return null;
   const list = (
     <ol className="cap-toc-list">

@@ -160,8 +160,9 @@ export interface ExpandRowsProps {
 }
 
 // A table row whose first cell opens a detail row under it, across the whole table (a webhook
-// event and its payload). The detail row is rendered only while open: a reflowed table draws rows
-// as grids, and a hidden grid row would still take its place.
+// event and its payload). The detail row is always rendered, hidden while closed, so the button's
+// aria-controls names a row that exists and print shows every detail; the reset's [hidden] puts
+// it away even in a reflowed table, whose rows are grids.
 export function ExpandRows({
   row,
   name,
@@ -180,11 +181,9 @@ export function ExpandRows({
   return (
     <>
       <tr>{row(button)}</tr>
-      {open ? (
-        <tr className="cap-expand-detail" id={region.id}>
-          <td colSpan={columns}>{detail}</td>
-        </tr>
-      ) : null}
+      <tr className="cap-expand-detail" id={region.id} hidden={!open}>
+        <td colSpan={columns}>{detail}</td>
+      </tr>
     </>
   );
 }

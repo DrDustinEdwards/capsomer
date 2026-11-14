@@ -1,6 +1,10 @@
-import { plural } from "../hooks/hooks.ts";
+import { plural } from "@drdustinedwards/site-helpers/text";
 import { Fragment, useEffect, useId, useState, type ReactNode } from "react";
+import { Button } from "../button/button.react.tsx";
 import { Empty } from "../empty/empty.react.tsx";
+import { isTypingKey } from "../row-list/row-list.ts";
+import { singleKeysOff } from "../shortcuts/shortcuts.ts";
+import { LATER_HOUR } from "../time/time.ts";
 import { Spinner } from "../skeleton/skeleton.react.tsx";
 import { useOptionalMessage } from "../message/message.react.tsx";
 import {
@@ -229,7 +233,7 @@ export function AttentionList(props: AttentionListProps) {
               <Row
                 className="cap-attention-notices"
                 status={<Status tone="info">{TONE_WORD.info}</Status>}
-                title={plural(n, "notice", "notices")}
+                title={plural(n, "notice")}
                 onOpen={() => toggle("notices")}
                 expanded={noticesOpen}
                 controls={regionId("notices")}
@@ -348,15 +352,14 @@ function NeedRow<G extends string>({
             <input type="hidden" name="need" value={need.id} />
             <input type="hidden" name="title" value={need.title} />
             <input type="hidden" name="zone" value={zone} />
-            <button
+            <Button
               type="submit"
-              className="cap-btn"
-              data-variant="quiet"
+              variant="quiet"
               data-cap-part="later"
               aria-describedby={aside ? undefined : noteId}
             >
               {aside ? "Bring back" : "Later"}
-            </button>
+            </Button>
           </Form>
           {renderLink({
             href: need.action.href,
@@ -370,8 +373,14 @@ function NeedRow<G extends string>({
   );
 }
 
+// The hour Later brings a row back, as the note says it: "8 am".
+const LATER_AT = new Intl.DateTimeFormat("en-US", { hour: "numeric", timeZone: "UTC" })
+  .format(Date.UTC(2000, 0, 1, LATER_HOUR))
+  .replace(/\s+/g, " ")
+  .toLowerCase();
+
 // What waits on one person, Blocking first, then Waiting for you, oldest first within each, as
-// one row list (so j and k move through both) with the urgency headings between the rows. Each
+// one row list (so j and k move through both), each urgency an item with its heading and its own list. Each
 // row has its one main action and Later, which sets it aside until 8 am tomorrow in the
 // person's zone; the row leaves at once, focus moves to the next row, and the message offers
 // Undo. `l` on a row sets it aside (or brings it back in the Later view): a single key that acts
@@ -394,8 +403,8 @@ export function NeedsList<G extends string = string>({
   const later = show === "later";
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key !== "l" || e.ctrlKey || e.metaKey || e.altKey || e.defaultPrevented) return;
-      if (document.documentElement.dataset.capSingleKeys === "off") return;
+      if (e.key !== "l" || e.repeat || e.defaultPrevented || isTypingKey(e) || singleKeysOff())
+        return;
       const row = document.activeElement?.closest<HTMLElement>(".cap-need-row");
       const button = row?.querySelector<HTMLButtonElement>("[data-cap-part='later']");
       if (!button) return;
@@ -423,27 +432,31 @@ export function NeedsList<G extends string = string>({
         {URGENCY_ORDER.map((u) => {
           const group = rows.filter((n) => n.urgency === u);
           if (group.length === 0) return null;
-          return [
+          // Each urgency is an item holding its heading and its own list, so a list's count is
+          // its rows, never the headings; j and k still move through every row of the outer list.
+          return (
             <li key={u} className="cap-need-group">
-              <h3 className="cap-need-head">
+              <h3 className="cap-need-head" id={`${noteId}-${u}`}>
                 <Pill tone={u === "blocking" ? "crit" : undefined} variant="secondary">
                   {URGENCY_TITLE[u]}
                 </Pill>
                 <span className="cap-need-count">{group.length}</span>
               </h3>
-            </li>,
-            ...group.map((n) => (
-              <NeedRow
-                key={n.id}
-                need={n}
-                zone={zone}
-                noteId={noteId}
-                onBack={onBack}
-                renderLink={renderLink}
-                useRowForm={useRowForm}
-              />
-            )),
-          ];
+              <ul className="cap-need-rows" role="list" aria-labelledby={`${noteId}-${u}`}>
+                {group.map((n) => (
+                  <NeedRow
+                    key={n.id}
+                    need={n}
+                    zone={zone}
+                    noteId={noteId}
+                    onBack={onBack}
+                    renderLink={renderLink}
+                    useRowForm={useRowForm}
+                  />
+                ))}
+              </ul>
+            </li>
+          );
         })}
       </RowList>
       <p className="cap-need-keys">
@@ -463,8 +476,8 @@ export function NeedsList<G extends string = string>({
         ) : null}
         <span id={noteId}>
           {later
-            ? "These come back on their own at 8 am, or sooner if they change."
-            : "Later hides a row until 8 am tomorrow, or sooner if it changes."}
+            ? `These come back on their own at ${LATER_AT}, or sooner if they change.`
+            : `Later hides a row until ${LATER_AT} tomorrow, or sooner if it changes.`}
         </span>
       </p>
     </>

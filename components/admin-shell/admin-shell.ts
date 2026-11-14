@@ -3,8 +3,9 @@
 // with G and 1 to 9. The header above it (its panels, the account menu and the phone's sheet) is
 // the site header's own behavior, which enhance() attaches too. No framework; the React wrapper
 // uses the same functions. The menu's links and the page are in the HTML without any of this.
-import { DEFAULT_PREF, readPref, writePref } from "../shell/shell.ts";
-import { singleKeysOff } from "../shortcuts/shortcuts.ts";
+import { readStored, reducedMotion, writeStored } from "../hooks/hooks.ts";
+import { DEFAULT_PREF } from "../shell/shell.ts";
+import { isTyping, singleKeysOff } from "../shortcuts/shortcuts.ts";
 import { enhance as enhanceHeader } from "../site-header/site-header.ts";
 import { attach as attachTip, hideTip } from "../tooltip/tooltip.ts";
 
@@ -30,7 +31,7 @@ export function pageTransitionsOn(
 ): boolean {
   if (!shell || shell.dataset.transition !== "page") return false;
   if (typeof (document as unknown as Transitioner).startViewTransition !== "function") return false;
-  return !window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+  return !reducedMotion();
 }
 
 export async function startPageTransition(
@@ -62,7 +63,7 @@ export function setMenu(shell: HTMLElement, collapsed: boolean, remember = true)
       text.textContent = name;
   }
   if (remember)
-    writePref(shell.dataset.capPref ?? ADMIN_PREF, collapsed ? "collapsed" : "expanded");
+    writeStored(shell.dataset.capPref ?? ADMIN_PREF, collapsed ? "collapsed" : "expanded");
 }
 
 export function toggleMenu(shell: HTMLElement): void {
@@ -81,8 +82,7 @@ export function jumpTarget(
   now = Date.now(),
 ): string | null {
   if (e.ctrlKey || e.metaKey || e.altKey || singleKeysOff()) return null;
-  const t = e.target as Element | null;
-  if (t?.closest?.("input, textarea, select, [contenteditable='true']")) return null;
+  if (isTyping(e.target)) return null;
   const live = armed.at > 0 && now - armed.at < JUMP_WINDOW_MS;
   armed.at = e.key === "g" ? now : 0;
   if (!live || !/^[1-9]$/.test(e.key)) return null;
@@ -102,9 +102,7 @@ export function isCollapseKey(
 ): boolean {
   if (!key || e.key !== key || e.ctrlKey || e.metaKey || e.altKey) return false;
   if (e.defaultPrevented || e.isComposing || singleKeysOff()) return false;
-  const t = e.target as HTMLElement | null;
-  if (t?.isContentEditable) return false;
-  return !t?.closest?.("input, textarea, select, [contenteditable], .cm-editor");
+  return !isTyping(e.target);
 }
 
 // Which entry is the page you are on, from the address: the entry whose `href` (or one of its
@@ -151,7 +149,7 @@ export function enhance(root: ParentNode = document): () => void {
     "[data-cap='admin-shell']:not([data-cap-ready])",
   )) {
     shell.dataset.capReady = "";
-    const pref = readPref(shell.dataset.capPref ?? ADMIN_PREF);
+    const pref = readStored(shell.dataset.capPref ?? ADMIN_PREF);
     if (pref) setMenu(shell, pref === "collapsed", false);
 
     // Each control's name tip, a child of its control. A menu link's tip repeats its name, so it

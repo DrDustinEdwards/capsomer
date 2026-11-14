@@ -84,7 +84,8 @@
 </template>
 
 <script type="module">
-  import { enhance, openShortcutSheet, register, setSingleKeys } from "./shortcuts.ts";
+  import { enhance, register, setSingleKeys } from "./shortcuts.ts";
+  import { openShortcutSheet } from "./shortcuts-sheet.ts";
   const only = new URLSearchParams(location.search).get("only");
   if (only) {
     const said = document.querySelector("[data-specimen-part='said']");

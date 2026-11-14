@@ -1,6 +1,7 @@
 import { useId, type ReactNode } from "react";
 import { Row, RowList } from "../row-list/row-list.react.tsx";
 import { fileMeta } from "../generated-file/generated-file.ts";
+import { Signs } from "../manual/manual.react.tsx";
 
 export interface ArchiveDoc {
   key: string;
@@ -116,47 +117,6 @@ export interface PagerDoc {
   href: string;
 }
 
-export interface DocumentPagerProps {
-  prev: PagerDoc | null;
-  next: PagerDoc | null;
-  // The category's name, for the nav's name: "More in Programs".
-  collection: string;
-  prevLabel?: string;
-  nextLabel?: string;
-  renderLink?: (props: ArchiveLinkProps) => ReactNode;
-}
-
-// Previous and Next in the category, each with the document's title. A missing end is left out,
-// and Next keeps its place on the right.
-export function DocumentPager({
-  prev,
-  next,
-  collection,
-  prevLabel = "Previous",
-  nextLabel = "Next",
-  renderLink = plainLink,
-}: DocumentPagerProps) {
-  if (!prev && !next) return null;
-  const side = (doc: PagerDoc, rel: "prev" | "next", word: string) =>
-    renderLink({
-      href: doc.href,
-      rel,
-      className: "cap-docpager-link",
-      children: (
-        <>
-          <span className="cap-docpager-dir">{word}</span>{" "}
-          <span className="cap-docpager-title">{doc.title}</span>
-        </>
-      ),
-    });
-  return (
-    <nav className="cap-docpager" aria-label={`More in ${collection}`}>
-      {prev ? side(prev, "prev", prevLabel) : null}
-      {next ? side(next, "next", nextLabel) : null}
-    </nav>
-  );
-}
-
 export interface DocumentViewerProps {
   title: ReactNode;
   // "Fall 2026 · Editor: Sam Lee".
@@ -170,7 +130,11 @@ export interface DocumentViewerProps {
   children?: ReactNode;
   prev?: PagerDoc | null;
   next?: PagerDoc | null;
+  // The category's name, for the signs' name: "More in Programs".
   collection: string;
+  // The words a screen reader hears before a neighbor's title. Default "Previous" and "Next".
+  prevLabel?: string;
+  nextLabel?: string;
   renderLink?: (props: ArchiveLinkProps) => ReactNode;
 }
 
@@ -186,6 +150,8 @@ export function DocumentViewer({
   prev = null,
   next = null,
   collection,
+  prevLabel = "Previous",
+  nextLabel = "Next",
   renderLink = plainLink,
 }: DocumentViewerProps) {
   const H = `h${level}` as "h1" | "h2";
@@ -206,7 +172,12 @@ export function DocumentViewer({
         )}
       </header>
       {children != null && <div className="cap-docview-body">{children}</div>}
-      <DocumentPager prev={prev} next={next} collection={collection} renderLink={renderLink} />
+      <Signs
+        label={`More in ${collection}`}
+        prev={prev ? { ...prev, label: prevLabel } : null}
+        next={next ? { ...next, label: nextLabel } : null}
+        renderLink={renderLink}
+      />
     </article>
   );
 }

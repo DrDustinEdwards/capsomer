@@ -1,7 +1,9 @@
-import { useEffect, useId, useRef, useState, type ReactNode } from "react";
+import { useEffect, useId, useRef, type ReactNode } from "react";
 import { useHydrated } from "../hooks/hooks.react.tsx";
 import { useOptionalMessage } from "../message/message.react.tsx";
-import { changeText, moveRow, rowFieldName } from "./repeater-field.ts";
+import { moveId, sortText } from "../sortable-list/sortable-list.ts";
+import { useRows } from "../sortable-list/sortable-list.react.tsx";
+import { rowFieldName } from "./repeater-field.ts";
 
 const FOCUSABLE = "input:not([type='hidden']), select, textarea, button, [tabindex]";
 
@@ -69,16 +71,9 @@ export function RepeaterField<T>({
   const message = useOptionalMessage();
   const list = useRef<HTMLOListElement>(null);
   const add = useRef<HTMLButtonElement>(null);
-  // Stable keys beside the rows, kept in step by every change made here.
-  const [ids, setIds] = useState(() => ({ list: rows.map((_, i) => i), next: rows.length }));
-  let keys = ids.list;
-  if (keys.length !== rows.length) {
-    const list = keys.slice(0, rows.length);
-    let next = ids.next;
-    while (list.length < rows.length) list.push(next++);
-    setIds({ list, next });
-    keys = list;
-  }
+  // Stable keys that follow each row as it moves or goes (the sortable list's useRows).
+  const keyed = useRows(rows, onChange);
+  const keys = keyed.items.map((r) => r.id);
   // After a change, where focus goes: a row's first control, a row's button, or Add.
   const focusNext = useRef<{ row: number; part?: string } | "add" | null>(null);
   useEffect(() => {
@@ -102,11 +97,6 @@ export function RepeaterField<T>({
   ];
   const hasError = error != null && error !== false && error !== "";
   const say = (text: string) => message?.say(text, { clears: true });
-
-  const change = (next: T[], list: number[]) => {
-    setIds((was) => ({ list, next: Math.max(was.next, ...list.map((k) => k + 1)) }));
-    onChange(next);
-  };
 
   return (
     <fieldset
@@ -135,9 +125,9 @@ export function RepeaterField<T>({
           };
           const move = (by: -1 | 1) => {
             const to = i + by;
-            change(moveRow(rows, i, to), moveRow(keys, i, to));
+            keyed.onReorder(moveId(keys, keys[i] ?? "", to));
             focusNext.current = { row: to, part: by < 0 ? "move-up" : "move-down" };
-            say(changeText(by < 0 ? "up" : "down", label, rowLabel(to, row)));
+            say(sortText.step(label, to + 1, rows.length));
           };
           return (
             <li className="cap-repeater-row" key={keys[i] ?? `spare-${i}`}>
@@ -178,13 +168,10 @@ export function RepeaterField<T>({
                     data-cap-part="remove"
                     disabled={rows.length <= min}
                     onClick={() => {
-                      change(
-                        rows.filter((_, j) => j !== i),
-                        keys.filter((_, j) => j !== i),
-                      );
+                      keyed.onRemove(keys[i] ?? "");
                       focusNext.current =
                         rows.length - 1 > 0 ? { row: Math.min(i, rows.length - 2) } : "add";
-                      say(changeText("removed", label));
+                      say(sortText.removed(label, rows.length - 1));
                     }}
                   >
                     Remove<span className="cap-sr-only"> {label}</span>
@@ -207,9 +194,9 @@ export function RepeaterField<T>({
           disabled={rows.length >= max}
           onClick={() => {
             const row = newRow();
-            change([...rows, row], [...keys, ids.next]);
+            onChange([...rows, row]);
             focusNext.current = { row: rows.length };
-            say(changeText("added", rowLabel(rows.length, row)));
+            say(sortText.added(rowLabel(rows.length, row), rows.length + 1));
           }}
         >
           {addLabel}

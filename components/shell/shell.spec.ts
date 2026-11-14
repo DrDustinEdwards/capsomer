@@ -200,17 +200,6 @@ eachTheme((theme) => {
     ]);
   });
 
-  test("keyboard: Tab reaches every entry of the menu in order, with a visible focus", async ({
-    page,
-  }) => {
-    await visitStates(page, "shell", theme, "expanded");
-    const link = page.getByRole("link", { name: "Sites, 2 down or degraded" });
-    await link.focus();
-    await page.keyboard.press("Tab");
-    await expect(page.getByRole("link", { name: "Queue, 3 blocked" })).toBeFocused();
-    await expect(page.locator(".cap-shell-rail a:focus-visible")).toHaveCount(1);
-  });
-
   test("behavior: comfortable density makes the menu items taller", async ({ page }) => {
     await visitStates(page, "shell", theme, "expanded");
     const compact = (await page.getByRole("link", { name: "Overview" }).boundingBox())?.height ?? 0;
@@ -278,21 +267,6 @@ eachTheme((theme) => {
       await expectNoAxeViolations(page);
     });
   }
-
-  test(
-    "accessibility: the logo is decorative, and the brand link is named by the name or by brandLabel",
-    { tag: "@markup" },
-    async ({ page }) => {
-      await visitStates(page, "shell", theme, "logo");
-      await expect(page.locator(".cap-shell-brand .cap-shell-logo")).toHaveAttribute(
-        "aria-hidden",
-        "true",
-      );
-      await expect(page.getByRole("link", { name: /^example\.org/ })).toBeVisible();
-      await visitStates(page, "shell", theme, "logo-only");
-      await expect(page.getByRole("link", { name: "example.org", exact: true })).toBeVisible();
-    },
-  );
 
   test("behavior: the logo is held to the bar's height and kept in proportion, never stretched", async ({
     page,

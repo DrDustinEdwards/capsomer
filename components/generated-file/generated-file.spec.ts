@@ -22,18 +22,6 @@ eachTheme((theme) => {
     ]);
   });
 
-  test("keyboard: Tab reaches the download link, then Generate, then the file's other actions", async ({
-    page,
-  }) => {
-    await visitStates(page, "generated-file", theme);
-    const panel = page.locator("#s-ready ~ *");
-    await panel.getByRole("link", { name: "Download the PDF" }).focus();
-    await page.keyboard.press("Tab");
-    await expect(panel.getByRole("button", { name: "Regenerate the PDF" })).toBeFocused();
-    await page.keyboard.press("Tab");
-    await expect(panel.getByRole("button", { name: "Publish to the archive" })).toBeFocused();
-  });
-
   test("behavior: each state says its word, and a run in progress takes no second press", async ({
     page,
   }) => {
@@ -56,7 +44,10 @@ eachTheme((theme) => {
       "Download the PDF",
     );
     for (const id of ["generating", "busy"])
-      await expect(page.locator(`#s-${id} ~ *`).getByRole("button")).toBeDisabled();
+      await expect(page.locator(`#s-${id} ~ *`).getByRole("button")).toHaveAttribute(
+        "aria-busy",
+        "true",
+      );
     await expect(page.locator("#s-stalled ~ *").getByRole("button")).toBeEnabled();
     await expect(page.locator("#s-ready ~ * .cap-link-meta")).toHaveText("PDF, 2.4 MB");
   });

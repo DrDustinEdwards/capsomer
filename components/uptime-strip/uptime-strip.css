@@ -10,7 +10,7 @@
 @layer cap.components {
   .cap-uptime-pct {
     font-size: var(--fs-body);
-    font-weight: 600;
+    font-weight: var(--weight-semibold);
     color: var(--text);
     font-variant-numeric: var(--figures);
   }
@@ -30,7 +30,7 @@
     }
     & .cap-uptime-pct {
       font-size: inherit;
-      font-weight: 400;
+      font-weight: var(--weight-regular);
     }
   }
 
@@ -70,8 +70,8 @@
     }
     &[data-key="nodata"] {
       background: none;
-      outline: 1px dashed var(--nodata);
-      outline-offset: -1px;
+      outline: var(--line-w) dashed var(--nodata);
+      outline-offset: calc(-1 * var(--focus-offset-tight));
     }
   }
 

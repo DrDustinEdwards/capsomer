@@ -36,13 +36,12 @@ export interface CountsByYearOptions {
 // room, every other on a laptop, every fifth on a phone). Nothing to count is the frame's no-data
 // state with a reason, never an empty chart.
 export function countsByYearHtml(o: CountsByYearOptions): string {
+  // One row per year and series, its count as the bar's length (not one row per counted unit).
   const rows = o.series.flatMap((s) =>
-    o.years.flatMap((year, i) =>
-      Array.from({ length: Math.max(0, Math.round(s.values[i] ?? 0)) }, () => ({
-        year,
-        type: s.label,
-      })),
-    ),
+    o.years.flatMap((year, i) => {
+      const count = Math.max(0, Math.round(s.values[i] ?? 0));
+      return count > 0 ? [{ year, type: s.label, count }] : [];
+    }),
   );
   if (rows.length === 0)
     return noDataHtml(o.title, o.emptyText ?? "There is nothing to count yet.");
@@ -52,6 +51,8 @@ export function countsByYearHtml(o: CountsByYearOptions): string {
     title: o.title,
     data: rows,
     x: "year",
+    y: "count",
+    wholeNumbers: true,
     series: "type",
     filterBy: "x",
     ...(o.hrefForYear ? { href: (year: unknown) => o.hrefForYear!(Number(year)) } : {}),

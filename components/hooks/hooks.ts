@@ -18,9 +18,12 @@ export function listText(words: readonly string[], join: "and" | "or" = "and"): 
   }).format(words);
 }
 
-/** A count with its noun: `plural(1, "post")` is "1 post", `plural(3, "post")` "3 posts"; an irregular noun passes its plural. */
-export function plural(n: number, one: string, many: string = `${one}s`): string {
-  return `${n} ${n === 1 ? one : many}`;
+/** The reader asks for reduced motion (false where there is no window: a server, a test). */
+export function reducedMotion(): boolean {
+  return (
+    typeof window !== "undefined" &&
+    !!window.matchMedia?.("(prefers-reduced-motion: reduce)").matches
+  );
 }
 
 let ids = 0;
@@ -31,8 +34,10 @@ export function uid(prefix: string): string {
   return `${prefix}-${ids}`;
 }
 
-// A value kept in this browser. localStorage where it may be used, a page-long Map where it is
-// refused (a private window, blocked storage), so a choice still switches without being kept.
+// A value kept in this browser. localStorage where it may be used, a page-long Map only where it is
+// refused (a private window, blocked storage, a full quota), so a choice still switches without
+// being kept. The Map never shadows storage that works, so a value changed or removed in another
+// tab reads as it is now.
 const memory = new Map<string, string>();
 const listeners = new Set<() => void>();
 
@@ -46,13 +51,14 @@ export function readStored(key: string): string | null {
 
 /** Stores a value (null forgets it) and tells every reader on the page. */
 export function writeStored(key: string, value: string | null): void {
-  if (value === null) memory.delete(key);
-  else memory.set(key, value);
   try {
     if (value === null) localStorage.removeItem(key);
     else localStorage.setItem(key, value);
+    memory.delete(key);
   } catch {
     // Not kept; still switched, from memory.
+    if (value === null) memory.delete(key);
+    else memory.set(key, value);
   }
   for (const listener of listeners) listener();
 }

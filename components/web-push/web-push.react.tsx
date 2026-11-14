@@ -71,22 +71,25 @@ export function PushDevices({
     }
   };
   return (
-    <div className="cap-push">
-      {problem ? (
-        <div className="cap-push-note" data-tone="warn" role="status">
-          Not set up yet: {problem}
-        </div>
-      ) : null}
-      {shown ? (
-        <div
-          className="cap-push-note"
-          data-tone={shown.kind === "crit" ? "crit" : undefined}
-          role={shown.kind === "crit" ? "alert" : "status"}
-        >
+    <div className="cap-web-push">
+      {/* Mounted from the start, so a note that appears in it is read (a region added with its
+          text often is not). A failure is an alert, which is read as it is added. */}
+      <div className="cap-web-push-live" role="status">
+        {problem ? (
+          <div className="cap-web-push-note" data-tone="warn">
+            Not set up yet: {problem}
+          </div>
+        ) : null}
+        {shown && shown.kind !== "crit" ? (
+          <div className="cap-web-push-note">{shown.text}</div>
+        ) : null}
+      </div>
+      {shown?.kind === "crit" ? (
+        <div className="cap-web-push-note" data-tone="crit" role="alert">
           {shown.text}
         </div>
       ) : null}
-      <div className="cap-push-actions">
+      <div className="cap-web-push-actions">
         {supported ? (
           <button
             type="button"
@@ -98,7 +101,7 @@ export function PushDevices({
             Turn on for this device
           </button>
         ) : (
-          <span className="cap-push-unsupported">This browser cannot receive Web Push.</span>
+          <span className="cap-web-push-unsupported">This browser cannot receive Web Push.</span>
         )}
         <button
           type="button"
@@ -110,12 +113,12 @@ export function PushDevices({
         </button>
       </div>
       {devices.length > 0 ? (
-        <ul className="cap-push-devices" aria-label="Devices with alerts on">
+        <ul className="cap-web-push-devices" aria-label="Devices with alerts on">
           {devices.map((d) => (
-            <li key={d.id} className="cap-push-device">
-              <span className="cap-push-device-name">
+            <li key={d.id} className="cap-web-push-device">
+              <span className="cap-web-push-device-name">
                 {d.label}{" "}
-                {d.detail ? <span className="cap-push-device-detail">{d.detail}</span> : null}
+                {d.detail ? <span className="cap-web-push-device-detail">{d.detail}</span> : null}
               </span>
               <button
                 type="button"
@@ -123,7 +126,7 @@ export function PushDevices({
                 disabled={wait}
                 onClick={() => onTurnOff(d.id)}
               >
-                Turn off
+                Turn off<span className="cap-sr-only"> {d.label}</span>
               </button>
             </li>
           ))}

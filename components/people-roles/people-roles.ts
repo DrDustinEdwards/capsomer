@@ -5,11 +5,11 @@
 // allowed) live in the app's server, in site-runtime's `./members`; this module only shows
 // what the server already decided.
 
-import { plural } from "../hooks/hooks.ts";
+import { plural } from "@drdustinedwards/site-helpers/text";
+import { listText } from "../hooks/hooks.ts";
 import { confirm } from "../confirm-dialog/confirm-dialog.ts";
 import { enhance as enhanceFields } from "../field/field.ts";
 import { enhance as enhanceMenus } from "../menu/menu.ts";
-import { listText } from "../hooks/hooks.ts";
 import { DAY, formatDate } from "../time/time.ts";
 
 // One person as the page shows them. The server fills `manageable` and `renewTo` from
@@ -367,6 +367,11 @@ export interface RoleGridPerson {
 // "Saved: Rosa Park on Field notes, Editor."
 export function roleSavedText(person: string, scope: string, role: string): string {
   return `Saved: ${person} on ${scope}, ${role}.`;
+}
+
+// A role change the app refused: the select goes back to the saved role.
+export function roleFailedText(person: string, scope: string): string {
+  return `Not saved: ${person} on ${scope}. The role is back to what it was.`;
 }
 
 // The name the grid shows for a person.

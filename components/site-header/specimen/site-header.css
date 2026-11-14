@@ -11,9 +11,9 @@
 /* The teal site's wordmark: the mono face, the x in the accent. */
 .sh-fh-wordmark {
   font-family: var(--mono);
-  font-size: 16px;
-  font-weight: 500;
-  letter-spacing: -0.04em;
+  font-size: var(--title-6);
+  font-weight: var(--weight-medium);
+  letter-spacing: calc(-1 * var(--tracking-wider));
 
   & em {
     font-style: normal;
@@ -23,8 +23,8 @@
 /* The fox site's wordmark: the serif. */
 .sh-fx-wordmark {
   font-family: var(--prose);
-  font-size: 20px;
-  font-weight: 600;
+  font-size: var(--title-4);
+  font-weight: var(--weight-semibold);
 }
 .cap-site-header-logo .cap-admin-logo {
   color: var(--accent);
@@ -39,9 +39,9 @@
 
   & h1 {
     margin: 0;
-    font-size: clamp(28px, 4vw, 40px);
-    line-height: 1.1;
-    letter-spacing: -0.02em;
+    font-size: clamp(var(--title-2), 4vw, var(--title-1));
+    line-height: var(--leading-tight);
+    letter-spacing: calc(-1 * var(--tracking-wide));
   }
   &:focus {
     outline: none;
@@ -54,15 +54,15 @@
   margin: 0;
   color: var(--accent-text);
   font-size: var(--fs-detail);
-  font-weight: 600;
-  letter-spacing: 0.1em;
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-sign);
   text-transform: uppercase;
 }
 .sh-lead {
   margin: 0;
   max-width: 56ch;
   color: var(--muted);
-  font-size: 16px;
+  font-size: var(--title-6);
 }
 /* Room to scroll, so the sticky header and the translucent band can be seen working. */
 .sh-filler {
@@ -80,7 +80,7 @@
     display: grid;
     gap: var(--space-1);
     padding: var(--space-4) var(--space-5);
-    border: 1px solid var(--line);
+    border: var(--line-w) solid var(--line);
     border-radius: var(--radius-l);
     background: var(--surface);
   }
@@ -89,7 +89,7 @@
     font-size: var(--fs-detail);
   }
   & b {
-    font-size: 22px;
+    font-size: var(--fs-h2);
     font-variant-numeric: tabular-nums;
   }
 }
@@ -97,7 +97,7 @@
   margin: 0;
   padding: 0;
   list-style: none;
-  border: 1px solid var(--line);
+  border: var(--line-w) solid var(--line);
   border-radius: var(--radius-l);
   background: var(--surface);
 
@@ -108,7 +108,7 @@
     padding: var(--space-4) var(--space-5);
   }
   & li + li {
-    border-block-start: 1px solid var(--line);
+    border-block-start: var(--line-w) solid var(--line);
   }
   & li > span:last-child {
     flex: none;
@@ -155,8 +155,8 @@
   margin: 0 0 var(--space-2);
   color: var(--muted);
   font-family: var(--mono);
-  font-size: 10px;
-  letter-spacing: 0.12em;
+  font-size: var(--fs-tiny);
+  letter-spacing: var(--tracking-sign);
   text-transform: uppercase;
 }
 .sh-chips {
@@ -173,7 +173,7 @@
 .sh-pick {
   display: grid !important;
   gap: var(--space-1);
-  border: 1px solid var(--line);
+  border: var(--line-w) solid var(--line);
   background: var(--raised);
 
   & b {
@@ -191,7 +191,7 @@
     display: grid;
     gap: var(--space-1);
     padding: var(--space-4) var(--space-5);
-    border-block-end: 1px solid var(--line);
+    border-block-end: var(--line-w) solid var(--line);
 
     & span {
       color: var(--muted);
@@ -203,7 +203,7 @@
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     margin: 0;
-    border-block-end: 1px solid var(--line);
+    border-block-end: var(--line-w) solid var(--line);
     text-align: center;
   }
   & dl div {
@@ -214,13 +214,13 @@
   & dd {
     margin: 0;
     font-family: var(--prose);
-    font-size: 20px;
+    font-size: var(--title-4);
   }
   & dt {
     color: var(--muted);
-    font-size: 10px;
+    font-size: var(--fs-tiny);
     text-transform: uppercase;
-    letter-spacing: 0.04em;
+    letter-spacing: var(--tracking-wider);
   }
   & ul {
     display: grid;
@@ -288,8 +288,8 @@
   border-radius: var(--radius-s);
   background: var(--accent-12);
   color: var(--ground);
-  font-size: 0.625rem;
-  font-weight: 700;
+  font-size: var(--fs-tiny);
+  font-weight: var(--weight-bold);
 }
 
 /* A site with its own look (examples.tsx, ownHeader): bsw's header values, by token only. */
@@ -298,8 +298,8 @@
 
   & .cap-site-header {
     --header-max-inline-size: 72rem;
-    --header-link-weight: 600;
-    --header-link-current-weight: 600;
+    --header-link-weight: var(--weight-semibold);
+    --header-link-current-weight: var(--weight-semibold);
     --header-edge: transparent;
     --header-scrolled-edge: var(--line);
     --header-translucent-mix: 70%;
@@ -307,7 +307,7 @@
   }
   /* The site's own button, drawn by its own class. */
   & .sh-own-cta {
-    border: 1px solid var(--accent);
+    border: var(--line-w) solid var(--accent);
     background: var(--surface);
     color: var(--accent-text);
   }

@@ -1,5 +1,7 @@
 /* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+/* The marks are the icon set's. */
+@import "../icons/icons.css";
 
 /* The share row: "Share" and a link to each service's own share intent, plain links with no
    script or tracker, ruled off under a post's lead. Extracted from Foxhound's ShareRow
@@ -12,12 +14,12 @@
     gap: var(--space-1) var(--space-3);
     margin-block-end: var(--space-6);
     padding-block: var(--space-3);
-    border-block-end: 1px solid var(--line);
+    border-block-end: var(--line-w) solid var(--line);
   }
   .cap-share-label {
     font-family: var(--readout);
     font-size: var(--fs-detail);
-    letter-spacing: 0.06em;
+    letter-spacing: var(--tracking-widest);
     text-transform: uppercase;
     color: var(--muted);
   }

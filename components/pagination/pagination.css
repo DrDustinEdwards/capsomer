@@ -19,7 +19,7 @@
        or facet above (the site's old .pager and .search-pagination both did this). */
     margin-block-start: var(--pagination-gap, var(--space-7));
     padding-block-start: var(--space-4);
-    border-block-start: 1px solid var(--line);
+    border-block-start: var(--line-w) solid var(--line);
     color: var(--muted);
     font-family: var(--ui);
     font-size: var(--fs-body);
@@ -34,7 +34,7 @@
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 2px;
+    gap: var(--space-1);
     margin: 0 0 0 auto;
     padding: 0;
     list-style: none;
@@ -52,14 +52,14 @@
     min-width: max(var(--control), var(--control-h-coarse));
     margin: 0;
     padding: 0 var(--space-3);
-    border: 1px solid transparent;
+    border: var(--line-w) solid transparent;
     border-radius: var(--radius-m);
     background: none;
     color: var(--accent-text);
     font: inherit;
     font-variant-numeric: var(--figures);
-    font-weight: 500;
-    line-height: 1.2;
+    font-weight: var(--weight-medium);
+    line-height: var(--leading-tight);
     text-decoration: none;
     white-space: nowrap;
     cursor: pointer;
@@ -80,7 +80,7 @@
     }
     &:focus-visible {
       outline: var(--ring-width) solid var(--ring);
-      outline-offset: 1px;
+      outline-offset: var(--focus-offset-tight);
     }
 
     /* The page a person is on: outlined in the accent (3:1), tinted, heavier, and named so
@@ -89,7 +89,7 @@
       border-color: var(--accent);
       background: var(--accent-soft);
       color: var(--text);
-      font-weight: 600;
+      font-weight: var(--weight-semibold);
       box-shadow: var(--shadow-xs);
       cursor: default;
     }
@@ -118,19 +118,19 @@
         flex: none;
         inline-size: 6px;
         block-size: 6px;
-        border-block-start: 1.5px solid currentColor;
-        border-inline-end: 1.5px solid currentColor;
+        border-block-start: var(--line-w-mid) solid currentColor;
+        border-inline-end: var(--line-w-mid) solid currentColor;
       }
     }
     &[data-kind="prev"]::before {
       content: "";
       transform: rotate(-135deg);
-      margin-inline-start: 2px;
+      margin-inline-start: var(--space-1);
     }
     &[data-kind="next"]::after {
       content: "";
       transform: rotate(45deg);
-      margin-inline-end: 2px;
+      margin-inline-end: var(--space-1);
     }
     &[data-kind="prev"]:dir(rtl)::before, :where([dir="rtl"]) &[data-kind="prev"]::before {
       transform: rotate(45deg);

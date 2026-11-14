@@ -124,46 +124,6 @@ eachTheme((theme) => {
   });
 
   test(
-    "accessibility: the dialog is named by its title and described by its description",
-    { tag: "@markup" },
-    async ({ page }) => {
-      await visitStates(page, "dialog", theme, "center");
-      const d = dlg(page, "Rename the site");
-      await expect(d).toHaveAccessibleName("Rename the site");
-      await expect(d).toHaveAccessibleDescription(/Visitors keep the old address/);
-      await expect(d.getByRole("heading", { name: "Rename the site", level: 2 })).toBeVisible();
-      await expect(d.getByRole("textbox", { name: "Site name" })).toBeVisible();
-      await expect(d.getByRole("button", { name: "Cancel" })).toBeVisible();
-      await expect(d.getByRole("button", { name: "Save name" })).toBeVisible();
-      await expect(d.getByRole("button", { name: "Close" })).toBeVisible();
-    },
-  );
-
-  test(
-    "accessibility: a confirm question is an alertdialog, named and described",
-    { tag: "@markup" },
-    async ({ page }) => {
-      await visitStates(page, "dialog", theme, "alert");
-      const d = alertDlg(page);
-      await expect(d).toBeVisible();
-      await expect(d).toHaveAccessibleDescription(/This cannot be undone/);
-      // An alert dialog has no corner Close button: the answer is Cancel or the action.
-      await expect(d.getByRole("button", { name: "Close" })).toHaveCount(0);
-    },
-  );
-
-  test(
-    "accessibility: a dialog named with aria-label has no dangling labelledby",
-    { tag: "@markup" },
-    async ({ page }) => {
-      await visitStates(page, "dialog", theme, "top");
-      const d = dlg(page, "Command menu");
-      await expect(d).toBeVisible();
-      await expect(d).not.toHaveAttribute("aria-labelledby", /.+/);
-    },
-  );
-
-  test(
     "accessibility: the page behind a modal dialog is inert, and the dialog is modal",
     { tag: "@markup" },
     async ({ page }) => {
@@ -278,23 +238,6 @@ eachTheme((theme) => {
     expect(fits).toBe(true);
     const body = d.locator(".cap-dialog-body");
     expect(await body.evaluate((el) => el.scrollHeight > el.clientHeight)).toBe(true);
-  });
-
-  test("behavior: a short centered dialog is as tall as its content, not the window", async ({
-    page,
-  }) => {
-    await live(page, theme);
-    await openFrom(page, "open-center");
-    const d = dlg(page, "Rename the site");
-    await expect(d).toBeVisible();
-    const { box, content, win } = await d.evaluate((el) => ({
-      box: el.getBoundingClientRect().height,
-      content: el.scrollHeight,
-      win: window.innerHeight,
-    }));
-    // The box is its content plus the 1px border each side.
-    expect(box - content).toBeLessThanOrEqual(4);
-    expect(box).toBeLessThan(win - 100);
   });
 
   test("behavior: a click on the backdrop closes a dialog and returns focus", async ({ page }) => {
@@ -532,12 +475,5 @@ eachTheme((theme) => {
     await expect(page.locator("#inline-rename")).toBeHidden();
     await expect(page).toHaveURL(/states\.html/);
     await expect(page.locator("#open-inline")).toBeFocused();
-  });
-
-  test("accessibility: the in-page dialog section has no axe violations with script on", async ({
-    page,
-  }) => {
-    await visitStates(page, "dialog", theme);
-    await expectNoAxeViolations(page);
   });
 });

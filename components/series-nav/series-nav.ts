@@ -6,16 +6,27 @@ export interface SeriesPart {
   title: string;
 }
 
-export interface SeriesPlace {
+export interface SeriesPlace<T = SeriesPart> {
   // 0-based; -1 when the current page is not one of the parts.
   index: number;
-  previous: SeriesPart | undefined;
-  next: SeriesPart | undefined;
+  previous: T | undefined;
+  next: T | undefined;
 }
 
-// Where `current` (a part's href) sits among `parts`, in their order.
-export function seriesPlace(parts: readonly SeriesPart[], current: string): SeriesPlace {
-  const index = parts.findIndex((part) => part.href === current);
+// Where `current` sits among `parts`, in their order: a part's href, or the key `keyOf` reads (a
+// document's slug). A key not in the list has no neighbors, never someone else's.
+export function seriesPlace(parts: readonly SeriesPart[], current: string): SeriesPlace;
+export function seriesPlace<T>(
+  parts: readonly T[],
+  current: string,
+  keyOf: (part: T) => string,
+): SeriesPlace<T>;
+export function seriesPlace<T extends { href?: string }>(
+  parts: readonly T[],
+  current: string,
+  keyOf: (part: T) => string = (part) => part.href ?? "",
+): SeriesPlace<T> {
+  const index = parts.findIndex((part) => keyOf(part) === current);
   return {
     index,
     previous: index > 0 ? parts[index - 1] : undefined,

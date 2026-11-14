@@ -45,8 +45,6 @@ import {
   emptyWords,
   filtered,
   inDays,
-  isoFromLocal,
-  localInputValue,
   postActions,
   postsHref,
   rowActions,
@@ -56,7 +54,9 @@ import {
   type RowAction,
 } from "./posts-list.ts";
 import type { ConfirmRequest } from "../content/content.ts";
-import { useCleanId, useHydrated } from "../hooks/hooks.react.tsx";
+import { useBrowserZone, useCleanId, useHydrated } from "../hooks/hooks.react.tsx";
+import { fromDateTimeLocal, toDateTimeLocal } from "../field/field.ts";
+import { toMs } from "../time/time.ts";
 
 export { contentStatus };
 export type { ContentLabels, IntentResult, PostRow, PostsData, ScheduledUpdateView, SubmitIntent };
@@ -114,8 +114,9 @@ function HeadCheck({
 // at the time it moves from, since a form with no script cannot add the zone the site needs.
 function RescheduleField({ id, at }: { id: string; at: string }) {
   const [local, setLocal] = useState<string | null>(null);
+  const zone = useBrowserZone(null);
   // oxlint-disable-next-line react/set-state-in-effect -- the person's own zone is known only in the browser, after hydration
-  useEffect(() => setLocal(localInputValue(at)), [at]);
+  useEffect(() => setLocal(zone ? toDateTimeLocal(new Date(toMs(at)), zone) : null), [at, zone]);
   if (local === null) {
     return (
       <div className="cap-field">
@@ -151,9 +152,17 @@ function RescheduleField({ id, at }: { id: string; at: string }) {
         aria-describedby={`${id}-help`}
         required
       />
-      <input type="hidden" name="publishAt" value={isoFromLocal(local)} />
+      <input
+        type="hidden"
+        name="publishAt"
+        value={
+          fromDateTimeLocal(local, zone ?? undefined)
+            ?.toISOString()
+            .replace(/\.\d{3}Z$/, "Z") ?? ""
+        }
+      />
       <p className="cap-field-description" id={`${id}-help`}>
-        In your time zone, {Intl.DateTimeFormat().resolvedOptions().timeZone}.
+        In your time zone, {zone}.
       </p>
     </div>
   );

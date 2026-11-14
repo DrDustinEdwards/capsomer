@@ -26,3 +26,17 @@ test("keyboard: arrows move a handle, the low one stays under the high one, and 
   await expect(high).toHaveValue("3000");
   await expect(page.locator("#rs-live .cap-range-slider-value")).toHaveText("$20 – $30");
 });
+
+test("behavior: a press on the track, with no drag, moves the nearer handle there", async ({
+  page,
+}) => {
+  await visitStates(page, "range-slider", "light");
+  const track = page.locator("#rs-live .cap-range-slider-track");
+  const box = await track.boundingBox();
+  if (!box) throw new Error("no track");
+  // Near the top end: the high handle comes down to it, and takes focus.
+  await page.mouse.click(box.x + box.width * 0.8, box.y + box.height / 2);
+  const high = page.getByRole("slider", { name: "Maximum amount" });
+  await expect(high).toHaveValue("40000");
+  await expect(high).toBeFocused();
+});

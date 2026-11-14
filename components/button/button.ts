@@ -4,7 +4,7 @@
 // reduced motion, or with no `.cap-btn-label`, the label just changes. The leaving words are a
 // copy hidden from assistive technology, so the button's name is only ever the new label.
 
-import { reducedMotion } from "../count-up/count-up.ts";
+import { reducedMotion } from "../hooks/hooks.ts";
 
 // Animates a label that has already changed, from the button's width before the change and a
 // copy of the old label. The React wrapper calls it after React has written the new label.

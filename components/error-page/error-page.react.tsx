@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { Empty } from "../empty/empty.react.tsx";
+import { buttonAttrs } from "../button/button-look.ts";
 
 // The page a React Router root ErrorBoundary renders: the failed Empty, in plain words for 404, 410
 // and everything else, with the site's own header kept so the skip link and landmarks stay. Eight
@@ -123,6 +124,12 @@ export interface ErrorPageProps {
   hero?: (words: ErrorWords) => ReactNode;
 }
 
+// The actions are plain button-styled links (ButtonLink with an href draws the same), so this page,
+// in every app's root bundle, takes neither ButtonLink nor the router; after an error a full load is
+// what the visitor wants anyway.
+const primary = buttonAttrs({ variant: "primary" }, undefined);
+const plain = buttonAttrs({}, undefined);
+
 export function ErrorPage({
   error,
   home,
@@ -148,7 +155,7 @@ export function ErrorPage({
   const withdrawn = words.status === 410;
   const action = withdrawn ? (
     <>
-      <a className="cap-btn" data-variant="primary" href={gone?.href ?? home}>
+      <a {...primary} href={gone?.href ?? home}>
         {gone?.label ?? homeLabel}
         {homeIcon}
       </a>
@@ -159,11 +166,11 @@ export function ErrorPage({
       {server ? (
         // An empty href is this address: a reload that works before the page hydrates, and with no script.
         // oxlint-disable-next-line jsx-a11y/anchor-is-valid -- an empty href reloads this address, with no script too
-        <a className="cap-btn" data-variant="primary" href="">
+        <a {...primary} href="">
           Try again
         </a>
       ) : null}
-      <a className="cap-btn" data-variant={server ? undefined : "primary"} href={home}>
+      <a {...(server ? plain : primary)} href={home}>
         {homeLabel}
         {homeIcon}
       </a>
@@ -240,17 +247,19 @@ export function SignedOutPage({
   return (
     <main id={mainId} tabIndex={-1} className="cap-error-page" data-status="signed-out">
       <meta name="robots" content="noindex" />
-      <div className="cap-empty" data-kind="nothing-yet" role="status">
-        <div className="cap-empty-header">
-          <h1 className="cap-empty-title">Signed out</h1>
-          <p className="cap-empty-text">{text}</p>
-        </div>
-        <div className="cap-empty-content">
-          <a className="cap-btn" data-variant="primary" href={signIn}>
+      <Empty
+        kind="nothing-yet"
+        role="status"
+        titleAs="h1"
+        title="Signed out"
+        action={
+          <a {...primary} href={signIn}>
             {byChoice ? "Sign in again" : "Reload to sign in"}
           </a>
-        </div>
-      </div>
+        }
+      >
+        {text}
+      </Empty>
     </main>
   );
 }

@@ -4,7 +4,6 @@
     "components/*/examples.html",
     "components/*/examples.tsx",
     "components/*/*.spec.ts",
-    "site/main.tsx",
     "site/specimen.ts",
     "site/*.spec.ts",
     "tokens/*.mjs",

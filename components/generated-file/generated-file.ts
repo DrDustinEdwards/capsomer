@@ -3,7 +3,7 @@
 // DOM. The store (site-runtime, or the app's own table) records what happened; this says what
 // state that is and what may happen next.
 
-import { formatBytes } from "../drop-zone/drop-zone.ts";
+import { formatBytes } from "../format/format.ts";
 import { toMsOrNull } from "../time/time.ts";
 
 // How long a run may hold the lock. A run still "generating" after this is taken to have died

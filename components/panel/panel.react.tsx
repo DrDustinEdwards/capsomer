@@ -1,5 +1,6 @@
 import type { ReactNode, Ref } from "react";
 import { Spinner } from "../skeleton/skeleton.react.tsx";
+import { Table } from "../table/table.react.tsx";
 
 export interface PanelProps {
   // The heading. A panel with no title and nothing else for its header is a bare surface: the
@@ -112,6 +113,7 @@ export function Panel({
         id={id}
         data-section={section}
         data-size={size}
+        aria-busy={reading || undefined}
       >
         {inner}
       </a>
@@ -140,7 +142,9 @@ export interface TablePanelProps extends Omit<PanelProps, "flush" | "headingId" 
   empty: ReactNode;
   // Narrow screens stack each row into label and value pairs (the table's data-reflow).
   reflow?: boolean;
-  // The <table class="cap-table">, with its caption.
+  // The table's caption, visually hidden: the heading names the region, the caption the table.
+  caption: ReactNode;
+  // The table's thead and tbody; Table draws the region, the table and the caption.
   children: ReactNode;
 }
 
@@ -152,6 +156,7 @@ export function TablePanel({
   isEmpty,
   empty,
   reflow,
+  caption,
   children,
   ...panel
 }: TablePanelProps) {
@@ -160,16 +165,9 @@ export function TablePanel({
       {isEmpty ? (
         empty
       ) : (
-        <div
-          className="cap-table-wrap"
-          data-cap="table"
-          data-reflow={reflow ? "" : undefined}
-          role="region"
-          aria-labelledby={headingId}
-          tabIndex={0}
-        >
+        <Table caption={caption} captionHidden labelledBy={headingId} reflow={reflow}>
           {children}
-        </div>
+        </Table>
       )}
     </Panel>
   );

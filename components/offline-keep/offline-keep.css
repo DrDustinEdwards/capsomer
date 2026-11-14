@@ -14,10 +14,10 @@
       display: none;
     }
   }
-  .cap-keep[aria-pressed="true"] {
+  .cap-offline-keep-button[aria-pressed="true"] {
     border-color: var(--accent);
   }
-  .cap-keep-status {
+  .cap-offline-keep-status {
     font-size: var(--fs-detail);
     color: var(--muted);
     &:empty {

@@ -1,4 +1,5 @@
 import { useId, useRef, type ReactNode } from "react";
+import { Icon, iconChevronLeft } from "../icons/icons.react.tsx";
 import { useHydrated } from "../hooks/hooks.react.tsx";
 import type { BreadcrumbItem, BreadcrumbProps } from "../breadcrumb/breadcrumb.react.tsx";
 import { PageHead } from "../page-head/page-head.react.tsx";
@@ -70,7 +71,6 @@ export function SwitchRow({
   disabledReason,
 }: SwitchRowProps) {
   const ready = useHydrated();
-  const reasonId = useId();
   const input = useRef<HTMLInputElement>(null);
   const off = disabledReason != null && disabledReason !== false && disabledReason !== "";
   return (
@@ -81,7 +81,7 @@ export function SwitchRow({
           <>
             {help}
             {off ? (
-              <span className="cap-settings-row-reason" id={reasonId}>
+              <span className="cap-settings-row-reason">
                 {help ? " " : null}
                 {disabledReason}
               </span>
@@ -170,16 +170,7 @@ export function SettingsLayout({
 function BackWords({ label }: { label: string }) {
   return (
     <>
-      <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
-        <path
-          d="M10 3L5 8l5 5"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-      </svg>
+      <Icon d={iconChevronLeft} className="cap-icon-flip" />
       {label}
     </>
   );

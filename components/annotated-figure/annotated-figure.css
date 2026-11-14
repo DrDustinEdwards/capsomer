@@ -63,8 +63,8 @@
   .cap-annotated-key-entries {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    border-block-start: 1px solid var(--text);
-    border-inline-start: 1px solid var(--text);
+    border-block-start: var(--line-w) solid var(--text);
+    border-inline-start: var(--line-w) solid var(--text);
   }
 
   @container (inline-size >= 40rem) {
@@ -85,21 +85,18 @@
     flex-direction: column;
     margin: 0;
     padding: var(--space-3) var(--space-4) var(--space-5);
-    border-inline-end: 1px solid var(--text);
-    border-block-end: 1px solid var(--text);
+    border-inline-end: var(--line-w) solid var(--text);
+    border-block-end: var(--line-w) solid var(--text);
 
     & > figcaption {
       display: contents;
     }
   }
 
+  /* The number is the mono eyebrow (.cap-eyebrow[data-variant="mono"]), put first. */
   .cap-annotated-key-num {
     order: -1;
     display: block;
-    color: var(--muted);
-    font: 500 var(--fs-label) / 1.5 var(--mono);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
   }
 
   .cap-annotated-key-art {
@@ -113,16 +110,16 @@
     display: block;
     margin-block: var(--space-1) var(--space-2);
     color: var(--text);
-    font-size: 1rem;
-    font-weight: 700;
-    line-height: 1.3;
+    font-size: var(--fs-lead);
+    font-weight: var(--weight-bold);
+    line-height: var(--leading-snug);
   }
 
   .cap-annotated-key-note {
     display: block;
     color: var(--muted);
     font-size: var(--fs-body);
-    line-height: 1.55;
+    line-height: var(--leading-normal);
   }
 
   /* Lit: a callout and its key entry together, by a heavier line and bold words, never color alone.
@@ -140,7 +137,7 @@
   }
   .cap-annotated-figure-leader[data-lit] .cap-annotated-figure-label,
   .cap-annotated-key-entry[data-lit] .cap-annotated-key-num {
-    font-weight: 700;
+    font-weight: var(--weight-bold);
   }
 
   @media (forced-colors: active) {

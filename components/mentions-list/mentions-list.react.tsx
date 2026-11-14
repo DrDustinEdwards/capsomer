@@ -11,14 +11,13 @@ import {
   VIEWS,
   VIEW_LABEL,
   actionsFor,
-  isTypingKey,
   statusOf,
   summaryText,
   type Mention,
   type ModState,
 } from "../moderation-queue/moderation-queue.ts";
 import { initials } from "../avatar/avatar.ts";
-import { listOwnsKeys, moveRowFocus, singleKeysOff } from "../row-list/row-list.ts";
+import { queueKey } from "../row-list/row-list.ts";
 import { Pill } from "../status/status.react.tsx";
 import { TabLink, TabsNav } from "../tabs/tabs.react.tsx";
 import { Time } from "../time/time.react.tsx";
@@ -151,14 +150,7 @@ export function MentionsList({
     const onKey = (e: KeyboardEvent) => {
       const root = rootRef.current;
       const list = root?.querySelector<HTMLElement>(".cap-mq-list");
-      if (!root || !list || e.defaultPrevented || isTypingKey(e) || singleKeysOff() || e.repeat)
-        return;
-      if (e.key === "j" || e.key === "k") {
-        if (!listOwnsKeys(list)) return;
-        if (moveRowFocus(list, e.key === "j" ? 1 : -1) || list.contains(document.activeElement))
-          e.preventDefault();
-        return;
-      }
+      if (!root || !list || !queueKey(e, list)) return;
       if (e.key === "Escape") {
         if (
           stateRef.current.selected.length &&
@@ -359,7 +351,7 @@ export function MentionsList({
                     onClick={toggle(m.id)}
                   >
                     <span className="cap-avatar" data-size="sm" aria-hidden="true">
-                      <span className="cap-avatar-fallback">{initials(m.author) || "?"}</span>
+                      <span className="cap-avatar-fallback">{initials(m.author)}</span>
                     </span>{" "}
                     <span className="cap-mq-name">{m.author}</span>{" "}
                     <span className="cap-mq-host">{m.host}</span>

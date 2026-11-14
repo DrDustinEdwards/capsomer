@@ -8,13 +8,14 @@ import {
   type Ref,
 } from "react";
 import { morphFrom } from "./button.ts";
+import { buttonAttrs, type ButtonLook } from "./button-look.ts";
 
-export interface ButtonProps extends Omit<
-  ButtonHTMLAttributes<HTMLButtonElement>,
-  "disabled" | "style"
-> {
-  variant?: "default" | "primary" | "secondary" | "danger" | "quiet" | "link";
-  size?: "xs" | "sm" | "default" | "lg";
+export { buttonAttrs, type ButtonLook };
+
+export interface ButtonProps
+  extends
+    Omit<ButtonHTMLAttributes<HTMLButtonElement>, "disabled" | "style">,
+    Pick<ButtonLook, "variant" | "size"> {
   // In flight: the label stays (so the width and the name stay) and a spinner covers it.
   // Clicks are ignored until it settles.
   pending?: boolean;
@@ -61,8 +62,6 @@ export function Button(props: ButtonProps) {
   const disabled = disabledReason != null && disabledReason !== false;
   const describedBy =
     [rest["aria-describedby"], disabled ? reasonId : null].filter(Boolean).join(" ") || undefined;
-  if (iconOnly && !label && !rest["aria-label"])
-    console.warn("Button: an icon-only button needs a label.");
 
   // The morph: after React writes a new label, animate from the last width and a copy of the
   // last label (button.ts).
@@ -91,13 +90,10 @@ export function Button(props: ButtonProps) {
     <button
       {...rest}
       type={type}
-      className={className ? `cap-btn ${className}` : "cap-btn"}
-      data-variant={variant === "default" ? undefined : variant}
-      data-size={size === "default" ? undefined : size}
-      data-icon-only={iconOnly ? "" : undefined}
-      data-wrap={wrap ? "" : undefined}
-      data-block={block ? "" : undefined}
-      aria-label={iconOnly ? (label ?? rest["aria-label"]) : rest["aria-label"]}
+      {...buttonAttrs(
+        { variant, size, iconOnly, wrap, block, label, "aria-label": rest["aria-label"] },
+        className,
+      )}
       aria-disabled={disabled ? true : undefined}
       aria-describedby={describedBy}
       aria-busy={pending ? true : undefined}

@@ -13,15 +13,10 @@ import {
 } from "react";
 import { useOptionalMessage } from "../message/message.react.tsx";
 import { SLUG_PATTERN, slugify } from "@drdustinedwards/site-helpers/slug";
-import {
-  centsToDollars,
-  countText,
-  keyValue,
-  revealedText,
-  stepValue,
-  toDateTimeLocal,
-} from "./field.ts";
+import { moneyInputValue } from "@dustinedwards/site-runtime/money";
+import { countText, keyValue, revealedText, stepValue, toDateTimeLocal } from "./field.ts";
 import { useHydrated } from "../hooks/hooks.react.tsx";
+import { rangeFill } from "../range-slider/range-slider.ts";
 
 // The props Field passes to its control. Any input, textarea or select (or a component
 // that forwards these to one) will do.
@@ -186,7 +181,6 @@ export function Range(
   },
 ) {
   const { value, min = 0, max = 100, className, style, ...rest } = props;
-  const fill = max > min ? ((value - min) / (max - min)) * 100 : 0;
   return (
     <input
       {...rest}
@@ -195,7 +189,7 @@ export function Range(
       max={max}
       value={value}
       className={className ? `cap-range ${className}` : "cap-range"}
-      style={{ ...style, ["--cap-range-fill" as string]: `${fill.toFixed(2)}%` }}
+      style={{ ...style, ["--cap-range-fill" as string]: rangeFill(value, min, max) }}
     />
   );
 }
@@ -231,28 +225,40 @@ export function InputGroupAddon(props: {
 // The words and checks every field part takes from Field.
 type FieldText = Pick<
   FieldProps,
-  "label" | "help" | "error" | "announce" | "required" | "helpPlacement" | "showRequired"
+  | "label"
+  | "labelHidden"
+  | "help"
+  | "error"
+  | "announce"
+  | "required"
+  | "helpPlacement"
+  | "showRequired"
 >;
 
-const FIELD_KEYS = [
-  "label",
-  "help",
-  "error",
-  "announce",
-  "required",
-  "helpPlacement",
-  "showRequired",
-] as const;
-
 // Splits a field part's props into the words Field takes and the rest, for the control.
-function splitField<T extends Partial<FieldText>>(props: T): [FieldText, Omit<T, keyof FieldText>] {
-  const field: Record<string, unknown> = {};
-  const rest: Record<string, unknown> = { ...props };
-  for (const k of FIELD_KEYS) {
-    if (k in rest) field[k] = rest[k];
-    delete rest[k];
-  }
-  return [field as unknown as FieldText, rest as Omit<T, keyof FieldText>];
+function splitField<T extends FieldText>(props: T) {
+  const {
+    label,
+    labelHidden,
+    help,
+    error,
+    announce,
+    required,
+    helpPlacement,
+    showRequired,
+    ...rest
+  } = props;
+  const field: FieldText = {
+    label,
+    labelHidden,
+    help,
+    error,
+    announce,
+    required,
+    helpPlacement,
+    showRequired,
+  };
+  return [field, rest] as const;
 }
 
 // A password with Show and Hide (GOV.UK Password input). The change is said in the status
@@ -591,24 +597,7 @@ export function DateInput(
   const hasError = error != null && error !== false && error !== "";
   const wrong = hasError ? (invalid ?? order) : [];
   return (
-    <fieldset
-      className="cap-field"
-      aria-describedby={help ? `${base}-help` : undefined}
-      data-invalid={hasError ? "true" : undefined}
-    >
-      <legend className="cap-field-label">
-        {legend}
-        {required ? (
-          <span className="cap-field-required" aria-hidden="true">
-            Required
-          </span>
-        ) : null}
-      </legend>
-      {help ? (
-        <p className="cap-field-help" id={`${base}-help`}>
-          {help}
-        </p>
-      ) : null}
+    <FieldSet legend={legend} help={help} error={error} announce={announce} required={required}>
       <div className="cap-date-input">
         {order.map((part) => (
           <div className="cap-date-input-part" key={part}>
@@ -625,11 +614,51 @@ export function DateInput(
               value={value[part]}
               onChange={(e) => onChange({ ...value, [part]: e.target.value })}
               aria-invalid={wrong.includes(part) ? true : undefined}
-              aria-describedby={hasError ? `${base}-error` : undefined}
             />
           </div>
         ))}
       </div>
+    </FieldSet>
+  );
+}
+
+// Controls that answer one question together (a date's parts, a set of radios) in a fieldset:
+// the legend, Required, the help and the error, both read as the group's description (GOV.UK's
+// fieldset).
+export function FieldSet(
+  props: Omit<FieldText, "label" | "helpPlacement" | "showRequired"> & {
+    legend: ReactNode;
+    id?: string;
+    children: ReactNode;
+  },
+) {
+  const { legend, help, error, announce = false, required, id, children } = props;
+  const base = useId();
+  const hasError = error != null && error !== false && error !== "";
+  const describedBy =
+    [help ? `${base}-help` : null, hasError ? `${base}-error` : null].filter(Boolean).join(" ") ||
+    undefined;
+  return (
+    <fieldset
+      className="cap-field"
+      id={id}
+      aria-describedby={describedBy}
+      data-invalid={hasError ? "true" : undefined}
+    >
+      <legend className="cap-field-label">
+        {legend}
+        {required ? (
+          <span className="cap-field-required" aria-hidden="true">
+            Required
+          </span>
+        ) : null}
+      </legend>
+      {help ? (
+        <p className="cap-field-help" id={`${base}-help`}>
+          {help}
+        </p>
+      ) : null}
+      {children}
       <p
         className="cap-field-error"
         id={`${base}-error`}
@@ -827,7 +856,8 @@ export function SlugField(
 
 // Money in dollars: a text box (inputMode decimal, never type="number", which drops what it
 // cannot read) with the currency sign inside its edge. The app keeps integer cents:
-// `defaultCents` fills it, and the server reads the posted text with dollarsToCents.
+// `defaultCents` fills it (site-runtime's moneyInputValue), and the server reads the posted text
+// with site-runtime's parseMoneyInput.
 export function MoneyField(
   props: FieldText &
     Omit<InputHTMLAttributes<HTMLInputElement>, "type" | "style" | "defaultValue"> & {
@@ -854,8 +884,10 @@ export function MoneyField(
             type="text"
             inputMode="decimal"
             autoComplete={rest.autoComplete ?? "off"}
-            pattern={rest.pattern ?? "\\$?[0-9,]*(\\.[0-9]{1,2})?"}
-            defaultValue={rest.value === undefined ? centsToDollars(defaultCents) : undefined}
+            pattern={rest.pattern ?? "[0-9,]*(\\.[0-9]{1,2})?"}
+            defaultValue={
+              rest.value === undefined ? moneyInputValue(defaultCents, "usd") : undefined
+            }
           />
         </div>
       )}

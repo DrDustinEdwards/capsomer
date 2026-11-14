@@ -256,13 +256,19 @@ export function ImageField({
 }: ImageFieldProps) {
   const labelId = useId();
   const words = picker?.words ?? { ...INSERT_WORDS, label: "Choose from library" };
+  // The shape through the CSSOM, not a style attribute (style-src 'self').
+  const thumb = useRef<HTMLDivElement>(null);
+  useLayoutEffect(() => {
+    if (ratio) thumb.current?.style.setProperty("aspect-ratio", ratio);
+    else thumb.current?.style.removeProperty("aspect-ratio");
+  }, [ratio]);
   return (
     <div className="cap-image-field" role="group" aria-labelledby={labelId}>
       <span className="cap-field-label" id={labelId}>
         {label}
       </span>
       <div className="cap-image-field-row">
-        <div className="cap-image-field-thumb" style={ratio ? { aspectRatio: ratio } : undefined}>
+        <div className="cap-image-field-thumb" ref={thumb}>
           {value ? <img src={src} alt={alt} /> : <span className="cap-muted">{none}</span>}
         </div>
         <div className="cap-image-field-controls">

@@ -7,7 +7,7 @@
 // attentionGroups, GROUP_CHILDREN, PROBLEM_ROWS; views/Overview.tsx: NeedsAttention),
 // made generic: the Portal's own feed types and its group table are the caller's here.
 
-import { plural } from "../hooks/hooks.ts";
+import { plural } from "@drdustinedwards/site-helpers/text";
 import { toggleGroup } from "../disclosure/disclosure.ts";
 import { attachRowList } from "../row-list/row-list.ts";
 
@@ -185,7 +185,7 @@ export function arrange(items: readonly AttentionItem[], options: ArrangeOptions
 // The sentence in the header: "3 problems", "no problems".
 export function problemCount(a: Arranged): string {
   const n = a.problems.length + a.more.length;
-  return n ? plural(n, "problem", "problems") : "No problems";
+  return n ? plural(n, "problem") : "No problems";
 }
 
 // "All 7 in CI and merges" when the group holds more than it shows, else "Open CI and merges".
@@ -268,11 +268,6 @@ export function needsShown<G extends string>(
   );
 }
 
-// The needs in a count (a header badge, a tab's number): every one not set aside.
-export function needCount(needs: readonly Pick<Need, "later">[]): number {
-  return needs.filter((n) => n.later === undefined).length;
-}
-
 // Moves focus off a row that is about to leave the list: to the next row's title, else the
 // previous one's, else the current filter tab in the same panel, so a keyboard user keeps their
 // place.
@@ -321,8 +316,6 @@ export interface Inbox<K extends string = string> {
   apps: InboxApp<K>[];
 }
 
-const SEVERITY_ORDER: readonly InboxSeverity[] = ["needs-you", "failing", "none"];
-
 // The worst severity of a set of items: needs-you when any waits on a person, failing when only
 // a machine fault is open, none when there are none. Needs-you wins, because only a person can
 // clear it.
@@ -334,14 +327,4 @@ export function severityOf<K extends string>(
     typeof waitsOnPerson === "function" ? waitsOnPerson : (k: K) => waitsOnPerson.has(k);
   if (items.some((i) => waits(i.kind))) return "needs-you";
   return items.length > 0 ? "failing" : "none";
-}
-
-// The worst of several severities (an inbox's, from its apps').
-export function worstSeverity(severities: readonly InboxSeverity[]): InboxSeverity {
-  return SEVERITY_ORDER.find((s) => severities.includes(s)) ?? "none";
-}
-
-// The admin shell's badge tone for a severity: violet "need", red "crit", or none.
-export function severityTone(s: InboxSeverity): "need" | "crit" | undefined {
-  return s === "needs-you" ? "need" : s === "failing" ? "crit" : undefined;
 }

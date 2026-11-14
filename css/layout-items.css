@@ -1,0 +1,46 @@
+/* The item helpers, a part of layout.css: a readable line, an item that grows, shrinks, keeps its
+   size or takes a whole row, and a centered column. They replace txasm's and Foxing's .grow,
+   .shrink, .span-2, .narrow and .form-page. */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+@layer cap.utilities {
+  /* A readable line: 65 characters. */
+  .cap-measure {
+    max-inline-size: 65ch;
+  }
+  /* An item that takes the room its row leaves, and may shrink below its content (a long name
+     beside its buttons). */
+  .cap-grow {
+    flex: 1 1 0%;
+    min-inline-size: 0;
+  }
+  /* An item that may shrink below its content's width (a flex or grid item, whose floor is
+     otherwise its content), so its own text wraps or its own table scrolls instead of the page. */
+  .cap-shrink {
+    min-inline-size: 0;
+  }
+  /* An item that keeps its own size and never shrinks (a time column, a thumbnail). */
+  .cap-keep {
+    flex: none;
+  }
+  /* An item that takes a whole row: every column of a grid, the full line of a cluster, the full
+     width of a block. */
+  .cap-full {
+    grid-column: 1 / -1;
+    flex-basis: 100%;
+    inline-size: 100%;
+  }
+  /* A centered column narrower than the page: a form (42rem, the default), a sign-in or other
+     single short form (data-width="narrow", 28rem) or a reading page (data-width="reading",
+     48rem). */
+  .cap-column {
+    max-inline-size: var(--column-max, 42rem);
+    margin-inline: auto;
+    &[data-width="narrow"] {
+      --column-max: 28rem;
+    }
+    &[data-width="reading"] {
+      --column-max: 48rem;
+    }
+  }
+}

@@ -9,11 +9,10 @@
 // once on hover, with no delay, and on click; on touch, on tap. Opened from the keyboard, focus
 // moves to its first item; Up and Down move between items, Home and End go to the ends, Esc closes
 // it and focus goes back to its button.
-import { plural } from "../hooks/hooks.ts";
 import { closeDialog, openDialog, wireDialog } from "../dialog/dialog.ts";
 import { escapeHtml } from "@dustinedwards/site-runtime/html";
 import { place } from "../popover/popover.ts";
-import { isImeEnter, singleKeysOff } from "../shortcuts/shortcuts.ts";
+import { register } from "../shortcuts/shortcuts.ts";
 import { attach as attachTip, hideTip } from "../tooltip/tooltip.ts";
 
 // A count is a glance, not a figure: past 99 it says 99+, in the header, the sheet, the bottom bar
@@ -45,7 +44,7 @@ export function panelItems(panel: HTMLElement): HTMLElement[] {
   );
 }
 
-const isOpen = (panel: HTMLElement): boolean => {
+export const isOpen = (panel: HTMLElement): boolean => {
   try {
     return panel.matches(":popover-open");
   } catch {
@@ -73,24 +72,6 @@ export function placePanel(trigger: HTMLElement, panel: HTMLElement): void {
   });
 }
 
-// The two letters on the avatar: the first and last word's first letters ("Alex Rivera": AR),
-// the first two letters of a one-word name, else the email's first letter (Foxhound's and txasm's
-// personInitials and initials). Whole letters (graphemes), not code units, so an accented or
-// non-Latin name never shows half a letter.
-const letters = (w: string): string[] =>
-  Array.from(
-    new Intl.Segmenter(undefined, { granularity: "grapheme" }).segment(w),
-    (g) => g.segment,
-  );
-export function initialsOf(name?: string | null, email?: string | null): string {
-  const words = (name ?? "").trim().split(/\s+/).filter(Boolean);
-  const first = (w: string) => letters(w)[0] ?? "";
-  if (words.length >= 2)
-    return `${first(words[0]!)}${first(words[words.length - 1]!)}`.toUpperCase();
-  if (words.length === 1) return letters(words[0]!).slice(0, 2).join("").toUpperCase();
-  return (first((email ?? "").trim()) || "?").toUpperCase();
-}
-
 let escBound = false;
 function onEsc(e: KeyboardEvent): void {
   if (e.key !== "Escape") return;
@@ -104,7 +85,7 @@ function onEsc(e: KeyboardEvent): void {
 }
 
 // Wires one disclosure button to its panel. Returns a function that unwires it.
-// Adds a listener and keeps its removal (wirePanel, wireSearch).
+// Adds a listener and keeps its removal (wirePanel, and wireSearch in site-header-search.ts).
 type On = <E extends Event>(
   target: EventTarget,
   type: string,
@@ -113,7 +94,12 @@ type On = <E extends Event>(
 ) => void;
 
 // Focus leaving an open panel for anything but its button closes it, as does a press outside both.
-function dismissOutside(on: On, trigger: HTMLElement, panel: HTMLElement, close: () => void): void {
+export function dismissOutside(
+  on: On,
+  trigger: HTMLElement,
+  panel: HTMLElement,
+  close: () => void,
+): void {
   on(panel, "focusout", (e: FocusEvent) => {
     const to = e.relatedTarget as Node | null;
     if (to && !panel.contains(to) && to !== trigger) close();
@@ -278,19 +264,19 @@ export function guardForms(root: HTMLElement): () => void {
 // (whichever form it takes), so the key keeps the choice exactly as the button does.
 export function wireThemeKey(header: HTMLElement, key: string): () => void {
   const want = key.toLowerCase();
-  const onKey = (e: KeyboardEvent) => {
-    if (e.key.toLowerCase() !== want || e.ctrlKey || e.metaKey || e.altKey || singleKeysOff())
-      return;
-    if (
-      (e.target as Element | null)?.closest?.("input, textarea, select, [contenteditable='true']")
-    )
-      return;
-    [...header.querySelectorAll<HTMLElement>(".cap-site-header-theme")]
-      .find((b) => b.getClientRects().length > 0)
-      ?.click();
-  };
-  document.addEventListener("keydown", onKey);
-  return () => document.removeEventListener("keydown", onKey);
+  const button = () =>
+    [...header.querySelectorAll<HTMLElement>(".cap-site-header-theme")].find(
+      (b) => b.getClientRects().length > 0,
+    );
+  // Through the one shortcut registry: it skips typing, a modal, a composition and a key already
+  // handled, honors the single-keys switch, and lists the key in the shortcuts sheet. Either case.
+  return register({
+    key: want === want.toUpperCase() ? want : [want, want.toUpperCase()],
+    label: "Switch the theme",
+    group: "General",
+    when: () => button() !== undefined,
+    run: () => button()?.click(),
+  });
 }
 
 // How far the page scrolls before the header is "scrolled" (data-scrolled): past a trackpad's
@@ -360,7 +346,7 @@ export function enhance(
       trigger.removeAttribute("aria-describedby");
     }
     const search = header.querySelector<HTMLElement>("[data-cap-part='search']");
-    if (search) parts.push(wireSearch(search, suggest));
+    if (search) parts.push(wireSearchOnDemand(search, suggest));
     const sheet = header.querySelector<HTMLDialogElement>("dialog.cap-site-header-sheet");
     const menu = header.querySelector<HTMLButtonElement>(".cap-site-header-menu");
     if (sheet) parts.push(wireDialog(sheet));
@@ -412,231 +398,23 @@ export interface SearchHit {
 }
 export type Suggest = (query: string, signal: AbortSignal) => Promise<SearchHit[]> | SearchHit[];
 
-// How long the field waits after a key before it asks, so a word typed fast asks once.
-export const SUGGEST_DELAY_MS = 120;
-
-let searchCount = 0;
-
 /**
- * Wires a letterhead's search ([data-cap-part="search"]: the icon link and its panel holding the
- * form) to open from the icon or "/", and, given `suggest`, to show matches as the person types.
- * Returns a function that unwires it.
+ * Wires a header's search (wireSearch, site-header-search.ts), loading that module on demand so a
+ * site without search never downloads it. Until it arrives, or if it fails to, the icon is the link
+ * to the search page it always is; a failed load reaches the page's error reporting. Returns a
+ * function that unwires it.
  */
-export function wireSearch(
-  search: HTMLElement,
-  suggest?: Suggest,
-  { limit = 6 }: { limit?: number } = {},
-): () => void {
-  const trigger = search.querySelector<HTMLElement>("[data-cap-part='search-trigger']");
-  const panel = search.querySelector<HTMLElement>(".cap-site-header-search-panel");
-  const form = panel?.querySelector<HTMLFormElement>("form");
-  const input = form?.querySelector<HTMLInputElement>("input[type='search']");
-  if (!trigger || !panel || !form || !input) return () => {};
-  const id = `cap-search-${++searchCount}`;
-  panel.id ||= id;
-  if (!panel.hasAttribute("popover")) panel.setAttribute("popover", "manual");
-  trigger.setAttribute("aria-controls", panel.id);
-  trigger.setAttribute("aria-expanded", "false");
-  const results = document.createElement("div");
-  results.className = "cap-site-header-results";
-  results.hidden = true;
-  const listbox = document.createElement("div");
-  listbox.setAttribute("role", "listbox");
-  listbox.id = `${id}-list`;
-  listbox.setAttribute("aria-label", input.getAttribute("aria-label") ?? "Search");
-  const emptyNote = document.createElement("p");
-  emptyNote.className = "cap-site-header-results-empty";
-  emptyNote.hidden = true;
-  const liveStatus = document.createElement("span");
-  liveStatus.className = "cap-sr-only";
-  liveStatus.setAttribute("role", "status");
-  results.append(listbox, emptyNote, liveStatus);
-  form.after(results);
-  const list = results.children[0] as HTMLElement;
-  const empty = results.children[1] as HTMLElement;
-  const status = results.children[2] as HTMLElement;
-  input.setAttribute("role", "combobox");
-  input.setAttribute("aria-autocomplete", "list");
-  input.setAttribute("aria-controls", `${id}-list`);
-  input.setAttribute("aria-expanded", "false");
-
-  let timer: number | undefined;
-  let pending: AbortController | undefined;
-  let active = -1;
-  const rows = () => [...list.querySelectorAll<HTMLAnchorElement>("[role='option']")];
-  const listed = () => !results.hidden;
-  const follow = () => {
-    if (isOpen(panel)) placePanel(trigger, panel);
-  };
-  const mark = (at: number) => {
-    const all = rows();
-    active = at;
-    all.forEach((row, i) => row.toggleAttribute("data-highlighted", i === at));
-    if (at >= 0 && all[at]) {
-      input.setAttribute("aria-activedescendant", all[at].id);
-      all[at].scrollIntoView({ block: "nearest" });
-    } else input.removeAttribute("aria-activedescendant");
-  };
-  const hideList = () => {
-    window.clearTimeout(timer);
-    pending?.abort();
-    mark(-1);
-    results.hidden = true;
-    input.setAttribute("aria-expanded", "false");
-  };
-  const close = (refocus = false) => {
-    hideList();
-    if (isOpen(panel)) panel.hidePopover();
-    if (refocus) trigger.focus({ preventScroll: true });
-  };
-  const open = () => {
-    closePanels();
-    if (!isOpen(panel)) panel.showPopover();
-    placePanel(trigger, panel);
-    input.focus({ preventScroll: true });
-    input.select();
-  };
-  const fullUrl = (query: string) => {
-    const url = new URL(form.action, location.href);
-    url.searchParams.set(input.name || "q", query);
-    return url.pathname + url.search;
-  };
-  const show = (query: string, hits: SearchHit[]) => {
-    const option = (optionId: string, href: string, className?: string) => {
-      const a = document.createElement("a");
-      a.setAttribute("role", "option");
-      a.id = optionId;
-      a.setAttribute("href", href);
-      a.tabIndex = -1;
-      if (className) a.className = className;
-      return a;
-    };
-    const part = (className: string, text: string) => {
-      const span = document.createElement("span");
-      span.className = className;
-      span.textContent = text;
-      return span;
-    };
-    const row = (h: SearchHit, i: number) => {
-      const a = option(`${id}-${i}`, h.url);
-      if (h.kind) a.append(part("cap-site-header-result-kind", h.kind));
-      a.append(part("cap-site-header-result-title", h.title));
-      if (h.detail) a.append(part("cap-site-header-result-detail", h.detail));
-      return a;
-    };
-    const top = hits.slice(0, limit);
-    const all = option(`${id}-all`, fullUrl(query), "cap-site-header-result-all");
-    all.textContent = `All results for \u201c${query}\u201d`;
-    list.replaceChildren(...top.map(row), all);
-    empty.hidden = top.length > 0;
-    empty.textContent = top.length
-      ? ""
-      : `No match for “${query}”. Try fewer words, or open all results.`;
-    status.textContent = top.length ? plural(hits.length, "match", "matches") : "No match";
-    mark(-1);
-    results.hidden = false;
-    input.setAttribute("aria-expanded", "true");
-    follow();
-  };
-  const ask = () => {
-    const query = input.value.trim();
-    pending?.abort();
-    if (!query || !suggest) return hideList();
-    const mine = new AbortController();
-    pending = mine;
-    Promise.resolve(suggest(query, mine.signal))
-      .then((hits) => {
-        if (!mine.signal.aborted && input.value.trim() === query) show(query, hits);
-      })
-      .catch(() => {
-        if (!mine.signal.aborted) show(query, []);
-      });
-  };
-
-  const undo: Array<() => void> = [];
-  const on = <E extends Event>(
-    target: EventTarget,
-    type: string,
-    fn: (e: E) => void,
-    opts?: boolean | AddEventListenerOptions,
-  ) => {
-    target.addEventListener(type, fn as EventListener, opts);
-    undo.push(() => target.removeEventListener(type, fn as EventListener, opts));
-  };
-  on(panel, "toggle", (e: ToggleEvent) => {
-    const opened = e.newState === "open";
-    trigger.setAttribute("aria-expanded", String(opened));
-    if (!opened) hideList();
-  });
-  on(trigger, "click", (e: MouseEvent) => {
-    e.preventDefault();
-    hideTip(trigger);
-    if (isOpen(panel)) close();
-    else open();
-  });
-  // "/" opens search from anywhere, but not while a person types in a field.
-  on(document, "keydown", (e: KeyboardEvent) => {
-    if (e.key !== "/" || e.ctrlKey || e.metaKey || e.altKey || e.defaultPrevented) return;
-    if (
-      (e.target as Element | null)?.closest?.("input, textarea, select, [contenteditable='true']")
-    )
-      return;
-    e.preventDefault();
-    open();
-  });
-  on(input, "input", () => {
-    window.clearTimeout(timer);
-    timer = window.setTimeout(ask, SUGGEST_DELAY_MS);
-  });
-  on(input, "keydown", (e: KeyboardEvent) => {
-    if (e.key === "Escape") {
-      e.preventDefault();
-      e.stopPropagation();
-      if (listed()) hideList();
-      else close(true);
-      return;
-    }
-    if (e.key === "Enter" && !isImeEnter(e)) {
-      const row = rows()[active];
-      if (listed() && row) {
-        e.preventDefault();
-        location.assign(row.href);
-      }
-      return;
-    }
-    if (e.key !== "ArrowDown" && e.key !== "ArrowUp") return;
-    if (!listed()) {
-      if (input.value.trim()) ask();
-      return;
-    }
-    e.preventDefault();
-    const all = rows();
-    mark(
-      active < 0
-        ? e.key === "ArrowDown"
-          ? 0
-          : all.length - 1
-        : (active + (e.key === "ArrowDown" ? 1 : all.length - 1)) % all.length,
-    );
-  });
-  // Focus leaving the panel for anything but its icon closes it; so does a press outside both.
-  dismissOutside(on, trigger, panel, close);
-  // A press on a row follows its link; focus stays in the field until then.
-  on(results, "pointerdown", (e: PointerEvent) => e.preventDefault());
-  on(window, "resize", follow);
-  on(window, "scroll", follow, true);
+export function wireSearchOnDemand(search: HTMLElement, suggest?: Suggest): () => void {
+  let unwire: (() => void) | undefined;
+  let gone = false;
+  // A server build (Vite sets import.meta.env.SSR) leaves the chunk out: search is wired only in a browser.
+  if (!(import.meta as { env?: { SSR?: boolean } }).env?.SSR)
+    void import("./site-header-search.ts").then((m) => {
+      if (!gone) unwire = m.wireSearch(search, suggest);
+    });
   return () => {
-    close();
-    undo.forEach((f) => f());
-    results.remove();
-    for (const a of [
-      "role",
-      "aria-autocomplete",
-      "aria-controls",
-      "aria-expanded",
-      "aria-activedescendant",
-    ])
-      input.removeAttribute(a);
+    gone = true;
+    unwire?.();
   };
 }
 

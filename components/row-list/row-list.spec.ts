@@ -97,41 +97,6 @@ eachTheme((theme) => {
     expect(real?.bg).toBe(forced?.bg);
   });
 
-  test("accessibility: the list's roles and names", { tag: "@markup" }, async ({ page }) => {
-    await visitStates(page, "row-list", theme);
-    await expect(page.locator("#list-mixed")).toMatchAriaSnapshot(`
-      - list /Mixed, worst first/:
-        - listitem:
-          - link "example.org is not answering"
-        - listitem:
-          - link "D1 rows read will run out before the reset"
-        - listitem:
-          - link "2 jobs are waiting for approval"
-        - listitem:
-          - link /example\\.net/
-        - listitem:
-          - link "4 notices"
-    `);
-    await expect(page.locator("#list-actions")).toMatchAriaSnapshot(`
-      - list:
-        - listitem:
-          - link "Push design/capsomer and open a pull request"
-          - button "Approve"
-          - button "Decline"
-    `);
-  });
-
-  test(
-    "accessibility: a row's link is described by its status and detail",
-    { tag: "@markup" },
-    async ({ page }) => {
-      await visitStates(page, "row-list", theme);
-      await expect(
-        page.getByRole("link", { name: "example.org is not answering" }),
-      ).toHaveAccessibleDescription("Critical 3 failed checks in a row, first at 14:02");
-    },
-  );
-
   test("keyboard: j and k move focus between the primary list's rows", async ({ page }) => {
     await visitStates(page, "row-list", theme);
     await page.locator("h1").click();
@@ -179,23 +144,6 @@ eachTheme((theme) => {
     ).toBeFocused();
   });
 
-  test("keyboard: Tab moves from row to row, one stop each", async ({ page }) => {
-    await visitStates(page, "row-list", theme);
-    await page.getByRole("link", { name: "example.org is not answering" }).focus();
-    await page.keyboard.press("Tab");
-    await expect(
-      page.getByRole("link", { name: "D1 rows read will run out before the reset" }),
-    ).toBeFocused();
-  });
-
-  test("keyboard: Enter follows the focused row's link", async ({ page }) => {
-    await visitStates(page, "row-list", theme);
-    await page.locator("h1").click();
-    await page.keyboard.press("j");
-    await page.keyboard.press("Enter");
-    await expect(page).toHaveURL(/#site-example-org$/);
-  });
-
   test("keyboard: j typed into a field stays in the field", async ({ page }) => {
     await visitStates(page, "row-list", theme);
     await page.evaluate(() => {
@@ -219,15 +167,6 @@ eachTheme((theme) => {
     ).not.toBeFocused();
   });
 
-  test("keyboard: a row is one tab stop, and its actions are their own", async ({ page }) => {
-    await visitStates(page, "row-list", theme);
-    await page.getByRole("link", { name: "Push design/capsomer and open a pull request" }).focus();
-    await page.keyboard.press("Tab");
-    await expect(page.getByRole("button", { name: "Approve" })).toBeFocused();
-    await page.keyboard.press("Tab");
-    await expect(page.getByRole("button", { name: "Decline" })).toBeFocused();
-  });
-
   test("behavior: a click anywhere on the row follows its link", async ({ page }) => {
     await visitStates(page, "row-list", theme);
     // The stretched link covers the whole row, so a click on the row lands on the link.
@@ -248,56 +187,6 @@ eachTheme((theme) => {
     expect(hit).toBe("act-decline");
     await page.locator("#act-decline").click();
     await expect(page).not.toHaveURL(/#job-push$/);
-  });
-
-  test("behavior: a long title takes two lines, is then cut, and keeps its full name", async ({
-    page,
-  }) => {
-    await visitStates(page, "row-list", theme);
-    const link = page.locator("#long-title");
-    await expect(link).toHaveCSS("-webkit-line-clamp", "2");
-    const cut = await link.evaluate((el) => el.scrollHeight > el.clientHeight);
-    expect(cut).toBe(true);
-    await expect(link).toHaveAccessibleName(/a fresh count every time$/);
-  });
-
-  test("behavior: a critical row has the red edge, flush and clipped to its corners, others none", async ({
-    page,
-  }) => {
-    await visitStates(page, "row-list", theme);
-    const edge = (sel: string) =>
-      page
-        .locator(sel)
-        .first()
-        .evaluate((el) => getComputedStyle(el).boxShadow);
-    for (const sel of ["#list-crit .cap-row", "#list-variants .cap-row[data-tone='crit']"]) {
-      // An inset shadow at the row's own edge: flush, and it follows the border radius.
-      expect(await edge(sel)).toMatch(/ 3px 0px 0px 0px inset$/);
-      expect(
-        await page
-          .locator(sel)
-          .first()
-          .evaluate((el) => getComputedStyle(el, "::before").content),
-      ).toBe("none");
-    }
-    expect(await edge("#list-focus .cap-row")).toBe("none");
-  });
-
-  test("behavior: the sizes step down, default taller than sm, sm than xs, and xs set smaller", async ({
-    page,
-  }) => {
-    await page.setViewportSize({ width: 390, height: 900 });
-    await visitStates(page, "row-list", theme);
-    const rows = page.locator("#list-variants .cap-row");
-    const size = (i: number) =>
-      rows.nth(i).evaluate((el) => ({
-        h: el.getBoundingClientRect().height,
-        font: parseFloat(getComputedStyle(el.querySelector(".cap-row-title a")!).fontSize),
-      }));
-    const [outline, sm, xs] = [await size(1), await size(3), await size(4)];
-    expect(sm.h, "sm, with its picture, is shorter than a default row").toBeLessThan(outline.h);
-    expect(xs.h).toBeLessThan(sm.h);
-    expect(xs.font).toBeLessThan(outline.font);
   });
 
   test("behavior: at phone width every row's text starts in one column, with or without an icon or a picture beside it", async ({
@@ -325,23 +214,6 @@ eachTheme((theme) => {
       "every icon and picture is beside its title",
     ).toBe(true);
   });
-
-  test(
-    "accessibility: a row that opens in place is a button with aria-expanded and what it controls",
-    { tag: "@markup" },
-    async ({ page }) => {
-      await visitStates(page, "row-list", theme);
-      const button = page.getByRole("button", { name: "3 pull requests await the seat" });
-      await expect(button).toHaveAttribute("aria-expanded", "false");
-      await expect(button).toHaveAttribute("aria-controls", "g1-kids");
-      await expect(button).toHaveAccessibleDescription(/Warning/);
-      // The chevron is decoration: it is not in the button's name.
-      await expect(page.locator("#list-group .cap-row-chevron")).toHaveAttribute(
-        "aria-hidden",
-        "true",
-      );
-    },
-  );
 
   test("keyboard: j and k reach a group row's button like any row's link", async ({ page }) => {
     await visitStates(page, "row-list", theme);

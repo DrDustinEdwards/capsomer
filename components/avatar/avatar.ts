@@ -31,20 +31,24 @@ export function enhance(root: ParentNode = document): () => void {
   };
 }
 
-// The initials for a name: the first letters of the first and last words.
-export function initials(name: string): string {
-  const words = name.trim().split(/\s+/).filter(Boolean);
-  if (words.length === 0) return "";
-  const first = words[0] ?? "";
-  const last = words.length > 1 ? (words[words.length - 1] ?? "") : "";
-  return `${firstGrapheme(first)}${firstGrapheme(last)}`;
+// The initials for a person: the first and last word's first letters ("Alex Rivera": AR), the
+// first two letters of a one-word name, else the email's first letter, else "?". Whole letters
+// (graphemes), not code units, so an accented or non-Latin name never shows half a letter.
+export function initials(name?: string | null, email?: string | null): string {
+  const words = (name ?? "").trim().split(/\s+/).filter(Boolean);
+  if (words.length >= 2)
+    return `${firstGrapheme(words[0]!)}${firstGrapheme(words[words.length - 1]!)}`.toUpperCase();
+  if (words.length === 1) return graphemes(words[0]!).slice(0, 2).join("").toUpperCase();
+  return (firstGrapheme((email ?? "").trim()) || "?").toUpperCase();
 }
+
+const graphemes = (word: string): string[] =>
+  Array.from(
+    new Intl.Segmenter(undefined, { granularity: "grapheme" }).segment(word),
+    (g) => g.segment,
+  );
 
 /** A word's first user-perceived character (an emoji with its modifiers, a letter with its accents). */
 function firstGrapheme(word: string): string {
-  for (const { segment } of new Intl.Segmenter(undefined, { granularity: "grapheme" }).segment(
-    word,
-  ))
-    return segment;
-  return "";
+  return graphemes(word)[0] ?? "";
 }

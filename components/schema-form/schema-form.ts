@@ -1,6 +1,7 @@
 // A form described as data: one FieldSpec per field, which the React part draws and readSpecs
 // reads back from a post, checked against the same spec. Safe on the server: no DOM.
-import { dollarsToCents, fromDateTimeLocal } from "../field/field.ts";
+import { parseMoneyInput } from "@dustinedwards/site-runtime/money";
+import { dateFrom, fromDateTimeLocal } from "../field/field.ts";
 
 export type FieldKind =
   | "text"
@@ -112,7 +113,7 @@ export function readSpec(form: FormData, spec: FieldSpec): { value: unknown; err
     }
     case "money": {
       if (!text) return need(undefined, true);
-      const cents = dollarsToCents(text);
+      const cents = parseMoneyInput(text, "usd");
       return cents === null
         ? {
             value: undefined,
@@ -129,7 +130,8 @@ export function readSpec(form: FormData, spec: FieldSpec): { value: unknown; err
     }
     case "date": {
       if (!text) return need(undefined, true);
-      return /^\d{4}-\d{2}-\d{2}$/.test(text) && !Number.isNaN(Date.parse(`${text}T00:00:00Z`))
+      const ymd = /^(\d{4})-(\d{2})-(\d{2})$/.exec(text);
+      return ymd && dateFrom(Number(ymd[1]), Number(ymd[2]), Number(ymd[3]))
         ? { value: text }
         : { value: undefined, error: `${spec.label} must be a real date.` };
     }

@@ -16,14 +16,9 @@
     scrollbar-width: thin;
     /* macOS draws the track only with a stable gutter. */
     scrollbar-gutter: stable;
-    border: 1px solid var(--line);
+    border: var(--line-w) solid var(--line);
     border-radius: var(--radius-m);
     padding: var(--pad-card);
-
-    &:focus-visible {
-      outline: var(--focus-width) solid var(--ring);
-      outline-offset: 2px;
-    }
     &[data-frame="none"] {
       border: 0;
       padding: 0;

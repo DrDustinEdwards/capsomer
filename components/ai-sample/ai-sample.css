@@ -6,7 +6,7 @@
    (components/email-samples.tsx, islands/email-generator.ts). */
 @layer cap.components {
   .cap-ai-sample {
-    border: 1px solid var(--line);
+    border: var(--line-w) solid var(--line);
     border-radius: var(--radius-l);
     background: var(--raised);
     color: var(--text);
@@ -19,20 +19,10 @@
     justify-content: space-between;
     gap: var(--space-2);
     padding: var(--space-3) var(--space-5);
-    border-block-end: 1px solid var(--line);
+    border-block-end: var(--line-w) solid var(--line);
   }
 
-  .cap-ai-sample-title {
-    margin: 0;
-    color: var(--muted);
-    font-family: var(--mono);
-    font-size: var(--fs-label);
-    font-weight: 500;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-  }
-
-  /* "Calls real AI": a status, with a dot that pulses only for readers who allow motion. */
+  /* "Calls real AI": a status, with a still dot (motion explains a change; this one changes nothing). */
   .cap-ai-sample-live {
     display: inline-flex;
     align-items: center;
@@ -47,18 +37,6 @@
       block-size: 6px;
       border-radius: var(--radius-full);
       background: currentColor;
-    }
-  }
-
-  @media (prefers-reduced-motion: no-preference) {
-    .cap-ai-sample-live::before {
-      animation: cap-ai-sample-pulse 2s var(--ease-out) infinite;
-    }
-  }
-
-  @keyframes cap-ai-sample-pulse {
-    50% {
-      opacity: 0.35;
     }
   }
 
@@ -102,7 +80,7 @@
   .cap-ai-sample-error {
     margin: 0;
     padding: var(--space-5);
-    border-block-start: 1px solid var(--line);
+    border-block-start: var(--line-w) solid var(--line);
   }
 
   .cap-ai-sample-error {
@@ -110,22 +88,18 @@
     font-size: var(--fs-detail);
   }
 
-  .cap-ai-sample-label {
-    margin: 0 0 var(--space-2);
-    color: var(--muted);
-    font-family: var(--mono);
-    font-size: var(--fs-label);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
+  /* A field's label is the mono eyebrow (.cap-eyebrow[data-variant="mono"]), spaced from its value. */
+  .cap-eyebrow.cap-ai-sample-label {
+    margin-block-end: var(--space-2);
   }
 
   .cap-ai-sample-field {
     margin: 0 0 var(--space-4);
     padding: var(--space-2) var(--space-3);
-    border: 1px solid var(--line);
+    border: var(--line-w) solid var(--line);
     border-radius: var(--radius-m);
     background: var(--ground);
-    font-weight: 500;
+    font-weight: var(--weight-medium);
     overflow-wrap: anywhere;
     white-space: pre-wrap;
 
@@ -134,8 +108,8 @@
       color: var(--muted);
       font-family: var(--mono);
       font-size: var(--fs-detail);
-      font-weight: 400;
-      line-height: 1.7;
+      font-weight: var(--weight-regular);
+      line-height: var(--leading-loose);
     }
 
     &:last-of-type {

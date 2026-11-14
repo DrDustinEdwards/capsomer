@@ -1,3 +1,6 @@
+import { AwayLink } from "../link/link.react.tsx";
+import { ABSOLUTE } from "../link/link.ts";
+
 export interface Source {
   // The kind: credit, music, image, article, book, web, or any other word.
   type: string;
@@ -23,19 +26,25 @@ export interface SourcesListProps {
   label?: string;
   // Whether an address leaves the site, for its hidden "(another site)" cue. Every absolute http(s) address by default.
   isExternal?: (url: string) => boolean;
+  // Mark a link to another site with the link system's ↗ (`data-link="away"`). Off by default.
+  markAway?: boolean;
 }
 
-const external = (url: string) => /^https?:\/\//i.test(url);
+const external = (url: string) => ABSOLUTE.test(url) && !/^(mailto|tel):/i.test(url);
 
 // The HTML contract in sources-list.md.
-export function SourcesList({ sources, label, isExternal = external }: SourcesListProps) {
+export function SourcesList({ sources, label, isExternal = external, markAway }: SourcesListProps) {
   if (!sources.length) return null;
   return (
     <ol className="cap-sources" aria-label={label}>
       {sources.map((s, i) => (
         <li className="cap-source" key={i}>
           <span className="cap-source-kind">{SOURCE_KINDS[s.type] ?? s.type}</span>
-          {s.url ? (
+          {s.url && markAway && isExternal(s.url) ? (
+            <AwayLink className="cap-source-title" href={s.url}>
+              {s.title}
+            </AwayLink>
+          ) : s.url ? (
             <a className="cap-source-title" href={s.url}>
               {s.title}
               {isExternal(s.url) ? <span className="cap-sr-only"> (another site)</span> : null}

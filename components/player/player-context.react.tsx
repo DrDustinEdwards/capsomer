@@ -10,13 +10,13 @@ import {
   useCallback,
   useContext,
   useEffect,
-  useLayoutEffect,
   useMemo,
   useRef,
   useState,
   type ReactNode,
   type RefObject,
 } from "react";
+import { useIsoLayoutEffect } from "../hooks/hooks.react.tsx";
 import {
   RESTART_SECONDS,
   RESUME_SAVE_SECONDS,
@@ -78,8 +78,6 @@ export interface PlayerApi extends PlayerState {
   // Pause and end the session: the dock goes, and does not come back on scroll. Resume positions stay.
   dismiss: () => void;
 }
-
-const useIsoLayoutEffect = typeof window === "undefined" ? useEffect : useLayoutEffect;
 
 const PlayerContext = createContext<PlayerApi | null>(null);
 

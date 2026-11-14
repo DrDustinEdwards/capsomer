@@ -43,6 +43,11 @@ test("references are read once and written again as text; control characters go"
     sanitizeRichText("&amp;lt; &deg;C &#x3b1; &unknown; a\u0000b", BODY),
     "&amp;lt; °C α &amp;unknown; ab",
   );
+  // A name the object inherits is unknown too, never a function's source.
+  assert.equal(
+    sanitizeRichText("&constructor; &toString;", BODY),
+    "&amp;constructor; &amp;toString;",
+  );
   // Stored again, the value is the same: sanitizing is idempotent.
   const once = sanitizeRichText("4 &deg;C &lt;em&gt;", BODY);
   assert.equal(sanitizeRichText(once, BODY), once);

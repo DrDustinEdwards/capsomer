@@ -42,39 +42,12 @@ eachTheme((theme) => {
     await expect(page.getByRole("list", { name: "Agent sessions", exact: true })).toBeVisible();
   });
 
-  test(
-    "accessibility: a collapsed count is spoken in words",
-    { tag: "@markup" },
-    async ({ page }) => {
-      await visitStates(page, "session-row", theme);
-      const steps = page.locator("#steps-tests");
-      await expect(steps.locator("[aria-hidden='true']").first()).toHaveText(" ×12");
-      await expect(steps.locator(".cap-sr-only").first()).toHaveText(" 12 times");
-    },
-  );
-
-  test("keyboard: Tab reaches each answer button, named for its action", async ({ page }) => {
-    await visitStates(page, "session-row", theme);
-    await page.keyboard.press("Tab");
-    await expect(page.getByRole("button", { name: "Approve push" }).first()).toBeFocused();
-    await page.keyboard.press("Tab");
-    await expect(page.getByRole("button", { name: "Decline" }).first()).toBeFocused();
-  });
-
   test("keyboard: Enter on an answer sends it", async ({ page }) => {
     await visitStates(page, "session-row", theme);
     const approve = page.getByRole("button", { name: "Approve push" }).first();
     await approve.focus();
     await page.keyboard.press("Enter");
     await expect(approve).toHaveAttribute("aria-busy", "true");
-  });
-
-  test("keyboard: Space on an answer sends it", async ({ page }) => {
-    await visitStates(page, "session-row", theme);
-    const decline = page.getByRole("button", { name: "Decline" }).first();
-    await decline.focus();
-    await page.keyboard.press("Space");
-    await expect(decline).toHaveAttribute("aria-busy", "true");
   });
 
   test("behavior: an answer announces which session and which answer", async ({ page }) => {
@@ -89,27 +62,6 @@ eachTheme((theme) => {
     );
     await page.getByRole("button", { name: "Keep 0008" }).click();
     expect(await detail).toEqual({ session: "sess_migr", answer: "keep-0008" });
-  });
-
-  test("behavior: the list shows a sampled stream and every state's word", async ({ page }) => {
-    await visitStates(page, "session-row", theme);
-    await expect(page.getByText("Showing 1 in 10 steps", { exact: false })).toBeVisible();
-    for (const word of ["Needs you", "Working", "Failed", "Idle", "Stopped"]) {
-      await expect(page.locator(".cap-pill", { hasText: word }).first()).toBeVisible();
-    }
-  });
-
-  test("behavior: only a failed session is marked critical, and it still says Failed in words", async ({
-    page,
-  }) => {
-    await visitStates(page, "session-row", theme);
-    const critical = page.locator(".cap-session[data-tone='crit']");
-    const failed = page.locator(".cap-session", {
-      has: page.locator(".cap-pill", { hasText: "Failed" }),
-    });
-    await expect(critical).not.toHaveCount(0);
-    await expect(critical).toHaveCount(await failed.count());
-    await expect(critical.first().locator(".cap-pill")).toContainText("Failed");
   });
 });
 

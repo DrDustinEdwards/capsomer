@@ -474,7 +474,7 @@ test("group: a group must be on a sortable field that the default sort orders by
 // A range facet over spans: an item held from 2019 to now matches 2024, an undated one matches
 // nothing, an inverted range is read the right way round, and the chip says it in words.
 test("a range facet matches overlapping spans and canonicalizes its address", async () => {
-  const { activeCount, catalogMarkdown, catalogDownloads, listParam, summaryText } =
+  const { catalogMarkdown, catalogDownloads, listParam } =
     await import("../../components/catalog/catalog-core.ts");
   const jobs = [
     { id: "a", title: "Field lead", from: 2019, to: null },
@@ -505,8 +505,7 @@ test("a range facet matches overlapping spans and canonicalizes its address", as
     ["a"],
   );
   assert.equal(result.chips[0].label, "Year: 2024 to 2025");
-  assert.equal(activeCount(result), 1);
-  assert.equal(summaryText(def, result), "Showing 1 of 3 roles");
+  assert.equal(result.chips.length, 1);
   const facet = result.facets.find((f) => f.key === "year");
   assert.equal(facet.range.values[0], 2015);
   assert.equal(

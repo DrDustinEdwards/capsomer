@@ -35,7 +35,7 @@
     }
     &:focus-visible {
       outline: var(--focus-width) solid var(--ring);
-      outline-offset: 4px;
+      outline-offset: calc(2 * var(--focus-offset));
     }
 
     & > * {
@@ -111,7 +111,7 @@
       padding: 0;
       display: grid;
       place-items: center;
-      border: 1px solid var(--line);
+      border: var(--line-w) solid var(--line);
       border-radius: var(--radius-full);
       background: var(--surface);
       color: var(--text);
@@ -131,15 +131,17 @@
       }
       &:focus-visible {
         outline: var(--focus-width) solid var(--ring);
-        outline-offset: 2px;
+        outline-offset: var(--focus-offset);
       }
       &:disabled {
-        opacity: 0.4;
+        opacity: var(--opacity-faint);
         cursor: default;
       }
       & svg {
         inline-size: 1.25rem;
         block-size: 1.25rem;
+        /* The chevron (components/icons, a 24-unit drawing), its line 2px at 20px. */
+        --icon-stroke: 2.4;
       }
       /* A carousel with the controls flipped for right-to-left points its arrows the way it moves. */
       &:dir(rtl) svg {
@@ -200,10 +202,10 @@
     .cap-carousel-track {
       scroll-behavior: smooth;
     }
+    /* The color eases; the width changes at once (motion is opacity, color and transform only, and
+       a scaled dot would stretch its round ends). */
     .cap-carousel-markers > button::before {
-      transition:
-        inline-size var(--dur-fast) var(--ease-out),
-        background-color var(--dur-fast) var(--ease-out);
+      transition: background-color var(--dur-fast) var(--ease-out);
     }
   }
 

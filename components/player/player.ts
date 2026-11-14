@@ -482,7 +482,7 @@ export function wireClip(root: HTMLElement): () => void {
       if (error instanceof DOMException && error.name === "AbortError") return;
       // A refused play is reported, not swallowed; the link stays one press away.
       fallBack();
-      throw error;
+      reportError(error);
     });
   };
   button.addEventListener("click", onClick);

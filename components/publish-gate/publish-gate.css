@@ -13,7 +13,7 @@
     gap: var(--space-4);
     min-width: 0;
     padding: var(--pad-card);
-    border: 1px solid var(--line);
+    border: var(--line-w) solid var(--line);
     border-radius: var(--radius-l);
     background: var(--surface);
     color: var(--text);
@@ -26,8 +26,8 @@
   .cap-gate-title {
     margin: 0;
     font-size: var(--fs-label);
-    font-weight: 600;
-    letter-spacing: 0.07em;
+    font-weight: var(--weight-semibold);
+    letter-spacing: var(--tracking-caps);
     text-transform: uppercase;
     color: var(--muted);
   }
@@ -35,8 +35,8 @@
   .cap-gate-summary {
     margin: 0;
     font-size: var(--fs-lead);
-    font-weight: 600;
-    line-height: 1.35;
+    font-weight: var(--weight-semibold);
+    line-height: var(--leading-snug);
 
     /* The word and its glyph run inline with the sentence, so the sentence reads as one line of
        text, to the eye and to a screen reader that describes a button with it. */
@@ -69,8 +69,8 @@
     margin: 0;
     padding: var(--space-4) var(--pad-card) var(--space-2);
     font-size: var(--fs-label);
-    font-weight: 600;
-    letter-spacing: 0.07em;
+    font-weight: var(--weight-semibold);
+    letter-spacing: var(--tracking-caps);
     text-transform: uppercase;
     color: var(--muted);
   }
@@ -117,7 +117,7 @@
     }
     & .cap-row-title :is(.cap-gate-site-name, .cap-gate-title-text) {
       display: block;
-      font-weight: 600;
+      font-weight: var(--weight-semibold);
     }
     & .cap-row-status {
       align-self: start;
@@ -138,7 +138,7 @@
     white-space: normal;
   }
   .cap-check[data-ok="true"] .cap-row-title :is(a, .cap-gate-title-text) {
-    font-weight: 500;
+    font-weight: var(--weight-medium);
   }
 
   /* A destination's buttons sit with its row, or beside the page's own publish control. */

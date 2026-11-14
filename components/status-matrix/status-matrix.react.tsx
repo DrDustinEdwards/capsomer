@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { Glyph, type GlyphName, type Tone } from "../status/status.react.tsx";
+import { Table } from "../table/table.react.tsx";
 
 export interface MatrixCell {
   tone: Tone;
@@ -46,60 +47,57 @@ export function StatusMatrix({
   emptyLabel = "Not checked",
 }: StatusMatrixProps) {
   return (
-    <div className="cap-table-wrap cap-matrix" role="region" aria-label={caption} tabIndex={0}>
-      <table className="cap-table">
-        <caption className={showCaption ? undefined : "cap-sr-only"}>{caption}</caption>
-        <thead>
-          <tr>
-            <td />
-            {columns.map((c) => (
-              <th key={c.id} scope="col">
-                {c.name}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map((r) => (
-            <tr key={r.id}>
-              <th scope="row">{r.name}</th>
-              {columns.map((c) => {
-                const cell = r.cells[c.id];
-                const where = `${r.text}, ${c.name}`;
-                if (!cell) {
-                  return (
-                    <td key={c.id}>
-                      <span
-                        className="cap-matrix-none"
-                        role="img"
-                        aria-label={`${where}: ${emptyLabel}`}
-                        title={emptyLabel}
-                      >
-                        ·
-                      </span>
-                    </td>
-                  );
-                }
-                const words = `${where}: ${cell.label}${cell.reason ? `. ${cell.reason}` : ""}`;
+    <Table caption={caption} captionHidden={!showCaption} className="cap-matrix">
+      <thead>
+        <tr>
+          <td />
+          {columns.map((c) => (
+            <th key={c.id} scope="col">
+              {c.name}
+            </th>
+          ))}
+        </tr>
+      </thead>
+      <tbody>
+        {rows.map((r) => (
+          <tr key={r.id}>
+            <th scope="row">{r.name}</th>
+            {columns.map((c) => {
+              const cell = r.cells[c.id];
+              const where = `${r.text}, ${c.name}`;
+              if (!cell) {
                 return (
                   <td key={c.id}>
                     <span
-                      className="cap-matrix-mark cap-status"
-                      data-tone={cell.tone}
+                      className="cap-matrix-none"
                       role="img"
-                      aria-label={words}
-                      title={words}
+                      aria-label={`${where}: ${emptyLabel}`}
+                      title={emptyLabel}
                     >
-                      <Glyph name={cell.glyph ?? cell.tone} />
+                      ·
                     </span>
                   </td>
                 );
-              })}
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+              }
+              const words = `${where}: ${cell.label}${cell.reason ? `. ${cell.reason}` : ""}`;
+              return (
+                <td key={c.id}>
+                  <span
+                    className="cap-matrix-mark cap-status"
+                    data-tone={cell.tone}
+                    role="img"
+                    aria-label={words}
+                    title={words}
+                  >
+                    <Glyph name={cell.glyph ?? cell.tone} />
+                  </span>
+                </td>
+              );
+            })}
+          </tr>
+        ))}
+      </tbody>
+    </Table>
   );
 }
 

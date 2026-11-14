@@ -2,7 +2,9 @@
 // zone with UTC beside it. The pure functions take the zone so they can be checked anywhere; in a page
 // the zone is the viewer's.
 
-import { plural } from "../hooks/hooks.ts";
+import { fromDateTimeLocal, toDateTimeLocal } from "../field/field.ts";
+import { dayKey } from "@dustinedwards/site-runtime/time";
+import { plural } from "@drdustinedwards/site-helpers/text";
 
 export const SEC = 1000;
 export const MIN = 60 * SEC;
@@ -38,27 +40,6 @@ export function toMs(at: number | Date | string | null | undefined): number {
 export function toMsOrNull(at: number | Date | string | null | undefined): number | null {
   const t = toMs(at);
   return Number.isFinite(t) ? t : null;
-}
-
-const dayFormats = new Map<string, Intl.DateTimeFormat>();
-const dayFormat = (zone = "") => {
-  let f = dayFormats.get(zone);
-  if (!f) {
-    f = new Intl.DateTimeFormat("en-CA", {
-      timeZone: zone || undefined,
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-    });
-    dayFormats.set(zone, f);
-  }
-  return f;
-};
-
-// The calendar day of a moment in a zone, "2027-03-06" (the browser's zone without one). A
-// meeting's day is its own zone's, not the viewer's.
-export function dayKey(at: number | Date | string, zone?: string): string {
-  return dayFormat(zone).format(toMs(at));
 }
 
 // Whole calendar days from `t` to `now` in the zone: 1 is yesterday, -1 tomorrow.
@@ -224,18 +205,6 @@ export function dateRange(
   const to = formatDate(b, options);
   if (from && to) return a === b || from === to ? from : `${from} to ${to}`;
   return from ?? to;
-}
-
-// The value a <input type="datetime-local"> takes, in UTC ("2026-09-30T13:02"), and back. A page
-// that edits times in UTC (an admin entering a meeting's hours) round-trips with these.
-export function utcInputValue(at: number | Date | string | null | undefined): string {
-  const t = toMs(at);
-  return Number.isFinite(t) ? new Date(t).toISOString().slice(0, 16) : "";
-}
-export function fromUtcInputValue(value: string): number {
-  return /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(:\d{2})?$/.test(value.trim())
-    ? Date.parse(`${value.trim()}Z`)
-    : Number.NaN;
 }
 
 // ---------------------------------------------------------------------------------------
@@ -561,24 +530,10 @@ export function laterUntil(
   zone: string | null | undefined,
   hour: number = LATER_HOUR,
 ): string {
-  const format = new Intl.DateTimeFormat("en-US", {
-    timeZone: knownZone(zone),
-    hourCycle: "h23",
-    year: "numeric",
-    month: "numeric",
-    day: "numeric",
-    hour: "numeric",
-    minute: "numeric",
-  });
-  const wall = (at: number) => {
-    const p = new Map(format.formatToParts(at).map((x) => [x.type, Number(x.value)]));
-    const part = (type: Intl.DateTimeFormatPartTypes) => p.get(type) ?? 0;
-    const [y, m, d] = [part("year"), part("month"), part("day")];
-    return { y, m, d, ms: Date.UTC(y, m - 1, d, part("hour"), part("minute")) };
-  };
-  const today = wall(typeof now === "number" ? now : now.getTime());
-  const want = Date.UTC(today.y, today.m - 1, today.d + 1, hour);
-  let at = want;
-  for (let i = 0; i < 2; i++) at += want - wall(at).ms;
-  return new Date(at).toISOString();
+  const z = knownZone(zone);
+  // Tomorrow's date on the zone's wall clock, then that hour there (fromDateTimeLocal settles the
+  // offset on the right side of a clock change).
+  const [y, m, d] = toDateTimeLocal(new Date(now), z).slice(0, 10).split("-").map(Number);
+  const next = new Date(Date.UTC(y!, m! - 1, d! + 1)).toISOString().slice(0, 10);
+  return fromDateTimeLocal(`${next}T${two(hour)}:00`, z)!.toISOString();
 }

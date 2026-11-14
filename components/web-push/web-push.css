@@ -5,13 +5,21 @@
    off), and a test alert. Extracted from the Capsid Portal's PhoneAlerts
    (dashboard/src/views/PhoneAlerts.tsx). */
 @layer cap.components {
-  .cap-push {
+  .cap-web-push {
     display: grid;
     gap: var(--space-3);
   }
-  .cap-push-note {
+  /* The status region, mounted from the start: with nothing in it, it takes no row of the grid. */
+  .cap-web-push-live {
+    display: grid;
+    gap: var(--space-3);
+    &:empty {
+      position: absolute;
+    }
+  }
+  .cap-web-push-note {
     padding: var(--space-2) var(--space-3);
-    border: 1px solid var(--line);
+    border: var(--line-w) solid var(--line);
     border-radius: var(--radius-m);
     background: var(--raised);
     font-size: var(--fs-label);
@@ -24,34 +32,34 @@
       background: var(--crit-soft);
     }
   }
-  .cap-push-actions {
+  .cap-web-push-actions {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     gap: var(--space-2);
   }
-  .cap-push-unsupported,
-  .cap-push-device-detail {
+  .cap-web-push-unsupported,
+  .cap-web-push-device-detail {
     color: var(--muted);
     font-size: var(--fs-detail);
   }
-  .cap-push-devices {
+  .cap-web-push-devices {
     margin: 0;
     padding: 0;
     list-style: none;
   }
-  .cap-push-device {
+  .cap-web-push-device {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     gap: var(--space-2);
     padding-block: var(--space-2);
-    border-block-start: 1px solid var(--line);
+    border-block-start: var(--line-w) solid var(--line);
     & .cap-btn {
       margin-inline-start: auto;
     }
   }
-  .cap-push-device-name {
+  .cap-web-push-device-name {
     min-inline-size: 0;
     overflow-wrap: anywhere;
   }

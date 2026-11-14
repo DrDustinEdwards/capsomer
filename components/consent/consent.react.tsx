@@ -1,5 +1,6 @@
-import type { ComponentType, FormHTMLAttributes, ReactNode } from "react";
+import type { ReactNode } from "react";
 import { Alert } from "../banner/banner.react.tsx";
+import { PlainForm, type FormComponent } from "../plain-form/plain-form.react.tsx";
 import { Button } from "../button/button.react.tsx";
 
 // What an app asking for access may do, or may not: one line each, a check or a cross beside it.
@@ -14,7 +15,7 @@ export interface PermissionListProps {
 export function PermissionList({ id, heading, items, allowed }: PermissionListProps) {
   return (
     <div className="cap-permissions" data-allowed={allowed ? "" : undefined}>
-      <p className="cap-permissions-heading" id={id}>
+      <p className="cap-eyebrow cap-permissions-heading" data-variant="mono" id={id}>
         {heading}
       </p>
       <ul className="cap-permissions-list" aria-labelledby={id}>
@@ -31,8 +32,6 @@ export function PermissionList({ id, heading, items, allowed }: PermissionListPr
     </div>
   );
 }
-
-type FormLike = ComponentType<FormHTMLAttributes<HTMLFormElement> & { children?: ReactNode }>;
 
 export interface ConsentScreenProps {
   // The app asking: "Example Assistant".
@@ -62,10 +61,8 @@ export interface ConsentScreenProps {
   // A last line: "Example Co never shares your payment provider's token with other apps."
   footnote?: ReactNode;
   // The router's form (React Router's Form), for its pending state. Default a plain form.
-  Form?: FormLike;
+  Form?: FormComponent;
 }
-
-const PlainForm: FormLike = (props) => <form {...props} />;
 
 // The OAuth consent screen every site shows an app asking for access: who is asking and how far
 // that is checked, where the access goes, the account, what it can do, the write grant as its own
@@ -109,7 +106,9 @@ export function ConsentScreen({
           </p>
           {redirectWarning ? <Alert tone="warn">{redirectWarning}</Alert> : null}
           <div className="cap-consent-box">
-            <p className="cap-permissions-heading">Account</p>
+            <p className="cap-eyebrow cap-permissions-heading" data-variant="mono">
+              Account
+            </p>
             <p className="cap-consent-account">{account.name}</p>
             {account.email ? <p className="cap-consent-mono">{account.email}</p> : null}
           </div>

@@ -6,8 +6,10 @@
 
 import { useCleanId } from "../hooks/hooks.react.tsx";
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
+import { Alert } from "../banner/banner.react.tsx";
 import { Button } from "../button/button.react.tsx";
 import { ChartFrame, type ChartFit } from "../chart-frame/chart-frame.react.tsx";
+import { errorText } from "../dialog/dialog.ts";
 import {
   Dialog,
   DialogBody,
@@ -17,6 +19,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "../dialog/dialog.react.tsx";
+import { validateFiles } from "../drop-zone/drop-zone.ts";
 import { Check, Field } from "../field/field.react.tsx";
 import { Segmented } from "../segmented/segmented.react.tsx";
 import { Select } from "../select/select.react.tsx";
@@ -27,7 +30,6 @@ import {
   chartDirective,
   chartReady,
   chooseColumns,
-  csvFileProblem,
   type ChartFields,
   type ChartType,
   type CsvColumn,
@@ -94,7 +96,10 @@ export function ChartBuilder({
   const start = (): ChartFields => ({ ...blank(types[0]?.value ?? "bar"), ...initial });
   const [f, setF] = useState<ChartFields>(start);
   const [fileError, setFileError] = useState("");
-  const [checked, setChecked] = useState<({ block: string } & ChartCheck) | null>(null);
+  // The check's answer for a block, or why it could not answer.
+  const [checked, setChecked] = useState<({ block: string; error?: string } & ChartCheck) | null>(
+    null,
+  );
   const [previewed, setPreviewed] = useState(false);
   const id = useCleanId();
   const frame = `cap-chart-preview-${id}`;
@@ -123,7 +128,7 @@ export function ChartBuilder({
     const timer = setTimeout(() => {
       void check(block, drawable).then(
         (result) => live && setChecked({ block, ...result }),
-        () => live && setChecked(null),
+        (error: unknown) => live && setChecked({ block, findings: [], error: errorText(error) }),
       );
     }, 300);
     return () => {
@@ -148,8 +153,8 @@ export function ChartBuilder({
   async function readFile(file: File | undefined) {
     setFileError("");
     if (!file) return;
-    const problem = csvFileProblem(file, maxBytes);
-    if (problem) return setFileError(problem);
+    const problem = validateFiles([file], { accept: ".csv,text/csv", maxBytes }).rejected[0];
+    if (problem) return setFileError(problem.message);
     set({ csv: await file.text() });
   }
 
@@ -291,9 +296,14 @@ export function ChartBuilder({
                 onChange={(e) => set({ caption: e.target.value })}
               />
             </Field>
+            {current?.error ? (
+              <Alert tone="warn" title="The chart check did not run">
+                {current.error}
+              </Alert>
+            ) : null}
             {check ? (
               <div role="status" className="cap-chart-builder-check">
-                {current?.findings.length ? (
+                {current?.error ? null : current?.findings.length ? (
                   <>
                     <p className="cap-chart-builder-note">The chart check flags:</p>
                     <ul className="cap-chart-builder-findings">

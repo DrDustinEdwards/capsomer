@@ -4,7 +4,9 @@
 // The subject (what a session is, where it is stored) stays in the app; it hands over each
 // item's times through an accessor.
 
-import { DAY, dayKey, formatDate, toMsOrNull, zoneName } from "../time/time.ts";
+import { dayKey } from "@dustinedwards/site-runtime/time";
+import { plural } from "@drdustinedwards/site-helpers/text";
+import { DAY, formatDate, toMsOrNull, zoneName } from "../time/time.ts";
 
 // The day key of items that have no date yet. Sorts after every real day.
 export const NO_DATE = "no-date";
@@ -160,18 +162,32 @@ export function dayLabel(
 
 // A slot's time in words: "9:00 AM to 10:30 AM", "From 9:00 AM", "Until 10:30 AM", or
 // `none` when it has no time.
+// A slot's time as words and the moments they name: "9:00 AM to 10:30 AM", "From 9:00 AM",
+// "Until 5:00 PM" or `none`. slotLabel joins them; the React schedule puts each moment in a <time>.
+export type SlotPart = string | { at: number; text: string };
+export function slotParts(
+  start: number | null,
+  end: number | null,
+  zone = "UTC",
+  none = "No time set",
+): SlotPart[] {
+  // "9:00 AM", on the American 12-hour clock, in the schedule's zone.
+  const clock = (at: number) => ({ at, text: formatDate(at, { style: "time", zone }) ?? "" });
+  if (start !== null && end !== null && end > start) return [clock(start), " to ", clock(end)];
+  if (start !== null) return ["From ", clock(start)];
+  if (end !== null) return ["Until ", clock(end)];
+  return [none];
+}
+
 export function slotLabel(
   start: number | null,
   end: number | null,
   zone = "UTC",
   none = "No time set",
 ): string {
-  // "9:00 AM", on the American 12-hour clock, in the schedule's zone.
-  const clock = (t: number) => formatDate(t, { style: "time", zone });
-  if (start !== null && end !== null && end > start) return `${clock(start)} to ${clock(end)}`;
-  if (start !== null) return `From ${clock(start)}`;
-  if (end !== null) return `Until ${clock(end)}`;
-  return none;
+  return slotParts(start, end, zone, none)
+    .map((p) => (typeof p === "string" ? p : p.text))
+    .join("");
 }
 
 // The line that says once which zone the times are in: "Times are in CDT." The zone's name at
@@ -182,5 +198,5 @@ export function zoneLine(at: number | null, zone = "UTC"): string {
 
 // "3 parallel tracks".
 export function tracksLabel(n: number): string {
-  return `${n} parallel ${n === 1 ? "track" : "tracks"}`;
+  return plural(n, "parallel track");
 }

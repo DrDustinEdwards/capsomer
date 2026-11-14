@@ -2,6 +2,8 @@
 // produce it, a page-wide signed-out flag, and the live room's reconnect wait. No React here: the
 // hooks are in data.react.tsx.
 
+import { errorText } from "../dialog/dialog.ts";
+
 /** What a request came to. A refusal carries the server's own text, never a bare status. */
 export type Answer<T> =
   | { kind: "ok"; value: T }
@@ -28,8 +30,15 @@ export function sessionEnded(res: Response, forbidden = true): boolean {
   );
 }
 
+// The server's words: its text, or the `error` of a JSON body ({ "error": "..." }).
 async function refusalText(res: Response): Promise<string> {
   const text = (await res.text().catch(() => "")).trim();
+  try {
+    const { error } = JSON.parse(text) as { error?: unknown };
+    if (typeof error === "string" && error) return error;
+  } catch {
+    // Not JSON: the text is the words.
+  }
   return text || `The server answered ${res.status} with no text`;
 }
 
@@ -48,7 +57,7 @@ export async function answerOf<T>(res: Response, forbidden = true): Promise<Answ
 }
 
 function thrown(e: unknown): Answer<never> {
-  return { kind: "error", message: e instanceof Error ? e.message : String(e) };
+  return { kind: "error", message: errorText(e) };
 }
 
 /** GET a JSON route on this origin, never cached, as an Answer. */

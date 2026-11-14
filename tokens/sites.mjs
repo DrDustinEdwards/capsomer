@@ -32,11 +32,12 @@ const SITES = {
   dustinedwards: {
     family: "purple",
     on: "<html>",
-    note: "its paper ground, layers above its own pinned bar with the reading-progress line over them, and the public charts' look from before Enarratio 0.3 (Enarratio's own literals)",
+    note: "its paper ground, layers above its own pinned bar with the reading-progress line over them, its eyebrows tracked 0.08em, and the public charts' look from before Enarratio 0.3 (Enarratio's own literals)",
     all: {
       "z-sticky": "100",
       "z-overlay": "800",
       "z-progress": "900",
+      "cap-eyebrow-tracking": "0.08em",
       "enarratio-font-size": "1rem",
       "enarratio-font-size-small": "0.875em",
       "enarratio-line-height-tooltip": "1.35",
@@ -85,7 +86,6 @@ const SITES = {
       "fs-detail": "0.8125rem",
       "fs-body": "0.875rem",
       control: "38px",
-      "control-h": "38px",
       "pad-x": "14px",
       "pad-y": "8px",
       "pad-card": "20px",
@@ -108,7 +108,7 @@ const SITES = {
       "link-pressed-bg": "transparent",
       "link-tint-pad": "0px",
     },
-    coarse: { control: "44px", "control-h": "44px" },
+    coarse: { control: "44px" },
     // Text, muted, dim and the control border are Foxhound's own hues lifted to Capsomer's APCA
     // floors (the dark mode plan, 2026-10-29): they were #e5e8e2, #a8a49e, #928d87 and #4a4c44,
     // the last 2.02:1 on the surface, under WCAG's 3:1 for a control's edge.
@@ -432,8 +432,26 @@ function files() {
 
 const path = (rel) => fileURLToPath(new URL(`../${rel}`, import.meta.url));
 
+// Every stylesheet Capsomer ships but the site layers themselves: a site value that none of them
+// reads changes nothing, so the check refuses it (a misspelt or retired name).
+function shippedCss() {
+  const read = (dir, keep) =>
+    readdirSync(path(dir), { withFileTypes: true }).flatMap((d) =>
+      d.isDirectory()
+        ? read(`${dir}/${d.name}`, keep)
+        : keep(d.name)
+          ? [readFileSync(path(`${dir}/${d.name}`), "utf8")]
+          : [],
+    );
+  const css = (name) => name.endsWith(".css");
+  // The generated site layers (tokens/site-*.css) set the values; they never read them.
+  const notLayer = (name) => css(name) && !name.startsWith("site-");
+  return [...read("css", css), ...read("tokens", notLayer), ...read("components", css)].join("\n");
+}
+
 function check() {
   const problems = [];
+  const shipped = shippedCss();
   const exports = JSON.parse(readFileSync(path("package.json"), "utf8")).exports;
   if (exports["./sites.css"] !== "./css/sites.css")
     problems.push(`package.json needs "./sites.css": "./css/sites.css" in exports`);
@@ -450,6 +468,8 @@ function check() {
       if (BRAND.test(k) && !site.ownBrand)
         problems.push(`${name}: --${k} is a brand color; add a family in palette.mjs instead`);
       if (/var\(/.test(v)) problems.push(`${name}: --${k} must be a literal, not ${v}`);
+      if (!shipped.includes(`var(--${k}`) && !shipped.includes(`--${k}:`))
+        problems.push(`${name}: --${k} is read by no Capsomer stylesheet, so it changes nothing`);
     }
     for (const k of Object.keys(site.light ?? {}))
       if (!(k in (site.dark ?? {})))
