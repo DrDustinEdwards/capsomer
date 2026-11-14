@@ -18,7 +18,7 @@ replaces:
 ## Usage
 
 ```html
-<section class="cap-cta-band" aria-labelledby="c"><p class="cap-cta-band-eyebrow">Start here</p><h2 id="c" class="cap-cta-band-title">Ready to write it down?</h2>
+<section class="cap-cta-band" aria-labelledby="c"><p class="cap-eyebrow" data-tone="accent">Start here</p><h2 id="c" class="cap-cta-band-title">Ready to write it down?</h2>
   <p class="cap-cta-band-text">Set up a notebook in two minutes.</p><div class="cap-cta-band-actions">[button links]</div>
   <p class="cap-cta-band-note">Apps for phones are coming.</p></section>
 ```
