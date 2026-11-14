@@ -2,8 +2,12 @@
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
 /* A landing page's first section (hero.md). Behavior and structure are shared; each site's look
-   is its tokens: --hero-title (the h1's size), --hero-face, --hero-lead-face, --hero-gap and the
-   card's surface. The aside moves beside the words where the section is wide enough. */
+   is its tokens, each defaulting to the look below: the title's --hero-title (size), --hero-face,
+   --hero-title-weight (unset, the heading's own), --hero-title-leading and --hero-title-tracking;
+   the lead's --hero-lead-face, --hero-lead-size, --hero-lead-weight and --hero-lead-leading;
+   --hero-gap; the card's --hero-card-bg, --hero-card-pad, --hero-card-radius, --hero-card-blur,
+   --hero-card-shadow and --hero-card-max. The aside moves beside the words where the section is
+   wide enough. */
 @layer cap.components {
   .cap-hero {
     --_title: var(--hero-title, clamp(2.25rem, 1.6rem + 3vw, 4rem));
@@ -37,26 +41,26 @@
     max-inline-size: 48rem;
 
     &[data-card] {
-      padding: var(--space-7);
+      max-inline-size: var(--hero-card-max, 48rem);
+      padding: var(--hero-card-pad, var(--space-7));
       border: var(--line-w) solid var(--line);
-      border-radius: var(--radius-xl);
+      border-radius: var(--hero-card-radius, var(--radius-xl));
       background: var(--hero-card-bg, color-mix(in srgb, var(--surface) 82%, transparent));
-      backdrop-filter: blur(12px);
+      box-shadow: var(--hero-card-shadow, none);
+      backdrop-filter: blur(var(--hero-card-blur, 12px));
     }
-  }
-  .cap-hero-eyebrow {
-    margin: 0 0 var(--space-4);
-    color: var(--accent-text);
-    font: var(--weight-semibold) var(--fs-detail) / var(--leading-snug) var(--ui);
-    letter-spacing: var(--tracking-widest);
-    text-transform: uppercase;
+
+    & > .cap-eyebrow {
+      margin-block-end: var(--space-4);
+    }
   }
   .cap-hero-title {
     margin: 0 0 var(--space-5);
     font-family: var(--hero-face, inherit);
     font-size: var(--_title);
-    line-height: var(--leading-none);
-    letter-spacing: calc(-1 * var(--tracking-wide));
+    font-weight: var(--hero-title-weight, revert-layer);
+    line-height: var(--hero-title-leading, var(--leading-none));
+    letter-spacing: var(--hero-title-tracking, calc(-1 * var(--tracking-wide)));
     text-wrap: balance;
   }
   .cap-hero-lead {
@@ -65,8 +69,8 @@
     color: var(--muted);
     font-family: var(--hero-lead-face, inherit);
     font-size: var(--hero-lead-size, var(--title-4));
-    font-weight: var(--weight-regular);
-    line-height: var(--leading-normal);
+    font-weight: var(--hero-lead-weight, var(--weight-regular));
+    line-height: var(--hero-lead-leading, var(--leading-normal));
     text-wrap: pretty;
   }
   /* More words between the lead and the actions, in body type. */

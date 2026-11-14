@@ -19,7 +19,7 @@ replaces:
 
 ```html
 <section class="cap-hero" aria-labelledby="h" data-aside>
-  <div class="cap-hero-text"><p class="cap-hero-eyebrow">Release notes</p><h1 id="h" class="cap-hero-title">Every change, written down once</h1>
+  <div class="cap-hero-text"><p class="cap-eyebrow" data-tone="accent">Release notes</p><h1 id="h" class="cap-hero-title">Every change, written down once</h1>
     <p class="cap-hero-lead">...</p><div class="cap-hero-actions">[button links]</div><p class="cap-hero-note">...</p></div>
   <div class="cap-hero-aside">[card or picture]</div>
 </section>
