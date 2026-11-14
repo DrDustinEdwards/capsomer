@@ -3,6 +3,12 @@
 Each release names every removed or renamed token or class, and every changed HTML contract. A pull request adds its entry as a
 changeset (`npx changeset`, `.changeset/README.md`); the release pull request writes them here.
 
+## 0.151.2
+
+### Patch Changes
+
+- **`Title`, `Text` and `Stack` take any element or component and its props.** `as` is a tag or a component (a router `Link` or `Form`), and that element's own props reach it with their types: `<Stack as="form" method="post" noValidate>`, `<Text as={Link} to="/x">`. Replaces 0.148.0's fixed element list. No CSS change.
+
 ## 0.151.1
 
 ### Patch Changes
