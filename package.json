@@ -277,7 +277,7 @@
     "rolldown": "1.2.15",
     "typescript": "6.0.3",
     "vite": "8.3.8",
-    "wrangler": "^4.151.3",
+    "wrangler": "4.151.3",
     "y-partyserver": "2.2.0",
     "y-protocols": "1.0.7",
     "yjs": "13.6.33",
