@@ -155,7 +155,10 @@
     flex: none;
     fill: none;
     stroke: currentColor;
-    stroke-width: 1.6;
+    /* Set on the icon itself, so a site's --icon-stroke and icons.css (which settings-row imports
+       after this file) both draw the admin icons at 1.6. */
+    --icon-stroke: 1.6;
+    stroke-width: var(--icon-stroke);
     stroke-linecap: round;
     stroke-linejoin: round;
   }

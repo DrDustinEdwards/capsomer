@@ -1,5 +1,5 @@
 import { useId, useState, type ChangeEvent, type ReactNode } from "react";
-import { Select } from "../select/select.react.tsx";
+import { NativeSelect } from "../select/select-native.react.tsx";
 
 // A star rating out of five, in halves (rating.md). `Rating` shows one: an image whose name says
 // the value ("3.5 out of 5 stars"), the stars drawn filled to that half. `RatingInput` asks for
@@ -100,8 +100,7 @@ export function RatingInput(props: RatingInputProps) {
         {label}
       </label>
       <div className="cap-rating-control">
-        <Select
-          native
+        <NativeSelect
           id={id}
           name={name}
           value={shown ? String(shown) : ""}
