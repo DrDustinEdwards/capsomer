@@ -1,0 +1,67 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* A person's work queue (NeedsList, attention-list.react.tsx), on row-list. Its own file so the
+   attention list does not carry it, and a work queue does not carry the attention list's frame;
+   it needs nothing from attention-list.css. Extracted from attention-list.css. */
+@layer cap.components {
+  /* The urgency headings span the row grid between the rows, a row's Later form takes no box of
+     its own, and the keys line sits under the list. */
+  /* An urgency: its heading, then its own list of rows, both on the row list's column grid. */
+  .cap-need-group {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: subgrid;
+    list-style: none;
+  }
+  .cap-need-head,
+  .cap-need-rows {
+    grid-column: 1 / -1;
+  }
+  .cap-need-rows {
+    display: grid;
+    grid-template-columns: subgrid;
+    row-gap: inherit;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .cap-need-head {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin: var(--space-4) 0 var(--space-2);
+    font-size: var(--fs-detail);
+  }
+  .cap-need-group:first-child .cap-need-head {
+    margin-block-start: var(--space-2);
+  }
+  .cap-need-count {
+    color: var(--muted);
+    font-variant-numeric: var(--figures);
+  }
+  .cap-need-row .cap-row-actions form {
+    display: contents;
+  }
+  .cap-need-keys {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-1) var(--space-4);
+    margin: var(--space-3) 0 0;
+    color: var(--muted);
+    font-size: var(--fs-detail);
+  }
+  /* No keyboard on a touch screen: only what Later does stays. A need's title sits beside its
+     two buttons, so on a touch screen it is a full target too, even with no detail line under it
+     (WCAG 2.5.8). */
+  @media (pointer: coarse) {
+    .cap-need-key {
+      display: none;
+    }
+    .cap-need-row .cap-row-title > :is(a, button) {
+      display: inline-flex;
+      align-items: center;
+      min-block-size: var(--target);
+    }
+  }
+}

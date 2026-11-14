@@ -59,6 +59,7 @@
     "./layout-items.css": "./css/layout-items.css",
     "./role-grid.css": "./components/people-roles/role-grid.css",
     "./plan-choice.css": "./components/price-card/plan-choice.css",
+    "./needs-list.css": "./components/attention-list/needs-list.css",
     "./feature-grid.css": "./components/feature/feature-grid.css",
     "./text.css": "./css/text.css",
     "./text-role.css": "./css/text-role.css",
