@@ -254,7 +254,8 @@
     .cap-rows {
       grid-template-columns: auto minmax(0, 1fr) auto;
     }
-    .cap-row-title :is(a, button) {
+    /* The same :is() list as the clamp it lifts, so it matches that rule's specificity and wins. */
+    .cap-row-title :is(a, button, .cap-row-text) {
       -webkit-line-clamp: none;
       line-clamp: none;
     }
