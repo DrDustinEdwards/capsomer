@@ -44,7 +44,7 @@ body {
   overflow-x: clip;
   background: var(--ground);
   color: var(--text);
-  font: 400 var(--fs-page)/1.55 var(--ui);
+  font: var(--weight-regular) var(--fs-page)/var(--leading-normal) var(--ui);
 }
 /* The family footer and the site header keep their own links (capsomer/family-footer.css,
    capsomer/site-header.css). */
@@ -71,16 +71,18 @@ h3 {
   text-wrap: balance;
 }
 h1 {
-  font: var(--weight-title) clamp(2.4rem, 5vw, 3.75rem) / 1 var(--ui);
+  font: var(--weight-title) clamp(var(--display-5), 5vw, var(--display-2)) / var(--leading-none)
+    var(--ui);
   /* Light needs less tightening than the 800 it replaced. */
-  letter-spacing: -0.02em;
+  letter-spacing: var(--tracking-tight);
 }
 h2:not(.cap-family-footer-heading) {
-  font: var(--weight-heading) clamp(1.75rem, 3.4vw, 2.6rem) / 1.05 var(--ui);
-  letter-spacing: -0.03em;
+  font: var(--weight-heading) clamp(var(--title-2-5), 3.4vw, var(--display-5)) / var(--leading-none)
+    var(--ui);
+  letter-spacing: var(--tracking-tight);
 }
 h3 {
-  font: var(--weight-heading) 1.2rem / 1.2 var(--ui);
+  font: var(--weight-heading) var(--title-4) / var(--leading-tight) var(--ui);
 }
 h2:not(.cap-family-footer-heading) {
   margin-block-end: var(--space-5);
@@ -101,7 +103,7 @@ h2:not(.cap-family-footer-heading) {
   max-block-size: calc(100dvh - var(--header-h));
   overflow-y: auto;
   padding-block: var(--space-6);
-  font-size: 0.9375rem;
+  font-size: var(--fs-lead);
 
   & ul {
     display: grid;
@@ -111,7 +113,7 @@ h2:not(.cap-family-footer-heading) {
   }
   & a {
     display: block;
-    padding: 5px var(--space-3);
+    padding: var(--space-2) var(--space-3);
     border-radius: var(--radius-m);
     color: var(--muted);
     text-decoration: none;
@@ -123,7 +125,7 @@ h2:not(.cap-family-footer-heading) {
   & a[aria-current] {
     background: var(--accent-soft);
     color: var(--accent-text);
-    font-weight: 600;
+    font-weight: var(--weight-semibold);
   }
 }
 .comp-side-h {
@@ -131,8 +133,8 @@ h2:not(.cap-family-footer-heading) {
   padding-inline: var(--space-3);
   color: var(--text);
   font-size: var(--fs-label);
-  font-weight: 600;
-  letter-spacing: 0.06em;
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-widest);
   text-transform: uppercase;
 }
 .comp-side-find {
@@ -140,7 +142,7 @@ h2:not(.cap-family-footer-heading) {
 }
 .comp-toc .comp-toc-sub a {
   padding-inline-start: var(--space-6);
-  font-size: 0.875rem;
+  font-size: var(--fs-body);
 }
 .comp-main {
   display: grid;
@@ -152,8 +154,8 @@ h2:not(.cap-family-footer-heading) {
   & h2 {
     margin: var(--space-5) 0 var(--space-4);
     padding-block-start: var(--space-3);
-    border-top: 4px solid var(--text);
-    font-size: clamp(1.35rem, 2.4vw, 1.75rem);
+    border-top: var(--line-w-heavy) solid var(--text);
+    font-size: clamp(var(--fs-h2), 2.4vw, var(--title-2-5));
   }
   & section > p {
     margin: 0;
@@ -168,8 +170,8 @@ h2:not(.cap-family-footer-heading) {
 
   & h1 {
     margin: 0;
-    font-size: clamp(2.25rem, 5vw, 3.25rem);
-    line-height: 1.05;
+    font-size: clamp(var(--title-1), 5vw, var(--display-3));
+    line-height: var(--leading-none);
   }
 }
 .comp-title-tools {
@@ -180,7 +182,7 @@ h2:not(.cap-family-footer-heading) {
   max-width: 40rem;
   margin: 0;
   color: var(--muted);
-  font-size: 1.15rem;
+  font-size: var(--fs-h3);
 }
 /* An example: the live component above, its markup below, as one box. */
 .comp-ex {
@@ -194,12 +196,12 @@ h2:not(.cap-family-footer-heading) {
 
   & h3 {
     margin: 0;
-    font-size: 1.125rem;
+    font-size: var(--fs-h3);
   }
 }
 .comp-ex-box {
   overflow: hidden;
-  border: 1px solid var(--line);
+  border: var(--line-w) solid var(--line);
   border-radius: var(--radius-xl);
   background: var(--surface);
 }
@@ -225,18 +227,18 @@ h2:not(.cap-family-footer-heading) {
 }
 .comp-ex-code {
   position: relative;
-  border-block-start: 1px solid var(--line);
+  border-block-start: var(--line-w) solid var(--line);
   background: var(--sunken);
 
   & pre {
     margin: 0;
-    padding: var(--space-5) 5rem var(--space-5) var(--space-5);
+    padding: var(--space-5) var(--space-9-5) var(--space-5) var(--space-5);
     overflow: auto;
     max-block-size: 28rem;
-    font: 13px/1.6 var(--mono);
+    font: var(--fs-detail)/var(--leading-relaxed) var(--mono);
   }
   .cap-tabs-panel & {
-    border: 1px solid var(--line);
+    border: var(--line-w) solid var(--line);
     border-radius: var(--radius-l);
   }
 }
@@ -300,7 +302,7 @@ h2:not(.cap-family-footer-heading) {
     position: static;
     order: 2;
     max-block-size: none;
-    border-block-start: 1px solid var(--line);
+    border-block-start: var(--line-w) solid var(--line);
   }
 }
 
@@ -355,7 +357,7 @@ h2:not(.cap-family-footer-heading) {
     gap: var(--space-1);
   }
   & a {
-    font-weight: 600;
+    font-weight: var(--weight-semibold);
   }
   & p {
     margin: 0;
@@ -365,7 +367,7 @@ h2:not(.cap-family-footer-heading) {
 .search-results mark {
   background: none;
   color: inherit;
-  font-weight: 700;
+  font-weight: var(--weight-bold);
 }
 
 /* The network board (site/network-board.ts): one checkerboard after Bridget Riley's Movement in Squares (1961), each
@@ -445,21 +447,21 @@ h2:not(.cap-family-footer-heading) {
   }
   & a {
     color: inherit;
-    font-weight: 700;
+    font-weight: var(--weight-bold);
     text-decoration: none;
     overflow-wrap: anywhere;
   }
   /* The pointer outlines the site's part of the bar, as the footer's site tiles do; no underline in the network. */
   & li:has(a:hover) {
-    box-shadow: inset 0 0 0 3px currentColor;
+    box-shadow: inset 0 0 0 var(--line-w-bar) currentColor;
   }
 }
 .home-net-state {
-  padding: 1px 5px;
+  padding: 1px var(--space-2);
   background: var(--surface);
   color: var(--text);
-  font: 700 0.6875rem / 1.4 var(--mono);
-  letter-spacing: 0.08em;
+  font: var(--weight-bold) var(--fs-label) / var(--leading-compact) var(--mono);
+  letter-spacing: var(--tracking-caps);
   text-transform: uppercase;
 }
 .home-net-narrow {
@@ -475,7 +477,7 @@ h2:not(.cap-family-footer-heading) {
   }
   .home-net-bar li {
     padding-inline: var(--space-2);
-    font-size: 0.875rem;
+    font-size: var(--fs-body);
   }
 }
 /* Forced colors drop the fills: the board goes, and the bar keeps its names and states in system colors. */
@@ -484,7 +486,7 @@ h2:not(.cap-family-footer-heading) {
     display: none;
   }
   .home-net-bar li {
-    border: 1px solid CanvasText;
+    border: var(--line-w) solid CanvasText;
   }
 }
 
@@ -523,7 +525,7 @@ h2:not(.cap-family-footer-heading) {
 .th-board {
   container-type: inline-size;
   padding: var(--space-5);
-  border: 1px solid var(--line);
+  border: var(--line-w) solid var(--line);
   border-radius: var(--radius-xl);
   background: var(--ground);
   color: var(--text);
@@ -532,8 +534,8 @@ h2:not(.cap-family-footer-heading) {
   margin: 0 0 var(--space-3);
   color: var(--muted);
   font-size: var(--fs-label);
-  font-weight: 600;
-  letter-spacing: 0.06em;
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-widest);
   text-transform: uppercase;
 }
 .th-board-grid {
@@ -551,7 +553,7 @@ h2:not(.cap-family-footer-heading) {
   align-content: start;
   min-inline-size: 0;
   padding: var(--space-5);
-  border: 1px solid var(--line);
+  border: var(--line-w) solid var(--line);
   border-radius: var(--radius-l);
   background: var(--surface);
 
@@ -586,14 +588,14 @@ h2:not(.cap-family-footer-heading) {
   &[data-kind="color"] {
     inline-size: 1.25rem;
     block-size: 1.25rem;
-    border: 1px solid var(--line);
+    border: var(--line-w) solid var(--line);
     border-radius: var(--radius-s);
   }
   &[data-kind="radius"],
   &[data-kind="shadow"] {
     inline-size: 2.5rem;
     block-size: 2.5rem;
-    border: 1px solid var(--line-strong);
+    border: var(--line-w) solid var(--line-strong);
     background: var(--surface);
   }
   &[data-kind="space"] {
@@ -602,7 +604,7 @@ h2:not(.cap-family-footer-heading) {
   }
   &[data-kind="type"]::before {
     content: "Aa";
-    line-height: 1;
+    line-height: var(--leading-none);
   }
   &[data-kind="none"] {
     display: none;
@@ -624,7 +626,7 @@ h2:not(.cap-family-footer-heading) {
   }
 }
 .sw-icons {
-  --icon-size: 24px;
+  --icon-size: var(--title-3);
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(7.5rem, 1fr));
   gap: var(--space-2);
@@ -639,7 +641,7 @@ h2:not(.cap-family-footer-heading) {
   inline-size: 100%;
   min-block-size: 6rem;
   padding: var(--space-3);
-  border: 1px solid var(--line);
+  border: var(--line-w) solid var(--line);
   border-radius: var(--radius-l);
   background: var(--surface);
   color: var(--text);
@@ -669,18 +671,18 @@ h2:not(.cap-family-footer-heading) {
     vertical-align: bottom;
   }
   & thead th {
-    font-weight: 400;
+    font-weight: var(--weight-regular);
   }
 }
 .sw-n {
   display: block;
-  font-weight: 600;
+  font-weight: var(--weight-semibold);
 }
 .sw-job {
   display: block;
   color: var(--muted);
   font-size: var(--fs-label);
-  line-height: 1.2;
+  line-height: var(--leading-tight);
 }
 .sw-step {
   display: grid;
@@ -701,12 +703,12 @@ h2:not(.cap-family-footer-heading) {
   }
   &[data-copied=""] code {
     color: var(--accent-text);
-    font-weight: 600;
+    font-weight: var(--weight-semibold);
   }
 }
 .sw-chip {
   display: block;
   block-size: 2.5rem;
-  border: 1px solid var(--line);
+  border: var(--line-w) solid var(--line);
   border-radius: var(--radius-m);
 }
