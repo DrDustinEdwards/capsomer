@@ -1,9 +1,10 @@
 import { useCleanId } from "../hooks/hooks.react.tsx";
 import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
+import { Button } from "../button/button.react.tsx";
 import { ConfirmDialog } from "../confirm-dialog/confirm-dialog.react.tsx";
 import { PlainForm, type FormComponent } from "../plain-form/plain-form.react.tsx";
 import { Empty } from "../empty/empty.react.tsx";
-import { isTypingKey, listOwnsKeys, moveRowFocus, singleKeysOff } from "../row-list/row-list.ts";
+import { queueKey } from "../row-list/row-list.ts";
 import { Status } from "../status/status.react.tsx";
 import { Time } from "../time/time.react.tsx";
 import {
@@ -104,20 +105,12 @@ export function ApprovalQueue({
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      const root = rootRef.current;
-      const list = root?.querySelector<HTMLElement>(".cap-mq-list");
-      if (!root || !list || e.defaultPrevented || e.repeat || isTypingKey(e) || singleKeysOff())
-        return;
-      if (document.querySelector("dialog:modal")) return;
+      const list = rootRef.current?.querySelector<HTMLElement>(".cap-mq-list");
+      if (!list || document.querySelector("dialog:modal")) return;
       // Focus in another queue on the page: that queue's keys, not these.
       const other = document.activeElement?.closest(".cap-mq-list");
       if (other && other !== list) return;
-      if (e.key === "j" || e.key === "k") {
-        if (!listOwnsKeys(list)) return;
-        if (moveRowFocus(list, e.key === "j" ? 1 : -1) || list.contains(document.activeElement))
-          e.preventDefault();
-        return;
-      }
+      if (!queueKey(e, list)) return;
       const row = document.activeElement?.closest<HTMLElement>(".cap-mq-row");
       if (!row || !list.contains(row)) return;
       const item = stateRef.current.items.find((i) => i.id === row.dataset.id);
@@ -126,7 +119,7 @@ export function ApprovalQueue({
       const button = row.querySelector<HTMLButtonElement>(
         `button[name='intent'][value='${CSS.escape(act.intent)}']`,
       );
-      if (!button || button.getAttribute("aria-disabled") === "true") return;
+      if (!button || button.getAttribute("aria-busy") === "true") return;
       e.preventDefault();
       if (act.confirm) setAsking({ button, action: act, item });
       else send(button, item);
@@ -250,20 +243,15 @@ export function ApprovalQueue({
                       {item.actions.map((a) => {
                         const key = keyOf(a);
                         return (
-                          <button
+                          <Button
                             key={a.intent}
                             type="submit"
-                            className="cap-btn"
-                            data-variant={variantOf(a)}
-                            data-size="sm"
+                            variant={variantOf(a)}
+                            size="sm"
                             name="intent"
                             value={a.intent}
                             aria-keyshortcuts={key}
-                            aria-busy={pending || undefined}
-                            aria-disabled={pending || undefined}
-                            onClickCapture={(e) => {
-                              if (pending) e.preventDefault();
-                            }}
+                            pending={pending}
                           >
                             {a.label}
                             <span className="cap-sr-only"> for {item.who}</span>
@@ -272,7 +260,7 @@ export function ApprovalQueue({
                                 {key}
                               </kbd>
                             ) : null}
-                          </button>
+                          </Button>
                         );
                       })}
                     </div>

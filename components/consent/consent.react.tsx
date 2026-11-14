@@ -15,7 +15,7 @@ export interface PermissionListProps {
 export function PermissionList({ id, heading, items, allowed }: PermissionListProps) {
   return (
     <div className="cap-permissions" data-allowed={allowed ? "" : undefined}>
-      <p className="cap-permissions-heading" id={id}>
+      <p className="cap-eyebrow cap-permissions-heading" data-variant="mono" id={id}>
         {heading}
       </p>
       <ul className="cap-permissions-list" aria-labelledby={id}>
@@ -106,7 +106,9 @@ export function ConsentScreen({
           </p>
           {redirectWarning ? <Alert tone="warn">{redirectWarning}</Alert> : null}
           <div className="cap-consent-box">
-            <p className="cap-permissions-heading">Account</p>
+            <p className="cap-eyebrow cap-permissions-heading" data-variant="mono">
+              Account
+            </p>
             <p className="cap-consent-account">{account.name}</p>
             {account.email ? <p className="cap-consent-mono">{account.email}</p> : null}
           </div>

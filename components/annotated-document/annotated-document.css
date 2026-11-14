@@ -87,12 +87,18 @@
     color: inherit;
     box-shadow: inset 0 calc(-1 * var(--line-w-thick)) 0 var(--cap-annotated-tone);
     cursor: pointer;
-    transition: box-shadow var(--dur-fast) var(--ease-out);
 
     &[data-lit] {
       box-shadow:
         inset 0 calc(-1 * var(--line-w-thick)) 0 var(--cap-annotated-tone),
         0 0 0 var(--line-w-thick) var(--cap-annotated-tone);
+    }
+  }
+
+  /* The ring around a lit passage fades in, unless motion is reduced. */
+  @media (prefers-reduced-motion: no-preference) {
+    .cap-annotated-doc mark {
+      transition: box-shadow var(--dur-fast) var(--ease-out);
     }
   }
 

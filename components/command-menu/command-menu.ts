@@ -30,6 +30,8 @@ export interface Command {
   // A line under the label from a search result's text: the words around the match, with the
   // typed words marked.
   snippet?: string;
+  // On a Recent entry, the id of the command it repeats (what is remembered).
+  of?: string;
   run: () => void;
 }
 

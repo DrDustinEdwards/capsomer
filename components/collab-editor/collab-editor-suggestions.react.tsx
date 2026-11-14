@@ -77,6 +77,10 @@ export function SuggestionsPanel({
     for (const s of items) direct(editor, fn(s.id));
   };
   const all = shown === "all";
+  // Which change a row's button acts on, for a screen reader: "Accept Ana's change".
+  const whose = (s: Suggestion) => (
+    <span className="cap-sr-only"> {s.by === String(me) ? "your" : `${who(s)}'s`} change</span>
+  );
 
   return (
     <Panel
@@ -182,6 +186,7 @@ export function SuggestionsPanel({
                       }
                     >
                       Show
+                      {whose(s)}
                     </Button>
                     {mayDecide ? (
                       <>
@@ -190,6 +195,7 @@ export function SuggestionsPanel({
                           onClick={() => editor && direct(editor, applySuggestion(s.id))}
                         >
                           Accept
+                          {whose(s)}
                         </Button>
                         <Button
                           size="xs"
@@ -197,6 +203,7 @@ export function SuggestionsPanel({
                           onClick={() => editor && direct(editor, revertSuggestion(s.id))}
                         >
                           Reject
+                          {whose(s)}
                         </Button>
                       </>
                     ) : s.by === String(me) ? (
@@ -206,6 +213,7 @@ export function SuggestionsPanel({
                         onClick={() => editor && direct(editor, revertSuggestion(s.id))}
                       >
                         Withdraw
+                        {whose(s)}
                       </Button>
                     ) : null}
                   </div>

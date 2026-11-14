@@ -5,7 +5,7 @@
 // uses the same functions. The menu's links and the page are in the HTML without any of this.
 import { readStored, reducedMotion, writeStored } from "../hooks/hooks.ts";
 import { DEFAULT_PREF } from "../shell/shell.ts";
-import { singleKeysOff } from "../shortcuts/shortcuts.ts";
+import { isTyping, singleKeysOff } from "../shortcuts/shortcuts.ts";
 import { enhance as enhanceHeader } from "../site-header/site-header.ts";
 import { attach as attachTip, hideTip } from "../tooltip/tooltip.ts";
 
@@ -82,8 +82,7 @@ export function jumpTarget(
   now = Date.now(),
 ): string | null {
   if (e.ctrlKey || e.metaKey || e.altKey || singleKeysOff()) return null;
-  const t = e.target as Element | null;
-  if (t?.closest?.("input, textarea, select, [contenteditable='true']")) return null;
+  if (isTyping(e.target)) return null;
   const live = armed.at > 0 && now - armed.at < JUMP_WINDOW_MS;
   armed.at = e.key === "g" ? now : 0;
   if (!live || !/^[1-9]$/.test(e.key)) return null;
@@ -103,9 +102,7 @@ export function isCollapseKey(
 ): boolean {
   if (!key || e.key !== key || e.ctrlKey || e.metaKey || e.altKey) return false;
   if (e.defaultPrevented || e.isComposing || singleKeysOff()) return false;
-  const t = e.target as HTMLElement | null;
-  if (t?.isContentEditable) return false;
-  return !t?.closest?.("input, textarea, select, [contenteditable], .cm-editor");
+  return !isTyping(e.target);
 }
 
 // Which entry is the page you are on, from the address: the entry whose `href` (or one of its

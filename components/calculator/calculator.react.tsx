@@ -1,6 +1,9 @@
 import { Fragment, useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
+import { Button } from "../button/button.react.tsx";
+import { Field } from "../field/field.react.tsx";
 import {
   checkTag,
+  formValues,
   resultView,
   textParts,
   type CalculatorField,
@@ -91,11 +94,13 @@ export function Calculator(props: CalculatorProps) {
   }, [embedded, values]);
 
   const onInput = (event: FormEvent<HTMLFormElement>) => {
-    const data = new FormData(event.currentTarget);
-    const next: Record<string, string> = {};
-    for (const field of fields) next[field.name] = String(data.get(field.name) ?? "").slice(0, 40);
     live.current = true;
-    setValues(next);
+    setValues(
+      formValues(
+        event.currentTarget,
+        fields.map((f) => f.name),
+      ),
+    );
   };
 
   return (
@@ -116,38 +121,32 @@ export function Calculator(props: CalculatorProps) {
           onInput(event);
         }}
       >
-        {fields.map((field) => {
-          const inputId = `${id}-${field.name}`;
-          const helpId = `${inputId}-help`;
-          const described = Boolean(field.hint || field.source);
-          return (
-            <div className="cap-field" key={field.name}>
-              <label className="cap-field-label" htmlFor={inputId}>
+        {fields.map((field) => (
+          <Field
+            key={field.name}
+            id={`${id}-${field.name}`}
+            label={
+              <>
                 {field.label}
                 {field.unit ? <span className="cap-calculator-unit"> ({field.unit})</span> : null}
-              </label>
-              {described ? (
-                <p className="cap-field-help" id={helpId}>
-                  <Hint field={field} />
-                </p>
-              ) : null}
-              <input
-                className="cap-input"
-                id={inputId}
-                name={field.name}
-                type="text"
-                inputMode={field.inputMode ?? "decimal"}
-                autoComplete="off"
-                spellCheck={false}
-                defaultValue={start[field.name]}
-                aria-describedby={described ? helpId : undefined}
-              />
-            </div>
-          );
-        })}
-        <button type="submit" className="cap-btn" data-variant="secondary">
+              </>
+            }
+            help={field.hint || field.source ? <Hint field={field} /> : undefined}
+          >
+            <input
+              className="cap-input"
+              name={field.name}
+              type="text"
+              inputMode={field.inputMode ?? "decimal"}
+              autoComplete="off"
+              spellCheck={false}
+              defaultValue={start[field.name]}
+            />
+          </Field>
+        ))}
+        <Button type="submit" variant="secondary">
           {submitLabel}
-        </button>
+        </Button>
       </form>
       <div className="cap-calculator-output">
         <div className="cap-calculator-status" role="status">

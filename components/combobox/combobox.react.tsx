@@ -79,7 +79,11 @@ export interface ComboboxProps extends ComboboxBaseProps {
   clearable?: boolean;
 }
 
-export interface ComboboxFreeTextProps extends Omit<ComboboxBaseProps, "items" | "emptyText"> {
+// No searchHint: a free text box says nothing while the text is short.
+export interface ComboboxFreeTextProps extends Omit<
+  ComboboxBaseProps,
+  "items" | "emptyText" | "searchHint"
+> {
   // Suggestions to filter here. With `search` they are not needed.
   items?: ComboboxOption[];
   // The typed text is the value: any text can be kept, and a suggestion only fills it in.
@@ -307,7 +311,8 @@ function useOptionSearch(
   return [found, run];
 }
 
-// Known options and found ones, each value once, the known first.
+// Found options and known ones, each value once, the found first (the search's own order), then
+// the known options it did not return (the chosen one, so its label shows).
 function pool(known: ComboboxOption[], found: ComboboxOption[]): ComboboxOption[] {
   const seen = new Set(found.map((i) => i.value));
   return [...found, ...known.filter((i) => !seen.has(i.value))];

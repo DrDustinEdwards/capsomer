@@ -9,24 +9,25 @@
 // A timer's remaining time is computed from the moment it ends, not counted down, so a phone that
 // sleeps or a page that reloads mid-incubation still knows how long is left.
 
-import { SEC, timecode } from "../time/time.ts";
+import { parseVersioned } from "../state-hooks/state-hooks.ts";
+import { DAY, HOUR, MIN, SEC, timecode } from "../time/time.ts";
 
 export const RUN_VERSION = 1;
 
-// Seconds in each unit a timer can use.
-const UNIT_SECONDS: Readonly<Record<string, number>> = Object.freeze({
-  second: 1,
-  seconds: 1,
-  sec: 1,
-  s: 1,
-  minute: 60,
-  minutes: 60,
-  min: 60,
-  hour: 3600,
-  hours: 3600,
-  h: 3600,
-  day: 86400,
-  days: 86400,
+// Milliseconds in each unit a timer can use.
+const UNIT_MS: Readonly<Record<string, number>> = Object.freeze({
+  second: SEC,
+  seconds: SEC,
+  sec: SEC,
+  s: SEC,
+  minute: MIN,
+  minutes: MIN,
+  min: MIN,
+  hour: HOUR,
+  hours: HOUR,
+  h: HOUR,
+  day: DAY,
+  days: DAY,
 });
 
 export interface StepTimer {
@@ -70,11 +71,10 @@ export interface StepInfo {
 // A timer's length in milliseconds: the longer end of a range ("5 to 10 minutes" runs 10), because
 // a timer that rings early is the mistake that costs the work. Null when it has no usable number.
 export function timerMs(timer: StepTimer): number | null {
-  const seconds = UNIT_SECONDS[String(timer.unit).toLowerCase()];
+  const unit = UNIT_MS[String(timer.unit).toLowerCase()];
   const amount = timer.max ?? timer.min;
-  if (seconds === undefined || amount === null || !Number.isFinite(amount) || amount <= 0)
-    return null;
-  return Math.round(amount * seconds * 1000);
+  if (unit === undefined || amount === null || !Number.isFinite(amount) || amount <= 0) return null;
+  return Math.round(amount * unit);
 }
 
 // The key a step's nth timer is stored under.
@@ -282,14 +282,10 @@ export function runMarkdown(run: Run, steps: StepInfo[], label = "Checklist"): s
 // Parses a stored run, or returns null: a value from another format, or one that is not a run, is
 // ignored, never trusted. Only the shapes this module writes are accepted.
 export function parseRun(raw: unknown): Run | null {
-  if (typeof raw !== "string") return null;
-  let value: Record<string, unknown>;
-  try {
-    value = JSON.parse(raw);
-  } catch {
-    return null;
-  }
-  if (!value || typeof value !== "object" || value.v !== RUN_VERSION) return null;
+  return parseVersioned(typeof raw === "string" ? raw : null, RUN_VERSION, runOf);
+}
+
+function runOf(value: Record<string, unknown>): Run | null {
   // typeof null is "object", so a null `steps` must be refused by name.
   const plainObject = (x: unknown) => x !== null && typeof x === "object" && !Array.isArray(x);
   if (

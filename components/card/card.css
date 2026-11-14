@@ -249,9 +249,12 @@
       outline: var(--focus-width) solid var(--ring);
       outline-offset: var(--focus-offset);
     }
+    /* Disabled as a field's control is: a dashed edge, the sunken ground and muted words. */
     &:has(> :disabled) {
       cursor: not-allowed;
-      opacity: var(--opacity-muted);
+      border-style: dashed;
+      background: var(--sunken);
+      color: var(--muted);
     }
   }
 

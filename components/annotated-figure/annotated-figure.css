@@ -93,13 +93,10 @@
     }
   }
 
+  /* The number is the mono eyebrow (.cap-eyebrow[data-variant="mono"]), put first. */
   .cap-annotated-key-num {
     order: -1;
     display: block;
-    color: var(--muted);
-    font: var(--weight-medium) var(--fs-label) / var(--leading-normal) var(--mono);
-    letter-spacing: var(--tracking-caps);
-    text-transform: uppercase;
   }
 
   .cap-annotated-key-art {
@@ -113,7 +110,7 @@
     display: block;
     margin-block: var(--space-1) var(--space-2);
     color: var(--text);
-    font-size: var(--title-6);
+    font-size: var(--fs-lead);
     font-weight: var(--weight-bold);
     line-height: var(--leading-snug);
   }

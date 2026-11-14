@@ -11,9 +11,8 @@ import {
 } from "../dialog/dialog.react.tsx";
 import type { Answer } from "../data/data.ts";
 import { errorText } from "../dialog/dialog.ts";
-import { wordMatches } from "./confirm-server.ts";
 import { wordPattern } from "./confirm-dialog.ts";
-import { CONFIRM_FIELD, REASON_FIELD } from "./confirm-server.ts";
+import { CONFIRM_FIELD, REASON_FIELD, wordMatches } from "./confirm-server.ts";
 
 const ERROR_GLYPH = (
   <path
@@ -526,34 +525,6 @@ export function ConfirmModal(props: ConfirmModalProps) {
 }
 
 // ---- Who asked, and the two steps ---------------------------------------------------------------
-
-/** What the dialog is asking about and the control that opened it, or null when closed. */
-export interface ConfirmAsk<T> {
-  subject: T;
-  opener: HTMLElement | null;
-}
-
-/**
- * The state a page keeps for its confirm dialogs: what is being asked about and the control that
- * asked, so focus goes back to it. `ask(subject, event.currentTarget)` opens; spread `props` into
- * the ConfirmDialog whose `open` is your own test of `subject`.
- */
-export function useConfirmAction<T>(): {
-  subject: T | null;
-  ask: (subject: T, opener?: EventTarget | null) => void;
-  close: () => void;
-  props: { returnTo: HTMLElement | null | undefined; onClose: (performed: boolean) => void };
-} {
-  const [asking, setAsking] = useState<ConfirmAsk<T> | null>(null);
-  const close = () => setAsking(null);
-  return {
-    subject: asking?.subject ?? null,
-    ask: (subject, opener) =>
-      setAsking({ subject, opener: opener instanceof HTMLElement ? opener : null }),
-    close,
-    props: { returnTo: asking?.opener, onClose: close },
-  };
-}
 
 /** A failed step: the server's words, and whether the preview it rested on has expired. */
 export interface StepError {

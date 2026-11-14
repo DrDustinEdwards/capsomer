@@ -6,7 +6,7 @@
 import { reducedMotion } from "../hooks/hooks.ts";
 
 // Scrolls `box` (a scroll container) so `target` sits near its top, without moving the page.
-function bring(box: HTMLElement, target: HTMLElement, margin: number) {
+export function bring(box: HTMLElement, target: HTMLElement, margin: number) {
   const top =
     target.getBoundingClientRect().top - box.getBoundingClientRect().top + box.scrollTop - margin;
   box.scrollTo({ top, behavior: reducedMotion() ? "auto" : "smooth" });

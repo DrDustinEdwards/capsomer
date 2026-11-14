@@ -11,7 +11,7 @@ import { plural } from "@drdustinedwards/site-helpers/text";
 import { confirm } from "../confirm-dialog/confirm-dialog.ts";
 import { toggleGroup } from "../disclosure/disclosure.ts";
 import { ensureRegion, say } from "../message/message.ts";
-import { isTypingKey, listOwnsKeys, moveRowFocus, singleKeysOff } from "../row-list/row-list.ts";
+import { isTypingKey, queueKey, singleKeysOff } from "../row-list/row-list.ts";
 import { enhance as enhanceShortcuts, register } from "../shortcuts/shortcuts.ts";
 import { enhance as enhanceTime, nowFor } from "../time/time.ts";
 import {
@@ -509,14 +509,8 @@ export function enhance(root: Element | Document | DocumentFragment = document):
       } else if (t.matches("[data-cap-part='view']")) setView(el, t.value as ModView);
     };
     const onKey = (e: KeyboardEvent) => {
-      if (e.defaultPrevented || !list || isTypingKey(e) || singleKeysOff() || e.repeat) return;
+      if (!list || !queueKey(e, list)) return;
       const key = e.key;
-      if (key === "j" || key === "k") {
-        if (!listOwnsKeys(list)) return;
-        if (moveRowFocus(list, key === "j" ? 1 : -1) || list.contains(document.activeElement))
-          e.preventDefault();
-        return;
-      }
       if (!["a", "r", "d", "x"].includes(key)) return;
       const row = rowOf(document.activeElement);
       if (!row || !list.contains(row) || document.querySelector("dialog:modal")) return;

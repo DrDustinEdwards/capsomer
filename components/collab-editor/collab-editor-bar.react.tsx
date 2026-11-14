@@ -1,6 +1,7 @@
 // The line above a file's text in its room: who else is in it, each in the color of their caret,
 // whether this page is connected, and for someone who may edit, Editing or Suggesting.
 
+import { listText } from "../hooks/hooks.ts";
 import { Avatar, AvatarGroup } from "../avatar/avatar.react.tsx";
 import { Segmented } from "../segmented/segmented.react.tsx";
 import { Status } from "../status/status.react.tsx";
@@ -42,7 +43,7 @@ export function RoomBar({
     <div className="cap-collab-bar">
       <div className="cap-collab-people">
         {others.length > 0 ? (
-          <AvatarGroup label={`Also here: ${names.join(", ")}`}>
+          <AvatarGroup label={`Also here: ${listText(names)}`}>
             {others.map((p) => (
               <span key={p.id} className="cap-collab-person" data-who={personSlot(p.id)}>
                 <Avatar name={p.name} size="sm" />
@@ -63,7 +64,7 @@ export function RoomBar({
           ) : others.length === 0 ? (
             "Only you are here."
           ) : (
-            `${names.join(", ")} ${others.length === 1 ? "is" : "are"} here too.`
+            `${listText(names)} ${others.length === 1 ? "is" : "are"} here too.`
           )}
         </p>
       </div>

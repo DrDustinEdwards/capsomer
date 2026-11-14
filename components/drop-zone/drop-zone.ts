@@ -80,6 +80,7 @@ const KIND_NAMES: Record<string, string> = {
   "audio/*": "audio",
   "text/plain": "text",
   "text/markdown": "Markdown",
+  "text/csv": "CSV",
 };
 
 // The accept list as a person would say it: "images and PDF", "JPEG, PNG and WebP".
