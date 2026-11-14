@@ -31,9 +31,10 @@ export interface AiEngineSettingsProps {
   // "The job's own default", value "".
   modelOptions: readonly SelectOption[];
   // The effort each job's API run uses ("low" to "max"), a partial map like `models`, and its
-  // choices, the first "The job's own default", value "".
-  efforts: Readonly<Partial<Record<string, string>>>;
-  effortOptions: readonly SelectOption[];
+  // choices, the first "The job's own default", value "". A site whose API runs take no effort
+  // leaves both out, and the table has no Effort column.
+  efforts?: Readonly<Partial<Record<string, string>>>;
+  effortOptions?: readonly SelectOption[];
   // Whether each engine can work now: the routine connected, an API key set.
   ready: { subscription: boolean; api: boolean };
   // What to do when one cannot, in a sentence.
@@ -56,7 +57,7 @@ export function AiEngineSettings({
   models,
   jobs,
   modelOptions,
-  efforts,
+  efforts = {},
   effortOptions,
   ready,
   readyNote,
@@ -119,7 +120,7 @@ export function AiEngineSettings({
           }
         >
           <Table
-            caption="The engine, model and effort for each job"
+            caption={`The engine, model${effortOptions ? " and effort" : ""} for each job`}
             captionHidden
             tableClassName="cap-ai-engine-table"
           >
@@ -128,7 +129,7 @@ export function AiEngineSettings({
                 <th scope="col">Job</th>
                 <th scope="col">Engine</th>
                 <th scope="col">Model when the API does it</th>
-                <th scope="col">Effort</th>
+                {effortOptions ? <th scope="col">Effort</th> : null}
               </tr>
             </thead>
             <tbody>
@@ -148,7 +149,7 @@ export function AiEngineSettings({
                   />
                 </td>
                 <td className="cap-muted">Each job's own</td>
-                <td className="cap-muted">Each job's own</td>
+                {effortOptions ? <td className="cap-muted">Each job's own</td> : null}
               </tr>
               {jobs.map((j) => (
                 <tr key={j.key}>
@@ -178,14 +179,16 @@ export function AiEngineSettings({
                       options={[...modelOptions]}
                     />
                   </td>
-                  <td>
-                    <Select
-                      name={`effort-${j.key}`}
-                      aria-label={`${j.label}: effort`}
-                      defaultValue={efforts[j.key] ?? ""}
-                      options={[...effortOptions]}
-                    />
-                  </td>
+                  {effortOptions ? (
+                    <td>
+                      <Select
+                        name={`effort-${j.key}`}
+                        aria-label={`${j.label}: effort`}
+                        defaultValue={efforts[j.key] ?? ""}
+                        options={[...effortOptions]}
+                      />
+                    </td>
+                  ) : null}
                 </tr>
               ))}
             </tbody>
@@ -215,7 +218,7 @@ export function AiEngineSettings({
               {usage.map((u) => (
                 <Row
                   key={`${u.job} ${u.effort ?? ""}`}
-                  title={`${jobs.find((j) => j.key === u.job)?.label ?? u.job}${u.effort ? `, effort ${effortOptions.find((e) => e.value === u.effort)?.label ?? u.effort}` : ""}`}
+                  title={`${jobs.find((j) => j.key === u.job)?.label ?? u.job}${u.effort ? `, effort ${effortOptions?.find((e) => e.value === u.effort)?.label ?? u.effort}` : ""}`}
                   detail={`${plural(u.calls, "call", "calls", { grouped: true })} · ${dollars(u.micros)}`}
                 />
               ))}
