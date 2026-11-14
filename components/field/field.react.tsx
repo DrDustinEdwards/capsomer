@@ -16,6 +16,7 @@ import { SLUG_PATTERN, slugify } from "@drdustinedwards/site-helpers/slug";
 import { moneyInputValue } from "@dustinedwards/site-runtime/money";
 import { countText, keyValue, revealedText, stepValue, toDateTimeLocal } from "./field.ts";
 import { useHydrated } from "../hooks/hooks.react.tsx";
+import { rangeFill } from "../range-slider/range-slider.ts";
 
 // The props Field passes to its control. Any input, textarea or select (or a component
 // that forwards these to one) will do.
@@ -180,7 +181,6 @@ export function Range(
   },
 ) {
   const { value, min = 0, max = 100, className, style, ...rest } = props;
-  const fill = max > min ? ((value - min) / (max - min)) * 100 : 0;
   return (
     <input
       {...rest}
@@ -189,7 +189,7 @@ export function Range(
       max={max}
       value={value}
       className={className ? `cap-range ${className}` : "cap-range"}
-      style={{ ...style, ["--cap-range-fill" as string]: `${fill.toFixed(2)}%` }}
+      style={{ ...style, ["--cap-range-fill" as string]: rangeFill(value, min, max) }}
     />
   );
 }
