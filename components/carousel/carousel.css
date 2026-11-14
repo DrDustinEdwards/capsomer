@@ -202,10 +202,10 @@
     .cap-carousel-track {
       scroll-behavior: smooth;
     }
+    /* The color eases; the width changes at once (motion is opacity, color and transform only, and
+       a scaled dot would stretch its round ends). */
     .cap-carousel-markers > button::before {
-      transition:
-        inline-size var(--dur-fast) var(--ease-out),
-        background-color var(--dur-fast) var(--ease-out);
+      transition: background-color var(--dur-fast) var(--ease-out);
     }
   }
 

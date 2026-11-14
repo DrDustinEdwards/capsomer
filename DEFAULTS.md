@@ -31,11 +31,11 @@ One page. Every line is a default with its reason, not a law: a better design ov
 
 ## Refused patterns
 
-Patterns other systems ship that Capsomer does not build, each with its reason and what to use instead. A product that needs one makes the case on the component's page first, as for any default.
+Patterns other systems ship that need a reason before a product uses one, each with that reason and the better default. Capsomer is a complete set with nothing left out on purpose (Dustin, 2026-11-13): a pattern here is built as a component when a product needs it, and its row stays as the guidance on when not to use it. Built so far: the carousel (`carousel.md`).
 
 | Pattern | Why not | Instead |
 | --- | --- | --- |
-| Carousel | It hides all but one slide, and a moving one fails WCAG 2.2.2 unless it can be paused; people rarely see past the first slide (NN/g, "Auto-Forwarding Carousels and Accordions Annoy Users", 2013). | Everything in view: a grid of panels or a row list. |
+| Carousel (built: `carousel.md`) | It hides all but one slide, and a moving one fails WCAG 2.2.2 unless it can be paused; people rarely see past the first slide (NN/g, "Auto-Forwarding Carousels and Accordions Annoy Users", 2013). Capsomer's never moves on its own. | Everything in view, a grid of panels or a row list, unless only a few of many items fit. |
 | Feed (APG `role="feed"`) | Endless loading puts the footer out of reach and loses a person's place; the APG feed pattern itself depends on screen reader reading modes behaving alike, which they do not. | Pagination (GOV.UK Pagination), or "Show more" that adds rows and moves no focus. |
 | Window splitter | A dragged divider needs a keyboard model and a single-pointer alternative (WCAG 2.5.7), for a layout container queries already fit to the space. | The shell's rail and collapse, the detail panel, and container queries. |
 | Menubar | APG's menubar is a desktop application's menu; for a site's navigation APG uses disclosure buttons and links (Example Disclosure Navigation Menu), and screen readers then announce plain links people know. | Site header and shell links; the menu button for a short list of commands. |

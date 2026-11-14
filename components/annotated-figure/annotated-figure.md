@@ -36,7 +36,7 @@ replaces:
   <div class="cap-annotated-key-entries">
     <figure class="cap-annotated-key-entry" data-callout="1">
       <svg class="cap-annotated-key-art" viewBox="0 0 76 76" role="img" aria-label="Header, drawn.">…</svg>
-      <figcaption><span class="cap-annotated-key-num">1</span><b class="cap-annotated-key-name">Header</b><span class="cap-annotated-key-note">The site's name and its menu.</span></figcaption>
+      <figcaption><span class="cap-eyebrow cap-annotated-key-num" data-variant="mono">1</span><b class="cap-annotated-key-name">Header</b><span class="cap-annotated-key-note">The site's name and its menu.</span></figcaption>
     </figure>
   </div>
 </section>

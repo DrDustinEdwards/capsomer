@@ -122,12 +122,6 @@
 
   /* A dataset previewed beside an article: heading, drawing, the sentence, the link, the source. */
   .cap-data-preview {
-    display: grid;
-    gap: var(--space-3);
-    padding: var(--pad-card);
-    border: var(--line-w) solid var(--line);
-    border-radius: var(--radius-l);
-    background: var(--surface);
     /* A card's own text size and leading, not the article's beside it. */
     font-size: var(--fs-body);
     line-height: var(--leading-relaxed);

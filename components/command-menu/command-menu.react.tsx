@@ -239,8 +239,7 @@ export function CommandMenu({
   const choose = (c: Command | undefined) => {
     if (!c) return;
     dlg.current?.close();
-    if (recentKey && c.id !== "ask")
-      setRecent(rememberRecent(recentKey, (c as Command & { of?: string }).of ?? c.id));
+    if (recentKey && c.id !== "ask") setRecent(rememberRecent(recentKey, c.of ?? c.id));
     c.run();
   };
 

@@ -1,4 +1,6 @@
 import { useEffect, useId, useRef, useState, type ReactNode, type RefObject } from "react";
+import { Alert } from "../banner/banner.react.tsx";
+import { Button } from "../button/button.react.tsx";
 import { Panel } from "../panel/panel.react.tsx";
 
 // What a list's editor holds: adding a new one, or editing one row. `key` names the row, so the
@@ -59,8 +61,9 @@ export interface ConfigFormProps {
 }
 
 // The one shell of an operator's add and edit forms: a panel that scrolls into view and puts focus
-// in its first field when it opens, the fields in a grid, a hint while the draft is not sendable,
-// the submit and Cancel, and an optional Danger area. Esc in a field cancels.
+// in its first field when it opens and hands focus back to its opener when it closes, the fields
+// in a grid, a hint while the draft is not sendable, the submit and Cancel, and an optional Danger
+// area. Esc in a field cancels.
 export function ConfigForm({
   f,
   first,
@@ -75,6 +78,21 @@ export function ConfigForm({
 }: ConfigFormProps) {
   const box = useRef<HTMLElement>(null);
   const form = useRef<HTMLFormElement>(null);
+  // The control that opened the form (Add, Edit) gets focus back when the form closes by Cancel,
+  // Esc or a save, if focus was lost with the form; a control that has gone keeps nothing.
+  // Read while rendering, before the form's own focus and before an app disables its Add button.
+  const [opener] = useState(() =>
+    typeof document === "undefined" ? null : document.activeElement,
+  );
+  useEffect(() => {
+    return () => {
+      requestAnimationFrame(() => {
+        const now = document.activeElement;
+        const lost = !now || now === document.body || !now.isConnected;
+        if (lost && opener instanceof HTMLElement && opener.isConnected) opener.focus();
+      });
+    };
+  }, [opener]);
   useEffect(() => {
     box.current?.scrollIntoView({ block: "nearest" });
     first.current?.focus();
@@ -107,17 +125,15 @@ export function ConfigForm({
       >
         {children}
         {hint && (
-          <p className="cap-config-hint cap-config-full" role="alert">
-            {hint}
-          </p>
+          <div className="cap-config-full">
+            <Alert tone="warn">{hint}</Alert>
+          </div>
         )}
         <div className="cap-config-actions cap-config-full">
-          <button type="submit" className="cap-btn" data-variant="primary">
+          <Button type="submit" variant="primary">
             {submitLabel}
-          </button>
-          <button type="button" className="cap-btn" onClick={onClose}>
-            Cancel
-          </button>
+          </Button>
+          <Button onClick={onClose}>Cancel</Button>
         </div>
         {danger != null && <div className="cap-config-danger cap-config-full">{danger}</div>}
       </form>

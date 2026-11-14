@@ -13,16 +13,7 @@
     gap: var(--space-4);
   }
 
-  .cap-contact-card {
-    display: grid;
-    gap: var(--space-3);
-    align-content: start;
-    min-inline-size: 0;
-    padding: var(--pad-card);
-    border: var(--line-w) solid var(--line);
-    border-radius: var(--radius-l);
-    background: var(--surface);
-  }
+  /* A card is .cap-card (card.css) with .cap-contact-card for the plain variant's hook. */
 
   .cap-contact-grid[data-variant="plain"] {
     gap: var(--space-6);
@@ -32,6 +23,7 @@
       border: 0;
       border-radius: 0;
       background: none;
+      box-shadow: none;
     }
 
     @media (min-width: 48rem) {
@@ -144,8 +136,7 @@
       color: var(--muted);
     }
 
-    /* The base link cues (weight, hover tint, visited) are the link's own; this adds the figures and
-       the target (24px, 44px on a touch screen), so numbers that wrap onto two lines stay apart. */
+    /* The base link cues (weight, hover tint, visited) are the link's own; this adds the figures and the target size. */
     & a {
       display: inline-flex;
       align-items: center;

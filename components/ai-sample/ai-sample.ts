@@ -47,7 +47,9 @@ export function drawSample(
   for (const f of result.fields) {
     const value = node("div", "cap-ai-sample-field", f.value);
     if (f.mono) value.dataset.variant = "mono";
-    box.append(node("p", "cap-ai-sample-label", f.label), value);
+    const label = node("p", "cap-eyebrow cap-ai-sample-label", f.label);
+    label.dataset.variant = "mono";
+    box.append(label, value);
   }
   if (result.note) box.append(node("p", "cap-ai-sample-note", result.note));
   out.append(box);
@@ -69,10 +71,14 @@ export function enhance(root: ParentNode = document, options: AiSampleOptions): 
     // A newer call wins: a slower earlier one landing late never replaces it.
     let call = 0;
 
+    // Busy is aria-busy and aria-disabled, never disabled, so the focused button keeps focus; a
+    // submit while busy is refused below.
+    let busyNow = false;
     const setBusy = (on: boolean) => {
-      button.disabled = on;
-      if (on) button.setAttribute("aria-busy", "true");
-      else button.removeAttribute("aria-busy");
+      busyNow = on;
+      for (const name of ["aria-busy", "aria-disabled"])
+        if (on) button.setAttribute(name, "true");
+        else button.removeAttribute(name);
       button.replaceChildren(...(on ? [busy] : idle.map((n) => n.cloneNode(true))));
     };
     const onChange = () => drawSample(out, null);
@@ -92,7 +98,7 @@ export function enhance(root: ParentNode = document, options: AiSampleOptions): 
     };
     const onSubmit = (e: Event) => {
       e.preventDefault();
-      void run();
+      if (!busyNow) void run();
     };
     form.addEventListener("change", onChange);
     form.addEventListener("submit", onSubmit);

@@ -94,7 +94,11 @@ export function useRoom(path: string, initial: string, initiallyUnsaved: boolean
       let message: ServerMessage;
       try {
         message = JSON.parse(raw) as ServerMessage;
-      } catch {
+      } catch (error) {
+        // Not dropped silently: the page says the room spoke and could not be read.
+        setNotice(
+          `The room sent a message this page could not read (${error instanceof Error ? error.message : "not JSON"}).`,
+        );
         return;
       }
       if (message.t === "people") setPeople(message.people);
@@ -208,16 +212,22 @@ export const personSlot = (id: number) => Math.abs(id) % 8;
  * the room this caret is gone; the room drops it when the socket closes in any case.
  */
 function withoutUnload<T>(run: () => T): T {
-  type Listen = (type: string, listener: unknown, options?: unknown) => void;
-  const w = window as unknown as { addEventListener: Listen; removeEventListener: Listen };
-  const { addEventListener: add, removeEventListener: remove } = w;
+  const { addEventListener: add, removeEventListener: remove } = window;
   const swap = (type: string) => (type === "unload" ? "pagehide" : type);
-  w.addEventListener = (type, ...rest) => add.call(w, swap(type), ...rest);
-  w.removeEventListener = (type, ...rest) => remove.call(w, swap(type), ...rest);
+  window.addEventListener = (
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | AddEventListenerOptions,
+  ) => add.call(window, swap(type), listener, options);
+  window.removeEventListener = (
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | EventListenerOptions,
+  ) => remove.call(window, swap(type), listener, options);
   try {
     return run();
   } finally {
-    w.addEventListener = add;
-    w.removeEventListener = remove;
+    window.addEventListener = add;
+    window.removeEventListener = remove;
   }
 }

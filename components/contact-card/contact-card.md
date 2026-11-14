@@ -20,14 +20,15 @@ replaces:
 ## Usage
 
 ```html
+<!-- Each card is a .cap-card (needs card.css); .cap-contact-card beside it is the plain variant's hook. -->
 <div class="cap-contact-grid">                 <!-- data-variant="plain" -->
-  <div class="cap-contact-card">
+  <div class="cap-card cap-contact-card">
     <h3 class="cap-contact-card-title">Telephone</h3>
     <dl class="cap-contact-lines">
       <div><dt>Editing</dt><dd><a href="tel:+1-555-010-0100">555-010-0100</a> <span>or</span> <a href="tel:+1-555-010-0101">555-010-0101</a></dd></div>
     </dl>
   </div>
-  <div class="cap-contact-card">
+  <div class="cap-card cap-contact-card">
     <h3 class="cap-contact-card-title">Email</h3>
     <ul class="cap-contact-ways" data-columns="1">   <!-- data-columns optional -->
       <li><a class="cap-contact-way" href="mailto:hello@example.com">hello@example.com<span aria-hidden="true"><svg>...</svg></span></a></li>
