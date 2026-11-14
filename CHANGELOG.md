@@ -3,6 +3,17 @@
 Each release names every removed or renamed token or class, and every changed HTML contract. A pull request adds its entry as a
 changeset (`npx changeset`, `.changeset/README.md`); the release pull request writes them here.
 
+## 0.151.2
+
+### Patch Changes
+
+- The optional peer `@tanstack/react-query` is `^5.90.21`, not `^5.104.0`. 5.104.0 was the version installed when
+  `capsomer/react/data` was added, not the lowest it works with: the data hooks typecheck against 5.90.21. The higher
+  floor made npm refuse any app that also installs EmDash (whose admin pins 5.90.21), which kept the astro repo's demo from
+  taking a Capsomer update. The showcase's own hast-util-from-html moves to 2.1.0, the floor Prelum's markdown copy now
+  asks for, so Capsomer's lockfile can take the current Prelum. No token, class or HTML contract changes.
+- **`Title`, `Text` and `Stack` take any element or component and its props.** `as` is a tag or a component (a router `Link` or `Form`), and that element's own props reach it with their types: `<Stack as="form" method="post" noValidate>`, `<Text as={Link} to="/x">`. Replaces 0.148.0's fixed element list. No CSS change.
+
 ## 0.151.1
 
 ### Patch Changes
