@@ -36,6 +36,8 @@ import { settingsFromForm } from "capsomer/behavior/ai-engine-settings";
   pending={busy}
 />
 
+// A site whose API runs take no effort leaves out efforts and effortOptions: no Effort column.
+
 // In the action:
 const saved = settingsFromForm((name) => form.get(name), FEATURES);
 ```
