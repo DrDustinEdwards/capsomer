@@ -1,39 +1,55 @@
-import { createElement, type HTMLAttributes, type Ref } from "react";
+import { createElement, type ComponentPropsWithRef, type ElementType } from "react";
 
-// The props of any element the roles are put on: its global and ARIA attributes, handlers, a ref, and the few element-specific
-// ones a heading, label or table cell takes. `as` is any intrinsic element: the element is the outline, the role is the look.
-export type ElementProps = HTMLAttributes<HTMLElement> & {
-  ref?: Ref<HTMLElement>;
-  as?: keyof React.JSX.IntrinsicElements;
-  htmlFor?: string;
-  scope?: "col" | "row";
-  colSpan?: number;
-};
+// `as` is any element or component (a `td`, an `h1`, a router `Link` or `Form`), and the props of that element or component
+// reach it: a ref, `htmlFor`, `href`, `method`, a handler. The element is the outline; the role is the look.
+export type As<T extends ElementType, Own> = Own & { as?: T } & Omit<
+    ComponentPropsWithRef<T>,
+    keyof Own | "as"
+  >;
 
-export type TitleProps = ElementProps & {
+interface TitleOwn {
   // The look, 1 the largest to 6; 4 when omitted. The heading level is `as` (h2 when omitted).
   size?: 1 | 2 | 3 | 4 | 5 | 6;
-};
+  className?: string;
+}
 
-export type TextProps = ElementProps & {
+interface TextOwn {
   size?: "tiny" | "small" | "lead";
   tone?: "muted" | "dim" | "ink" | "accent" | "ok" | "crit";
   weight?: "strong";
   face?: "ui" | "mono" | "prose" | "display";
   align?: "center" | "end";
-};
+  className?: string;
+}
+
+export type TitleProps<T extends ElementType = "h2"> = As<T, TitleOwn>;
+export type TextProps<T extends ElementType = "p"> = As<T, TextOwn>;
 
 // The HTML contract in text.md.
-export function Title({ size, as = "h2", className, ...rest }: TitleProps) {
-  return createElement(as, {
+export function Title<T extends ElementType = "h2">({
+  size,
+  as,
+  className,
+  ...rest
+}: TitleProps<T>) {
+  return createElement(as ?? "h2", {
     ...rest,
     className: className ? `cap-title ${className}` : "cap-title",
     "data-size": size === 4 ? undefined : size,
   });
 }
 
-export function Text({ size, tone, weight, face, align, as = "p", className, ...rest }: TextProps) {
-  return createElement(as, {
+export function Text<T extends ElementType = "p">({
+  size,
+  tone,
+  weight,
+  face,
+  align,
+  as,
+  className,
+  ...rest
+}: TextProps<T>) {
+  return createElement(as ?? "p", {
     ...rest,
     className: className ? `cap-text ${className}` : "cap-text",
     "data-size": size,
