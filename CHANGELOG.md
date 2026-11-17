@@ -3,6 +3,13 @@
 Each release names every removed or renamed token or class, and every changed HTML contract. A pull request adds its entry as a
 changeset (`npx changeset`, `.changeset/README.md`); the release pull request writes them here.
 
+## 0.154.0
+
+### Minor Changes
+
+- A shared leading step for the token sweep: `--leading-crisp` (1.15), used by Foxing (ui.css) and Foxhound (the audit
+  title). Nothing is removed or renamed.
+
 ## 0.153.0
 
 ### Minor Changes
