@@ -10,7 +10,7 @@ added: 0.79.3
 updated: 0.98.0
 source: Capsomer's own scripts (0.79.3, trusted-html.ts); RichText from txasm, 28 dangerouslySetInnerHTML of stored sanitized HTML in 20 files (routes/meetings.$slug.abstracts.$ref.tsx, awards.$slug.tsx, review.$assignmentId.tsx and the rest) and routes/accessibility.tsx's inline maxWidth 65ch
 replaces:
-  - "dangerouslySetInnerHTML=\\{\\{\\s*__html:\\s*(?!jsonLdText)"
+  - "dangerouslySetInnerHTML=\\{\\{\\s*__html:\\s*(?!jsonLdText|scriptJson)"
   - "style=\\{\\{\\s*maxWidth:\\s*\"65ch\""
 ---
 
