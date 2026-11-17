@@ -55,6 +55,43 @@ export function sortByHeader(th: HTMLTableCellElement, direction?: SortDirection
   return next;
 }
 
+// A row that leaves (removed, or hidden by a filter) while focus is in it would drop focus to the
+// body: it goes to the next row, else the previous, else the region, which is focusable.
+function keepFocus(wrap: HTMLElement): () => void {
+  let held: { row: HTMLElement; next: Element | null; prev: Element | null } | null = null;
+  const live = (el: Element | null): el is HTMLElement =>
+    el instanceof HTMLElement && wrap.contains(el) && !el.closest("[hidden]");
+  const onFocusIn = (e: FocusEvent) => {
+    const row = (e.target as Element).closest<HTMLElement>("tbody tr");
+    held = row && { row, next: row.nextElementSibling, prev: row.previousElementSibling };
+  };
+  const check = () => {
+    const h = held;
+    const a = document.activeElement;
+    if (!h || live(h.row) || (a && a !== document.body)) return;
+    held = null;
+    const row = [h.next, h.prev].find(live);
+    const target =
+      row?.querySelector<HTMLElement>("a[href], button:not(:disabled), input:not(:disabled)") ??
+      row ??
+      wrap;
+    if (target === row) row.tabIndex = -1;
+    target.focus();
+  };
+  const observer = new MutationObserver(check);
+  observer.observe(wrap, {
+    childList: true,
+    subtree: true,
+    attributes: true,
+    attributeFilter: ["hidden"],
+  });
+  wrap.addEventListener("focusin", onFocusIn);
+  return () => {
+    observer.disconnect();
+    wrap.removeEventListener("focusin", onFocusIn);
+  };
+}
+
 // Attaches to every [data-cap="table"] under root that is not attached yet. Returns a
 // function that detaches them all. A table already marked sorted (aria-sort in its
 // markup) is expected to arrive in that order; it is not re-sorted on attach.
@@ -70,7 +107,9 @@ export function enhance(root: ParentNode = document): () => void {
       if (button && th && wrap.contains(th)) sortByHeader(th);
     };
     wrap.addEventListener("click", onClick);
+    const unKeep = keepFocus(wrap);
     undo.push(() => {
+      unKeep();
       wrap.removeEventListener("click", onClick);
       delete wrap.dataset.capReady;
     });

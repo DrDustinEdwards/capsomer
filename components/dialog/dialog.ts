@@ -103,13 +103,15 @@ export function syncClosedBy(dialog: HTMLDialogElement): void {
   dialog.setAttribute("closedby", value);
 }
 
-// True when a click outside the dialog must not close it: it is locked, it is an alert
-// dialog (one that asks a question the person must answer), or it is busy.
+// True when a click outside the dialog (or a swipe down) must not close it: it is locked, it is an
+// alert dialog (one that asks a question the person must answer), it is busy, or a form in it has
+// unsaved input (field.ts marks a changed control data-cap-dirty). Esc, Close and Cancel still close.
 export function isLocked(dialog: HTMLDialogElement): boolean {
   return (
     dialog.hasAttribute("data-cap-modal-lock") ||
     dialog.getAttribute("role") === "alertdialog" ||
-    isBusy(dialog)
+    isBusy(dialog) ||
+    dialog.querySelector("form [data-cap-dirty]") !== null
   );
 }
 
@@ -286,6 +288,9 @@ export function wireDialog(dialog: HTMLDialogElement, opts: DialogOptions = {}):
     returnFocus(dialog, s.opts.returnTo);
   };
 
+  // A first edit locks the backdrop where the browser dismisses it itself (closedby).
+  const onInput = () => syncClosedBy(dialog);
+  dialog.addEventListener("input", onInput);
   dialog.addEventListener("mousedown", onDown);
   dialog.addEventListener("click", onClick);
   dialog.addEventListener("cancel", onCancel);
@@ -310,6 +315,7 @@ export function wireDialog(dialog: HTMLDialogElement, opts: DialogOptions = {}):
     gone = true;
     dialog.removeEventListener("focusin", onFirstFocus);
     unDrag();
+    dialog.removeEventListener("input", onInput);
     dialog.removeEventListener("mousedown", onDown);
     dialog.removeEventListener("click", onClick);
     dialog.removeEventListener("cancel", onCancel);
