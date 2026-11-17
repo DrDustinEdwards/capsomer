@@ -83,7 +83,7 @@ const d = useDialog();
 - A native `dialog` opened with `showModal()` is modal: the page behind is inert and out of the accessibility tree, and focus cannot leave.
 - Name it: `aria-labelledby` its title, or `aria-label` when there is no visible title (a palette). Describe it with `aria-describedby` its description or body.
 - A question the person must answer is `role="alertdialog"`; it has no corner Close button and ignores the backdrop.
-- A dialog with a form holding unsaved input (a control field.ts marked `data-cap-dirty`) ignores the backdrop and a swipe down; Esc, Close and Cancel still close it.
+- A dialog with a form holding unsaved input (a control field.ts marked `data-cap-dirty`) ignores the backdrop and a swipe down until it is closed or the form is reset; Esc, Close and Cancel still close it.
 - The Close button is an icon button named "Close" (`aria-label`), the last control in the order, in the corner.
 - Busy is `aria-busy` on the dialog and `aria-disabled` (not `disabled`) on Close and Cancel, so focus stays where it was.
 - Forced colors: the dialog, the footer and the divider keep their borders.
