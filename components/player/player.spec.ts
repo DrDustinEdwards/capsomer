@@ -136,9 +136,13 @@ eachTheme((theme) => {
   }) => {
     await page.setViewportSize({ width: 390, height: 700 });
     await visitStates(page, "player", theme, "surface");
-    await page.locator(".cap-player-chapter-title").first().evaluate((el) => {
-      el.textContent = "A chapter title that runs on far past the width of a phone screen ".repeat(3);
-    });
+    await page
+      .locator(".cap-player-chapter-title")
+      .first()
+      .evaluate((el) => {
+        el.textContent =
+          "A chapter title that runs on far past the width of a phone screen ".repeat(3);
+      });
     const wide = await page.evaluate(
       () => document.documentElement.scrollWidth > document.documentElement.clientWidth,
     );
