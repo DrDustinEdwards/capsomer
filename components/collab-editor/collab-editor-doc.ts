@@ -18,7 +18,13 @@
 // it twice. `prosemirrorToYXmlFragment` changes only the blocks that differ, so the comments anchored
 // in the others stay where they were.
 
-import { prosemirrorToYXmlFragment, yXmlFragmentToProsemirrorJSON } from "@tiptap/y-tiptap";
+import {
+  absolutePositionToRelativePosition,
+  initProseMirrorDoc,
+  prosemirrorToYXmlFragment,
+  yXmlFragmentToProsemirrorJSON,
+  type ProsemirrorMapping,
+} from "@tiptap/y-tiptap";
 import * as Y from "yjs";
 
 import {
@@ -77,13 +83,23 @@ function printsOf(ydoc: Y.Doc): Map<number, string> {
  * Puts `markdown` in as the whole document, keeping the blocks that are already the same, and starts
  * the save's bookkeeping from it. The first load of a room and every replacement both come here.
  * `saved` is the text as the site or Git holds it, when that differs (a room started from a draft).
+ * `doc`, the editor's JSON, goes in instead of the Markdown read: a document brought in from elsewhere
+ * with its pending suggestions (a block's mark also in its `smark`), which Markdown cannot carry.
  */
 export function loadMarkdown(
   ydoc: Y.Doc,
-  input: { markdown: string; version: string | null; dialect?: Dialect; saved?: string },
+  input: {
+    markdown: string;
+    version: string | null;
+    dialect?: Dialect;
+    saved?: string;
+    doc?: JsonDoc;
+  },
 ): void {
   const dialect = input.dialect ?? readMeta(ydoc).dialect;
-  const loaded = toDoc(input.markdown, dialect);
+  const loaded = input.doc
+    ? { doc: input.doc as JsonNode, tail: "\n" }
+    : toDoc(input.markdown, dialect);
   const node = roomSchema().nodeFromJSON(loaded.doc);
   // The prints are taken from the schema's own nodes, as an editor would see them after loading.
   const prints = fingerprints(node.toJSON() as JsonNode);
@@ -187,6 +203,28 @@ export function patchMarkdown(ydoc: Y.Doc, markdown: string): Patched {
     addPrints(ydoc, added, loaded.tail);
   });
   return { ok: true, changed: true };
+}
+
+/**
+ * Where the text from `from` to `to` (the document's positions) sits in the shared copy, as a comment's
+ * anchor: the same relative positions an editor's selection gives (`anchorOf`), for a room's server
+ * that has no editor, such as a thread brought in with a document.
+ */
+export function anchorAt(ydoc: Y.Doc, from: number, to: number): string {
+  const type = ydoc.getXmlFragment(FRAGMENT);
+  return anchorJson(type, initProseMirrorDoc(type, roomSchema()).mapping, from, to);
+}
+
+/** A range as JSON relative positions in `type`, which follow the text as people type around it. */
+export function anchorJson(
+  type: Y.XmlFragment,
+  mapping: ProsemirrorMapping,
+  from: number,
+  to: number,
+): string {
+  const at = (pos: number) =>
+    Y.relativePositionToJSON(absolutePositionToRelativePosition(pos, type, mapping));
+  return JSON.stringify({ from: at(from), to: at(to) });
 }
 
 /** After a save: the version it made, and the text it wrote, so nothing reads as unsaved. */
