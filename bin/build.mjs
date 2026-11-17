@@ -120,8 +120,7 @@ export async function bundleScript(entry, { format = "esm", name } = {}) {
     // Not "silent": that level drops every log before onLog sees it. onLog takes them all and keeps only this one.
     logLevel: "warn",
     onLog: (_level, log) => {
-      if (log.code === "UNRESOLVED_IMPORT")
-        unresolved.push(log.message.replace(/\x1b\[[0-9;]*m/g, "").split("\n")[0] ?? "");
+      if (log.code === "UNRESOLVED_IMPORT") unresolved.push(`${log.exporter} (in ${log.id})`);
     },
   });
   const { output } = await built.generate({
@@ -131,7 +130,8 @@ export async function bundleScript(entry, { format = "esm", name } = {}) {
     codeSplitting: false,
   });
   await built.close();
-  if (unresolved.length > 0) throw new Error(`${entry}: ${[...new Set(unresolved)].join("; ")}`);
+  if (unresolved.length > 0)
+    throw new Error(`${entry}: unresolved import of ${[...new Set(unresolved)].join("; ")}`);
   const [chunk] = output;
   if (output.length !== 1 || chunk?.type !== "chunk")
     throw new Error(`${entry}: expected one chunk`);
