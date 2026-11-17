@@ -1,5 +1,8 @@
 /* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+/* The checkbox and radio (.cap-check) are in check.css, which a page with only a box imports
+   alone (capsomer/check.css). */
+@import "./check.css";
 
 /* Form fields: a label above, help outside the control, an error beside it with an icon.
    .cap-input styles input and textarea; .cap-check a checkbox or radio with its label (the
@@ -301,142 +304,6 @@
     resize: vertical;
     /* Grows with its text where the browser can (field-sizing); otherwise the user drags it. */
     field-sizing: content;
-  }
-
-  /* A checkbox or radio with its label. The whole label is the hit area. The box and the
-     mark are drawn here so the edge, the fill and the tick are the same in every browser. */
-  .cap-check {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-3);
-    min-height: var(--target);
-    color: var(--text);
-    cursor: pointer;
-
-    & input {
-      --cap-check-edge: var(--line-strong);
-      appearance: none;
-      position: relative;
-      flex: none;
-      box-sizing: border-box;
-      width: 16px;
-      height: 16px;
-      margin: 0;
-      border: var(--line-w) solid var(--cap-check-edge);
-      border-radius: var(--radius-s);
-      background: var(--surface);
-      color: var(--primary-fg);
-      cursor: inherit;
-
-      /* The hit area: at least --target square (44px on a touch screen) around the 16px box, for a
-         box with no visible label beside it (a row's box); the box is drawn the same size. */
-      &::before {
-        content: "";
-        position: absolute;
-        inset: calc(7px - var(--target) / 2);
-      }
-      /* The tick (checkbox) and the dot (radio): drawn with borders and a circle, no image. */
-      &::after {
-        content: "";
-        position: absolute;
-        box-sizing: border-box;
-        opacity: 0;
-      }
-      &[type="checkbox"]::after {
-        left: calc(var(--space-2) + var(--line-w) / 2);
-        top: 1px;
-        width: 5px;
-        height: 9px;
-        border: solid currentColor;
-        border-width: 0 var(--line-w-thick) var(--line-w-thick) 0;
-        rotate: 45deg;
-      }
-      &[type="radio"] {
-        border-radius: 50%;
-      }
-      &[type="radio"]::after {
-        inset: var(--space-1-5);
-        border-radius: 50%;
-        background: currentColor;
-      }
-      &:hover:not(:disabled),
-      &[data-force="hover"] {
-        --cap-check-edge: var(--muted);
-      }
-      &:checked,
-      &[type="checkbox"]:indeterminate {
-        --cap-check-edge: var(--on);
-        background: var(--on);
-      }
-      &:checked::after {
-        opacity: 1;
-      }
-      /* Mixed: a bar instead of a tick. */
-      &[type="checkbox"]:indeterminate::after {
-        opacity: 1;
-        left: var(--space-1-5);
-        top: var(--space-2-5);
-        width: 8px;
-        height: 2px;
-        border-width: 0 0 var(--line-w-thick);
-        rotate: none;
-      }
-      &:focus-visible {
-        outline: var(--ring-width) solid var(--ring);
-        outline-offset: var(--focus-offset-tight);
-      }
-      &[aria-invalid="true"] {
-        --cap-check-edge: var(--crit);
-        box-shadow: 0 0 0 var(--ring-width) color-mix(in srgb, var(--crit) 20%, transparent);
-      }
-      &[aria-invalid="true"]:checked {
-        --cap-check-edge: var(--on);
-      }
-      &:disabled {
-        --cap-check-edge: var(--line-strong);
-        border-style: dashed;
-        background: var(--sunken);
-        color: var(--muted);
-      }
-      &:disabled:checked,
-      &[type="checkbox"]:disabled:indeterminate {
-        background: var(--sunken);
-        color: var(--muted);
-      }
-    }
-    &:has(input:disabled) {
-      color: var(--muted);
-      cursor: not-allowed;
-    }
-
-    /* A choice card: the whole box is the label and the chosen one takes the accent tint
-       (shadcn's field-label with a field inside). */
-    &[data-variant="card"] {
-      align-items: flex-start;
-      box-sizing: border-box;
-      width: 100%;
-      padding: var(--pad-x);
-      border: var(--line-w) solid var(--line);
-      border-radius: var(--radius-m);
-
-      & input {
-        margin-top: 1px;
-      }
-      &:hover:not(:has(input:disabled)) {
-        background: var(--raised);
-      }
-      &:has(input:checked) {
-        border-color: var(--accent-line);
-        background: var(--sel);
-      }
-      &:has(input:focus-visible) {
-        outline: var(--ring-width) solid var(--ring);
-        outline-offset: var(--focus-offset-tight);
-        & input:focus-visible {
-          outline: none;
-        }
-      }
-    }
   }
 
   /* A slider: a native range input on a 4px track that fills with the primary color up to the
@@ -799,40 +666,11 @@
         border-color var(--dur-fast) var(--ease-out),
         background-color var(--dur-fast) var(--ease-out);
     }
-    .cap-check input {
-      transition:
-        border-color var(--dur-fast) var(--ease-out),
-        background-color var(--dur-fast) var(--ease-out);
-
-      &::after {
-        transition:
-          opacity var(--dur-fast) var(--ease-out),
-          scale var(--dur-fast) var(--ease-out);
-      }
-      &:not(:checked):not(:indeterminate)::after {
-        scale: 0.6;
-      }
-    }
   }
 
   @media (forced-colors: active) {
     .cap-input[aria-invalid="true"] {
       border-width: var(--line-w-thick);
-    }
-    .cap-check input {
-      forced-color-adjust: none;
-      border-color: ButtonText;
-      background: Field;
-      color: HighlightText;
-
-      &:checked,
-      &[type="checkbox"]:indeterminate {
-        border-color: Highlight;
-        background: Highlight;
-      }
-      &:disabled {
-        border-color: GrayText;
-      }
     }
     .cap-field-error::before,
     .cap-field-count[data-over="true"]::before {

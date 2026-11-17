@@ -1,8 +1,11 @@
 /* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+/* The group row (.cap-group) is in group.css, which a page with groups and no <details>
+   imports alone (capsomer/group.css). */
+@import "./group.css";
 
 /* Show and hide: a native <details> section (.cap-disclosure), and a group row in a list
-   (.cap-group) whose button shows or hides the rows it groups. Two levels at most.
+   (.cap-group, group.css) whose button shows or hides the rows it groups. Two levels at most.
    Rebuilt in 0.2 to the craft of shadcn's Accordion and Collapsible: a smooth height
    animation where the browser supports it, a flat accordion variant (rules between items,
    the chevron at the end), a pressed state and a disabled one. */
@@ -249,105 +252,13 @@
     transform: rotate(-90deg) scaleX(-1);
   }
 
-  /* A group row: the button names what it holds and how many ("Notices, 4"). */
-  .cap-group {
-    display: grid;
-  }
-  /* The button may sit in a heading, so a person moving by heading finds the groups (the
-     Portal's queue groups are an h3 holding the button). The heading adds nothing of its
-     own: the button is the band. */
-  .cap-group-heading {
-    margin: 0;
-    font: inherit;
-    letter-spacing: inherit;
-  }
-  .cap-group-toggle {
-    display: flex;
-    align-items: center;
-    gap: var(--space-3);
-    width: 100%;
-    min-height: max(var(--target), var(--control));
-    padding: var(--space-2) var(--pad-x);
-    border: 0;
-    border-top: var(--line-w) solid var(--line);
-    background: var(--raised);
-    color: var(--text);
-    font-weight: var(--weight-semibold);
-    text-align: start;
-
-    &::before {
-      content: "";
-      flex: none;
-      width: 7px;
-      height: 7px;
-      margin-inline: var(--space-1) var(--space-1-5);
-      border-right: var(--line-w-mid) solid currentColor;
-      border-bottom: var(--line-w-mid) solid currentColor;
-      transform: rotate(-45deg);
-    }
-    &[aria-expanded="true"]::before {
-      transform: rotate(45deg);
-    }
-    &:hover,
-    &[data-force="hover"] {
-      background: var(--sel);
-    }
-    &:active,
-    &[data-force="pressed"] {
-      background: var(--accent-soft);
-    }
-    &:focus-visible {
-      outline-offset: calc(-1 * var(--focus-offset));
-    }
-    &:is(:disabled, [aria-disabled="true"]) {
-      opacity: var(--opacity-half);
-      pointer-events: none;
-    }
-  }
-  .cap-group-count {
-    min-width: 2.2em;
-    padding: 0 var(--space-2);
-    border: var(--line-w) solid var(--line-strong);
-    border-radius: var(--radius-full);
-    background: var(--surface);
-    color: var(--muted);
-    font-size: var(--fs-detail);
-    font-weight: var(--weight-semibold);
-    font-variant-numeric: var(--figures);
-    text-align: center;
-  }
-  .cap-group-rows {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-
-    /* Plain rows until the row-list component styles them. */
-    & > li:where(:not([class])) {
-      padding: var(--space-2) var(--space-4) var(--space-2) calc(var(--space-4) + 18px);
-      border-top: var(--line-w) solid var(--line);
-    }
-  }
-  /* The row that holds a second-level group. */
-  .cap-group-nest {
-    padding: 0;
-  }
-  /* The second level sits in from the first. */
-  .cap-group .cap-group .cap-group-toggle {
-    padding-inline-start: calc(var(--space-4) + 18px);
-  }
-  .cap-group .cap-group .cap-group-rows > li:where(:not([class])) {
-    padding-inline-start: calc(var(--space-4) + 36px);
-  }
-
   /* Right to left, the chevron is mirrored: a closed one points to the inline end there too. */
-  .cap-disclosure > summary:dir(rtl)::before, :where([dir="rtl"]) .cap-disclosure > summary::before,
-  .cap-group-toggle:dir(rtl)::before, :where([dir="rtl"]) .cap-group-toggle::before {
+  .cap-disclosure > summary:dir(rtl)::before, :where([dir="rtl"]) .cap-disclosure > summary::before {
     scale: -1 1;
   }
 
   @media (prefers-reduced-motion: no-preference) {
-    .cap-disclosure > summary::before,
-    .cap-group-toggle::before {
+    .cap-disclosure > summary::before {
       transition: transform var(--dur-fast) var(--ease-out);
     }
     .cap-disclosure > summary::after {
@@ -383,8 +294,7 @@
   }
 
   @media (forced-colors: active) {
-    .cap-disclosure > summary::before,
-    .cap-group-toggle::before {
+    .cap-disclosure > summary::before {
       border-color: CanvasText;
     }
   }
@@ -508,7 +418,6 @@
     }
     .cap-disclosure > summary::before,
     .cap-disclosure > summary::after,
-    .cap-group-toggle::before,
     .cap-expand-toggle::after {
       display: none;
     }
@@ -523,7 +432,6 @@
    specific than that rule. */
 @layer cap.reset {
   @media print {
-    .cap-group > .cap-group-rows[hidden],
     .cap-expand-region.cap-expand-region[hidden] {
       display: block !important;
     }

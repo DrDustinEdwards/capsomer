@@ -216,8 +216,10 @@
     gap: var(--space-2);
   }
 
-  /* A link inside the detail or the time also sits above the stretched link. */
-  .cap-row :is(.cap-row-detail, .cap-row-meta) :is(a, button) {
+  /* A link inside the detail or the time, and a control in the media column (a row's
+     checkbox), also sit above the stretched link, so they take their own clicks. */
+  .cap-row :is(.cap-row-detail, .cap-row-meta) :is(a, button),
+  .cap-row-media :is(a, button, label, input) {
     position: relative;
     z-index: 1;
   }

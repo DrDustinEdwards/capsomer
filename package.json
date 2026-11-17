@@ -148,6 +148,8 @@
     "./ambient-hex-field.css": "./components/ambient/ambient-hex-field.css",
     "./ambient-blobs.css": "./components/ambient/ambient-blobs.css",
     "./ambient-equalizer.css": "./components/ambient/ambient-equalizer.css",
+    "./check.css": "./components/field/check.css",
+    "./group.css": "./components/disclosure/group.css",
     "./*.css": "./components/*/*.css",
     "./behavior/chart-enhance": {
       "types": "./dist/components/chart-frame/chart-enhance.d.ts",
