@@ -280,7 +280,7 @@ export function wireDialog(dialog: HTMLDialogElement, opts: DialogOptions = {}):
     if (s.onPop) window.removeEventListener("popstate", s.onPop);
     s.onPop = null;
     // Submitted or canceled: the next opening starts with no unsaved input.
-    dialog.querySelectorAll("[data-cap-dirty]").forEach((c) => c.removeAttribute("data-cap-dirty"));
+    for (const c of dialog.querySelectorAll<HTMLElement>("[data-cap-dirty]")) delete c.dataset.capDirty;
     syncClosedBy(dialog);
     // Closed by Esc or Close: take back the entry the dialog pushed, so Back goes where it
     // went before.
