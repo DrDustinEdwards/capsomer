@@ -279,7 +279,7 @@ export function wireDialog(dialog: HTMLDialogElement, opts: DialogOptions = {}):
     s.observer = null;
     if (s.onPop) window.removeEventListener("popstate", s.onPop);
     s.onPop = null;
-    // Submitted or cancelled: the next opening starts with no unsaved input.
+    // Submitted or canceled: the next opening starts with no unsaved input.
     dialog.querySelectorAll("[data-cap-dirty]").forEach((c) => c.removeAttribute("data-cap-dirty"));
     syncClosedBy(dialog);
     // Closed by Esc or Close: take back the entry the dialog pushed, so Back goes where it
