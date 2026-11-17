@@ -30,3 +30,4 @@ replaces:
 - The panel is a labeled region ("AI answer"), focusable but not a Tab stop.
 - The badge's colors are the primary pair; the note and the status are muted text that reaches 4.5:1 on the accent tint.
 - Failure is said in words ("Ask is unavailable.", "Ask stopped early.", "No answer for that one.") and announced.
+- The announcer speaks once: the whole answer, or the failure. "Looking it up." is visible text only, since a loading announcement is noise and focus on the panel already names it.
