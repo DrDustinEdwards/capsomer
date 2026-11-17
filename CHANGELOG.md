@@ -3,6 +3,12 @@
 Each release names every removed or renamed token or class, and every changed HTML contract. A pull request adds its entry as a
 changeset (`npx changeset`, `.changeset/README.md`); the release pull request writes them here.
 
+## 0.155.0
+
+### Minor Changes
+
+- JsonLd (`capsomer/react/json-ld`) escapes through site-runtime's `scriptJson` (`@dustinedwards/site-runtime/html`) instead of Prelum's `jsonLdText`, which Prelum removes in favor of the one shared helper. The output is the same bytes. The optional peer `@dustinedwards/site-runtime` is now `>=0.160.0` (the release that exports `scriptJson` from `./html`). No token, class or HTML contract changed.
+
 ## 0.154.3
 
 ### Patch Changes
