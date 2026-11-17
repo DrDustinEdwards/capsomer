@@ -11,10 +11,7 @@ const firstColumn = (page: Page, table: string, col: number) =>
   page
     .locator(`${table} tbody tr`)
     .evaluateAll(
-      (rows, c) =>
-        rows.map(
-          (r) => (r as HTMLTableRowElement).cells[c]?.textContent?.trim() ?? "",
-        ),
+      (rows, c) => rows.map((r) => (r as HTMLTableRowElement).cells[c]?.textContent?.trim() ?? ""),
       col,
     );
 
@@ -24,9 +21,7 @@ eachTheme((theme) => {
     await expectNoAxeViolations(page);
   });
 
-  test("accessibility: no axe violations, narrow and reflowed", async ({
-    page,
-  }) => {
+  test("accessibility: no axe violations, narrow and reflowed", async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 700 });
     await visitStates(page, "table", theme, "narrow");
     await expectNoAxeViolations(page);
@@ -42,15 +37,9 @@ eachTheme((theme) => {
   }) => {
     await visitStates(page, "table", theme);
     await expectContrast(page, [
-      {
-        sel: "#t5 thead .cap-table-note",
-        what: "a note under a column's name",
-      },
+      { sel: "#t5 thead .cap-table-note", what: "a note under a column's name" },
       { sel: "#t5 .cap-table-aside", what: "small print beside a cell's text" },
-      {
-        sel: "[aria-labelledby='s-drop'] .cap-table-foot a",
-        what: "the link under the table",
-      },
+      { sel: "[aria-labelledby='s-drop'] .cap-table-foot a", what: "the link under the table" },
     ]);
   });
 
@@ -64,22 +53,13 @@ eachTheme((theme) => {
         sel: "#t1 thead th:first-child .cap-table-sort",
         what: "a sortable column header (and its glyph, at 4.5:1)",
       },
-      {
-        sel: "#t2 thead th[aria-sort] .cap-table-sort",
-        what: "the sorted column's header",
-      },
+      { sel: "#t2 thead th[aria-sort] .cap-table-sort", what: "the sorted column's header" },
       { sel: "#t1 tbody td[data-num]", what: "a number cell" },
       { sel: "#t1 tbody .cap-table-open", what: "a row's link" },
       { sel: "#t1 tbody .cap-muted", what: "a muted cell" },
       { sel: "#t1 caption", what: "the caption" },
-      {
-        sel: "#t4 tr[data-force='focus'] .cap-table-open",
-        what: "a focused row's link on --sel",
-      },
-      {
-        sel: "#t4 tr[data-force='focus'] td:nth-child(3)",
-        what: "a focused row's cell on --sel",
-      },
+      { sel: "#t4 tr[data-force='focus'] .cap-table-open", what: "a focused row's link on --sel" },
+      { sel: "#t4 tr[data-force='focus'] td:nth-child(3)", what: "a focused row's cell on --sel" },
     ]);
   });
 
@@ -88,36 +68,24 @@ eachTheme((theme) => {
   }) => {
     await visitStates(page, "table", theme);
     await expectContrast(page, [
-      {
-        sel: "#t6 #t6-selected th",
-        what: "a selected row's header cell on --sel",
-      },
-      {
-        sel: "#t6 #t6-selected td[data-num]",
-        what: "a selected row's number on --sel",
-      },
+      { sel: "#t6 #t6-selected th", what: "a selected row's header cell on --sel" },
+      { sel: "#t6 #t6-selected td[data-num]", what: "a selected row's number on --sel" },
       { sel: "#t6 tfoot td", what: "the footer's total" },
       { sel: "#t6 caption", what: "the caption under the table" },
       { sel: "#t8 .cap-table-empty", what: "the empty cell's text" },
     ]);
   });
 
-  test("behavior: a selected row says so with more than color", async ({
-    page,
-  }) => {
+  test("behavior: a selected row says so with more than color", async ({ page }) => {
     await visitStates(page, "table", theme);
     const bar = await page
       .locator("#t6-selected > :first-child")
       .evaluate((el) => getComputedStyle(el).boxShadow);
     expect(bar).not.toBe("none");
-    await expect(
-      page.getByRole("checkbox", { name: "Select INV002" }),
-    ).toBeChecked();
+    await expect(page.getByRole("checkbox", { name: "Select INV002" })).toBeChecked();
   });
 
-  test("behavior: a sticky header stays in view while the region scrolls", async ({
-    page,
-  }) => {
+  test("behavior: a sticky header stays in view while the region scrolls", async ({ page }) => {
     await visitStates(page, "table", theme);
     const region = page.locator("#t7");
     await region.scrollIntoViewIfNeeded();
@@ -128,20 +96,14 @@ eachTheme((theme) => {
     if (r && t) expect(Math.abs(t.y - r.y)).toBeLessThan(2);
   });
 
-  test("accessibility: the focused row's ring is 3:1 against its tint", async ({
-    page,
-  }) => {
+  test("accessibility: the focused row's ring is 3:1 against its tint", async ({ page }) => {
     await visitStates(page, "table", theme);
     const r = await ringContrast(page, "#t4 tr[data-force='focus']");
     expect(r, "the focused specimen row is on the page").not.toBeNull();
-    expect(r?.ratio ?? 0, `ring ${r?.ring} on ${r?.bg}`).toBeGreaterThanOrEqual(
-      3,
-    );
+    expect(r?.ratio ?? 0, `ring ${r?.ring} on ${r?.bg}`).toBeGreaterThanOrEqual(3);
   });
 
-  test("accessibility: the reflowed column names reach their contrast", async ({
-    page,
-  }) => {
+  test("accessibility: the reflowed column names reach their contrast", async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 700 });
     await visitStates(page, "table", theme, "reflow");
     // The column name is a ::before, which the shared helper cannot select: measured here,
@@ -154,15 +116,9 @@ eachTheme((theme) => {
         const lum = (c: number[]) => {
           const f = (x: number) => {
             const t = x / 255;
-            return t <= 0.04045
-              ? t / 12.92
-              : Math.pow((t + 0.055) / 1.055, 2.4);
+            return t <= 0.04045 ? t / 12.92 : Math.pow((t + 0.055) / 1.055, 2.4);
           };
-          return (
-            0.2126 * f(c[0] ?? 0) +
-            0.7152 * f(c[1] ?? 0) +
-            0.0722 * f(c[2] ?? 0)
-          );
+          return 0.2126 * f(c[0] ?? 0) + 0.7152 * f(c[1] ?? 0) + 0.0722 * f(c[2] ?? 0);
         };
         let bg = [255, 255, 255];
         for (let n: Element | null = el; n; n = n.parentElement) {
@@ -175,18 +131,13 @@ eachTheme((theme) => {
         const cs = getComputedStyle(el, "::before");
         const a = lum(rgb(cs.color));
         const b = lum(bg);
-        return {
-          content: cs.content,
-          ratio: (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05),
-        };
+        return { content: cs.content, ratio: (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05) };
       });
     expect(label.content).toBe('"Status"');
     expect(label.ratio).toBeGreaterThanOrEqual(4.5);
   });
 
-  test("keyboard: Enter on a sort button sorts ascending, then descending", async ({
-    page,
-  }) => {
+  test("keyboard: Enter on a sort button sorts ascending, then descending", async ({ page }) => {
     await visitStates(page, "table", theme);
     const th = page.locator("#t1 thead th").nth(2);
     await page.getByRole("button", { name: "Components used" }).focus();
@@ -196,9 +147,7 @@ eachTheme((theme) => {
     await page.keyboard.press("Enter");
     await expect(th).toHaveAttribute("aria-sort", "descending");
     expect(await firstColumn(page, "#t1", 2)).toEqual(["14", "9", "6", "0"]);
-    await expect(
-      page.getByRole("button", { name: "Components used" }),
-    ).toBeFocused();
+    await expect(page.getByRole("button", { name: "Components used" })).toBeFocused();
   });
 
   test("behavior: one header carries aria-sort at a time", async ({ page }) => {
@@ -206,10 +155,7 @@ eachTheme((theme) => {
     await page.getByRole("button", { name: "Own copies left" }).click();
     await page.getByRole("button", { name: "Reported" }).click();
     await expect(page.locator("#t1 thead th[aria-sort]")).toHaveCount(1);
-    await expect(page.locator("#t1 thead th").nth(5)).toHaveAttribute(
-      "aria-sort",
-      "ascending",
-    );
+    await expect(page.locator("#t1 thead th").nth(5)).toHaveAttribute("aria-sort", "ascending");
     expect(await firstColumn(page, "#t1", 0)).toEqual([
       "Storefront",
       "example.com",
@@ -218,22 +164,13 @@ eachTheme((theme) => {
     ]);
   });
 
-  test("behavior: data-sort orders a cell whose text does not sort", async ({
-    page,
-  }) => {
+  test("behavior: data-sort orders a cell whose text does not sort", async ({ page }) => {
     await visitStates(page, "table", theme);
     await page.getByRole("button", { name: "Own copies left" }).click();
-    expect(await firstColumn(page, "#t1", 3)).toEqual([
-      "not counted",
-      "0",
-      "2",
-      "4",
-    ]);
+    expect(await firstColumn(page, "#t1", 3)).toEqual(["not counted", "0", "2", "4"]);
   });
 
-  test("behavior: a click anywhere on a row follows its link", async ({
-    page,
-  }) => {
+  test("behavior: a click anywhere on a row follows its link", async ({ page }) => {
     await visitStates(page, "table", theme);
     // The stretched link covers the row, so a click on the row lands on the link.
     await page.locator("#t1 tbody tr").nth(2).click();
@@ -261,28 +198,16 @@ eachTheme((theme) => {
     const width = await page.locator("#t5").evaluate((el) => el.clientWidth);
     expect(width, "the specimen's region is wide").toBeGreaterThan(820);
     await expect(page.locator("#t5 .cap-table-aside").first()).toBeVisible();
-    await expect(
-      page.locator("#t5 thead th[data-drop='2']").first(),
-    ).toBeVisible();
+    await expect(page.locator("#t5 thead th[data-drop='2']").first()).toBeVisible();
     await page.setViewportSize({ width: 600, height: 400 });
     await visitStates(page, "table", theme, "drop");
     await expect(page.locator("#t-drop .cap-table-aside").first()).toBeHidden();
-    await expect(
-      page.locator("#t-drop thead th[data-drop='2']").first(),
-    ).toBeHidden();
-    await expect(
-      page.getByRole("columnheader", { name: /^Site/ }),
-    ).toBeVisible();
-    await expect(
-      page.getByRole("columnheader", { name: /^Status/ }),
-    ).toBeVisible();
-    await expect(
-      page.getByRole("columnheader", { name: /^Uptime/ }),
-    ).toBeVisible();
+    await expect(page.locator("#t-drop thead th[data-drop='2']").first()).toBeHidden();
+    await expect(page.getByRole("columnheader", { name: /^Site/ })).toBeVisible();
+    await expect(page.getByRole("columnheader", { name: /^Status/ })).toBeVisible();
+    await expect(page.getByRole("columnheader", { name: /^Uptime/ })).toBeVisible();
     // Dropped, so the table fits its region and does not scroll.
-    const scrolls = await page
-      .locator("#t-drop")
-      .evaluate((el) => el.scrollWidth > el.clientWidth);
+    const scrolls = await page.locator("#t-drop").evaluate((el) => el.scrollWidth > el.clientWidth);
     expect(scrolls).toBe(false);
   });
 
@@ -290,40 +215,12 @@ eachTheme((theme) => {
     page,
   }) => {
     await visitStates(page, "table", theme);
-    const label = page
-      .locator("#t-rowcheck tbody tr")
-      .first()
-      .locator(".cap-check");
+    const label = page.locator("#t-rowcheck tbody tr").first().locator(".cap-check");
     await label.click();
     await expect(label.getByRole("checkbox")).toBeChecked();
     expect(await page.evaluate(() => location.hash)).toBe("");
     // The link in the same row still opens its detail.
-    await page
-      .locator("#t-rowcheck")
-      .getByRole("link", { name: "The uptime strip" })
-      .click();
+    await page.locator("#t-rowcheck").getByRole("link", { name: "The uptime strip" }).click();
     expect(await page.evaluate(() => location.hash)).toBe("#post-p2");
   });
-});
-
-test("behavior: focus goes to the next row, else the previous, else the region, when its row leaves", async ({
-  page,
-}) => {
-  await visitStates(page, "table", "light");
-  const rows = page.locator("#t1 tbody tr");
-  const n = await rows.count();
-  const focusedIn = () =>
-    page.evaluate(() => document.activeElement?.closest("tr")?.rowIndex ?? -1);
-  await rows.first().locator("a").focus();
-  await rows.first().evaluate((r) => r.remove());
-  await expect.poll(focusedIn).toBe(1);
-  await rows.last().locator("a").focus();
-  await rows.last().evaluate((r) => r.remove());
-  await expect.poll(focusedIn).toBe(n - 2);
-  await page
-    .locator("#t1 tbody tr")
-    .evaluateAll((r) => r.slice(1).forEach((x) => x.remove()));
-  await page.locator("#t1 tbody tr a").focus();
-  await page.locator("#t1 tbody tr").evaluate((r) => r.remove());
-  await expect(page.locator("#t1")).toBeFocused();
 });

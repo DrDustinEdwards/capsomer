@@ -4,20 +4,13 @@
 
 export type SortDirection = "ascending" | "descending";
 
-const collator = new Intl.Collator(undefined, {
-  numeric: true,
-  sensitivity: "base",
-});
+const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: "base" });
 
 // The value a cell sorts by: its data-sort attribute when it has one (a timestamp, a raw
 // count), else its text. A plain number, with or without thousands separators, sorts as a
 // number.
 export function sortValue(cell: Element | undefined): string | number {
-  const raw = (
-    cell?.getAttribute("data-sort") ??
-    cell?.textContent ??
-    ""
-  ).trim();
+  const raw = (cell?.getAttribute("data-sort") ?? cell?.textContent ?? "").trim();
   if (/^-?\d[\d,]*(\.\d+)?$/.test(raw)) return Number(raw.replaceAll(",", ""));
   return raw;
 }
@@ -30,18 +23,11 @@ export function compareValues(a: string | number, b: string | number): number {
 }
 
 // Sorts every tbody's rows of `table` by column `index`. Stable: equal rows keep their order.
-export function sortRows(
-  table: HTMLTableElement,
-  index: number,
-  direction: SortDirection,
-): void {
+export function sortRows(table: HTMLTableElement, index: number, direction: SortDirection): void {
   const sign = direction === "ascending" ? 1 : -1;
   for (const body of Array.from(table.tBodies)) {
     const rows = Array.from(body.rows);
-    const keyed = rows.map((row) => ({
-      row,
-      key: sortValue(row.cells[index]),
-    }));
+    const keyed = rows.map((row) => ({ row, key: sortValue(row.cells[index]) }));
     keyed.sort((x, y) => sign * compareValues(x.key, y.key));
     body.append(...keyed.map((k) => k.row));
   }
@@ -57,14 +43,10 @@ export function columnIndex(th: HTMLTableCellElement): number {
 
 // Sorts by the column of `th`: ascending first, then toggling. Only one header carries
 // aria-sort at a time (APG sortable table). Returns the new direction.
-export function sortByHeader(
-  th: HTMLTableCellElement,
-  direction?: SortDirection,
-): SortDirection {
+export function sortByHeader(th: HTMLTableCellElement, direction?: SortDirection): SortDirection {
   const table = th.closest("table");
   const next: SortDirection =
-    direction ??
-    (th.getAttribute("aria-sort") === "ascending" ? "descending" : "ascending");
+    direction ?? (th.getAttribute("aria-sort") === "ascending" ? "descending" : "ascending");
   if (!table) return next;
   for (const other of Array.from(table.querySelectorAll("thead th[aria-sort]")))
     if (other !== th) other.removeAttribute("aria-sort");
@@ -73,75 +55,22 @@ export function sortByHeader(
   return next;
 }
 
-// A row that leaves (removed, or hidden by a filter) while focus is in it would drop focus to the
-// body: it goes to the next row, else the previous, else the region, which is focusable.
-function keepFocus(wrap: HTMLElement): () => void {
-  let held: {
-    row: HTMLElement;
-    next: Element | null;
-    prev: Element | null;
-  } | null = null;
-  const live = (el: Element | null): el is HTMLElement =>
-    el instanceof HTMLElement && wrap.contains(el) && !el.closest("[hidden]");
-  const onFocusIn = (e: FocusEvent) => {
-    const row = (e.target as Element).closest<HTMLElement>("tbody tr");
-    held = row && {
-      row,
-      next: row.nextElementSibling,
-      prev: row.previousElementSibling,
-    };
-  };
-  const check = () => {
-    const h = held;
-    const a = document.activeElement;
-    if (!h || live(h.row) || (a && a !== document.body)) return;
-    held = null;
-    const row = [h.next, h.prev].find(live);
-    const target =
-      row?.querySelector<HTMLElement>(
-        "a[href], button:not(:disabled), input:not(:disabled)",
-      ) ??
-      row ??
-      wrap;
-    if (target === row) row.tabIndex = -1;
-    target.focus();
-  };
-  const observer = new MutationObserver(check);
-  observer.observe(wrap, {
-    childList: true,
-    subtree: true,
-    attributes: true,
-    attributeFilter: ["hidden"],
-  });
-  wrap.addEventListener("focusin", onFocusIn);
-  return () => {
-    observer.disconnect();
-    wrap.removeEventListener("focusin", onFocusIn);
-  };
-}
-
 // Attaches to every [data-cap="table"] under root that is not attached yet. Returns a
 // function that detaches them all. A table already marked sorted (aria-sort in its
 // markup) is expected to arrive in that order; it is not re-sorted on attach.
 export function enhance(root: ParentNode = document): () => void {
   const undo: Array<() => void> = [];
   for (const wrap of Array.from(
-    root.querySelectorAll<HTMLElement>(
-      "[data-cap='table']:not([data-cap-ready])",
-    ),
+    root.querySelectorAll<HTMLElement>("[data-cap='table']:not([data-cap-ready])"),
   )) {
     wrap.dataset.capReady = "";
     const onClick = (e: MouseEvent) => {
-      const button = (e.target as Element).closest<HTMLButtonElement>(
-        ".cap-table-sort",
-      );
+      const button = (e.target as Element).closest<HTMLButtonElement>(".cap-table-sort");
       const th = button?.closest<HTMLTableCellElement>("th");
       if (button && th && wrap.contains(th)) sortByHeader(th);
     };
     wrap.addEventListener("click", onClick);
-    const unKeep = keepFocus(wrap);
     undo.push(() => {
-      unKeep();
       wrap.removeEventListener("click", onClick);
       delete wrap.dataset.capReady;
     });
