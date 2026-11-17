@@ -102,7 +102,9 @@ export async function minifyCss(css) {
 
 /**
  * A browser script bundled as one minified file, Capsomer's behavior modules and every lazy import inlined, so one
- * script hash or integrity value covers all of it. Rolldown comes with Vite; a site without it installs `rolldown`.
+ * script hash or integrity value covers all of it. Rolldown comes with Vite; a site without it installs `rolldown`. An import
+ * that does not resolve throws: left alone, the bundler keeps it as a bare specifier, a browser cannot load it, and the
+ * whole script dies on load.
  *
  * @param {string} entry
  * @param {{ format?: "esm" | "iife", name?: string }} [options]
@@ -110,7 +112,18 @@ export async function minifyCss(css) {
  */
 export async function bundleScript(entry, { format = "esm", name } = {}) {
   const { rolldown } = await import("rolldown");
-  const built = await rolldown({ input: entry, platform: "browser", logLevel: "silent" });
+  /** @type {string[]} */
+  const unresolved = [];
+  const built = await rolldown({
+    input: entry,
+    platform: "browser",
+    // Not "silent": that level drops every log before onLog sees it. onLog takes them all and keeps only this one.
+    logLevel: "warn",
+    onLog: (_level, log) => {
+      if (log.code === "UNRESOLVED_IMPORT")
+        unresolved.push(log.message.replace(/\x1b\[[0-9;]*m/g, "").split("\n")[0] ?? "");
+    },
+  });
   const { output } = await built.generate({
     format,
     name,
@@ -118,6 +131,7 @@ export async function bundleScript(entry, { format = "esm", name } = {}) {
     codeSplitting: false,
   });
   await built.close();
+  if (unresolved.length > 0) throw new Error(`${entry}: ${[...new Set(unresolved)].join("; ")}`);
   const [chunk] = output;
   if (output.length !== 1 || chunk?.type !== "chunk")
     throw new Error(`${entry}: expected one chunk`);
