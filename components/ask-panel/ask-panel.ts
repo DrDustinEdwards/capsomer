@@ -103,7 +103,9 @@ export function ask(container: HTMLElement, options: AskOptions): AskHandle {
   const header = el("div", "cap-ask-header");
   header.append(el("span", "cap-ask-badge", w.badge), el("span", "cap-ask-note", w.note));
   const status = el("p", "cap-ask-status", w.working);
-  // Not live: rewritten on every token it would be read over and over. The announcer speaks twice instead.
+  // Not live: rewritten on every token it would be read over and over. The announcer speaks once, with the whole
+  // answer or the failure; "Looking it up." stays visible text only, since an interstitial announcement is noise
+  // (Modern Web Guidance, accessibility: live regions). Focus on the panel already names it.
   const body = el("p", "cap-ask-body");
   body.setAttribute("aria-busy", "true");
   const cutNote = el("p", "cap-ask-cut", w.cut);
@@ -122,10 +124,6 @@ export function ask(container: HTMLElement, options: AskOptions): AskHandle {
   announcer.setAttribute("aria-live", "polite");
   panel.append(header, status, body, cutNote, sources, followUp, announcer);
   container.append(panel);
-  // A frame later, so the region is in the tree before its text changes and the change is heard.
-  requestAnimationFrame(() => {
-    if (!announcer.textContent) announcer.textContent = w.working;
-  });
 
   let answer = "";
   let firstToken = true;
