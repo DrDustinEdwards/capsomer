@@ -486,6 +486,8 @@
      the accent color and weight, never color alone. */
   :where(.cap-player-chapters) {
     display: grid;
+    /* One shrinkable column: an auto track grows to its widest title's nowrap text and the page scrolls sideways. */
+    grid-template-columns: minmax(0, 1fr);
     gap: var(--space-1);
     margin: 0;
     padding: 0;

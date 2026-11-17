@@ -131,6 +131,20 @@ eachTheme((theme) => {
     await expect(more).toBeFocused();
   });
 
+  test("layout: a long chapter title ellipsizes in its row and the phone page does not scroll sideways", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 390, height: 700 });
+    await visitStates(page, "player", theme, "surface");
+    await page.locator(".cap-player-chapter-title").first().evaluate((el) => {
+      el.textContent = "A chapter title that runs on far past the width of a phone screen ".repeat(3);
+    });
+    const wide = await page.evaluate(
+      () => document.documentElement.scrollWidth > document.documentElement.clientWidth,
+    );
+    expect(wide).toBe(false);
+  });
+
   test("keyboard: Enter on the inline audio button plays the clip, and again stops it", async ({
     page,
   }) => {
