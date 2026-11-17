@@ -103,6 +103,11 @@ export const SCALE = {
       "a heading inside a page: Inter Medium, the manual's Helvetica Medium",
     ],
     ["fs-tiny", "0.625rem", "a count badge's digits or a mark's letter; never running text"],
+    [
+      "fs-tiny-5",
+      "0.6875rem",
+      "half a step: a product site's eyebrow or label at a fixed 11px, in every density",
+    ],
     ["fs-small", "0.75rem", "small print at a fixed size: a caption, a footnote, a chart's label"],
     [
       "mono-size",
@@ -212,6 +217,7 @@ export const SCALE = {
     ["leading-snug-5", "1.375", "half a step: a product site's card heading or lead"],
     ["leading-compact", "1.4", "a dense row's detail line, a menu item"],
     ["leading-normal", "1.5", "app body text (--leading in both densities)"],
+    ["leading-normal-5", "1.55", "half a step: a product site's lead or a reading list's entry"],
     ["leading-relaxed", "1.6", "reading text (--leading in the reading context)"],
     ["leading-relaxed-5", "1.625", "half a step: a product site's reading text"],
     ["leading-loose", "1.7", "a mono list or a small caption that needs air between its lines"],
