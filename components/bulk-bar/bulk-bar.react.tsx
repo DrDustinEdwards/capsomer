@@ -34,6 +34,10 @@ export interface BulkBarAction {
   // with the action's id as the value. `run` is not used, the server answers.
   submit?: boolean;
   run?: (items: readonly BulkItem[]) => void | Promise<void>;
+  // The app's own flow does the whole action (a server preview and its own confirm and
+  // message): the bar hands it the selection and says nothing itself. `run`, the confirm
+  // fields, `said` and `undo` are not used, and the selection stays until the app clears it.
+  handOff?: (items: readonly BulkItem[]) => void;
   // Reverses a reversible action: the region offers Undo.
   undo?: (items: readonly BulkItem[]) => void | Promise<void>;
   disabled?: boolean;
@@ -192,7 +196,9 @@ export function BulkBar({
               data-variant={a.destructive ? "danger" : undefined}
               data-cap-bulk-action={a.id}
               aria-disabled={a.disabled || undefined}
-              onClick={() => (a.disabled ? undefined : void run(a))}
+              onClick={() =>
+                a.disabled ? undefined : a.handOff ? a.handOff(items) : void run(a)
+              }
             >
               {a.label}
             </button>
