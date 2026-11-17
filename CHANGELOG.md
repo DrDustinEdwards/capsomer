@@ -3,6 +3,12 @@
 Each release names every removed or renamed token or class, and every changed HTML contract. A pull request adds its entry as a
 changeset (`npx changeset`, `.changeset/README.md`); the release pull request writes them here.
 
+## 0.156.0
+
+### Minor Changes
+
+- Collab editor: `loadMarkdown` takes `doc`, the editor's JSON, in place of the Markdown it reads, so a room can be loaded with a document brought in from elsewhere (a Google Doc) together with its pending suggestions. New `anchorAt(ydoc, from, to)` gives a comment thread's anchor on the room's server, the same relative positions an editor's selection gives. No token, class or HTML contract changed.
+
 ## 0.155.2
 
 ### Patch Changes
