@@ -265,6 +265,27 @@ eachTheme((theme) => {
     await expect(d).toBeVisible();
   });
 
+  test("behavior: a dialog with unsaved input ignores the backdrop; Cancel still closes it", async ({
+    page,
+  }) => {
+    await live(page, theme);
+    await openFrom(page, "open-center");
+    const d = dlg(page, "Rename the site");
+    await backdropClick(page);
+    await expect(d).toBeHidden();
+
+    await openFrom(page, "open-center");
+    // field.ts marks an edited control data-cap-dirty on input; the dialog reads that mark.
+    await page.locator("#live-center-name").evaluate((el) => {
+      (el as HTMLElement).dataset.capDirty = "";
+      el.dispatchEvent(new Event("input", { bubbles: true }));
+    });
+    await backdropClick(page);
+    await expect(d).toBeVisible();
+    await d.getByRole("button", { name: "Cancel" }).click();
+    await expect(d).toBeHidden();
+  });
+
   test("behavior: a locked dialog and an alert dialog ignore a click on the backdrop", async ({
     page,
   }) => {

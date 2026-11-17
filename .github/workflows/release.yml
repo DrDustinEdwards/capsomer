@@ -34,14 +34,14 @@ jobs:
       contents: write
       id-token: write
       attestations: write
-    uses: DrDustinEdwards/devkit/.github/workflows/release.yml@9e40afbad5fa778718b9aac65bc205b3c0a9c101 # v0.51.0
+    uses: DrDustinEdwards/devkit/.github/workflows/release.yml@96077f74b3e1a57e636b3653ec605c8c10e53a49 # v0.51.1
     with:
       build: true
 
   bump:
     needs: release
     if: needs.release.outputs.created == 'true'
-    uses: DrDustinEdwards/devkit/.github/workflows/bump-consumers.yml@9e40afbad5fa778718b9aac65bc205b3c0a9c101 # v0.51.0
+    uses: DrDustinEdwards/devkit/.github/workflows/bump-consumers.yml@96077f74b3e1a57e636b3653ec605c8c10e53a49 # v0.51.1
     with:
       dry_run: false
     secrets:

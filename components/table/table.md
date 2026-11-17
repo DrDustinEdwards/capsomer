@@ -68,6 +68,7 @@ import { DataTable } from "capsomer/react/table";
 | Enter on a row's link | Opens the row's detail |
 
 - The region's name comes from the caption or the panel heading, so a screen reader says what scrolls.
+- When the row holding focus leaves the table (removed, or hidden with `hidden`), focus moves to the next row, else the previous, else the region; never to the body.
 - The region's focus ring is inset, so a panel's rounded clip never hides it.
 - `aria-sort` on exactly one header; the button inside has the column's name.
 - Forced colors: the sort glyph is drawn in CanvasText; focus rings are outlines and stay.
