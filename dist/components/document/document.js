@@ -1,0 +1,39 @@
+// The document's root: the attributes that put a page under its family and site layer, and the
+// start of a page that does not. One home for what every site's root.tsx and site.ts wrote by hand.
+// Extracted from bsw, julieedwards-info, germomics and txasm (root.tsx, app/site.ts, germomics app/lib/hydration.ts)
+// in 0.132.0.
+// The attributes for <html> or a wrapper. Undefined values are left out, so a spread writes only what is set.
+export function documentAttrs({ family, site, theme }) {
+    const attrs = {};
+    if (family)
+        attrs["data-family"] = family;
+    if (site)
+        attrs["data-cap-site"] = site;
+    if (theme === "light" || theme === "dark")
+        attrs["data-theme"] = theme;
+    return attrs;
+}
+// Starts a page that does not hydrate: runs each part (Capsomer's enhance functions, the site's islands) in order,
+// each on its own, so one that throws never stops the rest, and reports what failed. Answers, once every part that
+// returned a promise has settled, how many failed, thrown or rejected. Call it after site-runtime's startPage()
+// (./page-client), which installs the Trusted Types policy every part writes through.
+export async function startSite(parts, report = (e) => console.error(e)) {
+    let failed = 0;
+    const fail = (error) => {
+        failed++;
+        report(error);
+    };
+    const pending = [];
+    for (const part of parts) {
+        try {
+            const r = part();
+            if (r instanceof Promise)
+                pending.push(r.catch(fail));
+        }
+        catch (error) {
+            fail(error);
+        }
+    }
+    await Promise.all(pending);
+    return failed;
+}
