@@ -321,10 +321,13 @@
     font-family: var(--ui);
   }
 
+  /* The row wraps: when a name and its fact cannot sit side by side at their longest words (a phone, a long
+     path as the fact), the fact drops to its own line at the end instead of pushing the row past the screen. */
   .cap-leader-index-link {
     display: flex;
+    flex-wrap: wrap;
     align-items: baseline;
-    gap: var(--space-4);
+    gap: var(--space-1) var(--space-4);
     min-block-size: var(--target);
     padding-block: var(--space-3);
     border-block-end: var(--line-w) solid var(--line);
@@ -363,6 +366,7 @@
 
   .cap-leader-index-fact {
     flex: 0 1 auto;
+    margin-inline-start: auto;
     min-inline-size: min(min-content, 100%);
     overflow-wrap: break-word;
     font-variant-numeric: var(--figures);
