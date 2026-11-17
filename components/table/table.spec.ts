@@ -224,3 +224,23 @@ eachTheme((theme) => {
     expect(await page.evaluate(() => location.hash)).toBe("#post-p2");
   });
 });
+
+test("behavior: focus goes to the next row, else the previous, else the region, when its row leaves", async ({
+  page,
+}) => {
+  await visitStates(page, "table", "light");
+  const rows = page.locator("#t1 tbody tr");
+  const n = await rows.count();
+  const focusedIn = () =>
+    page.evaluate(() => document.activeElement?.closest("tr")?.rowIndex ?? -1);
+  await rows.first().locator("a").focus();
+  await rows.first().evaluate((r) => r.remove());
+  await expect.poll(focusedIn).toBe(1);
+  await rows.last().locator("a").focus();
+  await rows.last().evaluate((r) => r.remove());
+  await expect.poll(focusedIn).toBe(n - 2);
+  await page.locator("#t1 tbody tr").evaluateAll((r) => r.slice(1).forEach((x) => x.remove()));
+  await page.locator("#t1 tbody tr a").focus();
+  await page.locator("#t1 tbody tr").evaluate((r) => r.remove());
+  await expect(page.locator("#t1")).toBeFocused();
+});
