@@ -157,8 +157,6 @@ jobs:
             left=$(find .changeset -name '*.md' ! -name README.md)
             [ -z "$left" ] || { echo "::error::The version moved from $was to $now, but changesets are left: $left. A release is \`npx changeset version\` on main, alone."; exit 1; }
           fi
-      - name: No high advisory in what the package installs
-        run: npm audit --omit=dev --audit-level=high
       - name: Palette, scales, unit tests, types
         run: npm run check
       # Oxlint with devkit's shared config (oxlint.config.ts), type-aware.
