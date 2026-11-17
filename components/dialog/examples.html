@@ -417,9 +417,6 @@
 
   enhance(document);
 
-  // The rename form is a field form: typing in it marks the control touched, as in an app.
-  import("../field/field.ts").then((m) => m.enhance(document));
-
   // The specimens' own buttons: Save closes with a line said on the page; Publish starts a
   // request that runs until Finish answers it.
   document.addEventListener("click", (e) => {
@@ -443,4 +440,9 @@
       closeDialog(d, "save");
     }
   });
+</script>
+<script type="module">
+  // The rename form is a field form: typing in it marks the control touched, as in an app.
+  import { enhance } from "../field/field.ts";
+  enhance(document);
 </script>
