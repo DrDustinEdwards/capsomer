@@ -347,11 +347,12 @@
     font-variant-numeric: var(--figures);
   }
 
-  /* A long name or fact wraps inside the row instead of pushing it past a narrow screen. */
+  /* A long name or fact wraps at word boundaries and keeps the width of its longest word, so the dotted leader gives way
+     first; only a word wider than the row itself breaks. `anywhere` would let the flex item shrink below its words. */
   .cap-leader-index-name {
-    min-inline-size: 0;
+    min-inline-size: min(min-content, 100%);
     font-weight: var(--weight-bold);
-    overflow-wrap: anywhere;
+    overflow-wrap: break-word;
   }
 
   .cap-leader-index-dots {
@@ -362,8 +363,8 @@
 
   .cap-leader-index-fact {
     flex: 0 1 auto;
-    min-inline-size: 0;
-    overflow-wrap: anywhere;
+    min-inline-size: min(min-content, 100%);
+    overflow-wrap: break-word;
     font-variant-numeric: var(--figures);
     text-align: end;
   }
