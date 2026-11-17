@@ -3,6 +3,15 @@
 Each release names every removed or renamed token or class, and every changed HTML contract. A pull request adds its entry as a
 changeset (`npx changeset`, `.changeset/README.md`); the release pull request writes them here.
 
+## 0.153.0
+
+### Minor Changes
+
+- Two shared scale steps for the token sweep (Dustin's ruling, 2026-11-13: values two or more sites use become steps):
+  `--fs-tiny-5` (0.6875rem, a fixed 11px label in every density; Foxhound, Foxing and germomics) and
+  `--leading-normal-5` (1.55; Foxhound and dustinedwards.info). token-check now prefers a fixed step over a density step
+  of the same value, so `--fix` swaps 0.6875rem for `--fs-tiny-5` instead of leaving it raw. Nothing is removed or renamed.
+
 ## 0.152.2
 
 ### Patch Changes
