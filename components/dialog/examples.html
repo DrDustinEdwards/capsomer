@@ -414,10 +414,11 @@
 
 <script type="module">
   import { closeDialog, enhance, setDialogBusy } from "./dialog.ts";
-  import { enhance as enhanceFields } from "../field/field.ts";
 
   enhance(document);
-  enhanceFields(document);
+
+  // The rename form is a field form: typing in it marks the control touched, as in an app.
+  import("../field/field.ts").then((m) => m.enhance(document));
 
   // The specimens' own buttons: Save closes with a line said on the page; Publish starts a
   // request that runs until Finish answers it.
