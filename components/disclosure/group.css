@@ -1,0 +1,132 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* A group row in a list (.cap-group): a button that shows or hides the rows it groups, part of
+   the disclosure (disclosure.css imports it). A page with groups and no <details> imports
+   capsomer/group.css alone. */
+@layer cap.components {
+  /* A group row: the button names what it holds and how many ("Notices, 4"). */
+  .cap-group {
+    display: grid;
+  }
+  /* The button may sit in a heading, so a person moving by heading finds the groups (the
+     Portal's queue groups are an h3 holding the button). The heading adds nothing of its
+     own: the button is the band. */
+  .cap-group-heading {
+    margin: 0;
+    font: inherit;
+    letter-spacing: inherit;
+  }
+  .cap-group-toggle {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    width: 100%;
+    min-height: max(var(--target), var(--control));
+    padding: var(--space-2) var(--pad-x);
+    border: 0;
+    border-top: var(--line-w) solid var(--line);
+    background: var(--raised);
+    color: var(--text);
+    font-weight: var(--weight-semibold);
+    text-align: start;
+
+    &::before {
+      content: "";
+      flex: none;
+      width: 7px;
+      height: 7px;
+      margin-inline: var(--space-1) var(--space-1-5);
+      border-right: var(--line-w-mid) solid currentColor;
+      border-bottom: var(--line-w-mid) solid currentColor;
+      transform: rotate(-45deg);
+    }
+    &[aria-expanded="true"]::before {
+      transform: rotate(45deg);
+    }
+    &:hover,
+    &[data-force="hover"] {
+      background: var(--sel);
+    }
+    &:active,
+    &[data-force="pressed"] {
+      background: var(--accent-soft);
+    }
+    &:focus-visible {
+      outline-offset: calc(-1 * var(--focus-offset));
+    }
+    &:is(:disabled, [aria-disabled="true"]) {
+      opacity: var(--opacity-half);
+      pointer-events: none;
+    }
+  }
+  .cap-group-count {
+    min-width: 2.2em;
+    padding: 0 var(--space-2);
+    border: var(--line-w) solid var(--line-strong);
+    border-radius: var(--radius-full);
+    background: var(--surface);
+    color: var(--muted);
+    font-size: var(--fs-detail);
+    font-weight: var(--weight-semibold);
+    font-variant-numeric: var(--figures);
+    text-align: center;
+  }
+  .cap-group-rows {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+    /* Plain rows until the row-list component styles them. */
+    & > li:where(:not([class])) {
+      padding: var(--space-2) var(--space-4) var(--space-2) calc(var(--space-4) + 18px);
+      border-top: var(--line-w) solid var(--line);
+    }
+  }
+  /* The row that holds a second-level group. */
+  .cap-group-nest {
+    padding: 0;
+  }
+  /* The second level sits in from the first. */
+  .cap-group .cap-group .cap-group-toggle {
+    padding-inline-start: calc(var(--space-4) + 18px);
+  }
+  .cap-group .cap-group .cap-group-rows > li:where(:not([class])) {
+    padding-inline-start: calc(var(--space-4) + 36px);
+  }
+
+  /* Right to left, the chevron is mirrored: a closed one points to the inline end there too. */
+  .cap-group-toggle:dir(rtl)::before, :where([dir="rtl"]) .cap-group-toggle::before {
+    scale: -1 1;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .cap-group-toggle::before {
+      transition: transform var(--dur-fast) var(--ease-out);
+    }
+  }
+
+  @media (forced-colors: active) {
+    .cap-group-toggle::before {
+      border-color: CanvasText;
+    }
+  }
+
+  /* On paper every group is open, since a reader cannot press its button there. */
+  @media print {
+    .cap-group-toggle::before {
+      display: none;
+    }
+  }
+}
+
+/* The reset's [hidden] rule is !important in cap.reset, and an earlier layer's !important wins
+   over a later one's, so the print override for a hidden group sits in cap.reset too, more
+   specific than that rule. */
+@layer cap.reset {
+  @media print {
+    .cap-group > .cap-group-rows[hidden] {
+      display: block !important;
+    }
+  }
+}

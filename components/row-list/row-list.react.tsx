@@ -67,6 +67,8 @@ export interface RowProps {
   controls?: string;
   // A class a composing component adds to the row (the attention list's cap-attention-child).
   className?: string;
+  // The row's own id, so a link from elsewhere (a push alert) can land on it.
+  id?: string;
   // A router's link component; a plain <a> by default.
   renderLink?: (props: RowLinkProps) => ReactNode;
   // A reply opened in the row (an answer to a question, a note that unblocks a job): a RowReply,
@@ -92,6 +94,7 @@ export function Row({
   expanded,
   controls,
   className,
+  id: rowId,
   renderLink = plainLink,
   reply,
 }: RowProps) {
@@ -104,6 +107,7 @@ export function Row({
       .join(" ") || undefined;
   return (
     <li
+      id={rowId}
       className={className ? `cap-row ${className}` : "cap-row"}
       data-tone={tone}
       data-variant={variant}

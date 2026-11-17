@@ -4,7 +4,7 @@ title: Disclosure
 summary: Show and hide, a section that opens in place and a group row in a list.
 parts: [css, behavior, react]
 tool: native + own JavaScript
-states: [summary hover, summary pressed, accordion variant, card variant, compact card, triangle marker, group row pressed and disabled, section closed, section open, sections that open one at a time, group row collapsed with its count, group row expanded, two levels, group row in a heading, inline variant, sign marker, screen-only section, expand toggle, table detail row]
+states: [summary hover, summary pressed, accordion variant, card variant, compact card, triangle marker, group row pressed and disabled, section closed, section open, sections that open one at a time, group row collapsed with its count, group row expanded, two levels, group row in a heading, group holding a row list, inline variant, sign marker, screen-only section, expand toggle, table detail row]
 added: 0.1.0
 updated: 0.102.0
 source: the approved mockup ("4 notices", collapsed); patterns.md "Show or hide"
@@ -32,6 +32,14 @@ replaces:
     <li>api: 3 dependency updates waiting</li>
     <!-- a second level: <li class="cap-group-nest"><div class="cap-group" data-cap="disclosure">...</div></li> -->
   </ul>
+</div>
+```
+
+```html
+<!-- rows that are a list of their own (a row list; React: <Group body="list"><RowList>...) sit in a div -->
+<div class="cap-group" data-cap="disclosure">
+  <h3 class="cap-group-heading"><button type="button" class="cap-group-toggle" aria-expanded="true" aria-controls="running-rows">...</button></h3>
+  <div class="cap-group-rows" id="running-rows"><ul class="cap-rows" data-cap="row-list" role="list" aria-label="Running">...</ul></div>
 </div>
 ```
 

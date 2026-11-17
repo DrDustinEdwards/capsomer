@@ -216,8 +216,10 @@
     gap: var(--space-2);
   }
 
-  /* A link inside the detail or the time also sits above the stretched link. */
-  .cap-row :is(.cap-row-detail, .cap-row-meta) :is(a, button) {
+  /* A link inside the detail or the time, and a control in the media column (a row's
+     checkbox), also sit above the stretched link, so they take their own clicks. */
+  .cap-row :is(.cap-row-detail, .cap-row-meta) :is(a, button),
+  .cap-row-media :is(a, button, label, input) {
     position: relative;
     z-index: 1;
   }
@@ -248,14 +250,16 @@
   /* A phone, or any narrow column: the actions go underneath and a status moves above the
      title. An icon or a picture stays beside the title, as in a wide column, so a list has one
      layout at every width, and every row's text starts in the one column (the rows stay a
-     subgrid of the list). The title wraps instead of being cut: on a phone there is no hover and
-     no wider view to read the rest in (the Portal lets titles wrap at phone width). */
+     subgrid of the list). The title and the detail wrap instead of being cut: on a phone there is
+     no hover and no wider view to read the rest in (the Portal lets titles wrap at phone width). */
   @container cap-rows (max-width: 30rem) {
     .cap-rows {
       grid-template-columns: auto minmax(0, 1fr) auto;
     }
-    /* The same :is() list as the clamp it lifts, so it matches that rule's specificity and wins. */
-    .cap-row-title :is(a, button, .cap-row-text) {
+    /* The same :is() list as the clamp it lifts, so it matches that rule's specificity and wins.
+       The detail is not cut either, for the same reason: it is often what the row asks. */
+    .cap-row-title :is(a, button, .cap-row-text),
+    .cap-row-detail {
       -webkit-line-clamp: none;
       line-clamp: none;
     }
