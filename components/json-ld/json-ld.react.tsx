@@ -1,6 +1,6 @@
 // Structured data for a page: one `<script type="application/ld+json">` from a value, in place of a
 // hand-written `dangerouslySetInnerHTML` in every route.
-import { jsonLdText } from "@drdustinedwards/site-helpers/xml";
+import { scriptJson } from "@dustinedwards/site-runtime/html";
 import { markup } from "../trusted-html/trusted-html.ts";
 
 export interface JsonLdProps {
@@ -10,12 +10,12 @@ export interface JsonLdProps {
 }
 
 /**
- * The value as a JSON-LD data block. Prelum's `jsonLdText` escapes `<`, `>`, `&` and U+2028/9, so a
+ * The value as a JSON-LD data block. site-runtime's `scriptJson` escapes `<`, `>`, `&` and U+2028/9, so a
  * string in the data that holds `</script>` cannot close the element; the data is unchanged when parsed.
  * The text goes through the `capsomer` Trusted Types policy (`markup`), because React sets it with
  * `innerHTML` when it renders in the browser. A data block is not script: no nonce, and `script-src`
  * does not gate it.
  */
 export function JsonLd({ data }: JsonLdProps) {
-  return <script type="application/ld+json" dangerouslySetInnerHTML={markup(jsonLdText(data))} />;
+  return <script type="application/ld+json" dangerouslySetInnerHTML={markup(scriptJson(data))} />;
 }
