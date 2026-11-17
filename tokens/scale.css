@@ -44,6 +44,7 @@
   --weight-title: 300;
   --weight-heading: 500;
   --fs-tiny: 0.625rem;
+  --fs-tiny-5: 0.6875rem;
   --fs-small: 0.75rem;
   --mono-size: 0.75rem;
   --text-strong: 600;
@@ -92,6 +93,7 @@
   --leading-snug-5: 1.375;
   --leading-compact: 1.4;
   --leading-normal: 1.5;
+  --leading-normal-5: 1.55;
   --leading-relaxed: 1.6;
   --leading-relaxed-5: 1.625;
   --leading-loose: 1.7;

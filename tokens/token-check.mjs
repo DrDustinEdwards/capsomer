@@ -100,7 +100,9 @@ export function tokenScale(json) {
   group("focus", "line", (n) => n === "ring-width");
   group("focus", "offset", (n) => n.startsWith("focus-offset"));
   group("type", "size", (n) =>
-    /^(fs-(tiny|small|label|detail|body|lead|h2|h3)|title-\d(-5)?|display-\d|mono-size)$/.test(n),
+    /^(fs-(tiny|small|label|detail|body|lead|h2|h3)(-5)?|title-\d(-5)?|display-\d|mono-size)$/.test(
+      n,
+    ),
   );
   group("layout", "size", (n) => n === "fs-page");
   group("weight", "weight");
@@ -372,7 +374,13 @@ export function rawValues(css, scale) {
     }
     for (const [k, text, value, unit, inExpr, ratio] of found) {
       const steps = scale[k] ?? [];
-      const same = (x) => steps.find((t) => Math.abs(t[1] - x) < 1e-6);
+      // Of the steps with this value, a fixed one first: it draws the same in every density and stylesheet.
+      const same = (x) => {
+        const hits = steps.filter((t) => Math.abs(t[1] - x) < 1e-6);
+        return (
+          hits.find((t) => !(scale.density ?? []).includes(t[0]) && !sets.has(t[0])) ?? hits[0]
+        );
+      };
       const exactStep = same(value) ?? (value < 0 ? same(-value) : undefined);
       const near =
         exactStep ?? nearest(steps, steps.some((t) => t[1] < 0) ? value : Math.abs(value));
