@@ -211,6 +211,7 @@ export const SCALE = {
       "1",
       "one line in a box sized by its own height: a badge, an icon's label, a big figure",
     ],
+    ["leading-crisp", "1.15", "a product site's display or audit title, a hair under tight"],
     ["leading-tight", "1.2", "a title of two or more lines"],
     ["leading-tight-5", "1.25", "half a step: a product site's heading"],
     ["leading-snug", "1.3", "a row title, a card's heading, a label over a field"],

@@ -87,6 +87,7 @@
   --weight-heavy: 800;
   /* leading */
   --leading-none: 1;
+  --leading-crisp: 1.15;
   --leading-tight: 1.2;
   --leading-tight-5: 1.25;
   --leading-snug: 1.3;
