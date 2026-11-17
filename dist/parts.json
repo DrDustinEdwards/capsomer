@@ -1,0 +1,8350 @@
+{
+  "admin-shell": {
+    "root": "cap-admin",
+    "classes": [
+      "cap-admin",
+      "cap-admin-actions",
+      "cap-admin-badge",
+      "cap-admin-bar",
+      "cap-admin-bar-text",
+      "cap-admin-btn",
+      "cap-admin-collapse",
+      "cap-admin-count",
+      "cap-admin-group",
+      "cap-admin-group-label",
+      "cap-admin-icon",
+      "cap-admin-label",
+      "cap-admin-letter",
+      "cap-admin-logo",
+      "cap-admin-main",
+      "cap-admin-menu",
+      "cap-admin-page",
+      "cap-admin-strip",
+      "cap-admin-strip-group",
+      "cap-admin-tile",
+      "cap-admin-tip",
+      "cap-admin-trail"
+    ],
+    "parts": [
+      "cap-admin-actions",
+      "cap-admin-badge",
+      "cap-admin-bar",
+      "cap-admin-bar-text",
+      "cap-admin-btn",
+      "cap-admin-collapse",
+      "cap-admin-count",
+      "cap-admin-group",
+      "cap-admin-group-label",
+      "cap-admin-icon",
+      "cap-admin-label",
+      "cap-admin-letter",
+      "cap-admin-logo",
+      "cap-admin-main",
+      "cap-admin-menu",
+      "cap-admin-page",
+      "cap-admin-strip",
+      "cap-admin-strip-group",
+      "cap-admin-tile",
+      "cap-admin-tip",
+      "cap-admin-trail"
+    ],
+    "variants": {
+      "data-measure": [
+        "reading"
+      ],
+      "data-menu": [
+        "collapsed"
+      ],
+      "data-mono": [],
+      "data-standalone": [],
+      "data-tone": [],
+      "data-transition": [
+        "page"
+      ],
+      "data-variant": [
+        "letterhead",
+        "user"
+      ],
+      "data-width": [
+        "narrow",
+        "page"
+      ]
+    },
+    "states": [
+      ":active",
+      ":focus",
+      ":hover",
+      "[aria-current=\"page\"]",
+      "[aria-current=\"true\"]"
+    ],
+    "vars": [
+      {
+        "name": "--_bubble",
+        "default": "var(--space-5)"
+      },
+      {
+        "name": "--_gw",
+        "default": "20px"
+      },
+      {
+        "name": "--_gx",
+        "default": "calc(50% - 10px)"
+      },
+      {
+        "name": "--admin-hover",
+        "default": "color-mix(in srgb, var(--ground), var(--text) 10%)"
+      },
+      {
+        "name": "--admin-hover-edge",
+        "default": "var(--line-strong)"
+      },
+      {
+        "name": "--admin-menu",
+        "default": "var(--admin-menu-open)"
+      },
+      {
+        "name": "--admin-menu-collapsed",
+        "default": "calc(var(--rail-w-collapsed) + var(--space-6))"
+      },
+      {
+        "name": "--admin-menu-open",
+        "default": "calc(var(--rail-w) + var(--space-6))"
+      },
+      {
+        "name": "--admin-pill",
+        "default": "var(--accent-12)"
+      },
+      {
+        "name": "--admin-pill-fg",
+        "default": "var(--ground)"
+      },
+      {
+        "name": "--admin-row-pad",
+        "default": "calc((var(--admin-menu-collapsed) - 2 * var(--space-3) - var(--space-5)) / 2)"
+      },
+      {
+        "name": "--admin-strip",
+        "default": "var(--rail-w-collapsed)"
+      },
+      {
+        "name": "--admin-strip-bg",
+        "default": "color-mix(in srgb, var(--ground), var(--text) 7%)"
+      },
+      {
+        "name": "--admin-tile",
+        "default": "36px"
+      },
+      {
+        "name": "--admin-top",
+        "default": "var(--header-h)"
+      },
+      {
+        "name": "--header-bg",
+        "default": ""
+      }
+    ]
+  },
+  "ai-engine-settings": {
+    "root": "cap-ai-engine",
+    "classes": [
+      "cap-ai-engine",
+      "cap-ai-engine-job-note",
+      "cap-ai-engine-note",
+      "cap-ai-engine-spend",
+      "cap-ai-engine-status",
+      "cap-ai-engine-table"
+    ],
+    "parts": [
+      "cap-ai-engine-job-note",
+      "cap-ai-engine-note",
+      "cap-ai-engine-spend",
+      "cap-ai-engine-status",
+      "cap-ai-engine-table"
+    ],
+    "variants": {},
+    "states": [],
+    "vars": []
+  },
+  "ai-job-buttons": {
+    "root": "cap-ai-jobs",
+    "classes": [
+      "cap-ai-jobs",
+      "cap-ai-jobs-row"
+    ],
+    "parts": [
+      "cap-ai-jobs-row"
+    ],
+    "variants": {},
+    "states": [],
+    "vars": []
+  },
+  "ai-sample": {
+    "root": "cap-ai-sample",
+    "classes": [
+      "cap-ai-sample",
+      "cap-ai-sample-action",
+      "cap-ai-sample-controls",
+      "cap-ai-sample-error",
+      "cap-ai-sample-field",
+      "cap-ai-sample-head",
+      "cap-ai-sample-hint",
+      "cap-ai-sample-label",
+      "cap-ai-sample-live",
+      "cap-ai-sample-note",
+      "cap-ai-sample-out",
+      "cap-ai-sample-result"
+    ],
+    "parts": [
+      "cap-ai-sample-action",
+      "cap-ai-sample-controls",
+      "cap-ai-sample-error",
+      "cap-ai-sample-field",
+      "cap-ai-sample-head",
+      "cap-ai-sample-hint",
+      "cap-ai-sample-label",
+      "cap-ai-sample-live",
+      "cap-ai-sample-note",
+      "cap-ai-sample-out",
+      "cap-ai-sample-result"
+    ],
+    "variants": {
+      "data-variant": [
+        "mono"
+      ]
+    },
+    "states": [
+      ":empty"
+    ],
+    "vars": []
+  },
+  "ambient": {
+    "root": "cap-ambient",
+    "classes": [
+      "cap-ambient"
+    ],
+    "parts": [],
+    "variants": {
+      "data-hide": [
+        "phone"
+      ],
+      "data-paused": [],
+      "data-variant": [
+        "blobs",
+        "equalizer",
+        "hex-field"
+      ]
+    },
+    "states": [],
+    "vars": [
+      {
+        "name": "--c",
+        "default": "var(--cap-ambient-1)"
+      },
+      {
+        "name": "--cap-ambient-1",
+        "default": "var(--primary)"
+      },
+      {
+        "name": "--cap-ambient-2",
+        "default": "var(--accent)"
+      },
+      {
+        "name": "--cap-ambient-3",
+        "default": "var(--info)"
+      },
+      {
+        "name": "--cap-ambient-4",
+        "default": "var(--surface)"
+      },
+      {
+        "name": "--cap-ambient-flip",
+        "default": "-1"
+      },
+      {
+        "name": "--cap-ambient-height",
+        "default": "4rem"
+      },
+      {
+        "name": "--cap-ambient-strength",
+        "default": "var(--opacity-muted)"
+      },
+      {
+        "name": "--cap-ambient-strength-dark",
+        "default": "var(--opacity-faint)"
+      },
+      {
+        "name": "--cap-ambient-width",
+        "default": "13rem"
+      },
+      {
+        "name": "--d",
+        "default": "30s"
+      },
+      {
+        "name": "--dx",
+        "default": "26px"
+      },
+      {
+        "name": "--dy",
+        "default": "20px"
+      },
+      {
+        "name": "--h",
+        "default": "52%"
+      },
+      {
+        "name": "--k",
+        "default": "1.12"
+      },
+      {
+        "name": "--l",
+        "default": "-4s"
+      },
+      {
+        "name": "--o",
+        "default": "0.55"
+      },
+      {
+        "name": "--s",
+        "default": "26rem"
+      },
+      {
+        "name": "--x",
+        "default": "2%"
+      },
+      {
+        "name": "--y",
+        "default": "-40%"
+      }
+    ]
+  },
+  "anchor-bar": {
+    "root": "cap-anchors",
+    "classes": [
+      "cap-anchors",
+      "cap-anchors-label",
+      "cap-anchors-list"
+    ],
+    "parts": [
+      "cap-anchors-label",
+      "cap-anchors-list"
+    ],
+    "variants": {
+      "data-cap-anchor": [],
+      "data-orientation": [
+        "vertical"
+      ]
+    },
+    "states": [
+      ":active",
+      ":focus-visible",
+      ":hover",
+      "[aria-current=\"location\"]"
+    ],
+    "vars": [
+      {
+        "name": "--cap-anchors-h",
+        "default": "var(--space-8)"
+      }
+    ]
+  },
+  "annotated-document": {
+    "root": "cap-annotated",
+    "classes": [
+      "cap-annotated",
+      "cap-annotated-doc",
+      "cap-annotated-layout",
+      "cap-annotated-note",
+      "cap-annotated-note-icon",
+      "cap-annotated-note-kind",
+      "cap-annotated-note-text",
+      "cap-annotated-notes",
+      "cap-annotated-view"
+    ],
+    "parts": [
+      "cap-annotated-doc",
+      "cap-annotated-layout",
+      "cap-annotated-note",
+      "cap-annotated-note-icon",
+      "cap-annotated-note-kind",
+      "cap-annotated-note-text",
+      "cap-annotated-notes",
+      "cap-annotated-view"
+    ],
+    "variants": {
+      "data-hide-notes": [
+        "original"
+      ],
+      "data-kind": [
+        "tone"
+      ],
+      "data-lit": [],
+      "data-tone": [
+        "crit",
+        "info",
+        "ok",
+        "warn"
+      ],
+      "data-view-align": [
+        "center",
+        "end"
+      ]
+    },
+    "states": [
+      ":checked",
+      ":focus-visible",
+      ":hover",
+      "[aria-pressed=\"true\"]"
+    ],
+    "vars": [
+      {
+        "name": "--cap-annotated-h",
+        "default": "32rem"
+      },
+      {
+        "name": "--cap-annotated-soft",
+        "default": "var(--accent-soft)"
+      },
+      {
+        "name": "--cap-annotated-tone",
+        "default": "var(--accent)"
+      }
+    ]
+  },
+  "annotated-figure": {
+    "root": "cap-annotated-figure",
+    "classes": [
+      "cap-annotated-figure",
+      "cap-annotated-figure-caption",
+      "cap-annotated-figure-drawing",
+      "cap-annotated-figure-label",
+      "cap-annotated-figure-leader",
+      "cap-annotated-figure-target"
+    ],
+    "parts": [
+      "cap-annotated-figure-caption",
+      "cap-annotated-figure-drawing",
+      "cap-annotated-figure-label",
+      "cap-annotated-figure-leader",
+      "cap-annotated-figure-target"
+    ],
+    "variants": {
+      "data-layout": [
+        "narrow",
+        "wide"
+      ],
+      "data-lit": [],
+      "data-live": []
+    },
+    "states": [],
+    "vars": [
+      {
+        "name": "--cap-figure-ink",
+        "default": "var(--text)"
+      }
+    ]
+  },
+  "app-frame": {
+    "root": "cap-app-frame",
+    "classes": [
+      "cap-app-frame",
+      "cap-app-frame-address",
+      "cap-app-frame-bar",
+      "cap-app-frame-body",
+      "cap-app-frame-dots",
+      "cap-app-frame-foot"
+    ],
+    "parts": [
+      "cap-app-frame-address",
+      "cap-app-frame-bar",
+      "cap-app-frame-body",
+      "cap-app-frame-dots",
+      "cap-app-frame-foot"
+    ],
+    "variants": {
+      "data-variant": [
+        "app"
+      ]
+    },
+    "states": [],
+    "vars": [
+      {
+        "name": "--cap-app-frame-shadow",
+        "default": "var(--shadow-m)"
+      }
+    ]
+  },
+  "approval-queue": {
+    "root": "cap-approvals-title",
+    "classes": [
+      "cap-approvals",
+      "cap-approvals-title"
+    ],
+    "parts": [],
+    "variants": {},
+    "states": [],
+    "vars": []
+  },
+  "approval-sheet": {
+    "root": "cap-approval-form",
+    "classes": [
+      "cap-approval-cmd",
+      "cap-approval-error",
+      "cap-approval-form",
+      "cap-approval-gate",
+      "cap-approval-gates",
+      "cap-approval-job",
+      "cap-approval-meta",
+      "cap-approval-none"
+    ],
+    "parts": [],
+    "variants": {},
+    "states": [],
+    "vars": []
+  },
+  "ask-panel": {
+    "root": "cap-ask-trigger",
+    "classes": [
+      "cap-ask",
+      "cap-ask-badge",
+      "cap-ask-body",
+      "cap-ask-cut",
+      "cap-ask-followup",
+      "cap-ask-header",
+      "cap-ask-note",
+      "cap-ask-source-kind",
+      "cap-ask-sources",
+      "cap-ask-sources-heading",
+      "cap-ask-status",
+      "cap-ask-trigger"
+    ],
+    "parts": [],
+    "variants": {},
+    "states": [
+      ":focus-visible"
+    ],
+    "vars": [
+      {
+        "name": "--cap-ask-radius",
+        "default": "var(--radius-s)"
+      }
+    ]
+  },
+  "attention-list": {
+    "root": "cap-attention",
+    "classes": [
+      "cap-attention",
+      "cap-attention-child",
+      "cap-attention-clear",
+      "cap-attention-clear-text",
+      "cap-attention-count",
+      "cap-attention-head",
+      "cap-attention-link",
+      "cap-attention-notices",
+      "cap-attention-region",
+      "cap-attention-src",
+      "cap-attention-title"
+    ],
+    "parts": [
+      "cap-attention-child",
+      "cap-attention-clear",
+      "cap-attention-clear-text",
+      "cap-attention-count",
+      "cap-attention-head",
+      "cap-attention-link",
+      "cap-attention-notices",
+      "cap-attention-region",
+      "cap-attention-src",
+      "cap-attention-title"
+    ],
+    "variants": {},
+    "states": [
+      ":active",
+      ":focus-visible",
+      ":hover",
+      ":visited"
+    ],
+    "vars": [
+      {
+        "name": "--cap-attention-pad",
+        "default": "var(--pad-card)"
+      }
+    ]
+  },
+  "author-list": {
+    "root": "cap-author-list",
+    "classes": [
+      "cap-author-list",
+      "cap-author-list-full",
+      "cap-author-list-owner",
+      "cap-author-list-summary"
+    ],
+    "parts": [
+      "cap-author-list-full",
+      "cap-author-list-owner",
+      "cap-author-list-summary"
+    ],
+    "variants": {},
+    "states": [],
+    "vars": []
+  },
+  "authorship": {
+    "root": "cap-authorship",
+    "classes": [
+      "cap-authorship",
+      "cap-authorship-bar",
+      "cap-authorship-seg",
+      "cap-authorship-summary",
+      "cap-authorship-text",
+      "cap-run",
+      "cap-run-label"
+    ],
+    "parts": [
+      "cap-authorship-bar",
+      "cap-authorship-seg",
+      "cap-authorship-summary",
+      "cap-authorship-text"
+    ],
+    "variants": {
+      "data-authorship": [
+        "off"
+      ],
+      "data-kind": [
+        "ai",
+        "quoted"
+      ],
+      "data-share": [
+        "0"
+      ]
+    },
+    "states": [
+      ":checked"
+    ],
+    "vars": [
+      {
+        "name": "--cap-auth-gutter",
+        "default": "5.5rem"
+      },
+      {
+        "name": "--cap-auth-pad",
+        "default": "var(--space-3)"
+      },
+      {
+        "name": "--cap-auth-pad-block",
+        "default": "var(--space-4)"
+      },
+      {
+        "name": "--cap-auth-rule",
+        "default": "4px"
+      },
+      {
+        "name": "--cap-avatar-size",
+        "default": "var(--title-6)"
+      },
+      {
+        "name": "--cap-run-color",
+        "default": "var(--accent)"
+      },
+      {
+        "name": "--cap-run-pattern",
+        "default": "solid"
+      },
+      {
+        "name": "--cap-share",
+        "default": "0"
+      }
+    ]
+  },
+  "avatar": {
+    "root": "cap-avatar",
+    "classes": [
+      "cap-avatar",
+      "cap-avatar-badge",
+      "cap-avatar-count",
+      "cap-avatar-fallback",
+      "cap-avatar-group",
+      "cap-avatar-image"
+    ],
+    "parts": [
+      "cap-avatar-badge",
+      "cap-avatar-count",
+      "cap-avatar-fallback",
+      "cap-avatar-group",
+      "cap-avatar-image"
+    ],
+    "variants": {
+      "data-kind": [
+        "ai"
+      ],
+      "data-shape": [
+        "square"
+      ],
+      "data-size": [
+        "lg",
+        "sm"
+      ],
+      "data-state": [
+        "error"
+      ],
+      "data-tone": [
+        "crit",
+        "nodata",
+        "ok"
+      ]
+    },
+    "states": [],
+    "vars": [
+      {
+        "name": "--cap-avatar-size",
+        "default": "32px"
+      }
+    ]
+  },
+  "banner": {
+    "root": "cap-banner",
+    "classes": [
+      "cap-alert",
+      "cap-alert-action",
+      "cap-alert-body",
+      "cap-alert-text",
+      "cap-alert-title",
+      "cap-banner",
+      "cap-banner-actions",
+      "cap-banner-body",
+      "cap-banner-text",
+      "cap-banner-title"
+    ],
+    "parts": [
+      "cap-banner-actions",
+      "cap-banner-body",
+      "cap-banner-text",
+      "cap-banner-title"
+    ],
+    "variants": {
+      "data-tone": [
+        "crit",
+        "info",
+        "neutral",
+        "ok",
+        "warn"
+      ]
+    },
+    "states": [],
+    "vars": [
+      {
+        "name": "--_soft",
+        "default": "var(--warn-soft)"
+      },
+      {
+        "name": "--_tone",
+        "default": "var(--warn)"
+      }
+    ]
+  },
+  "breadcrumb": {
+    "root": "cap-breadcrumb",
+    "classes": [
+      "cap-breadcrumb",
+      "cap-breadcrumb-ellipsis",
+      "cap-breadcrumb-item",
+      "cap-breadcrumb-link",
+      "cap-breadcrumb-list",
+      "cap-breadcrumb-more",
+      "cap-breadcrumb-more-link",
+      "cap-breadcrumb-page"
+    ],
+    "parts": [
+      "cap-breadcrumb-ellipsis",
+      "cap-breadcrumb-item",
+      "cap-breadcrumb-link",
+      "cap-breadcrumb-list",
+      "cap-breadcrumb-more",
+      "cap-breadcrumb-more-link",
+      "cap-breadcrumb-page"
+    ],
+    "variants": {},
+    "states": [
+      ":focus-visible",
+      ":hover",
+      ":visited",
+      "[aria-current=\"page\"]",
+      "[aria-expanded=\"true\"]"
+    ],
+    "vars": []
+  },
+  "bulk-bar": {
+    "root": "cap-bulk",
+    "classes": [
+      "cap-bulk",
+      "cap-bulk-actions",
+      "cap-bulk-clear",
+      "cap-bulk-count",
+      "cap-bulk-detail",
+      "cap-bulk-field",
+      "cap-bulk-result-label",
+      "cap-bulk-result-message",
+      "cap-bulk-result-uses",
+      "cap-bulk-results",
+      "cap-bulk-results-list",
+      "cap-bulk-results-summary"
+    ],
+    "parts": [
+      "cap-bulk-actions",
+      "cap-bulk-clear",
+      "cap-bulk-count",
+      "cap-bulk-detail",
+      "cap-bulk-field",
+      "cap-bulk-result-label",
+      "cap-bulk-result-message",
+      "cap-bulk-result-uses",
+      "cap-bulk-results",
+      "cap-bulk-results-list",
+      "cap-bulk-results-summary"
+    ],
+    "variants": {
+      "data-cap-part": [
+        "dismiss-results"
+      ],
+      "data-position": [
+        "top"
+      ]
+    },
+    "states": [
+      "[hidden]"
+    ],
+    "vars": []
+  },
+  "button": {
+    "root": "cap-btn",
+    "classes": [
+      "cap-btn",
+      "cap-btn-away",
+      "cap-btn-group",
+      "cap-btn-group-text",
+      "cap-btn-label",
+      "cap-btn-reason",
+      "cap-btn-spinner",
+      "cap-link-btn"
+    ],
+    "parts": [
+      "cap-btn-away",
+      "cap-btn-group",
+      "cap-btn-group-text",
+      "cap-btn-label",
+      "cap-btn-reason",
+      "cap-btn-spinner"
+    ],
+    "variants": {
+      "data-block": [],
+      "data-icon": [
+        "end",
+        "start"
+      ],
+      "data-icon-only": [],
+      "data-leaving": [],
+      "data-orientation": [
+        "vertical"
+      ],
+      "data-size": [
+        "lg",
+        "sm",
+        "xs"
+      ],
+      "data-variant": [
+        "danger",
+        "default",
+        "link",
+        "primary",
+        "quiet",
+        "secondary"
+      ],
+      "data-wrap": []
+    },
+    "states": [
+      ":active",
+      ":disabled",
+      ":focus-visible",
+      ":hover",
+      "[aria-busy=\"true\"]",
+      "[aria-disabled=\"true\"]",
+      "[aria-expanded=\"true\"]",
+      "[aria-haspopup]",
+      "[aria-invalid=\"true\"]"
+    ],
+    "vars": [
+      {
+        "name": "--cap-btn-bg",
+        "default": "var(--raised)"
+      },
+      {
+        "name": "--cap-btn-fg",
+        "default": "var(--text)"
+      },
+      {
+        "name": "--cap-btn-fs",
+        "default": "var(--fs-body)"
+      },
+      {
+        "name": "--cap-btn-gap",
+        "default": "var(--space-2-5)"
+      },
+      {
+        "name": "--cap-btn-h",
+        "default": "var(--control)"
+      },
+      {
+        "name": "--cap-btn-hover",
+        "default": "color-mix(in srgb, var(--raised), var(--text) 7%)"
+      },
+      {
+        "name": "--cap-btn-icon",
+        "default": "16px"
+      },
+      {
+        "name": "--cap-btn-line",
+        "default": "var(--line-strong)"
+      },
+      {
+        "name": "--cap-btn-press",
+        "default": "color-mix(in srgb, var(--raised), var(--text) 12%)"
+      }
+    ]
+  },
+  "calculator": {
+    "root": "cap-calculator",
+    "classes": [
+      "cap-calculator",
+      "cap-calculator-answer",
+      "cap-calculator-error",
+      "cap-calculator-form",
+      "cap-calculator-note",
+      "cap-calculator-output",
+      "cap-calculator-section",
+      "cap-calculator-status",
+      "cap-calculator-steps",
+      "cap-calculator-unit"
+    ],
+    "parts": [
+      "cap-calculator-answer",
+      "cap-calculator-error",
+      "cap-calculator-form",
+      "cap-calculator-note",
+      "cap-calculator-output",
+      "cap-calculator-section",
+      "cap-calculator-status",
+      "cap-calculator-steps",
+      "cap-calculator-unit"
+    ],
+    "variants": {},
+    "states": [],
+    "vars": []
+  },
+  "card": {
+    "root": "cap-card",
+    "classes": [
+      "cap-card",
+      "cap-card-grid",
+      "cap-card-lead",
+      "cap-card-link",
+      "cap-card-media"
+    ],
+    "parts": [
+      "cap-card-grid",
+      "cap-card-lead",
+      "cap-card-link",
+      "cap-card-media"
+    ],
+    "variants": {
+      "data-align": [
+        "rows"
+      ],
+      "data-layout": [
+        "side"
+      ],
+      "data-ratio": [
+        "1",
+        "2/3",
+        "4/3"
+      ]
+    },
+    "states": [
+      ":active",
+      ":checked",
+      ":disabled",
+      ":focus-visible",
+      ":hover"
+    ],
+    "vars": [
+      {
+        "name": "--card-min",
+        "default": "16rem"
+      },
+      {
+        "name": "--card-ratio",
+        "default": "4 / 3"
+      },
+      {
+        "name": "--fs-card-title",
+        "default": "var(--fs-h3)"
+      }
+    ]
+  },
+  "carousel": {
+    "root": "cap-carousel",
+    "classes": [
+      "cap-carousel",
+      "cap-carousel-controls",
+      "cap-carousel-markers",
+      "cap-carousel-track",
+      "cap-carousel-viewport"
+    ],
+    "parts": [
+      "cap-carousel-controls",
+      "cap-carousel-markers",
+      "cap-carousel-track",
+      "cap-carousel-viewport"
+    ],
+    "variants": {
+      "data-axis": [
+        "block"
+      ],
+      "data-cap-loops": [],
+      "data-peek": [],
+      "data-per-view": [
+        "2",
+        "3"
+      ]
+    },
+    "states": [
+      ":disabled",
+      ":focus-visible",
+      ":hover",
+      "[aria-current=\"true\"]"
+    ],
+    "vars": [
+      {
+        "name": "--carousel-block",
+        "default": "20rem"
+      },
+      {
+        "name": "--carousel-gap",
+        "default": "var(--space-6)"
+      },
+      {
+        "name": "--carousel-overhang",
+        "default": "var(--space-3)"
+      },
+      {
+        "name": "--carousel-per-view",
+        "default": "1"
+      },
+      {
+        "name": "--current",
+        "default": ""
+      }
+    ]
+  },
+  "catalog": {
+    "root": "cap-catalog",
+    "classes": [
+      "cap-catalog",
+      "cap-catalog-actions",
+      "cap-catalog-apply",
+      "cap-catalog-body",
+      "cap-catalog-chip",
+      "cap-catalog-chips",
+      "cap-catalog-clear",
+      "cap-catalog-count",
+      "cap-catalog-facet",
+      "cap-catalog-filters",
+      "cap-catalog-group",
+      "cap-catalog-main",
+      "cap-catalog-more",
+      "cap-catalog-n",
+      "cap-catalog-sort",
+      "cap-catalog-status",
+      "cap-catalog-tray-head",
+      "cap-catalog-tray-open",
+      "cap-catalog-tray-title"
+    ],
+    "parts": [
+      "cap-catalog-actions",
+      "cap-catalog-apply",
+      "cap-catalog-body",
+      "cap-catalog-chip",
+      "cap-catalog-chips",
+      "cap-catalog-clear",
+      "cap-catalog-count",
+      "cap-catalog-facet",
+      "cap-catalog-filters",
+      "cap-catalog-group",
+      "cap-catalog-main",
+      "cap-catalog-more",
+      "cap-catalog-n",
+      "cap-catalog-sort",
+      "cap-catalog-status",
+      "cap-catalog-tray-head",
+      "cap-catalog-tray-open",
+      "cap-catalog-tray-title"
+    ],
+    "variants": {
+      "data-catalog-region": [
+        "results"
+      ],
+      "data-enhanced": [],
+      "data-reflow": [],
+      "data-tray": [
+        "open"
+      ]
+    },
+    "states": [
+      ":focus-visible",
+      ":target",
+      "[aria-busy=\"true\"]"
+    ],
+    "vars": []
+  },
+  "chart-builder": {
+    "root": "cap-chart-builder",
+    "classes": [
+      "cap-chart-builder",
+      "cap-chart-builder-check",
+      "cap-chart-builder-csv",
+      "cap-chart-builder-findings",
+      "cap-chart-builder-note",
+      "cap-chart-builder-preview",
+      "cap-chart-builder-suggestion",
+      "cap-chart-builder-y"
+    ],
+    "parts": [
+      "cap-chart-builder-check",
+      "cap-chart-builder-csv",
+      "cap-chart-builder-findings",
+      "cap-chart-builder-note",
+      "cap-chart-builder-preview",
+      "cap-chart-builder-suggestion",
+      "cap-chart-builder-y"
+    ],
+    "variants": {},
+    "states": [
+      ":empty"
+    ],
+    "vars": []
+  },
+  "chart-frame": {
+    "root": "cap-chart",
+    "classes": [
+      "cap-chart",
+      "cap-chart-figure",
+      "cap-chart-panel",
+      "cap-chart-reason",
+      "cap-chart-stale",
+      "cap-chart-title",
+      "cap-data",
+      "cap-data-preview",
+      "cap-data-preview-chart",
+      "cap-data-preview-heading",
+      "cap-data-preview-link",
+      "cap-data-preview-source",
+      "cap-data-preview-summary",
+      "cap-spark"
+    ],
+    "parts": [
+      "cap-chart-figure",
+      "cap-chart-panel",
+      "cap-chart-reason",
+      "cap-chart-stale",
+      "cap-chart-title"
+    ],
+    "variants": {
+      "data-enarratio-redraw": [],
+      "data-head": [
+        "inline"
+      ],
+      "data-out-of-range": []
+    },
+    "states": [],
+    "vars": [
+      {
+        "name": "--cap-narrow-height",
+        "default": "auto"
+      }
+    ]
+  },
+  "checklist-run": {
+    "root": "cap-run-bar",
+    "classes": [
+      "cap-run-actions",
+      "cap-run-bar",
+      "cap-run-clock",
+      "cap-run-done",
+      "cap-run-note",
+      "cap-run-progress",
+      "cap-run-roll",
+      "cap-run-start",
+      "cap-run-step-done",
+      "cap-run-step-shown",
+      "cap-run-summary",
+      "cap-run-timer",
+      "cap-run-tools",
+      "cap-run-warning"
+    ],
+    "parts": [],
+    "variants": {
+      "data-run": [
+        "on",
+        "view"
+      ],
+      "data-run-flag": [
+        "critical"
+      ],
+      "data-run-text": [],
+      "data-state": [
+        "done"
+      ],
+      "data-step": [],
+      "data-view": [
+        "step"
+      ]
+    },
+    "states": [
+      "[aria-current=\"step\"]",
+      "[aria-pressed=\"true\"]",
+      "[hidden]",
+      "[open]"
+    ],
+    "vars": []
+  },
+  "chips": {
+    "root": "cap-chips",
+    "classes": [
+      "cap-chip-count",
+      "cap-chip-input",
+      "cap-chips",
+      "cap-chips-count",
+      "cap-chips-label"
+    ],
+    "parts": [
+      "cap-chips-count",
+      "cap-chips-label"
+    ],
+    "variants": {
+      "data-size": [
+        "lg",
+        "sm"
+      ],
+      "data-variant": [
+        "solid"
+      ]
+    },
+    "states": [
+      ":checked",
+      ":disabled",
+      ":focus-visible",
+      ":hover",
+      "[aria-current=\"false\"]",
+      "[aria-current]",
+      "[aria-disabled=\"true\"]",
+      "[aria-pressed=\"true\"]"
+    ],
+    "vars": []
+  },
+  "cited-by": {
+    "root": "cap-cited-by",
+    "classes": [
+      "cap-cited-by",
+      "cap-cited-by-count",
+      "cap-cited-by-list",
+      "cap-cited-by-source",
+      "cap-cited-by-title"
+    ],
+    "parts": [
+      "cap-cited-by-count",
+      "cap-cited-by-list",
+      "cap-cited-by-source",
+      "cap-cited-by-title"
+    ],
+    "variants": {},
+    "states": [],
+    "vars": []
+  },
+  "collab-editor": {
+    "root": "cap-collab-caret",
+    "classes": [
+      "cap-collab-actions",
+      "cap-collab-bar",
+      "cap-collab-caret",
+      "cap-collab-caret-name",
+      "cap-collab-caret-selection",
+      "cap-collab-comment",
+      "cap-collab-comment-body",
+      "cap-collab-comment-form",
+      "cap-collab-comment-meta",
+      "cap-collab-line",
+      "cap-collab-mark",
+      "cap-collab-note",
+      "cap-collab-people",
+      "cap-collab-person",
+      "cap-collab-resolved",
+      "cap-collab-stack",
+      "cap-collab-suggestion",
+      "cap-collab-suggestion-text",
+      "cap-collab-suggestions",
+      "cap-collab-thread",
+      "cap-collab-thread-comments",
+      "cap-collab-thread-quote"
+    ],
+    "parts": [
+      "cap-collab-caret-name",
+      "cap-collab-caret-selection"
+    ],
+    "variants": {
+      "data-active": [],
+      "data-suggestion": [
+        "modification"
+      ],
+      "data-who": [
+        "0",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7"
+      ]
+    },
+    "states": [
+      ":focus-visible"
+    ],
+    "vars": [
+      {
+        "name": "--who",
+        "default": "var(--series-1)"
+      },
+      {
+        "name": "--who-text",
+        "default": "var(--series-text-1)"
+      }
+    ]
+  },
+  "combobox": {
+    "root": "cap-combobox",
+    "classes": [
+      "cap-combobox",
+      "cap-combobox-chip",
+      "cap-combobox-chip-remove",
+      "cap-combobox-chips",
+      "cap-combobox-clear",
+      "cap-combobox-empty",
+      "cap-combobox-error",
+      "cap-combobox-group",
+      "cap-combobox-help",
+      "cap-combobox-input",
+      "cap-combobox-label",
+      "cap-combobox-list",
+      "cap-combobox-popup",
+      "cap-combobox-positioner",
+      "cap-combobox-status",
+      "cap-combobox-trigger"
+    ],
+    "parts": [
+      "cap-combobox-chip",
+      "cap-combobox-chip-remove",
+      "cap-combobox-chips",
+      "cap-combobox-clear",
+      "cap-combobox-empty",
+      "cap-combobox-error",
+      "cap-combobox-group",
+      "cap-combobox-help",
+      "cap-combobox-input",
+      "cap-combobox-label",
+      "cap-combobox-list",
+      "cap-combobox-popup",
+      "cap-combobox-positioner",
+      "cap-combobox-status",
+      "cap-combobox-trigger"
+    ],
+    "variants": {
+      "data-disabled": [],
+      "data-empty": [],
+      "data-highlighted": [],
+      "data-popup-open": []
+    },
+    "states": [
+      ":disabled",
+      ":empty",
+      ":focus-visible",
+      ":hover",
+      "[aria-invalid=\"true\"]"
+    ],
+    "vars": [
+      {
+        "name": "--anchor-width",
+        "default": ""
+      },
+      {
+        "name": "--available-height",
+        "default": ""
+      },
+      {
+        "name": "--available-width",
+        "default": ""
+      },
+      {
+        "name": "--listbox-max",
+        "default": "min(22rem, var(--available-height))"
+      }
+    ]
+  },
+  "command-menu": {
+    "root": "cap-cmd-search",
+    "classes": [
+      "cap-cmd",
+      "cap-cmd-answer",
+      "cap-cmd-answer-region",
+      "cap-cmd-answer-status",
+      "cap-cmd-foot",
+      "cap-cmd-input",
+      "cap-cmd-list",
+      "cap-cmd-search",
+      "cap-cmd-snippet"
+    ],
+    "parts": [],
+    "variants": {},
+    "states": [
+      ":empty",
+      ":focus-visible",
+      "[open]"
+    ],
+    "vars": []
+  },
+  "config-form": {
+    "root": "cap-config-form",
+    "classes": [
+      "cap-config-actions",
+      "cap-config-danger",
+      "cap-config-form",
+      "cap-config-full"
+    ],
+    "parts": [],
+    "variants": {},
+    "states": [],
+    "vars": [
+      {
+        "name": "--fields-gap",
+        "default": "var(--gap) var(--space-6)"
+      }
+    ]
+  },
+  "confirm-dialog": {
+    "root": "cap-confirm-reason",
+    "classes": [
+      "cap-confirm-error",
+      "cap-confirm-error-lead",
+      "cap-confirm-modal",
+      "cap-confirm-note",
+      "cap-confirm-reason",
+      "cap-confirm-typed"
+    ],
+    "parts": [],
+    "variants": {
+      "data-inline": []
+    },
+    "states": [
+      ":empty"
+    ],
+    "vars": []
+  },
+  "consent": {
+    "root": "cap-consent",
+    "classes": [
+      "cap-consent",
+      "cap-consent-account",
+      "cap-consent-actions",
+      "cap-consent-body",
+      "cap-consent-box",
+      "cap-consent-brand",
+      "cap-consent-foot",
+      "cap-consent-form",
+      "cap-consent-line",
+      "cap-consent-mono",
+      "cap-consent-text",
+      "cap-consent-title",
+      "cap-permissions",
+      "cap-permissions-heading",
+      "cap-permissions-list"
+    ],
+    "parts": [
+      "cap-consent-account",
+      "cap-consent-actions",
+      "cap-consent-body",
+      "cap-consent-box",
+      "cap-consent-brand",
+      "cap-consent-foot",
+      "cap-consent-form",
+      "cap-consent-line",
+      "cap-consent-mono",
+      "cap-consent-text",
+      "cap-consent-title"
+    ],
+    "variants": {
+      "data-allowed": []
+    },
+    "states": [
+      ":focus"
+    ],
+    "vars": []
+  },
+  "contact-card": {
+    "root": "cap-contact-card",
+    "classes": [
+      "cap-contact-address",
+      "cap-contact-card",
+      "cap-contact-card-title",
+      "cap-contact-grid",
+      "cap-contact-lines",
+      "cap-contact-text",
+      "cap-contact-way",
+      "cap-contact-ways"
+    ],
+    "parts": [
+      "cap-contact-card-title"
+    ],
+    "variants": {
+      "data-columns": [
+        "1",
+        "2",
+        "3"
+      ],
+      "data-variant": [
+        "plain"
+      ]
+    },
+    "states": [
+      ":hover"
+    ],
+    "vars": [
+      {
+        "name": "--cap-contact-address-color",
+        "default": "var(--muted)"
+      },
+      {
+        "name": "--cap-contact-address-face",
+        "default": "inherit"
+      },
+      {
+        "name": "--cap-contact-address-size",
+        "default": "inherit"
+      },
+      {
+        "name": "--cap-contact-card-min",
+        "default": "16rem"
+      },
+      {
+        "name": "--cap-contact-card-title-case",
+        "default": "none"
+      },
+      {
+        "name": "--cap-contact-card-title-color",
+        "default": "var(--text)"
+      },
+      {
+        "name": "--cap-contact-card-title-face",
+        "default": "var(--display)"
+      },
+      {
+        "name": "--cap-contact-card-title-size",
+        "default": "var(--fs-h3)"
+      },
+      {
+        "name": "--cap-contact-card-title-tracking",
+        "default": "normal"
+      },
+      {
+        "name": "--cap-contact-card-title-weight",
+        "default": "var(--weight-heading)"
+      },
+      {
+        "name": "--cap-contact-way-color",
+        "default": "var(--accent-text)"
+      },
+      {
+        "name": "--cap-contact-way-face",
+        "default": "inherit"
+      },
+      {
+        "name": "--cap-contact-way-min",
+        "default": "12rem"
+      },
+      {
+        "name": "--cap-contact-way-size",
+        "default": "inherit"
+      }
+    ]
+  },
+  "content": {
+    "root": "cap-content-result",
+    "classes": [
+      "cap-content-result",
+      "cap-content-undo"
+    ],
+    "parts": [],
+    "variants": {},
+    "states": [
+      ":empty"
+    ],
+    "vars": []
+  },
+  "copy": {
+    "root": "cap-copy",
+    "classes": [
+      "cap-copy",
+      "cap-copy-button",
+      "cap-copy-done",
+      "cap-copy-icon",
+      "cap-copy-tip",
+      "cap-copyable"
+    ],
+    "parts": [
+      "cap-copy-button",
+      "cap-copy-done",
+      "cap-copy-icon",
+      "cap-copy-tip"
+    ],
+    "variants": {
+      "data-state": [
+        "done"
+      ]
+    },
+    "states": [
+      ":empty",
+      ":focus-visible",
+      ":focus-within",
+      ":hover"
+    ],
+    "vars": []
+  },
+  "count": {
+    "root": "cap-count",
+    "classes": [
+      "cap-count"
+    ],
+    "parts": [],
+    "variants": {
+      "data-tone": [
+        "crit",
+        "need",
+        "warn"
+      ]
+    },
+    "states": [
+      ":empty"
+    ],
+    "vars": []
+  },
+  "count-up": {
+    "root": "cap-count-up",
+    "classes": [
+      "cap-count-up"
+    ],
+    "parts": [],
+    "variants": {
+      "data-cap": [
+        "count-up"
+      ]
+    },
+    "states": [],
+    "vars": []
+  },
+  "cta-band": {
+    "root": "cap-cta-band",
+    "classes": [
+      "cap-cta-band",
+      "cap-cta-band-actions",
+      "cap-cta-band-note",
+      "cap-cta-band-text",
+      "cap-cta-band-title"
+    ],
+    "parts": [
+      "cap-cta-band-actions",
+      "cap-cta-band-note",
+      "cap-cta-band-text",
+      "cap-cta-band-title"
+    ],
+    "variants": {
+      "data-quiet": []
+    },
+    "states": [],
+    "vars": [
+      {
+        "name": "--cta-band-align",
+        "default": "center"
+      },
+      {
+        "name": "--cta-band-bg",
+        "default": "var(--accent-soft)"
+      },
+      {
+        "name": "--cta-band-border",
+        "default": "var(--line-w) solid var(--accent-line)"
+      },
+      {
+        "name": "--cta-band-pad",
+        "default": "var(--space-7) var(--space-6)"
+      },
+      {
+        "name": "--cta-band-title-face",
+        "default": "revert-layer"
+      },
+      {
+        "name": "--cta-band-title-leading",
+        "default": "revert-layer"
+      },
+      {
+        "name": "--cta-band-title-size",
+        "default": "revert-layer"
+      },
+      {
+        "name": "--cta-band-title-weight",
+        "default": "revert-layer"
+      }
+    ]
+  },
+  "danger-zone": {
+    "root": "cap-danger",
+    "classes": [
+      "cap-danger",
+      "cap-danger-actions",
+      "cap-danger-note",
+      "cap-danger-title"
+    ],
+    "parts": [
+      "cap-danger-actions",
+      "cap-danger-note",
+      "cap-danger-title"
+    ],
+    "variants": {},
+    "states": [],
+    "vars": []
+  },
+  "date-picker": {
+    "root": "cap-date-picker",
+    "classes": [
+      "cap-date-picker",
+      "cap-date-picker-grid",
+      "cap-date-picker-head"
+    ],
+    "parts": [
+      "cap-date-picker-grid",
+      "cap-date-picker-head"
+    ],
+    "variants": {
+      "data-date": []
+    },
+    "states": [
+      ":focus-visible",
+      ":hover",
+      "[aria-current=\"date\"]",
+      "[aria-disabled=\"true\"]",
+      "[aria-selected=\"true\"]"
+    ],
+    "vars": []
+  },
+  "delta": {
+    "root": "cap-delta",
+    "classes": [
+      "cap-delta",
+      "cap-delta-arrow"
+    ],
+    "parts": [
+      "cap-delta-arrow"
+    ],
+    "variants": {
+      "data-kind": [
+        "unchanged"
+      ],
+      "data-tone": [
+        "bad",
+        "good"
+      ]
+    },
+    "states": [],
+    "vars": []
+  },
+  "detail-panel": {
+    "root": "cap-detail-heading",
+    "classes": [
+      "cap-detail-body",
+      "cap-detail-cmd",
+      "cap-detail-controls",
+      "cap-detail-copied",
+      "cap-detail-diff",
+      "cap-detail-heading",
+      "cap-detail-id",
+      "cap-detail-kind",
+      "cap-detail-section",
+      "cap-detail-section-title",
+      "cap-detail-source",
+      "cap-detail-titlerow"
+    ],
+    "parts": [],
+    "variants": {
+      "data-variant": [
+        "danger"
+      ]
+    },
+    "states": [],
+    "vars": []
+  },
+  "dialog": {
+    "root": "cap-dialog",
+    "classes": [
+      "cap-dialog",
+      "cap-dialog-body",
+      "cap-dialog-close",
+      "cap-dialog-description",
+      "cap-dialog-footer",
+      "cap-dialog-header",
+      "cap-dialog-media",
+      "cap-dialog-title"
+    ],
+    "parts": [
+      "cap-dialog-body",
+      "cap-dialog-close",
+      "cap-dialog-description",
+      "cap-dialog-footer",
+      "cap-dialog-header",
+      "cap-dialog-media",
+      "cap-dialog-title"
+    ],
+    "variants": {
+      "data-align": [
+        "between",
+        "start"
+      ],
+      "data-cap-dragging": [],
+      "data-cap-inline": [],
+      "data-cap-modal-lock": [],
+      "data-cap-wired": [],
+      "data-divider": [],
+      "data-flush": [],
+      "data-placement": [
+        "bottom",
+        "left",
+        "right",
+        "top"
+      ],
+      "data-size": [
+        "lg",
+        "sm"
+      ],
+      "data-tone": [
+        "crit",
+        "warn"
+      ]
+    },
+    "states": [
+      ":focus-visible",
+      ":hover",
+      ":modal",
+      "[open]"
+    ],
+    "vars": [
+      {
+        "name": "--cap-dialog-dir",
+        "default": "1"
+      },
+      {
+        "name": "--cap-dialog-from",
+        "default": "translateY(8px) scale(0.96)"
+      },
+      {
+        "name": "--cap-dialog-gap",
+        "default": "max(var(--space-5), env(safe-area-inset-top, 0px), env(safe-area-inset-bottom, 0px))"
+      },
+      {
+        "name": "--cap-dialog-to",
+        "default": "translateY(4px) scale(0.98)"
+      },
+      {
+        "name": "--cap-dialog-top",
+        "default": "max(var(--space-5), 10dvh)"
+      },
+      {
+        "name": "--cap-dialog-w",
+        "default": "30rem"
+      },
+      {
+        "name": "--cap-drag",
+        "default": "0"
+      }
+    ]
+  },
+  "dictionary-entry": {
+    "root": "cap-dictionary-entry",
+    "classes": [
+      "cap-dictionary-entry",
+      "cap-dictionary-entry-ety",
+      "cap-dictionary-entry-ety-label",
+      "cap-dictionary-entry-head",
+      "cap-dictionary-entry-ipa",
+      "cap-dictionary-entry-label",
+      "cap-dictionary-entry-listen",
+      "cap-dictionary-entry-pos",
+      "cap-dictionary-entry-pron",
+      "cap-dictionary-entry-respell",
+      "cap-dictionary-entry-senses",
+      "cap-dictionary-entry-wave",
+      "cap-dictionary-entry-word"
+    ],
+    "parts": [
+      "cap-dictionary-entry-ety",
+      "cap-dictionary-entry-ety-label",
+      "cap-dictionary-entry-head",
+      "cap-dictionary-entry-ipa",
+      "cap-dictionary-entry-label",
+      "cap-dictionary-entry-listen",
+      "cap-dictionary-entry-pos",
+      "cap-dictionary-entry-pron",
+      "cap-dictionary-entry-respell",
+      "cap-dictionary-entry-senses",
+      "cap-dictionary-entry-wave",
+      "cap-dictionary-entry-word"
+    ],
+    "variants": {},
+    "states": [
+      ":focus-visible",
+      ":hover",
+      "[aria-pressed=\"true\"]",
+      "[hidden]"
+    ],
+    "vars": []
+  },
+  "disclosure": {
+    "root": "cap-disclosure",
+    "classes": [
+      "cap-disclosure",
+      "cap-disclosure-body",
+      "cap-expand-detail",
+      "cap-expand-region",
+      "cap-expand-toggle",
+      "cap-group",
+      "cap-group-count",
+      "cap-group-heading",
+      "cap-group-nest",
+      "cap-group-rows",
+      "cap-group-toggle"
+    ],
+    "parts": [
+      "cap-disclosure-body"
+    ],
+    "variants": {
+      "data-marker": [
+        "sign",
+        "triangle"
+      ],
+      "data-print": [
+        "hide"
+      ],
+      "data-size": [
+        "sm"
+      ],
+      "data-variant": [
+        "accordion",
+        "card",
+        "inline"
+      ]
+    },
+    "states": [
+      ":active",
+      ":disabled",
+      ":focus-visible",
+      ":hover",
+      "[aria-disabled=\"true\"]",
+      "[aria-expanded=\"true\"]",
+      "[hidden]",
+      "[open]"
+    ],
+    "vars": [
+      {
+        "name": "--disclosure-body-gap",
+        "default": "0"
+      },
+      {
+        "name": "--disclosure-body-pad",
+        "default": "0 var(--space-4) var(--space-4)"
+      },
+      {
+        "name": "--disclosure-marker-gap",
+        "default": "var(--space-3)"
+      },
+      {
+        "name": "--disclosure-pad",
+        "default": "0"
+      },
+      {
+        "name": "--disclosure-summary-min-h",
+        "default": "max(var(--target), var(--control))"
+      },
+      {
+        "name": "--disclosure-summary-pad",
+        "default": "var(--space-2) var(--space-4)"
+      }
+    ]
+  },
+  "document-archive": {
+    "root": "cap-archive",
+    "classes": [
+      "cap-archive",
+      "cap-archive-empty",
+      "cap-archive-group",
+      "cap-archive-head",
+      "cap-archive-more",
+      "cap-archive-title",
+      "cap-docview",
+      "cap-docview-body",
+      "cap-docview-download",
+      "cap-docview-head",
+      "cap-docview-sub",
+      "cap-docview-title"
+    ],
+    "parts": [
+      "cap-archive-empty",
+      "cap-archive-group",
+      "cap-archive-head",
+      "cap-archive-more",
+      "cap-archive-title"
+    ],
+    "variants": {},
+    "states": [],
+    "vars": []
+  },
+  "draft-compare": {
+    "root": "cap-compare",
+    "classes": [
+      "cap-compare",
+      "cap-compare-bar",
+      "cap-compare-card",
+      "cap-compare-cell",
+      "cap-compare-cell-label",
+      "cap-compare-change-label",
+      "cap-compare-counts",
+      "cap-compare-flow",
+      "cap-compare-gap",
+      "cap-compare-gap-rows",
+      "cap-compare-gapitem",
+      "cap-compare-head",
+      "cap-compare-hunk",
+      "cap-compare-jump",
+      "cap-compare-jump-link",
+      "cap-compare-jump-list",
+      "cap-compare-jump-title",
+      "cap-compare-key",
+      "cap-compare-key-mark",
+      "cap-compare-legend",
+      "cap-compare-none",
+      "cap-compare-row",
+      "cap-compare-rows",
+      "cap-compare-side",
+      "cap-compare-side-meta",
+      "cap-compare-side-role",
+      "cap-compare-side-title",
+      "cap-compare-skip",
+      "cap-compare-text",
+      "cap-compare-tools",
+      "cap-compare-view",
+      "cap-compare-views",
+      "cap-del",
+      "cap-ins",
+      "cap-merge",
+      "cap-merge-actions",
+      "cap-merge-choice",
+      "cap-merge-empty",
+      "cap-merge-intro",
+      "cap-merge-list",
+      "cap-merge-mark",
+      "cap-merge-same",
+      "cap-merge-side",
+      "cap-merge-sides",
+      "cap-merge-text",
+      "cap-patch-code",
+      "cap-patch-eol",
+      "cap-patch-file",
+      "cap-patch-file-counts",
+      "cap-patch-hunk-head",
+      "cap-patch-kind",
+      "cap-patch-line",
+      "cap-patch-no",
+      "cap-patch-note",
+      "cap-patch-path",
+      "cap-patch-scroll",
+      "cap-patch-sign",
+      "cap-patch-table"
+    ],
+    "parts": [
+      "cap-compare-bar",
+      "cap-compare-card",
+      "cap-compare-cell",
+      "cap-compare-cell-label",
+      "cap-compare-change-label",
+      "cap-compare-counts",
+      "cap-compare-flow",
+      "cap-compare-gap",
+      "cap-compare-gap-rows",
+      "cap-compare-gapitem",
+      "cap-compare-head",
+      "cap-compare-hunk",
+      "cap-compare-jump",
+      "cap-compare-jump-link",
+      "cap-compare-jump-list",
+      "cap-compare-jump-title",
+      "cap-compare-key",
+      "cap-compare-key-mark",
+      "cap-compare-legend",
+      "cap-compare-none",
+      "cap-compare-row",
+      "cap-compare-rows",
+      "cap-compare-side",
+      "cap-compare-side-meta",
+      "cap-compare-side-role",
+      "cap-compare-side-title",
+      "cap-compare-skip",
+      "cap-compare-text",
+      "cap-compare-tools",
+      "cap-compare-view",
+      "cap-compare-views"
+    ],
+    "variants": {
+      "data-current": [],
+      "data-empty": [],
+      "data-kept": [],
+      "data-kind": [
+        "del",
+        "ins"
+      ],
+      "data-op": [
+        "del",
+        "ins",
+        "same"
+      ],
+      "data-para": [],
+      "data-view": [
+        "changes",
+        "inline",
+        "side"
+      ]
+    },
+    "states": [
+      ":checked",
+      ":hover",
+      "[aria-current=\"true\"]"
+    ],
+    "vars": []
+  },
+  "draft-notice": {
+    "root": "cap-draft-notice",
+    "classes": [
+      "cap-draft-notice",
+      "cap-draft-notice-tag"
+    ],
+    "parts": [
+      "cap-draft-notice-tag"
+    ],
+    "variants": {},
+    "states": [],
+    "vars": []
+  },
+  "drop-zone": {
+    "root": "cap-drop",
+    "classes": [
+      "cap-drop",
+      "cap-drop-browse",
+      "cap-drop-file-size",
+      "cap-drop-files",
+      "cap-drop-hint",
+      "cap-drop-icon",
+      "cap-drop-idle",
+      "cap-drop-input",
+      "cap-drop-label",
+      "cap-drop-lead",
+      "cap-drop-over",
+      "cap-drop-overlay",
+      "cap-drop-overlay-text",
+      "cap-drop-overlay-title",
+      "cap-drop-rejections",
+      "cap-drop-status",
+      "cap-drop-title"
+    ],
+    "parts": [
+      "cap-drop-browse",
+      "cap-drop-file-size",
+      "cap-drop-files",
+      "cap-drop-hint",
+      "cap-drop-icon",
+      "cap-drop-idle",
+      "cap-drop-input",
+      "cap-drop-label",
+      "cap-drop-lead",
+      "cap-drop-over",
+      "cap-drop-overlay",
+      "cap-drop-overlay-text",
+      "cap-drop-overlay-title",
+      "cap-drop-rejections",
+      "cap-drop-status",
+      "cap-drop-title"
+    ],
+    "variants": {
+      "data-accepted-list": [
+        "off"
+      ],
+      "data-scope": [
+        "page"
+      ],
+      "data-state": [
+        "over",
+        "rejected"
+      ],
+      "data-tone": [
+        "crit"
+      ]
+    },
+    "states": [
+      ":disabled",
+      ":empty",
+      ":focus-visible",
+      ":hover"
+    ],
+    "vars": [
+      {
+        "name": "--cap-drop-edge",
+        "default": "var(--line-strong)"
+      }
+    ]
+  },
+  "editor-workspace": {
+    "root": "cap-workspace",
+    "classes": [
+      "cap-preview-pane",
+      "cap-workspace",
+      "cap-workspace-body",
+      "cap-workspace-pane"
+    ],
+    "parts": [
+      "cap-workspace-body",
+      "cap-workspace-pane"
+    ],
+    "variants": {
+      "data-cap-layout": [],
+      "data-cap-recede": [],
+      "data-cap-typing": [],
+      "data-layout": [
+        "split"
+      ]
+    },
+    "states": [
+      ":focus-within",
+      "[hidden]"
+    ],
+    "vars": []
+  },
+  "empty": {
+    "root": "cap-empty",
+    "classes": [
+      "cap-empty",
+      "cap-empty-content",
+      "cap-empty-header",
+      "cap-empty-media",
+      "cap-empty-text",
+      "cap-empty-title",
+      "cap-empty-wait",
+      "cap-missing"
+    ],
+    "parts": [
+      "cap-empty-content",
+      "cap-empty-header",
+      "cap-empty-media",
+      "cap-empty-text",
+      "cap-empty-title",
+      "cap-empty-wait"
+    ],
+    "variants": {
+      "data-flush": [],
+      "data-kind": [
+        "failed"
+      ],
+      "data-variant": [
+        "icon"
+      ]
+    },
+    "states": [],
+    "vars": []
+  },
+  "entry-list": {
+    "root": "cap-entry-list",
+    "classes": [
+      "cap-entry",
+      "cap-entry-body",
+      "cap-entry-kicker",
+      "cap-entry-list",
+      "cap-entry-mark",
+      "cap-entry-more",
+      "cap-entry-summary",
+      "cap-entry-tags",
+      "cap-entry-title",
+      "cap-entry-when"
+    ],
+    "parts": [],
+    "variants": {},
+    "states": [
+      ":hover"
+    ],
+    "vars": [
+      {
+        "name": "--tracks-gap-w",
+        "default": "1.5rem"
+      },
+      {
+        "name": "--tracks-rail-w",
+        "default": "7.5rem"
+      }
+    ]
+  },
+  "error-ad": {
+    "root": "cap-ad",
+    "classes": [
+      "cap-ad",
+      "cap-ad-art",
+      "cap-ad-defs",
+      "cap-ad-f-display",
+      "cap-ad-f-serif",
+      "cap-ad-f-slab",
+      "cap-ad-ink"
+    ],
+    "parts": [
+      "cap-ad-art",
+      "cap-ad-defs",
+      "cap-ad-f-display",
+      "cap-ad-f-serif",
+      "cap-ad-f-slab",
+      "cap-ad-ink"
+    ],
+    "variants": {
+      "data-size": [
+        "large"
+      ]
+    },
+    "states": [],
+    "vars": [
+      {
+        "name": "--cap-ad-ink",
+        "default": "#1b1f3b"
+      }
+    ]
+  },
+  "error-page": {
+    "root": "cap-error-page",
+    "classes": [
+      "cap-error-page",
+      "cap-error-page-body",
+      "cap-error-page-stack"
+    ],
+    "parts": [
+      "cap-error-page-body",
+      "cap-error-page-stack"
+    ],
+    "variants": {
+      "data-status": [
+        "404"
+      ]
+    },
+    "states": [
+      ":focus"
+    ],
+    "vars": [
+      {
+        "name": "--error-page-body-gap",
+        "default": "var(--gap)"
+      },
+      {
+        "name": "--error-page-body-pad-block",
+        "default": "0"
+      },
+      {
+        "name": "--error-page-hero-gap",
+        "default": "var(--gap)"
+      }
+    ]
+  },
+  "error-summary": {
+    "root": "cap-error-summary",
+    "classes": [
+      "cap-error-summary",
+      "cap-error-summary-list",
+      "cap-error-summary-title"
+    ],
+    "parts": [
+      "cap-error-summary-list",
+      "cap-error-summary-title"
+    ],
+    "variants": {},
+    "states": [
+      ":focus",
+      "[hidden]"
+    ],
+    "vars": []
+  },
+  "eyebrow": {
+    "root": "cap-eyebrow",
+    "classes": [
+      "cap-eyebrow"
+    ],
+    "parts": [],
+    "variants": {
+      "data-tone": [
+        "accent",
+        "dim",
+        "text"
+      ],
+      "data-variant": [
+        "mono"
+      ]
+    },
+    "states": [],
+    "vars": [
+      {
+        "name": "--cap-eyebrow-color",
+        "default": "var(--muted)"
+      },
+      {
+        "name": "--cap-eyebrow-size",
+        "default": "var(--fs-label)"
+      },
+      {
+        "name": "--cap-eyebrow-weight",
+        "default": "var(--weight-semibold)"
+      }
+    ]
+  },
+  "family-footer": {
+    "root": "cap-family-footer",
+    "classes": [
+      "cap-family-footer",
+      "cap-family-footer-about",
+      "cap-family-footer-center",
+      "cap-family-footer-center-name",
+      "cap-family-footer-columns",
+      "cap-family-footer-head",
+      "cap-family-footer-heading",
+      "cap-family-footer-icon",
+      "cap-family-footer-knockout",
+      "cap-family-footer-label",
+      "cap-family-footer-links",
+      "cap-family-footer-local",
+      "cap-family-footer-lock",
+      "cap-family-footer-logo",
+      "cap-family-footer-mark",
+      "cap-family-footer-note",
+      "cap-family-footer-private",
+      "cap-family-footer-site-name",
+      "cap-family-footer-site-role",
+      "cap-family-footer-sites",
+      "cap-family-footer-social",
+      "cap-family-footer-social-label",
+      "cap-family-footer-social-link",
+      "cap-family-footer-stamp",
+      "cap-go"
+    ],
+    "parts": [
+      "cap-family-footer-about",
+      "cap-family-footer-center",
+      "cap-family-footer-center-name",
+      "cap-family-footer-columns",
+      "cap-family-footer-head",
+      "cap-family-footer-heading",
+      "cap-family-footer-icon",
+      "cap-family-footer-knockout",
+      "cap-family-footer-label",
+      "cap-family-footer-links",
+      "cap-family-footer-local",
+      "cap-family-footer-lock",
+      "cap-family-footer-logo",
+      "cap-family-footer-mark",
+      "cap-family-footer-note",
+      "cap-family-footer-private",
+      "cap-family-footer-site-name",
+      "cap-family-footer-site-role",
+      "cap-family-footer-sites",
+      "cap-family-footer-social",
+      "cap-family-footer-social-label",
+      "cap-family-footer-social-link",
+      "cap-family-footer-stamp"
+    ],
+    "variants": {
+      "data-family-mark": [
+        "cerulean",
+        "magenta",
+        "olive",
+        "purple",
+        "rose",
+        "teal"
+      ],
+      "data-go": [
+        "out"
+      ]
+    },
+    "states": [
+      ":focus-visible",
+      ":hover",
+      ":visited",
+      "[aria-current]"
+    ],
+    "vars": [
+      {
+        "name": "--family-footer-name",
+        "default": "minmax(0, 20rem)"
+      },
+      {
+        "name": "--mark",
+        "default": "var(--family-purple)"
+      }
+    ]
+  },
+  "faq": {
+    "root": "cap-faq",
+    "classes": [
+      "cap-faq",
+      "cap-faq-answer",
+      "cap-faq-question"
+    ],
+    "parts": [
+      "cap-faq-answer",
+      "cap-faq-question"
+    ],
+    "variants": {
+      "data-variant": [
+        "accordion",
+        "cards",
+        "list"
+      ]
+    },
+    "states": [
+      "[open]"
+    ],
+    "vars": [
+      {
+        "name": "--cap-faq-face",
+        "default": "var(--ui)"
+      },
+      {
+        "name": "--cap-faq-gap",
+        "default": "var(--space-3)"
+      },
+      {
+        "name": "--cap-faq-measure",
+        "default": "48rem"
+      },
+      {
+        "name": "--cap-faq-size",
+        "default": "var(--fs-body)"
+      }
+    ]
+  },
+  "feature": {
+    "root": "cap-feature",
+    "classes": [
+      "cap-feature",
+      "cap-feature-body",
+      "cap-feature-media",
+      "cap-feature-scroll",
+      "cap-feature-text",
+      "cap-feature-title",
+      "cap-features"
+    ],
+    "parts": [
+      "cap-feature-body",
+      "cap-feature-media",
+      "cap-feature-scroll",
+      "cap-feature-text",
+      "cap-feature-title"
+    ],
+    "variants": {
+      "data-align": [
+        "start"
+      ],
+      "data-alternate": [],
+      "data-layout": [
+        "beside"
+      ],
+      "data-variant": [
+        "lifted"
+      ]
+    },
+    "states": [
+      ":focus-visible"
+    ],
+    "vars": [
+      {
+        "name": "--cap-feature-scroll-h",
+        "default": "30rem"
+      },
+      {
+        "name": "--cap-features-gap",
+        "default": "var(--space-9)"
+      }
+    ]
+  },
+  "feed": {
+    "root": "cap-feed",
+    "classes": [
+      "cap-feed",
+      "cap-feed-day",
+      "cap-feed-day-title",
+      "cap-feed-glyph",
+      "cap-feed-list",
+      "cap-feed-marker-link",
+      "cap-feed-row",
+      "cap-feed-what",
+      "cap-feed-when",
+      "cap-feed-who"
+    ],
+    "parts": [
+      "cap-feed-day",
+      "cap-feed-day-title",
+      "cap-feed-glyph",
+      "cap-feed-list",
+      "cap-feed-marker-link",
+      "cap-feed-row",
+      "cap-feed-what",
+      "cap-feed-when",
+      "cap-feed-who"
+    ],
+    "variants": {
+      "data-kind": [
+        "condensed",
+        "marker"
+      ],
+      "data-tone": [
+        "crit",
+        "info",
+        "nodata",
+        "ok",
+        "warn"
+      ]
+    },
+    "states": [],
+    "vars": []
+  },
+  "field": {
+    "root": "cap-field",
+    "classes": [
+      "cap-date-input",
+      "cap-date-input-part",
+      "cap-field",
+      "cap-field-content",
+      "cap-field-count",
+      "cap-field-description",
+      "cap-field-error",
+      "cap-field-group",
+      "cap-field-help",
+      "cap-field-label",
+      "cap-field-options",
+      "cap-field-required",
+      "cap-field-row",
+      "cap-field-separator",
+      "cap-field-title",
+      "cap-field-wide",
+      "cap-fields",
+      "cap-input-group-text",
+      "cap-range-field-ends",
+      "cap-range-field-head",
+      "cap-range-field-value",
+      "cap-span-field-end",
+      "cap-span-field-ends"
+    ],
+    "parts": [
+      "cap-field-content",
+      "cap-field-count",
+      "cap-field-description",
+      "cap-field-error",
+      "cap-field-group",
+      "cap-field-help",
+      "cap-field-label",
+      "cap-field-options",
+      "cap-field-required",
+      "cap-field-row",
+      "cap-field-separator",
+      "cap-field-title",
+      "cap-field-wide"
+    ],
+    "variants": {
+      "data-align": [
+        "block-end",
+        "block-start",
+        "inline-end",
+        "inline-start"
+      ],
+      "data-cap-part": [
+        "reveal",
+        "step-up",
+        "year"
+      ],
+      "data-cap-ready": [],
+      "data-invalid": [
+        "true"
+      ],
+      "data-orientation": [
+        "horizontal",
+        "responsive"
+      ],
+      "data-over": [
+        "true"
+      ],
+      "data-variant": [
+        "card",
+        "code",
+        "legend"
+      ]
+    },
+    "states": [
+      ":active",
+      ":checked",
+      ":disabled",
+      ":empty",
+      ":focus-visible",
+      ":hover",
+      ":indeterminate",
+      "[aria-invalid=\"true\"]",
+      "[hidden]"
+    ],
+    "vars": [
+      {
+        "name": "--cap-check-edge",
+        "default": "var(--line-strong)"
+      },
+      {
+        "name": "--cap-input-edge",
+        "default": "var(--line-strong)"
+      },
+      {
+        "name": "--cap-range-fill",
+        "default": "0%"
+      },
+      {
+        "name": "--cap-range-track",
+        "default": "linear-gradient(to right, var(--primary) var(--cap-range-fill, 0%), var(--line-strong) 0)"
+      },
+      {
+        "name": "--fields-gap",
+        "default": "var(--space-5)"
+      },
+      {
+        "name": "--fields-min",
+        "default": "16rem"
+      }
+    ]
+  },
+  "file-attach": {
+    "root": "cap-attach",
+    "classes": [
+      "cap-attach",
+      "cap-attach-button",
+      "cap-attach-control",
+      "cap-attach-empty",
+      "cap-attach-hint",
+      "cap-attach-input",
+      "cap-attach-item",
+      "cap-attach-item-end",
+      "cap-attach-list",
+      "cap-attach-meta",
+      "cap-attach-unavailable"
+    ],
+    "parts": [
+      "cap-attach-button",
+      "cap-attach-control",
+      "cap-attach-empty",
+      "cap-attach-hint",
+      "cap-attach-input",
+      "cap-attach-item",
+      "cap-attach-item-end",
+      "cap-attach-list",
+      "cap-attach-meta",
+      "cap-attach-unavailable"
+    ],
+    "variants": {},
+    "states": [
+      ":focus-visible"
+    ],
+    "vars": []
+  },
+  "filter-bar": {
+    "root": "cap-filter-bar",
+    "classes": [
+      "cap-filter-bar",
+      "cap-filter-bar-actions",
+      "cap-filter-bar-count",
+      "cap-filter-bar-fields"
+    ],
+    "parts": [
+      "cap-filter-bar-actions",
+      "cap-filter-bar-count",
+      "cap-filter-bar-fields"
+    ],
+    "variants": {},
+    "states": [],
+    "vars": []
+  },
+  "flag-list": {
+    "root": "cap-flags",
+    "classes": [
+      "cap-flag",
+      "cap-flag-anchor-note",
+      "cap-flag-body",
+      "cap-flag-diff",
+      "cap-flag-goto",
+      "cap-flag-group",
+      "cap-flag-group-count",
+      "cap-flag-group-head",
+      "cap-flag-group-rows",
+      "cap-flag-group-title",
+      "cap-flag-mark",
+      "cap-flag-note",
+      "cap-flag-quote",
+      "cap-flag-quote-text",
+      "cap-flag-resolution",
+      "cap-flag-suggestion",
+      "cap-flag-suggestion-foot",
+      "cap-flag-suggestion-head",
+      "cap-flag-title",
+      "cap-flags",
+      "cap-flags-batch",
+      "cap-flags-count",
+      "cap-flags-empty",
+      "cap-flags-filter",
+      "cap-flags-head",
+      "cap-flags-note",
+      "cap-flags-summary",
+      "cap-flags-title"
+    ],
+    "parts": [
+      "cap-flags-batch",
+      "cap-flags-count",
+      "cap-flags-empty",
+      "cap-flags-filter",
+      "cap-flags-head",
+      "cap-flags-note",
+      "cap-flags-summary",
+      "cap-flags-title"
+    ],
+    "variants": {
+      "data-anchor": [
+        "lost"
+      ],
+      "data-for": [
+        "all",
+        "open",
+        "resolved"
+      ],
+      "data-state": [
+        "applied",
+        "open",
+        "resolved"
+      ]
+    },
+    "states": [
+      ":checked",
+      ":empty",
+      "[hidden]"
+    ],
+    "vars": []
+  },
+  "form-status": {
+    "root": "cap-form-status",
+    "classes": [
+      "cap-form-status"
+    ],
+    "parts": [],
+    "variants": {},
+    "states": [],
+    "vars": []
+  },
+  "freshness": {
+    "root": "cap-fresh",
+    "classes": [
+      "cap-fresh",
+      "cap-fresh-more",
+      "cap-fresh-ring",
+      "cap-fresh-ring-left",
+      "cap-fresh-ring-track",
+      "cap-fresh-stale",
+      "cap-fresh-text"
+    ],
+    "parts": [
+      "cap-fresh-more",
+      "cap-fresh-ring",
+      "cap-fresh-ring-left",
+      "cap-fresh-ring-track",
+      "cap-fresh-stale",
+      "cap-fresh-text"
+    ],
+    "variants": {
+      "data-stale": []
+    },
+    "states": [],
+    "vars": []
+  },
+  "frontmatter-fields": {
+    "root": "cap-fm",
+    "classes": [
+      "cap-fm",
+      "cap-fm-field",
+      "cap-fm-grid",
+      "cap-fm-legend",
+      "cap-fm-raw-text"
+    ],
+    "parts": [
+      "cap-fm-field",
+      "cap-fm-grid",
+      "cap-fm-legend",
+      "cap-fm-raw-text"
+    ],
+    "variants": {
+      "data-wide": []
+    },
+    "states": [
+      ":empty"
+    ],
+    "vars": [
+      {
+        "name": "--fields-gap",
+        "default": "var(--gap)"
+      },
+      {
+        "name": "--fields-min",
+        "default": "14rem"
+      }
+    ]
+  },
+  "generated-file": {
+    "root": "cap-generated-file",
+    "classes": [
+      "cap-generated-actions",
+      "cap-generated-body",
+      "cap-generated-file",
+      "cap-generated-form",
+      "cap-generated-says",
+      "cap-generated-status"
+    ],
+    "parts": [],
+    "variants": {},
+    "states": [],
+    "vars": []
+  },
+  "graph": {
+    "root": "cap-graph",
+    "classes": [
+      "cap-graph",
+      "cap-graph-box",
+      "cap-graph-card",
+      "cap-graph-head",
+      "cap-graph-name",
+      "cap-graph-ring",
+      "cap-graph-ring-label",
+      "cap-graph-scroller",
+      "cap-graph-status",
+      "cap-graph-sub",
+      "cap-graph-svg",
+      "cap-graph-wire"
+    ],
+    "parts": [
+      "cap-graph-box",
+      "cap-graph-card",
+      "cap-graph-head",
+      "cap-graph-name",
+      "cap-graph-ring",
+      "cap-graph-ring-label",
+      "cap-graph-scroller",
+      "cap-graph-status",
+      "cap-graph-sub",
+      "cap-graph-svg",
+      "cap-graph-wire"
+    ],
+    "variants": {
+      "data-tone": [
+        "crit",
+        "ok",
+        "warn"
+      ]
+    },
+    "states": [
+      ":focus-visible",
+      ":hover"
+    ],
+    "vars": []
+  },
+  "hero": {
+    "root": "cap-hero",
+    "classes": [
+      "cap-hero",
+      "cap-hero-actions",
+      "cap-hero-aside",
+      "cap-hero-backdrop",
+      "cap-hero-body",
+      "cap-hero-lead",
+      "cap-hero-note",
+      "cap-hero-text",
+      "cap-hero-title"
+    ],
+    "parts": [
+      "cap-hero-actions",
+      "cap-hero-aside",
+      "cap-hero-backdrop",
+      "cap-hero-body",
+      "cap-hero-lead",
+      "cap-hero-note",
+      "cap-hero-text",
+      "cap-hero-title"
+    ],
+    "variants": {
+      "data-align": [
+        "center"
+      ],
+      "data-aside": [],
+      "data-card": []
+    },
+    "states": [],
+    "vars": [
+      {
+        "name": "--_title",
+        "default": "var(--hero-title, clamp(2.25rem, 1.6rem + 3vw, 4rem))"
+      },
+      {
+        "name": "--hero-card-bg",
+        "default": "color-mix(in srgb, var(--surface) 82%, transparent)"
+      },
+      {
+        "name": "--hero-card-blur",
+        "default": "12px"
+      },
+      {
+        "name": "--hero-card-max",
+        "default": "48rem"
+      },
+      {
+        "name": "--hero-card-pad",
+        "default": "var(--space-7)"
+      },
+      {
+        "name": "--hero-card-radius",
+        "default": "var(--radius-xl)"
+      },
+      {
+        "name": "--hero-card-shadow",
+        "default": "none"
+      },
+      {
+        "name": "--hero-face",
+        "default": "inherit"
+      },
+      {
+        "name": "--hero-gap",
+        "default": "var(--space-8)"
+      },
+      {
+        "name": "--hero-lead-face",
+        "default": "inherit"
+      },
+      {
+        "name": "--hero-lead-leading",
+        "default": "var(--leading-normal)"
+      },
+      {
+        "name": "--hero-lead-size",
+        "default": "var(--title-4)"
+      },
+      {
+        "name": "--hero-lead-weight",
+        "default": "var(--weight-regular)"
+      },
+      {
+        "name": "--hero-title",
+        "default": "clamp(2.25rem, 1.6rem + 3vw, 4rem)"
+      },
+      {
+        "name": "--hero-title-leading",
+        "default": "var(--leading-none)"
+      },
+      {
+        "name": "--hero-title-tracking",
+        "default": "calc(-1 * var(--tracking-wide))"
+      },
+      {
+        "name": "--hero-title-weight",
+        "default": "revert-layer"
+      }
+    ]
+  },
+  "history-list": {
+    "root": "cap-hist",
+    "classes": [
+      "cap-hist",
+      "cap-hist-bar",
+      "cap-hist-delta",
+      "cap-hist-dest",
+      "cap-hist-exact",
+      "cap-hist-foot",
+      "cap-hist-list",
+      "cap-hist-name",
+      "cap-hist-pick",
+      "cap-hist-picked",
+      "cap-hist-region",
+      "cap-hist-row",
+      "cap-hist-when",
+      "cap-hist-who"
+    ],
+    "parts": [
+      "cap-hist-bar",
+      "cap-hist-delta",
+      "cap-hist-dest",
+      "cap-hist-exact",
+      "cap-hist-foot",
+      "cap-hist-list",
+      "cap-hist-name",
+      "cap-hist-pick",
+      "cap-hist-picked",
+      "cap-hist-region",
+      "cap-hist-row",
+      "cap-hist-when",
+      "cap-hist-who"
+    ],
+    "variants": {
+      "data-kind": [
+        "run"
+      ]
+    },
+    "states": [
+      ":empty",
+      "[aria-disabled=\"true\"]",
+      "[hidden]"
+    ],
+    "vars": []
+  },
+  "icons": {
+    "root": "cap-icon",
+    "classes": [
+      "cap-icon",
+      "cap-icon-flip"
+    ],
+    "parts": [
+      "cap-icon-flip"
+    ],
+    "variants": {
+      "data-fill": [],
+      "data-flip": []
+    },
+    "states": [],
+    "vars": []
+  },
+  "inline-add-form": {
+    "root": "cap-inline-add",
+    "classes": [
+      "cap-inline-add"
+    ],
+    "parts": [],
+    "variants": {
+      "data-size": [
+        "short"
+      ]
+    },
+    "states": [],
+    "vars": []
+  },
+  "inline-confirm": {
+    "root": "cap-inline-confirm",
+    "classes": [
+      "cap-inline-confirm",
+      "cap-inline-confirm-actions",
+      "cap-inline-confirm-question"
+    ],
+    "parts": [
+      "cap-inline-confirm-actions",
+      "cap-inline-confirm-question"
+    ],
+    "variants": {},
+    "states": [],
+    "vars": []
+  },
+  "inspector": {
+    "root": "cap-inspector",
+    "classes": [
+      "cap-inspector",
+      "cap-inspector-open",
+      "cap-inspector-panel",
+      "cap-inspector-tabs"
+    ],
+    "parts": [
+      "cap-inspector-open",
+      "cap-inspector-panel",
+      "cap-inspector-tabs"
+    ],
+    "variants": {},
+    "states": [],
+    "vars": []
+  },
+  "label-color-list": {
+    "root": "cap-color-label-list",
+    "classes": [
+      "cap-color-label-edit",
+      "cap-color-label-list"
+    ],
+    "parts": [],
+    "variants": {},
+    "states": [],
+    "vars": []
+  },
+  "leaderboard": {
+    "root": "cap-leaderboard",
+    "classes": [
+      "cap-leaderboard",
+      "cap-leaderboard-empty",
+      "cap-leaderboard-name",
+      "cap-leaderboard-row",
+      "cap-leaderboard-score"
+    ],
+    "parts": [
+      "cap-leaderboard-empty",
+      "cap-leaderboard-name",
+      "cap-leaderboard-row",
+      "cap-leaderboard-score"
+    ],
+    "variants": {},
+    "states": [
+      "[aria-current=\"true\"]"
+    ],
+    "vars": [
+      {
+        "name": "--cap-leaderboard-name-face",
+        "default": "inherit"
+      }
+    ]
+  },
+  "legal-doc": {
+    "root": "cap-legal",
+    "classes": [
+      "cap-legal",
+      "cap-legal-body",
+      "cap-legal-contents",
+      "cap-legal-contents-title",
+      "cap-legal-intro",
+      "cap-legal-num",
+      "cap-legal-outro",
+      "cap-legal-section-title",
+      "cap-legal-sections",
+      "cap-legal-title",
+      "cap-legal-updated"
+    ],
+    "parts": [
+      "cap-legal-body",
+      "cap-legal-contents",
+      "cap-legal-contents-title",
+      "cap-legal-intro",
+      "cap-legal-num",
+      "cap-legal-outro",
+      "cap-legal-section-title",
+      "cap-legal-sections",
+      "cap-legal-title",
+      "cap-legal-updated"
+    ],
+    "variants": {},
+    "states": [],
+    "vars": []
+  },
+  "lightbox": {
+    "root": "cap-lightbox",
+    "classes": [
+      "cap-lightbox"
+    ],
+    "parts": [],
+    "variants": {
+      "data-cap": [
+        "lightbox"
+      ]
+    },
+    "states": [],
+    "vars": [
+      {
+        "name": "--cap-dialog-gap",
+        "default": ""
+      },
+      {
+        "name": "--cap-dialog-w",
+        "default": "auto"
+      }
+    ]
+  },
+  "like-button": {
+    "root": "cap-like-button",
+    "classes": [
+      "cap-like",
+      "cap-like-button",
+      "cap-like-error"
+    ],
+    "parts": [],
+    "variants": {},
+    "states": [
+      ":disabled",
+      ":hover",
+      "[aria-busy=\"true\"]",
+      "[aria-disabled=\"true\"]",
+      "[aria-pressed=\"true\"]"
+    ],
+    "vars": []
+  },
+  "link": {
+    "root": "cap-link-meta",
+    "classes": [
+      "cap-footnote-ref",
+      "cap-link-icon",
+      "cap-link-meta"
+    ],
+    "parts": [],
+    "variants": {
+      "data-footnote-backref": [],
+      "data-footnote-ref": [],
+      "data-link": [
+        "address",
+        "away",
+        "email",
+        "family",
+        "file",
+        "footnote",
+        "jump",
+        "next",
+        "phone",
+        "tag",
+        "xref"
+      ],
+      "data-site": [
+        "bsw",
+        "capsid",
+        "capsomer",
+        "carrel",
+        "dustinedwards",
+        "foxhound",
+        "foxing",
+        "germomics",
+        "julieedwards",
+        "prelum",
+        "txasm"
+      ]
+    },
+    "states": [
+      ":active",
+      ":focus-visible",
+      ":hover",
+      ":visited"
+    ],
+    "vars": [
+      {
+        "name": "--link-after",
+        "default": "\"\\2193\""
+      },
+      {
+        "name": "--link-alt",
+        "default": "\", opens another site\""
+      },
+      {
+        "name": "--link-before",
+        "default": "\"\\2709\\FE0E\""
+      }
+    ]
+  },
+  "link-file": {
+    "root": "cap-link-meta",
+    "classes": [],
+    "parts": [],
+    "variants": {
+      "data-link": [
+        "file"
+      ]
+    },
+    "states": [],
+    "vars": [
+      {
+        "name": "--link-after",
+        "default": "\"\\2193\""
+      },
+      {
+        "name": "--link-alt",
+        "default": "\"\""
+      }
+    ]
+  },
+  "listbox": {
+    "root": "cap-listbox",
+    "classes": [
+      "cap-listbox",
+      "cap-listbox-empty",
+      "cap-listbox-group",
+      "cap-listbox-label",
+      "cap-listbox-separator",
+      "cap-option-hint",
+      "cap-option-indicator"
+    ],
+    "parts": [
+      "cap-listbox-empty",
+      "cap-listbox-group",
+      "cap-listbox-label",
+      "cap-listbox-separator"
+    ],
+    "variants": {
+      "data-active": [],
+      "data-cap-ready": [],
+      "data-controlled": [],
+      "data-disabled": [],
+      "data-highlighted": [],
+      "data-mode": [
+        "descendant",
+        "roving"
+      ],
+      "data-selection": [
+        "multi",
+        "single"
+      ],
+      "data-tone": [
+        "crit"
+      ],
+      "data-unchecked": [],
+      "data-variant": [
+        "surface"
+      ]
+    },
+    "states": [
+      ":empty",
+      ":focus-visible",
+      ":focus-within",
+      ":hover",
+      "[aria-checked=\"false\"]",
+      "[aria-disabled=\"true\"]",
+      "[aria-selected=\"false\"]",
+      "[hidden]"
+    ],
+    "vars": [
+      {
+        "name": "--available-height",
+        "default": "60dvh"
+      },
+      {
+        "name": "--listbox-max",
+        "default": "min(18rem, var(--available-height, 60dvh))"
+      }
+    ]
+  },
+  "log-view": {
+    "root": "cap-log",
+    "classes": [
+      "cap-log",
+      "cap-log-empty",
+      "cap-log-mono",
+      "cap-log-note"
+    ],
+    "parts": [
+      "cap-log-empty",
+      "cap-log-mono",
+      "cap-log-note"
+    ],
+    "variants": {},
+    "states": [],
+    "vars": []
+  },
+  "manual": {
+    "root": "cap-running-head",
+    "classes": [
+      "cap-annunciator",
+      "cap-annunciator-state",
+      "cap-checklist",
+      "cap-checklist-dots",
+      "cap-checklist-item",
+      "cap-checklist-items",
+      "cap-checklist-kind",
+      "cap-checklist-line",
+      "cap-checklist-note",
+      "cap-checklist-strip",
+      "cap-cue-lines",
+      "cap-cue-name",
+      "cap-cue-strip",
+      "cap-cue-title",
+      "cap-cue-value",
+      "cap-direction",
+      "cap-form-boxes",
+      "cap-form-boxes-box",
+      "cap-hold",
+      "cap-layout-grid",
+      "cap-leader-index",
+      "cap-leader-index-dots",
+      "cap-leader-index-fact",
+      "cap-leader-index-link",
+      "cap-leader-index-name",
+      "cap-leader-index-no",
+      "cap-letterhead",
+      "cap-letterhead-address",
+      "cap-letterhead-folio",
+      "cap-letterhead-logo",
+      "cap-part",
+      "cap-part-lead",
+      "cap-part-no",
+      "cap-part-title",
+      "cap-patch-count",
+      "cap-patch-disc",
+      "cap-patch-dot",
+      "cap-patch-field",
+      "cap-patch-foot",
+      "cap-patch-name",
+      "cap-patch-rim",
+      "cap-patch-unit",
+      "cap-patched",
+      "cap-plate",
+      "cap-plate-box",
+      "cap-plate-caption",
+      "cap-plate-fig",
+      "cap-plate-no",
+      "cap-roll",
+      "cap-running-head",
+      "cap-running-head-folio",
+      "cap-running-head-name",
+      "cap-running-head-no",
+      "cap-running-head-tracks",
+      "cap-running-head-trail",
+      "cap-sign",
+      "cap-signs"
+    ],
+    "parts": [
+      "cap-running-head-folio",
+      "cap-running-head-name",
+      "cap-running-head-no",
+      "cap-running-head-tracks",
+      "cap-running-head-trail"
+    ],
+    "variants": {
+      "data-labeled": [],
+      "data-livery": [],
+      "data-size": [
+        "s"
+      ],
+      "data-span": [
+        "2",
+        "all"
+      ],
+      "data-state": [
+        "ahead",
+        "caution",
+        "done",
+        "now",
+        "off",
+        "warning"
+      ],
+      "data-variant": [
+        "forward",
+        "grid",
+        "panel",
+        "readings",
+        "sign",
+        "tones"
+      ],
+      "data-weight": [
+        "bold"
+      ]
+    },
+    "states": [
+      ":focus-visible",
+      ":hover",
+      "[aria-current]"
+    ],
+    "vars": [
+      {
+        "name": "--box-min",
+        "default": "10rem"
+      },
+      {
+        "name": "--cap-letterhead-logo-leading",
+        "default": "0.82"
+      },
+      {
+        "name": "--cap-letterhead-logo-size",
+        "default": "clamp(2.5rem, 6vw, 4.5rem)"
+      },
+      {
+        "name": "--cap-letterhead-logo-tracking",
+        "default": "-0.045em"
+      },
+      {
+        "name": "--cap-patch-foot-size",
+        "default": "0.5625rem"
+      },
+      {
+        "name": "--cap-patch-foot-tracking",
+        "default": "2px"
+      },
+      {
+        "name": "--cap-patch-tracking",
+        "default": "1.4px"
+      },
+      {
+        "name": "--cap-patch-unit-size",
+        "default": "7px"
+      },
+      {
+        "name": "--cap-patch-unit-tracking",
+        "default": "1px"
+      },
+      {
+        "name": "--cols",
+        "default": "4"
+      },
+      {
+        "name": "--grid-fill",
+        "default": "color-mix(in oklab, var(--crit) 4%, transparent)"
+      },
+      {
+        "name": "--grid-line",
+        "default": "color-mix(in oklab, var(--crit) 45%, transparent)"
+      },
+      {
+        "name": "--grid-soft",
+        "default": "color-mix(in oklab, var(--crit) 14%, transparent)"
+      }
+    ]
+  },
+  "markdown-editor": {
+    "root": "cap-md",
+    "classes": [
+      "cap-md",
+      "cap-md-foot",
+      "cap-md-frame",
+      "cap-md-hint",
+      "cap-md-limit",
+      "cap-md-option-hint",
+      "cap-md-option-note",
+      "cap-md-palette",
+      "cap-md-palette-label",
+      "cap-md-palette-note",
+      "cap-md-sep",
+      "cap-md-slash",
+      "cap-md-slash-hint",
+      "cap-md-slash-item",
+      "cap-md-source",
+      "cap-md-stats",
+      "cap-md-surface",
+      "cap-md-tool",
+      "cap-md-toolbar",
+      "cap-md-toolbar-hint",
+      "cap-md-upload",
+      "cap-md-upload-actions",
+      "cap-md-upload-error",
+      "cap-md-upload-fields",
+      "cap-md-upload-thumb",
+      "cap-md-upload-wait"
+    ],
+    "parts": [
+      "cap-md-foot",
+      "cap-md-frame",
+      "cap-md-hint",
+      "cap-md-limit",
+      "cap-md-option-hint",
+      "cap-md-option-note",
+      "cap-md-palette",
+      "cap-md-palette-label",
+      "cap-md-palette-note",
+      "cap-md-sep",
+      "cap-md-slash",
+      "cap-md-slash-hint",
+      "cap-md-slash-item",
+      "cap-md-source",
+      "cap-md-stats",
+      "cap-md-surface",
+      "cap-md-tool",
+      "cap-md-toolbar",
+      "cap-md-toolbar-hint",
+      "cap-md-upload",
+      "cap-md-upload-actions",
+      "cap-md-upload-error",
+      "cap-md-upload-fields",
+      "cap-md-upload-thumb",
+      "cap-md-upload-wait"
+    ],
+    "variants": {
+      "data-active": [],
+      "data-over": []
+    },
+    "states": [
+      ":active",
+      ":disabled",
+      ":empty",
+      ":focus-visible",
+      ":hover",
+      "[aria-disabled=\"true\"]",
+      "[aria-invalid=\"true\"]",
+      "[aria-readonly=\"true\"]"
+    ],
+    "vars": [
+      {
+        "name": "--cap-md-min",
+        "default": "16rem"
+      }
+    ]
+  },
+  "marquee": {
+    "root": "cap-marquee",
+    "classes": [
+      "cap-marquee",
+      "cap-marquee-group",
+      "cap-marquee-list",
+      "cap-marquee-pause",
+      "cap-marquee-track"
+    ],
+    "parts": [
+      "cap-marquee-group",
+      "cap-marquee-list",
+      "cap-marquee-pause",
+      "cap-marquee-track"
+    ],
+    "variants": {
+      "data-direction": [
+        "reverse"
+      ],
+      "data-paused": []
+    },
+    "states": [
+      ":checked",
+      ":focus-visible",
+      ":focus-within",
+      ":hover",
+      "[aria-hidden=\"true\"]"
+    ],
+    "vars": [
+      {
+        "name": "--marquee-duration",
+        "default": "120s"
+      },
+      {
+        "name": "--marquee-gap",
+        "default": "var(--space-8)"
+      },
+      {
+        "name": "--marquee-to",
+        "default": "-50%"
+      }
+    ]
+  },
+  "media": {
+    "root": "cap-media",
+    "classes": [
+      "cap-media",
+      "cap-media-act",
+      "cap-media-check",
+      "cap-media-check-box",
+      "cap-media-check-word",
+      "cap-media-copied",
+      "cap-media-copy",
+      "cap-media-count",
+      "cap-media-crop-actions",
+      "cap-media-crop-body",
+      "cap-media-crop-canvas",
+      "cap-media-crop-fields",
+      "cap-media-doc",
+      "cap-media-empty",
+      "cap-media-facts",
+      "cap-media-field-form",
+      "cap-media-flags",
+      "cap-media-focus",
+      "cap-media-focus-fields",
+      "cap-media-focus-frame",
+      "cap-media-focus-mark",
+      "cap-media-focus-previews",
+      "cap-media-form",
+      "cap-media-grid",
+      "cap-media-group",
+      "cap-media-group-count",
+      "cap-media-group-title",
+      "cap-media-inspector",
+      "cap-media-layout",
+      "cap-media-main",
+      "cap-media-meta",
+      "cap-media-name",
+      "cap-media-note",
+      "cap-media-open",
+      "cap-media-preview",
+      "cap-media-reason",
+      "cap-media-save",
+      "cap-media-search",
+      "cap-media-section",
+      "cap-media-state",
+      "cap-media-state-lead",
+      "cap-media-summary-note",
+      "cap-media-tags",
+      "cap-media-thumb",
+      "cap-media-tile",
+      "cap-media-title",
+      "cap-media-tool",
+      "cap-media-tool-actions",
+      "cap-media-toolbar",
+      "cap-media-used",
+      "cap-media-used-empty",
+      "cap-media-used-how"
+    ],
+    "parts": [
+      "cap-media-act",
+      "cap-media-check",
+      "cap-media-check-box",
+      "cap-media-check-word",
+      "cap-media-copied",
+      "cap-media-copy",
+      "cap-media-count",
+      "cap-media-crop-actions",
+      "cap-media-crop-body",
+      "cap-media-crop-canvas",
+      "cap-media-crop-fields",
+      "cap-media-doc",
+      "cap-media-empty",
+      "cap-media-facts",
+      "cap-media-field-form",
+      "cap-media-flags",
+      "cap-media-focus",
+      "cap-media-focus-fields",
+      "cap-media-focus-frame",
+      "cap-media-focus-mark",
+      "cap-media-focus-previews",
+      "cap-media-form",
+      "cap-media-grid",
+      "cap-media-group",
+      "cap-media-group-count",
+      "cap-media-group-title",
+      "cap-media-inspector",
+      "cap-media-layout",
+      "cap-media-main",
+      "cap-media-meta",
+      "cap-media-name",
+      "cap-media-note",
+      "cap-media-open",
+      "cap-media-preview",
+      "cap-media-reason",
+      "cap-media-save",
+      "cap-media-search",
+      "cap-media-section",
+      "cap-media-state",
+      "cap-media-state-lead",
+      "cap-media-summary-note",
+      "cap-media-tags",
+      "cap-media-thumb",
+      "cap-media-tile",
+      "cap-media-title",
+      "cap-media-tool",
+      "cap-media-tool-actions",
+      "cap-media-toolbar",
+      "cap-media-used",
+      "cap-media-used-empty",
+      "cap-media-used-how"
+    ],
+    "variants": {
+      "data-active": [],
+      "data-cap-part": [
+        "save-fallback"
+      ],
+      "data-cap-ready": [],
+      "data-inline": [],
+      "data-placement": [],
+      "data-ratio": [
+        "16:9",
+        "1:1",
+        "4:5"
+      ],
+      "data-selected": [],
+      "data-size": [
+        "l",
+        "s"
+      ],
+      "data-state": [
+        "binned",
+        "failed",
+        "idle",
+        "saved"
+      ],
+      "data-tone": [
+        "crit"
+      ],
+      "data-view": [
+        "list"
+      ]
+    },
+    "states": [
+      ":checked",
+      ":empty",
+      ":focus-visible",
+      ":focus-within",
+      ":hover",
+      ":modal",
+      "[aria-disabled=\"true\"]",
+      "[hidden]",
+      "[open]"
+    ],
+    "vars": [
+      {
+        "name": "--cap-dialog-from",
+        "default": "none"
+      },
+      {
+        "name": "--cap-dialog-to",
+        "default": "none"
+      },
+      {
+        "name": "--cap-focus-x",
+        "default": "50%"
+      },
+      {
+        "name": "--cap-focus-y",
+        "default": "50%"
+      },
+      {
+        "name": "--cap-media-mode",
+        "default": "sheet"
+      },
+      {
+        "name": "--cap-media-tile",
+        "default": "11rem"
+      }
+    ]
+  },
+  "media-library": {
+    "root": "cap-media-lib",
+    "classes": [
+      "cap-image-field",
+      "cap-image-field-actions",
+      "cap-image-field-controls",
+      "cap-image-field-row",
+      "cap-image-field-thumb",
+      "cap-image-field-url",
+      "cap-media-lib",
+      "cap-media-lib-accept",
+      "cap-media-lib-bar",
+      "cap-media-lib-chips",
+      "cap-media-lib-count",
+      "cap-media-lib-display",
+      "cap-media-lib-extra",
+      "cap-media-lib-history",
+      "cap-media-lib-history-facts",
+      "cap-media-lib-history-what",
+      "cap-media-lib-keys",
+      "cap-media-lib-layout",
+      "cap-media-lib-note",
+      "cap-media-lib-opened",
+      "cap-media-lib-pages",
+      "cap-media-lib-revert",
+      "cap-media-lib-tool-label",
+      "cap-media-lib-tools",
+      "cap-media-lib-upload",
+      "cap-media-lib-upload-actions",
+      "cap-media-lib-withheld"
+    ],
+    "parts": [
+      "cap-media-lib-accept",
+      "cap-media-lib-bar",
+      "cap-media-lib-chips",
+      "cap-media-lib-count",
+      "cap-media-lib-display",
+      "cap-media-lib-extra",
+      "cap-media-lib-history",
+      "cap-media-lib-history-facts",
+      "cap-media-lib-history-what",
+      "cap-media-lib-keys",
+      "cap-media-lib-layout",
+      "cap-media-lib-note",
+      "cap-media-lib-opened",
+      "cap-media-lib-pages",
+      "cap-media-lib-revert",
+      "cap-media-lib-tool-label",
+      "cap-media-lib-tools",
+      "cap-media-lib-upload",
+      "cap-media-lib-upload-actions",
+      "cap-media-lib-withheld"
+    ],
+    "variants": {},
+    "states": [
+      ":empty",
+      "[aria-current]"
+    ],
+    "vars": []
+  },
+  "mentions-list": {
+    "root": "cap-mentions",
+    "classes": [
+      "cap-mentions",
+      "cap-mentions-act",
+      "cap-mentions-count",
+      "cap-mentions-pages",
+      "cap-mentions-withheld"
+    ],
+    "parts": [
+      "cap-mentions-act",
+      "cap-mentions-count",
+      "cap-mentions-pages",
+      "cap-mentions-withheld"
+    ],
+    "variants": {},
+    "states": [],
+    "vars": []
+  },
+  "menu": {
+    "root": "cap-menu",
+    "classes": [
+      "cap-menu",
+      "cap-menu-chevron",
+      "cap-menu-form",
+      "cap-menu-item",
+      "cap-menu-positioner",
+      "cap-menu-reason",
+      "cap-menu-trigger"
+    ],
+    "parts": [
+      "cap-menu-chevron",
+      "cap-menu-form",
+      "cap-menu-item",
+      "cap-menu-positioner",
+      "cap-menu-reason",
+      "cap-menu-trigger"
+    ],
+    "variants": {
+      "data-instant": [],
+      "data-popup-open": [],
+      "data-submenu": [],
+      "data-tone": [
+        "crit"
+      ]
+    },
+    "states": [
+      ":disabled",
+      ":focus-visible",
+      ":hover",
+      "[open]"
+    ],
+    "vars": [
+      {
+        "name": "--anchor-width",
+        "default": "0px"
+      },
+      {
+        "name": "--available-height",
+        "default": ""
+      },
+      {
+        "name": "--available-width",
+        "default": ""
+      }
+    ]
+  },
+  "message": {
+    "root": "cap-message",
+    "classes": [
+      "cap-message",
+      "cap-message-dismiss",
+      "cap-message-error",
+      "cap-message-glyph",
+      "cap-message-item",
+      "cap-message-text",
+      "cap-message-undo"
+    ],
+    "parts": [
+      "cap-message-dismiss",
+      "cap-message-error",
+      "cap-message-glyph",
+      "cap-message-item",
+      "cap-message-text",
+      "cap-message-undo"
+    ],
+    "variants": {
+      "data-kind": [
+        "failure",
+        "warning"
+      ],
+      "data-lasting": []
+    },
+    "states": [
+      "[aria-busy=\"true\"]",
+      "[aria-disabled=\"true\"]"
+    ],
+    "vars": []
+  },
+  "meter": {
+    "root": "cap-meter",
+    "classes": [
+      "cap-meter",
+      "cap-meter-bar",
+      "cap-meter-fill",
+      "cap-meter-label",
+      "cap-meter-note",
+      "cap-meter-value"
+    ],
+    "parts": [
+      "cap-meter-bar",
+      "cap-meter-fill",
+      "cap-meter-label",
+      "cap-meter-note",
+      "cap-meter-value"
+    ],
+    "variants": {
+      "data-projected": [],
+      "data-size": [
+        "lg",
+        "sm"
+      ],
+      "data-state": [
+        "indeterminate"
+      ],
+      "data-threshold": [],
+      "data-tone": [
+        "crit",
+        "info",
+        "nodata",
+        "warn"
+      ]
+    },
+    "states": [],
+    "vars": [
+      {
+        "name": "--cap-meter-color",
+        "default": "var(--accent)"
+      },
+      {
+        "name": "--cap-meter-h",
+        "default": "var(--space-3)"
+      },
+      {
+        "name": "--cap-meter-projected",
+        "default": "0"
+      },
+      {
+        "name": "--cap-meter-ratio",
+        "default": "0.4"
+      },
+      {
+        "name": "--cap-meter-threshold",
+        "default": "0"
+      }
+    ]
+  },
+  "mode-banner": {
+    "root": "cap-mode-banner",
+    "classes": [
+      "cap-mode-banner",
+      "cap-mode-banner-actions",
+      "cap-mode-banner-text"
+    ],
+    "parts": [
+      "cap-mode-banner-actions",
+      "cap-mode-banner-text"
+    ],
+    "variants": {
+      "data-mode": [
+        "view-as"
+      ]
+    },
+    "states": [],
+    "vars": [
+      {
+        "name": "--tone",
+        "default": "var(--info)"
+      },
+      {
+        "name": "--tone-soft",
+        "default": "var(--info-soft)"
+      }
+    ]
+  },
+  "moderation-queue": {
+    "root": "cap-mq",
+    "classes": [
+      "cap-mq",
+      "cap-mq-check",
+      "cap-mq-count",
+      "cap-mq-decide",
+      "cap-mq-edit",
+      "cap-mq-empty",
+      "cap-mq-facts",
+      "cap-mq-findings",
+      "cap-mq-head",
+      "cap-mq-host",
+      "cap-mq-list",
+      "cap-mq-more",
+      "cap-mq-name",
+      "cap-mq-quote",
+      "cap-mq-retention",
+      "cap-mq-row",
+      "cap-mq-show",
+      "cap-mq-summary",
+      "cap-mq-tools",
+      "cap-mq-why"
+    ],
+    "parts": [
+      "cap-mq-check",
+      "cap-mq-count",
+      "cap-mq-decide",
+      "cap-mq-edit",
+      "cap-mq-empty",
+      "cap-mq-facts",
+      "cap-mq-findings",
+      "cap-mq-head",
+      "cap-mq-host",
+      "cap-mq-list",
+      "cap-mq-more",
+      "cap-mq-name",
+      "cap-mq-quote",
+      "cap-mq-retention",
+      "cap-mq-row",
+      "cap-mq-show",
+      "cap-mq-summary",
+      "cap-mq-tools",
+      "cap-mq-why"
+    ],
+    "variants": {
+      "data-cap-keys-open": [],
+      "data-cap-ready": [],
+      "data-cap-single-keys": [
+        "off"
+      ],
+      "data-empty": [],
+      "data-selected": []
+    },
+    "states": [
+      ":hover",
+      "[hidden]"
+    ],
+    "vars": []
+  },
+  "newsletter-signup": {
+    "root": "cap-newsletter",
+    "classes": [
+      "cap-newsletter",
+      "cap-newsletter-consent",
+      "cap-newsletter-form",
+      "cap-newsletter-text",
+      "cap-newsletter-title"
+    ],
+    "parts": [
+      "cap-newsletter-consent",
+      "cap-newsletter-form",
+      "cap-newsletter-text",
+      "cap-newsletter-title"
+    ],
+    "variants": {
+      "data-variant": [
+        "plain"
+      ]
+    },
+    "states": [],
+    "vars": [
+      {
+        "name": "--cap-newsletter-bg",
+        "default": "var(--surface)"
+      }
+    ]
+  },
+  "not-found-report": {
+    "root": "cap-nf-path",
+    "classes": [
+      "cap-nf-meta",
+      "cap-nf-path",
+      "cap-nf-reason"
+    ],
+    "parts": [],
+    "variants": {},
+    "states": [],
+    "vars": []
+  },
+  "offline-keep": {
+    "root": "cap-offline-keep-button",
+    "classes": [
+      "cap-offline-keep-button",
+      "cap-offline-keep-status"
+    ],
+    "parts": [],
+    "variants": {
+      "data-cap": [
+        "offline-keep"
+      ]
+    },
+    "states": [
+      ":empty",
+      "[aria-pressed=\"true\"]"
+    ],
+    "vars": []
+  },
+  "page-head": {
+    "root": "cap-page-head",
+    "classes": [
+      "cap-page-head",
+      "cap-page-head-actions",
+      "cap-page-head-lead",
+      "cap-page-head-text",
+      "cap-page-head-title"
+    ],
+    "parts": [
+      "cap-page-head-actions",
+      "cap-page-head-lead",
+      "cap-page-head-text",
+      "cap-page-head-title"
+    ],
+    "variants": {},
+    "states": [],
+    "vars": []
+  },
+  "pagination": {
+    "root": "cap-pagination",
+    "classes": [
+      "cap-page",
+      "cap-page-gap",
+      "cap-pagination",
+      "cap-pagination-list",
+      "cap-pagination-num",
+      "cap-pagination-status",
+      "cap-pagination-where"
+    ],
+    "parts": [
+      "cap-pagination-list",
+      "cap-pagination-num",
+      "cap-pagination-status",
+      "cap-pagination-where"
+    ],
+    "variants": {
+      "data-form": [
+        "steps"
+      ],
+      "data-kind": [
+        "next",
+        "prev"
+      ]
+    },
+    "states": [
+      ":active",
+      ":focus-visible",
+      ":hover",
+      ":visited",
+      "[aria-current=\"page\"]",
+      "[aria-disabled=\"true\"]"
+    ],
+    "vars": [
+      {
+        "name": "--pagination-gap",
+        "default": "var(--space-7)"
+      }
+    ]
+  },
+  "panel": {
+    "root": "cap-panel",
+    "classes": [
+      "cap-panel",
+      "cap-panel-action",
+      "cap-panel-body",
+      "cap-panel-count",
+      "cap-panel-desc",
+      "cap-panel-foot",
+      "cap-panel-head",
+      "cap-panel-more",
+      "cap-panel-pad",
+      "cap-panel-src"
+    ],
+    "parts": [
+      "cap-panel-action",
+      "cap-panel-body",
+      "cap-panel-count",
+      "cap-panel-desc",
+      "cap-panel-foot",
+      "cap-panel-head",
+      "cap-panel-more",
+      "cap-panel-pad",
+      "cap-panel-src"
+    ],
+    "variants": {
+      "data-flush": [],
+      "data-size": [
+        "sm"
+      ]
+    },
+    "states": [
+      ":active",
+      ":hover"
+    ],
+    "vars": []
+  },
+  "pdf-viewer": {
+    "root": "cap-pdf",
+    "classes": [
+      "cap-pdf",
+      "cap-pdf-bar",
+      "cap-pdf-error",
+      "cap-pdf-fallback",
+      "cap-pdf-page",
+      "cap-pdf-status",
+      "cap-pdf-zoom",
+      "cap-pdf-zoom-value"
+    ],
+    "parts": [
+      "cap-pdf-bar",
+      "cap-pdf-error",
+      "cap-pdf-fallback",
+      "cap-pdf-page",
+      "cap-pdf-status",
+      "cap-pdf-zoom",
+      "cap-pdf-zoom-value"
+    ],
+    "variants": {
+      "data-sized": []
+    },
+    "states": [],
+    "vars": []
+  },
+  "people-roles": {
+    "root": "cap-people",
+    "classes": [
+      "cap-people",
+      "cap-people-actions",
+      "cap-people-acts",
+      "cap-people-add-fields",
+      "cap-people-add-foot",
+      "cap-people-card",
+      "cap-people-change",
+      "cap-people-change-actions",
+      "cap-people-count",
+      "cap-people-edit",
+      "cap-people-email",
+      "cap-people-end",
+      "cap-people-head",
+      "cap-people-history",
+      "cap-people-history-by",
+      "cap-people-history-head",
+      "cap-people-history-item",
+      "cap-people-history-list",
+      "cap-people-history-reason",
+      "cap-people-history-what",
+      "cap-people-history-when",
+      "cap-people-lead",
+      "cap-people-name",
+      "cap-people-result",
+      "cap-people-review-foot",
+      "cap-people-review-item",
+      "cap-people-review-list",
+      "cap-people-review-who",
+      "cap-people-sync",
+      "cap-people-sync-error",
+      "cap-people-table",
+      "cap-people-tally",
+      "cap-people-who",
+      "cap-people-you"
+    ],
+    "parts": [
+      "cap-people-actions",
+      "cap-people-acts",
+      "cap-people-add-fields",
+      "cap-people-add-foot",
+      "cap-people-card",
+      "cap-people-change",
+      "cap-people-change-actions",
+      "cap-people-count",
+      "cap-people-edit",
+      "cap-people-email",
+      "cap-people-end",
+      "cap-people-head",
+      "cap-people-history",
+      "cap-people-history-by",
+      "cap-people-history-head",
+      "cap-people-history-item",
+      "cap-people-history-list",
+      "cap-people-history-reason",
+      "cap-people-history-what",
+      "cap-people-history-when",
+      "cap-people-lead",
+      "cap-people-name",
+      "cap-people-result",
+      "cap-people-review-foot",
+      "cap-people-review-item",
+      "cap-people-review-list",
+      "cap-people-review-who",
+      "cap-people-sync",
+      "cap-people-sync-error",
+      "cap-people-table",
+      "cap-people-tally",
+      "cap-people-who",
+      "cap-people-you"
+    ],
+    "variants": {
+      "data-soon": [],
+      "data-status": [
+        "expired",
+        "removed"
+      ],
+      "data-tone": [
+        "crit"
+      ],
+      "data-variant": [
+        "review"
+      ]
+    },
+    "states": [],
+    "vars": [
+      {
+        "name": "--fields-gap",
+        "default": "var(--space-4)"
+      },
+      {
+        "name": "--fields-min",
+        "default": "14rem"
+      }
+    ]
+  },
+  "permission-matrix": {
+    "root": "cap-perms",
+    "classes": [
+      "cap-perms",
+      "cap-perms-agent",
+      "cap-perms-bar",
+      "cap-perms-card",
+      "cap-perms-cards",
+      "cap-perms-cell",
+      "cap-perms-check",
+      "cap-perms-col",
+      "cap-perms-holds",
+      "cap-perms-key",
+      "cap-perms-name",
+      "cap-perms-narrow",
+      "cap-perms-note",
+      "cap-perms-wide"
+    ],
+    "parts": [
+      "cap-perms-agent",
+      "cap-perms-bar",
+      "cap-perms-card",
+      "cap-perms-cards",
+      "cap-perms-cell",
+      "cap-perms-check",
+      "cap-perms-col",
+      "cap-perms-holds",
+      "cap-perms-key",
+      "cap-perms-name",
+      "cap-perms-narrow",
+      "cap-perms-note",
+      "cap-perms-wide"
+    ],
+    "variants": {
+      "data-empty": [],
+      "data-held": [
+        "yes"
+      ]
+    },
+    "states": [],
+    "vars": []
+  },
+  "picture": {
+    "root": "cap-picture",
+    "classes": [
+      "cap-motion",
+      "cap-motion-pause",
+      "cap-motion-still",
+      "cap-motion-toggle",
+      "cap-picture"
+    ],
+    "parts": [],
+    "variants": {},
+    "states": [
+      ":checked",
+      ":focus-visible"
+    ],
+    "vars": []
+  },
+  "player": {
+    "root": "cap-player",
+    "classes": [
+      "cap-player",
+      "cap-player-at",
+      "cap-player-btn",
+      "cap-player-chapter",
+      "cap-player-chapter-now",
+      "cap-player-chapter-title",
+      "cap-player-chapters",
+      "cap-player-choices",
+      "cap-player-clip",
+      "cap-player-clip-button",
+      "cap-player-clip-link",
+      "cap-player-clip-wave",
+      "cap-player-cue",
+      "cap-player-dock",
+      "cap-player-dock-inner",
+      "cap-player-dock-row",
+      "cap-player-facade",
+      "cap-player-fine",
+      "cap-player-host",
+      "cap-player-host-name",
+      "cap-player-host-text",
+      "cap-player-hosts",
+      "cap-player-icon",
+      "cap-player-jump",
+      "cap-player-label",
+      "cap-player-legend",
+      "cap-player-list-heading",
+      "cap-player-mark",
+      "cap-player-menu",
+      "cap-player-meta",
+      "cap-player-meta-text",
+      "cap-player-moment",
+      "cap-player-moments",
+      "cap-player-more",
+      "cap-player-now",
+      "cap-player-options",
+      "cap-player-para",
+      "cap-player-para-chapter",
+      "cap-player-para-text",
+      "cap-player-play",
+      "cap-player-poster",
+      "cap-player-rate",
+      "cap-player-readalong",
+      "cap-player-said",
+      "cap-player-scrubber",
+      "cap-player-seek",
+      "cap-player-settings",
+      "cap-player-sheet",
+      "cap-player-speaker",
+      "cap-player-spin",
+      "cap-player-surface",
+      "cap-player-surface-row",
+      "cap-player-surface-settings",
+      "cap-player-ticks",
+      "cap-player-time",
+      "cap-player-title",
+      "cap-player-track",
+      "cap-player-transcript",
+      "cap-player-transcript-bar",
+      "cap-player-transcript-box",
+      "cap-player-transcript-link",
+      "cap-player-transcript-raw",
+      "cap-player-transport",
+      "cap-player-volume",
+      "cap-player-volume-row",
+      "cap-player-wave",
+      "cap-player-wave-bar",
+      "cap-player-wave-bars",
+      "cap-player-wave-box",
+      "cap-player-wave-empty",
+      "cap-player-wave-marker",
+      "cap-player-wave-note",
+      "cap-player-wave-preview",
+      "cap-player-wave-region",
+      "cap-player-wave-tip"
+    ],
+    "parts": [
+      "cap-player-at",
+      "cap-player-btn",
+      "cap-player-chapter",
+      "cap-player-chapter-now",
+      "cap-player-chapter-title",
+      "cap-player-chapters",
+      "cap-player-choices",
+      "cap-player-clip",
+      "cap-player-clip-button",
+      "cap-player-clip-link",
+      "cap-player-clip-wave",
+      "cap-player-cue",
+      "cap-player-dock",
+      "cap-player-dock-inner",
+      "cap-player-dock-row",
+      "cap-player-facade",
+      "cap-player-fine",
+      "cap-player-host",
+      "cap-player-host-name",
+      "cap-player-host-text",
+      "cap-player-hosts",
+      "cap-player-icon",
+      "cap-player-jump",
+      "cap-player-label",
+      "cap-player-legend",
+      "cap-player-list-heading",
+      "cap-player-mark",
+      "cap-player-menu",
+      "cap-player-meta",
+      "cap-player-meta-text",
+      "cap-player-moment",
+      "cap-player-moments",
+      "cap-player-more",
+      "cap-player-now",
+      "cap-player-options",
+      "cap-player-para",
+      "cap-player-para-chapter",
+      "cap-player-para-text",
+      "cap-player-play",
+      "cap-player-poster",
+      "cap-player-rate",
+      "cap-player-readalong",
+      "cap-player-said",
+      "cap-player-scrubber",
+      "cap-player-seek",
+      "cap-player-settings",
+      "cap-player-sheet",
+      "cap-player-speaker",
+      "cap-player-spin",
+      "cap-player-surface",
+      "cap-player-surface-row",
+      "cap-player-surface-settings",
+      "cap-player-ticks",
+      "cap-player-time",
+      "cap-player-title",
+      "cap-player-track",
+      "cap-player-transcript",
+      "cap-player-transcript-bar",
+      "cap-player-transcript-box",
+      "cap-player-transcript-link",
+      "cap-player-transcript-raw",
+      "cap-player-transport",
+      "cap-player-volume",
+      "cap-player-volume-row",
+      "cap-player-wave",
+      "cap-player-wave-bar",
+      "cap-player-wave-bars",
+      "cap-player-wave-box",
+      "cap-player-wave-empty",
+      "cap-player-wave-marker",
+      "cap-player-wave-note",
+      "cap-player-wave-preview",
+      "cap-player-wave-region",
+      "cap-player-wave-tip"
+    ],
+    "variants": {
+      "data-active": [],
+      "data-hidden": [],
+      "data-kind": [
+        "sound"
+      ],
+      "data-layout": [
+        "grid"
+      ],
+      "data-part": [
+        "close",
+        "next",
+        "play",
+        "setting",
+        "skip"
+      ],
+      "data-service": [
+        "soundcloud",
+        "spotify"
+      ],
+      "data-size": [
+        "lg",
+        "sm"
+      ],
+      "data-state": [
+        "leading",
+        "played",
+        "playing",
+        "region"
+      ],
+      "data-tone": [
+        "crit"
+      ],
+      "data-wave": [
+        "2"
+      ]
+    },
+    "states": [
+      ":disabled",
+      ":hover",
+      "[aria-current=\"true\"]",
+      "[aria-pressed=\"true\"]",
+      "[hidden]"
+    ],
+    "vars": [
+      {
+        "name": "--cap-player-at",
+        "default": "0%"
+      },
+      {
+        "name": "--cap-player-btn",
+        "default": "max(var(--control), var(--target))"
+      },
+      {
+        "name": "--cap-player-btn-lg",
+        "default": "calc(var(--cap-player-btn, max(var(--control), var(--target))) + var(--space-3))"
+      },
+      {
+        "name": "--cap-player-dock-h",
+        "default": "0px"
+      },
+      {
+        "name": "--cap-player-face",
+        "default": "var(--ui)"
+      },
+      {
+        "name": "--cap-player-meta-face",
+        "default": "var(--mono)"
+      }
+    ]
+  },
+  "poll": {
+    "root": "cap-poll",
+    "classes": [
+      "cap-poll",
+      "cap-poll-count",
+      "cap-poll-label",
+      "cap-poll-option"
+    ],
+    "parts": [
+      "cap-poll-count",
+      "cap-poll-label",
+      "cap-poll-option"
+    ],
+    "variants": {},
+    "states": [
+      ":disabled",
+      ":hover",
+      "[aria-pressed=\"true\"]"
+    ],
+    "vars": [
+      {
+        "name": "--share",
+        "default": "0"
+      }
+    ]
+  },
+  "popover": {
+    "root": "cap-popover",
+    "classes": [
+      "cap-popover",
+      "cap-popover-arrow",
+      "cap-popover-description",
+      "cap-popover-header",
+      "cap-popover-title"
+    ],
+    "parts": [
+      "cap-popover-arrow",
+      "cap-popover-description",
+      "cap-popover-header",
+      "cap-popover-title"
+    ],
+    "variants": {
+      "data-align": [
+        "end",
+        "start"
+      ],
+      "data-cap": [
+        "popover"
+      ],
+      "data-ending-style": [],
+      "data-flush": [],
+      "data-placed": [
+        "bottom",
+        "left",
+        "right",
+        "top"
+      ],
+      "data-placed-by": [
+        "js",
+        "pending"
+      ],
+      "data-side": [
+        "bottom",
+        "inline-end",
+        "inline-start",
+        "left",
+        "right",
+        "top"
+      ],
+      "data-size": [
+        "auto",
+        "lg",
+        "sm"
+      ],
+      "data-starting-style": [],
+      "data-variant": [
+        "tooltip"
+      ]
+    },
+    "states": [
+      ":focus",
+      ":popover-open"
+    ],
+    "vars": [
+      {
+        "name": "--_al",
+        "default": ""
+      },
+      {
+        "name": "--_arrow",
+        "default": "0px"
+      },
+      {
+        "name": "--_ax",
+        "default": ""
+      },
+      {
+        "name": "--_ay",
+        "default": ""
+      },
+      {
+        "name": "--_in",
+        "default": "var(--dur-base)"
+      },
+      {
+        "name": "--_line",
+        "default": "var(--line)"
+      },
+      {
+        "name": "--_off",
+        "default": "calc(var(--cap-offset, 4px) + var(--_arrow))"
+      },
+      {
+        "name": "--_origin",
+        "default": "top"
+      },
+      {
+        "name": "--_side",
+        "default": "bottom"
+      },
+      {
+        "name": "--_tx",
+        "default": "0px"
+      },
+      {
+        "name": "--_ty",
+        "default": "0px"
+      },
+      {
+        "name": "--cap-arrow-x",
+        "default": "50%"
+      },
+      {
+        "name": "--cap-arrow-y",
+        "default": "50%"
+      },
+      {
+        "name": "--cap-offset",
+        "default": "4px"
+      },
+      {
+        "name": "--cap-popover-x",
+        "default": "0px"
+      },
+      {
+        "name": "--cap-popover-y",
+        "default": "0px"
+      },
+      {
+        "name": "--transform-origin",
+        "default": "var(--_origin, center)"
+      }
+    ]
+  },
+  "posts-list": {
+    "root": "cap-posts",
+    "classes": [
+      "cap-posts",
+      "cap-posts-actions",
+      "cap-posts-bar",
+      "cap-posts-check",
+      "cap-posts-count",
+      "cap-posts-excerpt",
+      "cap-posts-extra",
+      "cap-posts-extra-cell",
+      "cap-posts-meta",
+      "cap-posts-none",
+      "cap-posts-notes",
+      "cap-posts-pages",
+      "cap-posts-path",
+      "cap-posts-preview",
+      "cap-posts-preview-row",
+      "cap-posts-rename",
+      "cap-posts-reschedule",
+      "cap-posts-status",
+      "cap-posts-table",
+      "cap-posts-title",
+      "cap-posts-tools",
+      "cap-posts-trash-note",
+      "cap-posts-update-side",
+      "cap-posts-update-side-when",
+      "cap-posts-update-sides",
+      "cap-posts-update-view",
+      "cap-posts-updated",
+      "cap-posts-when",
+      "cap-posts-withheld",
+      "cap-posts-wrap"
+    ],
+    "parts": [
+      "cap-posts-actions",
+      "cap-posts-bar",
+      "cap-posts-check",
+      "cap-posts-count",
+      "cap-posts-excerpt",
+      "cap-posts-extra",
+      "cap-posts-extra-cell",
+      "cap-posts-meta",
+      "cap-posts-none",
+      "cap-posts-notes",
+      "cap-posts-pages",
+      "cap-posts-path",
+      "cap-posts-preview",
+      "cap-posts-preview-row",
+      "cap-posts-rename",
+      "cap-posts-reschedule",
+      "cap-posts-status",
+      "cap-posts-table",
+      "cap-posts-title",
+      "cap-posts-tools",
+      "cap-posts-trash-note",
+      "cap-posts-update-side",
+      "cap-posts-update-side-when",
+      "cap-posts-update-sides",
+      "cap-posts-update-view",
+      "cap-posts-updated",
+      "cap-posts-when",
+      "cap-posts-withheld",
+      "cap-posts-wrap"
+    ],
+    "variants": {
+      "data-cap-part": [
+        "cancel-update"
+      ],
+      "data-reflow": [],
+      "data-selected": []
+    },
+    "states": [
+      ":empty",
+      "[open]"
+    ],
+    "vars": []
+  },
+  "price-card": {
+    "root": "cap-price-card",
+    "classes": [
+      "cap-price-card",
+      "cap-price-card-action",
+      "cap-price-card-amount",
+      "cap-price-card-flag",
+      "cap-price-card-label",
+      "cap-price-card-name",
+      "cap-price-card-points",
+      "cap-price-card-price",
+      "cap-price-card-text",
+      "cap-price-card-unit",
+      "cap-price-grid"
+    ],
+    "parts": [
+      "cap-price-card-action",
+      "cap-price-card-amount",
+      "cap-price-card-flag",
+      "cap-price-card-label",
+      "cap-price-card-name",
+      "cap-price-card-points",
+      "cap-price-card-price",
+      "cap-price-card-text",
+      "cap-price-card-unit"
+    ],
+    "variants": {
+      "data-featured": []
+    },
+    "states": [],
+    "vars": [
+      {
+        "name": "--cap-price-card-min",
+        "default": "14rem"
+      },
+      {
+        "name": "--cap-price-check",
+        "default": "var(--accent-text)"
+      },
+      {
+        "name": "--cap-price-color",
+        "default": "var(--accent-text)"
+      },
+      {
+        "name": "--cap-price-face",
+        "default": "var(--mono)"
+      },
+      {
+        "name": "--cap-price-label-size",
+        "default": "var(--fs-detail)"
+      },
+      {
+        "name": "--cap-price-label-weight",
+        "default": "var(--weight-regular)"
+      },
+      {
+        "name": "--cap-price-size",
+        "default": "calc(var(--title-3) + var(--space-3))"
+      },
+      {
+        "name": "--cap-price-unit-size",
+        "default": "var(--fs-detail)"
+      },
+      {
+        "name": "--cap-price-weight",
+        "default": "var(--weight-semibold)"
+      }
+    ]
+  },
+  "process": {
+    "root": "cap-process",
+    "classes": [
+      "cap-process",
+      "cap-process-end",
+      "cap-process-list",
+      "cap-process-step",
+      "cap-process-tag",
+      "cap-process-text",
+      "cap-process-title"
+    ],
+    "parts": [
+      "cap-process-end",
+      "cap-process-list",
+      "cap-process-step",
+      "cap-process-tag",
+      "cap-process-text",
+      "cap-process-title"
+    ],
+    "variants": {
+      "data-flush": [],
+      "data-layout": [
+        "rows"
+      ]
+    },
+    "states": [],
+    "vars": [
+      {
+        "name": "--cap-process-start",
+        "default": "0"
+      }
+    ]
+  },
+  "prose-page": {
+    "root": "cap-prose-page-head",
+    "classes": [
+      "cap-prose-page-body",
+      "cap-prose-page-head",
+      "cap-prose-page-lead",
+      "cap-prose-page-title"
+    ],
+    "parts": [],
+    "variants": {},
+    "states": [],
+    "vars": [
+      {
+        "name": "--cap-prose-page-body-pad",
+        "default": "var(--space-8)"
+      },
+      {
+        "name": "--cap-prose-page-head-bg",
+        "default": "var(--sunken)"
+      },
+      {
+        "name": "--cap-prose-page-head-pad",
+        "default": "var(--space-9)"
+      },
+      {
+        "name": "--cap-prose-page-head-text",
+        "default": "var(--text)"
+      },
+      {
+        "name": "--cap-prose-page-lead-text",
+        "default": "var(--muted)"
+      },
+      {
+        "name": "--cap-prose-page-measure",
+        "default": "48rem"
+      },
+      {
+        "name": "--cap-prose-page-title-case",
+        "default": "none"
+      },
+      {
+        "name": "--cap-prose-page-title-face",
+        "default": "var(--display)"
+      },
+      {
+        "name": "--cap-prose-page-title-leading",
+        "default": "var(--leading-tight)"
+      },
+      {
+        "name": "--cap-prose-page-title-max",
+        "default": "40rem"
+      },
+      {
+        "name": "--cap-prose-page-title-size",
+        "default": "var(--title-display)"
+      },
+      {
+        "name": "--cap-prose-page-title-tracking",
+        "default": "var(--tracking-snug)"
+      },
+      {
+        "name": "--cap-prose-page-title-weight",
+        "default": "var(--weight-title)"
+      },
+      {
+        "name": "--cap-prose-page-title-wrap",
+        "default": "balance"
+      }
+    ]
+  },
+  "publish-gate": {
+    "root": "cap-gate",
+    "classes": [
+      "cap-check-fix",
+      "cap-check-name",
+      "cap-gate",
+      "cap-gate-bar",
+      "cap-gate-clear",
+      "cap-gate-group-title",
+      "cap-gate-head",
+      "cap-gate-section",
+      "cap-gate-section-rows",
+      "cap-gate-site",
+      "cap-gate-site-name",
+      "cap-gate-summary",
+      "cap-gate-title",
+      "cap-gate-title-text"
+    ],
+    "parts": [
+      "cap-gate-bar",
+      "cap-gate-clear",
+      "cap-gate-group-title",
+      "cap-gate-head",
+      "cap-gate-section",
+      "cap-gate-section-rows",
+      "cap-gate-site",
+      "cap-gate-site-name",
+      "cap-gate-summary",
+      "cap-gate-title",
+      "cap-gate-title-text"
+    ],
+    "variants": {
+      "data-cap-actions": [],
+      "data-ok": [
+        "true"
+      ],
+      "data-section": [
+        "passed"
+      ]
+    },
+    "states": [
+      ":empty",
+      "[hidden]"
+    ],
+    "vars": []
+  },
+  "qr": {
+    "root": "cap-qr",
+    "classes": [
+      "cap-qr",
+      "cap-qr-caption",
+      "cap-qr-code",
+      "cap-qr-url"
+    ],
+    "parts": [
+      "cap-qr-caption",
+      "cap-qr-code",
+      "cap-qr-url"
+    ],
+    "variants": {
+      "data-size": [
+        "lg"
+      ]
+    },
+    "states": [],
+    "vars": []
+  },
+  "range-slider": {
+    "root": "cap-range-slider",
+    "classes": [
+      "cap-range-slider",
+      "cap-range-slider-ends",
+      "cap-range-slider-head",
+      "cap-range-slider-input",
+      "cap-range-slider-label",
+      "cap-range-slider-track",
+      "cap-range-slider-value"
+    ],
+    "parts": [
+      "cap-range-slider-ends",
+      "cap-range-slider-head",
+      "cap-range-slider-input",
+      "cap-range-slider-label",
+      "cap-range-slider-track",
+      "cap-range-slider-value"
+    ],
+    "variants": {},
+    "states": [
+      ":focus-visible"
+    ],
+    "vars": [
+      {
+        "name": "--cap-range-hi",
+        "default": "100%"
+      },
+      {
+        "name": "--cap-range-lo",
+        "default": "0%"
+      },
+      {
+        "name": "--cap-range-track",
+        "default": "transparent"
+      }
+    ]
+  },
+  "rating": {
+    "root": "cap-rating",
+    "classes": [
+      "cap-rating",
+      "cap-rating-control",
+      "cap-rating-empty",
+      "cap-rating-fill",
+      "cap-rating-img",
+      "cap-rating-note",
+      "cap-rating-stars"
+    ],
+    "parts": [
+      "cap-rating-control",
+      "cap-rating-empty",
+      "cap-rating-fill",
+      "cap-rating-img",
+      "cap-rating-note",
+      "cap-rating-stars"
+    ],
+    "variants": {
+      "data-half": [
+        "0",
+        "1",
+        "10",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9"
+      ],
+      "data-size": [
+        "lg",
+        "sm"
+      ]
+    },
+    "states": [],
+    "vars": [
+      {
+        "name": "--_fill",
+        "default": "0%"
+      },
+      {
+        "name": "--_star",
+        "default": "1.1em"
+      }
+    ]
+  },
+  "read-only-form": {
+    "root": "cap-read-only-form",
+    "classes": [
+      "cap-read-only-form"
+    ],
+    "parts": [],
+    "variants": {},
+    "states": [],
+    "vars": []
+  },
+  "read-state": {
+    "root": "cap-read-state",
+    "classes": [
+      "cap-read-again",
+      "cap-read-state"
+    ],
+    "parts": [],
+    "variants": {
+      "data-state": [
+        "reading"
+      ]
+    },
+    "states": [],
+    "vars": []
+  },
+  "reading-progress": {
+    "root": "cap-reading-progress",
+    "classes": [
+      "cap-reading-progress"
+    ],
+    "parts": [],
+    "variants": {
+      "data-cap-reading": []
+    },
+    "states": [],
+    "vars": [
+      {
+        "name": "--reading-progress-color",
+        "default": "var(--accent)"
+      },
+      {
+        "name": "--reading-progress-size",
+        "default": "3px"
+      },
+      {
+        "name": "--reading-progress-top",
+        "default": "0"
+      }
+    ]
+  },
+  "record-facts": {
+    "root": "cap-record-facts",
+    "classes": [
+      "cap-record-facts",
+      "cap-record-facts-item"
+    ],
+    "parts": [
+      "cap-record-facts-item"
+    ],
+    "variants": {
+      "data-mono": []
+    },
+    "states": [],
+    "vars": []
+  },
+  "related-links": {
+    "root": "cap-related",
+    "classes": [
+      "cap-related",
+      "cap-related-date",
+      "cap-related-excerpt",
+      "cap-related-list",
+      "cap-related-name",
+      "cap-related-title"
+    ],
+    "parts": [
+      "cap-related-date",
+      "cap-related-excerpt",
+      "cap-related-list",
+      "cap-related-name",
+      "cap-related-title"
+    ],
+    "variants": {
+      "data-kind": [
+        "internal"
+      ]
+    },
+    "states": [],
+    "vars": []
+  },
+  "repeater-field": {
+    "root": "cap-repeater-list",
+    "classes": [
+      "cap-repeater-actions",
+      "cap-repeater-add",
+      "cap-repeater-fields",
+      "cap-repeater-group",
+      "cap-repeater-list",
+      "cap-repeater-row"
+    ],
+    "parts": [],
+    "variants": {},
+    "states": [
+      "[hidden]"
+    ],
+    "vars": []
+  },
+  "reveal": {
+    "root": "cap-reveal",
+    "classes": [
+      "cap-reveal",
+      "cap-reveal-stack"
+    ],
+    "parts": [
+      "cap-reveal-stack"
+    ],
+    "variants": {
+      "data-from": [
+        "above"
+      ]
+    },
+    "states": [],
+    "vars": [
+      {
+        "name": "--reveal-distance",
+        "default": "-1.5rem"
+      }
+    ]
+  },
+  "rich-editor": {
+    "root": "cap-rich-editor",
+    "classes": [
+      "cap-rich-editor",
+      "cap-rich-editor-host",
+      "cap-rich-editor-slot",
+      "cap-rich-editor-src",
+      "cap-rich-editor-src-inline",
+      "cap-rich-editor-src-kind",
+      "cap-rich-editor-src-text",
+      "cap-rich-editor-surface"
+    ],
+    "parts": [
+      "cap-rich-editor-host",
+      "cap-rich-editor-slot",
+      "cap-rich-editor-src",
+      "cap-rich-editor-src-inline",
+      "cap-rich-editor-src-kind",
+      "cap-rich-editor-src-text",
+      "cap-rich-editor-surface"
+    ],
+    "variants": {
+      "data-front": [],
+      "data-hide-front": []
+    },
+    "states": [
+      ":focus-visible"
+    ],
+    "vars": [
+      {
+        "name": "--cap-md-min",
+        "default": "12rem"
+      }
+    ]
+  },
+  "rich-text-field": {
+    "root": "cap-rich-text-bar",
+    "classes": [
+      "cap-rich-text-bar"
+    ],
+    "parts": [],
+    "variants": {
+      "data-lines": [
+        "multi"
+      ]
+    },
+    "states": [],
+    "vars": []
+  },
+  "route-splash": {
+    "root": "cap-route-splash",
+    "classes": [
+      "cap-route-splash",
+      "cap-route-splash-label",
+      "cap-route-splash-mark"
+    ],
+    "parts": [
+      "cap-route-splash-label",
+      "cap-route-splash-mark"
+    ],
+    "variants": {},
+    "states": [],
+    "vars": []
+  },
+  "row-list": {
+    "root": "cap-rows",
+    "classes": [
+      "cap-row-chevron",
+      "cap-row-media",
+      "cap-row-reply",
+      "cap-row-reply-actions",
+      "cap-row-reply-form",
+      "cap-row-text",
+      "cap-rows"
+    ],
+    "parts": [],
+    "variants": {
+      "data-gap": [
+        "sm",
+        "xs"
+      ],
+      "data-size": [
+        "sm",
+        "xs"
+      ],
+      "data-static": [],
+      "data-tone": [
+        "crit"
+      ],
+      "data-variant": [
+        "icon",
+        "image",
+        "muted",
+        "outline"
+      ]
+    },
+    "states": [
+      ":focus-visible",
+      ":hover",
+      "[aria-expanded=\"true\"]"
+    ],
+    "vars": []
+  },
+  "save-bar": {
+    "root": "cap-save-bar",
+    "classes": [
+      "cap-save-bar",
+      "cap-save-bar-status"
+    ],
+    "parts": [
+      "cap-save-bar-status"
+    ],
+    "variants": {
+      "data-sticky": []
+    },
+    "states": [],
+    "vars": []
+  },
+  "save-toggle": {
+    "root": "cap-save-icon",
+    "classes": [
+      "cap-save",
+      "cap-save-icon"
+    ],
+    "parts": [],
+    "variants": {},
+    "states": [
+      "[aria-pressed=\"true\"]"
+    ],
+    "vars": []
+  },
+  "scale-control": {
+    "root": "cap-scale-control",
+    "classes": [
+      "cap-scale-control"
+    ],
+    "parts": [],
+    "variants": {},
+    "states": [],
+    "vars": []
+  },
+  "schedule": {
+    "root": "cap-schedule",
+    "classes": [
+      "cap-schedule",
+      "cap-schedule-body",
+      "cap-schedule-count",
+      "cap-schedule-day",
+      "cap-schedule-day-link",
+      "cap-schedule-day-title",
+      "cap-schedule-daybar",
+      "cap-schedule-daybar-extra",
+      "cap-schedule-daynav",
+      "cap-schedule-empty",
+      "cap-schedule-session",
+      "cap-schedule-session-meta",
+      "cap-schedule-session-title",
+      "cap-schedule-slot",
+      "cap-schedule-slots",
+      "cap-schedule-talks",
+      "cap-schedule-time",
+      "cap-schedule-track",
+      "cap-schedule-track-name",
+      "cap-schedule-tracks",
+      "cap-schedule-when",
+      "cap-schedule-zone"
+    ],
+    "parts": [
+      "cap-schedule-body",
+      "cap-schedule-count",
+      "cap-schedule-day",
+      "cap-schedule-day-link",
+      "cap-schedule-day-title",
+      "cap-schedule-daybar",
+      "cap-schedule-daybar-extra",
+      "cap-schedule-daynav",
+      "cap-schedule-empty",
+      "cap-schedule-session",
+      "cap-schedule-session-meta",
+      "cap-schedule-session-title",
+      "cap-schedule-slot",
+      "cap-schedule-slots",
+      "cap-schedule-talks",
+      "cap-schedule-time",
+      "cap-schedule-track",
+      "cap-schedule-track-name",
+      "cap-schedule-tracks",
+      "cap-schedule-when",
+      "cap-schedule-zone"
+    ],
+    "variants": {},
+    "states": [
+      ":hover",
+      ":visited",
+      "[aria-current=\"page\"]"
+    ],
+    "vars": []
+  },
+  "schedule-dialog": {
+    "root": "cap-schedule-dialog-lead",
+    "classes": [
+      "cap-schedule-dialog-lead"
+    ],
+    "parts": [],
+    "variants": {},
+    "states": [
+      ":empty"
+    ],
+    "vars": []
+  },
+  "schema-form": {
+    "root": "cap-schema-form",
+    "classes": [
+      "cap-schema-actions",
+      "cap-schema-cell",
+      "cap-schema-fields",
+      "cap-schema-form",
+      "cap-schema-json",
+      "cap-schema-readonly",
+      "cap-schema-status"
+    ],
+    "parts": [],
+    "variants": {
+      "data-wide": []
+    },
+    "states": [],
+    "vars": []
+  },
+  "scope-chip": {
+    "root": "cap-scope",
+    "classes": [
+      "cap-scope",
+      "cap-scope-label",
+      "cap-scope-submit"
+    ],
+    "parts": [
+      "cap-scope-label",
+      "cap-scope-submit"
+    ],
+    "variants": {
+      "data-cap-ready": []
+    },
+    "states": [],
+    "vars": []
+  },
+  "scroll-area": {
+    "root": "cap-scroll-area",
+    "classes": [
+      "cap-scroll-area"
+    ],
+    "parts": [],
+    "variants": {
+      "data-frame": [
+        "none"
+      ]
+    },
+    "states": [],
+    "vars": [
+      {
+        "name": "--scroll-area-max",
+        "default": "24rem"
+      },
+      {
+        "name": "--scrollbar-thumb",
+        "default": "var(--muted)"
+      },
+      {
+        "name": "--scrollbar-track",
+        "default": "var(--sunken)"
+      }
+    ]
+  },
+  "search-results": {
+    "root": "cap-search",
+    "classes": [
+      "cap-search",
+      "cap-search-context",
+      "cap-search-count",
+      "cap-search-empty",
+      "cap-search-facets",
+      "cap-search-head",
+      "cap-search-list",
+      "cap-search-main",
+      "cap-search-result",
+      "cap-search-snippet",
+      "cap-search-sort",
+      "cap-search-title",
+      "cap-search-why"
+    ],
+    "parts": [
+      "cap-search-context",
+      "cap-search-count",
+      "cap-search-empty",
+      "cap-search-facets",
+      "cap-search-head",
+      "cap-search-list",
+      "cap-search-main",
+      "cap-search-result",
+      "cap-search-snippet",
+      "cap-search-sort",
+      "cap-search-title",
+      "cap-search-why"
+    ],
+    "variants": {
+      "data-facets": []
+    },
+    "states": [
+      ":empty"
+    ],
+    "vars": []
+  },
+  "search-suggest": {
+    "root": "cap-search-suggest",
+    "classes": [
+      "cap-search-suggest",
+      "cap-search-suggest-list"
+    ],
+    "parts": [
+      "cap-search-suggest-list"
+    ],
+    "variants": {},
+    "states": [],
+    "vars": []
+  },
+  "secret-reveal": {
+    "root": "cap-secret",
+    "classes": [
+      "cap-secret",
+      "cap-secret-foot",
+      "cap-secret-note",
+      "cap-secret-title",
+      "cap-secret-value"
+    ],
+    "parts": [
+      "cap-secret-foot",
+      "cap-secret-note",
+      "cap-secret-title",
+      "cap-secret-value"
+    ],
+    "variants": {},
+    "states": [],
+    "vars": []
+  },
+  "section-band": {
+    "root": "cap-section-band",
+    "classes": [
+      "cap-section-band"
+    ],
+    "parts": [],
+    "variants": {
+      "data-cut": [
+        "slant"
+      ],
+      "data-overlap": []
+    },
+    "states": [],
+    "vars": [
+      {
+        "name": "--cap-band-bg",
+        "default": "var(--accent-12)"
+      },
+      {
+        "name": "--cap-band-fall",
+        "default": "5.5rem"
+      },
+      {
+        "name": "--cap-band-ghost",
+        "default": "color-mix(in srgb, var(--cap-band-bg, var(--accent-12)) 50%, transparent)"
+      },
+      {
+        "name": "--cap-band-pad-bottom",
+        "default": "calc(var(--cap-band-fall) + var(--space-6))"
+      },
+      {
+        "name": "--cap-band-pad-top",
+        "default": "calc(var(--cap-band-rise) + var(--space-6))"
+      },
+      {
+        "name": "--cap-band-rise",
+        "default": "6rem"
+      },
+      {
+        "name": "--cap-band-step",
+        "default": "2.5rem"
+      },
+      {
+        "name": "--cap-band-text",
+        "default": "var(--accent-1)"
+      }
+    ]
+  },
+  "segmented": {
+    "root": "cap-seg",
+    "classes": [
+      "cap-seg",
+      "cap-seg-options"
+    ],
+    "parts": [
+      "cap-seg-options"
+    ],
+    "variants": {
+      "data-fill": [],
+      "data-layout": [
+        "cards"
+      ],
+      "data-orientation": [
+        "vertical"
+      ],
+      "data-size": [
+        "lg",
+        "sm"
+      ],
+      "data-tone": [
+        "crit",
+        "info",
+        "ok",
+        "warn"
+      ]
+    },
+    "states": [
+      ":checked",
+      ":disabled",
+      ":focus-visible",
+      ":hover",
+      "[aria-invalid=\"true\"]"
+    ],
+    "vars": [
+      {
+        "name": "--cap-seg-fs",
+        "default": "var(--fs-body)"
+      },
+      {
+        "name": "--cap-seg-h",
+        "default": "max(var(--target), calc(var(--control) - 6px))"
+      },
+      {
+        "name": "--cap-seg-tone",
+        "default": "var(--accent)"
+      },
+      {
+        "name": "--cap-seg-tone-soft",
+        "default": "var(--accent-soft)"
+      },
+      {
+        "name": "--cap-seg-tone-text",
+        "default": "var(--accent-text)"
+      }
+    ]
+  },
+  "select": {
+    "root": "cap-select",
+    "classes": [
+      "cap-select",
+      "cap-select-icon",
+      "cap-select-popup",
+      "cap-select-trigger",
+      "cap-select-value",
+      "cap-select-wrap"
+    ],
+    "parts": [
+      "cap-select-icon",
+      "cap-select-popup",
+      "cap-select-trigger",
+      "cap-select-value",
+      "cap-select-wrap"
+    ],
+    "variants": {
+      "data-placeholder": [],
+      "data-size": [
+        "sm"
+      ]
+    },
+    "states": [
+      ":checked",
+      ":disabled",
+      ":focus-visible",
+      ":hover",
+      ":open",
+      "[aria-expanded=\"true\"]",
+      "[aria-invalid=\"true\"]"
+    ],
+    "vars": [
+      {
+        "name": "--cap-input-edge",
+        "default": "var(--line-strong)"
+      },
+      {
+        "name": "--cap-select-min",
+        "default": "9rem"
+      }
+    ]
+  },
+  "series-nav": {
+    "root": "cap-series",
+    "classes": [
+      "cap-series",
+      "cap-series-parts",
+      "cap-series-steps",
+      "cap-series-title"
+    ],
+    "parts": [
+      "cap-series-parts",
+      "cap-series-steps",
+      "cap-series-title"
+    ],
+    "variants": {},
+    "states": [
+      "[aria-current]"
+    ],
+    "vars": []
+  },
+  "session-row": {
+    "root": "cap-session-list",
+    "classes": [
+      "cap-session",
+      "cap-session-age",
+      "cap-session-agent",
+      "cap-session-answers",
+      "cap-session-ask",
+      "cap-session-cmd",
+      "cap-session-count",
+      "cap-session-head",
+      "cap-session-list",
+      "cap-session-note",
+      "cap-session-now",
+      "cap-session-question",
+      "cap-session-sample",
+      "cap-session-steps"
+    ],
+    "parts": [],
+    "variants": {
+      "data-tone": [
+        "crit"
+      ]
+    },
+    "states": [],
+    "vars": []
+  },
+  "settings-row": {
+    "root": "cap-settings-row",
+    "classes": [
+      "cap-settings-back",
+      "cap-settings-page",
+      "cap-settings-row",
+      "cap-settings-row-control",
+      "cap-settings-row-help",
+      "cap-settings-row-label",
+      "cap-settings-row-reason",
+      "cap-settings-row-text"
+    ],
+    "parts": [
+      "cap-settings-row-control",
+      "cap-settings-row-help",
+      "cap-settings-row-label",
+      "cap-settings-row-reason",
+      "cap-settings-row-text"
+    ],
+    "variants": {
+      "data-fill": [],
+      "data-flip": []
+    },
+    "states": [
+      ":hover"
+    ],
+    "vars": []
+  },
+  "share-preview": {
+    "root": "cap-serp",
+    "classes": [
+      "cap-og-card",
+      "cap-og-card-body",
+      "cap-og-card-description",
+      "cap-og-card-host",
+      "cap-og-card-image",
+      "cap-og-card-note",
+      "cap-og-card-title",
+      "cap-serp",
+      "cap-serp-description",
+      "cap-serp-note",
+      "cap-serp-title",
+      "cap-serp-url"
+    ],
+    "parts": [
+      "cap-serp-description",
+      "cap-serp-note",
+      "cap-serp-title",
+      "cap-serp-url"
+    ],
+    "variants": {},
+    "states": [],
+    "vars": []
+  },
+  "share-row": {
+    "root": "cap-icon",
+    "classes": [
+      "cap-share",
+      "cap-share-label",
+      "cap-share-link"
+    ],
+    "parts": [],
+    "variants": {
+      "data-fill": [],
+      "data-flip": []
+    },
+    "states": [
+      ":hover"
+    ],
+    "vars": []
+  },
+  "shell": {
+    "root": "cap-shell",
+    "classes": [
+      "cap-shell",
+      "cap-shell-actions",
+      "cap-shell-badge",
+      "cap-shell-brand",
+      "cap-shell-count",
+      "cap-shell-foot",
+      "cap-shell-group",
+      "cap-shell-group-label",
+      "cap-shell-hint",
+      "cap-shell-icon",
+      "cap-shell-label",
+      "cap-shell-linkish",
+      "cap-shell-logo",
+      "cap-shell-main",
+      "cap-shell-more",
+      "cap-shell-more-list",
+      "cap-shell-more-name",
+      "cap-shell-page",
+      "cap-shell-rail",
+      "cap-shell-railbtn",
+      "cap-shell-settings",
+      "cap-shell-spacer",
+      "cap-shell-tabs",
+      "cap-shell-toggle",
+      "cap-shell-top"
+    ],
+    "parts": [
+      "cap-shell-actions",
+      "cap-shell-badge",
+      "cap-shell-brand",
+      "cap-shell-count",
+      "cap-shell-foot",
+      "cap-shell-group",
+      "cap-shell-group-label",
+      "cap-shell-hint",
+      "cap-shell-icon",
+      "cap-shell-label",
+      "cap-shell-linkish",
+      "cap-shell-logo",
+      "cap-shell-main",
+      "cap-shell-more",
+      "cap-shell-more-list",
+      "cap-shell-more-name",
+      "cap-shell-page",
+      "cap-shell-rail",
+      "cap-shell-railbtn",
+      "cap-shell-settings",
+      "cap-shell-spacer",
+      "cap-shell-tabs",
+      "cap-shell-toggle",
+      "cap-shell-top"
+    ],
+    "variants": {
+      "data-hide": [
+        "phone"
+      ],
+      "data-rail": [
+        "collapsed"
+      ],
+      "data-tip": [
+        "hidden"
+      ],
+      "data-tone": [
+        "crit",
+        "warn"
+      ]
+    },
+    "states": [
+      ":active",
+      ":empty",
+      ":focus",
+      ":focus-visible",
+      ":hover",
+      "[aria-current=\"page\"]",
+      "[aria-current=\"true\"]",
+      "[aria-current]"
+    ],
+    "vars": []
+  },
+  "shortcuts": {
+    "root": "cap-kbd",
+    "classes": [
+      "cap-kbd",
+      "cap-kbd-group",
+      "cap-keys-about",
+      "cap-keys-body",
+      "cap-keys-foot",
+      "cap-keys-group",
+      "cap-keys-group-title",
+      "cap-keys-list",
+      "cap-keys-note"
+    ],
+    "parts": [
+      "cap-kbd-group"
+    ],
+    "variants": {},
+    "states": [],
+    "vars": []
+  },
+  "site-footer": {
+    "root": "cap-site-footer",
+    "classes": [
+      "cap-site-footer",
+      "cap-site-footer-links",
+      "cap-site-footer-note"
+    ],
+    "parts": [
+      "cap-site-footer-links",
+      "cap-site-footer-note"
+    ],
+    "variants": {
+      "data-links": [
+        "quiet"
+      ],
+      "data-tone": [
+        "raised"
+      ]
+    },
+    "states": [
+      ":hover"
+    ],
+    "vars": [
+      {
+        "name": "--site-footer-bg",
+        "default": "var(--raised)"
+      },
+      {
+        "name": "--site-footer-fs",
+        "default": "var(--fs-detail)"
+      },
+      {
+        "name": "--site-footer-gap",
+        "default": "0"
+      },
+      {
+        "name": "--site-footer-pad",
+        "default": "calc(var(--space-7) + var(--space-3))"
+      }
+    ]
+  },
+  "site-header": {
+    "root": "cap-site-header",
+    "classes": [
+      "cap-site-header",
+      "cap-site-header-account",
+      "cap-site-header-agency",
+      "cap-site-header-app",
+      "cap-site-header-avatar",
+      "cap-site-header-avatar-image",
+      "cap-site-header-badge",
+      "cap-site-header-chev",
+      "cap-site-header-count",
+      "cap-site-header-cta",
+      "cap-site-header-extras",
+      "cap-site-header-form",
+      "cap-site-header-ground",
+      "cap-site-header-icon",
+      "cap-site-header-initials",
+      "cap-site-header-link",
+      "cap-site-header-logo",
+      "cap-site-header-mark",
+      "cap-site-header-menu",
+      "cap-site-header-name",
+      "cap-site-header-names",
+      "cap-site-header-panel",
+      "cap-site-header-panel-label",
+      "cap-site-header-panel-list",
+      "cap-site-header-result-all",
+      "cap-site-header-result-detail",
+      "cap-site-header-result-kind",
+      "cap-site-header-result-title",
+      "cap-site-header-results",
+      "cap-site-header-results-empty",
+      "cap-site-header-sections",
+      "cap-site-header-sep",
+      "cap-site-header-sheet",
+      "cap-site-header-sheet-account",
+      "cap-site-header-sheet-cta",
+      "cap-site-header-sheet-icon",
+      "cap-site-header-sheet-label",
+      "cap-site-header-sheet-list",
+      "cap-site-header-sheet-name",
+      "cap-site-header-sheet-title",
+      "cap-site-header-signin",
+      "cap-site-header-signin-text",
+      "cap-site-header-skip",
+      "cap-site-header-switch",
+      "cap-site-header-switch-tile",
+      "cap-site-header-switcher",
+      "cap-site-header-theme",
+      "cap-site-header-tools",
+      "cap-site-header-trail",
+      "cap-site-header-view",
+      "cap-site-header-who"
+    ],
+    "parts": [
+      "cap-site-header-account",
+      "cap-site-header-agency",
+      "cap-site-header-app",
+      "cap-site-header-avatar",
+      "cap-site-header-avatar-image",
+      "cap-site-header-badge",
+      "cap-site-header-chev",
+      "cap-site-header-count",
+      "cap-site-header-cta",
+      "cap-site-header-extras",
+      "cap-site-header-form",
+      "cap-site-header-ground",
+      "cap-site-header-icon",
+      "cap-site-header-initials",
+      "cap-site-header-link",
+      "cap-site-header-logo",
+      "cap-site-header-mark",
+      "cap-site-header-menu",
+      "cap-site-header-name",
+      "cap-site-header-names",
+      "cap-site-header-panel",
+      "cap-site-header-panel-label",
+      "cap-site-header-panel-list",
+      "cap-site-header-result-all",
+      "cap-site-header-result-detail",
+      "cap-site-header-result-kind",
+      "cap-site-header-result-title",
+      "cap-site-header-results",
+      "cap-site-header-results-empty",
+      "cap-site-header-sections",
+      "cap-site-header-sep",
+      "cap-site-header-sheet",
+      "cap-site-header-sheet-account",
+      "cap-site-header-sheet-cta",
+      "cap-site-header-sheet-icon",
+      "cap-site-header-sheet-label",
+      "cap-site-header-sheet-list",
+      "cap-site-header-sheet-name",
+      "cap-site-header-sheet-title",
+      "cap-site-header-signin",
+      "cap-site-header-signin-text",
+      "cap-site-header-skip",
+      "cap-site-header-switch",
+      "cap-site-header-switch-tile",
+      "cap-site-header-switcher",
+      "cap-site-header-theme",
+      "cap-site-header-tools",
+      "cap-site-header-trail",
+      "cap-site-header-view",
+      "cap-site-header-who"
+    ],
+    "variants": {
+      "data-align": [
+        "end"
+      ],
+      "data-band": [
+        "dark"
+      ],
+      "data-collapse": [
+        "lg"
+      ],
+      "data-current": [],
+      "data-highlighted": [],
+      "data-links": [
+        "center",
+        "right"
+      ],
+      "data-logo-fill": [
+        "on"
+      ],
+      "data-phone": [
+        "bar"
+      ],
+      "data-placed-by": [],
+      "data-rest": [
+        "clear"
+      ],
+      "data-scrolled": [],
+      "data-sheet-icons": [
+        "auto"
+      ],
+      "data-size": [
+        "wide"
+      ],
+      "data-sticky": [
+        "false"
+      ],
+      "data-translucent": [],
+      "data-variant": [
+        "letterhead"
+      ]
+    },
+    "states": [
+      ":empty",
+      ":focus",
+      ":focus-visible",
+      ":focus-within",
+      ":hover",
+      ":popover-open",
+      "[aria-current=\"page\"]",
+      "[aria-current=\"true\"]",
+      "[aria-current]",
+      "[aria-expanded=\"true\"]"
+    ],
+    "vars": [
+      {
+        "name": "--_bubble",
+        "default": "var(--space-5)"
+      },
+      {
+        "name": "--cap-popover-x",
+        "default": "0px"
+      },
+      {
+        "name": "--cap-popover-y",
+        "default": "0px"
+      },
+      {
+        "name": "--header-accent",
+        "default": "var(--accent)"
+      },
+      {
+        "name": "--header-avatar",
+        "default": "var(--accent-12)"
+      },
+      {
+        "name": "--header-avatar-fg",
+        "default": "var(--ground)"
+      },
+      {
+        "name": "--header-bg",
+        "default": "var(--ground)"
+      },
+      {
+        "name": "--header-blur",
+        "default": "12px"
+      },
+      {
+        "name": "--header-chev-size",
+        "default": "var(--fs-small)"
+      },
+      {
+        "name": "--header-cta",
+        "default": "var(--primary)"
+      },
+      {
+        "name": "--header-cta-fg",
+        "default": "var(--primary-fg)"
+      },
+      {
+        "name": "--header-cta-order",
+        "default": "0"
+      },
+      {
+        "name": "--header-edge",
+        "default": "var(--header-line)"
+      },
+      {
+        "name": "--header-fg",
+        "default": "var(--text)"
+      },
+      {
+        "name": "--header-fg-muted",
+        "default": "var(--muted)"
+      },
+      {
+        "name": "--header-fs",
+        "default": "var(--fs-body)"
+      },
+      {
+        "name": "--header-hover",
+        "default": "color-mix(in srgb, var(--header-bg), var(--header-fg) 12%)"
+      },
+      {
+        "name": "--header-icon-bg",
+        "default": "none"
+      },
+      {
+        "name": "--header-icon-glyph",
+        "default": "18px"
+      },
+      {
+        "name": "--header-icon-size",
+        "default": "36px"
+      },
+      {
+        "name": "--header-icon-stroke",
+        "default": "1.6"
+      },
+      {
+        "name": "--header-inset",
+        "default": "max(var(--header-side), (100% - var(--header-max-inline-size)) / 2 + var(--header-side))"
+      },
+      {
+        "name": "--header-line",
+        "default": "var(--line)"
+      },
+      {
+        "name": "--header-link-current-weight",
+        "default": "var(--weight-medium)"
+      },
+      {
+        "name": "--header-link-gap",
+        "default": "var(--space-2)"
+      },
+      {
+        "name": "--header-link-pad",
+        "default": "0"
+      },
+      {
+        "name": "--header-link-weight",
+        "default": "var(--weight-regular)"
+      },
+      {
+        "name": "--header-links-gap",
+        "default": "20px"
+      },
+      {
+        "name": "--header-max-inline-size",
+        "default": "100%"
+      },
+      {
+        "name": "--header-menu-bg",
+        "default": "var(--header-icon-bg, none)"
+      },
+      {
+        "name": "--header-menu-glyph",
+        "default": "var(--header-icon-glyph, 18px)"
+      },
+      {
+        "name": "--header-menu-line",
+        "default": "var(--header-line)"
+      },
+      {
+        "name": "--header-menu-size",
+        "default": "var(--header-icon-size, 36px)"
+      },
+      {
+        "name": "--header-names",
+        "default": "19.75rem"
+      },
+      {
+        "name": "--header-panel-w",
+        "default": "40rem"
+      },
+      {
+        "name": "--header-row",
+        "default": "4rem"
+      },
+      {
+        "name": "--header-row-2",
+        "default": "3rem"
+      },
+      {
+        "name": "--header-scrolled-edge",
+        "default": "var(--header-edge)"
+      },
+      {
+        "name": "--header-scrolled-mix",
+        "default": "var(--header-translucent-mix)"
+      },
+      {
+        "name": "--header-scrolled-shadow",
+        "default": "none"
+      },
+      {
+        "name": "--header-sep",
+        "default": "block"
+      },
+      {
+        "name": "--header-sheet-label-case",
+        "default": "none"
+      },
+      {
+        "name": "--header-sheet-label-fs",
+        "default": "var(--fs-detail)"
+      },
+      {
+        "name": "--header-sheet-label-ink",
+        "default": "var(--muted)"
+      },
+      {
+        "name": "--header-sheet-label-tracking",
+        "default": "normal"
+      },
+      {
+        "name": "--header-sheet-label-weight",
+        "default": "var(--weight-medium)"
+      },
+      {
+        "name": "--header-sheet-row-fs",
+        "default": "var(--fs-body)"
+      },
+      {
+        "name": "--header-sheet-row-h",
+        "default": "max(var(--control), var(--target))"
+      },
+      {
+        "name": "--header-side",
+        "default": "var(--space-6)"
+      },
+      {
+        "name": "--header-slot",
+        "default": "calc(36px + var(--space-4))"
+      },
+      {
+        "name": "--header-stripe",
+        "default": "var(--space-3)"
+      },
+      {
+        "name": "--header-theme-order",
+        "default": "0"
+      },
+      {
+        "name": "--header-tools-gap",
+        "default": "var(--space-3)"
+      },
+      {
+        "name": "--header-translucent-mix",
+        "default": "85%"
+      }
+    ]
+  },
+  "site-header-frame": {
+    "root": "cap-site-header",
+    "classes": [],
+    "parts": [],
+    "variants": {
+      "data-align": [
+        "end"
+      ],
+      "data-band": [
+        "dark"
+      ],
+      "data-collapse": [
+        "lg"
+      ],
+      "data-current": [],
+      "data-links": [
+        "center",
+        "right"
+      ],
+      "data-logo-fill": [
+        "on"
+      ],
+      "data-phone": [
+        "bar"
+      ],
+      "data-placed-by": [],
+      "data-rest": [
+        "clear"
+      ],
+      "data-scrolled": [],
+      "data-sheet-icons": [
+        "auto"
+      ],
+      "data-size": [
+        "wide"
+      ],
+      "data-sticky": [
+        "false"
+      ],
+      "data-translucent": []
+    },
+    "states": [
+      ":empty",
+      ":focus",
+      ":focus-visible",
+      ":hover",
+      ":popover-open",
+      "[aria-current=\"page\"]",
+      "[aria-current=\"true\"]",
+      "[aria-current]",
+      "[aria-expanded=\"true\"]"
+    ],
+    "vars": [
+      {
+        "name": "--_bubble",
+        "default": "var(--space-5)"
+      },
+      {
+        "name": "--cap-popover-x",
+        "default": "0px"
+      },
+      {
+        "name": "--cap-popover-y",
+        "default": "0px"
+      },
+      {
+        "name": "--header-accent",
+        "default": "var(--accent)"
+      },
+      {
+        "name": "--header-avatar",
+        "default": "var(--accent-12)"
+      },
+      {
+        "name": "--header-avatar-fg",
+        "default": "var(--ground)"
+      },
+      {
+        "name": "--header-bg",
+        "default": "var(--ground)"
+      },
+      {
+        "name": "--header-blur",
+        "default": "12px"
+      },
+      {
+        "name": "--header-chev-size",
+        "default": "var(--fs-small)"
+      },
+      {
+        "name": "--header-cta",
+        "default": "var(--primary)"
+      },
+      {
+        "name": "--header-cta-fg",
+        "default": "var(--primary-fg)"
+      },
+      {
+        "name": "--header-cta-order",
+        "default": "0"
+      },
+      {
+        "name": "--header-edge",
+        "default": "var(--header-line)"
+      },
+      {
+        "name": "--header-fg",
+        "default": "var(--text)"
+      },
+      {
+        "name": "--header-fg-muted",
+        "default": "var(--muted)"
+      },
+      {
+        "name": "--header-fs",
+        "default": "var(--fs-body)"
+      },
+      {
+        "name": "--header-hover",
+        "default": "color-mix(in srgb, var(--header-bg), var(--header-fg) 12%)"
+      },
+      {
+        "name": "--header-icon-bg",
+        "default": "none"
+      },
+      {
+        "name": "--header-icon-glyph",
+        "default": "18px"
+      },
+      {
+        "name": "--header-icon-size",
+        "default": "36px"
+      },
+      {
+        "name": "--header-icon-stroke",
+        "default": "1.6"
+      },
+      {
+        "name": "--header-inset",
+        "default": "max(var(--header-side), (100% - var(--header-max-inline-size)) / 2 + var(--header-side))"
+      },
+      {
+        "name": "--header-line",
+        "default": "var(--line)"
+      },
+      {
+        "name": "--header-link-current-weight",
+        "default": "var(--weight-medium)"
+      },
+      {
+        "name": "--header-link-gap",
+        "default": "var(--space-2)"
+      },
+      {
+        "name": "--header-link-pad",
+        "default": "0"
+      },
+      {
+        "name": "--header-link-weight",
+        "default": "var(--weight-regular)"
+      },
+      {
+        "name": "--header-links-gap",
+        "default": "20px"
+      },
+      {
+        "name": "--header-max-inline-size",
+        "default": "100%"
+      },
+      {
+        "name": "--header-menu-bg",
+        "default": "var(--header-icon-bg, none)"
+      },
+      {
+        "name": "--header-menu-glyph",
+        "default": "var(--header-icon-glyph, 18px)"
+      },
+      {
+        "name": "--header-menu-line",
+        "default": "var(--header-line)"
+      },
+      {
+        "name": "--header-menu-size",
+        "default": "var(--header-icon-size, 36px)"
+      },
+      {
+        "name": "--header-panel-w",
+        "default": "40rem"
+      },
+      {
+        "name": "--header-scrolled-edge",
+        "default": "var(--header-edge)"
+      },
+      {
+        "name": "--header-scrolled-mix",
+        "default": "var(--header-translucent-mix)"
+      },
+      {
+        "name": "--header-scrolled-shadow",
+        "default": "none"
+      },
+      {
+        "name": "--header-sep",
+        "default": "block"
+      },
+      {
+        "name": "--header-sheet-label-case",
+        "default": "none"
+      },
+      {
+        "name": "--header-sheet-label-fs",
+        "default": "var(--fs-detail)"
+      },
+      {
+        "name": "--header-sheet-label-ink",
+        "default": "var(--muted)"
+      },
+      {
+        "name": "--header-sheet-label-tracking",
+        "default": "normal"
+      },
+      {
+        "name": "--header-sheet-label-weight",
+        "default": "var(--weight-medium)"
+      },
+      {
+        "name": "--header-sheet-row-fs",
+        "default": "var(--fs-body)"
+      },
+      {
+        "name": "--header-sheet-row-h",
+        "default": "max(var(--control), var(--target))"
+      },
+      {
+        "name": "--header-side",
+        "default": "var(--space-6)"
+      },
+      {
+        "name": "--header-theme-order",
+        "default": "0"
+      },
+      {
+        "name": "--header-tools-gap",
+        "default": "var(--space-3)"
+      },
+      {
+        "name": "--header-translucent-mix",
+        "default": "85%"
+      }
+    ]
+  },
+  "site-header-letterhead": {
+    "root": "cap-site-header",
+    "classes": [],
+    "parts": [],
+    "variants": {
+      "data-current": [],
+      "data-variant": [
+        "letterhead"
+      ]
+    },
+    "states": [
+      ":empty",
+      ":hover",
+      "[aria-current=\"page\"]"
+    ],
+    "vars": [
+      {
+        "name": "--header-accent",
+        "default": "var(--header-fg)"
+      },
+      {
+        "name": "--header-avatar",
+        "default": "var(--header-fg)"
+      },
+      {
+        "name": "--header-avatar-fg",
+        "default": "var(--header-bg)"
+      },
+      {
+        "name": "--header-bg",
+        "default": "var(--text)"
+      },
+      {
+        "name": "--header-fg",
+        "default": "var(--ground)"
+      },
+      {
+        "name": "--header-fg-muted",
+        "default": "color-mix(in srgb, var(--header-fg) 78%, var(--header-bg))"
+      },
+      {
+        "name": "--header-hover",
+        "default": "color-mix(in srgb, var(--header-bg), var(--header-fg) 14%)"
+      },
+      {
+        "name": "--header-line",
+        "default": "color-mix(in srgb, var(--header-fg) 26%, var(--header-bg))"
+      },
+      {
+        "name": "--header-names",
+        "default": "19.75rem"
+      },
+      {
+        "name": "--header-row",
+        "default": "4rem"
+      },
+      {
+        "name": "--header-row-2",
+        "default": "3rem"
+      },
+      {
+        "name": "--header-side",
+        "default": ""
+      },
+      {
+        "name": "--header-slot",
+        "default": "calc(36px + var(--space-4))"
+      },
+      {
+        "name": "--header-stripe",
+        "default": "var(--space-3)"
+      }
+    ]
+  },
+  "site-header-search": {
+    "root": "cap-site-header-search",
+    "classes": [
+      "cap-site-header-search",
+      "cap-site-header-search-panel"
+    ],
+    "parts": [
+      "cap-site-header-search-panel"
+    ],
+    "variants": {
+      "data-highlighted": []
+    },
+    "states": [
+      ":focus-visible",
+      ":focus-within",
+      ":hover"
+    ],
+    "vars": [
+      {
+        "name": "--cap-popover-x",
+        "default": "0px"
+      },
+      {
+        "name": "--cap-popover-y",
+        "default": "0px"
+      }
+    ]
+  },
+  "skeleton": {
+    "root": "cap-skeleton",
+    "classes": [
+      "cap-skeleton",
+      "cap-skeleton-block",
+      "cap-skeleton-line",
+      "cap-spinner",
+      "cap-spinner-arc",
+      "cap-spinner-label"
+    ],
+    "parts": [
+      "cap-skeleton-block",
+      "cap-skeleton-line"
+    ],
+    "variants": {
+      "data-label": [
+        "hidden"
+      ],
+      "data-layout": [
+        "page"
+      ],
+      "data-shape": [
+        "card",
+        "circle"
+      ],
+      "data-size": [
+        "lg",
+        "sm"
+      ]
+    },
+    "states": [],
+    "vars": []
+  },
+  "sortable-list": {
+    "root": "cap-sortable",
+    "classes": [
+      "cap-sortable",
+      "cap-sortable-board",
+      "cap-sortable-body",
+      "cap-sortable-detail",
+      "cap-sortable-empty",
+      "cap-sortable-foot",
+      "cap-sortable-handle",
+      "cap-sortable-head",
+      "cap-sortable-item",
+      "cap-sortable-label",
+      "cap-sortable-lane",
+      "cap-sortable-steps"
+    ],
+    "parts": [
+      "cap-sortable-board",
+      "cap-sortable-body",
+      "cap-sortable-detail",
+      "cap-sortable-empty",
+      "cap-sortable-foot",
+      "cap-sortable-handle",
+      "cap-sortable-head",
+      "cap-sortable-item",
+      "cap-sortable-label",
+      "cap-sortable-lane",
+      "cap-sortable-steps"
+    ],
+    "variants": {
+      "data-cap-part": [
+        "add",
+        "remove"
+      ],
+      "data-dragging": [],
+      "data-has-head": [],
+      "data-layout": [
+        "cards",
+        "stack"
+      ],
+      "data-lifted": [],
+      "data-readonly": [],
+      "data-sorting": []
+    },
+    "states": [
+      ":disabled",
+      ":focus-visible",
+      ":hover",
+      "[aria-pressed=\"true\"]"
+    ],
+    "vars": [
+      {
+        "name": "--cap-btn-fs",
+        "default": ""
+      },
+      {
+        "name": "--sortable-add-gap",
+        "default": "var(--space-3)"
+      },
+      {
+        "name": "--sortable-body-basis",
+        "default": "auto"
+      },
+      {
+        "name": "--sortable-body-pad-inline",
+        "default": "calc(var(--pad-card) - var(--space-2))"
+      },
+      {
+        "name": "--sortable-card-pad",
+        "default": "var(--space-2) var(--space-2) var(--pad-card)"
+      },
+      {
+        "name": "--sortable-card-radius",
+        "default": "var(--radius-l)"
+      },
+      {
+        "name": "--sortable-empty-border",
+        "default": "var(--line-w) dashed var(--line-strong)"
+      },
+      {
+        "name": "--sortable-empty-pad",
+        "default": "var(--space-4)"
+      },
+      {
+        "name": "--sortable-foot-gap",
+        "default": "var(--sortable-item-gap, var(--space-2))"
+      },
+      {
+        "name": "--sortable-gap",
+        "default": "var(--space-2)"
+      },
+      {
+        "name": "--sortable-item-align",
+        "default": "center"
+      },
+      {
+        "name": "--sortable-item-bg",
+        "default": "var(--surface)"
+      },
+      {
+        "name": "--sortable-item-border",
+        "default": "var(--line-w) solid var(--line)"
+      },
+      {
+        "name": "--sortable-item-gap",
+        "default": "var(--space-2)"
+      },
+      {
+        "name": "--sortable-item-pad",
+        "default": "var(--space-1)"
+      },
+      {
+        "name": "--sortable-item-radius",
+        "default": "var(--radius-m)"
+      },
+      {
+        "name": "--sortable-item-wrap",
+        "default": "nowrap"
+      },
+      {
+        "name": "--sortable-lane-bg",
+        "default": "none"
+      },
+      {
+        "name": "--sortable-lane-border",
+        "default": "0"
+      },
+      {
+        "name": "--sortable-lane-pad",
+        "default": "0"
+      },
+      {
+        "name": "--sortable-lane-radius",
+        "default": "0"
+      },
+      {
+        "name": "--sortable-remove-fs",
+        "default": "var(--cap-btn-fs)"
+      },
+      {
+        "name": "--sortable-remove-hover-ink",
+        "default": "var(--text)"
+      },
+      {
+        "name": "--sortable-remove-ink",
+        "default": "var(--sortable-step-ink, var(--muted))"
+      },
+      {
+        "name": "--sortable-remove-pad-inline",
+        "default": "calc(var(--pad-x) - 1px)"
+      },
+      {
+        "name": "--sortable-remove-weight",
+        "default": "var(--weight-medium)"
+      },
+      {
+        "name": "--sortable-step-ink",
+        "default": "var(--muted)"
+      },
+      {
+        "name": "--sortable-steps-gap",
+        "default": "var(--space-1)"
+      }
+    ]
+  },
+  "source-line": {
+    "root": "cap-source-line",
+    "classes": [
+      "cap-source-line"
+    ],
+    "parts": [],
+    "variants": {},
+    "states": [
+      ":hover"
+    ],
+    "vars": []
+  },
+  "sources-list": {
+    "root": "cap-sources",
+    "classes": [
+      "cap-source",
+      "cap-source-kind",
+      "cap-source-license",
+      "cap-source-note",
+      "cap-source-title",
+      "cap-sources"
+    ],
+    "parts": [],
+    "variants": {
+      "data-link": []
+    },
+    "states": [
+      ":visited"
+    ],
+    "vars": [
+      {
+        "name": "--cap-source-kind-pad",
+        "default": "1px var(--space-2)"
+      }
+    ]
+  },
+  "split": {
+    "root": "cap-split",
+    "classes": [
+      "cap-split",
+      "cap-split-head",
+      "cap-split-media",
+      "cap-split-text"
+    ],
+    "parts": [
+      "cap-split-head",
+      "cap-split-media",
+      "cap-split-text"
+    ],
+    "variants": {
+      "data-flip": [],
+      "data-list": [
+        "names"
+      ]
+    },
+    "states": [],
+    "vars": []
+  },
+  "stat-tile": {
+    "root": "cap-tiles",
+    "classes": [
+      "cap-tile",
+      "cap-tile-chart",
+      "cap-tile-detail",
+      "cap-tile-figure",
+      "cap-tile-icon",
+      "cap-tile-label",
+      "cap-tile-line",
+      "cap-tile-word",
+      "cap-tiles",
+      "cap-tiles-list"
+    ],
+    "parts": [
+      "cap-tiles-list"
+    ],
+    "variants": {
+      "data-layout": [
+        "grid"
+      ],
+      "data-size": [
+        "lg"
+      ],
+      "data-tone": [
+        "accent",
+        "crit",
+        "nodata",
+        "ok",
+        "warn"
+      ],
+      "data-variant": [
+        "static"
+      ]
+    },
+    "states": [
+      ":active",
+      ":focus-visible",
+      ":hover"
+    ],
+    "vars": [
+      {
+        "name": "--tile-align",
+        "default": "start"
+      },
+      {
+        "name": "--tile-detail-space",
+        "default": "var(--tile-gap, var(--space-2))"
+      },
+      {
+        "name": "--tile-figure-face",
+        "default": "inherit"
+      },
+      {
+        "name": "--tile-figure-size",
+        "default": "var(--fs-h3)"
+      },
+      {
+        "name": "--tile-figure-weight",
+        "default": "var(--weight-semibold)"
+      },
+      {
+        "name": "--tile-gap",
+        "default": "var(--space-2)"
+      },
+      {
+        "name": "--tile-icon-align",
+        "default": "center"
+      },
+      {
+        "name": "--tile-icon-flow",
+        "default": "row"
+      },
+      {
+        "name": "--tile-icon-size",
+        "default": "1.15em"
+      },
+      {
+        "name": "--tile-label-case",
+        "default": "none"
+      },
+      {
+        "name": "--tile-label-face",
+        "default": "inherit"
+      },
+      {
+        "name": "--tile-label-size",
+        "default": "var(--fs-detail)"
+      },
+      {
+        "name": "--tile-label-tracking",
+        "default": "normal"
+      },
+      {
+        "name": "--tile-label-weight",
+        "default": "inherit"
+      },
+      {
+        "name": "--tile-pad",
+        "default": "var(--pad-card)"
+      },
+      {
+        "name": "--tile-radius",
+        "default": "var(--radius-l)"
+      },
+      {
+        "name": "--tile-shadow",
+        "default": "none"
+      },
+      {
+        "name": "--tiles-columns",
+        "default": "repeat(auto-fit, minmax(min(100%, 11rem), 1fr))"
+      },
+      {
+        "name": "--tiles-gap",
+        "default": "var(--space-3)"
+      }
+    ]
+  },
+  "status": {
+    "root": "cap-status",
+    "classes": [
+      "cap-badge",
+      "cap-pill-dot",
+      "cap-status",
+      "cap-status-glyph",
+      "cap-status-reason"
+    ],
+    "parts": [
+      "cap-status-glyph",
+      "cap-status-reason"
+    ],
+    "variants": {
+      "data-series": [
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8"
+      ],
+      "data-tone": [
+        "crit",
+        "info",
+        "muted",
+        "nodata",
+        "ok",
+        "warn"
+      ],
+      "data-variant": [
+        "accent",
+        "default",
+        "destructive",
+        "ghost",
+        "link",
+        "outline",
+        "secondary",
+        "tag"
+      ],
+      "data-wrap": []
+    },
+    "states": [
+      ":disabled",
+      ":focus-visible",
+      ":hover",
+      "[aria-disabled=\"true\"]"
+    ],
+    "vars": [
+      {
+        "name": "--_bg",
+        "default": "var(--nodata-soft)"
+      },
+      {
+        "name": "--_fg",
+        "default": "var(--muted)"
+      },
+      {
+        "name": "--_line",
+        "default": "transparent"
+      },
+      {
+        "name": "--tag-case",
+        "default": "none"
+      },
+      {
+        "name": "--tag-edge",
+        "default": "45%"
+      },
+      {
+        "name": "--tag-face",
+        "default": "inherit"
+      },
+      {
+        "name": "--tag-size",
+        "default": "var(--fs-detail)"
+      },
+      {
+        "name": "--tag-tracking",
+        "default": "normal"
+      },
+      {
+        "name": "--tag-weight",
+        "default": "var(--weight-semibold)"
+      }
+    ]
+  },
+  "status-mark": {
+    "root": "cap-status-mark",
+    "classes": [
+      "cap-result",
+      "cap-result-actions",
+      "cap-result-body",
+      "cap-result-text",
+      "cap-result-title",
+      "cap-status-mark"
+    ],
+    "parts": [],
+    "variants": {
+      "data-tone": [
+        "crit",
+        "info",
+        "ok",
+        "warn"
+      ]
+    },
+    "states": [
+      ":focus"
+    ],
+    "vars": [
+      {
+        "name": "--tone",
+        "default": "var(--ok)"
+      },
+      {
+        "name": "--tone-soft",
+        "default": "var(--ok-soft)"
+      }
+    ]
+  },
+  "status-matrix": {
+    "root": "cap-matrix",
+    "classes": [
+      "cap-matrix",
+      "cap-matrix-key",
+      "cap-matrix-mark",
+      "cap-matrix-none"
+    ],
+    "parts": [
+      "cap-matrix-key",
+      "cap-matrix-mark",
+      "cap-matrix-none"
+    ],
+    "variants": {},
+    "states": [],
+    "vars": []
+  },
+  "step-indicator": {
+    "root": "cap-steps",
+    "classes": [
+      "cap-step",
+      "cap-step-dot",
+      "cap-step-meta",
+      "cap-step-name",
+      "cap-step-number",
+      "cap-steps",
+      "cap-steps-counter",
+      "cap-steps-heading",
+      "cap-steps-list"
+    ],
+    "parts": [
+      "cap-steps-counter",
+      "cap-steps-heading",
+      "cap-steps-list"
+    ],
+    "variants": {
+      "data-state": [
+        "complete"
+      ],
+      "data-variant": [
+        "inline",
+        "ordered",
+        "stations"
+      ]
+    },
+    "states": [
+      "[aria-current=\"step\"]"
+    ],
+    "vars": []
+  },
+  "subscribe-links": {
+    "root": "cap-subscribe",
+    "classes": [
+      "cap-subscribe",
+      "cap-subscribe-link",
+      "cap-subscribe-list",
+      "cap-subscribe-more",
+      "cap-subscribe-title"
+    ],
+    "parts": [
+      "cap-subscribe-link",
+      "cap-subscribe-list",
+      "cap-subscribe-more",
+      "cap-subscribe-title"
+    ],
+    "variants": {},
+    "states": [
+      ":hover"
+    ],
+    "vars": []
+  },
+  "summary-list": {
+    "root": "cap-summary-list",
+    "classes": [
+      "cap-detail-record",
+      "cap-summary-actions",
+      "cap-summary-list",
+      "cap-summary-missing"
+    ],
+    "parts": [],
+    "variants": {},
+    "states": [],
+    "vars": []
+  },
+  "switch": {
+    "root": "cap-switch",
+    "classes": [
+      "cap-switch",
+      "cap-switch-state"
+    ],
+    "parts": [
+      "cap-switch-state"
+    ],
+    "variants": {
+      "data-size": [
+        "sm"
+      ]
+    },
+    "states": [
+      ":checked",
+      ":disabled",
+      ":focus-visible",
+      ":hover",
+      "[aria-busy=\"true\"]",
+      "[aria-invalid=\"true\"]"
+    ],
+    "vars": [
+      {
+        "name": "--cap-sw-h",
+        "default": "20px"
+      },
+      {
+        "name": "--cap-sw-thumb",
+        "default": "14px"
+      },
+      {
+        "name": "--cap-sw-w",
+        "default": "36px"
+      }
+    ]
+  },
+  "switch-reason": {
+    "root": "cap-switch-reason",
+    "classes": [
+      "cap-switch-reason",
+      "cap-switch-reason-actions",
+      "cap-switch-reason-form",
+      "cap-switch-reason-keys",
+      "cap-switch-reason-label",
+      "cap-switch-reason-note"
+    ],
+    "parts": [
+      "cap-switch-reason-actions",
+      "cap-switch-reason-form",
+      "cap-switch-reason-keys",
+      "cap-switch-reason-label",
+      "cap-switch-reason-note"
+    ],
+    "variants": {},
+    "states": [
+      "[hidden]"
+    ],
+    "vars": []
+  },
+  "system-map": {
+    "root": "cap-system-map",
+    "classes": [
+      "cap-system-map",
+      "cap-system-map-caption",
+      "cap-system-map-card",
+      "cap-system-map-card-about",
+      "cap-system-map-card-domain",
+      "cap-system-map-card-full",
+      "cap-system-map-card-meta",
+      "cap-system-map-card-name",
+      "cap-system-map-card-private",
+      "cap-system-map-card-tie",
+      "cap-system-map-cards",
+      "cap-system-map-cell",
+      "cap-system-map-cell-name",
+      "cap-system-map-column",
+      "cap-system-map-column-name",
+      "cap-system-map-columns",
+      "cap-system-map-comb",
+      "cap-system-map-comb-cells",
+      "cap-system-map-comb-group",
+      "cap-system-map-detail",
+      "cap-system-map-flow",
+      "cap-system-map-flow-controls",
+      "cap-system-map-flow-name",
+      "cap-system-map-flow-status",
+      "cap-system-map-flow-text",
+      "cap-system-map-flows",
+      "cap-system-map-graph",
+      "cap-system-map-group-count",
+      "cap-system-map-group-name",
+      "cap-system-map-head",
+      "cap-system-map-hex",
+      "cap-system-map-lane",
+      "cap-system-map-network",
+      "cap-system-map-none",
+      "cap-system-map-part",
+      "cap-system-map-part-about",
+      "cap-system-map-part-full",
+      "cap-system-map-part-kind",
+      "cap-system-map-part-lines",
+      "cap-system-map-part-name",
+      "cap-system-map-parts",
+      "cap-system-map-place-name",
+      "cap-system-map-port",
+      "cap-system-map-steps",
+      "cap-system-map-switch",
+      "cap-system-map-tie",
+      "cap-system-map-tie-name",
+      "cap-system-map-tie-verbs",
+      "cap-system-map-ties",
+      "cap-system-map-title",
+      "cap-system-map-views",
+      "cap-system-map-wire",
+      "cap-system-map-wires"
+    ],
+    "parts": [
+      "cap-system-map-caption",
+      "cap-system-map-card",
+      "cap-system-map-card-about",
+      "cap-system-map-card-domain",
+      "cap-system-map-card-full",
+      "cap-system-map-card-meta",
+      "cap-system-map-card-name",
+      "cap-system-map-card-private",
+      "cap-system-map-card-tie",
+      "cap-system-map-cards",
+      "cap-system-map-cell",
+      "cap-system-map-cell-name",
+      "cap-system-map-column",
+      "cap-system-map-column-name",
+      "cap-system-map-columns",
+      "cap-system-map-comb",
+      "cap-system-map-comb-cells",
+      "cap-system-map-comb-group",
+      "cap-system-map-detail",
+      "cap-system-map-flow",
+      "cap-system-map-flow-controls",
+      "cap-system-map-flow-name",
+      "cap-system-map-flow-status",
+      "cap-system-map-flow-text",
+      "cap-system-map-flows",
+      "cap-system-map-graph",
+      "cap-system-map-group-count",
+      "cap-system-map-group-name",
+      "cap-system-map-head",
+      "cap-system-map-hex",
+      "cap-system-map-lane",
+      "cap-system-map-network",
+      "cap-system-map-none",
+      "cap-system-map-part",
+      "cap-system-map-part-about",
+      "cap-system-map-part-full",
+      "cap-system-map-part-kind",
+      "cap-system-map-part-lines",
+      "cap-system-map-part-name",
+      "cap-system-map-parts",
+      "cap-system-map-place-name",
+      "cap-system-map-port",
+      "cap-system-map-steps",
+      "cap-system-map-switch",
+      "cap-system-map-tie",
+      "cap-system-map-tie-name",
+      "cap-system-map-tie-verbs",
+      "cap-system-map-ties",
+      "cap-system-map-title",
+      "cap-system-map-views",
+      "cap-system-map-wire",
+      "cap-system-map-wires"
+    ],
+    "variants": {
+      "data-at": [],
+      "data-both": [],
+      "data-column": [
+        "inside"
+      ],
+      "data-level": [
+        "network"
+      ],
+      "data-link": [],
+      "data-lit": [],
+      "data-on": [],
+      "data-only": [],
+      "data-place": [
+        "outside",
+        "stores"
+      ],
+      "data-places": [
+        "2",
+        "3"
+      ],
+      "data-private": [],
+      "data-ring": [
+        "core",
+        "shared"
+      ],
+      "data-step": [],
+      "data-tie": [
+        "self"
+      ],
+      "data-wire": []
+    },
+    "states": [
+      ":empty",
+      ":focus-visible",
+      ":focus-within",
+      ":hover",
+      "[aria-current=\"step\"]",
+      "[hidden]"
+    ],
+    "vars": []
+  },
+  "table": {
+    "root": "cap-table",
+    "classes": [
+      "cap-table",
+      "cap-table-aside",
+      "cap-table-empty",
+      "cap-table-foot",
+      "cap-table-note",
+      "cap-table-open",
+      "cap-table-sort",
+      "cap-table-sort-down",
+      "cap-table-sort-up",
+      "cap-table-wrap"
+    ],
+    "parts": [
+      "cap-table-aside",
+      "cap-table-empty",
+      "cap-table-foot",
+      "cap-table-note",
+      "cap-table-open",
+      "cap-table-sort",
+      "cap-table-sort-down",
+      "cap-table-sort-up",
+      "cap-table-wrap"
+    ],
+    "variants": {
+      "data-caption": [
+        "bottom"
+      ],
+      "data-drop": [
+        "1"
+      ],
+      "data-label": [],
+      "data-num": [],
+      "data-reflow": [
+        "",
+        "medium",
+        "narrow",
+        "wide"
+      ],
+      "data-state": [
+        "selected"
+      ],
+      "data-sticky": [],
+      "data-wrap": []
+    },
+    "states": [
+      ":active",
+      ":focus-visible",
+      ":hover",
+      "[aria-expanded=\"true\"]",
+      "[aria-selected=\"true\"]",
+      "[aria-sort=\"ascending\"]",
+      "[aria-sort=\"descending\"]"
+    ],
+    "vars": [
+      {
+        "name": "--cap-table-max-h",
+        "default": "24rem"
+      }
+    ]
+  },
+  "tabs": {
+    "root": "cap-tabs",
+    "classes": [
+      "cap-tab",
+      "cap-tab-count",
+      "cap-tabs",
+      "cap-tabs-list",
+      "cap-tabs-panel",
+      "cap-tabs-panel-label"
+    ],
+    "parts": [
+      "cap-tabs-list",
+      "cap-tabs-panel",
+      "cap-tabs-panel-label"
+    ],
+    "variants": {
+      "data-dragging": [],
+      "data-fill": [],
+      "data-near": [],
+      "data-orientation": [
+        "vertical"
+      ],
+      "data-progressive": [],
+      "data-size": [
+        "lg",
+        "sm"
+      ],
+      "data-tone": [
+        "accent",
+        "crit",
+        "info",
+        "ok",
+        "warn"
+      ],
+      "data-variant": [
+        "line",
+        "pill"
+      ]
+    },
+    "states": [
+      ":disabled",
+      ":focus-visible",
+      ":hover",
+      ":visited",
+      "[aria-current=\"page\"]",
+      "[aria-disabled=\"true\"]",
+      "[aria-selected=\"true\"]",
+      "[hidden=\"until-found\"]",
+      "[hidden]"
+    ],
+    "vars": [
+      {
+        "name": "--_soft",
+        "default": "var(--cap-tab-mark, var(--surface))"
+      },
+      {
+        "name": "--_tone",
+        "default": "var(--accent)"
+      },
+      {
+        "name": "--cap-pill-end",
+        "default": ""
+      },
+      {
+        "name": "--cap-pill-start",
+        "default": ""
+      },
+      {
+        "name": "--cap-tab-fs",
+        "default": "var(--fs-body)"
+      },
+      {
+        "name": "--cap-tab-h",
+        "default": "max(var(--target), calc(var(--control) - 6px))"
+      },
+      {
+        "name": "--cap-tab-ink",
+        "default": "var(--text)"
+      },
+      {
+        "name": "--cap-tab-mark",
+        "default": "var(--surface)"
+      },
+      {
+        "name": "--cap-tab-mark-edge",
+        "default": "var(--_tone)"
+      },
+      {
+        "name": "--cap-tab-mark-radius",
+        "default": "var(--radius-full)"
+      },
+      {
+        "name": "--cap-tab-mark-shadow",
+        "default": "var(--shadow-xs)"
+      },
+      {
+        "name": "--cap-tab-min-inline-size",
+        "default": "var(--target)"
+      },
+      {
+        "name": "--cap-tab-tone",
+        "default": "var(--_tone)"
+      },
+      {
+        "name": "--cap-tab-weight",
+        "default": "var(--weight-medium)"
+      },
+      {
+        "name": "--cap-tabs-tray",
+        "default": "var(--sunken)"
+      },
+      {
+        "name": "--cap-tabs-tray-radius",
+        "default": "var(--radius-full)"
+      }
+    ]
+  },
+  "tag-group": {
+    "root": "cap-tags",
+    "classes": [
+      "cap-tag",
+      "cap-tag-remove",
+      "cap-tags",
+      "cap-tags-empty",
+      "cap-tags-label",
+      "cap-tags-list"
+    ],
+    "parts": [
+      "cap-tags-empty",
+      "cap-tags-label",
+      "cap-tags-list"
+    ],
+    "variants": {},
+    "states": [
+      ":focus-visible",
+      ":hover"
+    ],
+    "vars": []
+  },
+  "theme-switch": {
+    "root": "cap-theme",
+    "classes": [
+      "cap-theme",
+      "cap-theme-button",
+      "cap-theme-form",
+      "cap-theme-icon",
+      "cap-theme-options",
+      "cap-theme-text"
+    ],
+    "parts": [
+      "cap-theme-button",
+      "cap-theme-form",
+      "cap-theme-icon",
+      "cap-theme-options",
+      "cap-theme-text"
+    ],
+    "variants": {
+      "data-show": [
+        "dark",
+        "light"
+      ]
+    },
+    "states": [
+      ":checked",
+      ":disabled",
+      ":focus-visible",
+      ":hover"
+    ],
+    "vars": []
+  },
+  "time": {
+    "root": "cap-time",
+    "classes": [
+      "cap-time",
+      "cap-time-tip",
+      "cap-time-utc"
+    ],
+    "parts": [
+      "cap-time-tip",
+      "cap-time-utc"
+    ],
+    "variants": {
+      "data-format": [
+        "date",
+        "exact"
+      ],
+      "data-tone": [
+        "text"
+      ]
+    },
+    "states": [],
+    "vars": []
+  },
+  "timeline": {
+    "root": "cap-timeline",
+    "classes": [
+      "cap-timeline",
+      "cap-timeline-body",
+      "cap-timeline-icon",
+      "cap-timeline-node",
+      "cap-timeline-step",
+      "cap-timeline-text",
+      "cap-timeline-title"
+    ],
+    "parts": [
+      "cap-timeline-body",
+      "cap-timeline-icon",
+      "cap-timeline-node",
+      "cap-timeline-step",
+      "cap-timeline-text",
+      "cap-timeline-title"
+    ],
+    "variants": {
+      "data-cap-ready": [],
+      "data-shown": []
+    },
+    "states": [],
+    "vars": [
+      {
+        "name": "--cap-timeline-duration",
+        "default": "calc(var(--dur-slow) * 3)"
+      },
+      {
+        "name": "--cap-timeline-fill",
+        "default": "var(--primary)"
+      },
+      {
+        "name": "--cap-timeline-gap",
+        "default": "var(--space-7)"
+      },
+      {
+        "name": "--cap-timeline-node",
+        "default": "64px"
+      },
+      {
+        "name": "--cap-timeline-node-bg",
+        "default": "var(--surface)"
+      },
+      {
+        "name": "--cap-timeline-node-line",
+        "default": "var(--line-strong)"
+      },
+      {
+        "name": "--cap-timeline-track",
+        "default": "var(--line)"
+      }
+    ]
+  },
+  "toc": {
+    "root": "cap-toc",
+    "classes": [
+      "cap-toc",
+      "cap-toc-item",
+      "cap-toc-link",
+      "cap-toc-list",
+      "cap-toc-title"
+    ],
+    "parts": [
+      "cap-toc-item",
+      "cap-toc-link",
+      "cap-toc-list",
+      "cap-toc-title"
+    ],
+    "variants": {
+      "data-level": [
+        "3"
+      ],
+      "data-variant": [
+        "inline",
+        "sidebar"
+      ]
+    },
+    "states": [
+      ":hover",
+      "[aria-current=\"location\"]",
+      "[open]"
+    ],
+    "vars": []
+  },
+  "toolbar": {
+    "root": "cap-toolbar",
+    "classes": [
+      "cap-toolbar",
+      "cap-toolbar-sep"
+    ],
+    "parts": [
+      "cap-toolbar-sep"
+    ],
+    "variants": {},
+    "states": [
+      "[aria-orientation=\"vertical\"]",
+      "[aria-pressed=\"true\"]"
+    ],
+    "vars": [
+      {
+        "name": "--cap-btn-bg",
+        "default": "var(--accent-soft)"
+      },
+      {
+        "name": "--cap-btn-line",
+        "default": "var(--accent)"
+      }
+    ]
+  },
+  "tracks": {
+    "root": "cap-tracks",
+    "classes": [
+      "cap-rail-facts",
+      "cap-tracks"
+    ],
+    "parts": [],
+    "variants": {
+      "data-rail": [
+        "note",
+        "toc"
+      ],
+      "data-track": [
+        "rail",
+        "wide"
+      ]
+    },
+    "states": [],
+    "vars": [
+      {
+        "name": "--tracks-gap",
+        "default": "0rem"
+      },
+      {
+        "name": "--tracks-gap-w",
+        "default": "1.5rem"
+      },
+      {
+        "name": "--tracks-rail",
+        "default": "0rem"
+      },
+      {
+        "name": "--tracks-rail-w",
+        "default": "7.5rem"
+      }
+    ]
+  },
+  "tree": {
+    "root": "cap-tree",
+    "classes": [
+      "cap-tree",
+      "cap-tree-group",
+      "cap-tree-icon",
+      "cap-tree-label",
+      "cap-tree-meta",
+      "cap-tree-row",
+      "cap-tree-toggle"
+    ],
+    "parts": [
+      "cap-tree-group",
+      "cap-tree-icon",
+      "cap-tree-label",
+      "cap-tree-meta",
+      "cap-tree-row",
+      "cap-tree-toggle"
+    ],
+    "variants": {
+      "data-dragging": [],
+      "data-drop": [
+        "after",
+        "before",
+        "inside"
+      ],
+      "data-movable": [],
+      "data-sorting": [],
+      "data-variant": [
+        "surface"
+      ]
+    },
+    "states": [
+      ":focus-visible",
+      ":hover",
+      "[aria-current=\"page\"]",
+      "[aria-disabled=\"true\"]",
+      "[aria-expanded=\"true\"]",
+      "[aria-selected=\"true\"]",
+      "[hidden]"
+    ],
+    "vars": [
+      {
+        "name": "--tree-depth",
+        "default": "0"
+      },
+      {
+        "name": "--tree-indent",
+        "default": "calc(var(--space-5) + var(--space-1))"
+      }
+    ]
+  },
+  "trusted-html": {
+    "root": "cap-rich-text",
+    "classes": [
+      "cap-rich-text"
+    ],
+    "parts": [],
+    "variants": {
+      "data-measure": [
+        "text"
+      ]
+    },
+    "states": [],
+    "vars": []
+  },
+  "uptime-strip": {
+    "root": "cap-uptime-strip",
+    "classes": [
+      "cap-uptime-key",
+      "cap-uptime-legend",
+      "cap-uptime-line",
+      "cap-uptime-pct",
+      "cap-uptime-strip"
+    ],
+    "parts": [],
+    "variants": {
+      "data-key": [
+        "degraded",
+        "down",
+        "nodata"
+      ]
+    },
+    "states": [],
+    "vars": [
+      {
+        "name": "--_h",
+        "default": "66%"
+      },
+      {
+        "name": "--_key",
+        "default": "var(--warn)"
+      }
+    ]
+  },
+  "usage-meter": {
+    "root": "cap-usage",
+    "classes": [
+      "cap-usage",
+      "cap-usage-fresh",
+      "cap-usage-item",
+      "cap-usage-key",
+      "cap-usage-lead",
+      "cap-usage-legend",
+      "cap-usage-list",
+      "cap-usage-why"
+    ],
+    "parts": [
+      "cap-usage-fresh",
+      "cap-usage-item",
+      "cap-usage-key",
+      "cap-usage-lead",
+      "cap-usage-legend",
+      "cap-usage-list",
+      "cap-usage-why"
+    ],
+    "variants": {
+      "data-key": [
+        "projected",
+        "used"
+      ],
+      "data-stale": [],
+      "data-tone": [
+        "crit",
+        "warn"
+      ]
+    },
+    "states": [],
+    "vars": []
+  },
+  "verdict": {
+    "root": "cap-verdict",
+    "classes": [
+      "cap-verdict",
+      "cap-verdict-list",
+      "cap-verdict-note"
+    ],
+    "parts": [
+      "cap-verdict-list",
+      "cap-verdict-note"
+    ],
+    "variants": {},
+    "states": [],
+    "vars": []
+  },
+  "web-push": {
+    "root": "cap-web-push",
+    "classes": [
+      "cap-web-push",
+      "cap-web-push-actions",
+      "cap-web-push-device",
+      "cap-web-push-device-detail",
+      "cap-web-push-device-name",
+      "cap-web-push-devices",
+      "cap-web-push-live",
+      "cap-web-push-note",
+      "cap-web-push-unsupported"
+    ],
+    "parts": [
+      "cap-web-push-actions",
+      "cap-web-push-device",
+      "cap-web-push-device-detail",
+      "cap-web-push-device-name",
+      "cap-web-push-devices",
+      "cap-web-push-live",
+      "cap-web-push-note",
+      "cap-web-push-unsupported"
+    ],
+    "variants": {
+      "data-tone": [
+        "crit",
+        "warn"
+      ]
+    },
+    "states": [
+      ":empty"
+    ],
+    "vars": []
+  },
+  "writing-progress": {
+    "root": "cap-progress-body",
+    "classes": [
+      "cap-progress-body",
+      "cap-progress-days",
+      "cap-progress-form",
+      "cap-progress-line",
+      "cap-progress-note"
+    ],
+    "parts": [],
+    "variants": {},
+    "states": [
+      ":empty"
+    ],
+    "vars": []
+  }
+}
