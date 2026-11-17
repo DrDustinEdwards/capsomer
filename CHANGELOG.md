@@ -3,6 +3,14 @@
 Each release names every removed or renamed token or class, and every changed HTML contract. A pull request adds its entry as a
 changeset (`npx changeset`, `.changeset/README.md`); the release pull request writes them here.
 
+## 0.155.1
+
+### Patch Changes
+
+- `bundleScript` (capsomer/build) throws when an import does not resolve. It used to keep the import as a bare specifier in the bundle, which a browser cannot load, so the whole script died on load (the Prelum specimen's theme button, 0.61.0). No token, class or HTML contract changes.
+- `.cap-leader-index-name` and `.cap-leader-index-fact` wrap at word boundaries and keep the width of their longest word: `overflow-wrap: anywhere` with `min-inline-size: 0` let flexbox shrink a name to a few characters before the dotted leader, breaking words mid-word at phone width ("plo|t"). They now use `overflow-wrap: break-word` and `min-inline-size: min(min-content, 100%)`, so the leader gives way first and only a word wider than the row breaks. No class or HTML contract changes.
+- The player's chapter list (`.cap-player-chapters`) is one shrinkable column (`grid-template-columns: minmax(0, 1fr)`). Before, a long chapter title widened the list past a phone's screen and the page scrolled sideways; the title now ellipsizes inside the row. No class or token is removed or renamed and the HTML is unchanged.
+
 ## 0.155.0
 
 ### Minor Changes
