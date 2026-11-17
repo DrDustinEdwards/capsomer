@@ -10,7 +10,6 @@ import { Extension } from "@tiptap/core";
 import { Plugin, PluginKey, type EditorState } from "@tiptap/pm/state";
 import { Decoration, DecorationSet } from "@tiptap/pm/view";
 import {
-  absolutePositionToRelativePosition,
   relativePositionToAbsolutePosition,
   yCursorPlugin,
   yCursorPluginKey,
@@ -18,6 +17,8 @@ import {
 } from "@tiptap/y-tiptap";
 import type { Awareness } from "y-protocols/awareness";
 import * as Y from "yjs";
+
+import { anchorJson } from "./collab-editor-doc.ts";
 
 import { suggestingDispatch, suggestionPlugins, type Suggester } from "./collab-editor-suggest.ts";
 
@@ -86,9 +87,7 @@ export const commentsKey = new PluginKey<DecorationSet>("cap-collab-comments");
 export function anchorOf(state: EditorState, from: number, to: number): string | null {
   const y = ySyncPluginKey.getState(state);
   if (!y?.binding) return null;
-  const at = (pos: number) =>
-    Y.relativePositionToJSON(absolutePositionToRelativePosition(pos, y.type, y.binding.mapping));
-  return JSON.stringify({ from: at(from), to: at(to) });
+  return anchorJson(y.type, y.binding.mapping, from, to);
 }
 
 /** Where a thread's text is now, or null when that text is gone. */

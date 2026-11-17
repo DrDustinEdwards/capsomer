@@ -3,6 +3,7 @@
 // The page's side (the room hook, the bar and the panels) is `capsomer/react/collab-editor`.
 
 export {
+  anchorAt,
   FRAGMENT,
   isSeeded,
   loadMarkdown,
