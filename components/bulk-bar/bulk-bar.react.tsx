@@ -196,9 +196,7 @@ export function BulkBar({
               data-variant={a.destructive ? "danger" : undefined}
               data-cap-bulk-action={a.id}
               aria-disabled={a.disabled || undefined}
-              onClick={() =>
-                a.disabled ? undefined : a.handOff ? a.handOff(items) : void run(a)
-              }
+              onClick={() => (a.disabled ? undefined : a.handOff ? a.handOff(items) : void run(a))}
             >
               {a.label}
             </button>
