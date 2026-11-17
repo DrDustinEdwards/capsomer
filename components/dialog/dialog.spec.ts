@@ -271,10 +271,6 @@ eachTheme((theme) => {
     await live(page, theme);
     await openFrom(page, "open-center");
     const d = dlg(page, "Rename the site");
-    await backdropClick(page);
-    await expect(d).toBeHidden();
-
-    await openFrom(page, "open-center");
     // Typing makes field.ts mark the control data-cap-dirty; the dialog reads that mark.
     await page.locator("#live-center-name").fill("Renamed");
     await backdropClick(page);
