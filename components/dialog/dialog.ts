@@ -279,6 +279,9 @@ export function wireDialog(dialog: HTMLDialogElement, opts: DialogOptions = {}):
     s.observer = null;
     if (s.onPop) window.removeEventListener("popstate", s.onPop);
     s.onPop = null;
+    // Submitted or cancelled: the next opening starts with no unsaved input.
+    dialog.querySelectorAll("[data-cap-dirty]").forEach((c) => c.removeAttribute("data-cap-dirty"));
+    syncClosedBy(dialog);
     // Closed by Esc or Close: take back the entry the dialog pushed, so Back goes where it
     // went before.
     if (s.pushed) {
@@ -291,6 +294,7 @@ export function wireDialog(dialog: HTMLDialogElement, opts: DialogOptions = {}):
   // A first edit locks the backdrop where the browser dismisses it itself (closedby).
   const onInput = () => syncClosedBy(dialog);
   dialog.addEventListener("input", onInput);
+  dialog.addEventListener("reset", onInput);
   dialog.addEventListener("mousedown", onDown);
   dialog.addEventListener("click", onClick);
   dialog.addEventListener("cancel", onCancel);
@@ -322,6 +326,7 @@ export function wireDialog(dialog: HTMLDialogElement, opts: DialogOptions = {}):
     dialog.removeEventListener("keydown", onKey);
     dialog.removeEventListener("submit", onSubmit);
     dialog.removeEventListener("close", onClose);
+    dialog.removeEventListener("reset", onInput);
     s.observer?.disconnect();
     s.observer = null;
     delete dialog.dataset.capReady;

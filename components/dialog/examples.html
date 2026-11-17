@@ -43,7 +43,7 @@
             <h2 class="cap-dialog-title" id="live-center-title">Rename the site</h2>
             <p class="cap-dialog-description" id="live-center-desc">Visitors keep the old address; the new name shows in the dashboard.</p>
           </div>
-          <form class="cap-dialog-body" id="live-center-form">
+          <form class="cap-dialog-body" id="live-center-form" data-cap="field">
             <label for="live-center-name">Site name</label>
             <input class="cap-input" id="live-center-name" value="example.org" autocomplete="off" />
           </form>
@@ -414,8 +414,10 @@
 
 <script type="module">
   import { closeDialog, enhance, setDialogBusy } from "./dialog.ts";
+  import { enhance as enhanceFields } from "../field/field.ts";
 
   enhance(document);
+  enhanceFields(document);
 
   // The specimens' own buttons: Save closes with a line said on the page; Publish starts a
   // request that runs until Finish answers it.

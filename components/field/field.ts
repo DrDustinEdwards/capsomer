@@ -579,11 +579,16 @@ export function enhance(root: Element | Document | DocumentFragment = document):
         e.stopImmediatePropagation();
       }
     };
+    // A reset form holds no touched control.
+    const onReset = () =>
+      form.querySelectorAll("[data-cap-dirty]").forEach((c) => c.removeAttribute("data-cap-dirty"));
+    form.addEventListener("reset", onReset);
     form.addEventListener("input", onInput);
     form.addEventListener("change", onInput);
     form.addEventListener("focusout", onLeave);
     form.addEventListener("submit", onSubmit, { capture: true });
     undo.push(() => {
+      form.removeEventListener("reset", onReset);
       form.removeEventListener("input", onInput);
       form.removeEventListener("change", onInput);
       form.removeEventListener("focusout", onLeave);

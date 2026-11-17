@@ -275,14 +275,16 @@ eachTheme((theme) => {
     await expect(d).toBeHidden();
 
     await openFrom(page, "open-center");
-    // field.ts marks an edited control data-cap-dirty on input; the dialog reads that mark.
-    await page.locator("#live-center-name").evaluate((el) => {
-      (el as HTMLElement).dataset.capDirty = "";
-      el.dispatchEvent(new Event("input", { bubbles: true }));
-    });
+    // Typing makes field.ts mark the control data-cap-dirty; the dialog reads that mark.
+    await page.locator("#live-center-name").fill("Renamed");
     await backdropClick(page);
     await expect(d).toBeVisible();
     await d.getByRole("button", { name: "Cancel" }).click();
+    await expect(d).toBeHidden();
+
+    // Closing clears the mark: the reopened dialog holds no unsaved input.
+    await openFrom(page, "open-center");
+    await backdropClick(page);
     await expect(d).toBeHidden();
   });
 
