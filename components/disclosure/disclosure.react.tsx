@@ -53,8 +53,11 @@ export interface GroupProps {
   label: string;
   // How many rows it holds; read as "Notices, 4".
   count: number;
-  // The grouped rows, as <li> elements.
+  // The grouped rows: <li> elements by default, held in the group's own list.
   children: ReactNode;
+  // "list": the children are a whole list of their own (a RowList), held in a <div> in place
+  // of the group's list, so the rows keep that list's look and keys.
+  body?: "list";
   defaultExpanded?: boolean;
   // Critical rows are never collapsed: true keeps the group open.
   holdsCritical?: boolean;
@@ -70,6 +73,7 @@ export function Group({
   defaultExpanded = false,
   holdsCritical = false,
   headingLevel,
+  body,
 }: GroupProps) {
   const id = useId();
   const [open, setOpen] = useState(defaultExpanded || holdsCritical);
@@ -91,9 +95,15 @@ export function Group({
   return (
     <div className="cap-group" data-cap="disclosure">
       {headingLevel ? <Heading className="cap-group-heading">{toggle}</Heading> : toggle}
-      <ul className="cap-group-rows" id={id} hidden={!expanded}>
-        {children}
-      </ul>
+      {body === "list" ? (
+        <div className="cap-group-rows" id={id} hidden={!expanded}>
+          {children}
+        </div>
+      ) : (
+        <ul className="cap-group-rows" id={id} hidden={!expanded}>
+          {children}
+        </ul>
+      )}
     </div>
   );
 }
