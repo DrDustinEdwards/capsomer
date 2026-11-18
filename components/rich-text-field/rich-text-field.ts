@@ -103,6 +103,9 @@ export function decodeEntities(text: string): string {
 const escapeText = (text: string) =>
   text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
+/** Longest input the cleaner reads; the rest is dropped. The tag scan is quadratic on a long run of `<a` with no `>`, and no field holds this much. */
+export const RICH_TEXT_MAX_INPUT = 50_000;
+
 function tokenize(input: string): Token[] {
   const tokens: Token[] = [];
   const src = input.replace(/<!--[\s\S]*?-->/g, "");
@@ -125,7 +128,7 @@ const ALIASES: Readonly<Record<string, RichTextTag>> = { i: "em", b: "strong" };
  * `input` (HTML, or plain text with stray < and &) as a tree of plain text and the `allowed` tags only: any other tag
  * is dropped and its text kept, attributes and comments are dropped, `<i>` reads as `em` and `<b>` as `strong`, and
  * the tags are balanced (one closed out of order closes and reopens the ones inside it). Text in `<script>` and
- * `<style>` is dropped with them.
+ * `<style>` is dropped with them. Input past RICH_TEXT_MAX_INPUT characters is not read.
  */
 export function parseRichText(input: string, allowed: readonly RichTextTag[]): RichTextNode[] {
   const allow = new Set<string>(allowed);
@@ -145,7 +148,7 @@ export function parseRichText(input: string, allowed: readonly RichTextTag[]): R
     stack.push(node);
   };
   let skipping: string | null = null;
-  for (const token of tokenize((input ?? "").replace(CONTROLS, ""))) {
+  for (const token of tokenize((input ?? "").slice(0, RICH_TEXT_MAX_INPUT).replace(CONTROLS, ""))) {
     if (skipping) {
       if (token.type === "close" && token.tag === skipping) skipping = null;
       continue;
