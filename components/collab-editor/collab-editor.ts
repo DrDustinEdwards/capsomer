@@ -28,8 +28,8 @@ export type {
 export {
   listSuggestions,
   settle,
-  suggestionCounts,
   suggestingDispatch,
+  suggestions,
   suggestionPlugins,
   type JsonDoc,
   type Suggester,
