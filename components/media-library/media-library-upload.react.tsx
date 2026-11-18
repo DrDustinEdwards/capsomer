@@ -11,7 +11,6 @@ import {
   Dialog,
   DialogBody,
   DialogClose,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -225,10 +224,6 @@ function ScriptedUpload({
     >
       <DialogHeader>
         <DialogTitle>Upload {plural}</DialogTitle>
-        <DialogDescription>
-          Choose {plural}, then say what each picture shows for a person who cannot see it, or mark
-          it decorative if it adds nothing a reader would miss. The site stores nothing undescribed.
-        </DialogDescription>
       </DialogHeader>
       <DialogBody>
         {rules ? (

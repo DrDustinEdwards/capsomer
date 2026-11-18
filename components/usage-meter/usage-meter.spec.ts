@@ -290,7 +290,7 @@ test.describe("assess()", () => {
   test("behavior: a total that does not reset has no projection", () => {
     const a = assess({ used: 1.2, limit: 10, history: [1.1, 1.2], resetsAt: null, now: NOW });
     expect(a.projectedAtReset).toBeNull();
-    expect(a.text).toBe("No projection: 2 days of history, 7 needed. This total does not reset.");
+    expect(a.text).toBe("No projection: 2 days of history, 7 needed.");
   });
 
   test("behavior: the first hour of a day uses the week's typical rate", () => {

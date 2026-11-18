@@ -40,7 +40,7 @@ export function ApprovalSheet({
   gates,
   onApprove,
   onClose,
-  lead = "Each command runs once, when approved. Uncheck a gate you are not ready for; it stays waiting.",
+  lead = "Each command runs once, when approved.",
 }: ApprovalSheetProps) {
   const id = useId();
   const ref = useRef<HTMLDialogElement>(null);

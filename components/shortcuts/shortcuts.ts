@@ -22,7 +22,7 @@ export interface Shortcut {
 export const SINGLE_KEYS_PREF = "cap-single-keys";
 // The line under the switch, shared by the built sheet and the React one.
 export const SINGLE_KEYS_NOTE =
-  "Turn these off if they clash with a screen reader or speech input. It applies at once. Shortcuts with Ctrl or ⌘ keep working.";
+  "Turn these off if they clash with a screen reader. Shortcuts with Ctrl or ⌘ keep working.";
 export const SEQUENCE_MS = 1200;
 
 const entries: Shortcut[] = [];

@@ -432,7 +432,7 @@ export function HistoryList({
       undo: async () => {
         await onUndoRestore?.(event);
       },
-      undone: "The restored copy was removed. The earlier version is current again.",
+      undone: "Restore undone.",
       returnFocus: () => (opener.isConnected ? opener : null),
     });
   };

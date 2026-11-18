@@ -20,7 +20,6 @@ replaces:
 ```html
 <section class="cap-newsletter" aria-labelledby="nl-title">          <!-- data-variant="plain" -->
   <h2 class="cap-newsletter-title" id="nl-title">Newsletter</h2>
-  <p class="cap-newsletter-text">One line.</p>
   <form class="cap-newsletter-form" method="post" action="/subscribe" aria-labelledby="nl-title">
     <div class="cap-newsletter-row">
       <label class="cap-sr-only" for="nl-email">Email address</label>

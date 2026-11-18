@@ -189,9 +189,7 @@ export function fillInspector(
       p.textContent = "Not used anywhere.";
       const note = document.createElement("p");
       note.className = "cap-media-note";
-      note.append(
-        "No post cites this file. That is not proof it is unused: a page built in code can still use it, so check before you delete it. The Unattached filter lists every file like this. ",
-      );
+      note.append("A page built in code can still use it: check before you delete it. ");
       const show = document.createElement("button");
       show.type = "button";
       show.className = "cap-btn";

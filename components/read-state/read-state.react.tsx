@@ -59,7 +59,8 @@ export function ReadState({
   if (!hasData)
     return (
       <p className="cap-read-state" data-state="nothing-yet">
-        <Status tone="nodata">No data</Status> {empty ?? "No read yet."}
+        <Status tone="nodata">No data</Status>
+        {empty ? <> {empty}</> : null}
       </p>
     );
   return (

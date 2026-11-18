@@ -12,7 +12,8 @@ export interface ErrorWords {
   // The HTTP status the page stands for: the route error's own, else 500.
   status: number;
   title: string;
-  text: string;
+  // The line under the title: what went wrong. A 410 has none; its title says it.
+  text?: string;
 }
 
 // A route error response (a thrown Response, data() or a 404 no route matched) has a numeric
@@ -28,32 +29,31 @@ function statusOf(error: unknown): number | null {
 // or reset for a moment (DATABASE_DOWN_STATUS_TEXT in @dustinedwards/site-runtime/health).
 const DATABASE_DOWN = /database/i;
 
-/** What the page says for an error: its status, a title and one plain sentence. */
+/** What the page says for an error: its status, a title and, when it failed, one plain sentence. */
 export function errorWords(error: unknown): ErrorWords {
   const status = statusOf(error);
   if (status === 404)
     return {
       status,
       title: "Page not found",
-      text: "There is nothing at this address. Check it for a typo, or start again from the home page.",
+      text: "Nothing is at this address.",
     };
   if (status === 410)
     return {
       status,
-      title: "This page is gone",
-      text: "It was taken down on purpose and is not coming back.",
+      title: "This page was taken down",
     };
   if (status === 403)
     return {
       status,
       title: "You cannot open this page",
-      text: "Your account does not have access to it. If you think it should, ask whoever manages this site.",
+      text: "Your account does not have access.",
     };
   if (status !== null && status < 500)
     return {
       status,
       title: "This page cannot be shown",
-      text: `The request was refused (${status}). Start again from the home page.`,
+      text: `The request was refused (${status}).`,
     };
   if (status === 503) {
     const { statusText } = error as { statusText: string };
@@ -61,7 +61,7 @@ export function errorWords(error: unknown): ErrorWords {
       return {
         status,
         title: "The site's data is unavailable",
-        text: "Its database is not answering for the moment. Nothing you did caused this; try again in a few minutes.",
+        text: "Its database is not answering. Try again in a few minutes.",
       };
     return {
       status,
@@ -72,7 +72,7 @@ export function errorWords(error: unknown): ErrorWords {
   return {
     status: status ?? 500,
     title: "Something went wrong",
-    text: "The page could not be shown. It is not something you did; try again in a moment.",
+    text: "The page could not be shown. Try again in a moment.",
   };
 }
 
@@ -101,7 +101,8 @@ export interface ErrorPageProps {
   // A class for main beside cap-error-page, for the site's own page frame.
   className?: string;
   // The site's own words, in place of errorWords' for this error: a site whose copy is edited
-  // content (julieedwards.info's 404 is Carrel copy in D1) passes it here.
+  // content (julieedwards.info's 404 is Carrel copy in D1) passes it here. A 410 shows its title
+  // alone, so it takes no text.
   title?: string;
   text?: string;
   // The home link's words. Default "Go to the home page".
@@ -181,17 +182,16 @@ export function ErrorPage({
     <>
       {hero(words)}
       <div className="cap-error-page-body">
-        <p className="cap-empty-text">{thrown ? thrown.message : words.text}</p>
+        {thrown || (words.text && !withdrawn) ? (
+          <p className="cap-empty-text">{thrown ? thrown.message : words.text}</p>
+        ) : null}
         <div className="cap-empty-content">{action}</div>
       </div>
     </>
+  ) : withdrawn ? (
+    <Empty kind="nothing-yet" titleAs="h1" title={words.title} action={action} />
   ) : (
-    <Empty
-      kind={withdrawn ? "nothing-yet" : "failed"}
-      titleAs="h1"
-      title={words.title}
-      action={action}
-    >
+    <Empty kind="failed" titleAs="h1" title={words.title} action={action}>
       {thrown ? thrown.message : words.text}
     </Empty>
   );
@@ -227,23 +227,12 @@ export interface SignedOutPageProps {
   signIn: string;
   // The person signed out here (true), or the session ended on its own (false).
   byChoice: boolean;
-  // Under Access, an open Access session may sign the person straight back in: say so.
-  access?: boolean;
   mainId?: string;
 }
 
 // The page an app shows once its session is gone: a polite status, one heading and one way back.
 // It is not an error (nothing failed), so it is a status, not an alert.
-export function SignedOutPage({
-  app,
-  signIn,
-  byChoice,
-  access,
-  mainId = "main",
-}: SignedOutPageProps) {
-  const text = byChoice
-    ? `You signed out of ${app} in this browser.${access ? " Signing in again may not ask for your email while your Access session is still open." : ""}`
-    : `Your ${app} session ended, so the page stopped updating.`;
+export function SignedOutPage({ app, signIn, byChoice, mainId = "main" }: SignedOutPageProps) {
   return (
     <main id={mainId} tabIndex={-1} className="cap-error-page" data-status="signed-out">
       <meta name="robots" content="noindex" />
@@ -251,15 +240,13 @@ export function SignedOutPage({
         kind="nothing-yet"
         role="status"
         titleAs="h1"
-        title="Signed out"
+        title={byChoice ? `Signed out of ${app}` : `Your ${app} session ended`}
         action={
           <a {...primary} href={signIn}>
             {byChoice ? "Sign in again" : "Reload to sign in"}
           </a>
         }
-      >
-        {text}
-      </Empty>
+      />
     </main>
   );
 }

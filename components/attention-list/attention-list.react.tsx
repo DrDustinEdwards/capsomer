@@ -58,7 +58,7 @@ export interface AttentionListProps {
   headingLevel?: 2 | 3;
   // Said beside the ok status when no problem needs attention.
   clearText?: string;
-  // Said under the notices row's count: what a notice is here.
+  // Said under the notices row's count, when a notice here needs a word of its own.
   noticesDetail?: string;
   // What a folded group is called, what its rows have in common and where all of them are.
   groups?: Record<string, AttentionGroupInfo>;
@@ -94,7 +94,7 @@ export function AttentionList(props: AttentionListProps) {
     reading = false,
     headingLevel = 2,
     clearText = "Nothing needs you.",
-    noticesDetail = "Nothing to act on now",
+    noticesDetail,
     groups,
     problemRows,
     groupRows,
@@ -290,9 +290,6 @@ export interface NeedsListProps<G extends string = string> {
   onBack?: (need: Need<G>) => void;
   // The key that opens search ("⌘" or "Ctrl"), to name it in the keys line; left out without.
   searchKey?: string;
-  // The empty state's words, for the list and for Later.
-  emptyText?: ReactNode;
-  emptyLaterText?: ReactNode;
   // The page's main list: j and k work on it before focus is inside it.
   primary?: boolean;
 }
@@ -395,8 +392,6 @@ export function NeedsList<G extends string = string>({
   useRowForm = usePlainRowForm,
   onBack,
   searchKey,
-  emptyText,
-  emptyLaterText,
   primary,
 }: NeedsListProps<G>) {
   const noteId = useId();
@@ -417,14 +412,9 @@ export function NeedsList<G extends string = string>({
   const rows = needsShown(needs, show);
   if (rows.length === 0)
     return later ? (
-      <Empty kind="all-clear" flush title="Nothing set aside">
-        {emptyLaterText ?? "Later on a row hides it until tomorrow morning."}
-      </Empty>
+      <Empty kind="all-clear" flush title="Nothing set aside" />
     ) : (
-      <Empty kind="all-clear" flush title="Nothing needs you">
-        {emptyText ??
-          (show === "all" ? "Everything waiting on you is done." : "Nothing here. Try All.")}
-      </Empty>
+      <Empty kind="all-clear" flush title="Nothing needs you" />
     );
   return (
     <>

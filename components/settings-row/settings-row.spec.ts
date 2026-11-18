@@ -7,15 +7,12 @@ eachTheme((theme) => {
     await expectNoAxeViolations(page);
   });
 
-  test("accessibility: a switch is named and described by its row; disabled says why", async ({
-    page,
-  }) => {
+  test("accessibility: a switch is named by its row; disabled says why", async ({ page }) => {
     await visitStates(page, "settings-row", theme);
-    const alerts = page.getByRole("switch", { name: "Failure alerts" });
-    await expect(alerts).toHaveAccessibleDescription("An email the moment a check fails.");
+    await expect(page.getByRole("switch", { name: "Failure alerts" })).toBeVisible();
     const auto = page.getByRole("switch", { name: "Send without review" });
     await expect(auto).toBeDisabled();
-    await expect(auto).toHaveAccessibleDescription(/Only the account owner can change this\./);
+    await expect(auto).toHaveAccessibleDescription("Only the account owner can change this.");
     await expect(page.getByRole("button", { name: "Save" })).toHaveCount(0);
   });
 

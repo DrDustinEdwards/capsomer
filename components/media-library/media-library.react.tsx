@@ -555,8 +555,7 @@ export function MediaLibrary({
             aria-describedby={`${uid}-upalt-help`}
           />
           <p className="cap-field-help" id={`${uid}-upalt-help`}>
-            What the picture shows, for a person who cannot see it, or Upload as decorative if it
-            adds nothing a reader would miss. The site stores nothing undescribed.
+            What the picture shows, or upload it as decorative.
           </p>
         </div>
         {keepSize("up")}
@@ -596,8 +595,7 @@ export function MediaLibrary({
             aria-describedby={`${uid}-import-help`}
           />
           <p className="cap-field-help" id={`${uid}-import-help`}>
-            The site fetches its own copy and serves that, never the other site's. An https address
-            only. {rules ? rules.hint : ""}
+            An https address only. {rules ? rules.hint : ""}
           </p>
         </div>
         <div className="cap-field">
@@ -1155,9 +1153,7 @@ export function MediaLibrary({
                     </a>
                   ) : undefined
                 }
-              >
-                {words.text}
-              </Empty>
+              />
             ) : (
               <MediaGrid
                 items={groups ? undefined : shown}
@@ -1268,8 +1264,8 @@ export function MediaLibrary({
               aria-describedby={`${uid}-pick-help`}
             />
             <p className="cap-field-help" id={`${uid}-pick-help`}>
-              What a person who cannot see the picture needs to know here, or Insert as decorative
-              if it adds nothing. {pick.alt ? "It starts with the file's own alt text." : null}
+              What the picture shows here, or insert it as decorative.{" "}
+              {pick.alt ? "It starts with the file's own alt text." : null}
             </p>
             {pickSuggestion ? (
               <p className="cap-field-help" data-cap-part="pick-suggestion">
@@ -1293,8 +1289,7 @@ export function MediaLibrary({
               <p className="cap-field-help">
                 <a href={href(withMedia(query, { pick: pick.key, suggest: true }))}>
                   Suggest alt text
-                </a>{" "}
-                asks the site's model; nothing is filled in unless you choose it.
+                </a>
               </p>
             ) : null}
           </div>

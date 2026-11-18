@@ -1,7 +1,7 @@
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
 /* The frame of a page that is mostly words (about, careers, policies): a title band across the
-   page with the title and an optional line under it, then one reading column in the prose context.
+   page with the title, then one reading column in the prose context.
    Every interior page of a marketing site is this one frame. Extracted from BioScience Writers'
    PageHero and page-prose column, used by 21 of its 22 routes. */
 @layer cap.components {
@@ -23,14 +23,6 @@
     text-transform: var(--cap-prose-page-title-case, none);
     text-wrap: var(--cap-prose-page-title-wrap, balance);
     overflow-wrap: anywhere;
-  }
-
-  .cap-prose-page-lead {
-    margin: var(--space-4) auto 0;
-    max-inline-size: 42rem;
-    color: var(--cap-prose-page-lead-text, var(--muted));
-    font-size: var(--fs-lead);
-    line-height: var(--leading);
   }
 
   .cap-prose-page-body {

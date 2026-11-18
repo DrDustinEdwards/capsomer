@@ -6,8 +6,8 @@
 //   ## Usage           fenced code only
 //   ## Accessibility   the keyboard table and the notes (tables, lists, paragraphs)
 //
-// The summary in the frontmatter is the page's one line, so it is one sentence. `group` puts a doc under Patterns or
-// Primitives instead of Components.
+// The summary in the frontmatter is the page's description (its meta description and its search entry, never a visible
+// lead), so it is one sentence. `group` puts a doc under Patterns or Primitives instead of Components.
 import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { frontmatter } from "@drdustinedwards/site-helpers/frontmatter";
@@ -16,7 +16,7 @@ const SECTIONS = ["Usage", "Accessibility"];
 const GROUPS = ["pattern", "primitive"];
 /** A summary longer than one sentence: a sentence end followed by the start of another. */
 const MORE_THAN_ONE = /[.!?]\s+["'`(]?[A-Z]/;
-/** The page's lead is one line under the title: about what a line of it holds on a wide screen. */
+/** The page's description is one line: about what a search result shows of it. */
 const LONGEST = 100;
 
 /** The problems in one doc file's source, each a line naming what breaks the pattern; none for a file that keeps it. */

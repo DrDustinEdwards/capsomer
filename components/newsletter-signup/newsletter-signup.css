@@ -30,13 +30,6 @@
     font-weight: var(--weight-heading);
   }
 
-  .cap-newsletter-text {
-    margin: 0;
-    color: var(--muted);
-    font-size: var(--text-size);
-    line-height: var(--leading);
-  }
-
   .cap-newsletter-form {
     display: grid;
     gap: var(--space-3);

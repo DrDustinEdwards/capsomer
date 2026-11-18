@@ -14,7 +14,6 @@ import {
   Dialog,
   DialogBody,
   DialogClose,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -181,10 +180,6 @@ export function ChartBuilder({
       >
         <DialogHeader divider>
           <DialogTitle id={titleId}>Insert a chart</DialogTitle>
-          <DialogDescription>
-            Paste the data or choose a CSV file, pick the type and the columns, then write its title
-            and finding. Nothing is in the text until you insert it.
-          </DialogDescription>
         </DialogHeader>
         <DialogBody>
           <div className="cap-chart-builder">
@@ -195,11 +190,7 @@ export function ChartBuilder({
               onChange={(type) => set({ type })}
               options={types.map((t) => ({ value: t.value, label: t.label }))}
             />
-            <Field
-              label="Data, as CSV"
-              help="The first line names the columns. Paste it here, or choose a file below."
-              required
-            >
+            <Field label="Data, as CSV" required>
               <textarea
                 className="cap-input cap-chart-builder-csv"
                 rows={6}
@@ -252,7 +243,7 @@ export function ChartBuilder({
                 The data needs a header line and at least two columns.
               </p>
             ) : null}
-            <Field label="Title" help="What the chart is about, shown above it.">
+            <Field label="Title">
               <input
                 className="cap-input"
                 value={f.title}

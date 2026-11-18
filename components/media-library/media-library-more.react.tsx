@@ -306,11 +306,7 @@ export function MediaMore({
                   autoComplete="off"
                   maxLength={300}
                   defaultValue={item.credit ?? ""}
-                  aria-describedby={`${base}-credit-help`}
                 />
-                <p className="cap-field-help" id={`${base}-credit-help`}>
-                  Who made it, as they ask to be named.
-                </p>
               </div>
               <div className="cap-field">
                 <label className="cap-field-label" htmlFor={`${base}-license`}>
@@ -427,7 +423,7 @@ export function MediaMore({
               <p className="cap-media-note">
                 {turnMakesCopy(item, data.offers)
                   ? "A quarter turn saves the turned picture as a new file, since this site's addresses carry the size; pages that use this one keep it. A flip changes this one in place."
-                  : "Every page that uses it shows the turned picture."}
+                  : null}
                 {data.offers.history ? " Its history keeps the bytes it had." : ""}
               </p>
             </Tool>

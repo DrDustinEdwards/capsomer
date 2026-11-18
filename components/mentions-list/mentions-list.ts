@@ -13,7 +13,7 @@ import {
   type PageInfo,
 } from "../content/content.ts";
 import {
-  EMPTY_TEXT,
+  EMPTY_TITLE,
   VIEWS,
   bulkActionsFor,
   mentionsWord,
@@ -88,14 +88,8 @@ export function mentionActions(data: Pick<MentionsData, "offers" | "can" | "quer
   if (!can.decideMentions)
     withheld.push("You can read these mentions. Deciding them needs the site owner's role.");
   else {
-    if (!offers.delete)
-      withheld.push(
-        "Delete is not offered: this site keeps every mention. Reject one to keep it off its post.",
-      );
-    if (!offers.reset)
-      withheld.push(
-        "Back to waiting is not offered by this site, so a decision on a waiting mention has no Undo.",
-      );
+    if (!offers.delete) withheld.push("This site keeps every mention.");
+    if (!offers.reset) withheld.push("A decision on a waiting mention has no Undo.");
   }
   return { bulk, withheld };
 }
@@ -113,9 +107,8 @@ export function countLine(data: Pick<MentionsData, "rows" | "query" | "counts">)
 export function emptyWords(view: ModView): {
   kind: "all-clear" | "nothing-yet";
   title: string;
-  text: string;
 } {
-  return { kind: view === "pending" ? "all-clear" : "nothing-yet", ...EMPTY_TEXT[view] };
+  return { kind: view === "pending" ? "all-clear" : "nothing-yet", title: EMPTY_TITLE[view] };
 }
 
 // The sweep's button: "Remove 3 expired".

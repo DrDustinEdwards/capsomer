@@ -198,7 +198,7 @@ export function restoreVersion(root: HTMLElement, id: string): HTMLLIElement | n
         }),
       );
     },
-    undone: "The restored copy was removed. The earlier version is current again.",
+    undone: "Restore undone.",
     returnFocus: () =>
       opener?.isConnected
         ? opener

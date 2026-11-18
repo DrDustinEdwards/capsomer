@@ -355,9 +355,7 @@ eachTheme((theme) => {
       await visitStates(page, "media", theme);
       const ins = page.locator("#ins-static-ins");
       await expect(ins).toHaveAccessibleName("uptime-strip.png");
-      await expect(ins.getByLabel("Alt text")).toHaveAccessibleDescription(
-        /What a person who cannot see the picture needs to know/,
-      );
+      await expect(ins.getByLabel("Alt text")).toHaveAccessibleDescription(/Leave out “image of”/);
       await expect(ins.getByRole("checkbox", { name: "Decorative image" })).not.toBeChecked();
       await expect(ins.getByLabel("Title")).toBeVisible();
       await expect(ins.getByLabel("Caption")).toBeVisible();
@@ -869,7 +867,7 @@ eachTheme((theme) => {
     await link(page, "fieldnotes-migration.jpg").focus();
     await page.keyboard.press("Enter");
     await expect(used).toContainText("Not used anywhere.");
-    await expect(used).toContainText("The Unattached filter lists every file like this.");
+    await expect(used).toContainText("check before you delete it.");
     await expect(used.getByRole("link")).toHaveCount(0);
   });
 

@@ -82,10 +82,7 @@ test("behavior: an action is offered only where the site supports it and the per
     }),
   ).toEqual({
     bulk: [],
-    withheld: [
-      "Delete is not offered: this site keeps every mention. Reject one to keep it off its post.",
-      "Back to waiting is not offered by this site, so a decision on a waiting mention has no Undo.",
-    ],
+    withheld: ["This site keeps every mention.", "A decision on a waiting mention has no Undo."],
   });
   expect(
     mentionActions({ ...base, can: NONE, offers: { reset: true, delete: true, sweep: true } }),
@@ -113,7 +110,6 @@ test("behavior: the count, the sweep's button and the empty state in words", () 
   expect(emptyWords("pending")).toEqual({
     kind: "all-clear",
     title: "All clear",
-    text: "No mentions are waiting. Approved and rejected are one filter away.",
   });
   expect(emptyWords("rejected").kind).toBe("nothing-yet");
 });
@@ -433,7 +429,7 @@ eachTheme((theme) => {
     const list = mount(page, "v05");
     await list.getByRole("button", { name: "Approve the mention from Rosa Park" }).click();
     await expect(said(list)).toContainText(
-      "Approved the mention from Rosa Park. This site cannot put a mention back to waiting, so there is no Undo",
+      "Approved the mention from Rosa Park. This site cannot undo it.",
     );
     await expect(said(list).getByRole("button", { name: "Undo" })).toHaveCount(0);
     await list.getByRole("link", { name: "Approved 2" }).click();

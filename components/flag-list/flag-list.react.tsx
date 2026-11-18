@@ -189,11 +189,11 @@ export function Flag({
             <p
               className="cap-flag-anchor-note"
               data-cap-part="anchor-note"
-              hidden={anchor === "none"}
+              hidden={anchor !== "lost"}
             >
               {anchor === "lost"
                 ? "The text this flag was raised on changed or was removed. Last known text:"
-                : "Raised on this passage:"}
+                : null}
             </p>
             <p>
               <span className="cap-sr-only">Quoted passage: </span>
@@ -221,11 +221,7 @@ export function Flag({
               </ins>
             </div>
             <div className="cap-flag-suggestion-foot" data-cap-part="suggestion-foot">
-              {applied ? (
-                <p className="cap-flag-note">Applied to the draft.</p>
-              ) : !open ? (
-                <p className="cap-flag-note">Not applied. Reopen the flag to apply it.</p>
-              ) : anchor !== "found" ? (
+              {applied || !open ? null : anchor !== "found" ? (
                 <p className="cap-flag-note">
                   Cannot be applied: the passage it replaces has changed or gone.
                 </p>
@@ -241,9 +237,6 @@ export function Flag({
                   >
                     Apply<span className="cap-sr-only"> suggestion: {flag.message}</span>
                   </button>
-                  <span className="cap-flag-note">
-                    Nothing changes in the draft until you apply it.
-                  </span>
                 </>
               ) : (
                 <p className="cap-flag-note">
@@ -412,7 +405,7 @@ export function FlagList({
     const n = todo.length;
     await confirm({
       title: `Apply ${plural(n, "suggestion")}?`,
-      lead: "This rewrites the draft. Each replacement is listed; nothing else changes.",
+      lead: "This rewrites the draft.",
       body: todo.map(
         (f) =>
           `${quoted(f.anchor?.quote ?? "")} becomes ${quoted(f.suggestion?.replacement ?? "")}`,

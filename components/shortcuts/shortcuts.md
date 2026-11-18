@@ -29,7 +29,7 @@ replaces:
   <div class="cap-dialog-footer" data-align="start">
     <div class="cap-keys-foot">
       <label class="cap-switch"><input type="checkbox" role="switch" data-cap-part="single-keys" aria-describedby="keys-note" checked><span>Single-key shortcuts</span><span class="cap-switch-state" aria-hidden="true">On</span></label>
-      <p class="cap-keys-note" id="keys-note">Turn these off if they clash with a screen reader or speech input. It applies at once. Shortcuts with Ctrl or ⌘ keep working.</p>
+      <p class="cap-keys-note" id="keys-note">Turn these off if they clash with a screen reader. Shortcuts with Ctrl or ⌘ keep working.</p>
     </div>
   </div>
   <button type="button" class="cap-btn cap-dialog-close" data-variant="quiet" data-icon-only data-cap-part="close" aria-label="Close"><svg>…</svg></button>

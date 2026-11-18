@@ -25,8 +25,6 @@ export interface PanelProps {
   // The whole panel is one link (a card leading somewhere): the panel is an <a>, so it may hold no
   // other link or control.
   href?: string;
-  // shadcn's CardDescription: a muted line under the heading.
-  description?: ReactNode;
   // Controls that belong to the whole panel, placed after the title.
   actions?: ReactNode;
   // A tinted band under the body for the panel's own actions or a link (shadcn's CardFooter).
@@ -61,7 +59,6 @@ export function Panel({
   moreLabel = "View all",
   reading,
   href,
-  description,
   actions,
   footer,
   size,
@@ -82,8 +79,7 @@ export function Panel({
     meta != null ||
     actions != null ||
     source != null ||
-    moreLink != null ||
-    description != null;
+    moreLink != null;
   const inner = (
     <>
       {head ? (
@@ -94,7 +90,6 @@ export function Panel({
           {actions != null && <span className="cap-panel-action">{actions}</span>}
           {source != null && <span className="cap-panel-src">{source}</span>}
           {moreLink != null && <span className="cap-panel-more">{moreLink}</span>}
-          {description != null && <p className="cap-panel-desc">{description}</p>}
         </header>
       ) : null}
       <div className="cap-panel-body" data-flush={flush ? "" : undefined}>

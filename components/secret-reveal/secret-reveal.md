@@ -21,7 +21,7 @@ replaces:
   <h2 class="cap-secret-title" id="k-h">Your new API key</h2>
   <pre class="cap-secret-value" tabindex="-1" aria-labelledby="k-h" aria-describedby="k-n">sample_live_4f9c...</pre>
   <div class="cap-secret-foot">
-    <p class="cap-secret-note" id="k-n">This will not be shown again. Copy it now and store it somewhere safe.</p>
+    <p class="cap-secret-note" id="k-n">Shown once. Copy it now.</p>
     <!-- the copy button -->
   </div>
 </section>

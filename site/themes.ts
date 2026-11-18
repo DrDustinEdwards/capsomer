@@ -281,7 +281,7 @@ export function renderTheme(d: Data, slug: string): string {
   const tables = page.slug
     ? page.tables.map((t) => part(`tokens-${t.id}`, t.title, tokenTable(t, dark))).join("\n")
     : part("tokens-parts", "Tokens", overviewTable());
-  const main = `${titleBlock(page.title, page.line)}
+  const main = `${titleBlock(page.title)}
   <section class="th-stage" data-cap-part="stage" aria-label="Live components">
     ${controls(d, !dark)}
     ${stage}

@@ -21,10 +21,19 @@ replaces:
 <div class="cap-settings-row">
   <div class="cap-settings-row-text">
     <span class="cap-settings-row-label" id="r1-label">Failure alerts</span>
-    <p class="cap-settings-row-help" id="r1-help">An email the moment a check fails.</p>
   </div>
   <div class="cap-settings-row-control">
-    <label class="cap-switch"><input type="checkbox" role="switch" name="alerts" aria-labelledby="r1-label" aria-describedby="r1-help" checked /> <span class="cap-switch-state" aria-hidden="true">On</span></label>
+    <label class="cap-switch"><input type="checkbox" role="switch" name="alerts" aria-labelledby="r1-label" checked /> <span class="cap-switch-state" aria-hidden="true">On</span></label>
+  </div>
+</div>
+<!-- A setting the viewer cannot change: the reason under its name describes the disabled control. -->
+<div class="cap-settings-row">
+  <div class="cap-settings-row-text">
+    <span class="cap-settings-row-label" id="r2-label">Send without review</span>
+    <p class="cap-settings-row-reason" id="r2-reason">Only the account owner can change this.</p>
+  </div>
+  <div class="cap-settings-row-control">
+    <label class="cap-switch"><input type="checkbox" role="switch" name="auto" aria-labelledby="r2-label" aria-describedby="r2-reason" disabled /> <span class="cap-switch-state" aria-hidden="true">Off</span></label>
   </div>
 </div>
 ```

@@ -1,21 +1,17 @@
 import { useId, type ReactNode } from "react";
-import { Eyebrow } from "../eyebrow/eyebrow.react.tsx";
 
-// A landing page's first section (hero.md): an eyebrow, the page's one h1, a lead, the actions
-// and a note, with an aside beside them where there is room (a card, a picture, a product view)
+// A landing page's first section (hero.md): the page's one h1, a lead and the actions, with an
+// aside beside them where there is room (a card, a picture, a product view)
 // and an optional decorative layer behind. The look comes from the site's tokens: --hero-title
 // size, --hero-align, the surface; the layer is the site's own drawing, aria-hidden.
 
 export interface HeroProps {
   title: ReactNode;
-  eyebrow?: ReactNode;
   lead?: ReactNode;
   // More between the lead and the actions: further paragraphs, a price line.
   children?: ReactNode;
   // Buttons or button links; the first is the primary.
   actions?: ReactNode;
-  // A short line under the actions ("No card needed").
-  note?: ReactNode;
   // Beside the words from 60rem, under them before.
   aside?: ReactNode;
   // Decorative, behind everything; hidden from assistive technology.
@@ -33,11 +29,9 @@ export interface HeroProps {
 export function Hero(props: HeroProps) {
   const {
     title,
-    eyebrow,
     lead,
     children,
     actions,
-    note,
     aside,
     backdrop,
     align = "start",
@@ -61,14 +55,12 @@ export function Hero(props: HeroProps) {
         </div>
       ) : null}
       <div className="cap-hero-text" data-card={card ? "" : undefined}>
-        {eyebrow ? <Eyebrow tone="accent">{eyebrow}</Eyebrow> : null}
         <H id={titleId} className="cap-hero-title">
           {title}
         </H>
         {lead ? <p className="cap-hero-lead">{lead}</p> : null}
         {children ? <div className="cap-hero-body">{children}</div> : null}
         {actions ? <div className="cap-hero-actions">{actions}</div> : null}
-        {note ? <p className="cap-hero-note">{note}</p> : null}
       </div>
       {aside ? <div className="cap-hero-aside">{aside}</div> : null}
     </section>

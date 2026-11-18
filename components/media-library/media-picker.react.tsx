@@ -23,7 +23,6 @@ import {
   Dialog,
   DialogBody,
   DialogClose,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -73,13 +72,11 @@ export interface PickerWords {
   // The button that opens it.
   label: string;
   title: string;
-  lead: string;
 }
 
 export const INSERT_WORDS: PickerWords = {
   label: "Insert from library",
   title: "Insert an image from the library",
-  lead: "Pick an image already on the site, then describe it. It is not in the page until it has alt text.",
 };
 
 export interface MediaPickerProps {
@@ -183,7 +180,6 @@ export function MediaPicker({
       >
         <DialogHeader divider>
           <DialogTitle id={titleId}>{words.title}</DialogTitle>
-          <DialogDescription>{words.lead}</DialogDescription>
         </DialogHeader>
         <DialogBody>
           <div onClickCapture={follow}>

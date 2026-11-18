@@ -14,8 +14,6 @@ export interface PageHeadProps {
   renderLink?: BreadcrumbProps["renderLink"];
   // The page's one h1.
   title: ReactNode;
-  // One line saying what the page is for.
-  lead?: ReactNode;
   // The page's actions, at the right (buttons and links).
   actions?: ReactNode;
   // The title's level: the page's one h1, or lower where the page already has one (a states
@@ -30,7 +28,6 @@ export function PageHead({
   crumbs,
   renderLink,
   title,
-  lead,
   actions,
   headingLevel: H = "h1",
   patch,
@@ -48,7 +45,6 @@ export function PageHead({
         ) : (
           heading
         )}
-        {lead ? <p className="cap-page-head-lead">{lead}</p> : null}
       </div>
       {actions ? <div className="cap-page-head-actions">{actions}</div> : null}
     </header>

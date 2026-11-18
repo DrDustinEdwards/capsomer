@@ -27,8 +27,6 @@ export interface GeneratedFileFormProps {
 export interface GeneratedFileProps {
   // The panel's heading: "Program PDF".
   title: ReactNode;
-  // What the file is made from and how long a run takes.
-  description?: ReactNode;
   // What the store recorded; null when nothing has run.
   record: GeneratedRecord | null | undefined;
   // A fixed now, for a report or a test.
@@ -70,7 +68,7 @@ function sentence(
   const made = view.generatedAt !== null ? <Time at={view.generatedAt} format="exact" /> : null;
   switch (state) {
     case "none":
-      return "Nothing has been generated yet.";
+      return null;
     case "generating":
       return view.hasFile
         ? "This can take a minute. The current file stays available until the new one is ready; refresh to see it."
@@ -105,7 +103,6 @@ const plainForm =
 // download link with its format and size, and the Generate or Regenerate button.
 export function GeneratedFile({
   title,
-  description,
   record,
   now,
   lockMs,
@@ -132,7 +129,6 @@ export function GeneratedFile({
     <Panel
       title={title}
       level={level}
-      description={description}
       className="cap-generated"
       footer={
         generate || children != null ? (

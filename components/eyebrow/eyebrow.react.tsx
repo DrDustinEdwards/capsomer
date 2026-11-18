@@ -11,7 +11,8 @@ export interface EyebrowProps {
   className?: string;
 }
 
-// The HTML contract in eyebrow.md.
+// The HTML contract in eyebrow.md. A label that carries a fact ("Sample data", "Account"), never a
+// kicker over a heading that only restates it (DEFAULTS.md, let the layout explain).
 export function Eyebrow({ children, variant, tone, as: Tag = "p", id, className }: EyebrowProps) {
   return (
     <Tag

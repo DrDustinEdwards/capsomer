@@ -136,7 +136,7 @@ export function Schedule<T>({
   idPrefix,
   noDate = "To be scheduled",
   year = false,
-  empty = "Nothing is scheduled on this day yet.",
+  empty = "Nothing scheduled.",
   slotFooter,
 }: ScheduleProps<T>) {
   const DayH = `h${level}` as "h2" | "h3";

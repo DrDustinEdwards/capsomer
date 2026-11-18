@@ -23,7 +23,6 @@ function Panel({
     <GeneratedFile
       title="Annual report PDF"
       level={3}
-      description="Made from the report's sections. It can take up to a minute."
       record={record}
       now={NOW}
       downloadHref="#download"

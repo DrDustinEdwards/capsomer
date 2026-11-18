@@ -26,7 +26,7 @@ replaces:
   <form class="cap-approval-form">
     <div class="cap-dialog-header">
       <h2 class="cap-dialog-title" id="ap-title">2 gates are waiting</h2>
-      <p class="cap-dialog-description" id="ap-lead">Each command runs once, when approved. Uncheck a gate you are not ready for; it stays waiting.</p>
+      <p class="cap-dialog-description" id="ap-lead">Each command runs once, when approved.</p>
     </div>
     <div class="cap-dialog-body cap-approval-gates" data-flush role="group" aria-label="Gates waiting for approval">
       <fieldset class="cap-approval-gate">

@@ -82,7 +82,7 @@ export function RoomBar({
         />
       ) : (
         <p className="cap-collab-note">
-          You are suggesting: what you type shows as a suggestion until an editor accepts it.
+          You are suggesting.
           {pending > 0 ? ` ${pending} waiting.` : ""}
         </p>
       )}

@@ -55,7 +55,6 @@ function Page({ at, level = 2 }: { at: string; level?: 1 | 2 }) {
     <DocumentViewer
       title={doc.title}
       level={level}
-      subtitle={doc.detail}
       download={{ href: `${doc.href}.pdf`, bytes: 4_404_019 }}
       prev={previous}
       next={next}

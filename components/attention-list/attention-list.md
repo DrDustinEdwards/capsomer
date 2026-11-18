@@ -60,8 +60,7 @@ replaces:
     <!-- the notices: one closed row at the foot -->
     <li class="cap-row cap-attention-notices">
       <span class="cap-row-status" id="r3-s"><span class="cap-status" data-tone="info">[glyph]Notice</span></span>
-      <div class="cap-row-title"><button type="button" aria-expanded="false" aria-controls="att-notices" aria-describedby="r3-s r3-d">4 notices</button></div>
-      <p class="cap-row-detail" id="r3-d">Nothing to act on now</p>
+      <div class="cap-row-title"><button type="button" aria-expanded="false" aria-controls="att-notices" aria-describedby="r3-s">4 notices</button></div>
       <span class="cap-row-meta"><span class="cap-row-chevron" aria-hidden="true"></span></span>
     </li>
     <li class="cap-attention-region" id="att-notices" hidden><ul role="list" aria-label="Notices">[cap-attention-child rows]</ul></li>

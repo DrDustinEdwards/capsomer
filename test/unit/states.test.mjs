@@ -40,11 +40,10 @@ const EXAMPLES = `<link rel="stylesheet" href="./specimen/x.css" />
 </script>
 `;
 
-test("renderStates: one h1, one main, escaped title and summary", () => {
+test("renderStates: one h1, one main, escaped title", () => {
   const html = renderStates({
     template,
     title: "Tom & <Jerry>",
-    summary: 'It\'s "quoted" & <b>',
     examples: EXAMPLES,
     hasTsx: false,
   });
@@ -53,7 +52,7 @@ test("renderStates: one h1, one main, escaped title and summary", () => {
   assert.equal(count(html, /<main\b/g), 1);
   assert.equal(count(html, /<\/main>/g), 1);
   assert.match(html, /<title>Tom &amp; &lt;Jerry&gt;: states<\/title>/);
-  assert.ok(!html.includes("<Jerry>") && !html.includes("<b>"));
+  assert.ok(!html.includes("<Jerry>"));
   assert.match(html, /<script type="module" src="..\/..\/site\/specimen\.ts"><\/script>/);
 });
 
@@ -61,7 +60,6 @@ test("renderStates: keeps template specimens untouched, hoists links and scripts
   const html = renderStates({
     template,
     title: "X",
-    summary: "y",
     examples: EXAMPLES,
     hasTsx: true,
   });
@@ -96,7 +94,7 @@ test("generateStates: writes a page for each component with examples, none witho
     mkdirSync(join(dir, "components", name), { recursive: true });
   writeFileSync(
     join(dir, "components", "alpha", "alpha.md"),
-    "---\nname: alpha\ntitle: Alpha part\nsummary: 'The alpha''s job.'\n---\nBody\n",
+    "---\nname: alpha\ntitle: Alpha part\n---\nBody\n",
   );
   writeFileSync(
     join(dir, "components", "alpha", "examples.html"),
@@ -113,11 +111,6 @@ test("generateStates: writes a page for each component with examples, none witho
   assert.ok(
     alpha.includes('<figure class="built"></figure>') && !alpha.includes("build:chart"),
     "a build marker is the module's markup",
-  );
-  assert.match(
-    alpha,
-    /<h1>Alpha part<\/h1>\s*<p>The alpha&#39;s job\.<\/p>/,
-    "the YAML's doubled quote is one apostrophe, escaped",
   );
   const beta = readFileSync(join(dir, "components", "beta", "states.html"), "utf8");
   assert.match(beta, /<h1>beta<\/h1>/, "falls back to the folder name without a doc page");
@@ -140,7 +133,7 @@ test("every component's examples.html makes a valid page: one h1, one main, a he
       !/<h1\b/i.test(outsideTemplates(examples)) && !/<main\b/i.test(outsideTemplates(examples)),
       `${d.name}: the template supplies the h1 and the main`,
     );
-    const html = renderStates({ template, title: d.name, summary: "s", examples, hasTsx: false });
+    const html = renderStates({ template, title: d.name, examples, hasTsx: false });
     assert.equal(count(html, /<h1\b/g), 1, `${d.name}: one h1`);
     assert.equal(count(html, /<main\b/g), 1, `${d.name}: one main`);
     const templates = (examples.match(/<template\b/g) ?? []).length;

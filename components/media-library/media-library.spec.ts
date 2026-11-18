@@ -65,10 +65,7 @@ test("behavior: an action is offered only where the site supports it and the per
   });
   expect(bare.bulk).toEqual([]);
   expect(bare.withheld).toEqual([
-    "Uploads are not offered by this site.",
     "Alt text is set at upload here: this site cannot change it afterwards.",
-    "Tags are not offered: this site keeps no tags on its files.",
-    "Delete is not offered: this site cannot delete files.",
   ]);
   const reader = mediaActions({ offers: OFFERS, can: NONE, query: {} });
   expect(reader.bulk).toEqual([]);

@@ -9,16 +9,10 @@ function Rows() {
     <section className="cap-panel">
       <div className="cap-panel-body">
         <form id="sr-toggle" method="post" action="#" onSubmit={(e) => e.preventDefault()} />
-        <SwitchRow
-          label="Weekly digest"
-          help="A summary of the week every Monday."
-          checked={digest}
-          onCheckedChange={setDigest}
-        />
+        <SwitchRow label="Weekly digest" checked={digest} onCheckedChange={setDigest} />
         <SwitchRow
           name="alerts"
           label="Failure alerts"
-          help="An email the moment a check fails."
           defaultChecked
           form="sr-toggle"
           submitOnChange
@@ -26,12 +20,11 @@ function Rows() {
         <SwitchRow
           name="auto"
           label="Send without review"
-          help="Sends drafts the checks pass."
           disabledReason="Only the account owner can change this."
         />
-        <SettingsRow label="Time zone" help="Dates in emails use it.">
-          {({ labelId, helpId }) => (
-            <select className="cap-input" aria-labelledby={labelId} aria-describedby={helpId}>
+        <SettingsRow label="Time zone">
+          {({ labelId }) => (
+            <select className="cap-input" aria-labelledby={labelId}>
               <option>UTC</option>
               <option>America/Chicago</option>
             </select>
@@ -45,11 +38,7 @@ function Rows() {
 const MOUNTS = {
   rows: <Rows />,
   page: (
-    <SettingsLayout
-      title="Notifications"
-      lead="What we email you, and when."
-      back={{ href: "#settings", label: "Settings" }}
-    >
+    <SettingsLayout title="Notifications" back={{ href: "#settings", label: "Settings" }}>
       <p>The page's rows.</p>
     </SettingsLayout>
   ),

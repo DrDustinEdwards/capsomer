@@ -128,7 +128,7 @@ function messageOf(e: unknown): string {
 interface Tool {
   id: string;
   label: string;
-  hint: string;
+  hint?: string;
   keys?: string;
   paths: string[];
   glyph?: string;
@@ -217,12 +217,6 @@ export async function mountMarkdownEditor(
   });
   const surfaceEl = el("div", { class: "cap-md-surface" });
   const foot = el("div", { class: "cap-md-foot" });
-  const hint = el(
-    "p",
-    { class: "cap-md-hint", "aria-hidden": "true" },
-    icon(GLYPH.image),
-    "Drop or paste an image to upload it",
-  );
   const stats = el("p", { class: "cap-md-stats" });
   const statsCount = el("span", { class: "cap-md-count" });
   const statsLimit = el("span", { class: "cap-md-limit" });
@@ -230,7 +224,7 @@ export async function mountMarkdownEditor(
   const file = el("input", { type: "file", hidden: "" });
   file.tabIndex = -1;
   stats.append(statsCount, statsLimit);
-  foot.append(hint, stats);
+  foot.append(stats);
   frame.append(toolbar, surfaceEl, foot);
 
   const say = (text: string) => {
@@ -326,7 +320,6 @@ export async function mountMarkdownEditor(
       {
         id: "footnote",
         label: "Footnote",
-        hint: "A reference and its definition",
         paths: GLYPH.footnote,
         run: commands.footnote,
       },
@@ -335,7 +328,6 @@ export async function mountMarkdownEditor(
       t.push({
         id: "image",
         label: "Insert image",
-        hint: "Asks for alt text, then uploads the file",
         paths: GLYPH.image,
         run: () => file.click(),
       });
@@ -366,7 +358,7 @@ export async function mountMarkdownEditor(
         type: "button",
         class: "cap-md-tool",
         "aria-label": t.label,
-        title: `${t.label}. ${t.hint}`,
+        title: t.hint ? `${t.label}. ${t.hint}` : t.label,
       });
       if (t.keys) b.setAttribute("aria-keyshortcuts", t.keys);
       b.tabIndex = i === activeTool ? 0 : -1;
@@ -379,11 +371,8 @@ export async function mountMarkdownEditor(
       b.addEventListener("click", () => t.run());
       nodes.push(b);
     });
-    if (blocks.length > 0)
-      nodes.push(el("span", { class: "cap-md-toolbar-hint" }, "Type / on an empty line"));
     toolbar.replaceChildren(...nodes);
     // With every button disabled there is no tab stop, and the toolbar says so by being empty of focus.
-    hint.hidden = !o.onUpload;
   }
 
   cleanups.push(attachToolbar(toolbar, TOOLS));
@@ -713,7 +702,7 @@ export async function mountMarkdownEditor(
     const help = el(
       "p",
       { class: "cap-field-help", id: `${uid}-alt-help` },
-      `Describe ${name} for a person who cannot see it, or insert it as decorative if it adds nothing. It is uploaded when you insert it.`,
+      `Describe ${name}, or insert it as decorative.`,
     );
     const wait = el("p", { class: "cap-md-upload-wait", hidden: "" }, `Uploading ${name}`);
     const insert = el(

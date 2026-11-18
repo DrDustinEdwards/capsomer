@@ -25,7 +25,7 @@ export function renderIcons(d: Data): string {
         `<li data-name="${esc(n)}"><button type="button" class="sw-icon" data-copy="${esc(n)}"><svg class="cap-icon" viewBox="0 0 24 24"${fill ? " data-fill" : ""} aria-hidden="true" focusable="false"><path d="${esc(p)}"/></svg><span>${esc(n)}</span></button></li>`,
     )
     .join("");
-  const main = `${titleBlock("Icons", `${all.length} icons on one 24-unit grid; a click copies the export's name.`)}
+  const main = `${titleBlock("Icons")}
   <div class="sw-tools" data-cap-part="icon-tools" hidden>
     <div class="cap-field"><label class="cap-field-label" for="icon-find">Find an icon</label><input class="cap-input" id="icon-find" type="search" autocomplete="off" aria-describedby="icon-n" /></div>
     <fieldset class="cap-seg"><legend>Size</legend><div class="cap-seg-options">${[16, 20, 24, 32]
@@ -76,7 +76,7 @@ export function renderColors(d: Data): string {
   </section>`,
     )
     .join("\n  ");
-  const main = `${titleBlock("Colors", `${names.length} families, 12 steps each in light and dark; a click copies the value.`)}
+  const main = `${titleBlock("Colors")}
   <p class="cap-sr-only" id="copy-n" role="status"></p>
   ${families}`;
   return `${header("Colors", firsts(d))}

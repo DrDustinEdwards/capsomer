@@ -68,10 +68,7 @@ test("behavior: an action is offered only where the site supports it and the per
   expect(postActions({ offers: OFFERS, can: ALL }).withheld).toEqual([]);
   const noDelete = postActions({ offers: { ...OFFERS, delete: false, tags: false }, can: ALL });
   expect(noDelete.bulk.map((a) => a.intent)).toEqual(["duplicate", "unpublish"]);
-  expect(noDelete.withheld).toEqual([
-    "Tags are not offered: this site keeps no tags on its posts.",
-    "Delete is not offered: this site cannot delete posts.",
-  ]);
+  expect(noDelete.withheld).toEqual([]);
   // Delete is offered by the site but not to this person: nothing to tick it with, and no reason owed beyond the role.
   expect(
     postActions({ offers: OFFERS, can: { ...ALL, deleteContent: false } }).bulk.some(
@@ -212,7 +209,7 @@ eachTheme((theme) => {
       { sel: "[data-mount='editor'] .cap-posts-count", what: "the count" },
       { sel: "[data-mount='editor'] .cap-posts-path", what: "a post's path" },
       { sel: "[data-mount='editor'] .cap-posts-when", what: "when a scheduled post goes out" },
-      { sel: "[data-mount='limited'] .cap-posts-withheld li", what: "why an action is withheld" },
+      { sel: "[data-mount='reader'] .cap-posts-withheld li", what: "why an action is withheld" },
       { sel: "[data-mount='outcomes'] .cap-bulk-result-message", what: "why a post was not done" },
       { sel: "[data-mount='ideas'] .cap-posts-excerpt", what: "a post's excerpt" },
       {

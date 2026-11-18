@@ -23,10 +23,8 @@ export type ModeBannerProps =
 
 export const DEMO_WORDS = {
   title: "Demo with sample data",
-  visitor:
-    "This is how the dashboard looks once you connect. The numbers are made up, and nothing you do here is saved.",
-  signedIn:
-    "The numbers are made up, and nothing you do here is saved. This is not your real account.",
+  visitor: "Nothing you do here is saved.",
+  signedIn: "Nothing you do here is saved. This is not your real account.",
 } as const;
 
 export function ModeBanner(props: ModeBannerProps) {

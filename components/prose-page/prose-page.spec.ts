@@ -7,14 +7,13 @@ import {
 } from "../../test/helpers.ts";
 
 eachTheme((theme) => {
-  test("accessibility: no axe violations, and the title, lead and body reach their contrast", async ({
+  test("accessibility: no axe violations, and the title and body reach their contrast", async ({
     page,
   }) => {
     await visitStates(page, "prose-page", theme, "page");
     await expectNoAxeViolations(page);
     await expectContrast(page, [
       { sel: ".cap-prose-page-title", what: "the title" },
-      { sel: ".cap-prose-page-lead", what: "the lead" },
       { sel: ".cap-prose-page-body p", what: "the body" },
     ]);
   });

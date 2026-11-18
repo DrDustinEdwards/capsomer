@@ -1,5 +1,5 @@
 // Generates components/<name>/states.html from site/states-template.html, the component's
-// doc-page frontmatter (title, summary) and its examples.html (and examples.tsx, if any). A
+// doc-page frontmatter (its title) and its examples.html (and examples.tsx, if any). A
 // component whose specimens are drawn by Enarratio has examples.build.ts: its default export
 // maps names to markup, rendered when the pages are built, and each <!-- build:name --> in
 // examples.html is replaced by it, so the specimens are the package's live output, never pasted.
@@ -16,7 +16,7 @@ const PKG = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 function docMeta(md, fallback) {
   const { data } = frontmatter(md);
   const get = (key) => (typeof data[key] === "string" ? data[key] : "");
-  return { title: get("title") || fallback, summary: get("summary") };
+  return { title: get("title") || fallback };
 }
 
 // Splits examples.html into the part that belongs in <main> and the elements that belong in
@@ -53,7 +53,7 @@ function liftStyles(body) {
   return { body: out, css: rules.join("\n") };
 }
 
-export function renderStates({ template, title, summary, examples, hasTsx, css = "" }) {
+export function renderStates({ template, title, examples, hasTsx, css = "" }) {
   const split = splitExamples(examples);
   const { body } = split;
   const head = css ? [...split.head, '<link rel="stylesheet" href="./states.css" />'] : split.head;
@@ -64,7 +64,6 @@ export function renderStates({ template, title, summary, examples, hasTsx, css =
   ];
   const fill = {
     title: escapeHtml(title),
-    summary: escapeHtml(summary),
     head: head.map((h) => `    ${h}\n`).join(""),
     examples: body,
     scripts: after.map((s) => `    ${s}\n`).join(""),
@@ -98,10 +97,7 @@ export async function generateStates(root = PKG) {
     const tsx = join(base, "examples.tsx");
     if (!existsSync(join(base, "examples.html")) && !existsSync(tsx)) continue;
     const mdPath = join(base, `${d.name}.md`);
-    const { title, summary } = docMeta(
-      existsSync(mdPath) ? readFileSync(mdPath, "utf8") : "",
-      d.name,
-    );
+    const { title } = docMeta(existsSync(mdPath) ? readFileSync(mdPath, "utf8") : "", d.name);
     const examples = await loadExamples(base);
     const lifted = liftStyles(examples);
     if (lifted.css) writeFileSync(join(base, "states.css"), `${lifted.css}\n`);
@@ -110,7 +106,6 @@ export async function generateStates(root = PKG) {
       renderStates({
         template,
         title,
-        summary,
         examples: lifted.body,
         hasTsx: existsSync(tsx),
         css: lifted.css,

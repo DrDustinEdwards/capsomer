@@ -50,14 +50,6 @@
 [data-family="fox"] .sh-hero h1 {
   font-family: var(--prose);
 }
-.sh-eyebrow {
-  margin: 0;
-  color: var(--accent-text);
-  font-size: var(--fs-detail);
-  font-weight: var(--weight-semibold);
-  letter-spacing: var(--tracking-sign);
-  text-transform: uppercase;
-}
 .sh-lead {
   margin: 0;
   max-width: 56ch;

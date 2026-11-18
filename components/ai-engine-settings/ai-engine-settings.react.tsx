@@ -63,7 +63,7 @@ export function AiEngineSettings({
   readyNote,
   spentMicros,
   usage,
-  capHelp = "At the cap the API closes: Subscription is used instead, and Automatic stops falling back. 0 is no cap. Saved with the table.",
+  capHelp = "At the cap the API closes: Subscription is used instead, and Automatic stops falling back. 0 is no cap.",
   costNote = "Costs are the list prices times the tokens each call used. A subscription has no meter to read here.",
   action,
   Form = PlainForm,
@@ -134,12 +134,7 @@ export function AiEngineSettings({
             </thead>
             <tbody>
               <tr>
-                <th scope="row">
-                  Everything
-                  <span className="cap-ai-engine-job-note">
-                    Each job follows this unless it says otherwise.
-                  </span>
-                </th>
+                <th scope="row">Everything</th>
                 <td>
                   <Select
                     name="master"
@@ -210,9 +205,7 @@ export function AiEngineSettings({
             />
           </Field>
           {usage.length === 0 ? (
-            <Empty kind="all-clear" flush title="Nothing spent">
-              No API calls this month.
-            </Empty>
+            <Empty kind="all-clear" flush title="No API calls this month" />
           ) : (
             <RowList label="API spend by job">
               {usage.map((u) => (

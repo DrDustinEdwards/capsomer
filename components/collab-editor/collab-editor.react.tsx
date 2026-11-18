@@ -187,7 +187,7 @@ export function useRoomEditing(options: RoomEditingOptions): RoomEditing {
     : null;
 
   const markdownLocked = suggest
-    ? "Suggestions are made in the formatted view. The Markdown here shows the text as it stands."
+    ? null
     : pending > 0
       ? "Accept or reject the suggestions first: Markdown cannot show them. The Markdown here shows the text without them."
       : null;

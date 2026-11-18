@@ -263,7 +263,7 @@ export function renderComponent(d: Data, name: string): string {
     add("accessibility", "Accessibility", renderMarkdown(c.accessibility, 0));
   }
   const section = c.group === "primitive" ? "Primitives" : "Components";
-  const main = `${titleBlock(c.title, c.summary, tools)}
+  const main = `${titleBlock(c.title, tools)}
   ${preview}
   ${parts.map(([id, t, body]) => part(id, t, body)).join("\n  ")}`;
   return `${header(section, firsts(d))}

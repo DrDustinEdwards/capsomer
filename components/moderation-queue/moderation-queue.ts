@@ -17,7 +17,7 @@ import { enhance as enhanceTime, nowFor } from "../time/time.ts";
 import {
   ACTION_KEY,
   DELETE_KEY,
-  EMPTY_TEXT,
+  EMPTY_TITLE,
   type Mention,
   type ModAction,
   type ModState,
@@ -64,7 +64,7 @@ export {
   undoStack,
   sweepLines,
   mentionsWord,
-  EMPTY_TEXT,
+  EMPTY_TITLE,
   statusEl,
   actionButton,
 } from "./moderation-queue-model.ts";
@@ -151,11 +151,8 @@ export function refresh(root: HTMLElement): void {
   const empty = root.querySelector<HTMLElement>("[data-cap-part='empty']");
   if (empty) {
     empty.hidden = shown > 0;
-    const t = EMPTY_TEXT[view];
     const title = empty.querySelector(".cap-empty-title");
-    const text = empty.querySelector(".cap-empty-text");
-    if (title) title.textContent = t.title;
-    if (text) text.textContent = t.text;
+    if (title) title.textContent = EMPTY_TITLE[view];
     empty.dataset.kind = view === "pending" ? "all-clear" : "nothing-yet";
   }
   const list = listOf(root);

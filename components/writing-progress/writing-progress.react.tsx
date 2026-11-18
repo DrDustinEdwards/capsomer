@@ -153,7 +153,7 @@ export function WritingProgress({
   const recent = recentDays(totals, today, dayCount, goal.writingDays);
 
   return (
-    <Panel title={title} src="Typed words only" className="cap-progress">
+    <Panel title={title} className="cap-progress">
       <div className="cap-progress-body" data-cap="writing-progress">
         {target !== null ? (
           <Meter
@@ -217,14 +217,7 @@ export function WritingProgress({
                   />
                 </div>
               </fieldset>
-              <Field
-                label="Words a day"
-                help={
-                  mode === "deadline"
-                    ? "Used only when you set it by hand."
-                    : "Leave empty for no target."
-                }
-              >
+              <Field label="Words a day">
                 <input
                   className="cap-input"
                   name="dailyTarget"

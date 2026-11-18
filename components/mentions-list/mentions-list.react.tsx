@@ -301,9 +301,7 @@ export function MentionsList({
       ) : null}
 
       {empty ? (
-        <Empty kind={words.kind} title={words.title}>
-          {words.text}
-        </Empty>
+        <Empty kind={words.kind} title={words.title} />
       ) : (
         <ul
           className="cap-rows cap-mq-list"

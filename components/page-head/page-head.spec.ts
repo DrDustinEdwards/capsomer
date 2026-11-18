@@ -12,12 +12,9 @@ eachTheme((theme) => {
     await expectNoAxeViolations(page);
   });
 
-  test("accessibility: the title and the lead reach their contrast", async ({ page }) => {
+  test("accessibility: the title reaches its contrast", async ({ page }) => {
     await visitStates(page, "page-head", theme);
-    await expectContrast(page, [
-      { sel: "#ph-full .cap-page-head-title", what: "the page title" },
-      { sel: "#ph-full .cap-page-head-lead", what: "the lead line" },
-    ]);
+    await expectContrast(page, [{ sel: "#ph-full .cap-page-head-title", what: "the page title" }]);
   });
 
   test("behavior: the actions sit at the right of the title, and drop below it in a narrow space", async ({
