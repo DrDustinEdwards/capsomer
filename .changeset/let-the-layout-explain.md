@@ -4,7 +4,7 @@
 
 Let the layout explain (Dustin, 2026-11-18; DEFAULTS.md): the slots whose only use was a subtitle, eyebrow, note or helper line are gone, and the default strings say less.
 
-Removed props: `PageHead` `lead`; `SettingsLayout` `lead`; `ProsePage` / `ProsePageHead` `lead`; `DocumentViewer` `subtitle`; `Panel` `description` (and so `TablePanel`, `GeneratedFile` and `ChartPanel` `description`); `Hero` `eyebrow` and `note`; `CtaBand` `eyebrow` and `note`; `FeatureBlock` `eyebrow`; `SettingsRow` `help` and `SwitchRow` `help` (`disabledReason` stays); `NewsletterSignup` `text`; `AttentionList` `emptyText` and `emptyLaterText`; `Catalog` `emptyText`; `SignedOutPage` `access`. `ApprovalQueue` `empty` is `{ title }` (no `text`). `noticesDetail` on the attention list has no default.
+Removed props: `PageHead` `lead`; `SettingsLayout` `lead`; `ProsePage` / `ProsePageHead` `lead`; `DocumentViewer` `subtitle`; `Panel` `description` (and so `TablePanel`, `GeneratedFile` and `ChartPanel` `description`); `Hero` `eyebrow` and `note`; `CtaBand` `eyebrow` and `note`; `FeatureBlock` `eyebrow`; `SettingsRow` `help` and `SwitchRow` `help` (`disabledReason` stays); `NewsletterSignup` `text`; `AttentionList` `emptyText` and `emptyLaterText`; `Catalog` `emptyText`; `SignedOutPage` `access`; `PickerWords` `lead`. `ApprovalQueue` `empty` is `{ title }` (no `text`). `noticesDetail` on the attention list has no default.
 
 Removed classes: `cap-page-head-lead`, `cap-prose-page-lead` (and its `--cap-prose-page-lead-text`), `cap-docview-sub`, `cap-panel-desc`, `cap-hero-note`, `cap-cta-band-note`, `cap-settings-row-help`, `cap-newsletter-text`, `cap-md-hint`, `cap-md-toolbar-hint`. The hero no longer spaces a `.cap-eyebrow` above its title.
 
