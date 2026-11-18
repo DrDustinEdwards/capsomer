@@ -33,5 +33,5 @@ jobs:
       # The unit tests of `npm run check`. They import the .ts sources directly (not dist/), so coverage lands on the
       # mapped files. Components tested only in the browser suite have no unit coverage and show as unmeasured.
       # Node's test runner does not create the destination folder.
-      coverage-command: mkdir -p coverage && node --test --experimental-test-coverage --test-reporter=lcov --test-reporter-destination=coverage/lcov.info "test/unit/*.test.mjs"
+      coverage-command: mkdir -p coverage && node --test --experimental-test-coverage --test-reporter=spec --test-reporter-destination=stdout --test-reporter=lcov --test-reporter-destination=coverage/lcov.info "test/unit/*.test.mjs"
       coverage-file: coverage/lcov.info
