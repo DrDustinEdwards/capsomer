@@ -189,7 +189,6 @@ export interface ChartPanelProps extends Omit<ChartFrameProps, "noData" | "class
   // for screen readers and the table only; left out, the figure's title is the heading.
   title?: string;
   level?: 2 | 3;
-  description?: ReactNode;
   more?: ReactNode;
   src?: ReactNode;
   id?: string;
@@ -205,7 +204,6 @@ export interface ChartPanelProps extends Omit<ChartFrameProps, "noData" | "class
 export function ChartPanel({
   title,
   level,
-  description,
   more,
   src,
   id,
@@ -235,15 +233,7 @@ export function ChartPanel({
       </section>
     );
   return (
-    <Panel
-      title={title}
-      level={level}
-      description={description}
-      more={more}
-      src={src}
-      id={id}
-      className={cls}
-    >
+    <Panel title={title} level={level} more={more} src={src} id={id} className={cls}>
       {body}
     </Panel>
   );

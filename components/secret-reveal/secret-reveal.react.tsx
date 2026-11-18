@@ -7,7 +7,7 @@ import { useEffect, useId, useRef, type ReactNode } from "react";
 export function SecretReveal({
   title,
   secret,
-  note = "This will not be shown again. Copy it now and store it somewhere safe.",
+  note = "Shown once. Copy it now.",
   copy,
   headingLevel: H = "h2",
   focusOnShow = true,

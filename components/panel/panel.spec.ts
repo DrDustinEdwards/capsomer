@@ -37,12 +37,9 @@ eachTheme((theme) => {
     expect(box?.height ?? 0).toBeGreaterThanOrEqual(24);
   });
 
-  test("accessibility: description, action, footer and the padded block reach their contrast", async ({
-    page,
-  }) => {
+  test("accessibility: the footer and the padded block reach their contrast", async ({ page }) => {
     await visitStates(page, "panel", theme);
     await expectContrast(page, [
-      { sel: "#p-card .cap-panel-desc", what: "the description on the raised header" },
       { sel: "#p-card .cap-panel-foot .cap-muted", what: "muted text on the footer band" },
       { sel: "#p-pad .cap-panel-pad p", what: "text in the padded block" },
     ]);

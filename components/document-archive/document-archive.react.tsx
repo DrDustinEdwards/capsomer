@@ -39,7 +39,7 @@ export function DocumentList({
   docs,
   labelledBy,
   label,
-  empty = "Nothing here yet.",
+  empty = "Nothing here.",
   renderLink = plainLink,
 }: DocumentListProps) {
   if (docs.length === 0) return <p className="cap-archive-empty">{empty}</p>;
@@ -119,8 +119,6 @@ export interface PagerDoc {
 
 export interface DocumentViewerProps {
   title: ReactNode;
-  // "Fall 2026 · Editor: Sam Lee".
-  subtitle?: ReactNode;
   // The page's heading level for the title. Default 1: the document is the page.
   level?: 1 | 2;
   // Above the title: the page's breadcrumb.
@@ -142,7 +140,6 @@ export interface DocumentViewerProps {
 // Next in its category.
 export function DocumentViewer({
   title,
-  subtitle,
   level = 1,
   before,
   download,
@@ -161,7 +158,6 @@ export function DocumentViewer({
       <header className="cap-docview-head">
         {before}
         <H className="cap-docview-title">{title}</H>
-        {subtitle != null && <p className="cap-docview-sub">{subtitle}</p>}
         {download && (
           <p className="cap-docview-download">
             <a href={download.href} className="cap-btn" data-variant="primary" download>

@@ -156,7 +156,6 @@ export async function publishWithPreview(
   if (!site.first) return perform();
   await confirm({
     title: `Publish to ${site.name}?`,
-    lead: "Publishing for the first time cannot be taken back quietly: it goes public at once.",
     body: [`${site.name}: ${FIRST_PUBLICATION_NOTE}`],
     action: `Publish to ${site.name}`,
     perform,

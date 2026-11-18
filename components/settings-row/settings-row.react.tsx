@@ -5,34 +5,35 @@ import type { BreadcrumbItem, BreadcrumbProps } from "../breadcrumb/breadcrumb.r
 import { PageHead } from "../page-head/page-head.react.tsx";
 import { Switch } from "../switch/switch.react.tsx";
 
-// One setting on its own line: its name and one line on what it does at the start, its control
-// at the end, a rule between rows. `children` is given the ids to name and describe the control
-// with, so the row's words are the control's name and description.
+// One setting on its own line: its name at the start, its control at the end, a rule between
+// rows. `children` is given the ids to name the control with and, when it cannot be changed, to
+// describe it with the reason, so the row's words are the control's name and description.
 export function SettingsRow({
   label,
-  help,
+  disabledReason,
   children,
 }: {
   label: ReactNode;
-  help?: ReactNode;
-  children: (ids: { labelId: string; helpId?: string }) => ReactNode;
+  // Why its control cannot be changed here; shown under the name and describing the control.
+  disabledReason?: ReactNode;
+  children: (ids: { labelId: string; reasonId?: string }) => ReactNode;
 }) {
   const base = useId();
   const labelId = `${base}-label`;
-  const helpId = help ? `${base}-help` : undefined;
+  const reasonId = disabledReason ? `${base}-reason` : undefined;
   return (
     <div className="cap-settings-row">
       <div className="cap-settings-row-text">
         <span className="cap-settings-row-label" id={labelId}>
           {label}
         </span>
-        {help ? (
-          <p className="cap-settings-row-help" id={helpId}>
-            {help}
+        {disabledReason ? (
+          <p className="cap-settings-row-reason" id={reasonId}>
+            {disabledReason}
           </p>
         ) : null}
       </div>
-      <div className="cap-settings-row-control">{children({ labelId, helpId })}</div>
+      <div className="cap-settings-row-control">{children({ labelId, reasonId })}</div>
     </div>
   );
 }
@@ -40,7 +41,6 @@ export function SettingsRow({
 export interface SwitchRowProps {
   name?: string;
   label: ReactNode;
-  help?: ReactNode;
   checked?: boolean;
   defaultChecked?: boolean;
   onCheckedChange?: (checked: boolean) => void;
@@ -56,11 +56,10 @@ export interface SwitchRowProps {
   disabledReason?: ReactNode;
 }
 
-// A settings row whose control is a switch, named by the row's label and described by its line.
+// A settings row whose control is a switch, named by the row's label.
 export function SwitchRow({
   name,
   label,
-  help,
   checked,
   defaultChecked,
   onCheckedChange,
@@ -74,23 +73,8 @@ export function SwitchRow({
   const input = useRef<HTMLInputElement>(null);
   const off = disabledReason != null && disabledReason !== false && disabledReason !== "";
   return (
-    <SettingsRow
-      label={label}
-      help={
-        help || off ? (
-          <>
-            {help}
-            {off ? (
-              <span className="cap-settings-row-reason">
-                {help ? " " : null}
-                {disabledReason}
-              </span>
-            ) : null}
-          </>
-        ) : undefined
-      }
-    >
-      {({ labelId, helpId }) => (
+    <SettingsRow label={label} disabledReason={off ? disabledReason : undefined}>
+      {({ labelId, reasonId }) => (
         <>
           <Switch
             ref={input}
@@ -102,7 +86,7 @@ export function SwitchRow({
             busy={busy}
             disabled={off}
             aria-labelledby={labelId}
-            aria-describedby={helpId}
+            aria-describedby={reasonId}
             onCheckedChange={(on) => {
               onCheckedChange?.(on);
               if (submitOnChange) input.current?.form?.requestSubmit();
@@ -119,11 +103,10 @@ export function SwitchRow({
   );
 }
 
-// A settings page: the page head (title, its line, the trail) and, on a phone, where the
+// A settings page: the page head (title and trail) and, on a phone, where the
 // settings menu is hidden, a link back to the settings index above it.
 export function SettingsLayout({
   title,
-  lead,
   crumbs,
   renderLink,
   back = { href: "/settings", label: "Settings" },
@@ -131,7 +114,6 @@ export function SettingsLayout({
   children,
 }: {
   title: ReactNode;
-  lead?: ReactNode;
   crumbs?: BreadcrumbItem[];
   renderLink?: BreadcrumbProps["renderLink"];
   // The settings index; null for none.
@@ -155,13 +137,7 @@ export function SettingsLayout({
   return (
     <div className="cap-settings-page">
       {backLink}
-      <PageHead
-        title={title}
-        lead={lead}
-        crumbs={crumbs}
-        renderLink={renderLink}
-        actions={actions}
-      />
+      <PageHead title={title} crumbs={crumbs} renderLink={renderLink} actions={actions} />
       {children}
     </div>
   );

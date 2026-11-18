@@ -251,12 +251,7 @@ export function CommentsPanel({
   };
 
   return (
-    <Panel
-      title="Comments"
-      count={open.length}
-      src="Everyone in this file sees them at once"
-      id={id}
-    >
+    <Panel title="Comments" count={open.length} id={id}>
       <div className="cap-collab-stack" ref={list}>
         {writing ? (
           <div className="cap-collab-thread" data-new="">

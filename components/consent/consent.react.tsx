@@ -91,9 +91,7 @@ export function ConsentScreen({
           <h1 className="cap-consent-title">
             {client} wants to connect to your {product} account
           </h1>
-          <p className="cap-consent-text">
-            Approving grants access to the account below. You can revoke it any time from Settings.
-          </p>
+          <p className="cap-consent-text">You can revoke access in Settings.</p>
           <p className="cap-consent-text">
             {publishedBy ? (
               <>

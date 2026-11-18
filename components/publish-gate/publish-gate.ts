@@ -460,7 +460,6 @@ export function attachPublishGate(region: HTMLElement, hooks: GateHooks = {}): G
       // One-way for a first publication: previewed, with the destination listed, focus on Cancel.
       await confirm({
         title: `Publish to ${site.name}?`,
-        lead: "Publishing for the first time cannot be taken back quietly: it goes public at once.",
         body: [`${site.name}: ${FIRST_PUBLICATION_NOTE}`],
         action: `Publish to ${site.name}`,
         returnTo: button,

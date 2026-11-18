@@ -231,9 +231,7 @@ eachTheme((theme) => {
       { sel: `#sp-empty .cm-placeholder`, what: "the placeholder" },
       { sel: `#sp-lines .cm-gutterElement`, what: "a line number on the gutter" },
       { sel: `${d} .cap-md-toolbar .cap-md-tool`, what: "a toolbar icon" },
-      { sel: `${d} .cap-md-toolbar-hint`, what: "the toolbar hint" },
       { sel: `${d} .cap-md-count`, what: "the word count" },
-      { sel: `${d} .cap-md-hint`, what: "the drop hint" },
       { sel: `${d} .cap-field-label`, what: "the label" },
       { sel: `${d} .cap-field-help`, what: "the help" },
       { sel: `#sp-invalid .cap-field-error`, what: "the error message" },
@@ -900,14 +898,12 @@ eachTheme((theme) => {
     await expect(page.getByRole("textbox", { name: /Alt text/ })).toBeFocused();
   });
 
-  test("behavior: with no onUpload there is no image button and no drop hint", async ({ page }) => {
+  test("behavior: with no onUpload there is no image button", async ({ page }) => {
     await visitStates(page, NAME, theme);
     await ready(page, "sp-lines");
     const s = section(page, "sp-lines");
     await expect(toolbarOf(s).getByRole("button", { name: "Insert image" })).toHaveCount(0);
-    await expect(s.locator(".cap-md-hint")).toBeHidden();
     await expect(toolbarOf(s).getByRole("button", { name: "Chart" })).toHaveCount(0);
-    await expect(s.locator(".cap-md-toolbar-hint")).toHaveCount(0);
   });
 
   // ---- React -----------------------------------------------------------------------------

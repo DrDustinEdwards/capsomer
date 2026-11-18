@@ -38,7 +38,7 @@ replaces:
     <div class="cap-posts-tools"><form class="cap-posts-extra" method="post" action="/posts">...host actions...</form><a class="cap-btn" data-variant="primary" href="/editor/new">New post</a></div>
   </div>
   <p class="cap-posts-trash-note">Posts in Trash are deleted for good 30 days after they were moved there.</p> <!-- in the Trash -->
-  <ul class="cap-posts-withheld"><li>Delete is not offered: this site cannot delete posts.</li></ul>
+  <ul class="cap-posts-withheld"><li>Unpublishing needs a publisher's role.</li></ul>
   <div class="cap-message cap-content-result" role="status" aria-label="Results and failures">...the last result, Undo as form.cap-content-undo...</div>
   <div class="cap-posts-preview" role="status" aria-label="Preview link"> <!-- with offers.previewLinks; empty until a link is made -->
     <label class="cap-field-label" for="url">Preview link for Why the uptime strip counts gaps</label>

@@ -18,11 +18,9 @@ const SPECIMENS: Record<string, () => ReactNode> = {
   start: () => (
     <Hero
       headingLevel="h2"
-      eyebrow="Release notes"
       title="Every change, written down once"
       lead="Example Co keeps its release notes in one place, so every team reads the same words."
       actions={actions}
-      note="Free for teams of five or fewer."
       aside={
         <div className="cap-panel">
           <div className="cap-panel-body">

@@ -3,7 +3,7 @@
 
 /* A panel: a bordered surface with a header on the raised tone and a padded body.
    Extracted from the Capsid Portal (dashboard/src/styles.css, "panels"). Rebuilt in 0.2 to
-   the craft of shadcn's Card: header, title, description, action, content, footer, a small
+   the craft of shadcn's Card: header, title, action, content, footer, a small
    size, a first-child picture, and the Portal's padded block inside a flush body. */
 @layer cap.components {
   .cap-panel {
@@ -70,15 +70,6 @@
       letter-spacing: var(--tracking-snug);
       line-height: var(--leading);
     }
-  }
-
-  /* shadcn's CardDescription: a muted line under the heading, across the header's width. */
-  .cap-panel-desc {
-    flex: 1 0 100%;
-    order: 10;
-    margin: calc(var(--space-2) * -1) 0 0;
-    color: var(--muted);
-    font-size: var(--fs-detail);
   }
 
   /* shadcn's CardAction: a control for the whole panel, at the header's right. */

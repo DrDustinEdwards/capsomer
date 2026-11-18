@@ -6,7 +6,7 @@ import {
   visitStates,
 } from "../../test/helpers.ts";
 import {
-  EMPTY_TEXT,
+  EMPTY_TITLE,
   STATE_LABEL,
   VIEWS,
   VIEW_LABEL,
@@ -58,7 +58,7 @@ test("behavior: the words are the contract's states as Dustin named them, and th
     "Rejected",
     "All",
   ]);
-  expect(Object.keys(EMPTY_TEXT)).toEqual([...VIEWS]);
+  expect(Object.keys(EMPTY_TITLE)).toEqual([...VIEWS]);
   expect(inView("unverified", "pending")).toBe(false);
   expect(inView("unverified", "all")).toBe(true);
   const c = countStates([
@@ -316,7 +316,7 @@ eachTheme((theme) => {
     await page.keyboard.press("a");
     await expect(row(q, "m-101")).toHaveAttribute("data-state", "approved");
     await expect(region(page)).toContainText(
-      "Approved the mention from Rosa Park. This site cannot put a mention back to waiting, so there is no Undo",
+      "Approved the mention from Rosa Park. This site cannot undo it.",
     );
     await expect(region(page).getByRole("button", { name: /^Undo/ })).toHaveCount(0);
   });

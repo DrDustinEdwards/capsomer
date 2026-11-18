@@ -218,7 +218,6 @@ export function renderFlag(li: HTMLElement, ctx: Ctx): void {
     quoteNote.replaceChildren();
     if (status === "lost")
       quoteNote.append("The text this flag was raised on changed or was removed. Last known text:");
-    else if (status === "found") quoteNote.append("Raised on this passage:");
     quoteNote.hidden = quoteNote.childNodes.length === 0;
   }
   const sug = li.querySelector<HTMLElement>(".cap-flag-suggestion");
@@ -228,10 +227,9 @@ export function renderFlag(li: HTMLElement, ctx: Ctx): void {
     const foot = part(sug, "suggestion-foot");
     if (foot) {
       foot.replaceChildren();
-      if (applied) foot.append(el("p", "cap-flag-note", "Applied to the draft."));
-      else if (flag.state === "resolved")
-        foot.append(el("p", "cap-flag-note", "Not applied. Reopen the flag to apply it."));
-      else if (status !== "found")
+      if (applied || flag.state === "resolved") {
+        // The flag's state says it: nothing to add under the suggestion.
+      } else if (status !== "found")
         foot.append(
           el(
             "p",
@@ -249,10 +247,7 @@ export function renderFlag(li: HTMLElement, ctx: Ctx): void {
           "Apply",
           Object.assign(el("span", "cap-sr-only"), { textContent: ` suggestion: ${flag.message}` }),
         );
-        foot.append(
-          b,
-          el("span", "cap-flag-note", "Nothing changes in the draft until you apply it."),
-        );
+        foot.append(b);
       } else
         foot.append(
           el(
@@ -577,7 +572,7 @@ export function attachFlagList(root: HTMLElement, io?: FlagTextIO): FlagListHand
     const opener = part<HTMLElement>(root, "apply-all");
     await confirm({
       title: `Apply ${plural(todo.length, "suggestion")}?`,
-      lead: "This rewrites the draft. Each replacement is listed; nothing else changes.",
+      lead: "This rewrites the draft.",
       body: flags.map(
         (f) =>
           `${quoted(f.anchor?.quote ?? "")} becomes ${quoted(f.suggestion?.replacement ?? "")}`,

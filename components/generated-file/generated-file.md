@@ -23,7 +23,6 @@ replaces:
 <section class="cap-panel cap-generated">
   <header class="cap-panel-head">
     <h2>Program PDF</h2>
-    <p class="cap-panel-desc">Made from the schedule. It can take up to a minute.</p>
   </header>
   <div class="cap-panel-body">
     <div class="cap-generated-body" data-state="ready">
@@ -52,7 +51,7 @@ if (!mayStart(row && { status: row.genStatus, startedAt: row.updatedAt }, Date.n
 ```
 
 ```tsx
-<GeneratedFile title="Program PDF" description="Made from the schedule. It can take up to a minute."
+<GeneratedFile title="Program PDF"
   record={{ status: doc.genStatus, startedAt: doc.updatedAt, generatedAt: doc.generatedAt, bytes: doc.size, changedAt: program.updatedAt }}
   downloadHref={`/admin/editions/${id}/program-document/download`}
   fields={{ intent: "document-generate" }} busy={navigation.state === "submitting"}

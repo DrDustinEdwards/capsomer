@@ -4,7 +4,7 @@ title: Panel
 summary: A bordered surface with a raised header, optional count and source, and a padded body.
 parts: [css, react]
 tool: native
-states: [card parts (description, action, footer), flush body with a padded block, small size, comfortable density, with a header and a source, with a count and a link to the full view, body only, holding a list with no body padding, a panel that is a link, figures beside the heading, a View all link from its address, reading again, bare]
+states: [card parts (action, footer), flush body with a padded block, small size, comfortable density, with a header and a source, with a count and a link to the full view, body only, holding a list with no body padding, a panel that is a link, figures beside the heading, a View all link from its address, reading again, bare]
 added: 0.1.0
 updated: 0.100.0
 source: Capsid Portal, dashboard/src/styles.css ("panels") and dashboard/src/views/shared.tsx (Panel)
@@ -48,7 +48,6 @@ replaces:
   <header class="cap-panel-head">
     <h2 id="queue-h">Queue</h2>
     <span class="cap-panel-action"><button type="button" class="cap-btn">Edit</button></span>
-    <p class="cap-panel-desc">Jobs wait here until a driver takes them.</p>
   </header>
   <div class="cap-panel-body" data-flush>
     <div class="cap-panel-pad"><p>Two jobs are waiting.</p></div>

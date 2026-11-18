@@ -12,12 +12,9 @@ eachTheme((theme) => {
     await expectNoAxeViolations(page);
   });
 
-  test("accessibility: eyebrow, title, body and card text reach their contrast", async ({
-    page,
-  }) => {
+  test("accessibility: title, body and card text reach their contrast", async ({ page }) => {
     await visitStates(page, "feature", theme);
     await expectContrast(page, [
-      { sel: "#fe-stacked .cap-eyebrow", what: "the eyebrow" },
       { sel: "#fe-stacked .cap-feature-title", what: "the title" },
       { sel: "#fe-stacked .cap-feature-body", what: "the body" },
       { sel: "#fe-cards .cap-feature-card-text", what: "a card's line" },

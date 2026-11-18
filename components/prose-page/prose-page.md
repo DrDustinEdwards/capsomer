@@ -5,7 +5,7 @@ summary: "The frame of a page that is mostly words: a title band across the page
 group: pattern
 parts: [css, react]
 tool: native
-states: [title only, title and lead, long title, phone]
+states: [title, long title, phone]
 added: 0.132.0
 updated: 0.142.0
 source: BioScience Writers' PageHero (app/components/PageHero.tsx) and the `.page-prose` column (app/app.css), used by 21 of its 22 routes
@@ -21,7 +21,6 @@ replaces:
 ```html
 <header class="cap-prose-page-head">
   <h1 class="cap-prose-page-title">About us</h1>
-  <p class="cap-prose-page-lead">One line under the title.</p>   <!-- optional -->
 </header>
 <div class="cap-prose-page-body" data-context="prose">
   <p>...</p>

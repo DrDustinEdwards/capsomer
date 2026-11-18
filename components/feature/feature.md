@@ -23,7 +23,6 @@ replaces:
 <div class="cap-features" data-alternate>
   <div class="cap-feature" data-layout="beside">        <!-- data-variant="lifted", data-align="start" -->
     <div class="cap-feature-text">
-      <p class="cap-eyebrow" data-tone="accent">Recovery</p>
       <h3 class="cap-feature-title">Title</h3>
       <p class="cap-feature-body">Paragraph.</p>
     </div>
@@ -54,4 +53,4 @@ replaces:
 | Arrow keys | Scroll that window |
 
 - A tall preview is `role="region"` with a name and a Tab stop.
-- Title `--text`, paragraph `--muted`, eyebrow `--accent-text`: in the contrast report.
+- Title `--text`, paragraph `--muted`: in the contrast report.

@@ -28,7 +28,7 @@ eachTheme((theme) => {
   }) => {
     const cases = [
       { only: "not-found", title: "Page not found", retry: 0 },
-      { only: "gone", title: "This page is gone", retry: 0 },
+      { only: "gone", title: "This page was taken down", retry: 0 },
       { only: "server", title: "Something went wrong", retry: 1 },
       { only: "database", title: "The site's data is unavailable", retry: 1 },
     ];

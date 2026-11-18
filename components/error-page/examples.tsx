@@ -41,7 +41,6 @@ const SPECIMENS: Record<string, () => ReactNode> = {
       error={routeError(410, "Gone")}
       home="#home"
       gone={{ href: "#notes", label: "Read the notes" }}
-      text="This note was withdrawn by its author."
       siteHeader={header}
     />
   ),
@@ -69,7 +68,7 @@ const SPECIMENS: Record<string, () => ReactNode> = {
       )}
     />
   ),
-  "signed-out": () => <SignedOutPage app="Example Co admin" signIn="#home" byChoice access />,
+  "signed-out": () => <SignedOutPage app="Example Co admin" signIn="#home" byChoice />,
   "session-ended": () => <SignedOutPage app="Example Co admin" signIn="#home" byChoice={false} />,
   server: () => <ErrorPage error={new Error("D1 timed out")} home="#home" siteHeader={header} />,
   database: () => (

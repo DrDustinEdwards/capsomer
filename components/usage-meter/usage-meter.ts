@@ -97,7 +97,7 @@ export function assess(input: UsageInput): UsageAssessment {
     resetsAt == null
       ? enoughHistory
         ? "This total does not reset."
-        : `No projection: ${plural(history.length, "day")} of history, ${MIN_HISTORY} needed. This total does not reset.`
+        : `No projection: ${plural(history.length, "day")} of history, ${MIN_HISTORY} needed.`
       : `No projection: ${plural(history.length, "day")} of history, ${MIN_HISTORY} needed.`;
 
   const projection =

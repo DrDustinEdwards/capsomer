@@ -153,14 +153,9 @@ export function mediaActions(
   if (!can.edit)
     withheld.push(`You can look at these ${plural}. Changing them needs an editor's role.`);
   else {
-    if (!offers.upload && !trash) withheld.push("Uploads are not offered by this site.");
     if (!offers.alt)
       withheld.push("Alt text is set at upload here: this site cannot change it afterwards.");
-    if (!offers.tags && !trash)
-      withheld.push(`Tags are not offered: this site keeps no tags on its ${plural}.`);
   }
-  if (can.deleteMedia && !offers.delete && (trash || !offers.trash))
-    withheld.push(`Delete is not offered: this site cannot delete ${plural}.`);
   return { bulk, withheld };
 }
 
@@ -219,12 +214,12 @@ export function filtered(q: MediaQuery): boolean {
   return !!(q.q || q.tag || q.lens || q.kind || q.orientation);
 }
 
-// The empty state's title and line, naming what is not there.
+// The empty state's title, naming what is not there.
 export function emptyWords(
   q: MediaQuery,
   labels?: ContentLabels,
-): { kind: "nothing-yet" | "no-match" | "all-clear"; title: string; text: string } {
-  const { noun, plural } = nounsOf(labels, "file");
+): { kind: "nothing-yet" | "no-match" | "all-clear"; title: string } {
+  const { plural } = nounsOf(labels, "file");
   if (filtered(q)) {
     const what = [
       q.q ? `“${q.q}”` : null,
@@ -238,20 +233,14 @@ export function emptyWords(
     return {
       kind: "no-match",
       title: `No ${plural} match ${what}`,
-      text: "Clear the filters to see every one.",
     };
   }
   if (q.view === "trash")
     return {
       kind: "all-clear",
       title: "Trash is empty",
-      text: `A ${noun} moved to Trash waits here until it is restored or deleted for good.`,
     };
-  return {
-    kind: "nothing-yet",
-    title: `No ${plural} yet`,
-    text: `Upload the first ${noun} and it shows here.`,
-  };
+  return { kind: "nothing-yet", title: `No ${plural} yet` };
 }
 
 // The site's upload rules in words, for the drop zone's hint: "PNG, JPEG and WebP, up to 5 MB".
@@ -276,13 +265,13 @@ export function pickable(rows: readonly MediaRecord[]): MediaRecord[] {
 // The view: lenses, groups, and what the address says about how to draw the page.
 
 // The site-api contract's lenses (v0.6.0 MEDIA_LENSES), in words: what each chip shows.
-export const LENS_WORDS: Record<string, { label: string; hint: string }> = {
+export const LENS_WORDS: Record<string, { label: string; hint?: string }> = {
   unattached: {
     label: "Unattached",
     hint: "The site's own check finds nothing that uses these. A file placed by a page template is unattached by this measure and still live, so look before deleting.",
   },
-  "no-alt": { label: "No alt text", hint: "Images with no alt text written yet." },
-  large: { label: "Over 1 MB", hint: "Files larger than one mebibyte." },
+  "no-alt": { label: "No alt text" },
+  large: { label: "Over 1 MB" },
   duplicates: {
     label: "Duplicates",
     hint: "Files whose bytes are exactly another file's, by content hash, never by how a picture looks. Open one to see its twins.",

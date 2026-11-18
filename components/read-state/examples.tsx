@@ -86,7 +86,6 @@ const SPECIMENS: Record<string, () => ReactNode> = {
     <TablePanel
       title="Operator actions"
       headingId="rs-table"
-      description="Showing the last 2 entries, newest first."
       isEmpty={false}
       empty={null}
       reflow
@@ -116,11 +115,7 @@ const SPECIMENS: Record<string, () => ReactNode> = {
       headingId="rs-empty"
       isEmpty
       caption="The audit log, newest first."
-      empty={
-        <Empty kind="nothing-yet" flush title="No audit log entries yet.">
-          Every admin action that changes how the site runs writes an entry here.
-        </Empty>
-      }
+      empty={<Empty kind="nothing-yet" flush title="No audit log entries yet." />}
     >
       {null}
     </TablePanel>

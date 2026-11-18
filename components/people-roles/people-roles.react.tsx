@@ -419,8 +419,7 @@ function Review({
       <Hidden fields={{ intent: "review" }} />
       <Sub id={`${id}-rv`}>Still on your team?</Sub>
       <p className="cap-people-lead">
-        These people's access ends on {dayText(review.endDate)}. Keep or remove each. Anyone not
-        answered loses access on that date.
+        Anyone not answered loses access on {dayText(review.endDate)}.
       </p>
       <div className="cap-people-review-list">
         {review.people.map((p, i) => (
@@ -540,11 +539,7 @@ function AddForm({
       <Hidden fields={{ intent: "add" }} />
       <Sub id={`${id}-add`}>Add a person</Sub>
       <div className="cap-fields cap-people-add-fields">
-        <Field
-          id={`${id}-email`}
-          label="Email"
-          help="The address they sign in with. Cloudflare emails them a code."
-        >
+        <Field id={`${id}-email`} label="Email">
           <input
             className="cap-input"
             id={`${id}-email`}

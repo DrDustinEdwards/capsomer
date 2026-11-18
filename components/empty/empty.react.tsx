@@ -4,13 +4,10 @@ import { Spinner } from "../skeleton/skeleton.react.tsx";
 
 export type EmptyKind = "nothing-yet" | "no-match" | "all-clear" | "failed";
 
-export interface EmptyProps {
-  kind: EmptyKind;
+interface EmptyBase {
   // nothing-yet: "No sites are watched yet". no-match: "No jobs match “Blocked”".
   // failed: "Could not load the queue". all-clear: defaults to "All clear".
   title?: ReactNode;
-  // One plain sentence: how to add the first, what the filter hides, what failed.
-  children?: ReactNode;
   // nothing-yet: the one way to add the first. no-match: Clear filter. failed: Try again.
   action?: ReactNode;
   // An icon in a muted tile above the title (an svg). Decorative: the title says it.
@@ -24,6 +21,12 @@ export interface EmptyProps {
   // signed-out page). A failed one is always an alert.
   role?: "status";
 }
+
+// An empty state is its title and its one action; the layout says the rest. Only a failure has a
+// line under the title: what failed (the error), which the title alone cannot say.
+export type EmptyProps =
+  | (EmptyBase & { kind: "failed"; children?: ReactNode })
+  | (EmptyBase & { kind: Exclude<EmptyKind, "failed">; children?: never });
 
 export function Empty({
   kind,
@@ -67,7 +70,7 @@ export function Empty({
       ) : null}
       <div className="cap-empty-header">
         <Title className="cap-empty-title">{head}</Title>
-        {children ? <p className="cap-empty-text">{children}</p> : null}
+        {kind === "failed" && children ? <p className="cap-empty-text">{children}</p> : null}
       </div>
       {kind !== "all-clear" && action ? <div className="cap-empty-content">{action}</div> : null}
     </div>

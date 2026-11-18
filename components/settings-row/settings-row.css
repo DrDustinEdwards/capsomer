@@ -3,7 +3,7 @@
 /* The back link's chevron is the icon set's. */
 @import "../icons/icons.css";
 
-/* Settings rows: a setting's name and line at the start, its control at the end, a rule
+/* Settings rows: a setting's name (and, when it is locked, why) at the start, its control at the end, a rule
    between rows. The settings page: a back link to the index on a phone, then the page head. */
 @layer cap.components {
   .cap-settings-row {
@@ -28,13 +28,10 @@
     color: var(--text);
     font-weight: var(--weight-semibold);
   }
-  .cap-settings-row-help {
-    margin: 0;
-    color: var(--muted);
-    font-size: var(--fs-detail);
-  }
   .cap-settings-row-reason {
+    margin: 0;
     color: var(--text);
+    font-size: var(--fs-detail);
   }
   .cap-settings-row-control {
     display: flex;

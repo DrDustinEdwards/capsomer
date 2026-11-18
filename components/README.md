@@ -55,7 +55,7 @@ A hidden sentence (`.cap-sr-only`) beside an `aria-hidden` drawing is neither: t
 
 ## The states page: examples.html
 
-You write `examples.html`; the generator writes `states.html`. `node bin/capsomer.mjs states` (`npm run states`) builds `components/<name>/states.html` for every component that has an `examples.html` or an `examples.tsx`, from `site/states-template.html` (the head, the specimen script, `<body class="cap-specimens">`, one `<main>` with the `h1` and the intro), the doc page's frontmatter (`title` is the `h1` and the page title, `summary` is the intro) and your examples. It runs at the start of `npm run site` and `npm run e2e`, in the Playwright web server command, and whenever `site/vite.config.ts` loads, so a states page always exists before Vite looks for it. Edit `examples.html`, never `states.html`.
+You write `examples.html`; the generator writes `states.html`. `node bin/capsomer.mjs states` (`npm run states`) builds `components/<name>/states.html` for every component that has an `examples.html` or an `examples.tsx`, from `site/states-template.html` (the head, the specimen script, `<body class="cap-specimens">`, one `<main>` with the `h1`), the doc page's frontmatter (`title` is the `h1` and the page title) and your examples. It runs at the start of `npm run site` and `npm run e2e`, in the Playwright web server command, and whenever `site/vite.config.ts` loads, so a states page always exists before Vite looks for it. Edit `examples.html`, never `states.html`.
 
 `examples.html` holds the specimens and nothing else: no `<html>`, `<head>`, `<body>`, `<main>` or `<h1>` (the template supplies them; one `h1` and one `main` per page). Inline specimens:
 
@@ -92,6 +92,6 @@ eachTheme((theme) => {
 
 ## The doc page
 
-Frontmatter: `name` (the folder's name), `title`, `summary` (one sentence, the page's lead), `group` (`pattern` or `primitive`; a component leaves it out), `parts`, `tool` (native, own JavaScript, Base UI), `states`, `added`, `updated` (the release that last rebuilt it), `source` (where it was extracted from, if anywhere), `replaces` (regular expressions that find an app's own copy of this component, for `capsomer report`).
+Frontmatter: `name` (the folder's name), `title`, `summary` (one sentence, the page's meta description and search entry; never shown as a lead), `group` (`pattern` or `primitive`; a component leaves it out), `parts`, `tool` (native, own JavaScript, Base UI), `states`, `added`, `updated` (the release that last rebuilt it), `source` (where it was extracted from, if anywhere), `replaces` (regular expressions that find an app's own copy of this component, for `capsomer report`).
 
 The body is three headings and nothing else: `# <title>`, then `## Usage`, holding only code blocks (the HTML contract, then the React call if there is one), then `## Accessibility`: the keyboard table, then short points on roles, names, focus and forced colors. Everything else on the page is generated: the preview and examples from `examples.html`, the installation tabs, and the API tables from the React props, the behavior module's functions and `parts.json` (`bin/parts.mjs`: the parts, data attributes, states and CSS variables in the component's sheet). `node bin/capsomer.mjs docs` (part of `npm run check`) fails a doc file that leaves the pattern. No em dashes.

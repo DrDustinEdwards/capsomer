@@ -453,7 +453,7 @@ function InspectorBody({
                 onChange={(e) => edit({ alt: e.target.value })}
               />
               <p className="cap-field-help" id={`${base}-alt-help`}>
-                What a person who cannot see the picture needs to know. Leave out “image of”.
+                Leave out “image of”.
               </p>
             </div>
             <div className="cap-field" data-cap-part="decorative-field">
@@ -462,7 +462,6 @@ function InspectorBody({
                   type="checkbox"
                   name="decorative"
                   data-cap-part="decorative"
-                  aria-describedby={`${base}-deco-help`}
                   checked={fields.decorative}
                   onChange={(e) =>
                     edit(
@@ -473,10 +472,6 @@ function InspectorBody({
                 />{" "}
                 Decorative image
               </label>
-              <p className="cap-field-help" id={`${base}-deco-help`}>
-                It adds nothing a reader needs, so a screen reader skips it. This is a choice, not a
-                missing description.
-              </p>
             </div>
           </Wrap>
         ) : !img ? (
@@ -684,9 +679,7 @@ function InspectorBody({
               <>
                 <p className="cap-media-used-empty">Not used anywhere.</p>
                 <p className="cap-media-note">
-                  No post cites this file. That is not proof it is unused: a page built in code can
-                  still use it, so check before you delete it. The Unattached filter lists every
-                  file like this.{" "}
+                  A page built in code can still use it: check before you delete it.{" "}
                   {onShowUnattached ? (
                     <button
                       type="button"

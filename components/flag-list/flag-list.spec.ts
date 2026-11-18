@@ -148,7 +148,6 @@ eachTheme((theme) => {
         - button /Resolve flag.*This claim has no source/
         - button /Dismiss flag.*This claim has no source/
         - blockquote:
-          - paragraph: "Raised on this passage:"
           - paragraph: /Quoted passage.*Roughly 40%.*/
     `);
     await expect(flag(page, "f3")).toMatchAriaSnapshot(`

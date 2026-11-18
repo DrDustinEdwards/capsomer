@@ -364,7 +364,6 @@ const FIXTURES: Record<string, () => ReactElement> = {
   "page-head": () =>
     h(PageHead, {
       title: "Media",
-      lead: "Every picture on the site.",
       crumbs: [{ label: "Sites", href: "#sites" }, { label: "Media" }],
       actions: h(Button, null, "Upload"),
     }),
@@ -381,7 +380,6 @@ const FIXTURES: Record<string, () => ReactElement> = {
     h(Panel, {
       title: "Checks",
       count: 3,
-      description: "What ran today.",
       children: h("p", null, "All passed."),
     }),
   "people-roles": () =>

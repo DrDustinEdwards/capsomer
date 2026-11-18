@@ -40,7 +40,6 @@ replaces:
   <header class="cap-docview-head">
     [breadcrumb]
     <h1 class="cap-docview-title">Fall 2026 program</h1>
-    <p class="cap-docview-sub">Fall 2026 · Editor: Sam Lee</p>
     <p class="cap-docview-download"><a href="/documents/fall-2026/download" class="cap-btn" data-variant="primary" download>Download the PDF</a> <span class="cap-link-meta">PDF, 2.4 MB</span></p>
   </header>
   <div class="cap-docview-body">[the app's PDF viewer]</div>
@@ -55,7 +54,7 @@ replaces:
 <DocumentList docs={docs.map((d) => ({ key: d.slug, title: d.title, href: `${basePath}/${d.slug}`, detail: documentSubtitle(d) }))}
   label="Programs" empty="Documents are being added and will be listed here." renderLink={renderLink} />
 
-<DocumentViewer title={doc.title} subtitle={documentSubtitle(doc)} before={<Breadcrumb items={trail} />}
+<DocumentViewer title={doc.title} before={<Breadcrumb items={trail} />}
   download={{ href: `/documents/${doc.slug}/download`, bytes: doc.size }}
   prev={prev && { title: prev.title, href: `${basePath}/${prev.slug}` }}
   next={next && { title: next.title, href: `${basePath}/${next.slug}` }}
@@ -74,5 +73,5 @@ replaces:
 
 - Each category's list is named by its heading (`aria-labelledby`); a lone list takes `label`.
 - The pager is a `nav` named "More in <category>"; its links carry `rel="prev"` and `rel="next"`.
-- Contrast: the subtitle, the empty line, the size and the direction words in `--muted` (4.5:1), the titles in `--accent-text`, the pager links' edge `--line` beside their text.
+- Contrast: the empty line, the size and the direction words in `--muted` (4.5:1), the titles in `--accent-text`, the pager links' edge `--line` beside their text.
 - Forced colors: the pager links keep a `LinkText` edge.

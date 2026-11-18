@@ -35,7 +35,7 @@ export interface ApprovalQueueProps {
   // The findings list's name: "What the check held it for".
   findingsLabel?: string;
   // What an empty queue says.
-  empty?: { title: ReactNode; text: ReactNode };
+  empty?: { title: ReactNode };
   // A fixed "now" for the times, for a test or a server's clock.
   now?: number;
 }
@@ -56,7 +56,7 @@ export function ApprovalQueue({
   pending = false,
   textLabel = (i) => `Text for ${i.who}`,
   findingsLabel = "What the check held it for",
-  empty = { title: "All clear", text: "Nothing is waiting." },
+  empty = { title: "All clear" },
   now,
 }: ApprovalQueueProps) {
   const uid = useCleanId();
@@ -145,9 +145,7 @@ export function ApprovalQueue({
         </p>
       </div>
       {items.length === 0 ? (
-        <Empty kind="all-clear" title={empty.title} flush>
-          {empty.text}
-        </Empty>
+        <Empty kind="all-clear" title={empty.title} flush />
       ) : (
         <ul
           className="cap-rows cap-mq-list"

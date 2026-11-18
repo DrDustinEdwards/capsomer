@@ -55,9 +55,8 @@ const D = {
 };
 
 // The page under each header: a hero for a public page, tiles and rows for a signed-in one.
-const Hero = ({ eyebrow, title, lead }: { eyebrow: string; title: string; lead: string }) => (
+const Hero = ({ title, lead }: { title: string; lead: string }) => (
   <main className="sh-hero" id="main" tabIndex={-1}>
-    <p className="sh-eyebrow">{eyebrow}</p>
     <h1>{title}</h1>
     <p className="sh-lead">{lead}</p>
     <div className="sh-filler" aria-hidden="true" />
@@ -598,7 +597,6 @@ const SURFACES: Record<string, () => ReactNode> = {
     <Site family="teal">
       <SiteHeader {...lhPublic} />
       <Hero
-        eyebrow="Sample"
         title="AI agents say it's done. Capsid checks."
         lead="A public page under the family letterhead: the names beside the mark, the links in a second row."
       />
@@ -609,7 +607,6 @@ const SURFACES: Record<string, () => ReactNode> = {
     <Site family="amber">
       <SiteHeader {...fhPublic} />
       <Hero
-        eyebrow="Revenue recovery for Stripe"
         title="Get back the payments your customers meant to make."
         lead="Foxhound retries failed charges at the right moment and writes the emails that bring card holders back."
       />
@@ -637,7 +634,6 @@ const SURFACES: Record<string, () => ReactNode> = {
     <Site family="fox">
       <SiteHeader {...fxPublic} />
       <Hero
-        eyebrow="Book of the month"
         title="Find the next book you cannot put down."
         lead="Picks from readers you trust, clubs that actually meet, and a diary that remembers every page."
       />
@@ -647,7 +643,6 @@ const SURFACES: Record<string, () => ReactNode> = {
     <Site family="fox">
       <SiteHeader {...fxPublic} rest="clear" />
       <Hero
-        eyebrow="Book of the month"
         title="Find the next book you cannot put down."
         lead="Picks from readers you trust, clubs that actually meet, and a diary that remembers every page."
       />
@@ -659,7 +654,6 @@ const SURFACES: Record<string, () => ReactNode> = {
       <Hold press=".cap-site-header-sections .cap-site-header-link">
         <SiteHeader {...fxPublic} />
         <Hero
-          eyebrow="Book of the month"
           title="Find the next book you cannot put down."
           lead="Picks from readers you trust, clubs that actually meet, and a diary that remembers every page."
         />
@@ -707,7 +701,6 @@ const SURFACES: Record<string, () => ReactNode> = {
       <Hold press=".cap-site-header-menu">
         <SiteHeader {...fxPublic} />
         <Hero
-          eyebrow="Book of the month"
           title="Find the next book you cannot put down."
           lead="Picks from readers you trust, clubs that actually meet, and a diary that remembers every page."
         />
@@ -871,7 +864,6 @@ for (const el of Array.from(document.querySelectorAll<HTMLElement>("[data-static
       <div className={own ? "sh-site sh-own" : "sh-site"} data-family="teal">
         <SiteHeader {...(own ? ownHeader : staticHeader)} />
         <Hero
-          eyebrow="Written by the server"
           title="No React in the browser, the same header."
           lead="Rendered once to HTML; the behavior module wires the panels, the sheet, the theme and its key."
         />

@@ -556,7 +556,6 @@ export function RichEditor(props: RichEditorProps) {
     {
       id: "footnote",
       label: "Footnote",
-      hint: "A reference and its definition",
       paths: GLYPH.footnote,
       run: run((e) => {
         const md = markdown(e);
@@ -580,7 +579,6 @@ export function RichEditor(props: RichEditorProps) {
           {
             id: "image",
             label: "Insert image",
-            hint: "Asks for alt text, then uploads the file",
             paths: GLYPH.image,
             run: () => fileRef.current?.click(),
           },
@@ -635,7 +633,7 @@ export function RichEditor(props: RichEditorProps) {
                 type="button"
                 className="cap-md-tool"
                 aria-label={t.label}
-                title={`${t.label}. ${t.hint}`}
+                title={"hint" in t && t.hint ? `${t.label}. ${t.hint}` : t.label}
                 aria-keyshortcuts={t.keys}
                 tabIndex={i === activeTool ? 0 : -1}
                 disabled={off}
@@ -653,9 +651,6 @@ export function RichEditor(props: RichEditorProps) {
               </button>
             </span>
           ))}
-          {blocks.length > 0 ? (
-            <span className="cap-md-toolbar-hint">Type / on an empty line</span>
-          ) : null}
         </div>
         {!ready ? (
           // Before the script: the Markdown itself, readable and selectable.
@@ -669,12 +664,6 @@ export function RichEditor(props: RichEditorProps) {
         ) : null}
         <div ref={host} className="cap-md-surface cap-rich-editor-host" hidden={!ready} />
         <div className="cap-md-foot">
-          {onUpload ? (
-            <p className="cap-md-hint" aria-hidden="true">
-              <Icon paths={GLYPH.image} />
-              Drop or paste an image to upload it
-            </p>
-          ) : null}
           <p className="cap-md-stats">
             <span className="cap-md-count">
               {words.toLocaleString("en")} word{words === 1 ? "" : "s"}
@@ -742,8 +731,7 @@ export function RichEditor(props: RichEditorProps) {
               }}
             />
             <p className="cap-field-help" id={`${uid}-alt-help`}>
-              Describe {upload.file.name} for a person who cannot see it, or insert it as decorative
-              if it adds nothing. It is uploaded when you insert it.
+              Describe {upload.file.name}, or insert it as decorative.
             </p>
             {upload.sending ? (
               <p className="cap-md-upload-wait">Uploading {upload.file.name}</p>
@@ -862,7 +850,7 @@ export function RichEditor(props: RichEditorProps) {
             {typedUrl
               ? `Enter links to ${typedUrl}.`
               : matches.length === 0
-                ? "No page matches. Type a full address to link to it."
+                ? "No page matches."
                 : `${plural(matches.length, "page")}.`}
           </p>
         </div>

@@ -325,7 +325,7 @@ export const magicLink: Template<MagicLinkData> = {
   blocks: (d) => {
     const blocks = linkBlocks(d, {
       heading: `Sign in to ${d.brand.name}`,
-      intro: `Someone asked to sign in to ${d.brand.name} as ${d.to}. Use the button to finish.`,
+      intro: `Someone asked to sign in to ${d.brand.name} as ${d.to}.`,
       button: "Sign in",
       ignore: d.code
         ? "If this was not you, ignore this message. Nothing happens unless the link or the code is used."

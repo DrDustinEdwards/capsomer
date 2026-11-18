@@ -156,9 +156,7 @@ export interface MergeLabels {
   changedTheirs: string;
   // After a heading, when the pick leaves that side out.
   leftOut: string;
-  // The intro, then the sentence for a plan with a base, or without one.
-  intro: string;
-  withBase: string;
+  // Said above the differences when the version both started from could not be read.
   withoutBase: string;
   apply: string;
 }
@@ -174,9 +172,6 @@ const MERGE_LABELS: MergeLabels = {
   changedMine: "changed here",
   changedTheirs: "changed there",
   leftOut: "left out",
-  intro:
-    "Choose which text to keep for each difference, then use the merged text and save as usual. The unsaved text stays exactly as it is until then.",
-  withBase: "Where only one side changed a passage, that side is already chosen.",
   withoutBase: "The version both started from could not be read, so each starts on yours.",
   apply: "Use the merged text",
 };
@@ -250,9 +245,7 @@ export function DraftMerge({ plan, onApply, pending = false, labels, level = 3 }
   );
   return (
     <div className="cap-merge">
-      <p className="cap-merge-intro">
-        {l.intro} {plan.hasBase ? l.withBase : l.withoutBase}
-      </p>
+      {plan.hasBase ? null : <p className="cap-merge-intro">{l.withoutBase}</p>}
       <ol className="cap-merge-list">
         {plan.segments.map((s, i) => {
           if (s.kind === "same") {

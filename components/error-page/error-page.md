@@ -39,7 +39,7 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
   <div class="cap-empty" data-kind="failed" role="alert">
     <div class="cap-empty-header">
       <h1 class="cap-empty-title">[critical glyph]Page not found</h1>
-      <p class="cap-empty-text">There is nothing at this address. Check it for a typo, or start again from the home page.</p>
+      <p class="cap-empty-text">Nothing is at this address.</p>
     </div>
     <div class="cap-empty-content"><a class="cap-btn" data-variant="primary" href="/">Go to the home page</a></div>
   </div>
@@ -52,8 +52,7 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
 <main id="main" tabindex="-1" class="cap-error-page" data-status="signed-out">
   <div class="cap-empty" data-kind="nothing-yet" role="status">
     <div class="cap-empty-header">
-      <h1 class="cap-empty-title">Signed out</h1>
-      <p class="cap-empty-text">You signed out of Example in this browser.</p>
+      <h1 class="cap-empty-title">Signed out of Example</h1>
     </div>
     <div class="cap-empty-content"><a class="cap-btn" data-variant="primary" href="/sign-in">Sign in again</a></div>
   </div>
@@ -64,8 +63,7 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
 <main id="main" tabindex="-1" class="cap-error-page" data-status="410">
   <div class="cap-empty" data-kind="nothing-yet">
     <div class="cap-empty-header">
-      <h1 class="cap-empty-title">This page is gone</h1>
-      <p class="cap-empty-text">It was taken down on purpose.</p>
+      <h1 class="cap-empty-title">This page was taken down</h1>
     </div>
     <div class="cap-empty-content"><a class="cap-btn" data-variant="primary" href="/blog">Read the blog</a></div>
   </div>

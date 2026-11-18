@@ -187,8 +187,7 @@ export function undoAction(from: ModState, reset = false): ModAction | null {
 }
 
 // Said after a decision on a waiting mention, on a site that cannot put one back to waiting.
-export const NO_UNDO_TEXT =
-  "This site cannot put a mention back to waiting, so there is no Undo; the other decision is one key away.";
+export const NO_UNDO_TEXT = "This site cannot undo it.";
 
 // What one decision changed, so it can be reversed.
 export interface UndoEntry {
@@ -243,21 +242,12 @@ export function mentionsWord(n: number): string {
   return n === 1 ? "mention" : "mentions";
 }
 
-export const EMPTY_TEXT: Record<ModView, { title: string; text: string }> = {
-  pending: {
-    title: "All clear",
-    text: "No mentions are waiting. Approved and rejected are one filter away.",
-  },
-  failed: { title: "No missing sources", text: "Every mention's source page was found." },
-  approved: { title: "Nothing approved yet", text: "Approved mentions show on their post." },
-  rejected: {
-    title: "Nothing rejected",
-    text: "Rejected mentions wait here until the site's retention removes them.",
-  },
-  all: {
-    title: "No mentions yet",
-    text: "When another site links to a post, its mention arrives here.",
-  },
+export const EMPTY_TITLE: Record<ModView, string> = {
+  pending: "All clear",
+  failed: "No missing sources",
+  approved: "Nothing approved yet",
+  rejected: "Nothing rejected",
+  all: "No mentions yet",
 };
 
 // ---------------------------------------------------------------------------------------

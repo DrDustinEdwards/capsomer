@@ -1,7 +1,7 @@
 ---
 name: eyebrow
 title: Eyebrow
-summary: The small uppercase label over a block or a section, in the interface face or the mono face.
+summary: A small uppercase label that carries a fact about a block, never a kicker over a heading.
 parts: [css, react]
 tool: native
 states: [muted, dim, accent, text, mono, mono accent, as a section heading]
@@ -19,7 +19,8 @@ replaces:
 ## Usage
 
 ```html
-<p class="cap-eyebrow" data-variant="mono" data-tone="accent">Recovery</p>
+<!-- A fact the block needs said: "Sample data", "Account" over the consent permissions. Never a tag line over a heading. -->
+<p class="cap-eyebrow" data-variant="mono" data-tone="accent">Sample data</p>
 ```
 
 ## Accessibility

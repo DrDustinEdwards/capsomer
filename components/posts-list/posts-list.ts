@@ -130,12 +130,12 @@ export const NO_FILTERS: Partial<PostsQuery> = {
   to: undefined,
 };
 
-// The empty state's title and line, naming what is not there.
+// The empty state's title, naming what is not there.
 export function emptyWords(
   q: PostsQuery,
   labels?: ContentLabels,
-): { kind: "nothing-yet" | "no-match" | "all-clear"; title: string; text: string } {
-  const { noun, plural } = nounsOf(labels, "post");
+): { kind: "nothing-yet" | "no-match" | "all-clear"; title: string } {
+  const { plural } = nounsOf(labels, "post");
   if (filtered(q)) {
     const dates =
       q.from && q.to
@@ -157,40 +157,18 @@ export function emptyWords(
     return {
       kind: "no-match",
       title: `No ${plural}${q.trashed ? " in Trash" : ""} match ${what}`,
-      text: "Clear the filters to see every one.",
     };
   }
-  if (q.trashed)
-    return {
-      kind: "all-clear",
-      title: "Trash is empty",
-      text: `A ${noun} moved to Trash waits here until it is restored or deleted for good.`,
-    };
+  if (q.trashed) return { kind: "all-clear", title: "Trash is empty" };
   switch (q.status) {
     case "draft":
-      return {
-        kind: "nothing-yet",
-        title: "No drafts",
-        text: `Every ${nounsOf(labels, "post").noun} here is scheduled or published.`,
-      };
+      return { kind: "nothing-yet", title: "No drafts" };
     case "scheduled":
-      return {
-        kind: "nothing-yet",
-        title: "Nothing scheduled",
-        text: "A scheduled post shows here until it goes out.",
-      };
+      return { kind: "nothing-yet", title: "Nothing scheduled" };
     case "published":
-      return {
-        kind: "nothing-yet",
-        title: "Nothing published yet",
-        text: "Published posts show here.",
-      };
+      return { kind: "nothing-yet", title: "Nothing published yet" };
     default:
-      return {
-        kind: "nothing-yet",
-        title: `No ${plural} yet`,
-        text: `The first ${nounsOf(labels, "post").noun} you start shows here.`,
-      };
+      return { kind: "nothing-yet", title: `No ${plural} yet` };
   }
 }
 
@@ -266,8 +244,6 @@ export function postActions(
       bulk.push({ intent: "delete", label: "Delete for good", destructive: true });
     if (!can.edit)
       withheld.push(`You can read these ${plural}. Restoring them needs an editor's role.`);
-    if (can.deleteContent && !offers.delete)
-      withheld.push(`Delete is not offered: this site cannot delete ${plural}.`);
     return { bulk, withheld };
   }
   if (can.edit && offers.tags)
@@ -282,12 +258,7 @@ export function postActions(
     bulk.push({ intent: "delete", label: "Delete", destructive: true });
   if (!can.edit)
     withheld.push(`You can read these ${plural}. Changing them needs an editor's role.`);
-  else if (!offers.tags)
-    withheld.push(`Tags are not offered: this site keeps no tags on its ${plural}.`);
-  if (can.edit && !offers.duplicate) withheld.push(`Duplicate is not offered by this site.`);
   if (can.edit && !can.publish) withheld.push(`Unpublishing needs a publisher's role.`);
-  if (can.deleteContent && !offers.delete && !offers.trash)
-    withheld.push(`Delete is not offered: this site cannot delete ${plural}.`);
   return { bulk, withheld };
 }
 

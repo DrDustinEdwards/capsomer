@@ -1,8 +1,6 @@
 import type { ReactNode } from "react";
-import { Eyebrow } from "../eyebrow/eyebrow.react.tsx";
 
 export interface FeatureBlockProps {
-  eyebrow?: ReactNode;
   title: ReactNode;
   body?: ReactNode;
   // The picture of the feature working: a preview panel, a screenshot.
@@ -20,7 +18,6 @@ export interface FeatureBlockProps {
 
 // The HTML contract in feature.md.
 export function FeatureBlock({
-  eyebrow,
   title,
   body,
   media,
@@ -40,7 +37,6 @@ export function FeatureBlock({
       data-variant={lifted ? "lifted" : undefined}
     >
       <div className="cap-feature-text">
-        {eyebrow ? <Eyebrow tone="accent">{eyebrow}</Eyebrow> : null}
         <H className="cap-feature-title">{title}</H>
         {body ? <p className="cap-feature-body">{body}</p> : null}
       </div>

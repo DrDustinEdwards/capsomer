@@ -89,9 +89,7 @@ export function NotFoundReport({
       className="cap-nf"
     >
       {rows.length === 0 ? (
-        <Empty kind="all-clear" flush title={<Status tone="ok">All clear</Status>}>
-          No missing pages in the last {days} days.
-        </Empty>
+        <Empty kind="all-clear" flush title={`No missing pages in the last ${days} days`} />
       ) : (
         <RowList label="Missing paths, most hits first">
           {rows.map((row) => (

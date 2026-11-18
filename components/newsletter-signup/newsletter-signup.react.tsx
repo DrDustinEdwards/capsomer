@@ -19,7 +19,6 @@ export interface NewsletterSignupProps {
   // Where the form posts: the site's action, which sends the confirmation link (double opt-in).
   action?: string;
   title?: ReactNode;
-  text?: ReactNode;
   // The consent line, a required checkbox (a link to the privacy page inside it).
   consent?: ReactNode;
   // The action's answer: sent, or the error to show.
@@ -40,7 +39,6 @@ export interface NewsletterSignupProps {
 export function NewsletterSignup({
   action,
   title = "Newsletter",
-  text,
   consent,
   state,
   done = "Almost done: check your inbox for a link to confirm your subscription.",
@@ -102,7 +100,6 @@ export function NewsletterSignup({
       <H className="cap-newsletter-title" id={titleId}>
         {title}
       </H>
-      {text ? <p className="cap-newsletter-text">{text}</p> : null}
       <FormStatus status={sent} />
       {sent ? null : renderForm ? (
         renderForm({ ...formProps, children: fields })

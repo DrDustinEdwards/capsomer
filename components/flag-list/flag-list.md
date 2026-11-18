@@ -49,7 +49,7 @@ replaces:
             <button type="button" class="cap-btn" data-size="sm" data-variant="quiet" data-cap-part="dismiss">Dismiss<span class="cap-sr-only"> flag: This claim has no source</span></button>
           </div>
           <div class="cap-flag-body">
-            <blockquote class="cap-flag-quote"><p class="cap-flag-anchor-note" data-cap-part="anchor-note">Raised on this passage:</p><p><span class="cap-sr-only">Quoted passage: </span><q class="cap-flag-quote-text">Roughly 40% of the alerts were false alarms</q></p></blockquote>
+            <blockquote class="cap-flag-quote"><p class="cap-flag-anchor-note" data-cap-part="anchor-note" hidden></p><p><span class="cap-sr-only">Quoted passage: </span><q class="cap-flag-quote-text">Roughly 40% of the alerts were false alarms</q></p></blockquote>
             <!-- A suggestion, inert until the owner applies it: -->
             <div class="cap-flag-suggestion" data-state="inert">
               <p class="cap-flag-suggestion-head">Suggested by Spelling check</p>

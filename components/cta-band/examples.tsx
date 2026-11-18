@@ -11,13 +11,8 @@ const actions = (
 
 const SPECIMENS: Record<string, () => ReactNode> = {
   band: () => (
-    <CtaBand
-      eyebrow="Start here"
-      title="Ready to write it down?"
-      actions={actions}
-      note="Apps for phones are coming."
-    >
-      Set up a notebook in two minutes. No card needed.
+    <CtaBand title="Ready to write it down?" actions={actions}>
+      Set up a notebook in two minutes.
     </CtaBand>
   ),
   quiet: () => (

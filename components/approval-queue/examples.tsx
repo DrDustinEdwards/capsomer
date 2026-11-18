@@ -151,11 +151,7 @@ const mounts: Record<string, () => ReactElement> = {
     />
   ),
   empty: () => (
-    <ApprovalQueue
-      items={[]}
-      label="Waiting on you"
-      empty={{ title: "All clear", text: "Nothing is waiting." }}
-    />
+    <ApprovalQueue items={[]} label="Waiting on you" empty={{ title: "Nothing is waiting" }} />
   ),
 };
 

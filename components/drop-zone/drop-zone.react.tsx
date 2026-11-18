@@ -238,7 +238,6 @@ export function DropZone({
         <div className="cap-drop-overlay" aria-hidden="true">
           <div>
             <p className="cap-drop-overlay-title">Drop to upload</p>
-            <p className="cap-drop-overlay-text">Release anywhere on this page to add the files.</p>
           </div>
         </div>
       ) : null}

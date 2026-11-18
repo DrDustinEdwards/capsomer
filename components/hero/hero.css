@@ -49,10 +49,6 @@
       box-shadow: var(--hero-card-shadow, none);
       backdrop-filter: blur(var(--hero-card-blur, 12px));
     }
-
-    & > .cap-eyebrow {
-      margin-block-end: var(--space-4);
-    }
   }
   .cap-hero-title {
     margin: 0 0 var(--space-5);
@@ -95,11 +91,6 @@
     [data-align="center"] > .cap-hero-text > & {
       justify-content: center;
     }
-  }
-  .cap-hero-note {
-    margin: var(--space-4) 0 0;
-    color: var(--muted);
-    font-size: var(--fs-detail);
   }
   .cap-hero-aside {
     min-inline-size: 0;

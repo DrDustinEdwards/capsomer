@@ -20,8 +20,6 @@ export interface CatalogProps<T> {
   cells?: Partial<Record<string, (item: T) => ReactNode>>;
   // The page's heading id, which names the results region.
   labelledBy: string;
-  // What to say when the collection itself is empty, and the sentence under "No articles match".
-  emptyText?: { nothingYet?: ReactNode; noMatch?: ReactNode };
   // Beside the count: downloads, a view switch.
   actions?: ReactNode;
 }
@@ -50,7 +48,6 @@ export function Catalog<T>({
   title,
   cells,
   labelledBy,
-  emptyText,
   actions,
 }: CatalogProps<T>) {
   const ref = useRef<HTMLFormElement>(null);
@@ -267,14 +264,9 @@ export function Catalog<T>({
                       </a>
                     ) : undefined
                   }
-                >
-                  {emptyText?.noMatch ??
-                    `${result.total} ${result.total === 1 ? def.noun[0] : noun} are hidden by these filters.`}
-                </Empty>
+                />
               ) : (
-                <Empty kind="nothing-yet" title={`No ${noun} yet`}>
-                  {emptyText?.nothingYet}
-                </Empty>
+                <Empty kind="nothing-yet" title={`No ${noun} yet`} />
               )
             ) : (
               <div

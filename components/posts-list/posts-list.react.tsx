@@ -202,7 +202,7 @@ function RescheduleDialog({
           <DialogHeader>
             <DialogTitle>Reschedule {moving.name}</DialogTitle>
             <DialogDescription>
-              It goes out <Time at={moving.at} format="exact" />. Choose the new time.
+              It goes out <Time at={moving.at} format="exact" />.
             </DialogDescription>
           </DialogHeader>
           <Form
@@ -261,17 +261,18 @@ function RenameDialog({
       open={!!renaming}
       onOpenChange={(open) => (open ? undefined : onClose())}
       size="sm"
-      described
+      described={!!renaming?.path}
     >
       {renaming ? (
         <>
           <DialogHeader>
             <DialogTitle>Rename {renaming.name}</DialogTitle>
-            <DialogDescription>
-              {renaming.path
-                ? `Its address is ${renaming.path} now. The old address will redirect to the new one, so links to it keep working.`
-                : "It has never been published, so no address changes."}
-            </DialogDescription>
+            {renaming.path ? (
+              <DialogDescription>
+                Its address is {renaming.path} now. The old address will redirect to the new one, so
+                links to it keep working.
+              </DialogDescription>
+            ) : null}
           </DialogHeader>
           <Form
             method="post"
@@ -790,9 +791,7 @@ export function PostsList({
               </a>
             ) : undefined
           }
-        >
-          {words.text}
-        </Empty>
+        />
       ) : (
         // oxlint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- delegates the events of the controls inside it
         <div
@@ -984,8 +983,8 @@ export interface PostScheduledUpdateProps {
   now?: number;
 }
 
-// The page of the update waiting on a live post: a page head with the post's title, when the
-// update goes live and its actions, then the update beside the live post in the draft compare,
+// The page of the update waiting on a live post: a page head with the post's title and its
+// actions, then the update beside the live post (with when it goes live) in the draft compare,
 // with the unified patch under it. Reschedule… opens the dialog and Cancel the update asks
 // first, posting the posts list's own intents; with no script both are plain forms under the
 // head.
@@ -1065,13 +1064,6 @@ export function PostScheduledUpdate({
         crumbs={crumbs}
         headingLevel={headingLevel}
         title={<span id={`${uid}-h`}>{name}</span>}
-        lead={
-          <>
-            The update goes live <Time at={data.publishAt} format="exact" />,{" "}
-            {inDays(data.publishAt, clock)}. Until then the site serves the live {noun}; then the
-            update replaces it whole.
-          </>
-        }
         actions={actions}
       />
 
@@ -1122,7 +1114,7 @@ export function PostScheduledUpdate({
           Scheduled update
           <span className="cap-posts-update-side-when">
             {" "}
-            · goes live <Time at={data.publishAt} format="exact" />
+            · goes live <Time at={data.publishAt} format="exact" />, {inDays(data.publishAt, clock)}
           </span>
         </Side>
       </div>
