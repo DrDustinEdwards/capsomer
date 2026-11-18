@@ -3,6 +3,12 @@
 Each release names every removed or renamed token or class, and every changed HTML contract. A pull request adds its entry as a
 changeset (`npx changeset`, `.changeset/README.md`); the release pull request writes them here.
 
+## 0.158.1
+
+### Patch Changes
+
+- Mythos review round 5. The rich text cleaner reads at most 50,000 characters (`RICH_TEXT_MAX_INPUT`) and drops the rest, because its tag scan is quadratic on a long run of `<a` with no `>` or of `<!--` with no `-->`. No field holds that much.
+
 ## 0.158.0
 
 ### Minor Changes
