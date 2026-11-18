@@ -3,6 +3,12 @@
 Each release names every removed or renamed token or class, and every changed HTML contract. A pull request adds its entry as a
 changeset (`npx changeset`, `.changeset/README.md`); the release pull request writes them here.
 
+## 0.158.0
+
+### Minor Changes
+
+- collab-editor: `suggestions(schema, json)` replaces `suggestionCounts`. It gives each person's suggested changes (kind, id and text, a split run joined again) rather than a character count, so a room's suggest gate (site-runtime doc-room) can refuse a change to someone else's suggestion that keeps its length. Removed: `suggestionCounts`.
+
 ## 0.157.0
 
 ### Minor Changes
