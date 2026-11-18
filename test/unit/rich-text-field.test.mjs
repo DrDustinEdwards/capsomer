@@ -6,6 +6,7 @@ import {
   isEmptyRichText,
   richTextPlain,
   richTextWords,
+  RICH_TEXT_MAX_INPUT,
   sanitizeRichText,
 } from "../../components/rich-text-field/rich-text-field.ts";
 
@@ -100,4 +101,13 @@ test("stored abstract HTML keeps em, sup and sub and nothing that can run", () =
   );
   assert.equal(title("<EM>Bacillus</EM> <sup>1</sup>"), "<em>Bacillus</em> 1");
   assert.equal(body("<em>open <sup>x</em> y"), "<em>open <sup>x</sup></em><sup> y</sup>");
+});
+
+test("hostile input of any length is read in bounded time, and only its first part is kept", () => {
+  const started = performance.now();
+  for (const unit of ["<a", "<!--", "<em"]) {
+    body(unit.repeat(1_000_000));
+  }
+  assert.ok(performance.now() - started < 2_000);
+  assert.equal(body("a".repeat(RICH_TEXT_MAX_INPUT + 10)), "a".repeat(RICH_TEXT_MAX_INPUT));
 });
