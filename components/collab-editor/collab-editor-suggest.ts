@@ -14,7 +14,7 @@
 //   suggestion reaches a site or the repository only once someone accepts it.
 //
 // No DOM here except in the plugin's decorations, which only a browser draws: the room's server runs
-// `settle` and `suggestionCounts` too.
+// `settle` and `suggestions` too.
 
 import {
   isSuggestChangesEnabled,
@@ -89,16 +89,28 @@ export function settle(schema: Schema, json: JsonDoc): JsonDoc {
   return (tr.docChanged ? state.apply(tr).doc : state.doc).toJSON() as JsonDoc;
 }
 
-/** How many characters (and whole blocks) each person has suggested, by person id. */
-export function suggestionCounts(schema: Schema, json: JsonDoc): Map<string, number> {
-  const counts = new Map<string, number>();
-  const add = (by: unknown, n: number) => counts.set(String(by), (counts.get(String(by)) ?? 0) + n);
+/**
+ * What each person has suggested, by person id: each change in document order as its kind, its id and its text (a
+ * block's type for a whole block). The room's server compares these before and after a suggester's update, so a
+ * change to anyone else's suggestions, even one that keeps its length, is refused. Runs of one change that another
+ * person's typing split are joined again, so typing beside or inside someone's suggestion leaves theirs the same.
+ */
+export function suggestions(schema: Schema, json: JsonDoc): Map<string, string[][]> {
+  const byPerson = new Map<string, string[][]>();
   restoreBlockMarks(schema.nodeFromJSON(json)).descendants((node) => {
-    for (const mark of node.marks)
-      if (isSuggestion(mark)) add(mark.attrs.by, node.isText ? (node.text?.length ?? 0) : 1);
+    for (const mark of node.marks) {
+      if (!isSuggestion(mark)) continue;
+      const runs = byPerson.get(String(mark.attrs.by)) ?? [];
+      byPerson.set(String(mark.attrs.by), runs);
+      const text = node.isText ? (node.text ?? "") : `<${node.type.name}>`;
+      const last = runs.at(-1);
+      if (node.isText && last && last[0] === mark.type.name && last[1] === String(mark.attrs.id))
+        last[2] += text;
+      else runs.push([mark.type.name, String(mark.attrs.id), text]);
+    }
     return true;
   });
-  return counts;
+  return byPerson;
 }
 
 /** Keeps a block's suggestion marks and its `smark` attribute the same, whichever side changed. */
