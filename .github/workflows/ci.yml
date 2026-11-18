@@ -176,14 +176,14 @@ jobs:
         run: npm run token-check
       - name: Fetch the shards' reports
         if: always() && needs.browser.result != 'skipped'
-        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           pattern: blob-report-*
           path: blob-reports/
           merge-multiple: true
       - name: Fetch the shards' forced-colors screenshots
         if: always() && needs.browser.result != 'skipped'
-        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           pattern: forced-colors-*
           path: test-results/forced-colors/
