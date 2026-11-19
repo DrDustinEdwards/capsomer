@@ -3,6 +3,12 @@
 Each release names every removed or renamed token or class, and every changed HTML contract. A pull request adds its entry as a
 changeset (`npx changeset`, `.changeset/README.md`); the release pull request writes them here.
 
+## 0.159.1
+
+### Patch Changes
+
+- The enarratio peer range adds ^0.16.0 (six new chart types), and the dev dependency is 0.16.0. No tokens, classes or HTML contracts changed.
+
 ## 0.159.0
 
 ### Minor Changes
