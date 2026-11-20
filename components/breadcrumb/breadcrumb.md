@@ -62,3 +62,4 @@ replaces:
 - The folded button is named for what it does ("Show 2 more levels"); it has `aria-haspopup="dialog"` and `aria-expanded`. The popover is a dialog named "More levels".
 - Link text 4.5:1 on the page; the current page 4.5:1; the separator is decorative.
 - Each link and the button are at least `var(--target)` tall and wide. Forced colors draw the separator in CanvasText.
+- `variant="direction"` draws the same trail as the manual's airport direction strip (`.cap-direction`; load the manual CSS): same `nav` named "Breadcrumb", no folding, and `className` lands on the `nav` for the page's spacing.

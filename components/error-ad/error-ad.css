@@ -22,8 +22,8 @@
     src: url("../../fonts/alfa-slab-one-latin-400-normal.woff2") format("woff2");
   }
   .cap-ad {
-    /* The ad's own ink: dark on a light page and light on a dark one. */
-    --cap-ad-ink: #1b1f3b;
+    /* The ad's own ink: the text color, dark on a light page and light on a dark one. */
+    --cap-ad-ink: var(--text);
     align-self: flex-end;
     inline-size: min(100%, 32rem);
     margin-block-start: var(--space-8);
@@ -58,14 +58,6 @@
   }
   .cap-ad-ink {
     fill: var(--cap-ad-ink);
-  }
-  :root[data-theme="dark"] .cap-ad {
-    --cap-ad-ink: #f4ecd0;
-  }
-  @media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) .cap-ad {
-      --cap-ad-ink: #f4ecd0;
-    }
   }
   /* Decoration: not printed, and not drawn when the reader has asked for system colors. */
   @media print, (forced-colors: active) {

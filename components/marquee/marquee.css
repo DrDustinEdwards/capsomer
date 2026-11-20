@@ -20,7 +20,7 @@
     --marquee-gap: var(--space-8);
     inline-size: 100%;
     overflow: hidden;
-    mask-image: linear-gradient(to right, transparent, #000 10%, #000 90%, transparent);
+    mask-image: linear-gradient(to right, transparent, CanvasText 10%, CanvasText 90%, transparent);
   }
 
   .cap-marquee-track {

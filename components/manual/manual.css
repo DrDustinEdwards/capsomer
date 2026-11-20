@@ -690,7 +690,7 @@
 
   .cap-letterhead-logo {
     /* The letterhead's own lettering, set tight to its band: component tokens, not steps of the type scale. */
-    --cap-letterhead-logo-size: clamp(2.5rem, 6vw, 4.5rem);
+    --cap-letterhead-logo-size: clamp(var(--display-5), 6vw, var(--display-1));
     --cap-letterhead-logo-leading: 0.82;
     --cap-letterhead-logo-tracking: -0.045em;
     font: var(--weight-bold) var(--cap-letterhead-logo-size) / var(--cap-letterhead-logo-leading) var(--display);

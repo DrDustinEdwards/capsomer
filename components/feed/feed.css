@@ -58,14 +58,14 @@
   .cap-feed-row:not(:last-child)::after {
     content: "";
     position: absolute;
-    inset-block: calc(var(--pad-y) + var(--space-1-5) + 14px + var(--space-1)) calc(-1 * (var(--pad-y) + var(--space-1-5) - var(--space-1)));
+    inset-block: calc(var(--pad-y) + var(--space-1-5) + var(--space-4-5) + var(--space-1)) calc(-1 * (var(--pad-y) + var(--space-1-5) - var(--space-1)));
     inset-inline-start: calc(var(--pad-card) + 6.5px);
     inline-size: 1px;
     background: var(--line);
     pointer-events: none;
   }
   .cap-feed-row[data-kind="condensed"]:not(:last-child)::after {
-    inset-block-start: calc(var(--space-1) + var(--space-1-5) + 14px + var(--space-1));
+    inset-block-start: calc(var(--space-1) + var(--space-1-5) + var(--space-4-5) + var(--space-1));
   }
 
   .cap-feed-glyph {
