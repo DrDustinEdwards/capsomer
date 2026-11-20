@@ -1,5 +1,0 @@
----
-"capsomer": minor
----
-
-Every design value in the components is a token. Renamed: the avatar's component token `--cap-avatar-size` is `--cap-avatar-box` (it is a box, not a type size; set by `.cap-avatar` and `.cap-avatar-count`, and Authorship). The error ad's ink is `--text` (dark on a light page, light on a dark one) instead of two fixed colors, so it follows the theme's text color. The letterhead logo's clamp, the footer's, feed's and header's 14px and 20px offsets, the code-view anchor offset, the marquee mask (`CanvasText`), and the collab editor's and timeline's 2px and 1.5px lines now use the scale (`--display-5`, `--display-1`, `--space-4-5`, `--space-5-5`, `--line-w-thick`, `--line-w-mid`); they draw the same. `Breadcrumb` (React) takes `variant="direction"` for the airport direction strip (`.cap-direction`, no folding) and a `className` for the nav, so a site's own copy of the strip can be deleted. HTML contract: with the variant, the nav is `.cap-direction`, its `ol` and `li` carry no classes and links carry none.
