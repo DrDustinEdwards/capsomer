@@ -93,10 +93,14 @@
     }
   }
 
-  /* The number is the mono eyebrow (.cap-eyebrow[data-variant="mono"]), put first. */
+  /* The number, put first. */
   .cap-annotated-key-num {
     order: -1;
     display: block;
+    color: var(--muted);
+    font-family: var(--mono);
+    font-size: var(--fs-detail);
+    font-weight: var(--weight-medium);
   }
 
   .cap-annotated-key-art {

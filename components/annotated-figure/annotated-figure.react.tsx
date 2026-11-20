@@ -156,7 +156,7 @@ export function AnnotatedKey({ for: figure, label, entries }: AnnotatedKeyProps)
               </svg>
             ) : null}
             <figcaption>
-              <span className="cap-eyebrow cap-annotated-key-num" data-variant="mono">
+              <span className="cap-annotated-key-num">
                 {e.number}
               </span>
               <b className="cap-annotated-key-name">{e.name}</b>

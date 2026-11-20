@@ -24,7 +24,7 @@ replaces:
     <span class="cap-app-frame-address">example.com/dashboard</span>
   </div>
   <div class="cap-app-frame-body">[preview]</div>
-  <div class="cap-app-frame-foot"><p class="cap-eyebrow" data-variant="mono">Sample data</p></div>
+  <div class="cap-app-frame-foot"><p class="cap-meta">Sample data</p></div>
 </div>
 ```
 
