@@ -104,9 +104,7 @@ export function ConsentScreen({
           </p>
           {redirectWarning ? <Alert tone="warn">{redirectWarning}</Alert> : null}
           <div className="cap-consent-box">
-            <p className="cap-permissions-heading">
-              Account
-            </p>
+            <p className="cap-permissions-heading">Account</p>
             <p className="cap-consent-account">{account.name}</p>
             {account.email ? <p className="cap-consent-mono">{account.email}</p> : null}
           </div>
