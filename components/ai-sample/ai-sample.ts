@@ -47,8 +47,7 @@ export function drawSample(
   for (const f of result.fields) {
     const value = node("div", "cap-ai-sample-field", f.value);
     if (f.mono) value.dataset.variant = "mono";
-    const label = node("p", "cap-eyebrow cap-ai-sample-label", f.label);
-    label.dataset.variant = "mono";
+    const label = node("p", "cap-ai-sample-label", f.label);
     box.append(label, value);
   }
   if (result.note) box.append(node("p", "cap-ai-sample-note", result.note));

@@ -62,9 +62,7 @@ export function AiSample({
       onChange={onChange}
     >
       <div className="cap-ai-sample-head">
-        <p className="cap-eyebrow" data-variant="mono">
-          {title}
-        </p>
+        <p className="cap-ai-sample-title">{title}</p>
         {live ? <span className="cap-ai-sample-live">{live}</span> : null}
       </div>
       <div className="cap-ai-sample-controls">
@@ -90,11 +88,7 @@ export function AiSample({
         ) : (
           <div className="cap-ai-sample-result">
             {result.fields.flatMap((f) => [
-              <p
-                key={`${f.label}-l`}
-                className="cap-eyebrow cap-ai-sample-label"
-                data-variant="mono"
-              >
+              <p key={`${f.label}-l`} className="cap-ai-sample-label">
                 {f.label}
               </p>,
               <div

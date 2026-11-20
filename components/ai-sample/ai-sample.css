@@ -88,8 +88,15 @@
     font-size: var(--fs-detail);
   }
 
-  /* A field's label is the mono eyebrow (.cap-eyebrow[data-variant="mono"]), spaced from its value. */
-  .cap-eyebrow.cap-ai-sample-label {
+  .cap-ai-sample-title,
+  .cap-ai-sample-label {
+    margin: 0;
+    color: var(--muted);
+    font-size: var(--fs-detail);
+    font-weight: var(--weight-semibold);
+    line-height: var(--leading-compact);
+  }
+  .cap-ai-sample-label {
     margin-block-end: var(--space-2);
   }
 

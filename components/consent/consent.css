@@ -85,9 +85,12 @@
     gap: var(--space-3);
   }
 
-  /* A list's heading is the mono eyebrow (.cap-eyebrow[data-variant="mono"]), spaced from its list. */
-  .cap-eyebrow.cap-permissions-heading {
-    margin-block-end: var(--space-2);
+  .cap-permissions-heading {
+    margin: 0 0 var(--space-2);
+    color: var(--muted);
+    font-size: var(--fs-detail);
+    font-weight: var(--weight-semibold);
+    line-height: var(--leading-compact);
   }
   .cap-permissions-list {
     display: grid;

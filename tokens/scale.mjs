@@ -106,7 +106,7 @@ export const SCALE = {
     [
       "fs-tiny-5",
       "0.6875rem",
-      "half a step: a product site's eyebrow or label at a fixed 11px, in every density",
+      "half a step: a product site's label at a fixed 11px, in every density",
     ],
     ["fs-small", "0.75rem", "small print at a fixed size: a caption, a footnote, a chart's label"],
     [
@@ -242,9 +242,9 @@ export const SCALE = {
     ["tracking-wide", "0.02em", "small text in capitals that is read, not scanned"],
     ["tracking-wider", "0.04em", "a mono label"],
     ["tracking-widest", "0.06em", "a label in capitals"],
-    ["tracking-caps", "0.08em", "a small label in capitals (an eyebrow, a column head)"],
+    ["tracking-caps", "0.08em", "a small label in capitals (a column head)"],
     ["tracking-sign", "0.1em", "lettering on a sign or a stencil"],
-    ["tracking-spaced", "0.12em", "an eyebrow in capitals on a product site"],
+    ["tracking-spaced", "0.12em", "a label in capitals on a product site"],
     ["tracking-spread", "0.18em", "a wordmark or kicker in widely spaced capitals"],
   ],
   opacity: [
