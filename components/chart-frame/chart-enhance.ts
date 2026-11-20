@@ -24,7 +24,7 @@ const FRAME = ".cap-chart:not([data-enhance])";
 
 // Enhances every frame under root (the document by default), drawing again those that carry a
 // spec (each a RedrawnChart, with the host and destroy()), and returns the charts.
-export function enhanceCharts(
+export function enhanceFrames(
   root: ParentNode = document,
   options?: EnhanceOptions,
 ): Array<EnhancedChart | RedrawnChart> {
@@ -32,12 +32,12 @@ export function enhanceCharts(
 }
 
 // Enhances the page's frames now and watches for new ones. Returns a function that stops watching.
-export function watchCharts(options?: EnhanceOptions): () => void {
+export function watchFrames(options?: EnhanceOptions): () => void {
   return watchPage({ ...options, frame: FRAME } satisfies PageOptions);
 }
 
 if (typeof document !== "undefined" && typeof MutationObserver !== "undefined") {
   if (document.readyState === "loading")
-    document.addEventListener("DOMContentLoaded", () => watchCharts(), { once: true });
-  else watchCharts();
+    document.addEventListener("DOMContentLoaded", () => watchFrames(), { once: true });
+  else watchFrames();
 }
