@@ -39,7 +39,7 @@
     --header-link-weight: var(--weight-regular);
     --header-link-current-weight: var(--weight-medium);
     --header-link-pad: 0;
-    --header-links-gap: 20px;
+    --header-links-gap: var(--space-5-5);
     --header-chev-size: var(--fs-small);
     --header-link-gap: var(--space-2);
     /* The phone sheet's group labels and rows. */

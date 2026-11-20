@@ -106,14 +106,14 @@
      both themes; the line's own color, not hue alone, says which is which. */
   .cap-rich-editor-surface ins,
   .cap-collab-suggestion-text ins {
-    text-decoration: underline 2px;
+    text-decoration: underline var(--line-w-thick);
     text-decoration-color: var(--ok);
     background: var(--ok-soft);
   }
 
   .cap-rich-editor-surface del,
   .cap-collab-suggestion-text del {
-    text-decoration: line-through 2px;
+    text-decoration: line-through var(--line-w-thick);
     text-decoration-color: var(--crit);
     background: var(--crit-soft);
   }

@@ -9,29 +9,29 @@
    picture on a pale page still has a boundary. */
 @layer cap.components {
   .cap-avatar {
-    --cap-avatar-size: 32px;
+    --cap-avatar-box: 32px;
     position: relative;
     display: inline-flex;
     flex: none;
     align-items: center;
     justify-content: center;
-    width: var(--cap-avatar-size);
-    height: var(--cap-avatar-size);
+    width: var(--cap-avatar-box);
+    height: var(--cap-avatar-box);
     border-radius: var(--radius-full);
     background: var(--sunken);
     color: var(--muted);
     font-family: var(--face);
-    font-size: calc(var(--cap-avatar-size) * 0.4);
+    font-size: calc(var(--cap-avatar-box) * 0.4);
     font-weight: var(--weight-semibold);
     line-height: var(--leading-none);
     user-select: none;
     vertical-align: middle;
 
     &[data-size="sm"] {
-      --cap-avatar-size: var(--title-3);
+      --cap-avatar-box: var(--title-3);
     }
     &[data-size="lg"] {
-      --cap-avatar-size: 40px;
+      --cap-avatar-box: 40px;
     }
     /* A square avatar, for a site or a project rather than a person. */
     &[data-shape="square"] {
@@ -40,7 +40,7 @@
     /* The one hint of the kind of author: the agent's initials are set in the mono face. */
     &[data-kind="ai"] {
       font-family: var(--mono);
-      font-size: calc(var(--cap-avatar-size) * 0.34);
+      font-size: calc(var(--cap-avatar-box) * 0.34);
     }
   }
 
@@ -79,13 +79,13 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: max(10px, calc(var(--cap-avatar-size) * 0.35));
-    height: max(10px, calc(var(--cap-avatar-size) * 0.35));
+    width: max(10px, calc(var(--cap-avatar-box) * 0.35));
+    height: max(10px, calc(var(--cap-avatar-box) * 0.35));
     border-radius: var(--radius-full);
     background: var(--primary);
     color: var(--primary-fg);
     box-shadow: 0 0 0 var(--line-w-thick) var(--surface);
-    font-size: calc(var(--cap-avatar-size) * 0.22);
+    font-size: calc(var(--cap-avatar-box) * 0.22);
 
     & > svg {
       width: 70%;
@@ -121,13 +121,13 @@
 
   /* "+3": the people not shown. */
   .cap-avatar-count {
-    --cap-avatar-size: 32px;
+    --cap-avatar-box: 32px;
     display: inline-flex;
     flex: none;
     align-items: center;
     justify-content: center;
-    min-width: var(--cap-avatar-size);
-    height: var(--cap-avatar-size);
+    min-width: var(--cap-avatar-box);
+    height: var(--cap-avatar-box);
     margin-inline-start: calc(-1 * var(--space-3));
     padding-inline: var(--space-3);
     border-radius: var(--radius-full);

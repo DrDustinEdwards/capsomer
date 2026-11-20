@@ -18,6 +18,10 @@ export interface BreadcrumbProps {
   // already links, passes its structured data's minimum less one, so the page and its BreadcrumbList agree.
   minItems?: number;
   label?: string;
+  // "direction" draws the trail as the manual's airport direction strip (.cap-direction, components/manual): same
+  // links and page, no folding (maxItems is ignored), and the nav carries `className` for the page's own spacing.
+  variant?: "direction";
+  className?: string;
   // Draw a level's link with the app's router link: receives the class and the content.
   renderLink?: (props: { href: string; className: string; children: ReactNode }) => ReactNode;
 }
@@ -37,10 +41,13 @@ export function Breadcrumb({
   maxItems,
   minItems = 2,
   label = "Breadcrumb",
+  variant,
+  className,
   renderLink,
 }: BreadcrumbProps) {
   if (items.length < Math.max(2, minItems)) return null;
-  const folded = new Set(maxItems ? foldedLevels(items.length, maxItems) : []);
+  const strip = variant === "direction";
+  const folded = new Set(maxItems && !strip ? foldedLevels(items.length, maxItems) : []);
   const link = (item: BreadcrumbItem, className: string) =>
     renderLink ? (
       renderLink({ href: item.href ?? "#", className, children: item.label })
@@ -50,8 +57,11 @@ export function Breadcrumb({
       </a>
     );
   return (
-    <nav className="cap-breadcrumb" aria-label={label}>
-      <ol className="cap-breadcrumb-list">
+    <nav
+      className={[strip ? "cap-direction" : "cap-breadcrumb", className].filter(Boolean).join(" ")}
+      aria-label={label}
+    >
+      <ol className={strip ? undefined : "cap-breadcrumb-list"}>
         {items.map((item, i) => {
           if (folded.has(i)) {
             if (i !== Math.min(...folded)) return null;
@@ -84,13 +94,13 @@ export function Breadcrumb({
           }
           const last = i === items.length - 1;
           return (
-            <li className="cap-breadcrumb-item" key={`${item.href}-${i}`}>
+            <li className={strip ? undefined : "cap-breadcrumb-item"} key={`${item.href}-${i}`}>
               {last ? (
-                <span className="cap-breadcrumb-page" aria-current="page">
+                <span className={strip ? undefined : "cap-breadcrumb-page"} aria-current="page">
                   {item.label}
                 </span>
               ) : (
-                link(item, "cap-breadcrumb-link")
+                link(item, strip ? "" : "cap-breadcrumb-link")
               )}
             </li>
           );

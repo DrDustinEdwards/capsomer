@@ -48,6 +48,8 @@ replaces:
 />
 ```
 
+`variant="direction"` draws the same trail as the manual's airport direction strip (`.cap-direction`, load `components/manual` CSS): no folding, and `className` lands on the `nav` for the page's spacing.
+
 ## Accessibility
 
 | Key | Does |

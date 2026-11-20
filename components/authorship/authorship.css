@@ -112,7 +112,7 @@
     white-space: nowrap;
 
     & > .cap-avatar {
-      --cap-avatar-size: var(--title-6);
+      --cap-avatar-box: var(--title-6);
       box-shadow: none;
     }
   }

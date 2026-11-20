@@ -25,7 +25,7 @@
     &::after {
       content: "";
       position: absolute;
-      inset-inline-start: calc(var(--cap-timeline-node) / 2 - 1.5px);
+      inset-inline-start: calc(var(--cap-timeline-node) / 2 - var(--line-w-mid));
       inset-block: calc(var(--cap-timeline-node) / 2);
       inline-size: 3px;
       border-radius: var(--radius-s);

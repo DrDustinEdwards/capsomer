@@ -1187,7 +1187,7 @@
     position-anchor: --footnote-ref;
     inset: auto;
     inset-block-start: calc(anchor(bottom) + var(--space-3));
-    inset-inline-start: max(var(--space-3), calc(anchor(left) - 20px));
+    inset-inline-start: max(var(--space-3), calc(anchor(left) - var(--space-5-5)));
     margin: 0;
     position-try-fallbacks: flip-block;
   }
