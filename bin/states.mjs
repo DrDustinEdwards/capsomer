@@ -78,11 +78,33 @@ async function loadExamples(base) {
     : "";
   const build = join(base, "examples.build.ts");
   if (!existsSync(build)) return html;
-  const parts = (await import(pathToFileURL(build).href)).default;
+  const parts = await importBuild(build);
   return html.replace(/<!-- build:([\w-]+) -->/g, (_, k) => {
     if (typeof parts[k] !== "string") throw new Error(`${build} has no "${k}"`);
     return parts[k];
   });
+}
+
+// A build module's default export. One that imports a .tsx file (a React component rendered to a
+// string) goes through Vite's server-side loader, which compiles its JSX; any other Node imports
+// as it is.
+async function importBuild(file) {
+  if (!/from "[^"]+\.tsx"/.test(readFileSync(file, "utf8")))
+    return (await import(pathToFileURL(file).href)).default;
+  const { createServer } = await import("vite");
+  const server = await createServer({
+    root: PKG,
+    configFile: false,
+    appType: "custom",
+    server: { middlewareMode: true, hmr: false, watch: null },
+    logLevel: "error",
+    optimizeDeps: { noDiscovery: true },
+  });
+  try {
+    return (await server.ssrLoadModule(file)).default;
+  } finally {
+    await server.close();
+  }
 }
 
 // Writes states.html for every component that has examples.html or examples.tsx. Returns each
