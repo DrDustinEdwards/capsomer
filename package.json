@@ -185,6 +185,10 @@
       "types": "./dist/components/*/*.d.ts",
       "default": "./dist/components/*/*.js"
     },
+    "./react/select-native": {
+      "types": "./dist/components/select/select-native.react.d.ts",
+      "default": "./dist/components/select/select-native.react.js"
+    },
     "./react/player-context": {
       "types": "./dist/components/player/player-context.react.d.ts",
       "default": "./dist/components/player/player-context.react.js"

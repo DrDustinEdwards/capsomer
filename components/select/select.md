@@ -43,6 +43,12 @@ enhance(); // every [data-cap="select"] not marked data-native
   options={[{ value: "", label: "Choose an agent" }, { group: "Agents", options: [{ value: "driver", label: "capsid-driver" }] }]} />
 ```
 
+```tsx
+// Always the browser's own select: <Select native>'s props and markup, without select.ts in the page.
+import { NativeSelect } from "capsomer/react/select-native";
+<NativeSelect name="sort" options={[{ value: "new", label: "Newest" }, { value: "old", label: "Oldest" }]} />
+```
+
 ## Accessibility
 
 | Key | Does |
