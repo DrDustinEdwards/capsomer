@@ -75,14 +75,6 @@
   align-items: center;
 }
 
-/* A states page with scripts on shows its sections once specimen.ts has chosen which; with scripts
-   off, all of them. */
-@media (scripting: enabled) {
-  .cap-specimens:not(.cap-specimens-ready) > main > .cap-specimen {
-    display: none;
-  }
-}
-
 /* One example alone (?example=<heading id>), framed on a component's public page. */
 .cap-specimen-example {
   padding: var(--space-6);
