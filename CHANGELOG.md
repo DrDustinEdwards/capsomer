@@ -3,6 +3,12 @@
 Each release names every removed or renamed token or class, and every changed HTML contract. A pull request adds its entry as a
 changeset (`npx changeset`, `.changeset/README.md`); the release pull request writes them here.
 
+## 0.164.3
+
+### Patch Changes
+
+- `.cap-pill` and `.cap-badge` wrap their words when the container is narrower than the one-line width (`max-inline-size: 100%`, no `white-space: nowrap`); a pill that fits stays on one line. A long pill no longer makes a 320 px page scroll sideways.
+
 ## 0.164.2
 
 ### Patch Changes
