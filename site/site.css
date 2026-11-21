@@ -706,3 +706,38 @@ h2:not(.cap-family-footer-heading) {
   border: var(--line-w) solid var(--line);
   border-radius: var(--radius-m);
 }
+
+/* A component's Accessibility and Keyboard docs, rendered by Prelum: the reading context with the UI face and the family
+   table, so a doc reads as it did before Prelum rendered it (data table: components/table/table.css). */
+.site-doc {
+  --prose: var(--ui);
+  --prose-heading-face: var(--ui);
+  font-family: var(--ui);
+  font-size: var(--fs-body);
+
+  & .table-scroll {
+    max-inline-size: 100%;
+  }
+  & table {
+    inline-size: 100%;
+    border-collapse: collapse;
+    font-size: var(--fs-body);
+  }
+  & thead th {
+    padding: calc(var(--pad-y) + var(--space-1)) var(--pad-x);
+    border-bottom: var(--line-w) solid var(--line);
+    color: var(--muted);
+    font-family: var(--ui);
+    font-size: var(--fs-label);
+    font-weight: var(--weight-semibold);
+    letter-spacing: var(--tracking-widest);
+    text-align: start;
+    text-transform: uppercase;
+  }
+  & tbody :is(td, th) {
+    padding: calc(var(--pad-y) + var(--space-1)) var(--pad-x);
+    border-bottom: var(--line-w) solid var(--line);
+    text-align: start;
+    vertical-align: middle;
+  }
+}

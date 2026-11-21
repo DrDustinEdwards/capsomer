@@ -4,7 +4,7 @@
 //   primitive: name and one line; Anatomy; Data attributes; Keyboard; API
 import { existsSync, readFileSync } from "node:fs";
 import { iconChevronLeft, iconChevronRight } from "../components/icons/icons.ts";
-import { codeRegion, renderMarkdown } from "./markdown.ts";
+import { codeRegion } from "./markdown.ts";
 import {
   FOOTER,
   codeBox,
@@ -179,13 +179,6 @@ function api(c: Component): Array<[string, string, string]> {
   return out;
 }
 
-/** The keyboard table(s) of the Accessibility section, for a primitive's Keyboard part. */
-const keyboardOnly = (md: string) =>
-  md
-    .split(/\n\s*\n/)
-    .filter((b) => b.trimStart().startsWith("|"))
-    .join("\n\n");
-
 function nav(d: Data, c: Component): NavGroup[] {
   const links = (g: Component[]) => g.map((x) => [pageOf(x), x.title] as [string, string]);
   return c.group === "primitive"
@@ -227,7 +220,7 @@ export function renderComponent(d: Data, name: string): string {
   if (c.group === "primitive") {
     add("anatomy", "Anatomy", `${usage(c)}${partsTable(c)}`);
     add("attributes", "Data attributes", attributes(c));
-    add("keyboard", "Keyboard", renderMarkdown(keyboardOnly(c.accessibility), 0));
+    add("keyboard", "Keyboard", c.keyboardHtml);
     const a = api(c);
     add(
       "api",
@@ -260,7 +253,7 @@ export function renderComponent(d: Data, name: string): string {
       reference.map(([id, t, body]) => `<h3 id="${esc(id)}">${esc(t)}</h3>${body}`).join("\n"),
       reference.map(([id, t]) => [id, t]),
     );
-    add("accessibility", "Accessibility", renderMarkdown(c.accessibility, 0));
+    add("accessibility", "Accessibility", c.accessibilityHtml);
   }
   const section = c.group === "primitive" ? "Primitives" : "Components";
   const main = `${titleBlock(c.title, tools)}
