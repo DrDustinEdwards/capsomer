@@ -87,7 +87,7 @@ export interface ErrorPageProps {
   // The home page's address, for the way out.
   home: string;
   // The site's header, so its skip link and banner landmark stay on the error page. It must read no
-  // loader data: on the error path there is none.
+  // loader data: on the error path there is none. Without one, the page draws its own skip link.
   siteHeader?: ReactNode;
   // The site's footer (the contentinfo landmark), under the same condition.
   siteFooter?: ReactNode;
@@ -199,7 +199,12 @@ export function ErrorPage({
     <>
       {/* React hoists it into head: an error page is never indexed. */}
       <meta name="robots" content="noindex" />
-      {siteHeader}
+      {siteHeader ??
+        (Region === "main" ? (
+          <a className="cap-skip" href={`#${mainId}`}>
+            Skip to content
+          </a>
+        ) : null)}
       <Region
         id={Region === "main" ? mainId : undefined}
         tabIndex={Region === "main" ? -1 : undefined}

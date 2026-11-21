@@ -35,6 +35,7 @@ const SPECIMENS: Record<string, () => ReactNode> = {
   "not-found": () => (
     <ErrorPage error={routeError(404, "Not Found")} home="#home" siteHeader={header} />
   ),
+  "no-header": () => <ErrorPage error={routeError(404, "Not Found")} home="#home" />,
   gone: () => <ErrorPage error={routeError(410, "Gone")} home="#home" siteHeader={header} />,
   "gone-to": () => (
     <ErrorPage

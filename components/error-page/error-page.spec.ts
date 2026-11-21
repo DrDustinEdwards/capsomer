@@ -75,4 +75,12 @@ eachTheme((theme) => {
     await expect(page.getByRole("main")).toBeFocused();
     await expect(page.getByRole("banner")).toBeVisible();
   });
+
+  test("keyboard: with no site header the page draws its own skip link, first", async ({ page }) => {
+    await visitStates(page, "error-page", theme, "no-header");
+    await page.keyboard.press("Tab");
+    await expect(page.getByRole("link", { name: "Skip to content" })).toBeFocused();
+    await page.keyboard.press("Enter");
+    await expect(page.getByRole("main")).toBeFocused();
+  });
 });
