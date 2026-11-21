@@ -36,7 +36,7 @@ jobs:
       pull-requests: write
       id-token: write
       checks: write
-    uses: DrDustinEdwards/devkit/.github/workflows/pr.yml@86b2b7c4d1a750a506a706ead3f6a1c9485eb856 # v0.53.3
+    uses: DrDustinEdwards/devkit/.github/workflows/pr.yml@2dafea855b9156133ea1bb6310ff95c7dab8f58e # v0.55.9
     with:
       review: true
       node-version-file: .node-version
