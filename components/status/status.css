@@ -79,7 +79,8 @@
     position: relative;
     display: inline-flex;
     flex: none;
-    inline-size: fit-content;
+    inline-size: max-content;
+    max-inline-size: 100%;
     align-items: center;
     justify-content: center;
     gap: var(--space-2);
@@ -94,7 +95,6 @@
     font-size: var(--fs-detail);
     font-weight: var(--weight-semibold);
     line-height: var(--leading-snug);
-    white-space: nowrap;
     font-variant-numeric: var(--figures);
     text-decoration: none;
 
