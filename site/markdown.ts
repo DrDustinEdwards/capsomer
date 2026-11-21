@@ -1,8 +1,8 @@
-// A small Markdown renderer for the repo's own doc pages: headings, paragraphs, lists,
-// tables, fenced code, inline code, bold, italics and links. Every character is escaped
-// first, so the output holds only the markup this file writes.
+// The repo's own doc pages are rendered by Prelum, the one Markdown pipeline (assertSafe on, so a doc cannot carry
+// markup of its own), and set in the reading context with the docs' own face and table (site.css, .site-doc).
 
-import { slugify } from "@drdustinedwards/site-helpers/slug";
+import { render } from "@drdustinedwards/site-helpers/render/nomath";
+import { wrapRendered } from "@drdustinedwards/site-helpers/stored-render";
 import { escapeHtml } from "@dustinedwards/site-runtime/html";
 
 /**
@@ -13,106 +13,14 @@ import { escapeHtml } from "@dustinedwards/site-runtime/html";
 export const codeRegion = (name: string) =>
   `tabindex="0" role="region" aria-label="${escapeHtml(`Code: ${name}`)}"`;
 
-function inline(s: string): string {
-  const codes: string[] = [];
-  let out = escapeHtml(s).replace(/`([^`]+)`/g, (_, c: string) => {
-    codes.push(`<code>${c}</code>`);
-    return `\uE000${codes.length - 1}\uE000`;
+/** A doc's Markdown as the HTML of a docs block, in its render-version wrapper; empty stays empty. */
+export async function renderDoc(file: string, body: string): Promise<string> {
+  if (!body.trim()) return "";
+  const out = await render({
+    file,
+    body,
+    resolveImage: async () => null,
+    options: { assertSafe: true },
   });
-  out = out
-    .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
-    .replace(/(^|[\s(])\*([^*\s][^*]*)\*/g, "$1<em>$2</em>")
-    .replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, (_, text: string, href: string) => {
-      // A doc's link to a sibling component's doc (`../empty/empty.md`) is that component's page on the site.
-      const sibling = /^\.\.\/([\w-]+)\/\1\.md(#[\w-]+)?$/.exec(href);
-      const resolved = sibling
-        ? `${import.meta.env?.BASE_URL ?? "/"}components/${sibling[1]}/${sibling[2] ?? ""}`
-        : href;
-      const safe = /^(https?:|#|\.{0,2}\/)/.test(resolved) ? resolved : "#";
-      // Another site takes the link system's away contract (components/link/link.md).
-      if (/^https?:/.test(safe))
-        return `<a href="${safe}" data-link="away" rel="external">${text}<span class="cap-sr-only"> (opens another site)</span></a>`;
-      return `<a href="${safe}">${text}</a>`;
-    });
-  return out.replace(/\uE000(\d+)\uE000/g, (_, i: string) => codes[Number(i)] ?? "");
-}
-
-const cells = (row: string) =>
-  row
-    .trim()
-    .replace(/^\||\|$/g, "")
-    .split("|")
-    .map((c) => c.trim());
-
-// headingOffset shifts heading levels, so a doc page's "#" sits under the site's own h1.
-export function renderMarkdown(src: string, headingOffset = 1): string {
-  const lines = src.replace(/\r\n/g, "\n").split("\n");
-  const out: string[] = [];
-  let i = 0;
-  while (i < lines.length) {
-    const line = lines[i] ?? "";
-    if (line.startsWith("```")) {
-      const lang = line.slice(3).trim();
-      const body: string[] = [];
-      i++;
-      while (i < lines.length && !(lines[i] ?? "").startsWith("```")) body.push(lines[i++] ?? "");
-      i++;
-      out.push(
-        `<pre class="site-code" ${codeRegion(lang || "example")}><code>${escapeHtml(body.join("\n"))}</code></pre>`,
-      );
-      continue;
-    }
-    const h = line.match(/^(#{1,6})\s+(.*)$/);
-    if (h) {
-      const level = Math.min(6, (h[1]?.length ?? 1) + headingOffset);
-      const text = h[2] ?? "";
-      out.push(`<h${level} id="doc-${slugify(text)}">${inline(text)}</h${level}>`);
-      i++;
-      continue;
-    }
-    if (line.startsWith("|") && /^\|?\s*:?-{3,}/.test(lines[i + 1] ?? "")) {
-      const head = cells(line);
-      i += 2;
-      const rows: string[][] = [];
-      while (i < lines.length && (lines[i] ?? "").startsWith("|"))
-        rows.push(cells(lines[i++] ?? ""));
-      out.push(
-        `<div class="cap-table-wrap" role="region" tabindex="0" aria-label="Table"><table class="cap-table"><thead><tr>${head.map((c) => `<th scope="col">${inline(c)}</th>`).join("")}</tr></thead><tbody>${rows
-          .map((r) => `<tr>${r.map((c) => `<td>${inline(c)}</td>`).join("")}</tr>`)
-          .join("")}</tbody></table></div>`,
-      );
-      continue;
-    }
-    if (/^\s*[-*]\s+/.test(line) || /^\s*\d+\.\s+/.test(line)) {
-      const ordered = /^\s*\d+\./.test(line);
-      const items: string[] = [];
-      while (
-        i < lines.length &&
-        (/^\s*[-*]\s+/.test(lines[i] ?? "") ||
-          /^\s*\d+\.\s+/.test(lines[i] ?? "") ||
-          /^\s{2,}\S/.test(lines[i] ?? ""))
-      ) {
-        const l = lines[i++] ?? "";
-        if (/^\s{2,}\S/.test(l) && !/^\s*([-*]|\d+\.)\s+/.test(l) && items.length)
-          items[items.length - 1] += " " + l.trim();
-        else items.push(l.replace(/^\s*([-*]|\d+\.)\s+/, ""));
-      }
-      const tag = ordered ? "ol" : "ul";
-      out.push(`<${tag}>${items.map((it) => `<li>${inline(it)}</li>`).join("")}</${tag}>`);
-      continue;
-    }
-    if (line.trim() === "") {
-      i++;
-      continue;
-    }
-    const para: string[] = [];
-    while (
-      i < lines.length &&
-      (lines[i] ?? "").trim() !== "" &&
-      !/^(#{1,6}\s|```|\||\s*[-*]\s|\s*\d+\.\s)/.test(lines[i] ?? "")
-    )
-      para.push(lines[i++] ?? "");
-    out.push(`<p>${inline(para.join(" "))}</p>`);
-  }
-  return out.join("\n");
+  return `<div class="site-doc" data-context="prose">${wrapRendered(String(out.html), out.renderVersion)}</div>`;
 }

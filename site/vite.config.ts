@@ -5,7 +5,7 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import { subresourceIntegrity } from "@dustinedwards/site-runtime/sri";
 import { generateStates } from "../bin/states.mjs";
-import { firsts, readData, type Data } from "./content.ts";
+import { firsts, readData, renderDocs, type Data } from "./content.ts";
 import { renderComponent } from "./component-page.ts";
 import { PAGES, pathOf, renderTheme } from "./themes.ts";
 import { renderColors, renderIcons } from "./swatches.ts";
@@ -24,6 +24,7 @@ const root = fileURLToPath(new URL("..", import.meta.url));
 // first: Vite finds its inputs by the file existing (build and preview both load this).
 const examples = await generateStates(root);
 const data = readData(root, examples);
+await renderDocs(data);
 
 // Every page: its address, what its head says and how its body is written. Each is a copy of site/page.html written
 // into site/gen/ (gitignored), filled at build and served at its address (index.html in its folder).

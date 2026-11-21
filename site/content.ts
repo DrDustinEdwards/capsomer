@@ -1,6 +1,7 @@
 // What the site's pages are made from, read from the repo at build: each component's doc file (its frontmatter and its two
 // sections), its examples.html as the states generator filled it, its React and behavior exports, parts.json's entry
 // (bin/parts.mjs) and its API (site/api.ts); the color families (capsomer site-data); and the tokens.
+import { renderDoc } from "./markdown.ts";
 import { htmlToText } from "@drdustinedwards/site-helpers/text";
 import { frontmatter } from "@drdustinedwards/site-helpers/frontmatter";
 import { existsSync, readFileSync, readdirSync } from "node:fs";
@@ -36,6 +37,9 @@ export interface Component {
   // The doc file's two sections: Usage's code blocks, and Accessibility as Markdown.
   usage: Array<{ lang: string; code: string }>;
   accessibility: string;
+  // The same Accessibility section and its keyboard tables as HTML, rendered by renderDocs before any page is written.
+  accessibilityHtml: string;
+  keyboardHtml: string;
   react: string[];
   behavior: string[];
   styles: Parts | null;
@@ -120,6 +124,23 @@ const exportsOf = (path: string, re: RegExp) =>
   existsSync(path) ? [...readFileSync(path, "utf8").matchAll(re)].map((x) => x[1] ?? "") : [];
 
 /** Everything the pages say. `examples` is each component's examples.html as the states generator filled it. */
+/** The keyboard table(s) of the Accessibility section, for a primitive's Keyboard part. */
+const keyboardOnly = (md: string) =>
+  md
+    .split(/\n\s*\n/)
+    .filter((b) => b.trimStart().startsWith("|"))
+    .join("\n\n");
+
+/** Renders every component's Accessibility section with Prelum (an async pipeline, so it runs once before the pages are written). */
+export async function renderDocs(data: Data): Promise<void> {
+  await Promise.all(
+    data.components.map(async (c) => {
+      c.accessibilityHtml = await renderDoc(`${c.name}.md`, c.accessibility);
+      c.keyboardHtml = await renderDoc(`${c.name}.md`, keyboardOnly(c.accessibility));
+    }),
+  );
+}
+
 export function readData(root: string, examples: Map<string, string>): Data {
   const dir = resolve(root, "components");
   const names = readdirSync(dir, { withFileTypes: true })
@@ -145,6 +166,8 @@ export function readData(root: string, examples: Map<string, string>): Data {
           code: (m[2] ?? "").replace(/\n$/, ""),
         })),
         accessibility: (sections.Accessibility ?? "").trim(),
+        accessibilityHtml: "",
+        keyboardHtml: "",
         react: exportsOf(
           resolve(dir, name, `${name}.react.tsx`),
           /^export (?:function|const) ([A-Z]\w*)/gm,
