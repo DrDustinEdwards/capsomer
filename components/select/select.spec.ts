@@ -228,6 +228,9 @@ eachTheme((theme) => {
     await visitStates(page, "select", theme);
     const owner = page.getByRole("combobox", { name: /^Owner/ });
     await owner.click();
+    // The popup zooms in from 95%: a click aimed before the animation ends can land outside the
+    // popup on a slow runner, which light-dismisses it, and no option is then left to click.
+    await settled(page);
     await page.getByRole("option", { name: "seat-start (paused)" }).click({ force: true });
     await expect(page.locator("#sel-owner-native")).toHaveValue("");
     await expect(page.getByRole("listbox", { name: /^Owner/ })).toBeVisible();
