@@ -60,6 +60,8 @@ import { DataTable } from "capsomer/react/table";
 
 ## Accessibility
 
+A row with a `.cap-table-open` link opens its detail from anywhere in the row. Everything a person can focus or point at in it sits above that link: `a[href]`, `button`, `input`, `select`, `textarea`, `summary`, any `[tabindex]` other than `-1` (a tooltip trigger), `[role="button"]` and `.cap-check`. Mark anything else with `data-cap-lift`.
+
 | Key | Does |
 | --- | --- |
 | Tab | Reaches the scroll region, then each sort button, then each row's link |
