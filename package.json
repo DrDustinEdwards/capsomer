@@ -239,7 +239,7 @@
     "@dagrejs/dagre": "3.1.3",
     "@drdustinedwards/site-helpers": "github:DrDustinEdwards/prelum#v0.63.3",
     "@dustinedwards/devkit": "github:DrDustinEdwards/devkit#v0.53.3",
-    "@dustinedwards/site-runtime": "github:DrDustinEdwards/site-runtime#v0.170.0",
+    "@dustinedwards/site-runtime": "github:DrDustinEdwards/site-runtime#v0.173.0",
     "@fontsource-variable/source-serif-4": "5.3.1",
     "@handlewithcare/prosemirror-suggest-changes": "0.1.8",
     "@lezer/highlight": "1.2.5",
