@@ -1,6 +1,6 @@
 // Generates components/<name>/states.html from site/states-template.html, the component's
 // doc-page frontmatter (its title) and its examples.html (and examples.tsx, if any). A
-// component whose specimens are drawn by Enarratio has examples.build.ts (examples.build.tsx for a React one): its default export
+// component whose specimens are drawn by Enarratio has examples.build.ts: its default export
 // maps names to markup, rendered when the pages are built, and each <!-- build:name --> in
 // examples.html is replaced by it, so the specimens are the package's live output, never pasted.
 // Imported by bin/capsomer.mjs (`capsomer states`) and by site/vite.config.ts, so the pages
@@ -76,8 +76,7 @@ async function loadExamples(base) {
   const html = existsSync(join(base, "examples.html"))
     ? readFileSync(join(base, "examples.html"), "utf8")
     : "";
-  const tsx = join(base, "examples.build.tsx");
-  const build = existsSync(tsx) ? tsx : join(base, "examples.build.ts");
+  const build = join(base, "examples.build.ts");
   if (!existsSync(build)) return html;
   const parts = await importBuild(build);
   return html.replace(/<!-- build:([\w-]+) -->/g, (_, k) => {
@@ -86,10 +85,12 @@ async function loadExamples(base) {
   });
 }
 
-// A build module's default export. A .tsx one (a React component rendered to a string) goes
-// through Vite's server-side loader, which compiles its JSX; a .ts one Node imports as it is.
+// A build module's default export. One that imports a .tsx file (a React component rendered to a
+// string) goes through Vite's server-side loader, which compiles its JSX; any other Node imports
+// as it is.
 async function importBuild(file) {
-  if (!file.endsWith(".tsx")) return (await import(pathToFileURL(file).href)).default;
+  if (!/from "[^"]+\.tsx"/.test(readFileSync(file, "utf8")))
+    return (await import(pathToFileURL(file).href)).default;
   const { createServer } = await import("vite");
   const server = await createServer({
     root: PKG,

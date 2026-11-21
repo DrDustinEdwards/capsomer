@@ -5,7 +5,6 @@
     "components/*/*.react.tsx",
     "components/*/examples.html",
     "components/*/examples.tsx",
-    "components/*/examples.build.tsx",
     "components/*/specimen/*.ts",
     "components/*/specimen/runtime/*.mjs",
     "components/*/*.spec.ts",
