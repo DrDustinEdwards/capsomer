@@ -3,6 +3,13 @@
 Each release names every removed or renamed token or class, and every changed HTML contract. A pull request adds its entry as a
 changeset (`npx changeset`, `.changeset/README.md`); the release pull request writes them here.
 
+## 0.164.6
+
+### Patch Changes
+
+- ChartFrame measures its column before the first paint, so a chart drawn in the browser (a heat strip, which keeps its own height) is not shown at the server's width and then redrawn taller, which moved the page.
+- A component's example page (`?example=`) paints after its script has chosen the one example and its charts are drawn, so the page no longer moves as the other examples are hidden. With scripts off nothing is hidden.
+
 ## 0.164.5
 
 ### Patch Changes
