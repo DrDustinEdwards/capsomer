@@ -124,6 +124,15 @@
   --opacity-half: 0.5;
   --opacity-muted: 0.6;
   --opacity-soft: 0.88;
+  /* blur */
+  --blur-s: 4px;
+  --blur-m: 8px;
+  --blur-l: 12px;
+  --blur-xl: 64px;
+  /* paper */
+  --paper: #fff;
+  --paper-ink: #000;
+  --paper-rule: #999;
   /* layer */
   --z-base: 0;
   --z-raise: 10;

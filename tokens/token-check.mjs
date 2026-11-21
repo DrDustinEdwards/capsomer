@@ -59,7 +59,7 @@ export function resolveToken(block, name) {
 // Every design value in a stylesheet that is written as a literal where a token exists for its kind: colors, spaces,
 // font sizes, weights, line heights, tracking, radii, line widths, focus offsets, layers, durations, easings, shadows
 // and opacities (the W3C design tokens format's types: color, dimension, fontWeight, number, duration, cubicBezier,
-// shadow). Not checked, on purpose: a component's own geometry (a dialog's width, an avatar's size, grid tracks, an
+// shadow), and a blur. Not checked, on purpose: a component's own geometry (a dialog's width, an avatar's size, grid tracks, an
 // aspect ratio, a transform, a clip path), which is a component token where a site may change it; values relative to
 // the text or the box (em, ch, %, vw, vh), which scale with what they sit in; 0, 1px hairline offsets, and the
 // font metric overrides in an @font-face. Defining a custom property with a literal is how a token is made, so only
@@ -99,6 +99,7 @@ export function tokenScale(json) {
   group("line", "outline", (n) => n.startsWith("line-w"));
   group("focus", "line", (n) => n === "ring-width");
   group("focus", "offset", (n) => n.startsWith("focus-offset"));
+  group("blur", "blur");
   group("type", "size", (n) =>
     /^(fs-(tiny|small|label|detail|body|lead|h2|h3)(-5)?|title-\d(-5)?|display-\d|mono-size)$/.test(
       n,
@@ -191,29 +192,12 @@ const parts = (v) => {
 
 /** Each declaration in a stylesheet: [property, value, line]. Comments and @font-face blocks are skipped. */
 function declarations(css) {
-  // Comments, @font-face and @media print blocks become spaces, so every line keeps its number. Paper is not themed:
-  // print sets black on white.
+  // Comments and @font-face blocks become spaces, so every line keeps its number.
   const blank = (m) => m.replace(/[^\n]/g, " ");
-  let text = css
+  const text = css
     .replace(/\r\n/g, "\n")
     .replace(/\/\*[\s\S]*?\*\//g, blank)
     .replace(/@font-face\s*\{[^}]*\}/g, blank);
-  for (
-    let at = text.search(/@media\s+print\s*\{/);
-    at !== -1;
-    at = text.search(/@media\s+print\s*\{/)
-  ) {
-    let depth = 0;
-    let end = text.length;
-    for (let i = text.indexOf("{", at); i < text.length; i += 1) {
-      if (text[i] === "{") depth += 1;
-      else if (text[i] === "}" && --depth === 0) {
-        end = i + 1;
-        break;
-      }
-    }
-    text = text.slice(0, at) + blank(text.slice(at, end)) + text.slice(end);
-  }
   const starts = [0];
   for (let i = text.indexOf("\n"); i !== -1; i = text.indexOf("\n", i + 1)) starts.push(i + 1);
   const lineAt = (i) => {
@@ -298,15 +282,17 @@ export function rawValues(css, scale) {
           add(kind, m[0], px, "px", s === v && derived.has(m.index));
       }
     };
-    // A color, in any property but a mask (whose black is an alpha, not a color).
-    if (!prop.startsWith("mask")) {
-      for (const m of v.matchAll(HEX_LIT)) add("color", m[0]);
-      for (const m of v.matchAll(COLOR_FN)) add("color", `${m[0]}…)`);
-      if (!own && /color|background|fill|stroke|border|outline|shadow/.test(prop))
-        for (const m of v.matchAll(NAMED)) add("color", m[0]);
-    }
+    for (const m of v.matchAll(HEX_LIT)) add("color", m[0]);
+    for (const m of v.matchAll(COLOR_FN)) add("color", `${m[0]}…)`);
+    if (!own && /color|background|fill|stroke|border|outline|shadow|mask/.test(prop))
+      for (const m of v.matchAll(NAMED)) add("color", m[0]);
     const kind = own ? (NAMED_KIND.find(([re]) => re.test(prop))?.[1] ?? null) : null;
-    if (kind === "space" || (!own && SPACE_PROP.test(prop))) lengths("space", v, [0, 1]);
+    if (kind === "space" || (!own && (SPACE_PROP.test(prop) || prop === "border-spacing")))
+      lengths("space", v, [0, 1]);
+    else if (prop === "filter" || prop === "backdrop-filter") {
+      for (const m of v.matchAll(/blur\(\s*(-?\d*\.?\d+)(px|rem)\s*\)/g))
+        add("blur", `${m[1]}${m[2]}`, toPx(Number(m[1]), m[2]), "px");
+    } else if (prop === "text-underline-offset") lengths("offset", v);
     else if (kind === "radius" || RADIUS_PROP.test(prop)) {
       for (const m of v.matchAll(LENGTH)) {
         const px = toPx(Number(m[1]), m[2]);
