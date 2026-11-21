@@ -103,15 +103,23 @@ export function decodeEntities(text: string): string {
 const escapeText = (text: string) =>
   text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
-/** Longest input the cleaner reads; the rest is dropped. The tag scan is quadratic on a long run of `<a` with no `>`, and no field holds this much. */
+/** Longest input the cleaner reads; the rest is dropped. No field holds this much. */
 export const RICH_TEXT_MAX_INPUT = 50_000;
+
+/** `text` up to and including its last `end`, or nothing without one. A lazy scan for a close that is not there re-reads the rest of the text at every opener, so the scans below run only through the last close. */
+function through(text: string, end: string): string {
+  const at = text.lastIndexOf(end);
+  return at === -1 ? "" : text.slice(0, at + end.length);
+}
 
 function tokenize(input: string): Token[] {
   const tokens: Token[] = [];
-  const src = input.replace(/<!--[\s\S]*?-->/g, "");
+  const closed = through(input, "-->");
+  const src = closed.replace(/<!--[\s\S]*?-->/g, "") + input.slice(closed.length);
+  const scan = through(src, ">");
   let last = 0;
   TAG.lastIndex = 0;
-  for (let m = TAG.exec(src); m !== null; m = TAG.exec(src)) {
+  for (let m = TAG.exec(scan); m !== null; m = TAG.exec(scan)) {
     if (m.index > last) tokens.push({ type: "text", value: src.slice(last, m.index) });
     const tag = m[1]!.toLowerCase();
     tokens.push(m[0].startsWith("</") ? { type: "close", tag } : { type: "open", tag });
