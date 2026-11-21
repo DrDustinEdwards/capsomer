@@ -171,9 +171,9 @@ jobs:
       - name: Size (warns only)
         if: always()
         run: npm run size
-      - name: Token check (raw values warn; a declaration the browser drops fails)
+      - name: Token check (a raw design value or a declaration the browser drops fails)
         if: always()
-        run: npm run token-check
+        run: npm run token-check -- --strict
       - name: Fetch the shards' reports
         if: always() && needs.browser.result != 'skipped'
         uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2

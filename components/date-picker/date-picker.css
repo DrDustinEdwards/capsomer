@@ -38,7 +38,7 @@
   .cap-date-picker-grid {
     inline-size: 100%;
     border-collapse: separate;
-    border-spacing: 2px;
+    border-spacing: var(--space-1);
     font-variant-numeric: var(--figures-column);
 
     & th {

@@ -19,7 +19,7 @@
       inset-inline-start: var(--x);
       background: radial-gradient(circle, var(--c) 0%, transparent 70%);
       opacity: var(--o);
-      filter: blur(64px);
+      filter: blur(var(--blur-xl));
     }
 
     & > span:nth-child(1) { --c: var(--cap-ambient-1); --o: 0.55; --y: -40%; --x: 2%; --s: 26rem; --dx: 26px; --dy: 20px; --k: 1.12; --d: 30s; --l: -4s; }

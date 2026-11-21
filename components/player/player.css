@@ -304,7 +304,7 @@
     padding-block-end: env(safe-area-inset-bottom);
     border-block-start: var(--line-w) solid var(--line);
     background: color-mix(in oklab, var(--surface) 95%, transparent);
-    backdrop-filter: blur(8px);
+    backdrop-filter: blur(var(--blur-m));
     color: var(--text);
     container: cap-player-dock / inline-size;
     /* Auto-hidden while the track's own surface is on screen: faded and inert, still playing. */

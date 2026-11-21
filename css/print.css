@@ -5,9 +5,6 @@
    it), so no site keeps its own print block or per-component forced-colors edges. */
 @layer cap.base {
   @media print {
-    :root {
-      --print-rule: #999;
-    }
     /* Chrome and controls have no use on paper. A site marks its own with data-print="hide". */
     :is(
       [data-print="hide"],
@@ -32,7 +29,7 @@
     :where(pre) {
       white-space: pre-wrap;
       overflow-wrap: anywhere;
-      border: 1px solid var(--print-rule);
+      border: var(--line-w) solid var(--paper-rule);
     }
     /* An outside link carries its address, which paper cannot follow. */
     :where([data-context="prose"], .cap-prose) a[href^="http"]::after {
@@ -47,8 +44,8 @@
     /* The reading context on paper: black on white at a book's size, links in the text's own ink. */
     [data-context="prose"] {
       font-size: 11pt;
-      color: #000;
-      background: #fff;
+      color: var(--paper-ink);
+      background: var(--paper);
       & a {
         color: inherit;
       }

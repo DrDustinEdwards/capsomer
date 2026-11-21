@@ -243,10 +243,10 @@
       --cap-fade-end-at: 100%;
       scroll-padding-inline: var(--cap-fade);
       mask:
-        linear-gradient(#000, #000) no-clip subtract,
-        linear-gradient(to var(--cap-fade-dir), #000, transparent) var(--cap-fade-start-at) 0 /
+        linear-gradient(CanvasText, CanvasText) no-clip subtract,
+        linear-gradient(to var(--cap-fade-dir), CanvasText, transparent) var(--cap-fade-start-at) 0 /
           var(--cap-fade-start) 100% no-repeat no-clip,
-        linear-gradient(to var(--cap-fade-dir), transparent, #000) var(--cap-fade-end-at) 0 /
+        linear-gradient(to var(--cap-fade-dir), transparent, CanvasText) var(--cap-fade-end-at) 0 /
           var(--cap-fade-end) 100% no-repeat no-clip;
       /* Longhands, with duration auto: a minifier (Lightning CSS, Vite's) folds the animation
          shorthand and the timeline into one and writes a 0s duration, which Chromium runs as

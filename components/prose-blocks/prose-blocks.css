@@ -1283,7 +1283,7 @@
       & a[href^="http"]:where(:not(.heading-anchor, .image-link, .embed-link, .bookmark-link))::after {
         content: " (" attr(href) ")";
         font-size: 0.85em;
-        font-weight: 400;
+        font-weight: var(--weight-regular);
         word-break: break-all;
       }
       & :where(h2, h3) {

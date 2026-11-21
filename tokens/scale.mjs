@@ -258,6 +258,17 @@ export const SCALE = {
     ["opacity-muted", "0.6", "a secondary mark or a struck-out choice"],
     ["opacity-soft", "0.88", "a surface that lets a hint of the page show through"],
   ],
+  blur: [
+    ["blur-s", "4px", "a scrim's light blur, or a message coming into focus"],
+    ["blur-m", "8px", "a docked bar over moving content"],
+    ["blur-l", "12px", "a card over a picture"],
+    ["blur-xl", "64px", "a soft blob of color in the background"],
+  ],
+  paper: [
+    ["paper", "#fff", "the ground on paper: print is not themed"],
+    ["paper-ink", "#000", "text on paper"],
+    ["paper-rule", "#999", "a hairline on paper"],
+  ],
   layer: [
     ["z-base", "0", "the page"],
     [
@@ -571,6 +582,8 @@ export function renderJson() {
       "line-box": "dimension",
       tracking: undefined,
       opacity: "number",
+      blur: "dimension",
+      paper: "color",
       breakpoint: "dimension",
     })[group];
   const groups = { ...SCALE, breakpoint: BREAKPOINTS };

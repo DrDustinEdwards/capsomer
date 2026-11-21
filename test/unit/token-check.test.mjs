@@ -39,6 +39,8 @@ test("rawValues names each raw design value with its token, and leaves tokens, r
   color: var(--x, #fff);
   --cap-a-gap: 8px;
   --cap-a-w: 13px;
+  backdrop-filter: blur(8px);
+  mask: linear-gradient(#000, transparent);
 }
 @media print { .a { color: #000; } }`;
   const got = rawValues(css, scale).map((i) => `${i.line} ${i.kind} ${i.text} ${i.suggestion}`);
@@ -58,6 +60,9 @@ test("rawValues names each raw design value with its token, and leaves tokens, r
     "7 shadow 0 4px 8px var(--shadow-xs), var(--shadow-s), var(--shadow-m), var(--shadow-l)",
     "9 color #fff a color token from the palette",
     "10 space 8px var(--space-3)",
+    "12 blur 8px var(--blur-m)",
+    "13 color #000 a color token from the palette",
+    "15 color #000 a color token from the palette",
   ]);
   // --fix writes each exact token in place, a multi-line shadow included, and leaves what needs a choice.
   const { fixCss } = await import("../../tokens/token-check.mjs");
