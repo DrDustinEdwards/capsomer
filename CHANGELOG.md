@@ -3,6 +3,13 @@
 Each release names every removed or renamed token or class, and every changed HTML contract. A pull request adds its entry as a
 changeset (`npx changeset`, `.changeset/README.md`); the release pull request writes them here.
 
+## 0.163.1
+
+### Patch Changes
+
+- The rich text cleaner reads a long run of unclosed `<a`, `<em` or `<!--` in linear time. Before, each opener scanned the rest of the text for a close that was not there, so the largest allowed input took about half a second and a loaded CI runner could miss the 2 s bound in its unit test. The output is unchanged.
+- Select, SearchSuggest and Carousel: a server build (Vite's `import.meta.env.SSR`) leaves out their browser scripts (`select.ts`, `search-suggest.ts`, `carousel.ts` and, where nothing else uses them, the listbox and the popover), since the effects that use them never run there. A Worker that renders them carries only their markup (Carrel 14 KiB smaller, Foxing 16 KiB). No change to the HTML contract or the browser.
+
 ## 0.163.0
 
 ### Minor Changes
