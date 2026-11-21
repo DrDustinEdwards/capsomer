@@ -91,9 +91,14 @@ export function ChartFrame({
   });
   const redraws = draw !== undefined;
 
-  useEffect(() => {
+  // Measured before the first paint, so a drawing that keeps its own height (a heat strip) is never
+  // shown at the server's width and then redrawn taller; a resize redraws at most once a frame.
+  useLayoutEffect(() => {
     const el = ref.current;
-    if (!el || !redraws || typeof ResizeObserver === "undefined") return;
+    if (!el || !redraws) return;
+    const first = Math.floor(el.clientWidth);
+    if (first > 0) setDrawn(drawWidth(first, minWidth));
+    if (typeof ResizeObserver === "undefined") return;
     let frame = 0;
     const observer = new ResizeObserver((entries) => {
       const measured = Math.floor(entries[0]?.contentRect.width ?? 0);
