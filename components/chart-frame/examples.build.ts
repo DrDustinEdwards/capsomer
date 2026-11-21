@@ -14,14 +14,15 @@ const jobs = days.flatMap((day, i) => [
   { day, kind: "Reviews", n: [6, 8, 3, 2, 9, 11, 10][i] ?? 0 },
   { day, kind: "Deploys", n: [3, 4, 1, 0, 5, 4, 6][i] ?? 0 },
 ]);
+const source = { name: "The job log", href: "https://example.com/jobs" };
 const minutes = {
   values: [260, 280, 310, 300, 330, 320, 340],
   label: "Actions minutes per day, last 7 days",
   id: "cf-spark",
   width: 320,
   height: 56,
+  source,
 };
-const source = { name: "The job log", href: "https://example.com/jobs" };
 
 const barOptions = (id: string, extra: Partial<BarChartOptions<(typeof jobs)[number]>> = {}) =>
   ({
@@ -71,6 +72,7 @@ const lineSpec = {
   directLabels: true,
   width: 440,
   height: 240,
+  source,
 } as const;
 const areaSpec = {
   data: days.flatMap((day, i) => [
@@ -87,6 +89,7 @@ const areaSpec = {
   yLabel: "Jobs",
   width: 440,
   height: 240,
+  source,
 } as const;
 const drawings: Record<string, string> = {
   spark: frameHtml(sparkline(minutes)),
@@ -96,19 +99,27 @@ const drawings: Record<string, string> = {
       label: "Uptime of example.edu",
       subtitle: "83% up over 7 days",
       id: "cf-up",
+      source,
       width: 480,
       height: 28,
     }),
     { inline: true },
   ),
   ring: frameHtml(
-    progressRing({ value: 0.72, label: "Nightly backups verified", id: "cf-ring", size: 96 }),
+    progressRing({
+      value: 0.72,
+      label: "Nightly backups verified",
+      id: "cf-ring",
+      size: 96,
+      source,
+    }),
   ),
   heat: frameHtml(
     heatStrip({
       values: [3, 5, 8, 12, null, 19, 22, 17, 11, 6, 4, 3],
       label: "Requests per hour, last 12 hours",
       id: "cf-heat",
+      source,
       width: 480,
       height: 28,
     }),
@@ -117,6 +128,7 @@ const drawings: Record<string, string> = {
     timeline({
       label: "Deploys and downtime, today",
       id: "cf-timeline",
+      source,
       // Drawn at the column's width, so its 12 px text is not scaled down.
       width: 440,
       start: "2026-10-30T00:00:00Z",
@@ -219,7 +231,7 @@ drawings.families = families
       source,
       summary: false,
     } as const;
-    return `<div data-family="${f}" class="cf-family">${drawn("bar", barChart({ ...options, onIssue: () => {} }), options)}${frameHtml(heatStrip({ values: [1, 2, 3, 4, 5], label: `The ramp in the ${f} family`, id: `cf-ramp-${f}`, width: 440, height: 28 }))}</div>`;
+    return `<div data-family="${f}" class="cf-family">${drawn("bar", barChart({ ...options, onIssue: () => {} }), options)}${frameHtml(heatStrip({ values: [1, 2, 3, 4, 5], label: `The ramp in the ${f} family`, id: `cf-ramp-${f}`, width: 440, height: 28, source }))}</div>`;
   })
   .join("");
 
