@@ -1,7 +1,7 @@
 // The accessibility statement at /accessibility/, written into site/accessibility.html at build (site/vite.config.ts) from
 // Prelum's accessibilityStatement, the one statement every public site serves (devkit-a11y item S6). Only the facts are
 // this site's: it is built from Capsomer and draws Capsomer's links, problems go to dustinedwards.info's contact page (the
-// site has none of its own), and the limitations are the open findings of devkit-a11y's run of 2026-11-01.
+// site has none of its own), and the limitations are the open findings of devkit-a11y's run of 2026-11-21.
 import { accessibilityStatement } from "@drdustinedwards/site-helpers/accessibility";
 import { FOOTER, header } from "./chrome.ts";
 import { firsts, type Data } from "./content.ts";
@@ -12,12 +12,11 @@ const STATEMENT = accessibilityStatement({
     href: "https://dustinedwards.info/contact",
     label: "the contact page on dustinedwards.info",
   },
-  date: "2026-11-01",
+  date: "2026-11-21",
   capsomer: true,
   links: "marked",
   limitations: [
     "On the admin shell's page, one example's frame has an accessible name that does not begin with its visible label.",
-    "The page for an address that does not exist has no skip link as its first Tab stop.",
   ],
 });
 

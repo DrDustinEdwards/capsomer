@@ -11,6 +11,7 @@ import { PAGES, pathOf, renderTheme } from "./themes.ts";
 import { renderColors, renderIcons } from "./swatches.ts";
 import { SEARCH_PAGE, renderSearch, searchIndexJson } from "./search.ts";
 import { ACCESSIBILITY_PAGE, renderAccessibility } from "./accessibility.ts";
+import { NOT_FOUND_PAGE, renderNotFound } from "./not-found.ts";
 import { writePreloadFile } from "../scripts/preload.ts";
 import { ICON_TAGS, discoveryFiles, siteHead } from "./seo.ts";
 
@@ -70,6 +71,7 @@ const PAGE_LIST: Page[] = [
   },
   { ...SEARCH_PAGE, render: renderSearch, script: "/site/search-main.ts", noindex: true },
   { ...ACCESSIBILITY_PAGE, render: renderAccessibility },
+  { ...NOT_FOUND_PAGE, render: renderNotFound, noindex: true },
 ];
 const genOf = (path: string) => `site/gen${path === "/" ? "/index" : path.replace(/\/$/, "")}.html`;
 const template = readFileSync(resolve(root, "site/page.html"), "utf8");
@@ -129,7 +131,13 @@ export default defineConfig({
       generateBundle(_, bundle) {
         for (const [gen, p] of byGen) {
           const file = bundle[gen];
-          if (file) file.fileName = p.path === "/" ? "index.html" : `${p.path.slice(1)}index.html`;
+          if (file)
+            file.fileName =
+              p.path === "/"
+                ? "index.html"
+                : p.path.endsWith(".html")
+                  ? p.path.slice(1)
+                  : `${p.path.slice(1)}index.html`;
         }
       },
     },
