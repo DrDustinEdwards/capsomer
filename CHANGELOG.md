@@ -3,6 +3,12 @@
 Each release names every removed or renamed token or class, and every changed HTML contract. A pull request adds its entry as a
 changeset (`npx changeset`, `.changeset/README.md`); the release pull request writes them here.
 
+## 0.163.0
+
+### Minor Changes
+
+- A table row that opens a detail now keeps every focusable element above its row link: `a[href]`, `button`, `input`, `select`, `textarea`, `summary`, `[tabindex]` (a tooltip trigger), `[role="button"]` and `.cap-check`, plus anything marked `data-cap-lift`. Before, only links, buttons and checkboxes were lifted, so a tabindex element's hover went to the row link.
+
 ## 0.162.0
 
 ### Minor Changes
