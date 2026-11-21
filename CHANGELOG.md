@@ -3,6 +3,13 @@
 Each release names every removed or renamed token or class, and every changed HTML contract. A pull request adds its entry as a
 changeset (`npx changeset`, `.changeset/README.md`); the release pull request writes them here.
 
+## 0.164.4
+
+### Patch Changes
+
+- The writing-progress specimen is drawn when the states page is built, so its chart reads with scripts off.
+- A chart with a narrow drawing (narrowRedraw) now scales its wide drawing to the narrow one's height until the swap, on a site that loads Enarratio's own CSS unlayered. Before, Enarratio's unlayered `min-width` beat the layered rule, so the page moved when the swap came (germomics' Soho map, 615 px to 387 px).
+
 ## 0.164.3
 
 ### Patch Changes
