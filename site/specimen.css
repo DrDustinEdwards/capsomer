@@ -92,3 +92,18 @@
     }
   }
 }
+
+/* With scripts on, a states page paints once its script has chosen what to show (the one example of ?example=, a
+   frame per page-level specimen), so nothing moves under the reader as that happens. With scripts off nothing is
+   hidden, and a script that never runs reveals the page after two seconds. */
+@media (scripting: enabled) {
+  body:not(.cap-specimen-ready) > main {
+    visibility: hidden;
+    animation: cap-specimen-reveal 0s var(--dur-flow) forwards;
+  }
+}
+@keyframes cap-specimen-reveal {
+  to {
+    visibility: visible;
+  }
+}
