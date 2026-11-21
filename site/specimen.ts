@@ -29,6 +29,10 @@ if (example) {
   const section = document.getElementById(example)?.closest<HTMLElement>(".cap-specimen");
   document.body.classList.add("cap-specimen-example");
   section?.classList.add("cap-specimen-shown");
+  // The example is chosen; the charts in it draw as the page loads, so it shows after the load.
+  addEventListener("load", () =>
+    requestAnimationFrame(() => document.body.classList.add("cap-specimen-ready")),
+  );
 } else if (only) {
   const tpl = document.querySelector<HTMLTemplateElement>(
     `template[data-specimen="${CSS.escape(only)}"]`,
@@ -68,3 +72,4 @@ if (example) {
     tpl.replaceWith(section);
   }
 }
+if (!example) document.body.classList.add("cap-specimen-ready");
