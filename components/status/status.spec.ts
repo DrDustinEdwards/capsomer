@@ -187,4 +187,21 @@ eachTheme((theme) => {
     expect(box.pos).toBe("absolute");
     expect(box.h).toBeGreaterThanOrEqual(24);
   });
+
+  test("behavior: a pill stays on one line while it fits and wraps inside a container narrower than its words", async ({
+    page,
+  }) => {
+    await visitStates(page, "status", theme);
+    const box = await page.evaluate(() => {
+      const host = document.createElement("div");
+      host.style.inlineSize = "160px";
+      host.innerHTML =
+        '<span class="cap-pill" id="long">Never touches your billing configuration</span><span class="cap-pill" id="short">Short</span>';
+      document.body.append(host);
+      const rect = (id: string) => document.getElementById(id)!.getBoundingClientRect();
+      return { long: rect("long"), short: rect("short") };
+    });
+    expect(box.long.width).toBeLessThanOrEqual(160);
+    expect(box.short.height).toBeLessThan(box.long.height);
+  });
 });
