@@ -13,8 +13,9 @@ export interface DocumentProps extends DocumentScope {
   head?: ReactNode;
   // True on a page whose routes hydrate (site-runtime's routeHydrates(useMatches())): React Router's scripts. Otherwise `script`.
   hydrate?: boolean;
-  // The script a page that does not hydrate loads ("/site.js"): same-origin, deferred, so it needs no nonce.
-  script?: string;
+  // The script a page that does not hydrate loads: devkit's `SITE_SCRIPT` from `virtual:islands` ({ src, integrity,
+  // crossOrigin }), a bare `src` in `vite dev`. Same-origin and deferred, so it needs no nonce.
+  script?: { src: string; integrity?: string; crossOrigin?: "anonymous" };
   // After the content and the scripts: an analytics beacon.
   end?: ReactNode;
 }
@@ -37,7 +38,7 @@ export function Document({
         {head}
         <Meta />
         <Links />
-        {!hydrate && script ? <script src={script} defer /> : null}
+        {!hydrate && script ? <script {...script} defer /> : null}
       </head>
       <body>
         {children}
