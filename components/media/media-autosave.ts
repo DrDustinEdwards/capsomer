@@ -1,6 +1,5 @@
 // The media inspector's autosave.
 
-// ---------------------------------------------------------------------------------------
 // Autosave, pure. It waits until typing stops, saves, and says where it is. A change that
 // arrives while a save runs is saved after it. Nothing here touches the fields, so what was
 // typed is never lost: a failure only changes the state.

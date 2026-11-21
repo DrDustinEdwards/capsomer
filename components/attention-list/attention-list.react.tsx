@@ -262,8 +262,6 @@ export function AttentionList(props: AttentionListProps) {
   );
 }
 
-// ---- NeedsList: a person's work queue, with Later ----------------------------------------
-
 // A link a needs list draws: a row's title, or its main action (a primary button).
 export interface NeedLinkProps extends RowLinkProps {
   className?: string;

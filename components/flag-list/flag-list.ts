@@ -46,7 +46,6 @@ export type {
   FlagCounts,
 } from "./flag-list-model.ts";
 
-// ---------------------------------------------------------------------------------------
 // The page.
 
 const SVG = "http://www.w3.org/2000/svg";
@@ -279,8 +278,6 @@ export function renderFlag(li: HTMLElement, ctx: Ctx): void {
     body.append(p);
   }
 }
-
-// ---------------------------------------------------------------------------------------
 
 export interface FlagTextIO {
   getText(): string;

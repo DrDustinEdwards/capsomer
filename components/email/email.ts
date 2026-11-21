@@ -72,8 +72,6 @@ export interface Rendered {
   text: string;
 }
 
-// ---- escaping and links ------------------------------------------------------------------
-
 import { escapeHtml } from "@dustinedwards/site-runtime/html";
 
 /** One line: line breaks and runs of space become one space, so a value cannot add a header or a line. */
@@ -106,8 +104,6 @@ export function checkUrl(url: string): string {
   return url;
 }
 
-// ---- the colors ---------------------------------------------------------------------------
-
 function colorsFor(family: EmailFamily): { light: EmailColors; dark: EmailColors } {
   const c = emailColors[family];
   if (!c) throw new Error(`email: unknown family "${String(family)}"`);
@@ -121,8 +117,6 @@ const LEVEL_WORD: Record<AlertLevel, string> = {
 };
 const FONT = "-apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif";
 const MONO = "ui-monospace, SFMono-Regular, Menlo, Consolas, monospace";
-
-// ---- the frame -------------------------------------------------------------------------------
 
 function darkRules(d: EmailColors): string {
   return [
@@ -290,8 +284,6 @@ ${footerHtml(footer, c)}
   const text = `${oneLine(brand.name)}\n\n${blocks.map(blockText).join("\n\n")}\n\n--\n${textFooter.join("\n")}\n`;
   return { subject, html, text };
 }
-
-// ---- the templates ---------------------------------------------------------------------------
 
 interface LinkData {
   url: string;

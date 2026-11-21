@@ -45,7 +45,6 @@ export interface Flag {
   resolvedAt?: string;
 }
 
-// ---------------------------------------------------------------------------------------
 // Pure helpers.
 
 const byState = (a: Flag, b: Flag) =>

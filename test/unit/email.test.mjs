@@ -322,8 +322,6 @@ test("the dark rules are present and the document asks for both schemes", () => 
   assert.ok(r.html.includes(emailColors.purple.dark.ground));
 });
 
-// ---- contrast ---------------------------------------------------------------------------------
-
 // The pairs an email paints: body, muted and link text on the card and on the page, the button
 // label on its fill, and each alert level on its soft ground.
 const emailPairs = (c) => [

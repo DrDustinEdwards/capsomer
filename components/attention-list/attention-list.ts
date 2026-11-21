@@ -223,7 +223,6 @@ export function enhance(root: ParentNode = document): () => void {
   return () => undo.forEach((f) => f());
 }
 
-// ---- A person's work queue: needs, with Later ----------------------------------------------
 // The attention list above is what is wrong with the systems. A work queue (Carrel's Home) is
 // what waits on one person: each need has one main action and Later, which sets it aside until
 // tomorrow morning. The shapes and rules are Carrel's (app/lib/desk.server.ts, Need, and
@@ -282,7 +281,6 @@ export function focusNeighbor(row: HTMLElement, rowSelector = ".cap-need-row"): 
   target?.focus();
 }
 
-// ---- An inbox: what each app has waiting, as one feed ------------------------------------
 // The shape Capsid's inbox feed sends (src/ops-types/feed.ts) and the admin shell's badges and
 // an attention list read. The kinds are the sender's; which of them wait on a person decides
 // the severity.

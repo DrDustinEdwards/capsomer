@@ -11,7 +11,6 @@ import type { MediaRecord } from "../media/media.ts";
 import type { Mention, ModState, ModView } from "../moderation-queue/moderation-queue.ts";
 import { plural } from "@drdustinedwards/site-helpers/text";
 
-// ---------------------------------------------------------------------------------------
 // Shared by every list.
 
 // A post's state on its site. The contract's own words.
@@ -158,7 +157,6 @@ export function countText(
     : plural(shown, noun, many);
 }
 
-// ---------------------------------------------------------------------------------------
 // Posts.
 
 export type PostSort = "updated" | "published" | "title";
@@ -271,7 +269,6 @@ export interface ScheduledUpdateView {
   can: ContentCan;
 }
 
-// ---------------------------------------------------------------------------------------
 // Media.
 
 export interface MediaQuery {
@@ -405,7 +402,6 @@ export interface PickedMedia {
   alt: string;
 }
 
-// ---------------------------------------------------------------------------------------
 // Mentions.
 
 // A mention's state, the contract's own words (site-api MentionStatus).
@@ -447,7 +443,6 @@ export interface MentionsData {
   can: ContentCan;
 }
 
-// ---------------------------------------------------------------------------------------
 // The script path, pure.
 
 // The form an IntentResult's undo, or a confirm request, posts: the intent and its fields, a list

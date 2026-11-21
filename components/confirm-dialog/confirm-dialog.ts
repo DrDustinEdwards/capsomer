@@ -28,7 +28,6 @@ export function wordPattern(word: string): string {
     .join("");
 }
 
-// ---------------------------------------------------------------------------------------
 // The confirm dialog itself.
 
 // Gets the reason the person typed, "" when the dialog asks for none.

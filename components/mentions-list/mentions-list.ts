@@ -21,7 +21,6 @@ import {
   type ModView,
 } from "../moderation-queue/moderation-queue.ts";
 
-// ---------------------------------------------------------------------------------------
 // Addresses.
 
 const QUERY_ORDER: ReadonlyArray<keyof MentionsQuery> = ["view", "cursor", "open"];
@@ -52,7 +51,6 @@ export function currentView(data: Pick<MentionsData, "query" | "counts">): ModVi
   return data.counts.pending > 0 ? "pending" : "all";
 }
 
-// ---------------------------------------------------------------------------------------
 // What is offered.
 
 export type MentionIntent = ModAction | "delete";
@@ -94,7 +92,6 @@ export function mentionActions(data: Pick<MentionsData, "offers" | "can" | "quer
   return { bulk, withheld };
 }
 
-// ---------------------------------------------------------------------------------------
 // Words.
 
 // "4 mentions", "Showing 50 of 212 mentions".
@@ -117,7 +114,6 @@ export function sweepLabel(expiring: MentionsData["expiring"]): { n: number; lab
   return { n, label: `Remove ${n} expired` };
 }
 
-// ---------------------------------------------------------------------------------------
 // The content kit's page, as the list's data.
 
 // One mention as site-api's content kit gives it (MentionItem with the kit's postHref), typed here by

@@ -37,8 +37,6 @@ const kb = (n) => `${(n / KB).toFixed(1)} KB`;
 const gz = (buf) => gzipSync(buf, { level: 9 }).length;
 const readJsonFile = (p) => JSON.parse(readFileSync(p, "utf8").replace(/^\uFEFF/, ""));
 
-// ---- shared ------------------------------------------------------------------------------
-
 const SKIP_DIRS = new Set([
   "node_modules",
   ".git",
@@ -93,8 +91,6 @@ function git(argsList, cwd) {
   }
 }
 
-// ---- token-check -------------------------------------------------------------------------
-
 // Raw design values in an app's CSS (tokens/token-check.mjs rawValues: every kind, with the token to use).
 // Generated files and Capsomer's own token files are skipped.
 export function tokenCheck(root, paths, { fix = false } = {}) {
@@ -130,8 +126,6 @@ export function tokenCheck(root, paths, { fix = false } = {}) {
   );
   return { count: items.length, items, invalid };
 }
-
-// ---- report --------------------------------------------------------------------------------
 
 function installedVersion(root) {
   const lock = join(root, "package-lock.json");
@@ -257,8 +251,6 @@ export function report(root) {
     accessibility: a11yFrom(flag("a11y")),
   };
 }
-
-// ---- size ----------------------------------------------------------------------------------
 
 const BUDGET = { base: 3 * KB, css: 15 * KB, behavior: 10 * KB };
 
@@ -405,8 +397,6 @@ async function baseUiSizes() {
   return out;
 }
 
-// ---- site-data -----------------------------------------------------------------------------
-
 async function siteData() {
   const dataDir = join(PKG, "site", "data");
   mkdirSync(dataDir, { recursive: true });
@@ -500,8 +490,6 @@ async function siteData() {
     `site-data: wrote site/data/families.json (test results${results.available ? `: ${results.totals.passed} passed, ${results.totals.failed} failed` : ": no test run found"})`,
   );
 }
-
-// ---- weight and loc (the no-bloat baseline) ------------------------------------------------
 
 // JavaScript and CSS weight per route: for every .html page in a built site, the gzip size of
 // the scripts and stylesheets it loads (script src, stylesheet link, modulepreload). Fonts and
@@ -656,7 +644,6 @@ function bloat(root) {
   );
   console.log(out.join("\n"));
 }
-// ---- fallback-font ------------------------------------------------------------------------
 
 async function fallbackFont() {
   const file = args[1];
@@ -711,8 +698,6 @@ async function fallbackFont() {
   );
   console.log(fallbackFontFace({ family, local, ...measured }));
 }
-
-// ---- main ----------------------------------------------------------------------------------
 
 if (cmd === "report") {
   const out = flag("out", "capsomer-report.json");

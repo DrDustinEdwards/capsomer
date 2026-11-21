@@ -14,7 +14,6 @@ import {
   type PostSort,
 } from "../content/content.ts";
 
-// ---------------------------------------------------------------------------------------
 // Status.
 
 export interface ContentStatusWords {
@@ -70,7 +69,6 @@ export function rowStatus(
   return st.when ? { ...st, note: st.when } : st;
 }
 
-// ---------------------------------------------------------------------------------------
 // Words.
 
 export const STATUS_TABS: ReadonlyArray<{ status: ContentStatus | undefined; label: string }> = [
@@ -172,7 +170,6 @@ export function emptyWords(
   }
 }
 
-// ---------------------------------------------------------------------------------------
 // Addresses.
 
 const QUERY_ORDER: ReadonlyArray<keyof PostsQuery> = [
@@ -202,7 +199,6 @@ export function withFilter(q: PostsQuery, change: Partial<PostsQuery>): PostsQue
   return next;
 }
 
-// ---------------------------------------------------------------------------------------
 // What is offered.
 
 // The content kit's names (site-api runPostsIntent), so a host passes the form straight on.

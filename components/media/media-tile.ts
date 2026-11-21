@@ -120,7 +120,6 @@ function checkBox(): HTMLElement[] {
 export const part = <T extends HTMLElement = HTMLElement>(root: ParentNode, name: string) =>
   root.querySelector<T>(`[data-cap-part='${name}']`);
 
-// ---------------------------------------------------------------------------------------
 // Tiles. A tile's facts are its data attributes, so the page, the filters and the inspector read
 // one thing.
 

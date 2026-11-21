@@ -1,7 +1,6 @@
 // The media library's records: the facts of one file and the plain functions that read them.
 import { formatBytes } from "../format/format.ts";
 
-// ---------------------------------------------------------------------------------------
 // The records, pure.
 
 export type AltState = "missing" | "decorative" | "set";

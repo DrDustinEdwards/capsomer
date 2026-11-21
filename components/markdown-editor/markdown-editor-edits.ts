@@ -1,7 +1,5 @@
 // The markdown editor's types and pure helpers: the edits each command makes, counted and checked without a page (markdown-editor.ts).
 
-// ---- types ---------------------------------------------------------------------------------
-
 // One edit to the document, in the document's own positions (every change refers to the text
 // as it was before any of them), and where the cursor goes after.
 export interface Edit {
@@ -91,8 +89,6 @@ export interface MarkdownEditorHandle {
   update(patch: Partial<MarkdownEditorOptions>): void;
   destroy(): void;
 }
-
-// ---- pure helpers --------------------------------------------------------------------------
 
 export const LINK_RESULT_LIMIT = 8;
 

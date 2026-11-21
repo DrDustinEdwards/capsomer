@@ -28,7 +28,6 @@ const region = (page: Page, id: string) => page.locator(`#${id}`);
 const publishBtn = (page: Page, id: string) =>
   page.locator(`[data-cap-actions][data-gate="${id}"] [data-cap-part="publish"]`);
 
-// ---------------------------------------------------------------------------------------
 // Pure helpers.
 
 const c = (
@@ -103,7 +102,6 @@ test("behavior: the overall state is the worst of the destinations, and a shared
 });
 
 eachTheme((theme) => {
-  // -------------------------------------------------------------------------------------
   // Accessibility.
 
   test("accessibility: no axe violations", async ({ page }) => {
@@ -227,7 +225,6 @@ eachTheme((theme) => {
     },
   );
 
-  // -------------------------------------------------------------------------------------
   // Keyboard, one test per row of the doc page's table.
 
   test("keyboard: Enter on a blocked Publish button does nothing", async ({ page }) => {
@@ -330,7 +327,6 @@ eachTheme((theme) => {
     await expect(region(page, "pg-blocked-c-alt").getByRole("link")).toBeFocused();
   });
 
-  // -------------------------------------------------------------------------------------
   // Behavior.
 
   test("behavior: failing checks come before the passing ones, required before advisory", async ({

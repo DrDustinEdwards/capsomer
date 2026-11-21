@@ -61,8 +61,6 @@ function parseTree(source, dialect) {
   });
 }
 
-// ---------- reading: mdast to the editor's JSON
-
 /** @param {any} node */
 const span = (node) => [node.position.start.offset, node.position.end.offset];
 
@@ -269,8 +267,6 @@ export function toDoc(source, dialect) {
   return { doc: { type: "doc", content }, tail: source.slice(at) };
 }
 
-// ---------- comparing
-
 /**
  * A node with its origins taken out, as a string: two blocks with the same print are the same text.
  * @param {JsonNode} node
@@ -376,8 +372,6 @@ function canon(node) {
 export function sameBlock(a, b) {
   return JSON.stringify(canon(a)) === JSON.stringify(canon(b));
 }
-
-// ---------- writing
 
 const MARK_ORDER = ["link", "bold", "italic", "strike", "code"];
 

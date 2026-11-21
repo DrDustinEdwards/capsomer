@@ -390,8 +390,6 @@ test("catalogRedirect: an address that carries defaults or unknown parameters is
   );
 });
 
-// ---- headings over the rows (group)
-
 const YEARS = [
   { id: "a", title: "Alpha", year: 2026 },
   { id: "b", title: "Beta", year: 2026 },

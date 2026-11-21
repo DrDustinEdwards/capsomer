@@ -11,7 +11,6 @@ import { listText } from "../hooks/hooks.ts";
 
 const READY = "data-cap-ready";
 
-// ---------------------------------------------------------------------------------------
 // The rules, pure. They take anything shaped like a File, so they run anywhere.
 
 export interface FileLike {
@@ -153,7 +152,6 @@ export function setInputFiles(input: HTMLInputElement, files: readonly File[]): 
   }
 }
 
-// ---------------------------------------------------------------------------------------
 // The DOM.
 
 export interface DropDetail {

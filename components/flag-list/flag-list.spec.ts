@@ -22,7 +22,6 @@ const flag = (page: Page, id: string) => page.locator(`#fl-main-${id}`);
 const DRAFT =
   "The tool watches 14 sites every five minutes. Roughly 40% of the alerts last quarter were false alarms. The new retry policy was shipped on Tuesday. Rosa reviewed it and said it was fine. Recieved wisdom says to alert on the first failure, but we wait for three.";
 
-// ---------------------------------------------------------------------------------------
 // Pure helpers.
 
 const sample: Flag[] = [
@@ -88,7 +87,6 @@ test("behavior: appliable lists open flags with a suggestion whose passage is st
 });
 
 eachTheme((theme) => {
-  // -------------------------------------------------------------------------------------
   // Accessibility.
 
   test("accessibility: no axe violations", async ({ page }) => {
@@ -171,7 +169,6 @@ eachTheme((theme) => {
     );
   });
 
-  // -------------------------------------------------------------------------------------
   // Keyboard, one test per row of the doc page's table.
 
   test("keyboard: j and k move between flags across both groups", async ({ page }) => {
@@ -288,7 +285,6 @@ eachTheme((theme) => {
     await expect(flag(page, "f1").getByRole("link")).toBeFocused();
   });
 
-  // -------------------------------------------------------------------------------------
   // Behavior.
 
   test("behavior: resolving keeps the flag on the record with who and when, and the counts follow", async ({

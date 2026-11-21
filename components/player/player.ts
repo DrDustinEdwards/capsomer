@@ -8,7 +8,6 @@ import { clamp, readStored, writeStored } from "../hooks/hooks.ts";
 import { ratio } from "../meter/meter.ts";
 import { SEC, duration, timecode } from "../time/time.ts";
 
-// ---------------------------------------------------------------------------------------
 // The track.
 
 export interface PlayerChapter {
@@ -63,7 +62,6 @@ export const RESTART_SECONDS = 3;
 export const clampRate = (r: number): number => Math.min(RATE_MAX, Math.max(RATE_MIN, r));
 export const clampVolume = (v: number): number => ratio(v, 1);
 
-// ---------------------------------------------------------------------------------------
 // What the player remembers, in localStorage under a prefix the site chooses ("germomics-" keeps
 // the keys a site already wrote). Reads and writes go
 // through hooks.ts' storage: where it is blocked or full the player still plays, and remembers for the page.
@@ -114,7 +112,6 @@ export function playerStorage(prefix = "cap-player-"): PlayerStorage {
   };
 }
 
-// ---------------------------------------------------------------------------------------
 // Time and labels.
 
 // "1:02:03" or "4:05".
@@ -145,7 +142,6 @@ export function activeChapterIndex(chapters: readonly { start: number }[], t: nu
   return idx;
 }
 
-// ---------------------------------------------------------------------------------------
 // Media Session: the lock screen, a car and the media keys.
 
 export function mediaSession(): MediaSession | null {
@@ -258,7 +254,6 @@ export function setSessionHandlers(handlers: SessionHandlers): () => void {
   };
 }
 
-// ---------------------------------------------------------------------------------------
 // The press before React. A page that sends no React until a reader presses play starts the audio
 // inside the press itself (Safari and iOS refuse a play() that comes later), on the one element the
 // provider renders, which then adopts it as it is.
@@ -312,7 +307,6 @@ export function startTrack(
   return true;
 }
 
-// ---------------------------------------------------------------------------------------
 // Waveform. The stored contract is a fixed-length list of integers 0 to 100, the loudest slice
 // 100; the renderer also takes 0 to 1 floats and downsamples, never upsamples.
 
@@ -410,7 +404,6 @@ export function syntheticPeaks(bars = WAVEFORM_BARS): number[] {
   });
 }
 
-// ---------------------------------------------------------------------------------------
 // Transcript. The cues come parsed and grouped into paragraphs by Prelum (./vtt); these follow them.
 
 export interface TranscriptCue {
@@ -437,7 +430,6 @@ export function playheadCue(cues: readonly { start: number }[], t: number): numb
 // The label of the hidden metadata track the transcript mirrors its cues onto.
 export const TRANSCRIPT_TRACK_LABEL = "cap-player-transcript";
 
-// ---------------------------------------------------------------------------------------
 // The inline audio button: a small play button inside running text that plays a short clip (a
 // pronunciation). The server writes a plain link to the clip, which works with no script; this
 // shows the button in its place, which plays in place on a press (a native button: click, Enter,

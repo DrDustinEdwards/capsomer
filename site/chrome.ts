@@ -28,7 +28,7 @@ export function header(current: Section | "", firsts: Record<Section, string>): 
 }
 
 // The foot of every page: the family footer every dustinedwards.info site closes with, with Capsomer's own part under
-// its thin magenta stripe (Dustin, 2026-10-26).
+// its thin magenta stripe.
 const VERSION: string = JSON.parse(
   readFileSync(new URL("../package.json", import.meta.url), "utf8"),
 ).version;

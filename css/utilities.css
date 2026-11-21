@@ -71,7 +71,7 @@
   }
 }
 
-/* The family arrow (Dustin, 2026-10-27): one bold arrow, square shaft and wide solid head, for every
+/* The family arrow: one bold arrow, square shaft and wide solid head, for every
    link that takes you somewhere, after the transit signs (New York City Transit Authority 1970,
    British Rail 1965) that drew one arrow and turned it. Turned only in 45-degree steps: on (the
    default) points right, back points left, out (leaves the site) points up and right. A clip path,
@@ -149,7 +149,7 @@
   }
 }
 
-/* The panel lamp (Dustin, 2026-11-04), the hover of wayfinding links (the family footer's link columns and a
+/* The panel lamp, the hover of wayfinding links (the family footer's link columns and a
    next link): under the pointer or focus a small square lamp in the family's color lights just left of the
    link, as a lamp on an instrument panel, while the link's own rules turn its words to the accent. The lamp
    is positioned outside the flow, so nothing moves; the link sets position: relative. */

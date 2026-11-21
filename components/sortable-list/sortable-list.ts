@@ -6,7 +6,6 @@
 
 import { clamp } from "../hooks/hooks.ts";
 
-// ---------------------------------------------------------------------------------------
 // Pure functions.
 
 export interface SortMove {
@@ -138,7 +137,6 @@ export function keyTarget(key: string, index: number, count: number): number | n
   return null;
 }
 
-// ---------------------------------------------------------------------------------------
 // A pointer drag, shared with the tree. It starts once the pointer has moved a few pixels
 // (so a click stays a click), follows the pointer, and ends on release (drop), or on
 // Escape or a canceled pointer (cancel). After a drag, the click the release makes is
@@ -256,7 +254,6 @@ export function announcer(el: HTMLElement): { region: HTMLElement; made: boolean
   return { region, made: true };
 }
 
-// ---------------------------------------------------------------------------------------
 // The controller, over the HTML contract: `[data-cap="sortable-list"]`.
 //
 // Lists that share a `data-group` are one set: an item can be dragged, or moved by the keyboard,
@@ -434,7 +431,6 @@ export function createSortableList(el: HTMLElement): SortableList {
     return sortText[said === "over" ? "over" : "step"](labelOf(item), posOf(item) + 1, count);
   };
 
-  // ---- keyboard: pick up, move, drop
   const handleOf = (item: HTMLElement) => item.querySelector<HTMLElement>(".cap-sortable-handle");
   const setLifted = (item: HTMLElement | null) => {
     for (const list of groupOf(el))
@@ -541,7 +537,6 @@ export function createSortableList(el: HTMLElement): SortableList {
     if (lifted && to && !groupOf(el).some((l) => l.contains(to))) cancel();
   };
 
-  // ---- the step buttons, the move-to select and Remove
   const onClick = (e: MouseEvent) => {
     const target = e.target as Element | null;
     const part = target?.closest<HTMLButtonElement>(
@@ -598,7 +593,6 @@ export function createSortableList(el: HTMLElement): SortableList {
     }
   };
 
-  // ---- the pointer
   const onDown = (e: PointerEvent) => {
     const handle = (e.target as Element | null)?.closest<HTMLElement>(".cap-sortable-handle");
     const item = handle?.closest<HTMLElement>(".cap-sortable-item");

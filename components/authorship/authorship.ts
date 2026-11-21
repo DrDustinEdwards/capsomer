@@ -91,9 +91,7 @@ export function summaryHtml(summary: Summary, label = "Authorship"): string {
   return `<div class="cap-meter cap-authorship-summary" data-cap-part="summary"><span class="cap-meter-label">${esc(label)}</span><span class="cap-meter-value" data-cap-part="text">${esc(summary.text)}</span><span class="cap-meter-bar" aria-hidden="true">${segs}</span><span class="cap-meter-note" data-cap-part="notes">${notes}</span></div>`;
 }
 
-// ---------------------------------------------------------------------------------------
 // The behavior
-// ---------------------------------------------------------------------------------------
 
 export const STORAGE_KEY = "cap-authorship";
 const READY = "data-cap-ready";

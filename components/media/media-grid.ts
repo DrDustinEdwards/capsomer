@@ -1,6 +1,5 @@
 // The media grid's two-dimensional arrow keys.
 
-// ---------------------------------------------------------------------------------------
 // The grid's arrow keys, from the rendered boxes: the
 // browser decides the column count, and a second layout engine would disagree with it at the
 // widths nobody tested.

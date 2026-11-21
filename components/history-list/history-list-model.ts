@@ -4,7 +4,6 @@ import { plural, wordCount } from "@drdustinedwards/site-helpers/text";
 import { dayKey } from "@dustinedwards/site-runtime/time";
 import { formatDate, parse } from "../time/time.ts";
 
-// ---------------------------------------------------------------------------------------
 // The data.
 
 export type HistoryKind = "edit" | "autosave" | "named" | "publish" | "restore";
@@ -55,7 +54,6 @@ export interface Single {
 }
 export type Line = Run | Single;
 
-// ---------------------------------------------------------------------------------------
 // Pure helpers.
 
 // The signed change in length, in words: `after` minus `before`. Each is the text or its

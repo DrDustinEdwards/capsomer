@@ -41,7 +41,6 @@ import { usePlayer } from "./player-context.react.tsx";
 
 export type RenderLink = (props: LinkProps) => ReactNode;
 
-// ---------------------------------------------------------------------------------------
 // Icons, from the shared set. Each is aria-hidden; the control carries the name. player.css sizes
 // them (.cap-player-icon) and draws them at the player's stroke.
 
@@ -69,7 +68,6 @@ function useTarget(track?: PlayerTrack) {
   return { p, isThis };
 }
 
-// ---------------------------------------------------------------------------------------
 // Transport.
 
 // Play and pause: the name changes with the state and there is no aria-pressed (APG Button: one,
@@ -242,7 +240,6 @@ export function Scrubber({ track, ticks = false }: { track?: PlayerTrack; ticks?
   );
 }
 
-// ---------------------------------------------------------------------------------------
 // Settings: inline in the phone's sheet, and behind a popover or a menu in the dock and on the surface.
 
 // The speed presets as radios (one tab stop, the arrow keys choose) and a fine range from 0.5 to 3.

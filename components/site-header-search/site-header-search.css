@@ -4,8 +4,7 @@
 /* The site header's search (the magnifier, its panel and the matches), a part of site-header.css. A site
    that loads the parts instead loads it after site-header-frame.css and site-header-letterhead.css. */
 @layer cap.components {
-  /* Search: a magnifier icon beside the theme, on the sites that have search (Dustin, 2026-10-28;
-     a box on half the sites made the header differ from tab to tab). The icon is a link to the
+  /* Search: a magnifier icon beside the theme, on the sites that have search (a box on half the sites made the header differ from tab to tab). The icon is a link to the
      search page; with script it opens this panel under it, the field focused, and the site's
      matches drop down under the field as the person types (site-header.ts, wireSearch). The panel
      wears the section panels' surface. */

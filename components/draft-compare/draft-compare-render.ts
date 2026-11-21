@@ -13,9 +13,7 @@ import {
   countsText,
 } from "./draft-compare-diff.ts";
 
-// ---------------------------------------------------------------------------------------
 // The renderer
-// ---------------------------------------------------------------------------------------
 
 export type CompareView = "side" | "inline" | "changes";
 export const VIEWS: readonly CompareView[] = ["side", "inline", "changes"];

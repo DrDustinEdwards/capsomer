@@ -58,8 +58,6 @@ export type {
   MarkdownEditorHandle,
 } from "./markdown-editor-edits.ts";
 
-// ---- the DOM -------------------------------------------------------------------------------
-
 const SVG_NS = "http://www.w3.org/2000/svg";
 let serial = 0;
 
@@ -188,7 +186,6 @@ export async function mountMarkdownEditor(
   let slash: { from: number; menu: HTMLElement; stop: () => void } | null = null;
   let requiredMessage: HTMLElement | null = null;
 
-  // ---- what the textarea says -----------------------------------------------------------
   const readOnly = () => o.readOnly ?? ta.readOnly;
   const disabled = () => o.disabled ?? ta.disabled;
   const placeholder = () =>
@@ -208,7 +205,6 @@ export async function mountMarkdownEditor(
     return a;
   };
 
-  // ---- the chrome -----------------------------------------------------------------------
   const frame = el("div", { class: "cap-md-frame" });
   const toolbar = el("div", {
     class: "cap-md-toolbar",
@@ -248,7 +244,6 @@ export async function mountMarkdownEditor(
     }
   }
 
-  // ---- edits ----------------------------------------------------------------------------
   const doc = () => surface?.getValue() ?? ta.value;
   const apply = (edit: Edit) => surface?.apply(edit);
   const sel = () => surface?.selection() ?? { from: 0, to: 0 };
@@ -274,7 +269,6 @@ export async function mountMarkdownEditor(
     }
   }
 
-  // ---- toolbar (the shared APG toolbar: one tab stop, arrows between the buttons) ----------
   const TOOLS = ".cap-md-tool:not(:disabled)";
   function tools(): Tool[] {
     const t: Tool[] = [
@@ -377,7 +371,6 @@ export async function mountMarkdownEditor(
 
   cleanups.push(attachToolbar(toolbar, TOOLS));
 
-  // ---- floating surfaces: the shared popover, placed at the cursor --------------------------
   // A floating panel is the shared `.cap-popover` (popover.css), shown with the Popover API in
   // the top layer so the editor's clipping frame cannot cut it off, and placed by popover.ts's
   // `place()` against a virtual anchor: the box of the character at `pos`. It follows the
@@ -417,7 +410,6 @@ export async function mountMarkdownEditor(
     panel.remove();
   }
 
-  // ---- the link palette: a labeled combobox over the shared listbox ----------------------
   async function resolveTargets(query: string): Promise<LinkTarget[]> {
     const src = o.linkTargets;
     if (!src) return [];
@@ -586,7 +578,6 @@ export async function mountMarkdownEditor(
     surface.apply(linkEdit(l.from, l.to, selected, href, fallback));
   }
 
-  // ---- the slash menu: a lone "/" on its line offers the app's blocks ---------------------
   function syncSlash() {
     if (!surface || !o.scaffolds?.length || readOnly() || disabled()) return closeSlash();
     const c = surface.caret();
@@ -648,7 +639,6 @@ export async function mountMarkdownEditor(
     dismiss(menu);
   }
 
-  // ---- image upload: described first, then sent ------------------------------------------
   // The person describes the image before it leaves the browser (ATAG 2.0 B.2.3: the authoring
   // tool prompts for the text alternative; the server refuses an undescribed upload anyway), so
   // the file is sent once, with its alt text or its decorative choice, and nothing is uploaded
@@ -806,7 +796,6 @@ export async function mountMarkdownEditor(
     if (f) startUpload(f);
   });
 
-  // ---- sync with the textarea and the page ------------------------------------------------
   function syncState() {
     surface?.configure({
       placeholder: placeholder(),
@@ -898,7 +887,6 @@ export async function mountMarkdownEditor(
     ],
   });
 
-  // ---- mount ----------------------------------------------------------------------------
   buildToolbar();
   surface = createSurface({
     parent: surfaceEl,

@@ -2,9 +2,7 @@
 
 import { plural, wordCount } from "@drdustinedwards/site-helpers/text";
 
-// ---------------------------------------------------------------------------------------
 // The diff
-// ---------------------------------------------------------------------------------------
 
 export type Op = "same" | "ins" | "del";
 
@@ -388,9 +386,7 @@ export function diffSentences(a: string, b: string, options: SentenceOptions = {
   return out;
 }
 
-// ---------------------------------------------------------------------------------------
 // The analysis a view is drawn from
-// ---------------------------------------------------------------------------------------
 
 export interface Counts {
   added: number;

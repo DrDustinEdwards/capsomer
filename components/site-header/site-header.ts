@@ -380,7 +380,7 @@ export function enhance(
   return () => undo.forEach((f) => f());
 }
 
-// Search (Dustin, 2026-10-28): a magnifier icon beside the theme, on the sites that have search; a
+// Search: a magnifier icon beside the theme, on the sites that have search; a
 // box that only opened another box, or that did nothing until Enter, read as broken, and a box on
 // half the sites made the header differ from tab to tab. The icon is a link to the site's search
 // page, so it works with no script. With script, the icon (or "/") opens a field under it, focused,
@@ -463,7 +463,7 @@ export function searchHtml({
 
 /**
  * A public page's letterhead as HTML: plain string building, so a static build or a server writes
- * the same markup as the React header (Dustin, 2026-10-27). `enhance` and the theme switch wire it.
+ * the same markup as the React header. `enhance` and the theme switch wire it.
  */
 export function letterheadHtml({
   name,

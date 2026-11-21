@@ -70,7 +70,6 @@ export type { BuildOptions } from "./history-list-rows.ts";
 
 export { isTypingKey };
 
-// ---------------------------------------------------------------------------------------
 // The behavior.
 
 const READY = "data-cap-ready";

@@ -81,7 +81,6 @@ export type {
 
 export { isTypingKey };
 
-// ---------------------------------------------------------------------------------------
 // The behavior.
 
 const READY = "data-cap-ready";

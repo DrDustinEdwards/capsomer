@@ -49,7 +49,6 @@ export type {
   DropZone,
 } from "./tree-model.ts";
 
-// ---------------------------------------------------------------------------------------
 // The controller, over the HTML contract: `[data-cap="tree"]`, a `ul.cap-tree` of
 // `li.cap-tree-item[data-value]`, each holding its `.cap-tree-row` (a link, or a span) and,
 // for a branch, a `ul.cap-tree-group`.
@@ -250,7 +249,6 @@ export function createTree(el: HTMLElement): Tree {
     return true;
   };
 
-  // ---- keys
   let typed: TypeaheadState = { buffer: "", at: 0 };
   const onKey = (e: KeyboardEvent) => {
     const row = (e.target as Element | null)?.closest<HTMLElement>("[role='treeitem']");
@@ -292,7 +290,6 @@ export function createTree(el: HTMLElement): Tree {
     }
   };
 
-  // ---- the pointer: the toggle opens and closes, the rest of the row chooses
   const rowAt = (target: EventTarget | null) => {
     const row = (target as Element | null)?.closest<HTMLElement>(".cap-tree-row");
     return row && el.contains(row) ? row : null;
@@ -371,7 +368,6 @@ export function createTree(el: HTMLElement): Tree {
     });
   };
 
-  // ---- start: read the delivered markup's own state
   model = read(el);
   for (const [id, p] of parts) {
     const node = findNode(model, id);

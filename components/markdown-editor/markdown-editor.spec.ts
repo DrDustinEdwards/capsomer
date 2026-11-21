@@ -91,8 +91,6 @@ async function pairRatio(page: Page, fg: string, bg: string): Promise<number> {
   );
 }
 
-// ---- pure helpers (no browser) -------------------------------------------------------------
-
 test("behavior: a typed address is recognized, and a query filters the pages by title, address and hint", () => {
   expect(
     ["https://a.example", "mailto:x@y.example", "/writing/a", "#top"].every(looksLikeUrl),
@@ -158,7 +156,6 @@ test("behavior: the edits wrap, cycle, number, place and link as the site's edit
 });
 
 eachTheme((theme) => {
-  // ---- accessibility ---------------------------------------------------------------------
   test(
     "accessibility: a scroller that overflows is a keyboard stop, one that does not keeps CodeMirror's own -1",
     { tag: "@markup" },
@@ -492,7 +489,6 @@ eachTheme((theme) => {
     ]);
   });
 
-  // ---- keyboard (one per row of the doc page's table) ------------------------------------
   test("keyboard: Tab enters the toolbar at one stop, the next Tab enters the surface", async ({
     page,
   }) => {
@@ -778,7 +774,6 @@ eachTheme((theme) => {
     await expect(page.locator("textarea")).toHaveValue(/src="\/media\/a\.png" alt=""\}/);
   });
 
-  // ---- the image step --------------------------------------------------------------------
   test("keyboard: an image is described before it is sent: focus moves to the alt field, Insert waits for alt text, Enter uploads with it and inserts", async ({
     page,
   }) => {
@@ -906,7 +901,6 @@ eachTheme((theme) => {
     await expect(toolbarOf(s).getByRole("button", { name: "Chart" })).toHaveCount(0);
   });
 
-  // ---- React -----------------------------------------------------------------------------
   test("behavior: React: StrictMode leaves exactly one editor, and what is typed reaches React state", async ({
     page,
   }) => {
@@ -938,7 +932,6 @@ eachTheme((theme) => {
     await expect(page.locator("#react-count")).toHaveText("21");
   });
 
-  // ---- behavior -------------------------------------------------------------------------
   test("behavior: the textarea the page loaded with holds the text, is labeled, and is hidden once upgraded", async ({
     page,
   }) => {

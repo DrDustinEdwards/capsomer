@@ -5,9 +5,7 @@ import { editScript } from "./draft-compare-diff.ts";
 import { escapeHtml as esc } from "@dustinedwards/site-runtime/html";
 import { sr } from "./draft-compare-render.ts";
 
-// ---------------------------------------------------------------------------------------
 // The patch mode: a unified git patch shown as it is, by line
-// ---------------------------------------------------------------------------------------
 
 export type PatchOp = "same" | "ins" | "del";
 
@@ -202,11 +200,9 @@ export function renderPatch(patch: string, options: PatchOptions = {}): string {
   return `<section ${attrs}><div class="cap-compare-bar"><div class="cap-compare-legend">${key}<p class="cap-compare-counts">${esc(patchCountsText(patchCounts(files)))}</p></div></div>${files.map((f, i) => patchFile(f, id, i + 1)).join("")}</section>`;
 }
 
-// ---------------------------------------------------------------------------------------
 // Writing a patch: two texts the app holds (a draft against the site's text, or against an
 // AI draft) as a unified patch, in the shape jsdiff's createTwoFilesPatch writes, which is the
 // shape site-api's revision diffs come in. So every patch an app shows reads the same.
-// ---------------------------------------------------------------------------------------
 
 export interface UnifiedSide {
   text: string;

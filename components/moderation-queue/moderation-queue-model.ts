@@ -2,7 +2,6 @@
 
 import { GLYPHS, glyphSvg } from "../message/message.ts";
 
-// ---------------------------------------------------------------------------------------
 // The data and the pure helpers.
 
 // A mention's state on its site, in the contract's words (site-api MentionStatus). A mention
@@ -250,7 +249,6 @@ export const EMPTY_TITLE: Record<ModView, string> = {
   all: "No mentions yet",
 };
 
-// ---------------------------------------------------------------------------------------
 // DOM helpers.
 
 type Attrs = Record<string, string | boolean | undefined>;
