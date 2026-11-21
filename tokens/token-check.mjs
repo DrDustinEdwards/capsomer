@@ -194,7 +194,7 @@ const parts = (v) => {
 function declarations(css) {
   // Comments and @font-face blocks become spaces, so every line keeps its number.
   const blank = (m) => m.replace(/[^\n]/g, " ");
-  let text = css
+  const text = css
     .replace(/\r\n/g, "\n")
     .replace(/\/\*[\s\S]*?\*\//g, blank)
     .replace(/@font-face\s*\{[^}]*\}/g, blank);
