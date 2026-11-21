@@ -87,19 +87,20 @@
     white-space: nowrap;
   }
 
-  /* A chart drawn on a server with a narrow drawing for phones (narrowRedraw): until the script
-     swaps the narrow one in, the wide drawing scales into the column instead of scrolling, at about
-     the height the narrow one will have, so the swap does not move the page. A chart that keeps its
-     shape (a map) gives the narrow drawing's own height (--cap-narrow-height, frameHtml's keepShape).
-     With no script nothing swaps, and the wide drawing keeps its width and scrolls. Enarratio's own
+  /* A chart drawn on a server with a narrow drawing for phones that keeps the chart's shape (a map;
+     narrowRedraw's and frameHtml's keepShape): until the script swaps the narrow one in, the wide
+     drawing scales into the column at the narrow drawing's own height (--cap-narrow-height), so the
+     swap does not move the page. Any other redraw draws the narrow one at the height the wide one
+     shows at 30rem, where it keeps its width and scrolls, so it is left alone. With no script
+     nothing swaps, and the wide drawing keeps its width and scrolls. Enarratio's own
      base rules (min-width: 30rem on the wide drawing) are not in a layer, so a layered rule loses
      to them; these three are !important to take that back, on this one rule. */
   @media (scripting: enabled) {
     @container (width < 30rem) {
-      .cap-chart[data-enarratio-redraw] .enarratio-frame-wide > svg {
+      .cap-chart[data-keep-shape] .enarratio-frame-wide > svg {
         min-inline-size: 0 !important;
         inline-size: 100% !important;
-        block-size: var(--cap-narrow-height, auto) !important;
+        block-size: var(--cap-narrow-height) !important;
       }
     }
   }

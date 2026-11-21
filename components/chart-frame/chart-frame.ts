@@ -32,7 +32,7 @@ export function frameHtml(chart: string, o: FrameOptions = {}): string {
   const redraw = o.redraw ? ` ${redrawAttribute(o.redraw)}` : "";
   const box =
     o.keepShape && o.redraw && "narrow" in o.redraw ? chartViewBox(o.redraw.narrow) : undefined;
-  const shape = box ? ` style="--cap-narrow-height: ${box.h}px"` : "";
+  const shape = box ? ` data-keep-shape style="--cap-narrow-height: ${box.h}px"` : "";
   return `<div class="cap-chart"${o.inline ? ' data-head="inline"' : ""}${grid}${redraw}${shape}><div class="cap-chart-figure">${chart}</div>${o.after ?? ""}</div>`;
 }
 
