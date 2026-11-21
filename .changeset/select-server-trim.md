@@ -2,4 +2,4 @@
 "capsomer": patch
 ---
 
-Select: a server build (Vite's `import.meta.env.SSR`) leaves out `select.ts`, the listbox and the popover, since the effects that use them never run there. A Worker that renders a Select carries only its markup (about 14 KiB, 4 KiB gzip, less in Carrel). No change to the HTML contract or the browser.
+Select and SearchSuggest: a server build (Vite's `import.meta.env.SSR`) leaves out their browser scripts (`select.ts`, `search-suggest.ts` and, where nothing else uses them, the listbox and the popover), since the effects that use them never run there. A Worker that renders them carries only their markup (Carrel 14 KiB smaller, Foxing 16 KiB). No change to the HTML contract or the browser.
