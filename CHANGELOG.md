@@ -3,6 +3,12 @@
 Each release names every removed or renamed token or class, and every changed HTML contract. A pull request adds its entry as a
 changeset (`npx changeset`, `.changeset/README.md`); the release pull request writes them here.
 
+## 0.164.6
+
+### Patch Changes
+
+- A component's example page (`?example=`) paints after its script has chosen the one example and its charts are drawn, so the page no longer moves as the other examples are hidden. With scripts off nothing is hidden.
+
 ## 0.164.5
 
 ### Patch Changes
