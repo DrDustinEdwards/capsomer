@@ -31,5 +31,26 @@
         ]
       }
     ]
+  },
+  "permissions": {
+    "allow": [
+      "Bash(npm run *)",
+      "Bash(npm test*)",
+      "Bash(npx tsc *)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git show *)",
+      "Bash(git log *)",
+      "Bash(git branch*)"
+    ],
+    "ask": [
+      "Bash(npm run deploy*)",
+      "Bash(npx wrangler deploy*)",
+      "Bash(npx wrangler secret*)",
+      "Bash(npx wrangler d1 migrations apply*)",
+      "Bash(npx wrangler d1 execute *DELETE*)",
+      "Bash(npx wrangler d1 execute *DROP*)"
+    ],
+    "deny": ["Bash(rm -rf *)", "Read(**/.env*)", "Read(**/.dev.vars)"]
   }
 }
