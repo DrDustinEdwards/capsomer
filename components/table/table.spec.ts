@@ -223,6 +223,25 @@ eachTheme((theme) => {
     await page.locator("#t-rowcheck").getByRole("link", { name: "The uptime strip" }).click();
     expect(await page.evaluate(() => location.hash)).toBe("#post-p2");
   });
+
+  test("behavior: a focusable non-link in a linked row sits above the row link", async ({
+    page,
+  }) => {
+    await visitStates(page, "table", theme);
+    const trigger = page.locator("#lift-trigger");
+    // Pointer events reach the trigger (a tooltip would show), not the stretched link.
+    await trigger.scrollIntoViewIfNeeded();
+    const hit = await trigger.evaluate((el) => {
+      const r = el.getBoundingClientRect();
+      return document.elementFromPoint(r.x + r.width / 2, r.y + r.height / 2) === el;
+    });
+    expect(hit).toBe(true);
+    await trigger.focus();
+    await expect(trigger).toBeFocused();
+    // Elsewhere in the row still opens the detail.
+    await page.locator("#t-rowcheck tbody tr").nth(2).locator("td").first().click({ force: true });
+    expect(await page.evaluate(() => location.hash)).toBe("#post-p3");
+  });
 });
 
 test("behavior: focus goes to the next row, else the previous, else the region, when its row leaves", async ({
