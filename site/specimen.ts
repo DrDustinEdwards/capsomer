@@ -25,6 +25,9 @@ if (theme === "light" || theme === "dark") document.documentElement.dataset.them
 // component's public page frames each example this way, with the title and the code beside it.
 const example = params.get("example");
 const only = params.get("only");
+// With scripts on, the sections wait (specimen.css) until this has chosen which to show, so the first
+// paint is the final layout and the page does not shift when the others are hidden.
+document.body.classList.add("cap-specimens-ready");
 if (example) {
   const section = document.getElementById(example)?.closest<HTMLElement>(".cap-specimen");
   document.body.classList.add("cap-specimen-example");
