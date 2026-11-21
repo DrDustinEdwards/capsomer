@@ -78,5 +78,5 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
 | Enter on the skip link | Moves to main |
 
 - The failed Empty's contract: shape, word and color together, `role="alert"`, the title in `--crit` at 4.5:1 in both themes.
-- One `h1`, the title; one `main`. The header's skip link and landmarks come from the site's own header.
+- One `h1`, the title; one `main`. The header's skip link and landmarks come from the site's own header; without `siteHeader` the page draws its own skip link to main.
 - The development stack is a named, focusable region, so it scrolls by keyboard on a phone.
