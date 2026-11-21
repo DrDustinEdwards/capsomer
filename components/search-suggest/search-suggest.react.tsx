@@ -4,6 +4,10 @@ import { attachSuggest, type SuggestOptions } from "./search-suggest.ts";
 
 export type { Suggestion, SuggestOptions } from "./search-suggest.ts";
 
+// A server build (Vite sets import.meta.env.SSR) drops search-suggest.ts: the effect that wires it
+// never runs there.
+const SERVER = (import.meta as { env?: { SSR?: boolean } }).env?.SSR;
+
 export type SearchSuggestProps = Omit<
   ComponentProps<typeof SearchField>,
   "value" | "onChange" | "action"
@@ -43,7 +47,7 @@ export function SearchSuggest({
 
   useEffect(() => {
     const el = root.current;
-    if (!el) return;
+    if (SERVER || !el) return;
     return attachSuggest(el, {
       suggest: (q, signal) => latest.current.suggest(q, signal),
       go: (href) => (latest.current.go ? latest.current.go(href) : location.assign(href)),

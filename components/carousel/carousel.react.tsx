@@ -2,6 +2,10 @@ import { Children, useEffect, useRef, type ReactNode } from "react";
 import { Icon, iconChevronLeft, iconChevronRight } from "../icons/icons.react.tsx";
 import { attach, partsOf } from "./carousel.ts";
 
+// A server build (Vite sets import.meta.env.SSR) drops carousel.ts: the effect that wires it never
+// runs there.
+const SERVER = (import.meta as { env?: { SSR?: boolean } }).env?.SSR;
+
 // The carousel's HTML contract (carousel.md), wired by carousel.ts once mounted. Each child is one
 // slide. The server renders the first slide in view, every slide's label and every marker, so the
 // track scrolls and snaps before hydration.
@@ -33,7 +37,7 @@ export function Carousel({
   const root = useRef<HTMLElement>(null);
   const slides = Children.toArray(children);
   useEffect(() => {
-    const parts = root.current && partsOf(root.current);
+    const parts = !SERVER && root.current && partsOf(root.current);
     return parts ? attach(parts) : undefined;
   }, [slides.length]);
 
