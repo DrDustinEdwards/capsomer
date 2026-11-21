@@ -28,6 +28,8 @@ export interface CountsByYearOptions {
   yLabel?: string;
   // What the frame says when there is nothing to draw.
   emptyText?: string;
+  // Where the counts come from, in the figure's source line.
+  source?: string;
   width?: number;
   height?: number;
 }
@@ -62,6 +64,7 @@ export function countsByYearHtml(o: CountsByYearOptions): string {
     xLabel: null,
     yLabel: o.yLabel ?? "Count",
     alt: o.alt,
+    ...(o.source ? { source: o.source } : {}),
     width,
     height: o.height ?? 220,
   });
