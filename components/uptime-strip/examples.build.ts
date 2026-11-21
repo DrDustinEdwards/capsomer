@@ -25,10 +25,22 @@ const legend = `<ul class="cap-uptime-legend" aria-label="Key">${[
   )
   .join("")}</ul>`;
 const strip = (id: string, label: string, subtitle: string, slots: UptimeSlot[], alt?: string) =>
-  frameHtml(uptimeStrip({ id, label, subtitle, slots, alt, width: 640, height: 28 }), {
-    inline: true,
-    after: legend,
-  });
+  frameHtml(
+    uptimeStrip({
+      id,
+      label,
+      subtitle,
+      slots,
+      alt,
+      width: 640,
+      height: 28,
+      source: "Example uptime checks",
+    }),
+    {
+      inline: true,
+      after: legend,
+    },
+  );
 
 export default {
   allUp: strip("up-1", "example.com", "100% up over 7 days", week({})),

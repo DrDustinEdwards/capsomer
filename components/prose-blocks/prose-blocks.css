@@ -239,7 +239,8 @@
       & :where(th, td) > :where(a[href]) {
         padding-block: calc((var(--space-6) - 1em) / 2);
       }
-      & :where(thead th) {
+      /* Not a chart's data table: its text stays at the chart's size (12 px at least, B3). */
+      & :where(thead th:not(.enarratio *)) {
         border-block-end: var(--line-w) solid var(--text);
         color: var(--muted);
         font: var(--weight-medium) var(--fs-label) / var(--leading-normal) var(--mono);
