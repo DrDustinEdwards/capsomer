@@ -305,8 +305,6 @@ export function enhance(root: ParentNode = document): () => void {
   return () => undo.forEach((f) => f());
 }
 
-// ---- The members page's address and lead line (from dustinedwards.info's lab, members.server.ts)
-
 // A title as a group of people: "Lab worker" is "Lab workers"; a title already plural stays.
 export function pluralTitle(label: string): string {
   return label.endsWith("s") ? label : `${label}s`;
@@ -334,8 +332,6 @@ export function personFromParam(
   if (!asked) return undefined;
   return emails.some((e) => e.toLowerCase() === asked) && allowed(asked) ? asked : undefined;
 }
-
-// ---- The role grid: people by scopes (from Carrel's People page) ---------------------------
 
 // One column: a project, a site, an app.
 export interface RoleScope {

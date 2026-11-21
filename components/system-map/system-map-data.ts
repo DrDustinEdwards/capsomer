@@ -1,7 +1,6 @@
 // The system map's data and the pure reading of it (system-map.ts): who uses whom, a system's
 // parts by what they do, and the flows over a system's parts.
 
-// ---------------------------------------------------------------------------------------
 // Data. The shape of Capsid's public model (capsid/system/model.json through toPublic),
 // narrowed to what the map shows; a host maps its own data onto it.
 
@@ -166,7 +165,6 @@ export interface SystemMapOptions {
   flow?: { id: string; step: number };
 }
 
-// ---------------------------------------------------------------------------------------
 // Reading. Every line is read between the systems that own its ends, so a part's line to another
 // system's part counts as the two systems' tie.
 
@@ -284,7 +282,6 @@ export const count = (n: number, one: string, many = `${one}s`): string =>
 /** What a step's status line says. */
 export const stepText = (n: number, total: number): string => `Step ${n} of ${total}`;
 
-// ---------------------------------------------------------------------------------------
 // The network's layout. A layered drawing (Sugiyama, Tagawa and Toda 1981), with the layers set by
 // what each system is rather than computed: the shared packages stand in the middle lane, since
 // nearly every tie runs to or from one of them, and each block of the rest (a group of what people

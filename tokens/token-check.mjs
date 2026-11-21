@@ -55,7 +55,6 @@ export function resolveToken(block, name) {
   return { value: null, chain };
 }
 
-// ---- raw values ------------------------------------------------------------------------------------------------------
 // Every design value in a stylesheet that is written as a literal where a token exists for its kind: colors, spaces,
 // font sizes, weights, line heights, tracking, radii, line widths, focus offsets, layers, durations, easings, shadows
 // and opacities (the W3C design tokens format's types: color, dimension, fontWeight, number, duration, cubicBezier,

@@ -161,7 +161,6 @@ eachTheme((theme) => {
       /Command copied\.|Command is selected/,
     );
   });
-  // ---- driven by the address (?inspect=) ------------------------------------------------------
   const MENTION = "A reply from rosa.example about the annual report";
   const mention = (page: Page) => page.getByRole("dialog", { name: MENTION });
   const visitUrl = async (page: Page, inspect?: string) => {

@@ -76,8 +76,6 @@ export function suggesting(suggester: Suggester) {
   });
 }
 
-// ---- comments
-
 export type Anchored = { id: string; anchor: string | null };
 type Range = { from: Y.RelativePosition; to: Y.RelativePosition };
 

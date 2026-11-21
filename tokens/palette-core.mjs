@@ -25,7 +25,7 @@ export const FAMILIES = {
     defaultTheme: "dark",
     note: "capsid.dustinedwards.info, dark by default (rule 15)",
   },
-  // Foxhound's amber, Recova's #f0b429 (Dustin, 2026-10-25). Bright enough that white cannot sit
+  // Foxhound's amber, Recova's #f0b429. Bright enough that white cannot sit
   // on it, so the primary button carries a dark label in both themes (label: "dark"), as Recova's
   // did. In the light theme the seed is under 3:1 on the light surfaces, so step 9 there is the
   // same hue and chroma darkened until it reaches 3:1 (lightStep9), and the button fills with it.
@@ -57,7 +57,7 @@ export const FAMILIES = {
     note: "julieedwards.info, light by default; the school green #15532E is step 11 in light",
   },
   // Two families for the public sites under dustinedwards.info, each its own color under the
-  // shared manual theme (Dustin, 2026-10-26). Both are purple's lightness and strength (OKLCH L 0.587,
+  // shared manual theme. Both are purple's lightness and strength (OKLCH L 0.587,
   // C 0.172) at a hue no family had: magenta at 334 between purple and fox, cerulean at 230
   // between teal and navy. A red was left out: it would read as the error color. Magenta was at
   // 330; at 334 it sits as far from purple (CIEDE2000 13.3) as from rose (13.2), the closest
@@ -91,7 +91,6 @@ export const FAMILIES = {
     note: "Enarratio's gallery, light by default",
   },
 };
-// ---- color math ---------------------------------------------------------------------
 
 const hexToRgb = (hex) => [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255);
 const toLinear = (c) => (c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4));
@@ -223,8 +222,6 @@ export function strengthen(hex, ok, to) {
   return tune(C, H, ok, L, to);
 }
 
-// ---- the scales ----------------------------------------------------------------------
-
 const NEUTRAL_CHROMA = 0.012;
 // Status hues are kept; only lightness is tuned. info also colors a running job.
 const STATUS = { ok: 150, warn: 78, crit: 26, info: 255 };
@@ -232,8 +229,6 @@ const TEXT = 4.6; // a little above 4.5, so rounding to hex cannot fall under it
 const CONTROL = 3.0;
 const darkest = (...hexes) => hexes.reduce((a, b) => (luminance(b) < luminance(a) ? b : a));
 const lightest = (...hexes) => hexes.reduce((a, b) => (luminance(b) > luminance(a) ? b : a));
-
-// ---- the family scale (rule 14) ----------------------------------------------------------
 
 // The same lightness roles for every family: [L, share of the seed's chroma]. Step 9 is the
 // seed; step 10 is the seed darkened in light and lightened in dark; step 11 in light may be
@@ -567,7 +562,7 @@ export function familyTheme(seed, anchor, scheme, label = "light", level = "stan
   t.sign = dark ? t.raised : t.text;
   t["on-sign"] = dark ? t.text : t.ground;
   t["sign-edge"] = dark ? t["line-strong"] : t.text;
-  // The page you are on, in a direction strip (Dustin, 2026-11-04): an FAA location sign, light type
+  // The page you are on, in a direction strip: an FAA location sign, light type
   // and a light outline on a dark gray box set into the dark strip. The box is a step lighter than the
   // sign in both themes; the type is the family's hue at a light step, at AAA (7:1) on the box and on
   // the sign (AC 150/5345-44L: a location sign is outlined, not filled).
@@ -631,8 +626,6 @@ export const FAMILY_ORDER = [
   "lit-bulb",
   ...Array.from({ length: 12 }, (_, i) => `accent-${i + 1}`),
 ];
-
-// ---- the pairs every theme must pass ---------------------------------------------------
 
 // Every pair a theme must pass: { fg, bg, min, what, ratio, lcMin, lc, pass }. min is WCAG 2.2's
 // ratio (the floor in both themes); lcMin is the APCA floor for the role at `level` (LEVELS).
@@ -730,8 +723,6 @@ export function failures(t, level = "standard") {
       ),
   ];
 }
-
-// ---- the files ---------------------------------------------------------------------------
 
 function lines(t, indent, scheme, withScheme) {
   const out = [...FAMILY_ORDER, ...CHART_ORDER, ...ELEVATION_ORDER].map(

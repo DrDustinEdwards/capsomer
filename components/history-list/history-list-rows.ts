@@ -16,7 +16,6 @@ import {
   stamp,
 } from "./history-list-model.ts";
 
-// ---------------------------------------------------------------------------------------
 // DOM.
 
 type Attrs = Record<string, string | boolean | undefined>;

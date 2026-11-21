@@ -2,7 +2,6 @@
 
 import { clamp } from "../hooks/hooks.ts";
 
-// ---------------------------------------------------------------------------------------
 // Pure functions, over plain nodes. A node with `children` (even an empty list) is a
 // branch and can hold others; a node without is a leaf.
 
@@ -140,8 +139,6 @@ export function treeKey(
       return null;
   }
 }
-
-// ---- moving
 
 export type MoveDir = "up" | "down" | "in" | "out";
 

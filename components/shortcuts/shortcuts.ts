@@ -364,7 +364,6 @@ export function keysFragment(key: string | string[]): DocumentFragment {
   return frag;
 }
 
-// ---------------------------------------------------------------------------------------
 // The sheet.
 
 // Lets an app (the React wrapper) open its own sheet when "?" is pressed.

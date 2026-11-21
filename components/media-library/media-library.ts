@@ -19,7 +19,6 @@ import { formatBytes } from "../format/format.ts";
 import { altStateOf, type MediaRecord, type UsedIn } from "../media/media-record.ts";
 import { formatDate } from "../time/time.ts";
 
-// ---------------------------------------------------------------------------------------
 // Addresses.
 
 const QUERY_ORDER: ReadonlyArray<keyof MediaQuery> = [
@@ -111,7 +110,6 @@ export function withMedia(q: MediaQuery, change: Partial<MediaQuery>): MediaQuer
   return next;
 }
 
-// ---------------------------------------------------------------------------------------
 // What is offered.
 
 // The content kit's names (site-api runMediaIntent), so a host passes the form straight on.
@@ -198,7 +196,6 @@ export function inspectorOffers(data: Pick<MediaData, "offers" | "can">): {
   };
 }
 
-// ---------------------------------------------------------------------------------------
 // Words.
 
 // "24 files", "Showing 48 of 210 files", "3 files in Trash".
@@ -261,7 +258,6 @@ export function pickable(rows: readonly MediaRecord[]): MediaRecord[] {
   return rows.filter((r) => r.kind === "image" && r.state === "ready");
 }
 
-// ---------------------------------------------------------------------------------------
 // The view: lenses, groups, and what the address says about how to draw the page.
 
 // The site-api contract's lenses (v0.6.0 MEDIA_LENSES), in words: what each chip shows.
@@ -357,7 +353,6 @@ export function readMediaView(
   };
 }
 
-// ---------------------------------------------------------------------------------------
 // The content kit's page, as the library's data.
 
 // One file as the site-api contract gives it (MediaItem, with the kit's absolute `src`), typed here by
@@ -503,7 +498,6 @@ export function mediaDataOfKit(
   };
 }
 
-// ---------------------------------------------------------------------------------------
 // v0.13.0: live changes, uploads that were already stored, turns, shrinking and licenses.
 
 // Whether a file as it is now belongs in this view: Trash or the library, and the chosen tag, kind

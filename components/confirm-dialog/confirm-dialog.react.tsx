@@ -524,8 +524,6 @@ export function ConfirmModal(props: ConfirmModalProps) {
   );
 }
 
-// ---- Who asked, and the two steps ---------------------------------------------------------------
-
 /** What the dialog is asking about and the control that opened it, or null when closed. */
 export interface ConfirmAsk<T> {
   subject: T;

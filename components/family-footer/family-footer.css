@@ -31,7 +31,7 @@
     & a:focus-visible {
       color: var(--accent-text);
     }
-    /* No tint behind any footer link on hover (Dustin, 2026-11-07): the wordmark and the social icons
+    /* No tint behind any footer link on hover: the wordmark and the social icons
        carried one while the word links and site tiles already had none. The color change is the cue. */
   }
 
@@ -323,7 +323,7 @@
   }
 }
 
-/* The footer's outbound arrow as an FAA sign arrow (Dustin, 2026-11-04): the thick shaft and
+/* The footer's outbound arrow as an FAA sign arrow: the thick shaft and
    triangular head (--faa-arrow-out), 1.25em, turned up and right. In the utilities layer, where the
    family arrow it replaces is drawn (css/utilities.css). */
 @layer cap.utilities {

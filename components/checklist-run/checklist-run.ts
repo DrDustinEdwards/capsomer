@@ -143,8 +143,6 @@ export function start(root: HTMLElement, options: RunOptions = {}): () => void {
   const cannotSave = (error: unknown, why: string) =>
     `This run cannot be saved on this device (${error instanceof Error ? error.message : why}). Download the record before you leave.`;
 
-  // ------------------------------------------------------------ storage
-
   function load(): Run | null {
     try {
       const stored = parseRun(localStorage.getItem(KEY));
@@ -180,8 +178,6 @@ export function start(root: HTMLElement, options: RunOptions = {}): () => void {
     run = null;
     end();
   }
-
-  // ------------------------------------------------------------ the bar and the live regions
 
   const live = el("div", { class: "cap-sr-only", role: "status", "aria-live": "polite" });
   const alertRegion = el("div", { class: "cap-sr-only", role: "alert" });
@@ -328,8 +324,6 @@ export function start(root: HTMLElement, options: RunOptions = {}): () => void {
     li.querySelector<HTMLElement>(".cap-run-done input")?.focus({ preventScroll: true });
   }
 
-  // ------------------------------------------------------------ a step's tools
-
   function timerBox(li: HTMLElement, step: number, index: number, timer: StepTimer): HTMLElement {
     const key = timerKey(keyOf(li), index);
     timerStep.set(key, String(step));
@@ -452,8 +446,6 @@ export function start(root: HTMLElement, options: RunOptions = {}): () => void {
     }
   }
 
-  // ------------------------------------------------------------ timers ring
-
   function ensureAudio() {
     try {
       audio ??= new AudioContext();
@@ -498,8 +490,6 @@ export function start(root: HTMLElement, options: RunOptions = {}): () => void {
     if (ticker === undefined) ticker = window.setInterval(tick, 500);
   }
 
-  // ------------------------------------------------------------ the screen stays on
-
   async function keepAwake() {
     try {
       wakeLock = (await navigator.wakeLock?.request("screen")) ?? null;
@@ -532,8 +522,6 @@ export function start(root: HTMLElement, options: RunOptions = {}): () => void {
     }
   };
   document.addEventListener("visibilitychange", onVisible);
-
-  // ------------------------------------------------------------ the scale, changed in place
 
   async function applyScale(href: string, focus = false) {
     try {
@@ -583,8 +571,6 @@ export function start(root: HTMLElement, options: RunOptions = {}): () => void {
     void applyScale(`${url.pathname}${url.search}`, true);
   };
   scaleForm?.addEventListener("submit", onScale);
-
-  // ------------------------------------------------------------ start, finish, stop
 
   function begin(existing: Run | null) {
     run =
@@ -715,8 +701,6 @@ export function start(root: HTMLElement, options: RunOptions = {}): () => void {
     summary.scrollIntoView({ block: "start" });
     say("Run finished. The record is ready to download or print.");
   }
-
-  // ------------------------------------------------------------ mount
 
   startButton.addEventListener("click", () => begin(load()));
   (root.querySelector(o.startSlot) ?? root).append(startButton);

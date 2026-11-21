@@ -42,7 +42,6 @@ export { buildTile, glyph, recordOf, syncTile, writeRecord } from "./media-tile.
 
 const READY = "data-cap-ready";
 
-// ---------------------------------------------------------------------------------------
 // The controller.
 
 export interface MediaOptions {
@@ -112,7 +111,6 @@ export function attachMedia(root: HTMLElement, options: MediaOptions = {}): Medi
   const openLink = (t: HTMLElement | null) =>
     t?.querySelector<HTMLElement>(".cap-media-open") ?? null;
 
-  // ---- roving focus: one tile's controls take Tab, the arrows move between tiles.
   const controlsOf = (t: HTMLElement) =>
     Array.from(
       t.querySelectorAll<HTMLElement>(
@@ -153,7 +151,6 @@ export function attachMedia(root: HTMLElement, options: MediaOptions = {}): Medi
     return id === null ? null : byKey(id);
   };
 
-  // ---- selection: the real checkboxes; the tile mirrors them.
   const boxOf = (t: HTMLElement) => t.querySelector<HTMLInputElement>(".cap-media-check > input");
   const syncSelected = (t: HTMLElement) => {
     const box = boxOf(t);
@@ -179,7 +176,6 @@ export function attachMedia(root: HTMLElement, options: MediaOptions = {}): Medi
     }
   };
 
-  // ---- the inspector.
   let current: HTMLElement | null = null;
   let session = 0;
   const drafts = new Map<string, MediaFields>();
@@ -311,7 +307,6 @@ export function attachMedia(root: HTMLElement, options: MediaOptions = {}): Medi
     if (was && o.focus) focusTile(active);
   };
 
-  // ---- filters, search, view, size, counts.
   const view = () =>
     root.querySelector<HTMLInputElement>("[data-cap-part='view'] input:checked")?.value ??
     "library";
@@ -456,7 +451,6 @@ export function attachMedia(root: HTMLElement, options: MediaOptions = {}): Medi
       el.textContent = String(nBin);
   };
 
-  // ---- order: within each group, as the sort says. An upload in progress or a failed one stays first.
   const sortBy = () =>
     root.querySelector<HTMLInputElement>("[data-cap-part='sort'] input:checked")?.value ?? "";
   const applySort = () => {
@@ -490,7 +484,6 @@ export function attachMedia(root: HTMLElement, options: MediaOptions = {}): Medi
       focused.focus({ preventScroll: true });
   };
 
-  // ---- Trash.
   const rawBin = async (keys: string[], to: "binned" | "ready") => {
     const before = keys.map((k) => ({ k, state: byKey(k)?.dataset.state ?? "ready" }));
     for (const k of keys) {
@@ -546,7 +539,6 @@ export function attachMedia(root: HTMLElement, options: MediaOptions = {}): Medi
       returnTo: openLink(active),
     });
 
-  // ---- events.
   listen(root, "change", (e: Event) => {
     const t = e.target;
     if (!(t instanceof HTMLInputElement)) return;
@@ -812,7 +804,6 @@ export function attachMedia(root: HTMLElement, options: MediaOptions = {}): Medi
       void autosave?.flush();
     });
   }
-  // ---- mode: a pane beside the grid, or a sheet over it.
   let lastMode = modeOf();
   if (typeof ResizeObserver !== "undefined") {
     const ro = new ResizeObserver(() => {
@@ -837,7 +828,6 @@ export function attachMedia(root: HTMLElement, options: MediaOptions = {}): Medi
     cleanups.push(() => ro.disconnect());
   }
 
-  // ---- start.
   for (const t of tiles()) syncSelected(t);
   applySort();
   if (inspector) {

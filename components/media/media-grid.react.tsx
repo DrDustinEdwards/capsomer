@@ -15,7 +15,6 @@ import {
 } from "./media.ts";
 import { formatBytes } from "../format/format.ts";
 
-// ---------------------------------------------------------------------------------------
 // MediaTile: one file. Renders exactly the contract in the doc page: the open link (the tile's
 // one tab stop), the flags, the checkbox, and the progress or failure block.
 
@@ -243,7 +242,6 @@ function ProgressBar({ labelId, pct, name }: { labelId: string; pct: number; nam
   );
 }
 
-// ---------------------------------------------------------------------------------------
 // MediaGrid: the tiles, with roving focus and the arrow keys. Selection and the active file are the
 // app's state.
 

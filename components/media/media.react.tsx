@@ -38,7 +38,6 @@ export type { MediaTileProps, MediaGroup, MediaGridProps } from "./media-grid.re
 
 export type { MediaFields, MediaRecord } from "./media.ts";
 
-// ---------------------------------------------------------------------------------------
 // MediaInspector: the details of one file, in a pane beside the grid or a side sheet over it, saving
 // by itself. A failed save keeps what was typed, in the form and in `drafts`, so switching files
 // and coming back does not lose it.

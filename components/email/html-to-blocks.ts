@@ -92,8 +92,6 @@ const VOID_TAGS = new Set([
 ]);
 const TAG = /<(\/?)([a-zA-Z][a-zA-Z0-9-]*)((?:[^>"']|"[^"]*"|'[^']*')*?)(\/?)>/g;
 
-// ---- attributes and hiding -------------------------------------------------------
-
 function isHidden(attrs: Record<string, string | undefined>): boolean {
   if ("hidden" in attrs) return true;
   if ((attrs["aria-hidden"] ?? "").trim().toLowerCase() === "true") return true;

@@ -63,7 +63,6 @@ export type {
 
 export { FIRST_PUBLICATION_NOTE };
 
-// ---------------------------------------------------------------------------------------
 // The page.
 
 const READY = "data-cap-ready";

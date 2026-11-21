@@ -6,7 +6,6 @@
 // an address entry that Back takes away, and a keyboard stop on a body that scrolls.
 // No framework; the React wrapper and the other overlays call the same functions.
 
-// ---------------------------------------------------------------------------------------
 // Helpers every overlay shares (confirm-dialog.ts re-exports the first six for 0.1 imports).
 
 const openers = new WeakMap<HTMLDialogElement, Element | null>();
@@ -115,7 +114,6 @@ export function isLocked(dialog: HTMLDialogElement): boolean {
   );
 }
 
-// ---------------------------------------------------------------------------------------
 // Opening and closing.
 
 export interface DialogOptions {

@@ -31,8 +31,6 @@ enhanceHeader(document, {
 enhanceTheme();
 enhanceTabs();
 
-// ---- a component's page --------------------------------------------------------------------
-
 // Each example's frame takes the page's theme and grows to its content (same origin, so the page
 // can read it; sizes go through the CSSOM, as the CSP asks).
 const frames = [...document.querySelectorAll<HTMLIFrameElement>(".comp-ex-frame")];
@@ -167,8 +165,6 @@ if (net) {
     .catch(() => {});
 }
 
-// ---- a Themes page -------------------------------------------------------------------------
-
 // The controls set the board's family, theme and density, as a site does with data-family, data-cap-theme and
 // data-density; each token's sample and value are then read back from the board, so the table says what it shows.
 const controls = document.querySelector<HTMLElement>("[data-cap-part='controls']");
@@ -249,8 +245,6 @@ if (document.querySelector(".th-val, .th-demo")) {
   });
   matchMedia("(prefers-color-scheme: dark)").addEventListener("change", paintTokens);
 }
-
-// ---- Icons and Colors ----------------------------------------------------------------------
 
 // A click copies the icon's name or the step's value, said in the page's status line.
 const copied = document.querySelector<HTMLElement>("#icon-n, #copy-n");

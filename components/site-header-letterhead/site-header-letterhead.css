@@ -5,7 +5,7 @@
    loads the parts instead loads it after site-header-frame.css. */
 @layer cap.components {
   /* The family letterhead (data-variant="letterhead"): the header of dustinedwards.info and its
-     *.dustinedwards.info sites, public pages and admins alike (Dustin, 2026-10-27). The names follow
+     *.dustinedwards.info sites, public pages and admins alike. The names follow
      the center letterhead of the NASA Graphics Standards Manual (1975, page 3.2): the agency's name
      small, the center's name bold under it. The band is the Park Service's Unigrid (Massimo
      Vignelli, 1977), whose brochures open with a black band carrying the park's name in white: here
@@ -19,7 +19,7 @@
      links row, which swipes, instead of the sheet. */
   .cap-site-header[data-variant="letterhead"] {
     --header-stripe: var(--space-3);
-    /* Roomier than the 56px one-row header: a 64px top row and a 48px second row (Dustin, 2026-10-27). */
+    /* Roomier than the 56px one-row header: a 64px top row and a 48px second row. */
     --header-row: 4rem;
     --header-row-2: 3rem;
     --header-bg: var(--text);
@@ -70,7 +70,7 @@
       gap: var(--space-4);
       margin: 0;
 
-      /* Search and the theme keep the places the admin gives them (Dustin, 2026-10-27): where the
+      /* Search and the theme keep the places the admin gives them: where the
          inbox or the account is missing, its slot in the corner stays empty. Not on a phone. */
       & > .cap-site-header-account:empty {
         display: none;
@@ -105,7 +105,7 @@
       padding-inline: var(--header-side);
       overflow-x: auto;
       scrollbar-width: none;
-      /* No hairline between the rows (Dustin, 2026-10-27): the band is one sign. */
+      /* No hairline between the rows: the band is one sign. */
       border-block-start: 0;
       font-size: var(--fs-lead);
       font-weight: var(--weight-medium);
@@ -148,7 +148,7 @@
       }
     }
   }
-  /* In dark mode the band stays dark rather than flipping to white (Dustin, 2026-10-27): it is the
+  /* In dark mode the band stays dark rather than flipping to white: it is the
      same sign at night, lifted off the darker page as a raised surface (Material's dark theme
      lightens what sits higher). Its stripe keeps the site's color. */
   :root[data-theme="dark"] .cap-site-header[data-variant="letterhead"] {
@@ -202,7 +202,7 @@
       margin-block-start: var(--space-3);
       inset-block-start: var(--space-3);
 
-      /* The 16px above the stripe, as on a public page, in the band's own color (Dustin, 2026-10-28),
+      /* The 16px above the stripe, as on a public page, in the band's own color,
          so the admin's bar reads as one block to the window's top edge. */
       &::before {
         content: "";

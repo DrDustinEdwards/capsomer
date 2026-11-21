@@ -54,7 +54,6 @@ export interface GateSite {
   first?: boolean;
 }
 
-// ---------------------------------------------------------------------------------------
 // Pure helpers.
 
 export function checkState(c: Pick<GateCheck, "ok" | "required">): CheckState {

@@ -651,8 +651,6 @@ function Field({
   );
 }
 
-// ---- RoleGrid: people by scopes, a role in each cell --------------------------------------
-
 export interface RoleGridProps {
   people: RoleGridPerson[];
   scopes: RoleScope[];

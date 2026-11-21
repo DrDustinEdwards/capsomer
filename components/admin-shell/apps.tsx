@@ -29,7 +29,7 @@ export interface FamilyApp {
   // (the headquarters' admin, "Dustin Edwards", has no agency over it).
   names?: readonly [site: string, app: string];
   // A commercial app that stands apart from the Dustin Edwards network: its letterhead has no
-  // agency over its name (Foxhound, Dustin 2026-10-30).
+  // agency over its name (Foxhound).
   standalone?: boolean;
 }
 
@@ -123,7 +123,7 @@ export const FAMILY_APPS: readonly FamilyApp[] = [
     logo: PORTAL,
     names: ["Capsid", "Portal"],
   },
-  // Carrel's signed-in app is Desk (Dustin, 2026-10-26); carrel.dustinedwards.info is its public site.
+  // Carrel's signed-in app is Desk; carrel.dustinedwards.info is its public site.
   {
     id: "carrel",
     label: "Carrel Desk",

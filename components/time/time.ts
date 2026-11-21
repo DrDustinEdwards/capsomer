@@ -52,7 +52,7 @@ export function calendarDays(t: number, now: number, zone?: string): number {
 }
 
 // "September 12", or "September 12, 2025" when the year is not this one: American English,
-// the family's (Dustin, 2026-10-25).
+// the family's.
 export function day(t: number, now: number = Date.now(), zone?: string): string {
   const year = (x: number) =>
     new Intl.DateTimeFormat("en-US", { timeZone: zone, year: "numeric" }).format(x);
@@ -105,7 +105,6 @@ export function utc(t: number): string {
   return `${new Date(t).toISOString().replace("T", " ").slice(0, 16)}Z`;
 }
 
-// ---------------------------------------------------------------------------------------
 // Dates with no "ago": a long date, a medium one, a month and day, with or without the time.
 
 export type DateStyle = "long" | "medium" | "monthDay" | "monthYear" | "weekday" | "time";
@@ -207,7 +206,6 @@ export function dateRange(
   return from ?? to;
 }
 
-// ---------------------------------------------------------------------------------------
 // Durations: how long, not when. Milliseconds in, like every function here (`seconds * SEC`).
 
 const whole = (n: number | null | undefined) =>

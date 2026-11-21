@@ -1,7 +1,7 @@
 import { escapeHtml } from "@dustinedwards/site-runtime/html";
 
 /*
- * The one footer every dustinedwards.info site closes with (Dustin, 2026-10-26), as NASA's agency and
+ * The one footer every dustinedwards.info site closes with, as NASA's agency and
  * its centers: under a thin stripe in the page's own color, the site's own part (its name, links and
  * stamp) and the strip of the family's sites with this one lit; then the double stripe, the name as the
  * letterhead's logotype, the profiles, the workspace logins and the site links of dustinedwards.info,
@@ -65,7 +65,7 @@ const SIGN_IN_NOTE = "(requires sign-in)";
 
 /**
  * The logins, in Dustin's order: Admin, Portal, Desk, Lab. Each one's own sign-in keeps it private.
- * Desk is Carrel's signed-in writing app, as Portal is Capsid's (Dustin, 2026-10-26); Carrel itself
+ * Desk is Carrel's signed-in writing app, as Portal is Capsid's; Carrel itself
  * is a public site in the strip of sites.
  */
 export const WORKSPACE_LINKS: WorkspaceLink[] = [

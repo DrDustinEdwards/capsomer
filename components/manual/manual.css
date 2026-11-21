@@ -265,7 +265,7 @@
     }
   }
 
-  /* Readings as an instrument panel (the Apollo DSKY, study section 7b; Dustin, 2026-11-04): the dark
+  /* Readings as an instrument panel (the Apollo DSKY, study section 7b): the dark
      sign in both themes, legends in drafting capitals as the DSKY's engraved Gorton markings, and each
      value lit in seven segments (--readout) in the family's light color, the current-page sign's
      (--on-sign-here), with a soft glow: the site's own hue, not the DSKY's green (Dustin, 2026-11-04).
@@ -557,7 +557,7 @@
     border: var(--line-w) solid var(--sign-edge);
     background: var(--sign);
     color: var(--on-sign);
-    /* A way on is wayfinding: the airport sign face, bold (Dustin, 2026-11-04). */
+    /* A way on is wayfinding: the airport sign face, bold. */
     font: var(--weight-bold) var(--title-6) / var(--leading-snug) var(--wayfinding);
     text-decoration: none;
     overflow-wrap: anywhere;
@@ -773,7 +773,7 @@
   }
 }
 
-/* The trail to a page as an airport's direction signs (Dustin, 2026-11-04): Overpass Bold, the free
+/* The trail to a page as an airport's direction signs: Overpass Bold, the free
    Highway Gothic that FAA airport signs are lettered in (AC 150/5345-44L, Appendix A), on a dark band,
    white FAA arrows between the ways, and the page you are on as a location sign: light type and a light
    outline on a dark gray box (a location sign is outlined; a filled one means "hold"). */

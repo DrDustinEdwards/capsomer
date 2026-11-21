@@ -315,7 +315,6 @@ export function RichEditor(props: RichEditorProps) {
     editorRef.current?.setEditable(!readOnly, false);
   }, [readOnly]);
 
-  // ---- the block menu on a lone "/"
   const slashOpen = useRef(false);
   useLayoutEffect(() => {
     propsRef.current = props;
@@ -389,7 +388,6 @@ export function RichEditor(props: RichEditorProps) {
       .run();
   }
 
-  // ---- the link palette
   function openPalette() {
     const editor = editorRef.current;
     if (!editor || readOnlyRef.current) return;
@@ -434,7 +432,6 @@ export function RichEditor(props: RichEditorProps) {
     editor.commands.unsetMark("link", { extendEmptyMarkRange: false });
   }
 
-  // ---- images: described, then sent, then in the text
   function startUpload(file: File) {
     if (!propsRef.current.onUpload) return;
     setUploadError(null);
@@ -494,7 +491,6 @@ export function RichEditor(props: RichEditorProps) {
     }
   }
 
-  // ---- the toolbar
   const run = (fn: (e: Editor) => void) => () => {
     const editor = editorRef.current;
     if (editor) fn(editor);

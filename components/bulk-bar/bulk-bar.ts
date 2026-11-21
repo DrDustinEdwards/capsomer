@@ -12,7 +12,6 @@ import { setStaticHtml } from "../trusted-html/trusted-html.ts";
 const READY = "data-cap-ready";
 const SELECT = "input[type='checkbox'][data-cap-select]";
 
-// ---------------------------------------------------------------------------------------
 // Pure helpers.
 
 export interface BulkItem {
@@ -167,7 +166,6 @@ export async function performBulk(spec: BulkActionSpec): Promise<boolean> {
   return true;
 }
 
-// ---------------------------------------------------------------------------------------
 // The DOM.
 
 export interface BulkHandler {

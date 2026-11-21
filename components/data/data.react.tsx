@@ -39,8 +39,6 @@ export {
 } from "./data.ts";
 export type { Answer, Failure, Flag } from "./data.ts";
 
-// ---- The query client ---------------------------------------------------------------------------
-
 export interface QueryClientOptions {
   /** How long a read stays fresh (30 s). Above 0, so a read the server made for this page is fresh
    *  on hydration and not read again at once (TanStack Query, Advanced Server Rendering). */
@@ -79,8 +77,6 @@ export function createQueryClient({
     },
   });
 }
-
-// ---- Seeded reads and optimistic writes ---------------------------------------------------------
 
 /** With a seed the data is never undefined, so a seeded page reads `.data` directly. */
 export type SeededResult<T, S> = [S] extends [T]
@@ -201,8 +197,6 @@ export function useWrite<V = void, R = unknown>(
   return { run, fire, pending: m.isPending, error: words(m.error), reset: m.reset };
 }
 
-// ---- Answers as queries -------------------------------------------------------------------------
-
 /** A page-wide flag as React state. False on the server, which renders only signed-in pages. */
 export function useFlag(flag: Flag): boolean {
   return useSyncExternalStore(flag.subscribe, flag.get, () => false);
@@ -239,8 +233,6 @@ export function useAnswer<T>(
     reread: useCallback(() => void refetch(), [refetch]),
   };
 }
-
-// ---- The live room ------------------------------------------------------------------------------
 
 export interface LiveRoomOptions {
   /** Each text frame the room sends. */
@@ -321,8 +313,6 @@ export function useLiveRoom(
   }, [room]);
   return { connected };
 }
-
-// ---- Lazy parts the page can load first --------------------------------------------------------
 
 /**
  * A chunk of lazy components that the page can load before it hydrates. React.lazy suspends on its

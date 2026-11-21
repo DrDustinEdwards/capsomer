@@ -30,7 +30,6 @@ const saveStatus = (page: Page): Locator =>
 const library = (page: Page, theme: Theme, only = "library") =>
   visitStates(page, "media", theme, only);
 
-// ---------------------------------------------------------------------------------------
 // The pure parts run in node.
 
 test("behavior: the grid's arrow keys read rendered rows, wrap in reading order and stop at the edges", () => {
@@ -181,7 +180,6 @@ test("behavior: a bulk tag skips what already has it, records a failure and carr
 eachTheme((theme) => {
   test.use({ permissions: ["clipboard-read", "clipboard-write"] });
 
-  // -------------------------------------------------------------------------------------
   // accessibility
 
   test("accessibility: no axe violations on the states page", async ({ page }) => {
@@ -400,7 +398,6 @@ eachTheme((theme) => {
     },
   );
 
-  // -------------------------------------------------------------------------------------
   // keyboard
 
   test("keyboard: Tab enters the grid at the active tile only, then its checkbox, then leaves", async ({
@@ -685,7 +682,6 @@ eachTheme((theme) => {
     await expect(link(page, FOX)).toBeFocused();
   });
 
-  // -------------------------------------------------------------------------------------
   // behavior
 
   test("behavior: wide, the inspector is a pane beside the grid; narrow, a closed sheet", async ({
@@ -1053,7 +1049,6 @@ eachTheme((theme) => {
     await expect(t.locator(".cap-status")).toHaveText(["No alt text", "Unattached"]);
   });
 
-  // -------------------------------------------------------------------------------------
   // The React wrappers render the same contract and behave the same way.
 
   test("accessibility: no axe violations in the React specimen", async ({ page }) => {

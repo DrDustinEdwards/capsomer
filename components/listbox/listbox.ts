@@ -9,7 +9,6 @@
 import { uid } from "../hooks/hooks.ts";
 import { isImeEnter } from "../shortcuts/shortcuts.ts";
 
-// ---------------------------------------------------------------------------------------
 // Pure functions.
 
 export interface Searchable {
@@ -151,7 +150,6 @@ export function emptyText(query: string): string {
   return `No results for “${query.trim()}”`;
 }
 
-// ---------------------------------------------------------------------------------------
 // The controller.
 
 export type ListboxMode =
@@ -323,7 +321,6 @@ export function createListbox(el: HTMLElement, opts: ListboxOptions = {}): Listb
       o.setAttribute("aria-selected", "false");
   });
 
-  // ---- the active option
   let current: HTMLElement | null = el.querySelector<HTMLElement>("[role='option'][data-active]");
 
   const syncRoving = () => {
@@ -384,7 +381,6 @@ export function createListbox(el: HTMLElement, opts: ListboxOptions = {}): Listb
     move(end ? disabled.lastIndexOf(false) : disabled.indexOf(false), mode === "roving");
   };
 
-  // ---- selection
   const getValue = () =>
     selection === "none"
       ? []
@@ -420,7 +416,6 @@ export function createListbox(el: HTMLElement, opts: ListboxOptions = {}): Listb
     syncRoving();
   };
 
-  // ---- filtering
   const filter: Listbox["filter"] = (query, rank = opts.rank) => {
     const all = items();
     const keep = new Set(filterCommands(all, query, rank).map((i) => i.el));
@@ -470,7 +465,6 @@ export function createListbox(el: HTMLElement, opts: ListboxOptions = {}): Listb
     return n;
   };
 
-  // ---- keys
   let typed: TypeaheadState = { buffer: "", at: 0 };
   const pageBy = () => {
     if (opts.pageSize) return opts.pageSize;
@@ -528,7 +522,6 @@ export function createListbox(el: HTMLElement, opts: ListboxOptions = {}): Listb
     return handled;
   };
 
-  // ---- wiring
   const onKey = (e: KeyboardEvent) => void handleKey(e);
   const optionAt = (e: Event) => {
     const o = (e.target as Element | null)?.closest<HTMLElement>("[role='option']") ?? null;
@@ -623,7 +616,6 @@ export function createListbox(el: HTMLElement, opts: ListboxOptions = {}): Listb
   };
 }
 
-// ---------------------------------------------------------------------------------------
 // Markup wiring: `[data-cap="listbox"]`.
 
 const listboxes = new WeakMap<HTMLElement, Listbox>();
