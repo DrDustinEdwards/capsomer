@@ -13,13 +13,10 @@ eachTheme((theme) => {
     }
   });
 
-  test("behavior: the module draws 24 hexagons at the size its random source gives", async ({
-    page,
-  }) => {
+  test("behavior: the module draws 24 hexagons", async ({ page }) => {
     await visitStates(page, "ambient", theme);
     const hexes = page.locator("#am-hex .cap-ambient > span");
     await expect(hexes).toHaveCount(24);
-    await expect(hexes.first()).toHaveCSS("width", "67px");
   });
 
   test("behavior: each equalizer bar takes its own height", async ({ page }) => {

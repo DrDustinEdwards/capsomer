@@ -2,8 +2,7 @@
 // The framing is the WHATWG HTML standard's (9.2 Server-sent events): lines end in CRLF, LF or CR; a blank line
 // dispatches; `event:` names the event ("message" when none); each `data:` line adds a line to the data; one space
 // after the colon is framing; a line starting with a colon is a comment; `id:` and `retry:` are read and kept.
-// Extracted from dei's Ask stream (lib/search/sse.mjs, enhance/ask.ts) and Foxing's client (packages/client http.ts
-// stream) in 0.132.0. No DOM: it runs in a Worker and on a phone as well.
+// No DOM: it runs in a Worker and on a phone as well.
 
 export interface SseEvent {
   event: string;

@@ -5,7 +5,7 @@
 // waitUntil(promise), once that promise resolves. The app writes its audit row there and
 // offers Undo through the message region.
 //
-// The flow is the Capsid Portal's ui/Switch.tsx (AutomationSwitch and ReasonForm, #216),
+// The flow is the Capsid Portal's ui/Switch.tsx (AutomationSwitch and ReasonForm),
 // without its API calls: the app's own listener does the sending.
 
 import { clearError, showError } from "../field/field.ts";

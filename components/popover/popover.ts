@@ -10,7 +10,7 @@
 // computes it from getBoundingClientRect with a flip and a shift. Every dynamic value goes
 // through the CSSOM (apps keep style-src 'self').
 
-import { clamp } from "../hooks/hooks.ts";
+import { clamp, listenInto } from "../hooks/hooks.ts";
 
 export type Side = "top" | "bottom" | "left" | "right" | "inline-start" | "inline-end";
 export type Align = "start" | "center" | "end";
@@ -234,15 +234,7 @@ export function attach(trigger: HTMLElement, popup: HTMLElement): () => void {
   if (!popup.hasAttribute("popover")) popup.setAttribute("popover", tooltip ? "manual" : "auto");
   if (!popup.id) popup.id = `cap-popover-${++anchors}`;
   const undo: Array<() => void> = [];
-  const on = <E extends Event>(
-    target: EventTarget,
-    type: string,
-    fn: (e: E) => void,
-    opts?: boolean | AddEventListenerOptions,
-  ) => {
-    target.addEventListener(type, fn as EventListener, opts);
-    undo.push(() => target.removeEventListener(type, fn as EventListener, opts));
-  };
+  const on = listenInto(undo);
 
   // Anchor positioning needs names; the engine can be forced to the JS fallback with
   // data-engine="js" (used by the tests and by apps that must match old browsers exactly).

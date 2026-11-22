@@ -11,6 +11,45 @@ export function clamp(n: number, lo: number, hi: number): number {
   return Math.max(lo, Math.min(n, Math.max(lo, hi)));
 }
 
+/**
+ * Runs `attach` on every `[data-cap="name"]` under `root`, or `root` itself, not yet marked
+ * `data-cap-ready`, marks it, and returns one function that detaches them all and clears the marks.
+ * The root is typed as the union, not ParentNode: under @cloudflare/workers-types an
+ * HTMLFormElement does not type as a ParentNode, so a site could not pass its form.
+ */
+export function enhanceEach(
+  root: ParentNode | Element | Document | DocumentFragment,
+  name: string,
+  attach: (el: HTMLElement) => (() => void) | void,
+): () => void {
+  const selector = `[data-cap='${name}']:not([data-cap-ready])`;
+  const found = [...root.querySelectorAll<HTMLElement>(selector)];
+  if (root instanceof HTMLElement && root.matches(selector)) found.unshift(root);
+  const undo: Array<() => void> = [];
+  for (const el of found) {
+    el.dataset.capReady = "";
+    const off = attach(el);
+    undo.push(() => {
+      off?.();
+      delete el.dataset.capReady;
+    });
+  }
+  return () => undo.forEach((f) => f());
+}
+
+/** `addEventListener` that records how to take itself off again: push onto `undo`, run them all to detach. */
+export function listenInto(undo: Array<() => void>) {
+  return <E extends Event>(
+    target: EventTarget,
+    type: string,
+    fn: (e: E) => void,
+    opts?: boolean | AddEventListenerOptions,
+  ) => {
+    target.addEventListener(type, fn as EventListener, opts);
+    undo.push(() => target.removeEventListener(type, fn as EventListener, opts));
+  };
+}
+
 /** "A, B, and C" (and "A and B"; "A, B, or C" with "or"): the platform's own list, in American English with its serial comma. */
 export function listText(words: readonly string[], join: "and" | "or" = "and"): string {
   return new Intl.ListFormat("en-US", {

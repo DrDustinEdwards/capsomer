@@ -98,7 +98,7 @@ export function themeColorMeta(
 
 // The pre-paint script: run inline in the head, before the stylesheet, or the page flashes the other theme. A site with
 // a Content Security Policy allows it by its hash, so the text must be exactly what this returns (hash its output).
-// With no options it applies the choice remembered in localStorage, the 0.1.0 script, unchanged. With `cookie` (the site
+// With no options it applies the choice remembered in localStorage. With `cookie` (the site
 // keeps the choice in that cookie) it leaves alone a data-theme the server already wrote, and otherwise applies the
 // cookie's choice, else localStorage's: a page served from a cache, or written with no request, still opens in the
 // person's theme, and a server's answer (Foxhound's account choice) is never overruled by an older one in this browser.

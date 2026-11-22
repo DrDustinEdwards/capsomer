@@ -314,7 +314,7 @@ export interface ConfirmPageProps {
   headingLevel?: "h1" | "h2";
   // More fields for the form, beside `hidden`: a list a server renders as its own inputs.
   children?: ReactNode;
-  // Cancel without leaving the page (0.22.0): the link still goes to cancelHref with no script.
+  // Cancel without leaving the page: the link still goes to cancelHref with no script.
   onCancel?: () => void;
   // The form element, for a router's own form (React Router's <Form>), so the post is a client
   // navigation. It is given every prop the plain form would get.
@@ -464,7 +464,7 @@ export function ConfirmPage({
 
 export type ConfirmModalProps = Omit<ConfirmPageProps, "headingLevel">;
 
-// The confirm page as a modal (0.22.0), for a server that answers a destructive request by drawing
+// The confirm page as a modal, for a server that answers a destructive request by drawing
 // the confirmation over the page it came from. It is in the page until script runs (data-inline),
 // so a reader with no script still gets the second step; then it opens as a modal. Esc leaves the
 // way Cancel does, and focus goes back to the control that opened it, or to that control's menu

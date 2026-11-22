@@ -2,6 +2,7 @@
 // it: site-header.ts and the React header import it on demand. The design note is on SearchHit in
 // site-header.ts.
 import { plural } from "@drdustinedwards/site-helpers/text";
+import { listenInto } from "../hooks/hooks.ts";
 import { isImeEnter } from "../shortcuts/shortcuts.ts";
 import { hideTip } from "../tooltip/tooltip.ts";
 import {
@@ -155,15 +156,7 @@ export function wireSearch(
   };
 
   const undo: Array<() => void> = [];
-  const on = <E extends Event>(
-    target: EventTarget,
-    type: string,
-    fn: (e: E) => void,
-    opts?: boolean | AddEventListenerOptions,
-  ) => {
-    target.addEventListener(type, fn as EventListener, opts);
-    undo.push(() => target.removeEventListener(type, fn as EventListener, opts));
-  };
+  const on = listenInto(undo);
   on(panel, "toggle", (e: ToggleEvent) => {
     const opened = e.newState === "open";
     trigger.setAttribute("aria-expanded", String(opened));

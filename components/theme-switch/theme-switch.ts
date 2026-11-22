@@ -1,4 +1,4 @@
-// The theme switch: Light or Dark, as a two-choice segmented radio group, or (0.9.0) as one icon
+// The theme switch: Light or Dark, as a two-choice segmented radio group, or as one icon
 // button that switches to the other theme (data-variant="button", the site header's control). The first visit
 // follows the operating system's setting (data-theme is left off, so the system's choice
 // applies); the first time the person chooses, data-theme is set and the choice is remembered
@@ -6,7 +6,7 @@
 // what an app runs before first paint; toggleTheme() is for a "t" shortcut. No framework;
 // the React wrapper uses the same functions.
 //
-// One behavior on every site (0.92.0): a person's choice (chooseTheme) is painted, remembered in
+// One behavior on every site: a person's choice (chooseTheme) is painted, remembered in
 // this browser, written to the site's cookie where it keeps one (data-cap-cookie), so its server
 // renders the next page in that theme with no flash, and handed to the site's onSave hook, which
 // saves it to the signed-in account. Where the cookie is the memory, the server's answer (the
@@ -39,8 +39,8 @@ export interface ThemeMemory {
   onError?: (error: unknown) => void;
 }
 
-// What the person chose and the browser remembers, or null if they never did. A "system"
-// remembered by 0.1.0 reads as no choice: the system's setting applies, as it did.
+// What the person chose and the browser remembers, or null if they never did. A remembered
+// "system" reads as no choice: the system's setting applies.
 export function readTheme(key = THEME_PREF): ThemeChoice | null {
   const v = readStored(key);
   return isChoice(v) ? v : null;
@@ -201,7 +201,7 @@ function wireButton(el: HTMLElement, key: string, memory: ThemeMemory): () => vo
   };
 }
 
-// The form (data-variant="form", 0.22.0): the button form for a site that keeps the choice in a
+// The form (data-variant="form"): the button form for a site that keeps the choice in a
 // cookie and works with no script. Two submit buttons ship, each a real post to the site's theme
 // route, and CSS shows the one for the theme that is not showing. With script a press switches at
 // once and writes the cookie (data-cap-cookie names it), and the server writes the same data-theme

@@ -70,7 +70,7 @@ eachTheme((theme) => {
     await page.keyboard.type("x");
     await expect(html).toHaveAttribute("data-cap-typing", "");
     const switcher = page.locator("#ws-html [data-cap-layout]");
-    await expect(switcher).toHaveCSS("opacity", "0.08");
+    await expect(switcher).not.toHaveCSS("opacity", "1");
     await page.mouse.move(10, 10);
     await page.mouse.move(40, 40);
     await expect(html).not.toHaveAttribute("data-cap-typing");

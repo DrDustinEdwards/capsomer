@@ -4,7 +4,7 @@
 // panels), so this module only adds what changes after a person acts; a progressive set
 // (data-progressive) arrives as links to every panel and is turned into tabs here. It also keeps
 // a remembered choice (data-remember) and drags the pill variant's mark. The keyboard is this
-// module's own on purpose: Chrome's focusgroup does not skip a disabled tab (#321). No framework;
+// module's own on purpose: Chrome's focusgroup does not skip a disabled tab. No framework;
 // the React wrapper uses the same pure functions.
 
 import { readStored, subscribeStored, writeStored } from "../hooks/hooks.ts";

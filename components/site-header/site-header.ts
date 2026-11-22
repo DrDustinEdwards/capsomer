@@ -11,6 +11,7 @@
 // it and focus goes back to its button.
 import { closeDialog, openDialog, wireDialog } from "../dialog/dialog.ts";
 import { escapeHtml } from "@dustinedwards/site-runtime/html";
+import { listenInto } from "../hooks/hooks.ts";
 import { place } from "../popover/popover.ts";
 import { registerKey } from "../shortcuts/shortcuts.ts";
 import { attach as attachTip, hideTip } from "../tooltip/tooltip.ts";
@@ -118,15 +119,7 @@ export function wirePanel(trigger: HTMLElement, panel: HTMLElement): () => void 
   let mode: "hover" | "held" = "held";
   let timer: number | undefined;
   const undo: Array<() => void> = [];
-  const on = <E extends Event>(
-    target: EventTarget,
-    type: string,
-    fn: (e: E) => void,
-    opts?: boolean | AddEventListenerOptions,
-  ) => {
-    target.addEventListener(type, fn as EventListener, opts);
-    undo.push(() => target.removeEventListener(type, fn as EventListener, opts));
-  };
+  const on = listenInto(undo);
   const follow = () => {
     if (isOpen(panel)) placePanel(trigger, panel);
   };
