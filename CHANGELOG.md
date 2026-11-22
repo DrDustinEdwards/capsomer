@@ -3,6 +3,13 @@
 Each release names every removed or renamed token or class, and every changed HTML contract. A pull request adds its entry as a
 changeset (`npx changeset`, `.changeset/README.md`); the release pull request writes them here.
 
+## 0.164.7
+
+### Patch Changes
+
+- The showcase renders each component's Accessibility and Keyboard docs with Prelum (v0.63.7), the one Markdown pipeline, and deletes its own renderer (`site/markdown.ts`'s `renderMarkdown`). The docs' HTML contract on the showcase changes: tables are Prelum's `.table-scroll` and headings carry its anchors, set in a `.site-doc` reading context that keeps the docs' face and table look. The package is unchanged.
+- The `enarratio` peer range allows 0.17. No token, class or HTML contract changes.
+
 ## 0.164.6
 
 ### Patch Changes
