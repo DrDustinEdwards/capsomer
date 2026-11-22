@@ -1,3 +1,41 @@
+<!-- def:shell-1 -->      <div class="cap-shell-foot">
+        <div class="cap-shell-hint">
+          <button type="button" class="cap-shell-linkish"><span>Command menu</span><span><kbd>Ctrl</kbd> <kbd>K</kbd></span></button>
+          <button type="button" class="cap-shell-linkish"><span>Shortcuts</span><kbd>?</kbd></button>
+        </div>
+        <button type="button" class="cap-shell-toggle" data-cap-part="rail-toggle" aria-expanded="true" aria-controls="cap-rail"><svg class="cap-shell-icon" viewBox="0 0 16 16" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" d="M2.5 2.5h11v11h-11zM6 2.5v11M10.5 6 8.5 8l2 2" /></svg><span class="cap-shell-label">Collapse menu</span><kbd aria-hidden="true">[</kbd></button>
+      </div>
+    </nav><!-- /def -->
+<!-- def:shell-2 -->      <div class="cap-shell-foot">
+        <div class="cap-shell-hint">
+          <button type="button" class="cap-shell-railbtn"><svg class="cap-shell-icon" viewBox="0 0 16 16" aria-hidden="true"><circle cx="7" cy="7" r="4.5" fill="none" stroke="currentColor" stroke-width="1.5" /><path d="m10.5 10.5 3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" /></svg><span class="cap-shell-label">Command menu</span></button>
+          <button type="button" class="cap-shell-railbtn"><svg class="cap-shell-icon" viewBox="0 0 16 16" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.5" d="M1.5 4.5h13v7h-13zM4 8h8" /></svg><span class="cap-shell-label">Shortcuts</span></button>
+        </div>
+        <button type="button" class="cap-shell-toggle" data-cap-part="rail-toggle" aria-expanded="false" aria-controls="cap-rail"><svg class="cap-shell-icon" viewBox="0 0 16 16" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" d="M2.5 2.5h11v11h-11zM6 2.5v11M10.5 6 8.5 8l2 2" /></svg><span class="cap-shell-label">Expand menu</span><kbd aria-hidden="true">[</kbd></button>
+      </div>
+    </nav><!-- /def -->
+<!-- def:shell-3 -->    <a class="cap-shell-skip" href="#cap-main">Skip to content</a>
+    <header class="cap-shell-top">
+      <a class="cap-shell-brand" href="#cap-main">
+        <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path fill="var(--accent)" d="M10 1 17.8 5.5v9L10 19l-7.8-4.5v-9z" /><path fill="var(--surface)" d="M10 5.4 14 7.7v4.6L10 14.6 6 12.3V7.7z" /></svg>
+        Portal
+      </a><!-- /def -->
+<!-- def:shell-rows -->        <a href="#cap-main" data-force="hover"><svg class="cap-shell-icon" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M3 2h10v12H3z" opacity=".35" /><path fill="currentColor" d="M5 5h6v1.5H5zM5 8h6v1.5H5z" /></svg><span class="cap-shell-label">Activity</span> <span class="cap-shell-count"></span></a>
+        <a href="#cap-main"><svg class="cap-shell-icon" viewBox="0 0 16 16" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.6" d="m3.5 8.5 3 3 6-7" /></svg><span class="cap-shell-label">Reports</span> <span class="cap-shell-count"></span></a>
+        <a href="#cap-main" data-force="pressed"><svg class="cap-shell-icon" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="2.4" fill="none" stroke="currentColor" stroke-width="1.5" /></svg><span class="cap-shell-label">Backups</span> <span class="cap-shell-count"></span></a>
+      </div>
+<!-- use:shell-1 -->
+    <main class="cap-shell-main" id="cap-main" tabindex="-1">
+      <div class="cap-shell-page">
+        <h1>Overview</h1>
+        <p>The page's own content sits here, and the document scrolls. Activity shows hover and Backups shows pressed; keyboard focus is the 2 px ring.</p>
+      </div>
+    </main>
+    <nav class="cap-shell-tabs" aria-label="Sections">
+      <a href="#cap-main" aria-current="page">Overview</a><a href="#cap-main" aria-label="Sites, 2 down or degraded">Sites <span class="cap-count cap-shell-badge" data-tone="crit">2</span></a><a href="#cap-main">Queue</a><a href="#cap-main">Activity</a>
+    </nav>
+  </div>
+</template><!-- /def -->
 <template data-specimen="expanded" data-title="Expanded, with groups, counts, hover and pressed" data-height="520">
   <div class="cap-shell" data-cap="shell" data-cap-pref="cap-rail-specimen-expanded">
     <a class="cap-shell-skip" href="#cap-main">Skip to content</a>
@@ -30,29 +68,7 @@
       </div>
       <div class="cap-shell-group" role="group" aria-labelledby="g-record">
         <div class="cap-shell-group-label" id="g-record">Record</div>
-        <a href="#cap-main" data-force="hover"><svg class="cap-shell-icon" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M3 2h10v12H3z" opacity=".35" /><path fill="currentColor" d="M5 5h6v1.5H5zM5 8h6v1.5H5z" /></svg><span class="cap-shell-label">Activity</span> <span class="cap-shell-count"></span></a>
-        <a href="#cap-main"><svg class="cap-shell-icon" viewBox="0 0 16 16" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.6" d="m3.5 8.5 3 3 6-7" /></svg><span class="cap-shell-label">Reports</span> <span class="cap-shell-count"></span></a>
-        <a href="#cap-main" data-force="pressed"><svg class="cap-shell-icon" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="2.4" fill="none" stroke="currentColor" stroke-width="1.5" /></svg><span class="cap-shell-label">Backups</span> <span class="cap-shell-count"></span></a>
-      </div>
-      <div class="cap-shell-foot">
-        <div class="cap-shell-hint">
-          <button type="button" class="cap-shell-linkish"><span>Command menu</span><span><kbd>Ctrl</kbd> <kbd>K</kbd></span></button>
-          <button type="button" class="cap-shell-linkish"><span>Shortcuts</span><kbd>?</kbd></button>
-        </div>
-        <button type="button" class="cap-shell-toggle" data-cap-part="rail-toggle" aria-expanded="true" aria-controls="cap-rail"><svg class="cap-shell-icon" viewBox="0 0 16 16" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" d="M2.5 2.5h11v11h-11zM6 2.5v11M10.5 6 8.5 8l2 2" /></svg><span class="cap-shell-label">Collapse menu</span><kbd aria-hidden="true">[</kbd></button>
-      </div>
-    </nav>
-    <main class="cap-shell-main" id="cap-main" tabindex="-1">
-      <div class="cap-shell-page">
-        <h1>Overview</h1>
-        <p>The page's own content sits here, and the document scrolls. Activity shows hover and Backups shows pressed; keyboard focus is the 2 px ring.</p>
-      </div>
-    </main>
-    <nav class="cap-shell-tabs" aria-label="Sections">
-      <a href="#cap-main" aria-current="page">Overview</a><a href="#cap-main" aria-label="Sites, 2 down or degraded">Sites <span class="cap-count cap-shell-badge" data-tone="crit">2</span></a><a href="#cap-main">Queue</a><a href="#cap-main">Activity</a>
-    </nav>
-  </div>
-</template>
+<!-- use:shell-rows -->
 
 <template data-specimen="logo" data-title="The site's logo beside the name, in the top bar" data-height="520">
   <div class="cap-shell" data-cap="shell" data-cap-pref="cap-rail-specimen-logo">
@@ -85,29 +101,7 @@
       </div>
       <div class="cap-shell-group" role="group" aria-labelledby="g-record-logo">
         <div class="cap-shell-group-label" id="g-record-logo">Record</div>
-        <a href="#cap-main" data-force="hover"><svg class="cap-shell-icon" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M3 2h10v12H3z" opacity=".35" /><path fill="currentColor" d="M5 5h6v1.5H5zM5 8h6v1.5H5z" /></svg><span class="cap-shell-label">Activity</span> <span class="cap-shell-count"></span></a>
-        <a href="#cap-main"><svg class="cap-shell-icon" viewBox="0 0 16 16" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.6" d="m3.5 8.5 3 3 6-7" /></svg><span class="cap-shell-label">Reports</span> <span class="cap-shell-count"></span></a>
-        <a href="#cap-main" data-force="pressed"><svg class="cap-shell-icon" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="2.4" fill="none" stroke="currentColor" stroke-width="1.5" /></svg><span class="cap-shell-label">Backups</span> <span class="cap-shell-count"></span></a>
-      </div>
-      <div class="cap-shell-foot">
-        <div class="cap-shell-hint">
-          <button type="button" class="cap-shell-linkish"><span>Command menu</span><span><kbd>Ctrl</kbd> <kbd>K</kbd></span></button>
-          <button type="button" class="cap-shell-linkish"><span>Shortcuts</span><kbd>?</kbd></button>
-        </div>
-        <button type="button" class="cap-shell-toggle" data-cap-part="rail-toggle" aria-expanded="true" aria-controls="cap-rail"><svg class="cap-shell-icon" viewBox="0 0 16 16" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" d="M2.5 2.5h11v11h-11zM6 2.5v11M10.5 6 8.5 8l2 2" /></svg><span class="cap-shell-label">Collapse menu</span><kbd aria-hidden="true">[</kbd></button>
-      </div>
-    </nav>
-    <main class="cap-shell-main" id="cap-main" tabindex="-1">
-      <div class="cap-shell-page">
-        <h1>Overview</h1>
-        <p>The page's own content sits here, and the document scrolls. Activity shows hover and Backups shows pressed; keyboard focus is the 2 px ring.</p>
-      </div>
-    </main>
-    <nav class="cap-shell-tabs" aria-label="Sections">
-      <a href="#cap-main" aria-current="page">Overview</a><a href="#cap-main" aria-label="Sites, 2 down or degraded">Sites <span class="cap-count cap-shell-badge" data-tone="crit">2</span></a><a href="#cap-main">Queue</a><a href="#cap-main">Activity</a>
-    </nav>
-  </div>
-</template>
+<!-- use:shell-rows -->
 
 <template data-specimen="logo-only" data-title="The logo alone: the link is named by brandLabel" data-height="520">
   <div class="cap-shell" data-cap="shell" data-cap-pref="cap-rail-specimen-logo-only">
@@ -140,29 +134,7 @@
       </div>
       <div class="cap-shell-group" role="group" aria-labelledby="g-record-logo-only">
         <div class="cap-shell-group-label" id="g-record-logo-only">Record</div>
-        <a href="#cap-main" data-force="hover"><svg class="cap-shell-icon" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M3 2h10v12H3z" opacity=".35" /><path fill="currentColor" d="M5 5h6v1.5H5zM5 8h6v1.5H5z" /></svg><span class="cap-shell-label">Activity</span> <span class="cap-shell-count"></span></a>
-        <a href="#cap-main"><svg class="cap-shell-icon" viewBox="0 0 16 16" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.6" d="m3.5 8.5 3 3 6-7" /></svg><span class="cap-shell-label">Reports</span> <span class="cap-shell-count"></span></a>
-        <a href="#cap-main" data-force="pressed"><svg class="cap-shell-icon" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="2.4" fill="none" stroke="currentColor" stroke-width="1.5" /></svg><span class="cap-shell-label">Backups</span> <span class="cap-shell-count"></span></a>
-      </div>
-      <div class="cap-shell-foot">
-        <div class="cap-shell-hint">
-          <button type="button" class="cap-shell-linkish"><span>Command menu</span><span><kbd>Ctrl</kbd> <kbd>K</kbd></span></button>
-          <button type="button" class="cap-shell-linkish"><span>Shortcuts</span><kbd>?</kbd></button>
-        </div>
-        <button type="button" class="cap-shell-toggle" data-cap-part="rail-toggle" aria-expanded="true" aria-controls="cap-rail"><svg class="cap-shell-icon" viewBox="0 0 16 16" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" d="M2.5 2.5h11v11h-11zM6 2.5v11M10.5 6 8.5 8l2 2" /></svg><span class="cap-shell-label">Collapse menu</span><kbd aria-hidden="true">[</kbd></button>
-      </div>
-    </nav>
-    <main class="cap-shell-main" id="cap-main" tabindex="-1">
-      <div class="cap-shell-page">
-        <h1>Overview</h1>
-        <p>The page's own content sits here, and the document scrolls. Activity shows hover and Backups shows pressed; keyboard focus is the 2 px ring.</p>
-      </div>
-    </main>
-    <nav class="cap-shell-tabs" aria-label="Sections">
-      <a href="#cap-main" aria-current="page">Overview</a><a href="#cap-main" aria-label="Sites, 2 down or degraded">Sites <span class="cap-count cap-shell-badge" data-tone="crit">2</span></a><a href="#cap-main">Queue</a><a href="#cap-main">Activity</a>
-    </nav>
-  </div>
-</template>
+<!-- use:shell-rows -->
 
 <template data-specimen="collapsed" data-title="Collapsed to icons, Settings current" data-height="460">
   <div class="cap-shell" data-cap="shell" data-rail="collapsed" data-cap-pref="cap-rail-specimen-collapsed">
@@ -188,14 +160,7 @@
       <a href="#cap-main" aria-current="page"><svg class="cap-shell-icon" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M2 2h5v5H2zM9 2h5v5H9zM2 9h5v5H2zM9 9h5v5H9z" /></svg><span class="cap-shell-label">Components</span> <span class="cap-shell-count"></span></a>
       <a href="#cap-main" aria-label="Tests, 1 failing"><svg class="cap-shell-icon" viewBox="0 0 16 16" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.6" d="m3.5 8.5 3 3 6-7" /></svg><span class="cap-shell-label">Tests</span> <span class="cap-shell-count" data-tone="crit">1</span></a>
       <a href="#cap-main" aria-label="Queue, 3 blocked"><svg class="cap-shell-icon" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M2 3h12v2H2zM2 7h12v2H2zM2 11h12v2H2z" /></svg><span class="cap-shell-label">Queue</span> <span class="cap-shell-count" data-tone="warn">3</span></a>
-      <div class="cap-shell-foot">
-        <div class="cap-shell-hint">
-          <button type="button" class="cap-shell-railbtn"><svg class="cap-shell-icon" viewBox="0 0 16 16" aria-hidden="true"><circle cx="7" cy="7" r="4.5" fill="none" stroke="currentColor" stroke-width="1.5" /><path d="m10.5 10.5 3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" /></svg><span class="cap-shell-label">Command menu</span></button>
-          <button type="button" class="cap-shell-railbtn"><svg class="cap-shell-icon" viewBox="0 0 16 16" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.5" d="M1.5 4.5h13v7h-13zM4 8h8" /></svg><span class="cap-shell-label">Shortcuts</span></button>
-        </div>
-        <button type="button" class="cap-shell-toggle" data-cap-part="rail-toggle" aria-expanded="false" aria-controls="cap-rail"><svg class="cap-shell-icon" viewBox="0 0 16 16" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" d="M2.5 2.5h11v11h-11zM6 2.5v11M10.5 6 8.5 8l2 2" /></svg><span class="cap-shell-label">Expand menu</span><kbd aria-hidden="true">[</kbd></button>
-      </div>
-    </nav>
+<!-- use:shell-2 -->
     <main class="cap-shell-main" id="cap-main" tabindex="-1">
       <div class="cap-shell-page">
         <h1>Settings</h1>
@@ -229,14 +194,7 @@
       <a href="#cap-main" aria-current="page"><svg class="cap-shell-icon" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M2 2h5v5H2zM9 2h5v5H9zM2 9h5v5H2zM9 9h5v5H9z" /></svg><span class="cap-shell-label">Components</span> <span class="cap-shell-count"></span></a>
       <a href="#cap-main" aria-label="Tests, 1 failing" data-force="hover"><svg class="cap-shell-icon" viewBox="0 0 16 16" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.6" d="m3.5 8.5 3 3 6-7" /></svg><span class="cap-shell-label">Tests</span> <span class="cap-shell-count" data-tone="crit">1</span></a>
       <a href="#cap-main"><svg class="cap-shell-icon" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M2 3h12v2H2zM2 7h12v2H2zM2 11h12v2H2z" /></svg><span class="cap-shell-label">Queue</span> <span class="cap-shell-count"></span></a>
-      <div class="cap-shell-foot">
-        <div class="cap-shell-hint">
-          <button type="button" class="cap-shell-railbtn"><svg class="cap-shell-icon" viewBox="0 0 16 16" aria-hidden="true"><circle cx="7" cy="7" r="4.5" fill="none" stroke="currentColor" stroke-width="1.5" /><path d="m10.5 10.5 3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" /></svg><span class="cap-shell-label">Command menu</span></button>
-          <button type="button" class="cap-shell-railbtn"><svg class="cap-shell-icon" viewBox="0 0 16 16" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.5" d="M1.5 4.5h13v7h-13zM4 8h8" /></svg><span class="cap-shell-label">Shortcuts</span></button>
-        </div>
-        <button type="button" class="cap-shell-toggle" data-cap-part="rail-toggle" aria-expanded="false" aria-controls="cap-rail"><svg class="cap-shell-icon" viewBox="0 0 16 16" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" d="M2.5 2.5h11v11h-11zM6 2.5v11M10.5 6 8.5 8l2 2" /></svg><span class="cap-shell-label">Expand menu</span><kbd aria-hidden="true">[</kbd></button>
-      </div>
-    </nav>
+<!-- use:shell-2 -->
     <main class="cap-shell-main" id="cap-main" tabindex="-1">
       <div class="cap-shell-page">
         <h1>Components</h1>
@@ -248,12 +206,7 @@
 
 <template data-specimen="comfortable" data-title="Comfortable density" data-height="460">
   <div class="cap-shell" data-cap="shell" data-density="comfortable" data-cap-pref="cap-rail-specimen-comfortable">
-    <a class="cap-shell-skip" href="#cap-main">Skip to content</a>
-    <header class="cap-shell-top">
-      <a class="cap-shell-brand" href="#cap-main">
-        <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path fill="var(--accent)" d="M10 1 17.8 5.5v9L10 19l-7.8-4.5v-9z" /><path fill="var(--surface)" d="M10 5.4 14 7.7v4.6L10 14.6 6 12.3V7.7z" /></svg>
-        Portal
-      </a>
+<!-- use:shell-3 -->
       <div class="cap-shell-spacer"></div>
       <div class="cap-shell-actions">
         <fieldset class="cap-theme" data-cap="theme-switch" data-cap-pref="cap-theme-specimen-comfortable">
@@ -274,14 +227,7 @@
         <a href="#cap-main" aria-label="Sites, 2 down or degraded"><svg class="cap-shell-icon" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" stroke-width="1.5" /></svg><span class="cap-shell-label">Sites</span> <span class="cap-shell-count" data-tone="crit">2</span></a>
         <a href="#cap-main" aria-label="Queue, 3 blocked"><svg class="cap-shell-icon" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M2 3h12v2H2zM2 7h12v2H2zM2 11h12v2H2z" /></svg><span class="cap-shell-label">Queue</span> <span class="cap-shell-count" data-tone="warn">3</span></a>
       </div>
-      <div class="cap-shell-foot">
-        <div class="cap-shell-hint">
-          <button type="button" class="cap-shell-linkish"><span>Command menu</span><span><kbd>Ctrl</kbd> <kbd>K</kbd></span></button>
-          <button type="button" class="cap-shell-linkish"><span>Shortcuts</span><kbd>?</kbd></button>
-        </div>
-        <button type="button" class="cap-shell-toggle" data-cap-part="rail-toggle" aria-expanded="true" aria-controls="cap-rail"><svg class="cap-shell-icon" viewBox="0 0 16 16" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" d="M2.5 2.5h11v11h-11zM6 2.5v11M10.5 6 8.5 8l2 2" /></svg><span class="cap-shell-label">Collapse menu</span><kbd aria-hidden="true">[</kbd></button>
-      </div>
-    </nav>
+<!-- use:shell-1 -->
     <main class="cap-shell-main" id="cap-main" tabindex="-1">
       <div class="cap-shell-page">
         <h1>Overview</h1>
@@ -293,12 +239,7 @@
 
 <template data-specimen="phone" data-title="Phone width, with the tab bar" data-height="560" data-width="390">
   <div class="cap-shell" data-cap="shell" data-cap-pref="cap-rail-specimen-phone">
-    <a class="cap-shell-skip" href="#cap-main">Skip to content</a>
-    <header class="cap-shell-top">
-      <a class="cap-shell-brand" href="#cap-main">
-        <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path fill="var(--accent)" d="M10 1 17.8 5.5v9L10 19l-7.8-4.5v-9z" /><path fill="var(--surface)" d="M10 5.4 14 7.7v4.6L10 14.6 6 12.3V7.7z" /></svg>
-        Portal
-      </a>
+<!-- use:shell-3 -->
       <div class="cap-shell-spacer"></div>
       <div class="cap-shell-actions">
         <fieldset class="cap-theme" data-cap="theme-switch" data-cap-pref="cap-theme-specimen-phone">

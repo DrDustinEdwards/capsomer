@@ -1,3 +1,23 @@
+<!-- def:flag-list-1 -->        <li class="cap-flags-empty" data-for="open">No open flags.</li>
+        <li class="cap-flags-empty" data-for="resolved">Nothing resolved yet.</li>
+        <li class="cap-flags-empty" data-for="all">No flags on this draft.</li>
+      </ul>
+      <div class="cap-sr-only" role="status" data-cap-part="live"></div>
+    </section><!-- /def -->
+<!-- def:flag-list-2 -->            <span class="cap-row-meta"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Resolved</span></span>
+            <div class="cap-row-actions"><button type="button" class="cap-btn" data-size="sm" data-cap-part="reopen">Reopen<span class="cap-sr-only"> flag: The quoted review has no date</span></button></div>
+            <div class="cap-flag-body"><blockquote class="cap-flag-quote"><p class="cap-flag-anchor-note" data-cap-part="anchor-note" hidden></p><p><span class="cap-sr-only">Quoted passage: </span><q class="cap-flag-quote-text">Rosa reviewed it and said it was fine</q></p></blockquote><p class="cap-flag-resolution">Resolved by Rosa Park <time class="cap-time" data-cap="time" datetime="2026-10-02T07:30:00Z">2 hours ago</time>.</p></div>
+          </li>
+          </ul>
+        </li><!-- /def -->
+<!-- def:flag-rows -->            <span class="cap-row-meta"><span class="cap-status" data-tone="nodata"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M5 8h6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>Dismissed</span></span>
+            <div class="cap-row-actions"><button type="button" class="cap-btn" data-size="sm" data-cap-part="reopen">Reopen<span class="cap-sr-only"> flag: 14 sites differs from the sites page</span></button></div>
+            <div class="cap-flag-body"><blockquote class="cap-flag-quote"><p class="cap-flag-anchor-note" data-cap-part="anchor-note" hidden></p><p><span class="cap-sr-only">Quoted passage: </span><q class="cap-flag-quote-text">The tool watches 14 sites</q></p></blockquote><p class="cap-flag-resolution">Dismissed by Alex Rivera <time class="cap-time" data-cap="time" datetime="2026-10-01T15:00:00Z">yesterday</time>.</p></div>
+          </li>
+          </ul>
+        </li>
+<!-- use:flag-list-1 -->
+</section><!-- /def -->
 <section class="cap-specimen" aria-labelledby="s-main">
   <h2 id="s-main">Open flags, blocking first, with suggestions the owner can apply</h2>
   <p class="cap-muted">The draft below is what the anchors are read against. Change a quoted phrase and its flag says "Anchor lost".</p>
@@ -46,12 +66,7 @@
             <span class="cap-row-status" id="fl-main-f6-s"><span class="cap-status" data-tone="crit"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M5 1h6l4 4v6l-4 4H5l-4-4V5zM7.2 4h1.6v5H7.2zM7.2 10.4h1.6V12H7.2z"/></svg>Blocking</span></span>
             <div class="cap-row-title"><a href="#fl-draft" aria-describedby="fl-main-f6-s fl-main-f6-d"><span class="cap-flag-message">The quoted review has no date</span> <span class="cap-flag-goto">Go to passage</span></a></div>
             <p class="cap-row-detail" id="fl-main-f6-d">Sources check. Cause: <span data-cap-part="cause">A quotation names its source and date.</span></p>
-            <span class="cap-row-meta"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Resolved</span></span>
-            <div class="cap-row-actions"><button type="button" class="cap-btn" data-size="sm" data-cap-part="reopen">Reopen<span class="cap-sr-only"> flag: The quoted review has no date</span></button></div>
-            <div class="cap-flag-body"><blockquote class="cap-flag-quote"><p class="cap-flag-anchor-note" data-cap-part="anchor-note" hidden></p><p><span class="cap-sr-only">Quoted passage: </span><q class="cap-flag-quote-text">Rosa reviewed it and said it was fine</q></p></blockquote><p class="cap-flag-resolution">Resolved by Rosa Park <time class="cap-time" data-cap="time" datetime="2026-10-02T07:30:00Z">2 hours ago</time>.</p></div>
-          </li>
-          </ul>
-        </li>
+<!-- use:flag-list-2 -->
         <li class="cap-flag-group" data-group="advisory">
           <div class="cap-flag-group-head"><h3 class="cap-flag-group-title" id="fl-main-g-advisory">Advisory</h3><span class="cap-flag-group-count">3 open, 1 resolved</span></div>
           <ul class="cap-flag-group-rows" role="list" aria-labelledby="fl-main-g-advisory">
@@ -83,19 +98,7 @@
             <span class="cap-row-status" id="fl-main-f7-s"><span class="cap-status" data-tone="warn"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1.2 15.4 14H.6zM7.3 6h1.4v4H7.3zM7.3 11h1.4v1.4H7.3z"/></svg>Advisory</span></span>
             <div class="cap-row-title"><a href="#fl-draft" aria-describedby="fl-main-f7-s fl-main-f7-d"><span class="cap-flag-message">14 sites differs from the sites page</span> <span class="cap-flag-goto">Go to passage</span></a></div>
             <p class="cap-row-detail" id="fl-main-f7-d">Continuity reviewer (AI). Cause: <span data-cap-part="cause">Numbers agree with the page they name.</span></p>
-            <span class="cap-row-meta"><span class="cap-status" data-tone="nodata"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M5 8h6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>Dismissed</span></span>
-            <div class="cap-row-actions"><button type="button" class="cap-btn" data-size="sm" data-cap-part="reopen">Reopen<span class="cap-sr-only"> flag: 14 sites differs from the sites page</span></button></div>
-            <div class="cap-flag-body"><blockquote class="cap-flag-quote"><p class="cap-flag-anchor-note" data-cap-part="anchor-note" hidden></p><p><span class="cap-sr-only">Quoted passage: </span><q class="cap-flag-quote-text">The tool watches 14 sites</q></p></blockquote><p class="cap-flag-resolution">Dismissed by Alex Rivera <time class="cap-time" data-cap="time" datetime="2026-10-01T15:00:00Z">yesterday</time>.</p></div>
-          </li>
-          </ul>
-        </li>
-        <li class="cap-flags-empty" data-for="open">No open flags.</li>
-        <li class="cap-flags-empty" data-for="resolved">Nothing resolved yet.</li>
-        <li class="cap-flags-empty" data-for="all">No flags on this draft.</li>
-      </ul>
-      <div class="cap-sr-only" role="status" data-cap-part="live"></div>
-    </section>
-</section>
+<!-- use:flag-rows -->
 
 <section class="cap-specimen" aria-labelledby="s-guest">
   <h2 id="s-guest">Seen by someone who is not the owner, with the record (All) shown</h2>
@@ -132,12 +135,7 @@
             <span class="cap-row-status" id="fl-guest-f6-s"><span class="cap-status" data-tone="crit"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M5 1h6l4 4v6l-4 4H5l-4-4V5zM7.2 4h1.6v5H7.2zM7.2 10.4h1.6V12H7.2z"/></svg>Blocking</span></span>
             <div class="cap-row-title"><a href="#fl-draft" aria-describedby="fl-guest-f6-s fl-guest-f6-d"><span class="cap-flag-message">The quoted review has no date</span> <span class="cap-flag-goto">Go to passage</span></a></div>
             <p class="cap-row-detail" id="fl-guest-f6-d">Sources check. Cause: <span data-cap-part="cause">A quotation names its source and date.</span></p>
-            <span class="cap-row-meta"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Resolved</span></span>
-            <div class="cap-row-actions"><button type="button" class="cap-btn" data-size="sm" data-cap-part="reopen">Reopen<span class="cap-sr-only"> flag: The quoted review has no date</span></button></div>
-            <div class="cap-flag-body"><blockquote class="cap-flag-quote"><p class="cap-flag-anchor-note" data-cap-part="anchor-note" hidden></p><p><span class="cap-sr-only">Quoted passage: </span><q class="cap-flag-quote-text">Rosa reviewed it and said it was fine</q></p></blockquote><p class="cap-flag-resolution">Resolved by Rosa Park <time class="cap-time" data-cap="time" datetime="2026-10-02T07:30:00Z">2 hours ago</time>.</p></div>
-          </li>
-          </ul>
-        </li>
+<!-- use:flag-list-2 -->
         <li class="cap-flag-group" data-group="advisory">
           <div class="cap-flag-group-head"><h3 class="cap-flag-group-title" id="fl-guest-g-advisory">Advisory</h3><span class="cap-flag-group-count">1 open, 1 resolved</span></div>
           <ul class="cap-flag-group-rows" role="list" aria-labelledby="fl-guest-g-advisory">
@@ -153,19 +151,7 @@
             <span class="cap-row-status" id="fl-guest-f7-s"><span class="cap-status" data-tone="warn"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1.2 15.4 14H.6zM7.3 6h1.4v4H7.3zM7.3 11h1.4v1.4H7.3z"/></svg>Advisory</span></span>
             <div class="cap-row-title"><a href="#fl-draft" aria-describedby="fl-guest-f7-s fl-guest-f7-d"><span class="cap-flag-message">14 sites differs from the sites page</span> <span class="cap-flag-goto">Go to passage</span></a></div>
             <p class="cap-row-detail" id="fl-guest-f7-d">Continuity reviewer (AI). Cause: <span data-cap-part="cause">Numbers agree with the page they name.</span></p>
-            <span class="cap-row-meta"><span class="cap-status" data-tone="nodata"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M5 8h6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>Dismissed</span></span>
-            <div class="cap-row-actions"><button type="button" class="cap-btn" data-size="sm" data-cap-part="reopen">Reopen<span class="cap-sr-only"> flag: 14 sites differs from the sites page</span></button></div>
-            <div class="cap-flag-body"><blockquote class="cap-flag-quote"><p class="cap-flag-anchor-note" data-cap-part="anchor-note" hidden></p><p><span class="cap-sr-only">Quoted passage: </span><q class="cap-flag-quote-text">The tool watches 14 sites</q></p></blockquote><p class="cap-flag-resolution">Dismissed by Alex Rivera <time class="cap-time" data-cap="time" datetime="2026-10-01T15:00:00Z">yesterday</time>.</p></div>
-          </li>
-          </ul>
-        </li>
-        <li class="cap-flags-empty" data-for="open">No open flags.</li>
-        <li class="cap-flags-empty" data-for="resolved">Nothing resolved yet.</li>
-        <li class="cap-flags-empty" data-for="all">No flags on this draft.</li>
-      </ul>
-      <div class="cap-sr-only" role="status" data-cap-part="live"></div>
-    </section>
-</section>
+<!-- use:flag-rows -->
 
 <section class="cap-specimen" aria-labelledby="s-done">
   <h2 id="s-done">Nothing open: the record stays</h2>
@@ -194,12 +180,7 @@
             <span class="cap-row-status" id="fl-done-d1-s"><span class="cap-status" data-tone="crit"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M5 1h6l4 4v6l-4 4H5l-4-4V5zM7.2 4h1.6v5H7.2zM7.2 10.4h1.6V12H7.2z"/></svg>Blocking</span></span>
             <div class="cap-row-title"><a href="#fl-draft" aria-describedby="fl-done-d1-s fl-done-d1-d"><span class="cap-flag-message">The quoted review has no date</span> <span class="cap-flag-goto">Go to passage</span></a></div>
             <p class="cap-row-detail" id="fl-done-d1-d">Sources check. Cause: <span data-cap-part="cause">A quotation names its source and date.</span></p>
-            <span class="cap-row-meta"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Resolved</span></span>
-            <div class="cap-row-actions"><button type="button" class="cap-btn" data-size="sm" data-cap-part="reopen">Reopen<span class="cap-sr-only"> flag: The quoted review has no date</span></button></div>
-            <div class="cap-flag-body"><blockquote class="cap-flag-quote"><p class="cap-flag-anchor-note" data-cap-part="anchor-note" hidden></p><p><span class="cap-sr-only">Quoted passage: </span><q class="cap-flag-quote-text">Rosa reviewed it and said it was fine</q></p></blockquote><p class="cap-flag-resolution">Resolved by Rosa Park <time class="cap-time" data-cap="time" datetime="2026-10-02T07:30:00Z">2 hours ago</time>.</p></div>
-          </li>
-          </ul>
-        </li>
+<!-- use:flag-list-2 -->
         <li class="cap-flag-group" data-group="advisory">
           <div class="cap-flag-group-head"><h3 class="cap-flag-group-title" id="fl-done-g-advisory">Advisory</h3><span class="cap-flag-group-count">0 open, 1 resolved</span></div>
           <ul class="cap-flag-group-rows" role="list" aria-labelledby="fl-done-g-advisory">
@@ -207,19 +188,7 @@
             <span class="cap-row-status" id="fl-done-d2-s"><span class="cap-status" data-tone="warn"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1.2 15.4 14H.6zM7.3 6h1.4v4H7.3zM7.3 11h1.4v1.4H7.3z"/></svg>Advisory</span></span>
             <div class="cap-row-title"><a href="#fl-draft" aria-describedby="fl-done-d2-s fl-done-d2-d"><span class="cap-flag-message">14 sites differs from the sites page</span> <span class="cap-flag-goto">Go to passage</span></a></div>
             <p class="cap-row-detail" id="fl-done-d2-d">Continuity reviewer (AI). Cause: <span data-cap-part="cause">Numbers agree with the page they name.</span></p>
-            <span class="cap-row-meta"><span class="cap-status" data-tone="nodata"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M5 8h6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>Dismissed</span></span>
-            <div class="cap-row-actions"><button type="button" class="cap-btn" data-size="sm" data-cap-part="reopen">Reopen<span class="cap-sr-only"> flag: 14 sites differs from the sites page</span></button></div>
-            <div class="cap-flag-body"><blockquote class="cap-flag-quote"><p class="cap-flag-anchor-note" data-cap-part="anchor-note" hidden></p><p><span class="cap-sr-only">Quoted passage: </span><q class="cap-flag-quote-text">The tool watches 14 sites</q></p></blockquote><p class="cap-flag-resolution">Dismissed by Alex Rivera <time class="cap-time" data-cap="time" datetime="2026-10-01T15:00:00Z">yesterday</time>.</p></div>
-          </li>
-          </ul>
-        </li>
-        <li class="cap-flags-empty" data-for="open">No open flags.</li>
-        <li class="cap-flags-empty" data-for="resolved">Nothing resolved yet.</li>
-        <li class="cap-flags-empty" data-for="all">No flags on this draft.</li>
-      </ul>
-      <div class="cap-sr-only" role="status" data-cap-part="live"></div>
-    </section>
-</section>
+<!-- use:flag-rows -->
 
 <section class="cap-specimen" aria-labelledby="s-phone">
   <h2 id="s-phone">A narrow column</h2>
@@ -268,12 +237,7 @@
           </li>
           </ul>
         </li>
-        <li class="cap-flags-empty" data-for="open">No open flags.</li>
-        <li class="cap-flags-empty" data-for="resolved">Nothing resolved yet.</li>
-        <li class="cap-flags-empty" data-for="all">No flags on this draft.</li>
-      </ul>
-      <div class="cap-sr-only" role="status" data-cap-part="live"></div>
-    </section>
+<!-- use:flag-list-1 -->
   </div>
 </section>
 
@@ -312,12 +276,7 @@
           </li>
           </ul>
         </li>
-        <li class="cap-flags-empty" data-for="open">No open flags.</li>
-        <li class="cap-flags-empty" data-for="resolved">Nothing resolved yet.</li>
-        <li class="cap-flags-empty" data-for="all">No flags on this draft.</li>
-      </ul>
-      <div class="cap-sr-only" role="status" data-cap-part="live"></div>
-    </section>
+<!-- use:flag-list-1 -->
   </div>
 </section>
 

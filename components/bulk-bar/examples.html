@@ -1,3 +1,12 @@
+<!-- def:bulk-bar-1 -->    <p class="cap-bulk-count" role="status"></p>
+    <button type="button" class="cap-btn" data-variant="quiet" data-cap-part="select-all" data-cap-label="Select all {n} in view">Select all in view</button>
+    <div class="cap-bulk-actions">
+      <button type="button" class="cap-btn" data-cap-bulk-action="archive" data-cap-label="Archive" data-cap-said="Archived {n} draft{s}." data-cap-undone="Brought {n} draft{s} back.">Archive</button>
+      <button type="button" class="cap-btn" data-variant="danger" data-cap-bulk-action="bin" data-destructive data-cap-label="Bin" data-cap-confirm-title="Bin {n} item{s}?" data-cap-confirm-lead="Binned drafts cannot be brought back." data-cap-confirm-action="Bin {n} item{s}" data-cap-said="Binned {n} draft{s}.">Bin</button>
+    </div>
+    <button type="button" class="cap-btn cap-bulk-clear" data-variant="quiet">Clear selection</button>
+  </div>
+</section><!-- /def -->
 <link rel="stylesheet" href="./specimen/bulk.css" />
 
 <section class="cap-specimen" aria-labelledby="s-selected">
@@ -26,15 +35,7 @@
       <li data-label="What a mention queue is for"><label class="cap-check"><input type="checkbox" value="n-3" data-cap-select /> What a mention queue is for</label><span class="bulk-meta">Draft, edited 3 days ago</span></li>
   </ul>
   <div class="cap-bulk" data-cap="bulk-bar" data-cap-list="none-list" role="region" aria-label="Bulk actions" id="bulk-none" hidden>
-    <p class="cap-bulk-count" role="status"></p>
-    <button type="button" class="cap-btn" data-variant="quiet" data-cap-part="select-all" data-cap-label="Select all {n} in view">Select all in view</button>
-    <div class="cap-bulk-actions">
-      <button type="button" class="cap-btn" data-cap-bulk-action="archive" data-cap-label="Archive" data-cap-said="Archived {n} draft{s}." data-cap-undone="Brought {n} draft{s} back.">Archive</button>
-      <button type="button" class="cap-btn" data-variant="danger" data-cap-bulk-action="bin" data-destructive data-cap-label="Bin" data-cap-confirm-title="Bin {n} item{s}?" data-cap-confirm-lead="Binned drafts cannot be brought back." data-cap-confirm-action="Bin {n} item{s}" data-cap-said="Binned {n} draft{s}.">Bin</button>
-    </div>
-    <button type="button" class="cap-btn cap-bulk-clear" data-variant="quiet">Clear selection</button>
-  </div>
-</section>
+<!-- use:bulk-bar-1 -->
 
 <section class="cap-specimen" aria-labelledby="s-live">
   <h2 id="s-live">Choose, then act: archive runs at once with Undo, bin previews first</h2>
@@ -47,15 +48,7 @@
       <li data-label="Search without a server"><label class="cap-check"><input type="checkbox" value="d-5" data-cap-select /> Search without a server</label><span class="bulk-meta">Draft, edited 5 days ago</span></li>
   </ul>
   <div class="cap-bulk" data-cap="bulk-bar" data-cap-list="live-list" role="region" aria-label="Bulk actions" id="bulk-live" hidden>
-    <p class="cap-bulk-count" role="status"></p>
-    <button type="button" class="cap-btn" data-variant="quiet" data-cap-part="select-all" data-cap-label="Select all {n} in view">Select all in view</button>
-    <div class="cap-bulk-actions">
-      <button type="button" class="cap-btn" data-cap-bulk-action="archive" data-cap-label="Archive" data-cap-said="Archived {n} draft{s}." data-cap-undone="Brought {n} draft{s} back.">Archive</button>
-      <button type="button" class="cap-btn" data-variant="danger" data-cap-bulk-action="bin" data-destructive data-cap-label="Bin" data-cap-confirm-title="Bin {n} item{s}?" data-cap-confirm-lead="Binned drafts cannot be brought back." data-cap-confirm-action="Bin {n} item{s}" data-cap-said="Binned {n} draft{s}.">Bin</button>
-    </div>
-    <button type="button" class="cap-btn cap-bulk-clear" data-variant="quiet">Clear selection</button>
-  </div>
-</section>
+<!-- use:bulk-bar-1 -->
 
 <section class="cap-specimen" aria-labelledby="s-form">
   <h2 id="s-form">A form: the actions are submit buttons and the server confirms</h2>

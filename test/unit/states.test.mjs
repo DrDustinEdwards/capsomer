@@ -14,7 +14,7 @@ import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { test } from "node:test";
 import { fileURLToPath } from "node:url";
-import { generateStates, renderStates, splitExamples } from "../../bin/states.mjs";
+import { expandUses, generateStates, renderStates, splitExamples } from "../../bin/states.mjs";
 
 const ROOT = resolve(fileURLToPath(new URL("../..", import.meta.url)));
 const template = readFileSync(join(ROOT, "site", "states-template.html"), "utf8");
@@ -98,7 +98,7 @@ test("generateStates: writes a page for each component with examples, none witho
   );
   writeFileSync(
     join(dir, "components", "alpha", "examples.html"),
-    `${EXAMPLES}<!-- build:chart -->\n`,
+    `<!-- def:row --><p id="\${id}" \${flag}>x</p><!-- /def -->\n${EXAMPLES}<!-- use:row id=r1 flag=hidden --><!-- build:chart -->\n`,
   );
   writeFileSync(
     join(dir, "components", "alpha", "examples.build.ts"),
@@ -112,6 +112,10 @@ test("generateStates: writes a page for each component with examples, none witho
     alpha.includes('<figure class="built"></figure>') && !alpha.includes("build:chart"),
     "a build marker is the module's markup",
   );
+  assert.ok(
+    alpha.includes('<p id="r1" hidden>x</p>') && !alpha.includes("def:row"),
+    "use pastes a def",
+  );
   const beta = readFileSync(join(dir, "components", "beta", "states.html"), "utf8");
   assert.match(beta, /<h1>beta<\/h1>/, "falls back to the folder name without a doc page");
   assert.ok(beta.includes('src="./examples.tsx"'));
@@ -124,7 +128,9 @@ test("every component's examples.html makes a valid page: one h1, one main, a he
   );
   assert.ok(names.length > 0);
   for (const d of names) {
-    const examples = readFileSync(join(ROOT, "components", d.name, "examples.html"), "utf8");
+    const examples = expandUses(
+      readFileSync(join(ROOT, "components", d.name, "examples.html"), "utf8"),
+    );
     assert.ok(
       !/<(?:html|head|body)\b/i.test(outsideTemplates(examples)),
       `${d.name}: examples.html is inner markup only`,

@@ -1,11 +1,11 @@
 {
   "baseline": {
-    "measured_at": "a511901",
+    "measured_at": "30b2eb6",
     "knip": {},
     "jscpd": {
-      "clones": 77,
-      "lines": 1135,
-      "percentage": 0.59,
+      "clones": 39,
+      "lines": 511,
+      "percentage": 0.27,
       "unread": 24
     },
     "shared copies": {

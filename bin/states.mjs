@@ -71,11 +71,37 @@ export function renderStates({ template, title, examples, hasTsx, css = "" }) {
   return template.replace(/\{\{(\w+)\}\}/g, (_, k) => fill[k] ?? "");
 }
 
-// A component's examples.html with every <!-- build:name --> filled from its examples.build.ts.
+// Markup an examples.html repeats is written once: <!-- def:name -->...<!-- /def --> is removed from the
+// page, and <!-- use:name key=value ... --> pastes it, each ${key} in it replaced (an unset one is empty).
+export function expandUses(html) {
+  const defs = {};
+  const rest = html.replace(
+    /<!-- def:([\w-]+) -->([\s\S]*?)<!-- \/def -->\n?/g,
+    (_, k, body) => ((defs[k] = body), ""),
+  );
+  const use = /<!-- use:([\w-]+)((?: [\w-]+=\S+)*) -->/g;
+  let out = rest;
+  // A def may use another, so paste until none is left.
+  while (use.test(out)) {
+    out = out.replace(use, (_, k, args) => {
+      if (!(k in defs)) throw new Error(`examples.html has no <!-- def:${k} -->`);
+      const vals = Object.fromEntries(
+        [...args.matchAll(/([\w-]+)=(\S+)/g)].map((m) => [m[1], m[2]]),
+      );
+      return defs[k].replace(/\$\{([\w-]+)\}/g, (_, v) => vals[v] ?? "");
+    });
+    use.lastIndex = 0;
+  }
+  return out;
+}
+
+// A component's examples.html with every def/use expanded and every <!-- build:name --> filled from its examples.build.ts.
 async function loadExamples(base) {
-  const html = existsSync(join(base, "examples.html"))
-    ? readFileSync(join(base, "examples.html"), "utf8")
-    : "";
+  const html = expandUses(
+    existsSync(join(base, "examples.html"))
+      ? readFileSync(join(base, "examples.html"), "utf8")
+      : "",
+  );
   const build = join(base, "examples.build.ts");
   if (!existsSync(build)) return html;
   const parts = await importBuild(build);
