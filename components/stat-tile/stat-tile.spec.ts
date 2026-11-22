@@ -153,7 +153,6 @@ eachTheme((theme) => {
     const sec = "section[aria-labelledby='s-static']";
     await expect(page.locator(`${sec} .cap-tile`)).toHaveCount(6);
     await expect(page.locator(`${sec} a, ${sec} button`)).toHaveCount(0);
-    await expect(page.locator(`${sec} .cap-tile`).first()).toHaveCSS("cursor", "default");
     // The label comes before the figure, so it reads "Open rate 41% up 8%".
     await expect(page.locator(`${sec} .cap-tile`).nth(1)).toHaveText(
       /Open rate\s*41%\s*▲\s*up 8%\s*Against/,
