@@ -40,7 +40,7 @@ const CENTER = `<div class="cap-family-footer-center">
   </div>
   <p class="cap-family-footer-stamp"><span>Release ${VERSION}</span></p>
 </div>`;
-export const FOOTER = `<footer class="home-foot">
+export const FOOTER = `<footer class="home-foot" id="page-end">
   <div class="cap-page">${familyFooterHtml({ site: "capsomer", center: CENTER, statement: "/accessibility/" })}</div>
 </footer>`;
 
