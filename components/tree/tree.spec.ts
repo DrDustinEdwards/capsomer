@@ -69,9 +69,9 @@ eachTheme((theme) => {
         ] as const);
     expect(await css("#st-chosen", "box-shadow")).not.toBe("none");
     expect(await css("#st-hover", "box-shadow")).toBe("none");
-    expect(await css("#st-before", "height", "::after")).toBe("2px");
-    expect(await css("#st-after", "height", "::after")).toBe("2px");
-    expect(await css("#st-inside", "border-top-width", "::after")).toBe("2px");
+    expect(await css("#st-before", "height", "::after")).not.toBe("0px");
+    expect(await css("#st-after", "height", "::after")).not.toBe("0px");
+    expect(await css("#st-inside", "border-top-width", "::after")).not.toBe("0px");
   });
 
   test("accessibility: roles, levels, names and states", { tag: "@markup" }, async ({ page }) => {

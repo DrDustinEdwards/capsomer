@@ -136,7 +136,7 @@ eachTheme((theme) => {
     await expect(page.getByRole("switch", { name: "Single-key shortcuts" })).not.toBeChecked();
   });
 
-  // The switch is the one for the whole app (C18): a component's own keys obey it, on another page too.
+  // The switch is the one for the whole app: a component's own keys obey it, on another page too.
   test("keyboard: the switch turns off another component's single keys", async ({ page }) => {
     await visitStates(page, "shortcuts", theme, "page");
     await page.getByRole("button", { name: "Keyboard shortcuts" }).click();

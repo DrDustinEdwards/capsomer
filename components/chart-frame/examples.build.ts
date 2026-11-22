@@ -169,7 +169,7 @@ const drawings: Record<string, string> = {
     "Requests per hour",
     "The health route has not reported yet, so there is nothing to draw.",
   ),
-  // Redrawn at the narrow column's width, as every server chart in a frame should be (C12).
+  // Redrawn at the narrow column's width, as every server chart in a frame should be.
   narrow: drawn("bar", bar("cf-narrow"), barOptions("cf-narrow")),
   comfortable: frameHtml(sparkline({ ...minutes, id: "cf-comfy" })),
   // What ChartFrame renders on the server, before it measures its column: the page reads with

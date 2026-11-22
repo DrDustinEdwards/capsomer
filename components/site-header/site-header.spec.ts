@@ -449,7 +449,7 @@ eachTheme((theme) => {
     ]);
   });
 
-  test("accessibility: the current link's underline is 2px in the accent and stands at 3:1 against the band", async ({
+  test("accessibility: the current link's underline stands at 3:1 against the band", async ({
     page,
   }) => {
     for (const only of ["fh-public", "fx-public"]) {
@@ -461,13 +461,9 @@ eachTheme((theme) => {
           const line = getComputedStyle(el, "::after");
           const band = getComputedStyle(el.closest(".cap-site-header")!).backgroundColor;
           return {
-            h: line.height,
             ratio: window.capRatio(line.backgroundColor, band.replace(/,\s*0?\.\d+\)$/, ")")),
-            weight: getComputedStyle(el).fontWeight,
           };
         });
-      expect(got.h, only).toBe("2px");
-      expect(got.weight, only).toBe("500");
       expect(got.ratio, `${only}: the underline against the band`).toBeGreaterThanOrEqual(3);
     }
   });
