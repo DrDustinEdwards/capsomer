@@ -1,3 +1,39 @@
+<!-- def:media-1 -->    <button type="submit" class="cap-btn" data-variant="primary" data-cap-part="save-fallback">Save</button>
+  </form>
+  <div class="cap-dialog-footer">
+    <div class="cap-media-save" data-cap-part="save" data-state="idle"><p role="status" data-cap-part="save-status">Changes save by themselves.</p><p role="alert" data-cap-part="save-error"></p><button type="button" class="cap-btn" data-size="sm" data-cap-part="retry-save" hidden>Retry</button></div>
+    <button type="button" class="cap-btn" data-cap-part="bin">Move to Trash</button>
+    <button type="button" class="cap-btn" data-cap-part="restore" hidden>Restore</button>
+  </div>
+  <button type="button" class="cap-btn cap-dialog-close" data-variant="quiet" data-icon-only data-cap-part="close" aria-label="Close"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" focusable="false"><path d="M4 4l8 8M12 4l-8 8" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" /></svg></button>
+</dialog><!-- /def -->
+<!-- def:media-2 -->  <div class="cap-drop-status" role="status" data-cap-part="status"></div>
+  <div class="cap-drop-rejections" role="alert" data-cap-part="rejections"></div>
+</div></div>
+  </div>
+  <div class="cap-empty" data-kind="all-clear" data-cap-empty="bin" hidden>
+    <div class="cap-empty-header"><p class="cap-empty-title">Trash is empty</p><p class="cap-empty-text">A file you move to Trash keeps its address, and waits here until you restore it.</p></div>
+  </div>
+</div>
+      <div class="cap-message" data-cap="message" role="status" aria-label="Results and failures" aria-atomic="false"></div>
+    </div><!-- /def -->
+<!-- def:media-3 -->      <div class="cap-media-empty" hidden>
+  <div class="cap-empty" data-kind="no-match" data-flush data-cap-empty="search" hidden>
+    <div class="cap-empty-header"><p class="cap-empty-title">No files match your search</p><p class="cap-empty-text">Searched names, alt text, captions and tags.</p></div>
+    <div class="cap-empty-content"><button type="button" class="cap-btn" data-cap-part="clear-search">Clear the search</button></div>
+  </div>
+  <div class="cap-empty" data-kind="no-match" data-flush data-cap-empty="filter" hidden>
+    <div class="cap-empty-header"><p class="cap-empty-title">Nothing in this view</p><p class="cap-empty-text">Every file passes these checks.</p></div>
+    <div class="cap-empty-content"><button type="button" class="cap-btn" data-cap-part="clear-filters">Show everything</button></div>
+  </div><!-- /def -->
+<!-- def:media-inspector -->      <div data-cap-part="used"><ul class="cap-media-used"><li><a href="/admin/posts/spring-release/edit">Notes on the spring release</a><span class="cap-media-used-how">image in the body</span></li><li><a href="/admin/posts/quieter-status-page/edit">A quieter status page</a><span class="cap-media-used-how">cover</span></li></ul></div>
+    </section>
+<!-- use:media-1 -->
+  </div>
+</div>
+
+  </main>
+</template><!-- /def -->
 <link rel="stylesheet" href="./specimen/media.css" />
 
 <section class="cap-specimen" aria-labelledby="s-tiles">
@@ -132,15 +168,7 @@
       <h3 id="ins-static-ins-used-l">Used in</h3>
       <div data-cap-part="used"><ul class="cap-media-used"><li><a href="/admin/posts/uptime-gaps/edit">Why the uptime strip counts gaps</a><span class="cap-media-used-how">image in the body</span></li></ul></div>
     </section>
-    <button type="submit" class="cap-btn" data-variant="primary" data-cap-part="save-fallback">Save</button>
-  </form>
-  <div class="cap-dialog-footer">
-    <div class="cap-media-save" data-cap-part="save" data-state="idle"><p role="status" data-cap-part="save-status">Changes save by themselves.</p><p role="alert" data-cap-part="save-error"></p><button type="button" class="cap-btn" data-size="sm" data-cap-part="retry-save" hidden>Retry</button></div>
-    <button type="button" class="cap-btn" data-cap-part="bin">Move to Trash</button>
-    <button type="button" class="cap-btn" data-cap-part="restore" hidden>Restore</button>
-  </div>
-  <button type="button" class="cap-btn cap-dialog-close" data-variant="quiet" data-icon-only data-cap-part="close" aria-label="Close"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" focusable="false"><path d="M4 4l8 8M12 4l-8 8" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" /></svg></button>
-</dialog>
+<!-- use:media-1 -->
 
 </div></div>
 </section>
@@ -193,15 +221,7 @@
       <h3 id="ins-unused-used-l">Used in</h3>
       <div data-cap-part="used"><p class="cap-media-used-empty">Not used anywhere.</p><p class="cap-media-note">A page built in code can still use it: check before you delete it. <button type="button" class="cap-btn" data-variant="link" data-cap-part="show-unattached">Show unattached files</button></p></div>
     </section>
-    <button type="submit" class="cap-btn" data-variant="primary" data-cap-part="save-fallback">Save</button>
-  </form>
-  <div class="cap-dialog-footer">
-    <div class="cap-media-save" data-cap-part="save" data-state="idle"><p role="status" data-cap-part="save-status">Changes save by themselves.</p><p role="alert" data-cap-part="save-error"></p><button type="button" class="cap-btn" data-size="sm" data-cap-part="retry-save" hidden>Retry</button></div>
-    <button type="button" class="cap-btn" data-cap-part="bin">Move to Trash</button>
-    <button type="button" class="cap-btn" data-cap-part="restore" hidden>Restore</button>
-  </div>
-  <button type="button" class="cap-btn cap-dialog-close" data-variant="quiet" data-icon-only data-cap-part="close" aria-label="Close"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" focusable="false"><path d="M4 4l8 8M12 4l-8 8" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" /></svg></button>
-</dialog>
+<!-- use:media-1 -->
 
 </div></div>
 </section>
@@ -254,15 +274,7 @@
       <h3 id="ins-deco-used-l">Used in</h3>
       <div data-cap-part="used"><ul class="cap-media-used"><li><a href="/admin/posts/project-tree/edit">Field notes: reading a project tree</a><span class="cap-media-used-how">figure</span></li></ul></div>
     </section>
-    <button type="submit" class="cap-btn" data-variant="primary" data-cap-part="save-fallback">Save</button>
-  </form>
-  <div class="cap-dialog-footer">
-    <div class="cap-media-save" data-cap-part="save" data-state="idle"><p role="status" data-cap-part="save-status">Changes save by themselves.</p><p role="alert" data-cap-part="save-error"></p><button type="button" class="cap-btn" data-size="sm" data-cap-part="retry-save" hidden>Retry</button></div>
-    <button type="button" class="cap-btn" data-cap-part="bin">Move to Trash</button>
-    <button type="button" class="cap-btn" data-cap-part="restore" hidden>Restore</button>
-  </div>
-  <button type="button" class="cap-btn cap-dialog-close" data-variant="quiet" data-icon-only data-cap-part="close" aria-label="Close"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" focusable="false"><path d="M4 4l8 8M12 4l-8 8" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" /></svg></button>
-</dialog>
+<!-- use:media-1 -->
 
 </div></div>
 </section>
@@ -488,15 +500,7 @@
 </li>
 </ul></section>
       </div>
-      <div class="cap-media-empty" hidden>
-  <div class="cap-empty" data-kind="no-match" data-flush data-cap-empty="search" hidden>
-    <div class="cap-empty-header"><p class="cap-empty-title">No files match your search</p><p class="cap-empty-text">Searched names, alt text, captions and tags.</p></div>
-    <div class="cap-empty-content"><button type="button" class="cap-btn" data-cap-part="clear-search">Clear the search</button></div>
-  </div>
-  <div class="cap-empty" data-kind="no-match" data-flush data-cap-empty="filter" hidden>
-    <div class="cap-empty-header"><p class="cap-empty-title">Nothing in this view</p><p class="cap-empty-text">Every file passes these checks.</p></div>
-    <div class="cap-empty-content"><button type="button" class="cap-btn" data-cap-part="clear-filters">Show everything</button></div>
-  </div>
+<!-- use:media-3 -->
   <div class="cap-empty" data-kind="nothing-yet" data-cap-empty="library" hidden>
     <div class="cap-empty-header"><p class="cap-empty-title">Nothing here yet</p><p class="cap-empty-text">Files you upload get an address you can paste into any post.</p></div>
     <div class="cap-empty-content"><div class="cap-drop" data-cap="drop-zone" data-max-bytes="5242880" data-max-files="10" id="library-empty-drop">
@@ -506,16 +510,7 @@
     <span class="cap-drop-title" id="library-empty-drop-title"><span class="cap-drop-idle">Drop files here, or <span class="cap-drop-browse">browse</span></span><span class="cap-drop-over">Drop to upload</span></span>
     <span class="cap-drop-hint" id="library-empty-drop-hint">Images and PDF, up to 5 MB each, up to 10 at a time.</span>
   </label>
-  <div class="cap-drop-status" role="status" data-cap-part="status"></div>
-  <div class="cap-drop-rejections" role="alert" data-cap-part="rejections"></div>
-</div></div>
-  </div>
-  <div class="cap-empty" data-kind="all-clear" data-cap-empty="bin" hidden>
-    <div class="cap-empty-header"><p class="cap-empty-title">Trash is empty</p><p class="cap-empty-text">A file you move to Trash keeps its address, and waits here until you restore it.</p></div>
-  </div>
-</div>
-      <div class="cap-message" data-cap="message" role="status" aria-label="Results and failures" aria-atomic="false"></div>
-    </div>
+<!-- use:media-2 -->
     <dialog class="cap-dialog cap-media-inspector" data-cap="media-inspector" data-placement="right" data-size="md" id="library-ins" aria-labelledby="library-ins-title" open>
   <div class="cap-dialog-header" data-divider>
     <h2 class="cap-dialog-title cap-media-title" id="library-ins-title" data-cap-part="title">launch-hero.jpg</h2>
@@ -558,22 +553,7 @@
     <dl class="cap-media-facts" data-cap-part="facts"><dt>Key</dt><dd>media/launch-hero.jpg</dd><dt>Type</dt><dd>image/jpeg</dd><dt>Size</dt><dd>412 kB</dd><dt>Dimensions</dt><dd>1600 by 900</dd><dt>Uploaded</dt><dd>2026-09-30</dd></dl>
     <section class="cap-media-section" aria-labelledby="library-ins-used-l">
       <h3 id="library-ins-used-l">Used in</h3>
-      <div data-cap-part="used"><ul class="cap-media-used"><li><a href="/admin/posts/spring-release/edit">Notes on the spring release</a><span class="cap-media-used-how">image in the body</span></li><li><a href="/admin/posts/quieter-status-page/edit">A quieter status page</a><span class="cap-media-used-how">cover</span></li></ul></div>
-    </section>
-    <button type="submit" class="cap-btn" data-variant="primary" data-cap-part="save-fallback">Save</button>
-  </form>
-  <div class="cap-dialog-footer">
-    <div class="cap-media-save" data-cap-part="save" data-state="idle"><p role="status" data-cap-part="save-status">Changes save by themselves.</p><p role="alert" data-cap-part="save-error"></p><button type="button" class="cap-btn" data-size="sm" data-cap-part="retry-save" hidden>Retry</button></div>
-    <button type="button" class="cap-btn" data-cap-part="bin">Move to Trash</button>
-    <button type="button" class="cap-btn" data-cap-part="restore" hidden>Restore</button>
-  </div>
-  <button type="button" class="cap-btn cap-dialog-close" data-variant="quiet" data-icon-only data-cap-part="close" aria-label="Close"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" focusable="false"><path d="M4 4l8 8M12 4l-8 8" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" /></svg></button>
-</dialog>
-  </div>
-</div>
-
-  </main>
-</template>
+<!-- use:media-inspector -->
 
 <template data-specimen="sheet" data-title="Narrow: the inspector is a side sheet" data-height="760" data-width="420">
   <main>
@@ -674,15 +654,7 @@
 </li>
 </ul></section>
       </div>
-      <div class="cap-media-empty" hidden>
-  <div class="cap-empty" data-kind="no-match" data-flush data-cap-empty="search" hidden>
-    <div class="cap-empty-header"><p class="cap-empty-title">No files match your search</p><p class="cap-empty-text">Searched names, alt text, captions and tags.</p></div>
-    <div class="cap-empty-content"><button type="button" class="cap-btn" data-cap-part="clear-search">Clear the search</button></div>
-  </div>
-  <div class="cap-empty" data-kind="no-match" data-flush data-cap-empty="filter" hidden>
-    <div class="cap-empty-header"><p class="cap-empty-title">Nothing in this view</p><p class="cap-empty-text">Every file passes these checks.</p></div>
-    <div class="cap-empty-content"><button type="button" class="cap-btn" data-cap-part="clear-filters">Show everything</button></div>
-  </div>
+<!-- use:media-3 -->
   <div class="cap-empty" data-kind="nothing-yet" data-cap-empty="library" hidden>
     <div class="cap-empty-header"><p class="cap-empty-title">Nothing here yet</p><p class="cap-empty-text">Files you upload get an address you can paste into any post.</p></div>
     <div class="cap-empty-content"><div class="cap-drop" data-cap="drop-zone" data-max-bytes="5242880" data-max-files="10" id="narrow-empty-drop">
@@ -692,16 +664,7 @@
     <span class="cap-drop-title" id="narrow-empty-drop-title"><span class="cap-drop-idle">Drop files here, or <span class="cap-drop-browse">browse</span></span><span class="cap-drop-over">Drop to upload</span></span>
     <span class="cap-drop-hint" id="narrow-empty-drop-hint">Images and PDF, up to 5 MB each, up to 10 at a time.</span>
   </label>
-  <div class="cap-drop-status" role="status" data-cap-part="status"></div>
-  <div class="cap-drop-rejections" role="alert" data-cap-part="rejections"></div>
-</div></div>
-  </div>
-  <div class="cap-empty" data-kind="all-clear" data-cap-empty="bin" hidden>
-    <div class="cap-empty-header"><p class="cap-empty-title">Trash is empty</p><p class="cap-empty-text">A file you move to Trash keeps its address, and waits here until you restore it.</p></div>
-  </div>
-</div>
-      <div class="cap-message" data-cap="message" role="status" aria-label="Results and failures" aria-atomic="false"></div>
-    </div>
+<!-- use:media-2 -->
     <dialog class="cap-dialog cap-media-inspector" data-cap="media-inspector" data-placement="right" data-size="md" id="narrow-ins" aria-labelledby="narrow-ins-title" open>
   <div class="cap-dialog-header" data-divider>
     <h2 class="cap-dialog-title cap-media-title" id="narrow-ins-title" data-cap-part="title">launch-hero.jpg</h2>
@@ -744,22 +707,7 @@
     <dl class="cap-media-facts" data-cap-part="facts"><dt>Key</dt><dd>media/launch-hero.jpg</dd><dt>Type</dt><dd>image/jpeg</dd><dt>Size</dt><dd>412 kB</dd><dt>Dimensions</dt><dd>1600 by 900</dd><dt>Uploaded</dt><dd>2026-09-30</dd></dl>
     <section class="cap-media-section" aria-labelledby="narrow-ins-used-l">
       <h3 id="narrow-ins-used-l">Used in</h3>
-      <div data-cap-part="used"><ul class="cap-media-used"><li><a href="/admin/posts/spring-release/edit">Notes on the spring release</a><span class="cap-media-used-how">image in the body</span></li><li><a href="/admin/posts/quieter-status-page/edit">A quieter status page</a><span class="cap-media-used-how">cover</span></li></ul></div>
-    </section>
-    <button type="submit" class="cap-btn" data-variant="primary" data-cap-part="save-fallback">Save</button>
-  </form>
-  <div class="cap-dialog-footer">
-    <div class="cap-media-save" data-cap-part="save" data-state="idle"><p role="status" data-cap-part="save-status">Changes save by themselves.</p><p role="alert" data-cap-part="save-error"></p><button type="button" class="cap-btn" data-size="sm" data-cap-part="retry-save" hidden>Retry</button></div>
-    <button type="button" class="cap-btn" data-cap-part="bin">Move to Trash</button>
-    <button type="button" class="cap-btn" data-cap-part="restore" hidden>Restore</button>
-  </div>
-  <button type="button" class="cap-btn cap-dialog-close" data-variant="quiet" data-icon-only data-cap-part="close" aria-label="Close"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" focusable="false"><path d="M4 4l8 8M12 4l-8 8" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" /></svg></button>
-</dialog>
-  </div>
-</div>
-
-  </main>
-</template>
+<!-- use:media-inspector -->
 
 <template data-specimen="empty" data-title="An empty library with the drop zone" data-height="520" data-width="900">
   <main>
@@ -843,16 +791,7 @@
     <span class="cap-drop-title" id="blank-empty-drop-title"><span class="cap-drop-idle">Drop files here, or <span class="cap-drop-browse">browse</span></span><span class="cap-drop-over">Drop to upload</span></span>
     <span class="cap-drop-hint" id="blank-empty-drop-hint">Images and PDF, up to 5 MB each, up to 10 at a time.</span>
   </label>
-  <div class="cap-drop-status" role="status" data-cap-part="status"></div>
-  <div class="cap-drop-rejections" role="alert" data-cap-part="rejections"></div>
-</div></div>
-  </div>
-  <div class="cap-empty" data-kind="all-clear" data-cap-empty="bin" hidden>
-    <div class="cap-empty-header"><p class="cap-empty-title">Trash is empty</p><p class="cap-empty-text">A file you move to Trash keeps its address, and waits here until you restore it.</p></div>
-  </div>
-</div>
-      <div class="cap-message" data-cap="message" role="status" aria-label="Results and failures" aria-atomic="false"></div>
-    </div>
+<!-- use:media-2 -->
   </div>
 </div>
 

@@ -1,3 +1,16 @@
+<!-- def:confirm-dialog-1 -->      <div class="cap-dialog-footer" data-align="between">
+        <a class="cap-btn" href="/admin/sites/example">Cancel</a>
+        <button type="submit" class="cap-btn" data-variant="danger">Delete site</button>
+      </div>
+    </form>
+  </main>
+</template><!-- /def -->
+<!-- def:confirm-dialog-2 -->    <div class="cap-dialog-footer" data-align="between">
+      <button type="button" class="cap-btn" data-cap-part="cancel">Cancel</button>
+      <button type="button" class="cap-btn" data-variant="danger" data-cap-part="perform">Revoke agent</button>
+    </div>
+  </dialog>
+</template><!-- /def -->
 <template data-specimen="live" data-title="Working: open it from a button" data-height="420">
   <main class="specimen-page" id="main" tabindex="-1">
     <h1>Agents</h1>
@@ -41,12 +54,7 @@
       </ul>
     </div>
     <div class="cap-confirm-error" role="alert" id="open-error" data-cap-part="error"></div>
-    <div class="cap-dialog-footer" data-align="between">
-      <button type="button" class="cap-btn" data-cap-part="cancel">Cancel</button>
-      <button type="button" class="cap-btn" data-variant="danger" data-cap-part="perform">Revoke agent</button>
-    </div>
-  </dialog>
-</template>
+<!-- use:confirm-dialog-2 -->
 
 <template data-specimen="page" data-title="The confirm page: a form in the page, no script needed" data-height="640">
   <main class="specimen-page" id="main" tabindex="-1">
@@ -75,13 +83,7 @@
         </div>
       </div>
       <div class="cap-confirm-error" role="alert"></div>
-      <div class="cap-dialog-footer" data-align="between">
-        <a class="cap-btn" href="/admin/sites/example">Cancel</a>
-        <button type="submit" class="cap-btn" data-variant="danger">Delete site</button>
-      </div>
-    </form>
-  </main>
-</template>
+<!-- use:confirm-dialog-1 -->
 
 <template data-specimen="page-error" data-title="The confirm page, after the server refused: the typed word did not match" data-height="680">
   <main class="specimen-page" id="main" tabindex="-1">
@@ -110,13 +112,7 @@
         </div>
       </div>
       <div class="cap-confirm-error" role="alert"><b class="cap-confirm-error-lead">Not done. Nothing was changed.</b> The word did not match. Type delete exactly, then try again.</div>
-      <div class="cap-dialog-footer" data-align="between">
-        <a class="cap-btn" href="/admin/sites/example">Cancel</a>
-        <button type="submit" class="cap-btn" data-variant="danger">Delete site</button>
-      </div>
-    </form>
-  </main>
-</template>
+<!-- use:confirm-dialog-1 -->
 
 <template data-specimen="comfortable" data-title="Comfortable density" data-height="520">
   <main class="specimen-page" tabindex="-1">
@@ -137,12 +133,7 @@
       </ul>
     </div>
     <div class="cap-confirm-error" role="alert" id="comf-error" data-cap-part="error"></div>
-    <div class="cap-dialog-footer" data-align="between">
-      <button type="button" class="cap-btn" data-cap-part="cancel">Cancel</button>
-      <button type="button" class="cap-btn" data-variant="danger" data-cap-part="perform">Revoke agent</button>
-    </div>
-  </dialog>
-</template>
+<!-- use:confirm-dialog-2 -->
 
 <template data-specimen="busy" data-title="Busy: the action is running, Esc is held" data-height="460">
   <main class="specimen-page" tabindex="-1">
