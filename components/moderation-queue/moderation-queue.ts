@@ -11,7 +11,7 @@ import { plural } from "@drdustinedwards/site-helpers/text";
 import { confirm } from "../confirm-dialog/confirm-dialog.ts";
 import { toggleGroup } from "../disclosure/disclosure.ts";
 import { ensureRegion, say } from "../message/message.ts";
-import { isTypingKey, queueKey, singleKeysOff } from "../row-list/row-list.ts";
+import { queueKey, singleKeysOff } from "../row-list/row-list.ts";
 import { enhance as enhanceShortcuts, register } from "../shortcuts/shortcuts.ts";
 import { enhance as enhanceTime, nowFor } from "../time/time.ts";
 import {
@@ -78,8 +78,6 @@ export type {
   UndoEntry,
   UndoStack,
 } from "./moderation-queue-model.ts";
-
-export { isTypingKey };
 
 // The behavior.
 

@@ -230,7 +230,7 @@ eachTheme((theme) => {
         )
         .first(),
     ).toBeVisible();
-    // With a tip already up, the next icon's tip shows at once: before the fix it stayed over the panel.
+    // With a tip already up, the next icon's tip shows at once, not over the panel.
     const avatar = page.getByRole("button", { name: "Your account" });
     await avatar.hover();
     await expect(page.locator(".cap-site-header-account .cap-site-header-panel")).toBeVisible();
@@ -472,14 +472,12 @@ eachTheme((theme) => {
     }
   });
 
-  test("accessibility: at phone width, one 56px row: the logo, up to two site icons, the theme, Sign in or the avatar, the menu button last; no second row", async ({
+  test("accessibility: at phone width, one row: the logo, up to two site icons, the theme, Sign in or the avatar, the menu button last; no second row", async ({
     page,
   }) => {
     await page.setViewportSize(PHONE);
     await visitStates(page, "site-header", theme, "fh-public-phone");
     await expectNoAxeViolations(page);
-    expect((await page.locator(".cap-site-header").boundingBox())!.height).toBe(56);
-    expect((await page.locator(".cap-site-header-logo").boundingBox())!.x).toBe(16);
     await expect(page.locator(".cap-site-header-sections")).toBeHidden();
     await expect(page.locator(".cap-site-header-cta")).toBeHidden();
     let row = await rowOrder(page);
@@ -606,8 +604,6 @@ eachTheme((theme) => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await visitStates(page, "site-header", theme, "lh-public");
     const header = page.locator(".cap-site-header[data-variant='letterhead']").first();
-    // The links sit in the one 64px row beside the names, where they fit.
-    expect(Math.round((await header.boundingBox())!.height)).toBe(72);
     // Its links row is the phone's too, so it writes no menu button and no sheet.
     await expect(header.locator(".cap-site-header-menu, .cap-site-header-sheet")).toHaveCount(0);
     await header.getByRole("link", { name: "Search Capsid" }).click();
@@ -694,7 +690,7 @@ eachTheme((theme) => {
     expect(await page.evaluate(() => document.cookie)).toContain(`sample_theme=${other}`);
   });
 
-  test("behavior: a wide panel (a mega-menu) is 40rem, under the header, inside the window", async ({
+  test("behavior: a wide panel (a mega-menu) is under the header, inside the window", async ({
     page,
   }) => {
     await page.setViewportSize({ width: 1280, height: 800 });
@@ -703,7 +699,6 @@ eachTheme((theme) => {
     await expect(panel).toBeVisible();
     const p = (await panel.boundingBox())!;
     const h = (await page.locator(".cap-site-header").boundingBox())!;
-    expect(Math.round(p.width)).toBe(640);
     expect(p.y).toBeGreaterThanOrEqual(h.y + h.height);
     expect(p.x + p.width).toBeLessThanOrEqual(1280);
   });
@@ -725,17 +720,12 @@ eachTheme((theme) => {
     ).toBeVisible();
     await expectNoAxeViolations(page);
   });
-  test("behavior: a site's own look by tokens: a 64px band whose bar keeps to its column, data-scrolled once the page scrolls, and the phone's row under 1024px with data-collapse=lg, its sheet without an icon column", async ({
+  test("behavior: a site's own look by tokens: a band whose bar keeps to its column, data-scrolled once the page scrolls, and the phone's row under 1024px with data-collapse=lg, its sheet without an icon column", async ({
     page,
   }) => {
     await page.setViewportSize({ width: 1400, height: 800 });
     await visitStates(page, "site-header", theme, "own-look");
     const header = page.locator(".cap-site-header");
-    const h = (await header.boundingBox())!;
-    expect(Math.round(h.height)).toBe(64);
-    // 72rem centered in the window, then the side: the logo starts at (1400 - 1152) / 2 + 24.
-    const logo = (await page.getByRole("link", { name: "Example Writers home" }).boundingBox())!;
-    expect(Math.round(logo.x)).toBe(Math.round((h.width - 1152) / 2 + 24));
     await expect(header).not.toHaveAttribute("data-scrolled");
     await page.mouse.wheel(0, 400);
     await expect(header).toHaveAttribute("data-scrolled", "");

@@ -13,7 +13,7 @@
 import { isImeEnter } from "../shortcuts/shortcuts.ts";
 import { singleKeysOff } from "../row-list/row-list.ts";
 import { type CompareView, STORAGE_KEY, VIEWS } from "./draft-compare-render.ts";
-import { readStored, writeStored } from "../hooks/hooks.ts";
+import { enhanceEach, readStored, writeStored } from "../hooks/hooks.ts";
 
 export {
   tokenize,
@@ -72,8 +72,6 @@ export type {
 } from "./draft-compare-patch.ts";
 
 // The behavior
-
-const READY = "data-cap-ready";
 
 function readView(): CompareView | null {
   const v = readStored(STORAGE_KEY);
@@ -227,22 +225,5 @@ export function toggleAll(root: Element): void {
 // The root is Element | Document | DocumentFragment, not ParentNode: under @cloudflare/workers-types
 // an HTMLFormElement does not type as a ParentNode, so a site could not pass its form.
 export function enhance(root: Element | Document | DocumentFragment = document): () => void {
-  const found = [
-    ...root.querySelectorAll<HTMLElement>("[data-cap='draft-compare']:not([data-cap-ready])"),
-  ];
-  if (
-    root instanceof HTMLElement &&
-    root.matches("[data-cap='draft-compare']:not([data-cap-ready])")
-  )
-    found.unshift(root);
-  const undo: Array<() => void> = [];
-  for (const el of found) {
-    el.setAttribute(READY, "");
-    const off = attach(el);
-    undo.push(() => {
-      off();
-      el.removeAttribute(READY);
-    });
-  }
-  return () => undo.forEach((f) => f());
+  return enhanceEach(root, "draft-compare", attach);
 }

@@ -148,7 +148,7 @@ export const FAMILY_APPS: readonly FamilyApp[] = [
     names: ["Foxhound", "Admin"],
     standalone: true,
   },
-  // Foxing joins the family's admin apps in 0.9.0, seventh, before Capsomer; its mark is a
+  // Foxing's mark is a
   // placeholder until Dustin picks one.
   { id: "foxing", label: "Foxing", href: "https://foxing.app/admin", logo: FOXING },
   {

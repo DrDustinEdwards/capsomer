@@ -7,7 +7,7 @@
 import { escapeHtml as esc } from "@dustinedwards/site-runtime/html";
 import { wordCount } from "@drdustinedwards/site-helpers/text";
 import { syncWord } from "../switch/switch.ts";
-import { readStored, writeStored } from "../hooks/hooks.ts";
+import { enhanceEach, readStored, writeStored } from "../hooks/hooks.ts";
 
 export type Kind = "you" | "ai" | "quoted";
 export const KINDS: readonly Kind[] = ["you", "ai", "quoted"];
@@ -94,7 +94,6 @@ export function summaryHtml(summary: Summary, label = "Authorship"): string {
 // The behavior
 
 export const STORAGE_KEY = "cap-authorship";
-const READY = "data-cap-ready";
 
 function stored(): boolean | null {
   const v = readStored(STORAGE_KEY);
@@ -194,19 +193,5 @@ function attach(root: HTMLElement): () => void {
 // applies the remembered choice, wires the switch, and counts the summary. Returns a function
 // that detaches them all.
 export function enhance(root: ParentNode = document): () => void {
-  const found = [
-    ...root.querySelectorAll<HTMLElement>("[data-cap='authorship']:not([data-cap-ready])"),
-  ];
-  if (root instanceof HTMLElement && root.matches("[data-cap='authorship']:not([data-cap-ready])"))
-    found.unshift(root);
-  const undo: Array<() => void> = [];
-  for (const el of found) {
-    el.setAttribute(READY, "");
-    const off = attach(el);
-    undo.push(() => {
-      off();
-      el.removeAttribute(READY);
-    });
-  }
-  return () => undo.forEach((f) => f());
+  return enhanceEach(root, "authorship", attach);
 }

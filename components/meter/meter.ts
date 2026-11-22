@@ -2,6 +2,7 @@
 // bar, set through the CSSOM so apps keep style-src 'self'. The number itself is in the
 // markup's text and aria-valuetext; this only draws the bar. The usage meter, the stat tile
 // and any app's bar use these same functions.
+import { enhanceEach } from "../hooks/hooks.ts";
 
 export type MeterTone = "ok" | "warn" | "crit";
 
@@ -84,22 +85,12 @@ const WATCHED = [
 // Attaches to every [data-cap="meter"] under root (or root itself) not yet attached, draws
 // its bar, and redraws it whenever a value changes. Returns a function that detaches.
 export function enhance(root: ParentNode = document): () => void {
-  const undo: Array<() => void> = [];
-  const found = [...root.querySelectorAll<HTMLElement>("[data-cap='meter']:not([data-cap-ready])")];
-  if (root instanceof HTMLElement && root.matches("[data-cap='meter']:not([data-cap-ready])"))
-    found.unshift(root);
-  for (const meter of found) {
-    meter.dataset.capReady = "";
+  return enhanceEach(root, "meter", (meter) => {
     const bar = meter.querySelector<HTMLElement>(".cap-meter-bar");
-    if (bar) {
-      update(bar);
-      const watch = new MutationObserver(() => update(bar));
-      watch.observe(bar, { attributes: true, attributeFilter: WATCHED });
-      undo.push(() => watch.disconnect());
-    }
-    undo.push(() => {
-      delete meter.dataset.capReady;
-    });
-  }
-  return () => undo.forEach((f) => f());
+    if (!bar) return;
+    update(bar);
+    const watch = new MutationObserver(() => update(bar));
+    watch.observe(bar, { attributes: true, attributeFilter: WATCHED });
+    return () => watch.disconnect();
+  });
 }

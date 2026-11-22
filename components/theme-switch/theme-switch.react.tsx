@@ -300,7 +300,7 @@ function FormButton({
 }
 
 // The theme button for a site that keeps the choice in a cookie and works with no script
-// (data-variant="form", 0.22.0): two real submit buttons, one shown by CSS, each saying what it
+// (data-variant="form"): two real submit buttons, one shown by CSS, each saying what it
 // does. Pure markup, so a server render and the browser agree; capsomer/behavior/theme-switch's
 // enhance() makes a press switch at once and write the cookie.
 export function ThemeForm({

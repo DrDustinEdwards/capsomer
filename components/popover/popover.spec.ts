@@ -139,8 +139,8 @@ eachTheme((theme) => {
   });
 
   test("keyboard: a tooltip removed while open does not swallow the next Esc", async ({ page }) => {
-    // Removal hides a popover without a toggle event, so the module used to keep the tip as open
-    // and eat the Esc a dialog around it needed.
+    // Removal hides a popover without a toggle event; the tip must not stay "open" and eat the Esc a
+    // dialog around it needs.
     await visitStates(page, "popover", theme);
     const retry = page.getByRole("button", { name: "Retry job" });
     await retry.focus();

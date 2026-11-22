@@ -7,7 +7,7 @@
 // No framework; the React wrapper uses the same helpers.
 import { toggleGroup } from "../disclosure/disclosure.ts";
 import { GLYPHS, ensureRegion, say } from "../message/message.ts";
-import { isTypingKey, listOwnsKeys, moveRowFocus, singleKeysOff } from "../row-list/row-list.ts";
+import { attachRowList } from "../row-list/row-list.ts";
 import { enhance as enhanceTime, nowFor, parse } from "../time/time.ts";
 import {
   type HistoryEntry,
@@ -68,31 +68,12 @@ export {
 } from "./history-list-rows.ts";
 export type { BuildOptions } from "./history-list-rows.ts";
 
-export { isTypingKey };
-
 // The behavior.
 
 const READY = "data-cap-ready";
 
 const rowsOf = (root: HTMLElement) => root.querySelector<HTMLElement>(":scope > .cap-hist-list");
 
-// j and k between the lines' titles, row-list's movement (moveRowFocus) with its isTypingKey check.
-// Attached once per list.
-export function attachListKeys(list: HTMLElement): () => void {
-  if (list.dataset.capKeys !== undefined) return () => {};
-  list.dataset.capKeys = "";
-  const onKey = (e: KeyboardEvent) => {
-    if (e.defaultPrevented || (e.key !== "j" && e.key !== "k")) return;
-    if (isTypingKey(e) || singleKeysOff() || !listOwnsKeys(list)) return;
-    if (moveRowFocus(list, e.key === "j" ? 1 : -1) || list.contains(document.activeElement))
-      e.preventDefault();
-  };
-  document.addEventListener("keydown", onKey);
-  return () => {
-    document.removeEventListener("keydown", onKey);
-    delete list.dataset.capKeys;
-  };
-}
 const lineRows = (root: HTMLElement) =>
   Array.from(root.querySelectorAll<HTMLLIElement>(".cap-hist-row[data-id]"));
 const rowById = (root: HTMLElement, id: string) =>
@@ -308,7 +289,7 @@ export function enhance(root: ParentNode = document): () => void {
     if (el.hasAttribute(READY)) continue;
     el.setAttribute(READY, "");
     const list = rowsOf(el);
-    if (list) undo.push(attachListKeys(list));
+    if (list) undo.push(attachRowList(list));
     // Before the script, Compare is a submit button of the picks' GET form; now the link,
     // which says what is missing and orders the pair, takes its place.
     for (const b of el.querySelectorAll<HTMLElement>("[data-cap-part='compare-submit']"))

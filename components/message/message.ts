@@ -448,7 +448,7 @@ export function enhance(root: ParentNode = document): () => void {
     if (!el.hasAttribute("aria-label")) el.setAttribute("aria-label", "Results and failures");
     // A new message is read by itself; the ones before it are not read again.
     if (!el.hasAttribute("aria-atomic")) el.setAttribute("aria-atomic", "false");
-    // 0.1.0's region held one text and its two buttons directly: items replace them.
+    // A region holding a text and buttons directly is rebuilt as items.
     for (const old of el.querySelectorAll(":scope > [data-cap-part]:not([data-cap-part='item'])"))
       old.remove();
     const r = region(el);

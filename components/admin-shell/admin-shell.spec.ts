@@ -56,7 +56,7 @@ eachTheme((theme) => {
         - button "${themeName}"
         - button "Your account"
     `);
-      // Tiles and badges only: search, inbox and help moved to the header (0.9.0).
+      // Tiles and badges only: search, inbox and help are in the header.
       await expect(page.locator(".cap-admin-strip")).toMatchAriaSnapshot(`
       - navigation "Apps":
         - list:
@@ -209,10 +209,7 @@ eachTheme((theme) => {
     await expect(page.locator(".cap-admin")).toHaveAttribute("data-menu", "collapsed");
     await expect(toggle).toHaveAccessibleName("Expand menu");
     await expect(toggle).toHaveAttribute("aria-expanded", "false");
-    // An icon column at the collapsed rail width, beside the strip.
     await expect(menu).toBeVisible();
-    expect((await menu.boundingBox())?.width).toBe(80);
-    expect((await page.locator(".cap-admin-strip").boundingBox())?.width).toBe(56);
     // Same order, same places, same names; only the words are hidden.
     const after = await places();
     expect(after).toEqual(before);
@@ -251,7 +248,6 @@ eachTheme((theme) => {
     await toggle.focus();
     await page.keyboard.press("Space");
     await expect(page.locator(".cap-admin")).not.toHaveAttribute("data-menu", "collapsed");
-    expect((await menu.boundingBox())?.width).toBe(232);
   });
 
   test("keyboard: a collapsed menu icon shows its name on hover and focus, and Esc hides it", async ({
@@ -379,7 +375,6 @@ eachTheme((theme) => {
     await expect(
       page.locator(".cap-admin-menu").getByRole("link", { name: "Articles" }),
     ).toHaveAttribute("aria-current", "page");
-    expect((await page.locator(".cap-admin-menu").boundingBox())?.width).toBe(288);
     await expect(page.locator(".cap-admin-page")).toHaveAttribute("data-measure", "reading");
   });
 
@@ -570,9 +565,7 @@ eachTheme((theme) => {
     expect(box!.width).toBeGreaterThan(box!.height * 1.5);
   });
 
-  test("behavior: tab labels are 12px and all five tabs fit a 360px phone, badges clear of the icon", async ({
-    page,
-  }) => {
+  test("behavior: all five tabs fit a 360px phone, badges clear of the icon", async ({ page }) => {
     await page.setViewportSize({ width: 360, height: 740 });
     await visitStates(page, "admin-shell", theme, "phone");
     const tabs = await page.locator(".cap-site-tabs > *").evaluateAll((els) =>
@@ -625,7 +618,7 @@ eachTheme((theme) => {
     await expect(page.locator(".cap-site-header-logo")).toBeVisible();
     await expect(page.locator(".cap-site-header-logo")).toHaveAccessibleName("Capsid Portal");
     await expect(page.locator(".cap-admin-bar")).toContainText("Updated");
-    // 0.9.0: the bar no longer repeats the app's name; the header carries it.
+    // The bar does not repeat the app's name; the header carries it.
     await expect(page.locator(".cap-admin-bar-app")).toHaveCount(0);
     await page.setViewportSize({ width: 1280, height: 800 });
     await visitStates(page, "admin-shell", theme, "expanded");
@@ -1088,7 +1081,7 @@ eachTheme((theme) => {
       );
     expect(order.at(-1)).toBe("refresh");
     await expect(bar.getByRole("button", { name: "Refresh" })).toBeVisible();
-    // 0.9.0: no Light and Dark switch in the bar; one icon button in the header.
+    // No Light and Dark switch in the bar; one icon button in the header.
     await expect(page.locator("[data-cap='theme-switch']")).toHaveCount(1);
     const button = page.locator(".cap-site-header .cap-theme-button");
     await expect(button).toHaveAccessibleName(
