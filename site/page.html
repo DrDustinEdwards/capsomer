@@ -4,6 +4,10 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <!-- The title, description, canonical, social tags and JSON-LD: site/seo.ts, at build. -->
+    <!-- The first paint waits for the footer, the page's last element, so a phone never paints the section list
+         under a half-parsed page and then loses it below the fold as the rest arrives (CLS). Browsers that do not
+         know rel="expect" paint as they always did. -->
+    <link rel="expect" href="#page-end" blocking="render" />
     <link rel="stylesheet" href="/site/site.css" />
     <!--frames-->
     <script src="/theme.js"></script>

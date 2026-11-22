@@ -1,4 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
+import { SHOW_DELAY_MS } from "./popover.ts";
 import {
   eachTheme,
   expectContrast,
@@ -193,13 +194,17 @@ eachTheme((theme) => {
   test("behavior: a tooltip waits on hover, then the next one opens at once (delay group)", async ({
     page,
   }) => {
+    // The delay is the page's own timer, so the test drives the page's clock: a sleep of 80 ms of wall time
+    // took over 300 ms on a loaded runner and the tip had already opened.
+    await page.clock.install();
     await visitStates(page, "popover", theme);
     await page.getByRole("button", { name: "Retry job" }).hover();
-    await page.waitForTimeout(80);
+    await page.clock.runFor(SHOW_DELAY_MS - 100);
     await expect(page.locator("#tip-retry")).toBeHidden();
+    await page.clock.runFor(100);
     await expect(page.locator("#tip-retry")).toBeVisible();
     await page.getByRole("button", { name: "Cancel job" }).hover();
-    await expect(page.locator("#tip-cancel")).toBeVisible({ timeout: 120 });
+    await expect(page.locator("#tip-cancel")).toBeVisible();
     await expect(page.locator("#tip-retry")).toBeHidden();
   });
 
