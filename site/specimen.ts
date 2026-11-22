@@ -28,8 +28,13 @@ const only = params.get("only");
 if (example) {
   const section = document.getElementById(example)?.closest<HTMLElement>(".cap-specimen");
   document.body.classList.add("cap-specimen-example");
-  // The page around this frame has a main of its own, so this one is named: landmarks of one role share no name.
-  document.querySelector("main")?.setAttribute("aria-label", document.title);
+  // The page around this frame has a main of its own, and so does each sibling frame: this one is named for its example.
+  document
+    .querySelector("main")
+    ?.setAttribute(
+      "aria-label",
+      `${document.title} ${document.getElementById(example)?.textContent ?? ""}`.trim(),
+    );
   section?.classList.add("cap-specimen-shown");
   // The example is chosen; the charts in it draw as the page loads, so it shows after the load.
   addEventListener("load", () =>
