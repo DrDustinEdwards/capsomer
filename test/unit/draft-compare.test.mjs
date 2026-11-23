@@ -396,3 +396,10 @@ test("unifiedPatch: the shape jsdiff writes, hunks merged within two contexts, a
   assert.equal(hasChanges(unifiedPatch("a", { text: "same\n" }, { text: "same\n" })), false);
   assert.equal(hasChanges(merged), true);
 });
+
+test("renderPatch: a revision name and the id are escaped", () => {
+  const html = renderPatch("--- a/x@<img src=x onerror=1>\n+++ b/x@2\n@@ -1 +1 @@\n-a\n+b\n", {
+    id: 'p"><script>',
+  });
+  assert.ok(!html.includes("<img") && !html.includes("<script>"));
+});

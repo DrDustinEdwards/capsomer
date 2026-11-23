@@ -1,9 +1,16 @@
 // Small helpers every React app in the network wrote its own copy of. No framework here: the React
 // hooks are in hooks.react.tsx.
 
+import { isHttpUrl, isSameOriginPath } from "@dustinedwards/site-runtime/url";
+
 /** Joins class names, dropping the empty ones: `cn("cap-btn", busy && "is-busy")`. No merging. */
 export function cn(...parts: Array<string | false | null | undefined>): string {
   return parts.filter(Boolean).join(" ");
+}
+
+/** An address safe as an href: http(s) or a path on this site. A stored `javascript:` or `data:` address is not. */
+export function linkable(href: unknown): href is string {
+  return typeof href === "string" && (isHttpUrl(href) || isSameOriginPath(href));
 }
 
 /** `n` held to `lo` to `hi`; where `hi` is under `lo`, `lo`. */

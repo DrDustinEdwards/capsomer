@@ -2,17 +2,10 @@
 // Plain functions of the inspector element; the controller in media.ts owns when they run.
 
 import { copySnippets, parseTags, type MediaFields, type MediaRecord } from "./media-record.ts";
-import type { SaveState } from "./media-autosave.ts";
+import { SAVE_TEXT, type SaveState } from "./media-autosave.ts";
 import { glyph, part } from "./media-tile.ts";
 import { formatBytes } from "../format/format.ts";
-
-const SAVE_TEXT: Record<SaveState, string> = {
-  idle: "Changes save by themselves.",
-  dirty: "Unsaved changes",
-  saving: "Saving…",
-  saved: "Saved",
-  failed: "Could not save",
-};
+import { linkable } from "../hooks/hooks.ts";
 
 export function readFields(inspector: ParentNode | null): MediaFields {
   const ins = <T extends HTMLElement = HTMLElement>(name: string) =>
@@ -171,9 +164,11 @@ export function fillInspector(
       for (const u of r.used) {
         const li = document.createElement("li");
         const a = document.createElement("a");
-        a.href = u.href;
-        a.textContent = u.title;
-        li.append(a);
+        if (linkable(u.href)) {
+          a.href = u.href;
+          a.textContent = u.title;
+          li.append(a);
+        } else li.append(u.title);
         if (u.how) {
           const how = document.createElement("span");
           how.className = "cap-media-used-how";

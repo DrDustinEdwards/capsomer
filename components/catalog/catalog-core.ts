@@ -723,10 +723,10 @@ export function catalogRecords<T>(
   });
 }
 
-// A Markdown table cell: pipes escaped, whitespace (newlines included) collapsed to one space.
-const markdownCell = (value: unknown): string =>
+// A Markdown table cell: pipes escaped (link text: brackets and backslashes too), whitespace collapsed.
+const markdownCell = (value: unknown, link = false): string =>
   String(value ?? "")
-    .replaceAll("|", "\\|")
+    .replace(link ? /[|[\]\\]/g : /\|/g, "\\$&")
     .replace(/\s+/g, " ")
     .trim();
 
@@ -760,10 +760,10 @@ export function catalogMarkdown<T>(
   const head = columns.map((f) => markdownCell(f.column?.header ?? f.label));
   const body = rows.map((item) =>
     columns.map((field, i) => {
-      const text = markdownCell(asList(field.value(item)).join(join));
-      return i === 0 && options.href
-        ? `[${text}](${options.origin ?? ""}${options.href(item)})`
-        : text;
+      const raw = asList(field.value(item)).join(join);
+      if (i !== 0 || !options.href) return markdownCell(raw);
+      const to = options.href(item).replace(/[() <>]/g, (c) => `%${c.charCodeAt(0).toString(16)}`);
+      return `[${markdownCell(raw, true)}](${options.origin ?? ""}${to})`;
     }),
   );
   return [

@@ -1,4 +1,5 @@
 import { useId, type ReactNode } from "react";
+import { linkable } from "../hooks/hooks.ts";
 
 /** One work that cites this one, as a scholarly index reports it. Every field but the title may be missing. */
 export interface CitingWork {
@@ -15,7 +16,9 @@ export function citedByHeading(total: number, shown: number): string {
   return total > shown ? `Cited by ${shown} of ${total}` : `Cited by ${total}`;
 }
 
-const workHref = (w: CitingWork) => w.href ?? (w.doi ? `https://doi.org/${w.doi}` : null);
+const workHref = (w: CitingWork) =>
+  (linkable(w.href) && !w.href.startsWith("/") ? w.href : null) ??
+  (w.doi ? `https://doi.org/${encodeURI(w.doi).replace(/[?#]/g, encodeURIComponent)}` : null);
 
 export interface CitedByCountProps {
   // The count the index reports. Below 1 nothing is drawn: a cold cache must not look like a measured zero.
@@ -33,7 +36,7 @@ export function CitedByCount({ count, href, source, readAt }: CitedByCountProps)
   const words = `Cited by ${count}`;
   return (
     <p className="cap-cited-by-count">
-      {href ? <a href={href}>{words}</a> : words}{" "}
+      {linkable(href) ? <a href={href}>{words}</a> : words}{" "}
       <span className="cap-cited-by-source">
         {source}, read {readAt ?? "an unrecorded date"}
       </span>

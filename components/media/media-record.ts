@@ -1,4 +1,5 @@
 // The media library's records: the facts of one file and the plain functions that read them.
+import { escapeHtml } from "@dustinedwards/site-runtime/html";
 import { formatBytes } from "../format/format.ts";
 
 // The records, pure.
@@ -122,6 +123,9 @@ export function describeRecord(
   return `${kind}, ${formatBytes(r.bytes)}`;
 }
 
+// Markdown link or alt text: the brackets and backslash that would end it early.
+const mdText = (text: string): string => text.replace(/[\\[\]]/g, "\\$&");
+
 // The three things a person copies: the address, the Markdown, the HTML. An image goes in as an
 // image and a document as a link: an <img> for a PDF breaks the page.
 export function copySnippets(
@@ -129,13 +133,14 @@ export function copySnippets(
 ): Array<{ id: string; label: string; name: string; value: string }> {
   const alt = r.alt.trim();
   // Prelum refuses ![](x) as missing alt text; ![""](x) is how Markdown says decorative.
-  const mdAlt = !alt && r.decorative ? '""' : alt;
+  const mdAlt = !alt && r.decorative ? '""' : mdText(alt);
   // A document's link text: "uptime-report.pdf" gives "uptime report". Never an image's alt text: a
   // file's name says nothing of what the picture shows (the checklist's B2).
   const title = r.name
     .replace(/\.[a-z0-9]+$/i, "")
     .replace(/[-_]+/g, " ")
     .trim();
+  const url = escapeHtml(r.url);
   if (r.kind === "image") {
     return [
       { id: "address", label: "Copy address", name: "Copy address", value: r.url },
@@ -149,7 +154,7 @@ export function copySnippets(
         id: "html",
         label: "HTML tag",
         name: "Copy the HTML tag",
-        value: `<img src="${r.url}" alt="${alt}">`,
+        value: `<img src="${url}" alt="${escapeHtml(alt)}">`,
       },
     ];
   }
@@ -159,13 +164,13 @@ export function copySnippets(
       id: "markdown",
       label: "Markdown",
       name: "Copy the Markdown link",
-      value: `[${title}](${r.url})`,
+      value: `[${mdText(title)}](${r.url})`,
     },
     {
       id: "html",
       label: "HTML link",
       name: "Copy the HTML link",
-      value: `<a href="${r.url}">${title}</a>`,
+      value: `<a href="${url}">${escapeHtml(title)}</a>`,
     },
   ];
 }

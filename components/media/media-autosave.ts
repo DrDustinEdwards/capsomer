@@ -6,6 +6,14 @@
 
 export type SaveState = "idle" | "dirty" | "saving" | "saved" | "failed";
 
+export const SAVE_TEXT: Record<SaveState, string> = {
+  idle: "Changes save by themselves.",
+  dirty: "Unsaved changes",
+  saving: "Saving…",
+  saved: "Saved",
+  failed: "Could not save",
+};
+
 export interface AutosaveOptions {
   // Milliseconds of quiet before a save: 800.
   delay?: number;

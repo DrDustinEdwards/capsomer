@@ -1,6 +1,6 @@
 {
   "baseline": {
-    "measured_at": "dd8eed8",
+    "measured_at": "92645b5",
     "knip": {},
     "jscpd": {
       "clones": 39,
@@ -42,7 +42,7 @@
       "components/media-library/media-library.react.tsx": 1367,
       "components/media-library/media-library.ts": 593,
       "components/media/media.css": 831,
-      "components/media/media.react.tsx": 1038,
+      "components/media/media.react.tsx": 1032,
       "components/media/media.spec.ts": 1227,
       "components/media/media.ts": 1035,
       "components/mentions-list/mentions-list.react.tsx": 502,
@@ -76,13 +76,13 @@
       "tokens/sites.mjs": 553
     },
     "tests": {
-      "files": 254,
-      "cases": 1739
+      "files": 255,
+      "cases": 1742
     },
     "comments": {
-      "lines": 14569,
-      "code": 153353,
-      "percentage": 8.68
+      "lines": 14572,
+      "code": 153426,
+      "percentage": 8.67
     }
   }
 }

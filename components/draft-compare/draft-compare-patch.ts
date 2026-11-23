@@ -162,7 +162,7 @@ function patchLine(l: PatchLine): string {
 
 function patchFile(f: PatchFile, id: string, n: number): string {
   const path = patchPath(f);
-  const heading = `${id}-file-${n}`;
+  const heading = esc(`${id}-file-${n}`);
   const rev = revisionPair(f.oldPath, f.newPath);
   const kind =
     f.oldPath === "/dev/null"
@@ -182,7 +182,7 @@ function patchFile(f: PatchFile, id: string, n: number): string {
   const table = f.hunks.length
     ? `<div class="cap-patch-scroll" role="region" aria-labelledby="${heading}" tabindex="0"><table class="cap-patch-table"><caption class="cap-sr-only">${esc(path)}, ${counts}</caption>${body}</table></div>`
     : "";
-  return `<section class="cap-patch-file" aria-labelledby="${heading}"><h3 class="cap-patch-path" id="${heading}"><code>${esc(path)}</code>${kind ? ` <span class="cap-patch-kind">${kind}</span>` : ""}<span class="cap-patch-file-counts">${counts}</span></h3>${f.note ? `<p class="cap-patch-note">${esc(f.note)}</p>` : ""}${table}</section>`;
+  return `<section class="cap-patch-file" aria-labelledby="${heading}"><h3 class="cap-patch-path" id="${heading}"><code>${esc(path)}</code>${kind ? ` <span class="cap-patch-kind">${esc(kind)}</span>` : ""}<span class="cap-patch-file-counts">${counts}</span></h3>${f.note ? `<p class="cap-patch-note">${esc(f.note)}</p>` : ""}${table}</section>`;
 }
 
 // A unified git patch as it is: one file at a time, one row per line, the old and new line
@@ -193,7 +193,7 @@ export function renderPatch(patch: string, options: PatchOptions = {}): string {
   const id = options.id ?? "patch";
   const files = parsePatch(patch);
   const name = options.title ? `Patch: ${options.title}` : "Patch";
-  const attrs = `class="cap-compare cap-patch" data-mode="patch" id="${id}" aria-label="${esc(name)}"`;
+  const attrs = `class="cap-compare cap-patch" data-mode="patch" id="${esc(id)}" aria-label="${esc(name)}"`;
   if (!files.length)
     return `<section ${attrs}><p class="cap-compare-none" role="status"><strong>No changes.</strong> This patch has no lines to show.</p></section>`;
   const key = `<ul class="cap-compare-key" aria-label="Key to the marks"><li><span class="cap-compare-key-mark" data-kind="ins">Added</span> a plus opens the line</li><li><span class="cap-compare-key-mark" data-kind="del">Removed</span> a minus opens the line</li></ul>`;

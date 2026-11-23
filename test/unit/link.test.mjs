@@ -64,3 +64,17 @@ test("every family link site has its icon in link.css, and link.css draws no oth
       .sort(),
   );
 });
+
+test("linkable: http(s) and site paths link; javascript:, data: and protocol-relative addresses do not", async () => {
+  const { linkable } = await import("../../components/hooks/hooks.ts");
+  for (const ok of ["https://example.com/a", "/media/1"]) assert.equal(linkable(ok), true);
+  for (const bad of [
+    "javascript:alert(1)",
+    "data:text/html,x",
+    "//evil.example",
+    "/\\evil.example",
+    null,
+    "",
+  ])
+    assert.equal(linkable(bad), false);
+});

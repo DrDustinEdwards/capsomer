@@ -516,6 +516,12 @@ test("a range facet matches overlapping spans and canonicalizes its address", as
     catalogMarkdown(def, jobs, "", { href: (j) => `/cv/${j.id}` }).split("\n")[3],
     "| [Lab \\| bench](/cv/b) |",
   );
+  assert.equal(
+    catalogMarkdown(def, [{ ...jobs[0], title: "a](https://evil.example) b" }], "", {
+      href: () => "/x (1)",
+    }).split("\n")[2],
+    "| [a\\](https://evil.example) b](/x%20%281%29) |",
+  );
   assert.equal(catalogDownloads(def, result).csv, "/cv.csv?year-from=2024&year-to=2025");
   assert.deepEqual(listParam(new URLSearchParams("t=a,b&t=a&t=z"), "t", new Set(["a", "b"])), [
     "a",

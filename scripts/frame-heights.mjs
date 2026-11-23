@@ -5,7 +5,7 @@
 import { execFileSync } from "node:child_process";
 import { createServer } from "node:http";
 import { createReadStream, existsSync, statSync, writeFileSync } from "node:fs";
-import { extname, join, resolve } from "node:path";
+import { extname, join, resolve, sep } from "node:path";
 import { chromium } from "@playwright/test";
 
 const root = resolve(import.meta.dirname, "..");
@@ -21,12 +21,13 @@ const types = {
 };
 const server = createServer((req, res) => {
   let file = join(dist, decodeURIComponent(req.url.split("?")[0]));
+  if (!resolve(file).startsWith(resolve(dist) + sep)) return res.writeHead(403).end("forbidden");
   if (existsSync(file) && statSync(file).isDirectory()) file = join(file, "index.html");
   if (!existsSync(file) && existsSync(`${file}.html`)) file += ".html";
   if (!existsSync(file)) return res.writeHead(404).end("not found");
   res.writeHead(200, { "content-type": types[extname(file)] ?? "application/octet-stream" });
   createReadStream(file).pipe(res);
-}).listen(0);
+}).listen(0, "127.0.0.1");
 const base = `http://localhost:${server.address().port}`;
 const names = (await import("node:fs"))
   .readdirSync(join(dist, "components"), { withFileTypes: true })

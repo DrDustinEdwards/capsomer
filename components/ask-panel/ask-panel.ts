@@ -5,6 +5,7 @@
 // how its follow-up is marked) stays the site's, through `read` and `split`.
 
 import { answerDelta } from "@dustinedwards/site-runtime/ai-ask";
+import { isSameOriginPath } from "@dustinedwards/site-runtime/url";
 
 import { uid } from "../hooks/hooks.ts";
 import { jsonData, readSse, type SseEvent } from "../sse/sse.ts";
@@ -71,7 +72,6 @@ export interface AskHandle {
 }
 
 const defaultRead = (e: SseEvent): AskRead => ({ delta: answerDelta(jsonData(e)) });
-const sameOrigin = (url: string) => url.startsWith("/") && !url.startsWith("//");
 
 function el<K extends keyof HTMLElementTagNameMap>(
   tag: K,
@@ -90,7 +90,7 @@ export function ask(container: HTMLElement, options: AskOptions): AskHandle {
   const read = options.read ?? defaultRead;
   const split =
     options.split ?? ((answer: string): { answer: string; followUp?: string } => ({ answer }));
-  const allow = options.allowSource ?? sameOrigin;
+  const allow = options.allowSource ?? isSameOriginPath;
   const controller = new AbortController();
   container.replaceChildren();
   container.hidden = false;

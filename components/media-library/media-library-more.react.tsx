@@ -11,13 +11,11 @@ import {
   oversized,
   turnMakesCopy,
 } from "./media-library.ts";
+import { isHttpUrl } from "@dustinedwards/site-runtime/url";
 import { formatBytes } from "../format/format.ts";
 
-// The inspector's sections for site-api v0.13.0's media ideas, each shown only where the kit offers it
-// and the person may run it: the files holding the same bytes, what the file itself said at upload,
-// the model's suggestions, credit and license, turns and mirrors, shrinking to the site's size, and the
-// file's earlier bytes with a revert. Each is a form (`Tool`) posting the kit's own intent, so it works
-// with no script; inside the autosaving inspector `Tool` hands its fields to the library's `submit`.
+// The inspector's sections for site-api v0.13.0's media ideas, each shown only where the kit offers it and the
+// person may run it. Each is a form (`Tool`) posting the kit's intent, so it works with no script.
 
 const REASON_WORDS: Record<MediaRevision["reason"], string> = {
   upload: "Uploaded",
@@ -376,7 +374,9 @@ export function MediaMore({
                 <>
                   <dt>Source</dt>
                   <dd>
-                    <a href={item.sourceUrl}>{item.sourceUrl}</a>
+                    <a href={isHttpUrl(item.sourceUrl) ? item.sourceUrl : undefined}>
+                      {item.sourceUrl}
+                    </a>
                   </dd>
                 </>
               ) : null}

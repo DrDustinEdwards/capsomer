@@ -38,7 +38,7 @@ import { settingsFromForm } from "capsomer/behavior/ai-engine-settings";
 
 // A site whose API runs take no effort leaves out efforts and effortOptions: no Effort column.
 
-// In the action:
+// In the action (a cap that is not a number of dollars, 0 or more, throws a RangeError; empty or 0 means no cap):
 const saved = settingsFromForm((name) => form.get(name), FEATURES);
 ```
 
