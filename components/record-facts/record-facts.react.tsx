@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { linkable } from "../hooks/hooks.ts";
 
 export interface RecordFact {
   // The fact's name, read first: "Year", "Journal", "DOI".
@@ -28,7 +29,7 @@ export function RecordFacts({ facts }: RecordFactsProps) {
         <div className="cap-record-facts-item" key={f.label}>
           <dt>{f.label}</dt>
           <dd data-mono={f.mono ? "" : undefined}>
-            {f.href ? <a href={f.href}>{f.value}</a> : f.value}
+            {linkable(f.href) ? <a href={f.href}>{f.value}</a> : f.value}
           </dd>
         </div>
       ))}

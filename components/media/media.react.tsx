@@ -23,12 +23,14 @@ import {
   type MediaRecord,
   type SaveState,
   copySnippets,
+  SAVE_TEXT,
   createAutosave,
   parseTags,
 } from "./media.ts";
 import { COPIED_MS, COPY_FAILED_MS, copyText } from "../copy/copy.ts";
 import { MediaFocus, focusWords } from "./media-focus.react.tsx";
 import { formatBytes } from "../format/format.ts";
+import { linkable } from "../hooks/hooks.ts";
 
 // The crop editor, loaded the first time Crop is pressed, so a library page does not carry it.
 const MediaCrop = lazy(() => import("./media-crop.react.tsx"));
@@ -140,14 +142,6 @@ function Ident({ item, intent }: { item: MediaRecord; intent: string }) {
     </>
   );
 }
-
-const SAVE_TEXT: Record<SaveState, string> = {
-  idle: "Changes save by themselves.",
-  dirty: "Unsaved changes",
-  saving: "Saving…",
-  saved: "Saved",
-  failed: "Could not save",
-};
 
 export function MediaInspector(props: MediaInspectorProps) {
   const { item, open, mode, onClose, opener, id, ref: handle } = props;
@@ -669,7 +663,7 @@ function InspectorBody({
               <ul className="cap-media-used">
                 {item.used.map((u) => (
                   <li key={u.href}>
-                    <a href={u.href}>{u.title}</a>
+                    {linkable(u.href) ? <a href={u.href}>{u.title}</a> : u.title}
                     {u.how ? <span className="cap-media-used-how">{u.how}</span> : null}
                   </li>
                 ))}

@@ -3,6 +3,7 @@
 // localStorage instead. No DOM and no framework, so it runs in a Worker, in Node and in the browser alike.
 // dustinedwards.info, Foxhound and txasm each wrote this for themselves; it lives here once.
 
+import { readCapped } from "@dustinedwards/site-runtime/body";
 import { mediaType, redirectResponse, textResponse } from "@dustinedwards/site-runtime/http";
 
 const isJson = (request: Request): boolean =>
@@ -130,13 +131,13 @@ const THEME_BODY_MAX = 1024;
 // The choice a theme request carries: `theme=light|dark` from a form (the no-script ThemeForm), or `{ "theme": ... }`
 // from a fetch (an onSave hook). Anything else, a body over 1 KB included, is null.
 export async function readThemeChoice(request: Request): Promise<ThemeChoice | null> {
-  let text: string;
+  let text: string | null;
   try {
-    text = await request.text();
+    text = await readCapped(request, THEME_BODY_MAX);
   } catch {
     return null;
   }
-  if (text.length > THEME_BODY_MAX) return null;
+  if (text === null) return null;
   if (isJson(request)) {
     try {
       const body: unknown = JSON.parse(text);

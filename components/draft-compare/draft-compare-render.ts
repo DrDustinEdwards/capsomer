@@ -381,7 +381,7 @@ export function renderCompare(
   after: CompareSide,
   options: CompareOptions = {},
 ): string {
-  const id = options.id ?? "compare";
+  const id = esc(options.id ?? "compare");
   const view = options.view ?? "side";
   const labels: CompareLabels = { before: "Before", after: "After", ...options.labels };
   const an = analyze(before.text, after.text, options);

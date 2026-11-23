@@ -41,7 +41,8 @@ export function engineWord(value: string): string {
 
 // The settings a saved form holds: master, feature-<key>, model-<key> and effort-<key> for each job
 // (empty is "follow everything" and "the job's own default"), and cap in dollars. The override is not in the
-// form; the app keeps the one it has.
+// form; the app keeps the one it has. An empty cap or 0 is "no cap"; a cap that is not a number of dollars, 0 or more
+// throws a RangeError, so a malformed value never switches the cap off.
 export function settingsFromForm(
   get: (name: string) => unknown,
   jobs: readonly Pick<EngineJob, "key">[],
@@ -64,11 +65,13 @@ export function settingsFromForm(
     if (e) efforts[j.key] = e;
   }
   const cap = Number(get("cap") || 0);
+  if (!Number.isFinite(cap) || cap < 0)
+    throw new RangeError("The spend cap is a number of dollars, 0 or more.");
   return {
     master: String(get("master") || "auto"),
     features,
     models,
     efforts,
-    apiCapMicros: Number.isFinite(cap) && cap > 0 ? Math.round(cap * 1_000_000) : 0,
+    apiCapMicros: Math.round(cap * 1_000_000),
   };
 }
