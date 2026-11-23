@@ -4,20 +4,20 @@
 // script the links are plain in-page links.
 
 import { goToSection, watchSections } from "../anchor-bar/anchor-bar.ts";
+import { hashId } from "../hooks/hooks.ts";
 
 export const MIN_ITEMS = 3;
 
 // The headings a contents list links to, in its order.
 export function linkedHeadings(nav: Element): HTMLElement[] {
   return [...nav.querySelectorAll<HTMLAnchorElement>("a.cap-toc-link[href^='#']")]
-    .map((a) => document.getElementById(decodeURIComponent(a.hash.slice(1))))
+    .map((a) => document.getElementById(hashId(a.hash.slice(1))))
     .filter((h): h is HTMLElement => h !== null);
 }
 
 export function markCurrent(nav: Element, id: string | null): void {
   for (const a of nav.querySelectorAll<HTMLAnchorElement>("a.cap-toc-link")) {
-    if (id !== null && decodeURIComponent(a.hash.slice(1)) === id)
-      a.setAttribute("aria-current", "location");
+    if (id !== null && hashId(a.hash.slice(1)) === id) a.setAttribute("aria-current", "location");
     else a.removeAttribute("aria-current");
   }
 }
@@ -30,7 +30,7 @@ export function attach(nav: HTMLElement): () => void {
   if (!headings.length) return () => {};
   const click = (e: Event) => {
     const a = (e.target as Element).closest<HTMLAnchorElement>("a.cap-toc-link");
-    const h = a && document.getElementById(decodeURIComponent(a.hash.slice(1)));
+    const h = a && document.getElementById(hashId(a.hash.slice(1)));
     if (!h) return;
     e.preventDefault();
     goToSection(h);

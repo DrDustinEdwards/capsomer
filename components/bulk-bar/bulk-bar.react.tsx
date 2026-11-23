@@ -185,6 +185,7 @@ export function BulkBar({
               className="cap-btn"
               data-variant={a.destructive ? "danger" : undefined}
               aria-disabled={a.disabled || undefined}
+              onClick={(e) => a.disabled && e.preventDefault()}
             >
               {a.label}
             </button>

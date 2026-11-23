@@ -1,7 +1,7 @@
 // Server-sent events read in the browser from a fetch() body, for a stream that a POST starts (EventSource only GETs).
 // The framing is the WHATWG HTML standard's (9.2 Server-sent events): lines end in CRLF, LF or CR; a blank line
 // dispatches; `event:` names the event ("message" when none); each `data:` line adds a line to the data; one space
-// after the colon is framing; a line starting with a colon is a comment; `id:` and `retry:` are read and kept.
+// after the colon is framing; a line starting with a colon is a comment; `id:` is kept and `retry:` is ignored.
 // No DOM: it runs in a Worker and on a phone as well.
 
 export interface SseEvent {

@@ -25,9 +25,7 @@ import { UI_STACK } from "./palette-core.mjs";
 // light values only where light is pinned (data-theme="light" on the root, or
 // data-cap-theme="light"); its dark values are also written under the family's dark selectors,
 // so they tie them. phone applies under phoneMax, Capsomer's phone width (767.98px) unless the
-// site's own layout breaks elsewhere. coarse applies under a coarse pointer (touch). waive names a WCAG pair the site's own colors already
-// fail where it renders today ({ scheme, what, fg, why }); the check refuses a waiver that no
-// longer matches a failure, so it goes once the site's color is fixed.
+// site's own layout breaks elsewhere. coarse applies under a coarse pointer (touch).
 const SITES = {
   dustinedwards: {
     family: "purple",
@@ -487,15 +485,7 @@ function check() {
     const t = themes(family);
     for (const scheme of ["light", "dark"]) {
       const merged = { ...t[scheme].tokens, ...site.all, ...site[scheme] };
-      const waivers = (site.waive ?? []).filter((w) => w.scheme === scheme);
-      const fails = failures(merged);
-      const waived = (f) => waivers.some((w) => f.startsWith(`${w.what}: --${w.fg} `));
-      problems.push(...fails.filter((f) => !waived(f)).map((p) => `${name} ${scheme}: ${p}`));
-      for (const w of waivers)
-        if (!fails.some((f) => f.startsWith(`${w.what}: --${w.fg} `)))
-          problems.push(
-            `${name} ${scheme}: the waiver for ${w.what} --${w.fg} matches no failure; remove it`,
-          );
+      problems.push(...failures(merged).map((p) => `${name} ${scheme}: ${p}`));
       const mergedMore = {
         ...t[`${scheme}More`].tokens,
         ...site.all,

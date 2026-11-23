@@ -7,9 +7,15 @@ import {
   useMemo,
   useState,
   useSyncExternalStore,
+  type ComponentProps,
   type ReactNode,
 } from "react";
 import { readStored, subscribeStored, writeStored } from "./hooks.ts";
+
+/** The default `renderLink` of every component that takes one: a plain anchor. */
+export const plainLink = ({ children, ...props }: ComponentProps<"a">) => (
+  <a {...props}>{children}</a>
+);
 
 export { cn } from "./hooks.ts";
 

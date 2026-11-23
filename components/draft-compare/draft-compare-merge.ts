@@ -55,7 +55,9 @@ export function merged(plan: MergePlan, picks: readonly MergePick[]): string {
     }
     const pick = picks[i++] ?? s.start;
     if (pick !== "theirs") blocks.push(...s.mine);
-    if (pick !== "mine") blocks.push(...s.theirs);
+    // "Both" cannot repeat a frontmatter key, so for one it keeps mine and leaves theirs out.
+    if (pick !== "mine")
+      blocks.push(...(pick === "both" ? s.theirs.filter((b) => !b.front) : s.theirs));
   }
   const front = blocks.filter((b) => b.front);
   const body = blocks.filter((b) => !b.front);

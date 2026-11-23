@@ -59,6 +59,12 @@ export function attachCatalog(form: HTMLFormElement): () => void {
   const setTray = (open: boolean) => {
     if (open) form.dataset.tray = "open";
     else delete form.dataset.tray;
+    // The opener is a link that works with no script; with it, it is a disclosure and says so.
+    const filters = form.querySelector(".cap-catalog-filters")?.id;
+    for (const o of form.querySelectorAll('[data-catalog-tray="open"]')) {
+      o.setAttribute("aria-expanded", String(open));
+      if (filters) o.setAttribute("aria-controls", filters);
+    }
   };
 
   // Fetches an address and swaps the changed regions. `focusCount` moves focus to the count line when the control
@@ -191,6 +197,7 @@ export function attachCatalog(form: HTMLFormElement): () => void {
   form.addEventListener("submit", onSubmit);
   form.addEventListener("click", onClick);
   form.addEventListener("keydown", onKey);
+  setTray(form.dataset.tray === "open");
   const media = window.matchMedia(NARROW);
   const onMedia = () => {
     if (!media.matches) setTray(false);

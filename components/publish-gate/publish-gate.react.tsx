@@ -6,6 +6,7 @@ import { Glyph } from "../status/status.react.tsx";
 import { Time } from "../time/time.react.tsx";
 import {
   FIRST_PUBLICATION_NOTE,
+  TONE,
   appliesTo,
   checkState,
   countChecks,
@@ -23,13 +24,6 @@ import {
 } from "./publish-gate.ts";
 
 export type { GateCheck, GateHold, GatePublished, GateSite, GateState } from "./publish-gate.ts";
-
-const TONE: Record<GateState, "crit" | "info" | "ok"> = {
-  blocked: "crit",
-  held: "info",
-  ready: "ok",
-  published: "ok",
-};
 
 function StateStatus({ state }: { state: GateState }) {
   return (
@@ -241,13 +235,18 @@ export function PublishGate({
     await publishWithPreview(site, () => run(site));
   };
 
+  const unpublishing = useRef(new Set<string>());
   const onUnpublish = async (site: GateSite) => {
+    if (unpublishing.current.has(site.id)) return;
+    unpublishing.current.add(site.id);
     try {
       await unpublish?.([site.id]);
     } catch (err) {
       return problem(
         `Could not unpublish from ${site.name}: ${err instanceof Error ? err.message : String(err)}`,
       );
+    } finally {
+      unpublishing.current.delete(site.id);
     }
     announce(`Unpublished from ${site.name}.`, {
       undo: async () => {

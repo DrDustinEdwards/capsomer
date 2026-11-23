@@ -2,6 +2,7 @@ import { useId, type ReactNode } from "react";
 import { Row, RowList } from "../row-list/row-list.react.tsx";
 import { fileMeta } from "../generated-file/generated-file.ts";
 import { Signs } from "../manual/manual.react.tsx";
+import { plainLink } from "../hooks/hooks.react.tsx";
 
 export interface ArchiveDoc {
   key: string;
@@ -21,8 +22,6 @@ export interface ArchiveLinkProps {
   "aria-describedby"?: string;
   children: ReactNode;
 }
-
-const plainLink = ({ children, ...props }: ArchiveLinkProps) => <a {...props}>{children}</a>;
 
 export interface DocumentListProps {
   docs: readonly ArchiveDoc[];

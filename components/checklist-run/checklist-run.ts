@@ -10,9 +10,7 @@
 //
 // The server stays the one place amounts are computed: a new scale is fetched as the page at that
 // scale and every [data-run-swap] region is swapped in, matched by its name and its place, so
-// nothing here knows a unit conversion. If that fetch fails the browser navigates to the scaled
-// page, which is what the scale form does with no script. Extracted from dustinedwards.info's run
-// mode (app/enhance/run.ts).
+// nothing here knows a unit conversion. If that fetch fails the browser navigates to the scaled page.
 
 import { confirm } from "../confirm-dialog/confirm-dialog.ts";
 import { readStored, uid, writeStored } from "../hooks/hooks.ts";
@@ -89,8 +87,7 @@ export function start(root: HTMLElement, options: RunOptions = {}): () => void {
   const KEY = o.storageKey ?? `cap.run:${checklist.path}`;
   const stepItems = Array.from(root.querySelectorAll<HTMLElement>(o.steps));
   if (stepItems.length === 0) throw new Error("checklist-run: this page has no steps to run");
-  // A step is addressed by its own id, else its section and number: numbering restarts in a
-  // section that starts its own list, so the number alone is not unique.
+  // A step is addressed by its own id, else its section and number (numbering restarts per list).
   const stepSection = (li: HTMLElement) =>
     li.closest("section[aria-labelledby]")?.getAttribute("aria-labelledby") ?? "";
   const keyOf = (li: HTMLElement) => li.id || `${stepSection(li)}.${li.dataset.step}`;
@@ -202,8 +199,7 @@ export function start(root: HTMLElement, options: RunOptions = {}): () => void {
     window.setTimeout(() => (live.textContent = message), 30);
   }
 
-  // The run's roll blocks (manual.css .cap-roll), one a step: filled for a step done, lit for the
-  // step being worked, faint ahead. Drawn only: the progress line says it in words.
+  // The run's roll blocks (manual.css .cap-roll), one a step: done, lit, or faint. Drawn only.
   function roll(lit: HTMLElement | undefined) {
     const blocks = el("ol", { class: "cap-roll cap-run-roll", "aria-hidden": "true" });
     for (const li of stepItems) {
@@ -269,8 +265,7 @@ export function start(root: HTMLElement, options: RunOptions = {}): () => void {
     }
   }
 
-  // One step at a time, or every step. The step shown alone is a cue card: a dark strip names the
-  // checklist and the card over the step.
+  // One step at a time, or every step; a step shown alone is a cue card under a strip naming the checklist.
   function applyView() {
     if (oneAtATime && run) root.dataset.view = "step";
     else delete root.dataset.view;
@@ -388,6 +383,8 @@ export function start(root: HTMLElement, options: RunOptions = {}): () => void {
     for (const box of root.querySelectorAll<Drawn>(".cap-run-timer")) box.draw?.();
   }
 
+  const flushes: Array<() => void> = [];
+
   function buildTools(li: HTMLElement) {
     const step = Number(li.dataset.step);
     const key = keyOf(li);
@@ -408,14 +405,16 @@ export function start(root: HTMLElement, options: RunOptions = {}): () => void {
     });
     note.value = run?.steps[key]?.note ?? "";
     let pending: number | undefined;
-    note.addEventListener("input", () => {
-      window.clearTimeout(pending);
-      pending = window.setTimeout(() => run && update(setNote(run, key, note.value)), 400);
-    });
-    note.addEventListener("blur", () => {
+    const flush = () => {
       window.clearTimeout(pending);
       if (run) update(setNote(run, key, note.value));
+    };
+    flushes.push(flush);
+    note.addEventListener("input", () => {
+      window.clearTimeout(pending);
+      pending = window.setTimeout(flush, 400);
     });
+    note.addEventListener("blur", flush);
     const tools = el(
       "div",
       { class: "cap-run-tools" },
@@ -613,6 +612,7 @@ export function start(root: HTMLElement, options: RunOptions = {}): () => void {
     window.clearInterval(ticker);
     ticker = undefined;
     void letSleep();
+    for (const flush of flushes.splice(0)) flush();
     removeTools();
     delete root.dataset.run;
     delete root.dataset.view;

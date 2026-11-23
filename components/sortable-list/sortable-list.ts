@@ -227,7 +227,7 @@ export function startPointerDrag(
     e.preventDefault();
     e.stopPropagation();
     off();
-    swallowClick();
+    window.addEventListener("pointerup", swallowClick, { capture: true, once: true });
     h.onCancel();
   };
   window.addEventListener("pointermove", move, true);

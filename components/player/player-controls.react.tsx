@@ -3,7 +3,6 @@
 // control reads the one provider (usePlayer). Transport and the scrubber take an optional `track`:
 // on a track's page they act on that track (switching the player to it on first use) without
 // taking over a different track that is playing; the dock passes none and drives the current one.
-// Speed, volume and sleep are the player's own settings and need no track.
 import { useEffect, useId, useRef, type ReactNode, type RefObject } from "react";
 import { clamp } from "../hooks/hooks.ts";
 import {
@@ -22,7 +21,8 @@ import {
 import { Menu } from "../menu/menu.react.tsx";
 import { rangeFill } from "../range-slider/range-slider.ts";
 import { Popover, PopoverContent, PopoverTrigger } from "../popover/popover.react.tsx";
-import { plainLink, type LinkProps } from "../shell/shell.react.tsx";
+import { plainLink } from "../hooks/hooks.react.tsx";
+import type { LinkProps } from "../shell/shell.react.tsx";
 import {
   RATE_MAX,
   RATE_MIN,

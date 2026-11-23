@@ -416,7 +416,7 @@ async function siteData() {
     ? `${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}`
     : null;
 
-  // The test run, summarized per component, for --results-out (ci.yml keeps it with the run and on the results branch).
+  // The test run, summarized per component, for --results-out (ci.yml keeps it with the run).
   const src = join(PKG, "test-results", "results.json");
   const results = {
     available: false,

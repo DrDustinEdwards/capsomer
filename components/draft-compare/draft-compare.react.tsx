@@ -261,11 +261,11 @@ export function DraftMerge({ plan, onApply, pending = false, labels, level = 3 }
           const options: Array<SegmentedOption<MergePick>> = [
             { value: "mine", label: l.keepMine },
             { value: "theirs", label: l.keepTheirs },
-            // Keeping both needs a passage on each side.
+            // Keeping both needs a passage on each side, and a frontmatter key cannot be written twice.
             {
               value: "both",
               label: l.keepBoth,
-              disabled: s.mine.length === 0 || s.theirs.length === 0,
+              disabled: s.mine.length === 0 || s.theirs.length === 0 || s.mine.some((b) => b.front),
             },
           ];
           return (

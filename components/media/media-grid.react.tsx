@@ -292,6 +292,8 @@ export function MediaGrid({
   const root = useRef<HTMLDivElement>(null);
   const all = groups ? groups.flatMap((g) => g.items) : (items ?? []);
   const anchor = useRef<string>(activeKey);
+  // A filter or delete can remove the active file; Tab must still find a tile.
+  const stop = all.some((k) => k.key === activeKey) ? activeKey : all[0]?.key;
 
   const toggle = (key: string) =>
     onSelectedChange(
@@ -368,7 +370,7 @@ export function MediaGrid({
         active={item.key === activeKey}
         selected={selected.includes(item.key)}
         inspecting={inspecting}
-        tabStop={item.key === activeKey}
+        tabStop={item.key === stop}
         onOpen={(k) => {
           onActiveChange(k);
           onOpen(k);

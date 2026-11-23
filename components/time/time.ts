@@ -254,7 +254,7 @@ const UNIT_WORDS = {
 } as const;
 type Unit = keyof typeof UNIT_WORDS;
 
-// Where Intl.DurationFormat exists (Chrome 129, Firefox 136, Safari 16.4; MDN:
+// Where Intl.DurationFormat exists (Chrome 129, Firefox 136, Safari 18.4; MDN:
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DurationFormat)
 // it writes the words; elsewhere the same English is written here, so a server and a browser that
 // differ in support still print the same text.

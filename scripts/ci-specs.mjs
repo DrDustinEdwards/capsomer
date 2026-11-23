@@ -136,7 +136,7 @@ function pick(changed, base) {
   const touched = new Set();
   for (const path of changed) {
     const m = /^components\/([^/]+)\/./.exec(path);
-    if (m && m[1] !== "README.md") {
+    if (m) {
       if (!existsSync(join("components", m[1])))
         return { mode: "full", why: `${path}: a removed component` };
       touched.add(m[1]);

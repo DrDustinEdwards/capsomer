@@ -19,7 +19,6 @@ import {
   countName,
   headerItem,
   part,
-  plainLink,
 } from "./site-header-parts.react.tsx";
 import {
   badgeText,
@@ -28,6 +27,7 @@ import {
   wireSearchOnDemand,
   wireThemeKey,
 } from "./site-header.ts";
+import { plainLink } from "../hooks/hooks.react.tsx";
 
 export { countName, HeaderTip, SheetGroup } from "./site-header-parts.react.tsx";
 export type {

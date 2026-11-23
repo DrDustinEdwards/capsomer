@@ -31,14 +31,14 @@ function board(sites: readonly FamilySite[], offset: number, states: NetworkStat
   return `<div class="home-net-board" aria-hidden="true">${stretches.join("")}</div>`;
 }
 
+const STATE_WORD = { caution: "Caution", warning: "Warning" } as const;
+
 function bar(sites: readonly FamilySite[], states: NetworkStates): string {
   return `<ul class="home-net-bar" aria-label="Network sites">${sites
     .map((site) => {
       const state = states[site.id] ?? "normal";
       const word =
-        state === "normal"
-          ? ""
-          : `<span class="home-net-state">${state === "caution" ? "Caution" : "Warning"}</span>`;
+        state === "normal" ? "" : `<span class="home-net-state">${STATE_WORD[state]}</span>`;
       return `<li data-family="${site.family}" data-site="${site.id}" data-state="${state}"><a href="${esc(site.href)}">${esc(site.name)}</a>${word}</li>`;
     })
     .join("")}</ul>`;
@@ -67,7 +67,7 @@ export function relight(root: ParentNode, states: NetworkStates): void {
     if (state === "normal") continue;
     const word = document.createElement("span");
     word.className = "home-net-state";
-    word.textContent = state === "caution" ? "Caution" : "Warning";
+    word.textContent = STATE_WORD[state];
     li.append(word);
   }
 }

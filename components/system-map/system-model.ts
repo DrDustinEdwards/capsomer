@@ -134,6 +134,8 @@ export function parsePublicModel(raw: unknown): ModelResult {
       if (!systems.has(end) && !containers.has(end))
         problems.push(`relationships.${r.id}: no element ${end}`);
   const edges = new Map(model.relationships.map((r) => [r.id, r]));
+  if (edges.size !== model.relationships.length)
+    problems.push("relationships: an id is used twice");
   const flowIds = new Set<string>();
   for (const flow of model.flows ?? []) {
     if (flowIds.has(flow.id)) problems.push(`flows.${flow.id}: the id is used twice`);

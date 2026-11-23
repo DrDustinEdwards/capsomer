@@ -123,7 +123,6 @@ const json = (path: string) => (existsSync(path) ? JSON.parse(readFileSync(path,
 const exportsOf = (path: string, re: RegExp) =>
   existsSync(path) ? [...readFileSync(path, "utf8").matchAll(re)].map((x) => x[1] ?? "") : [];
 
-/** Everything the pages say. `examples` is each component's examples.html as the states generator filled it. */
 /** The keyboard table(s) of the Accessibility section, for a primitive's Keyboard part. */
 const keyboardOnly = (md: string) =>
   md
@@ -141,6 +140,7 @@ export async function renderDocs(data: Data): Promise<void> {
   );
 }
 
+/** Everything the pages say. `examples` is each component's examples.html as the states generator filled it. */
 export function readData(root: string, examples: Map<string, string>): Data {
   const dir = resolve(root, "components");
   const names = readdirSync(dir, { withFileTypes: true })

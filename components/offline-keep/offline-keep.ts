@@ -73,12 +73,12 @@ export async function keep(o: KeepOptions): Promise<void> {
 export async function remove(o: KeepOptions): Promise<void> {
   const cache = await caches.open(o.cache);
   await cache.delete(o.page);
-  // The files are shared between kept pages, so they go only with the last page. A page's address
-  // has no extension; a stylesheet, bundle, font or image has one.
-  const pages = (await cache.keys()).filter(
-    (request) => !/\.[a-z0-9]+$/i.test(new URL(request.url).pathname),
-  );
-  if (pages.length > 0) return;
+  // The files are shared between kept pages, so they go only with the last page. A page is an HTML
+  // document whatever its address ends in; a stylesheet, bundle, font or image is not.
+  for (const request of await cache.keys()) {
+    const type = (await cache.match(request))?.headers.get("content-type") ?? "";
+    if (/^text\/html\b/i.test(type)) return;
+  }
   await caches.delete(o.cache);
   const script = new URL(o.worker, location.href).pathname;
   for (const registration of await navigator.serviceWorker.getRegistrations()) {

@@ -80,13 +80,8 @@ function h<K extends keyof HTMLElementTagNameMap>(
   return e;
 }
 
-const TONE: Record<GateState, "crit" | "info" | "ok"> = {
-  blocked: "crit",
-  held: "info",
-  ready: "ok",
-  published: "ok",
-};
-const GLYPH: Record<GateState, string> = {
+// A state's tone, which is also its glyph.
+export const TONE: Record<GateState, "crit" | "info" | "ok"> = {
   blocked: "crit",
   held: "info",
   ready: "ok",
@@ -94,7 +89,7 @@ const GLYPH: Record<GateState, string> = {
 };
 
 export function stateStatus(s: GateState): HTMLSpanElement {
-  return statusEl(TONE[s], WORD[s], GLYPH[s]);
+  return statusEl(TONE[s], WORD[s], TONE[s]);
 }
 
 // A check, read from its row.
@@ -471,20 +466,22 @@ export function attachPublishGate(region: HTMLElement, hooks: GateHooks = {}): G
     await run(site, button);
   };
 
-  const unpublish = async (id: string, button: HTMLElement | null) => {
+  const unpublish = async (id: string) => {
     const li = siteRow(id);
-    if (!li) return;
+    if (!li || busy.has(id)) return;
     const site = readSite(li);
     const hk = hooksFor.get(region) ?? {};
     const was = site.published;
+    busy.add(id);
     try {
       await hk.unpublish?.([id]);
     } catch (err) {
       return problem(
         `Could not unpublish from ${site.name}: ${err instanceof Error ? err.message : String(err)}`,
       );
+    } finally {
+      busy.delete(id);
     }
-    void button;
     setPublished(id, null);
     containers(id)[0]?.querySelector<HTMLElement>("button")?.focus();
     announce(
@@ -505,7 +502,7 @@ export function attachPublishGate(region: HTMLElement, hooks: GateHooks = {}): G
     const box = btn.closest<HTMLElement>("[data-cap-actions]");
     if (!box || !(box.dataset.gate === region.id || region.contains(box))) return;
     const id = box.dataset.site ?? "";
-    if (btn.dataset.capPart === "unpublish") return void unpublish(id, btn);
+    if (btn.dataset.capPart === "unpublish") return void unpublish(id);
     // A blocked or held button is focusable so its reason can be heard; pressing it does nothing.
     if (btn.getAttribute("aria-disabled") === "true") {
       e.preventDefault();

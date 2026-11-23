@@ -31,6 +31,7 @@ import {
   type AttentionGroupInfo,
   type AttentionItem,
 } from "./attention-list.ts";
+import { plainLink } from "../hooks/hooks.react.tsx";
 
 export type {
   AttentionGroupInfo,
@@ -71,8 +72,6 @@ export interface AttentionListProps {
   // A router's link component; a plain <a> by default.
   renderLink?: (props: RowLinkProps) => ReactNode;
 }
-
-const plainLink = ({ children, ...props }: RowLinkProps) => <a {...props}>{children}</a>;
 
 function whenOf(when: AttentionItem["when"]): ReactNode {
   return typeof when === "string" ? (

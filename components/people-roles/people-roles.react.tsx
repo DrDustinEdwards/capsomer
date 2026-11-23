@@ -171,7 +171,7 @@ export function PeopleRoles({
         <Review id={id} Sub={Sub} review={data.review} action={action} />
       ) : null}
 
-      <div className="cap-table-wrap" role="region" aria-labelledby={`${id}-h`} tabIndex={0}>
+      <div className="cap-table-wrap" role="region" aria-label={data.heading} tabIndex={0}>
         <table className="cap-table cap-people-table">
           <thead>
             <tr>
@@ -245,7 +245,7 @@ interface RowProps {
 function PersonRows({ p, now, action, titles, changing, hrefFor, closeHref }: RowProps) {
   const soon = endsSoon(p, now);
   const who = <span className="cap-sr-only"> for {p.name}</span>;
-  const editId = `pr-change-${p.email.replace(/[^a-zA-Z0-9]/g, "-")}`;
+  const editId = `pr-change-${useId()}`;
   const { primary, items } = rowActions(
     p,
     titles.length > 0,

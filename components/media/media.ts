@@ -18,6 +18,7 @@ import {
   describeRecord,
   LARGE_BYTES,
   parseTags,
+  unattached,
   type MediaFields,
   type MediaRecord,
 } from "./media-record.ts";
@@ -325,7 +326,7 @@ export function attachMedia(root: HTMLElement, options: MediaOptions = {}): Medi
   };
   const matchesFilter = (t: HTMLElement, name: string): boolean => {
     const r = recordOf(t);
-    if (name === "unattached") return r.used.length === 0;
+    if (name === "unattached") return unattached(r);
     if (name === "no-alt") return r.kind === "image" && r.altState === "missing";
     if (name === "large") return r.bytes > LARGE_BYTES;
     return true;
@@ -366,11 +367,9 @@ export function attachMedia(root: HTMLElement, options: MediaOptions = {}): Medi
     const names = pressed();
     let visible = 0;
     let matchable = 0;
-    let library = 0;
     for (const t of tiles()) {
       const state = t.dataset.state ?? "ready";
       const inView = v === "bin" ? state === "binned" : state !== "binned";
-      if (state !== "binned") library += 1;
       let show = inView;
       const settled = state === "ready" || state === "binned";
       // An upload in progress or a failed one stays in view: it is not a search result, it is news.
@@ -404,9 +403,7 @@ export function attachMedia(root: HTMLElement, options: MediaOptions = {}): Medi
             ? "search"
             : names.length
               ? "filter"
-              : library === 0
-                ? "library"
-                : "library";
+              : "library";
       empty.hidden = !none;
       for (const child of empty.querySelectorAll<HTMLElement>("[data-cap-empty]"))
         child.hidden = child.dataset.capEmpty !== cause;
@@ -988,8 +985,8 @@ export function attachMedia(root: HTMLElement, options: MediaOptions = {}): Medi
           return t ? { item: t, tags: parseTags(t.dataset.tags ?? "") } : null;
         },
         write: async (id, t, tags) => {
-          t.dataset.tags = tags.join(", ");
           await options.save?.(id, { ...recordFields(t), tags });
+          t.dataset.tags = tags.join(", ");
         },
       });
       changed.set(items, result.done);

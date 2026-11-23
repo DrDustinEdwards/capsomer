@@ -82,7 +82,10 @@ export function accessText(
   now: number,
 ): string {
   if (p.status === "removed") return p.endedOn ? `Removed ${dayText(p.endedOn)}` : "Removed";
-  if (p.status === "expired") return `Ended ${dayText(p.endedOn ?? (p.endDate as string))}`;
+  if (p.status === "expired") {
+    const on = p.endedOn ?? p.endDate;
+    return on ? `Ended ${dayText(on)}` : "Ended";
+  }
   if (p.endDate === null) return "Does not expire";
   const left = daysLeft(p.endDate, now);
   if (left === 0) return `Ends today, ${dayText(p.endDate)}`;

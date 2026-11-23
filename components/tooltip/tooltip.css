@@ -4,8 +4,7 @@
 /* The tooltip has no rules of its own. It is the shared popover's tooltip variant
    (components/popover/popover.css): `.cap-popover[data-variant="tooltip"]`, the inverted
    surface at the detail size with a key cap and an optional arrow, placed by CSS anchor
-   positioning with a script fallback, fading and zooming in 100 ms. Load popover.css with it.
-   0.1's `.cap-tip` class is still accepted as a hook on the same element. */
+   positioning with a script fallback, fading and zooming in 100 ms. Load popover.css with it. */
 @layer cap.components {
   /* Nothing here: see the note above. */
 }

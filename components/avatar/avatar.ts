@@ -2,7 +2,7 @@
 // in the HTML. Without script the picture simply covers them, so a page delivered as HTML
 // still names the person in text.
 
-const READY = "data-cap-ready";
+import { enhanceEach } from "../hooks/hooks.ts";
 
 function watch(root: HTMLElement): () => void {
   const img = root.querySelector<HTMLImageElement>(".cap-avatar-image");
@@ -20,15 +20,7 @@ function watch(root: HTMLElement): () => void {
 }
 
 export function enhance(root: ParentNode = document): () => void {
-  const undo: Array<() => void> = [];
-  for (const el of root.querySelectorAll<HTMLElement>('[data-cap="avatar"]')) {
-    if (el.hasAttribute(READY)) continue;
-    el.setAttribute(READY, "");
-    undo.push(watch(el));
-  }
-  return () => {
-    for (const fn of undo) fn();
-  };
+  return enhanceEach(root, "avatar", watch);
 }
 
 // The initials for a person: the first and last word's first letters ("Alex Rivera": AR), the

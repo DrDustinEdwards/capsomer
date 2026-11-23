@@ -97,6 +97,10 @@ export interface Flag {
   tone: "warn" | "info" | "nodata";
   word: string;
 }
+// A file nothing uses; where its use was not listed, by the count.
+export const unattached = (r: Pick<MediaRecord, "used" | "usedUnknown" | "usedCount">): boolean =>
+  r.usedUnknown ? r.usedCount === 0 : r.used.length === 0;
+
 export function flagsFor(
   r: Pick<MediaRecord, "kind" | "altState" | "used" | "state" | "usedUnknown" | "usedCount">,
 ): Flag[] {
@@ -107,8 +111,7 @@ export function flagsFor(
     out.push({ tone: "warn", word: "No alt text" });
   if (r.kind === "image" && r.altState === "decorative")
     out.push({ tone: "info", word: "Decorative" });
-  if (r.state !== "binned" && (r.usedUnknown ? r.usedCount === 0 : r.used.length === 0))
-    out.push({ tone: "nodata", word: "Unattached" });
+  if (r.state !== "binned" && unattached(r)) out.push({ tone: "nodata", word: "Unattached" });
   return out;
 }
 

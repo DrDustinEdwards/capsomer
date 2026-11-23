@@ -145,9 +145,13 @@ export function attachSuggest(root: HTMLElement, opts: SuggestOptions): () => vo
     input.setAttribute("aria-expanded", "true");
   };
 
-  const onInput = () => {
+  // A scheduled or in-flight request must not open the list after the person has left or submitted.
+  const cancel = () => {
     clearTimeout(timer);
     pending?.abort();
+  };
+  const onInput = () => {
+    cancel();
     const q = input.value.trim();
     if (q.length < min) {
       items = [];
@@ -203,8 +207,12 @@ export function attachSuggest(root: HTMLElement, opts: SuggestOptions): () => vo
     if (items.length > 0) open();
   };
   // The listbox keeps focus in the box on a pointer press, so a blur is a real leave.
-  const onBlur = () => close();
+  const onBlur = () => {
+    cancel();
+    close();
+  };
   const onSubmit = (e: SubmitEvent) => {
+    cancel();
     close();
     if (!opts.search) return;
     e.preventDefault();

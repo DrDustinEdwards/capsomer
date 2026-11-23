@@ -2,7 +2,8 @@
 // name. Colors: every family as its 12 steps, light beside dark, each step's job above it, and a click copies the value.
 // Both are whole HTML; site/page.ts adds the search, the size and the copying.
 import * as icons from "../components/icons/icons.ts";
-import { FOOTER, esc, header, titleBlock } from "./chrome.ts";
+import { escapeHtml as esc } from "@dustinedwards/site-runtime/html";
+import { FOOTER, header, titleBlock } from "./chrome.ts";
 import { firsts, type Data } from "./content.ts";
 
 const single = (main: string) =>

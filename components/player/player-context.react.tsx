@@ -260,11 +260,9 @@ export function PlayerProvider({
   );
 
   const toggleMute = useCallback(() => {
-    setMuted((m) => {
-      storage.saveMuted(!m);
-      return !m;
-    });
-  }, [storage]);
+    storage.saveMuted(!muted);
+    setMuted(!muted);
+  }, [muted, storage]);
 
   const toggle = useCallback(() => {
     if (!live.current.current) return;
@@ -283,6 +281,13 @@ export function PlayerProvider({
     setIsPlaying(true);
   }, []);
   const playTrackAt = useCallback((track: PlayerTrack, seconds: number) => {
+    // The track already loaded has no metadata event coming, so a pending seek would wait for the next track.
+    const audio = audioRef.current;
+    if (audio && live.current.current?.id === track.id) {
+      audio.currentTime = seconds;
+      setIsPlaying(true);
+      return;
+    }
     pendingSeek.current = seconds;
     setQueueState([track]);
     setIndex(0);
@@ -380,7 +385,8 @@ export function PlayerProvider({
     // The position starts over; it comes back once the new duration is known.
     clearPositionState();
     const track = live.current.current;
-    if (track && typeof MediaMetadata !== "undefined")
+    if (!track) session.metadata = null;
+    else if (typeof MediaMetadata !== "undefined")
       session.metadata = new MediaMetadata(
         trackMetadata(track, { artist, album, artwork }) as MediaMetadataInit,
       );

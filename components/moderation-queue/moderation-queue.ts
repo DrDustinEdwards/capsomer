@@ -11,8 +11,8 @@ import { plural } from "@drdustinedwards/site-helpers/text";
 import { confirm } from "../confirm-dialog/confirm-dialog.ts";
 import { toggleGroup } from "../disclosure/disclosure.ts";
 import { ensureRegion, say } from "../message/message.ts";
-import { queueKey, singleKeysOff } from "../row-list/row-list.ts";
-import { enhance as enhanceShortcuts, register } from "../shortcuts/shortcuts.ts";
+import { queueKey } from "../row-list/row-list.ts";
+import { enhance as enhanceShortcuts, register, singleKeysOff } from "../shortcuts/shortcuts.ts";
 import { enhance as enhanceTime, nowFor } from "../time/time.ts";
 import {
   ACTION_KEY,

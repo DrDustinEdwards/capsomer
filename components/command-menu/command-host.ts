@@ -67,13 +67,19 @@ export function createCommandHost(
   const open = async (query = "", opener: Element | null = document.activeElement) => {
     (await load()).open(query, opener);
   };
-  const unbindKey = onModK(() => void open());
+  // A chunk that fails to load is said where the person asked, not left a dead shortcut (the message
+  // region loads only then, so the first load stays light).
+  const ask = (query = "", opener?: Element | null) =>
+    open(query, opener).catch(async () =>
+      (await import("../message/message.ts")).fail("The command menu could not load. Try again."),
+    );
+  const unbindKey = onModK(() => void ask());
   undo.push(whenIdle(warm));
   for (const btn of root.querySelectorAll<HTMLElement>(
     "[data-cap-command-open]:not([data-cap-ready])",
   )) {
     btn.dataset.capReady = "";
-    const onClick = () => void open("", btn);
+    const onClick = () => void ask("", btn);
     btn.addEventListener("click", onClick);
     undo.push(() => {
       btn.removeEventListener("click", onClick);

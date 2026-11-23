@@ -8,7 +8,6 @@ import { familyFooterHtml } from "../components/family-footer/family-footer.ts";
 import { letterheadHtml } from "../components/site-header/site-header.ts";
 import { codeRegion } from "./markdown.ts";
 
-export { esc };
 
 /** The five sections, by their name in the letterhead; each links to its first page. */
 export type Section = "Themes" | "Components" | "Primitives" | "Icons" | "Colors";

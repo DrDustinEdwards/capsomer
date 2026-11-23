@@ -9,6 +9,7 @@ import { toParagraphs, type Cue } from "@drdustinedwards/site-helpers/vtt";
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { markQuery } from "../command-menu/command-menu.ts";
 import { useCopy } from "../copy/copy.react.tsx";
+import { useOptionalMessage } from "../message/message.react.tsx";
 import { plural } from "@drdustinedwards/site-helpers/text";
 import { reducedMotion } from "../hooks/hooks.ts";
 import { SearchField } from "../field/field.react.tsx";
@@ -72,6 +73,7 @@ export function PlayerTranscript({
   const [following, setFollowing] = useState(true);
   const [query, setQuery] = useState("");
   const clipboard = useCopy();
+  const message = useOptionalMessage();
   const [boxVisible, setBoxVisible] = useState(false);
   const box = useRef<HTMLDivElement>(null);
   const programmatic = useRef(false);
@@ -161,10 +163,12 @@ export function PlayerTranscript({
   const jump = (seconds: number) => (isThis ? p.seek(seconds) : p.playTrackAt(track, seconds));
 
   // Copied through the copy part, so a refused clipboard says Copy failed as every copy button does.
+  const copyWord =
+    clipboard.state === "done" ? "Copied" : clipboard.state === "failed" ? "Copy failed" : "";
   const copyQuote = async () => {
     const sel = window.getSelection();
     let text = sel ? sel.toString().trim() : "";
-    if (!text) return;
+    if (!text) return message?.say("Select text in the transcript first.");
     const words = text.split(/\s+/);
     if (words.length > 200) text = `${words.slice(0, 200).join(" ")}…`;
     // The time of the cue the selection starts in, else the playhead.
@@ -217,20 +221,19 @@ export function PlayerTranscript({
             <span className="cap-player-meta">{plural(matches, "match", "matches")}</span>
           ) : null}
           {copy ? (
-            <button
-              type="button"
-              className="cap-btn"
-              data-size="sm"
-              onClick={() => void copyQuote()}
-            >
-              <span aria-live="polite">
-                {clipboard.state === "done"
-                  ? "Copied"
-                  : clipboard.state === "failed"
-                    ? "Copy failed"
-                    : "Copy with link"}
+            <>
+              <button
+                type="button"
+                className="cap-btn"
+                data-size="sm"
+                onClick={() => void copyQuote()}
+              >
+                {copyWord || "Copy with link"}
+              </button>
+              <span className="cap-sr-only" role="status">
+                {copyWord}
               </span>
-            </button>
+            </>
           ) : null}
         </div>
       ) : null}
@@ -240,7 +243,7 @@ export function PlayerTranscript({
           const head = heads[pi] as (typeof heads)[number];
           const startSec = (para[0] as TranscriptCue).start;
           return (
-            <div key={startSec} className="cap-player-para">
+            <div key={`${startSec}-${pi}`} className="cap-player-para">
               {head.showChapter ? (
                 <p className="cap-player-para-chapter">{chapters[head.chap]?.title}</p>
               ) : null}
@@ -254,9 +257,9 @@ export function PlayerTranscript({
                 >
                   {formatTime(startSec)}
                 </button>{" "}
-                {para.map((c) => (
+                {para.map((c, i) => (
                   <button
-                    key={c.start}
+                    key={`${c.start}-${i}`}
                     type="button"
                     className="cap-player-cue"
                     // One tab stop per paragraph (its time button); a cue is pressed with a pointer.

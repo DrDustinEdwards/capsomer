@@ -91,7 +91,9 @@ export function decodeEntities(text: string): string {
     if (ref[0] === "#") {
       const code =
         ref[1] === "x" || ref[1] === "X" ? Number.parseInt(ref.slice(2), 16) : Number(ref.slice(1));
-      return code > 0 && code <= 0x10ffff && !(code >= 0xd800 && code <= 0xdfff)
+      // A C0 control (but tab, LF, CR) is as invalid as a literal one: it never reaches stored text.
+      const control = code < 0x20 && code !== 9 && code !== 10 && code !== 13;
+      return code > 0 && code <= 0x10ffff && !control && !(code >= 0xd800 && code <= 0xdfff)
         ? String.fromCodePoint(code)
         : "�";
     }

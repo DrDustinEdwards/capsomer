@@ -1,7 +1,9 @@
 import { Fragment, useCallback, useEffect, useId, useRef, useState, type ReactNode } from "react";
 import { Dialog, DialogBody, DialogHeader, DialogTitle } from "../dialog/dialog.react.tsx";
 import { readStored, writeStored } from "../hooks/hooks.ts";
+import { registerKey } from "../shortcuts/shortcuts.ts";
 import { DEFAULT_PREF } from "./shell.ts";
+import { plainLink } from "../hooks/hooks.react.tsx";
 
 export interface ShellEntry {
   id: string;
@@ -54,7 +56,10 @@ export interface ShellProps {
   prefKey?: string;
   // A router's link component; a plain <a> by default.
   renderLink?: (props: LinkProps) => ReactNode;
-  // Controlled collapse, for an app that binds a key to it.
+  // The rail's collapse key, shown on its toggle; the shell binds it (never while a person types, or with
+  // single-key shortcuts off). false shows no key and binds none.
+  collapseKey?: string | false;
+  // Controlled collapse.
   collapsed?: boolean;
   onCollapsedChange?: (collapsed: boolean) => void;
   children: ReactNode;
@@ -80,8 +85,6 @@ const MoreIcon = () => (
     <circle cx="13" cy="8" r="1.4" fill="currentColor" />
   </svg>
 );
-
-export const plainLink = ({ children, ...props }: LinkProps) => <a {...props}>{children}</a>;
 
 // Consecutive entries with the same `group` are one group.
 export function groups<E extends { group?: string }>(
@@ -148,6 +151,23 @@ export function Shell(props: ShellProps) {
     prefKey,
     props.collapsed,
     props.onCollapsedChange,
+  );
+  const collapseKey = props.collapseKey ?? "[";
+  useEffect(
+    () =>
+      collapseKey
+        ? registerKey({
+            key: collapseKey,
+            label: "Collapse the menu",
+            group: "General",
+            // Not on a phone, where the rail is hidden.
+            when: () =>
+              (document.querySelector("[data-cap-part='rail-toggle']")?.getClientRects().length ??
+                0) > 0,
+            run: () => setCollapsed(!collapsed),
+          })
+        : undefined,
+    [collapseKey, collapsed, setCollapsed],
   );
   // A phone tab bar holds at most five entries (rule 9): with a More sheet, four and More.
   const phoneTabs = tabs?.slice(0, more ? 4 : 5);
@@ -243,7 +263,7 @@ export function Shell(props: ShellProps) {
           >
             <RailIcon />
             <span className="cap-shell-label">{collapsed ? "Expand menu" : "Collapse menu"}</span>
-            <kbd aria-hidden="true">[</kbd>
+            {collapseKey ? <kbd aria-hidden="true">{collapseKey}</kbd> : null}
           </button>
         </div>
       </nav>

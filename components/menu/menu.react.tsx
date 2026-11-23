@@ -364,7 +364,7 @@ export function FormMenu({
   ...rest
 }: FormMenuProps) {
   const ref = useRef<HTMLDetailsElement>(null);
-  useEffect(() => (ref.current ? enhance(ref.current.parentNode ?? document) : undefined), []);
+  useEffect(() => (ref.current ? enhance(ref.current) : undefined), []);
   const ordinary = items.filter((i) => !i.danger);
   const danger = items.filter((i) => i.danger);
   const select = (i: FormMenuItem) => (e: MouseEvent<HTMLAnchorElement>) => {

@@ -169,7 +169,10 @@ export function RichTextField({
     const html = event.clipboardData.getData("text/html");
     const text = event.clipboardData.getData("text/plain");
     // Plain text is text: its < and & are characters, not markup.
-    const tree = html ? parseRichText(html, tags) : [text];
+    // The end of a block or a line break is a space: the parser drops the tag, and two paragraphs would fuse.
+    const tree = html
+      ? parseRichText(html.replace(/<\/(?:p|div|li|h[1-6]|tr|blockquote)>|<br\s*\/?>/gi, " "), tags)
+      : [text];
     const flat = tree.map((n) => (typeof n === "string" ? n.replace(/\s*[\r\n]+\s*/g, " ") : n));
     if (insertNodes(el, richTextNodes(el.ownerDocument, flat), el.ownerDocument.getSelection()))
       sync();

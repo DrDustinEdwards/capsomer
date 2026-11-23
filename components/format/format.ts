@@ -14,15 +14,12 @@ export function formatBytes(bytes: number): string {
   if (value < 1024) return `${sign}${Math.round(value)} B`;
   value /= 1024;
   let unit = 0;
-  while (value >= 1024 && unit < BYTE_UNITS.length - 1) {
+  // Rounded first: 1023.96 MB shows as "1 GB", never "1024 MB".
+  while (Math.round(value) >= 1024 && unit < BYTE_UNITS.length - 1) {
     value /= 1024;
     unit++;
   }
-  if (unit === 0) {
-    // 1023.6 kB rounds to 1024 kB: say 1 MB instead.
-    const whole = Math.round(value);
-    return whole >= 1024 ? `${sign}1 MB` : `${sign}${whole} kB`;
-  }
+  if (unit === 0) return `${sign}${Math.round(value)} kB`;
   const shown = value >= 100 ? String(Math.round(value)) : value.toFixed(1).replace(/\.0$/, "");
   return `${sign}${shown} ${BYTE_UNITS[unit]}`;
 }
