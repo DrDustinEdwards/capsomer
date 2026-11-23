@@ -88,6 +88,7 @@ export function PopoverContent({
       id={id}
       popover={tip ? "manual" : "auto"}
       role={tip ? "tooltip" : "dialog"}
+      aria-labelledby={tip || props["aria-label"] ? undefined : `${id}-title`}
       data-variant={tip ? "tooltip" : undefined}
       data-side={side}
       data-align={align}
@@ -110,7 +111,7 @@ export function PopoverHeader({ className, ...props }: ComponentProps<"div">) {
   );
 }
 
-// Names the dialog: the behavior module points aria-labelledby at it (or names it by its trigger when there is none).
+// Names the dialog: PopoverContent points aria-labelledby at it.
 export function PopoverTitle({ className, children, ...props }: ComponentProps<"h2">) {
   const { id } = useContext(Ctx);
   return (

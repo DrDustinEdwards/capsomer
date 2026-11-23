@@ -221,21 +221,21 @@ export function PlayerTranscript({
             <span className="cap-player-meta">{plural(matches, "match", "matches")}</span>
           ) : null}
           {copy ? (
-            <>
-              <button
-                type="button"
-                className="cap-btn"
-                data-size="sm"
-                onClick={() => void copyQuote()}
-              >
-                {copyWord || "Copy with link"}
-              </button>
-              <span className="cap-sr-only" role="status">
-                {copyWord}
-              </span>
-            </>
+            <button
+              type="button"
+              className="cap-btn"
+              data-size="sm"
+              onClick={() => void copyQuote()}
+            >
+              {copyWord || "Copy with link"}
+            </button>
           ) : null}
         </div>
+      ) : null}
+      {copy ? (
+        <span className="cap-sr-only" role="status">
+          {copyWord}
+        </span>
       ) : null}
 
       <div ref={box} className="cap-player-transcript-box">
