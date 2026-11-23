@@ -83,7 +83,8 @@ export function expandUses(html) {
   let out = rest;
   // A def may use another, so paste until none is left.
   for (let passes = 0; use.test(out); passes++) {
-    if (passes > 20) throw new Error("examples.html: a <!-- def --> uses itself, or two use each other");
+    if (passes > 20)
+      throw new Error("examples.html: a <!-- def --> uses itself, or two use each other");
     out = out.replace(use, (_, k, args) => {
       if (!(k in defs)) throw new Error(`examples.html has no <!-- def:${k} -->`);
       const vals = Object.fromEntries(
