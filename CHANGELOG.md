@@ -3,6 +3,12 @@
 Each release names every removed or renamed token or class, and every changed HTML contract. A pull request adds its entry as a
 changeset (`npx changeset`, `.changeset/README.md`); the release pull request writes them here.
 
+## 0.164.10
+
+### Patch Changes
+
+- The theme switch in the browser no longer bundles the server route's body and response helpers. `capsomer/theme-server` exports the same names.
+
 ## 0.164.9
 
 ### Patch Changes
