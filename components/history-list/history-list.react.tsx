@@ -472,7 +472,6 @@ export function HistoryList({
             className="cap-btn"
             data-variant="primary"
             data-cap-part="compare"
-            // oxlint-disable-next-line jsx-a11y/no-redundant-roles -- an <a> with no href has no link role; this disabled link keeps it
             role="link"
             aria-disabled="true"
             tabIndex={0}

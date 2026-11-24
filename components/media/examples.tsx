@@ -137,7 +137,7 @@ const ITEMS: MediaRecord[] = [
 
 interface Win {
   failReactSave?: boolean;
-  reactSaves: Array<{ key: string; fields: MediaFields }>;
+  reactSaves?: Array<{ key: string; fields: MediaFields }>;
 }
 
 function Demo() {
@@ -151,11 +151,10 @@ function Demo() {
   const current = items.find((i) => i.key === active) ?? null;
   const ready = items.filter((i) => i.state === "ready");
   const w = window as unknown as Win;
-  w.reactSaves ??= [];
 
   const save = async (key: string, fields: MediaFields) => {
     await new Promise((r) => setTimeout(r, 60));
-    w.reactSaves.push({ key, fields });
+    (w.reactSaves ??= []).push({ key, fields });
     if (w.failReactSave) throw new Error("The server answered 502.");
     setItems((all) =>
       all.map((i) =>
