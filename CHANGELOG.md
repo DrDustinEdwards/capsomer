@@ -3,6 +3,15 @@
 Each release names every removed or renamed token or class, and every changed HTML contract. A pull request adds its entry as a
 changeset (`npx changeset`, `.changeset/README.md`); the release pull request writes them here.
 
+## 0.164.8
+
+### Patch Changes
+
+- Removes the `isTypingKey` re-exports from `history-list` and `moderation-queue` (import it from `row-list`) and `attachListKeys` from `history-list` (use `attachRowList` from `row-list`). Adds `enhanceEach` and `listenInto` to `hooks`, which replace three copies of the enhance loop and three of the listener helper.
+- Repin Prelum 0.63.14
+- Fixes from the 2026-11-23 code review. Removed exports: `plainLink` from shell (one copy now in hooks.react), the command-menu aliases `matchesQuery`, `filterCommands` and `step` (import from listbox), the `RowForm` and `onlyParamsChanged` re-exports of router.react, `singleKeysOff` from row-list (import from shortcuts), `GLYPH` from publish-gate (use `TONE`), the system-map wires `draw` and `destroy`, and the unused history-list `deltas` prop. Shell takes a `collapseKey` prop (default "["); its keyboard hint shows only when set. Bulk-bar, menu, avatar, annotated-document, chart-frame, catalog, confirm-dialog, draft-compare, copy, error-summary, media, people-roles, player, offline-keep, offline-sw, publish-gate, rich-text-field, search-suggest, sortable-list, system-model, toc, web-push, token-check and states fixes; stat-tile uses the status glyph.
+- Security: the media library, cited-by and record-facts draw an address as a link only when it is http(s) or a path on the site, so a stored `javascript:` or `data:` address shows as text. The patch view escapes a revision name and the compare and patch ids. Media copy snippets escape alt text, names and the address. The ask panel's source check uses site-runtime's `isSameOriginPath` (a `/\host` address is no longer same-origin). `catalogMarkdown` escapes link text and the address. The theme route reads its body to a 1 KB cap as it streams. `settingsFromForm` throws a `RangeError` for a malformed or negative cap instead of reading it as no cap. New export `linkable` in hooks.
+
 ## 0.164.7
 
 ### Patch Changes
