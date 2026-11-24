@@ -11,7 +11,7 @@
 // renders the next page in that theme with no flash, and handed to the site's onSave hook, which
 // saves it to the signed-in account. Where the cookie is the memory, the server's answer (the
 // data-theme it wrote) is copied into this browser's memory first (syncServedTheme), so an older
-// choice here never overrules it. The pre-paint script is themeScript (theme-server.ts).
+// choice here never overrules it. The pre-paint script is themeScript (theme-cookie.ts).
 import { readStored, reducedMotion, writeStored } from "../hooks/hooks.ts";
 import { attach as attachTip } from "../tooltip/tooltip.ts";
 import {
@@ -21,7 +21,7 @@ import {
   THEME_PREF,
   themeCookie,
   type ThemeChoice,
-} from "./theme-server.ts";
+} from "./theme-cookie.ts";
 
 export { THEME_COOKIE, THEME_PREF, type ThemeChoice };
 
