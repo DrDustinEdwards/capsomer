@@ -23,7 +23,7 @@ export function wordPattern(word: string): string {
     .map((ch) =>
       /[a-z]/i.test(ch)
         ? `[${ch.toUpperCase()}${ch.toLowerCase()}]`
-        : ch.replace(/[\^$.*+?()[\]{}|/-]/g, "\\$&"),
+        : ch.replace(/[\^$.*+?()[\]{}|/]/g, "\\$&"),
     )
     .join("");
 }

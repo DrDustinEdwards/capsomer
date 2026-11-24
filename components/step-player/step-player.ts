@@ -3,9 +3,8 @@
 // hidden and whenever the person moves themselves (a key, a step link), because motion a person did
 // not start must be easy to stop (WCAG 2.2.2). Under reduced motion it waits half as long again on
 // each step. The page owns the steps; the player only calls go(n).
-import { clamp } from "../hooks/hooks.ts";
 
-import { reducedMotion } from "../hooks/hooks.ts";
+import { clamp, reducedMotion } from "../hooks/hooks.ts";
 
 export interface StepPlayerOptions {
   // The button. Rendered hidden: with no script there is nothing to play, so it is shown here.

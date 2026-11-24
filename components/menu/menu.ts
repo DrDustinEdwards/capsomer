@@ -3,7 +3,7 @@
 // outside it, and moves between the buttons with the arrow keys; ArrowDown on the summary opens
 // it and lands on the first button. The Base UI menu needs none of this; it is React only.
 
-const READY = "data-cap-ready";
+import { enhanceEach } from "../hooks/hooks.ts";
 
 // The items the arrow keys move through: the submit buttons that are not disabled, and link items.
 const buttonsOf = (d: HTMLElement) =>
@@ -16,14 +16,9 @@ export function stepIndex(count: number, from: number, dir: 1 | -1): number {
   return (from + dir + count) % count;
 }
 
-export function enhance(root: ParentNode = document): () => void {
-  const undo: Array<() => void> = [];
-  for (const d of Array.from(
-    root.querySelectorAll<HTMLDetailsElement>(
-      "details[data-cap='menu-form']:not([data-cap-ready])",
-    ),
-  )) {
-    d.setAttribute(READY, "");
+export function enhance(root: ParentNode | Element = document): () => void {
+  return enhanceEach(root, "menu-form", (el) => {
+    const d = el as HTMLDetailsElement;
     const summary = d.querySelector<HTMLElement>(":scope > summary");
     const close = (focus: boolean) => {
       d.open = false;
@@ -56,12 +51,10 @@ export function enhance(root: ParentNode = document): () => void {
     d.addEventListener("keydown", onKey);
     d.addEventListener("focusout", onFocusOut);
     document.addEventListener("pointerdown", onOutside);
-    undo.push(() => {
+    return () => {
       d.removeEventListener("keydown", onKey);
       d.removeEventListener("focusout", onFocusOut);
       document.removeEventListener("pointerdown", onOutside);
-      d.removeAttribute(READY);
-    });
-  }
-  return () => undo.forEach((f) => f());
+    };
+  });
 }

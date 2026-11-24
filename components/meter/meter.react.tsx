@@ -1,6 +1,7 @@
-import { useId, useLayoutEffect, useRef, type ReactNode } from "react";
+import { useId, useRef, type ReactNode } from "react";
 import { setBar, toneFor, type MeterTone } from "./meter.ts";
 import { Glyph } from "../status/status.react.tsx";
+import { useIsoLayoutEffect } from "../hooks/hooks.react.tsx";
 
 export interface MeterProps {
   label: ReactNode;
@@ -64,7 +65,7 @@ export function Meter({
   const labelId = useId();
   const root = ["cap-meter", className].filter(Boolean).join(" ");
   // Positions go through the CSSOM, never a style prop (style-src 'self').
-  useLayoutEffect(() => {
+  useIsoLayoutEffect(() => {
     if (bar.current && value !== null && !measuring)
       setBar(bar.current, { value, max, min, projected, threshold });
   }, [value, max, min, projected, threshold, measuring]);

@@ -60,6 +60,8 @@ export function enhance(root: ParentNode = document): () => void {
       rail.removeEventListener("click", onRail);
       doc.removeEventListener("click", onDoc);
       el.removeEventListener("change", onView);
+      clear();
+      delete el.dataset.capReady;
     });
   }
   return () => {

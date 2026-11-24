@@ -14,10 +14,6 @@ import {
 } from "../confirm-dialog/confirm-dialog.react.tsx";
 import { onlyParamsChanged } from "./router.ts";
 
-export type { RowForm };
-
-export { onlyParamsChanged };
-
 /** A part's `renderForm` as the router's Form: the post is a client navigation, and works as a
  * plain form before the script runs. `<ConfirmPage renderForm={routerRenderForm} />`. */
 export function routerRenderForm(props: ConfirmFormProps): ReactElement {

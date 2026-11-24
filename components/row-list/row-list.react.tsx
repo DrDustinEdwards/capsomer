@@ -2,6 +2,7 @@ import { useEffect, useId, useRef, useState, type ReactNode } from "react";
 import { PlainForm, type FormComponent } from "../plain-form/plain-form.react.tsx";
 import { isImeEnter } from "../shortcuts/shortcuts.ts";
 import { attachRowList } from "./row-list.ts";
+import { plainLink } from "../hooks/hooks.react.tsx";
 
 export interface RowListProps {
   // The list's name: the heading id that names it (preferred), or a label.
@@ -75,8 +76,6 @@ export interface RowProps {
   // shown under the row's text across the row, above the stretched link.
   reply?: ReactNode;
 }
-
-const plainLink = ({ children, ...props }: RowLinkProps) => <a {...props}>{children}</a>;
 
 export function Row({
   title,

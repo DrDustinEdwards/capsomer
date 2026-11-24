@@ -8,6 +8,15 @@ export function cn(...parts: Array<string | false | null | undefined>): string {
   return parts.filter(Boolean).join(" ");
 }
 
+/** The element id a hash names: percent-decoded, or as written when it is not valid percent-encoding ("#%E0"). */
+export function hashId(hash: string): string {
+  try {
+    return decodeURIComponent(hash);
+  } catch {
+    return hash;
+  }
+}
+
 /** An address safe as an href: http(s) or a path on this site. A stored `javascript:` or `data:` address is not. */
 export function linkable(href: unknown): href is string {
   return typeof href === "string" && (isHttpUrl(href) || isSameOriginPath(href));

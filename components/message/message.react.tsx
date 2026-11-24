@@ -222,16 +222,21 @@ export function MessageProvider({ children, region = true, undoKey = true }: Mes
 }
 
 export function useMessage(): MessageApi {
-  const ctx = useContext(MessageContext);
-  if (!ctx) throw new Error("useMessage needs a <MessageProvider> above it.");
-  return { say: ctx.say, fail: ctx.fail, dismiss: ctx.dismiss };
+  const api = useOptionalMessage();
+  if (!api) throw new Error("useMessage needs a <MessageProvider> above it.");
+  return api;
 }
 
 // The same API, or null when no <MessageProvider> is above: for a component that says its
 // results in the page's region when there is one and works without it (a form that posts).
+// One object while the provider's callbacks hold, so an effect that depends on it does not re-run each render.
 export function useOptionalMessage(): MessageApi | null {
   const ctx = useContext(MessageContext);
-  return ctx ? { say: ctx.say, fail: ctx.fail, dismiss: ctx.dismiss } : null;
+  const { say, fail, dismiss } = ctx ?? {};
+  return useMemo(
+    () => (say && fail && dismiss ? { say, fail, dismiss } : null),
+    [say, fail, dismiss],
+  );
 }
 
 // The region itself. One per page. It has no data-cap attribute, so the plain behavior

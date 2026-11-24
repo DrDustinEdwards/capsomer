@@ -8,6 +8,7 @@ import {
   type ScheduleDay,
   type ScheduleSlot,
 } from "./schedule.ts";
+import { plainLink } from "../hooks/hooks.react.tsx";
 
 type Level = 2 | 3 | 4;
 
@@ -17,8 +18,6 @@ export interface ScheduleLinkProps {
   "aria-current"?: "page";
   children: ReactNode;
 }
-
-const plainLink = ({ children, ...props }: ScheduleLinkProps) => <a {...props}>{children}</a>;
 
 export interface ScheduleDayNavProps {
   // The day keys to offer, from dayKeys().

@@ -5,14 +5,7 @@
 // shortcut registry. Every command shows its shortcut. No framework; the React wrapper uses
 // the same pure functions.
 import { closeDialog, openDialog, wireDialog } from "../dialog/dialog.ts";
-import {
-  createListbox,
-  filterCommands as filterItems,
-  groupBy,
-  matchesQuery as matches,
-  step as stepIndex,
-  type Listbox,
-} from "../listbox/listbox.ts";
+import { createListbox, groupBy, type Listbox } from "../listbox/listbox.ts";
 import { keysFragment, register } from "../shortcuts/shortcuts.ts";
 import { readStored, uid, writeStored } from "../hooks/hooks.ts";
 
@@ -129,13 +122,6 @@ export function stopCommand(o: {
     run: o.run,
   };
 }
-
-// The listbox's own filtering, grouping and stepping, under the names this module has always
-// exported: a case-insensitive substring over the group, the label and the keywords (so the
-// name of a group finds all of it; an empty query matches all).
-export const matchesQuery = matches;
-export const filterCommands = filterItems;
-export const step = stepIndex;
 
 // Commands by group, in the order each group first appears.
 export function groupCommands<T extends { group: string }>(
@@ -696,6 +682,12 @@ export function attach(
 let current: Attached | null = null;
 let unregisterKeys: (() => void) | null = null;
 
+// A menu taken down is no longer the one Ctrl K opens.
+function release(a: Attached): void {
+  a.detach();
+  if (current === a) current = null;
+}
+
 function ensureShortcut(): void {
   if (unregisterKeys) return;
   unregisterKeys = register({
@@ -733,9 +725,8 @@ export function createCommandMenu(commands: Command[], opts: MenuOptions = {}): 
     ...a,
     dialog,
     detach() {
-      a.detach();
+      release(a);
       dialog.remove();
-      if (current === a) current = null;
     },
   };
 }
@@ -783,7 +774,7 @@ export function enhance(root: ParentNode = document): () => void {
       { ask },
     );
     current = a;
-    undo.push(a.detach);
+    undo.push(() => release(a));
   }
   for (const btn of root.querySelectorAll<HTMLElement>(
     "[data-cap-command-open]:not([data-cap-ready])",

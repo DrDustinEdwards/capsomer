@@ -7,7 +7,7 @@
 // module's own on purpose: Chrome's focusgroup does not skip a disabled tab. No framework;
 // the React wrapper uses the same pure functions.
 
-import { readStored, subscribeStored, writeStored } from "../hooks/hooks.ts";
+import { hashId, readStored, subscribeStored, writeStored } from "../hooks/hooks.ts";
 import { startPointerDrag } from "../sortable-list/sortable-list.ts";
 
 const READY = "data-cap-ready";
@@ -233,12 +233,7 @@ export function upgrade(root: HTMLElement): boolean {
     (p) => p.parentElement?.closest("[data-cap='tabs'], .cap-tabs") === root,
   );
   const pairs = [...list.querySelectorAll<HTMLAnchorElement>(":scope > a.cap-tab")].flatMap((a) => {
-    let id = a.hash.slice(1);
-    try {
-      id = decodeURIComponent(id);
-    } catch {
-      /* keep raw */
-    }
+    const id = hashId(a.hash.slice(1));
     const panel = id ? panels.find((p) => p.id === id) : undefined;
     return panel ? [{ tab: a as HTMLElement, panel }] : [];
   });
@@ -359,15 +354,7 @@ function attach(root: HTMLElement): () => void {
   };
   const fromHash = () => {
     if (!hashed() || !location.hash) return;
-    // A malformed escape (#%) throws URIError, which here ran inside init and stopped every later
-    // tab set on the page; fall back to the raw text as the link component does.
-    const raw = location.hash.slice(1);
-    let id = raw;
-    try {
-      id = decodeURIComponent(raw);
-    } catch {
-      /* keep raw */
-    }
+    const id = hashId(location.hash.slice(1));
     const tab = tabsOf(root).find((t) => t.getAttribute("aria-controls") === id);
     if (tab && tab.getAttribute("aria-selected") !== "true") select(root, tab);
   };

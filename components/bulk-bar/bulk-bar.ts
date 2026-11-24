@@ -81,8 +81,7 @@ export function allVisibleSelected(
   return rows.length > 0 && rows.every((r) => selected.has(r.id));
 }
 
-// Select all: the selection becomes exactly the rows in view; when they all are, it clears.
-// Replacing, not merging, so no id out of view stays selected unseen.
+// Select all: the selection becomes exactly the rows in view (replaced, not merged); all already: clears.
 export function toggleAllVisible(
   selected: ReadonlySet<string>,
   rows: ReadonlyArray<{ id: string }>,
@@ -485,7 +484,8 @@ export function attachBulkBar(bar: HTMLElement): () => void {
   const onClick = (e: MouseEvent) => {
     const target = e.target instanceof Element ? e.target : null;
     const button = target?.closest<HTMLElement>("button, [data-cap-bulk-action]");
-    if (!button || !bar.contains(button) || button.getAttribute("aria-disabled") === "true") return;
+    if (!button || !bar.contains(button)) return;
+    if (button.getAttribute("aria-disabled") === "true") return e.preventDefault();
     if (button.classList.contains("cap-bulk-clear")) {
       clearSelection(bar);
       return;

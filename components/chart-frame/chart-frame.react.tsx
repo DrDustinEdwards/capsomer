@@ -150,7 +150,9 @@ export function ChartFrame({
         charts = m.enhance(el, enhanceOptions.current);
       })
       .catch(() => {
-        // The chart is complete without the layer: its words and table are in the HTML.
+        // The chart is complete without the layer: its words and table are in the HTML. A failed
+        // load is not kept, so the next draw tries again.
+        enhancer = undefined;
       });
     return () => {
       live = false;

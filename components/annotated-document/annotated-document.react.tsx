@@ -56,20 +56,25 @@ export function AnnotatedDocument({
   const rail = useRef<HTMLUListElement>(null);
 
   // The passages are the app's children, not elements this component renders, so they are marked
-  // through the DOM after the render.
+  // through the DOM after every render.
+  useEffect(() => {
+    for (const m of doc.current?.querySelectorAll<HTMLElement>("mark[data-note]") ?? [])
+      m.toggleAttribute("data-lit", m.dataset.note === lit?.id);
+  }, [lit, children]);
+
+  // The scroll runs only when the lit note changes, not on a parent's re-render.
   useEffect(() => {
     const box = doc.current;
-    if (!box) return;
-    const marks = [...box.querySelectorAll<HTMLElement>("mark[data-note]")];
-    for (const m of marks) m.toggleAttribute("data-lit", m.dataset.note === lit?.id);
-    if (!lit) return;
-    const first = marks.find((m) => m.dataset.note === lit.id);
+    if (!box || !lit) return;
+    const first = [...box.querySelectorAll<HTMLElement>("mark[data-note]")].find(
+      (m) => m.dataset.note === lit.id,
+    );
     const note = rail.current?.querySelector<HTMLElement>(
       `.cap-annotated-note[data-note="${CSS.escape(lit.id)}"]`,
     );
     if (lit.from === "note" && first) bring(box, first, 40);
     if (lit.from === "passage" && note && rail.current) bring(rail.current, note, 12);
-  }, [lit, children]);
+  }, [lit]);
 
   const toggle = (id: string, from: "note" | "passage") =>
     setLit((cur) => (cur?.id === id ? null : { id, from }));

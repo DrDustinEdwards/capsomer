@@ -9,7 +9,7 @@ import { lazy, Suspense, useEffect, useRef, useState, type ReactNode } from "rea
 import { useIsoLayoutEffect } from "../hooks/hooks.react.tsx";
 import { Dialog, DialogBody, DialogHeader, DialogTitle } from "../dialog/dialog.react.tsx";
 import { Icon, iconAlert, iconChevronUp, iconClose, iconSpinner } from "../icons/icons.react.tsx";
-import { plainLink } from "../shell/shell.react.tsx";
+import { plainLink } from "../hooks/hooks.react.tsx";
 import { activeChapterIndex } from "./player.ts";
 import { usePlayer } from "./player-context.react.tsx";
 import {
@@ -158,7 +158,15 @@ export function PlayerDock({
               className="cap-player-btn"
               data-part="close"
               aria-label="Close player"
-              onClick={p.dismiss}
+              onClick={() => {
+                p.dismiss();
+                // The dock unmounts with focus on its Close button; land on the page, not the body.
+                const main = document.querySelector<HTMLElement>("main");
+                if (main) {
+                  if (!main.hasAttribute("tabindex")) main.tabIndex = -1;
+                  main.focus({ preventScroll: true });
+                }
+              }}
             >
               <Icon d={iconClose} className="cap-player-icon" />
             </button>
@@ -189,8 +197,6 @@ export function PlayerDock({
   );
 }
 
-// The layout effect runs before paint on the client, so a surface already on screen hides the dock
-// with no flash; on the server it is a plain effect (never run).
 const LazyWaveform = lazy(() =>
   import("./player-waveform.react.tsx").then((m) => ({ default: m.Waveform })),
 );
@@ -224,7 +230,8 @@ export function PlayerSurface({
   const active = p.current?.id === track.id;
   const section = useRef<HTMLElement>(null);
 
-  // Only while this track is the one loaded: another track playing keeps the dock in view.
+  // Only while this track is the one loaded: another track playing keeps the dock in view. The layout
+  // effect runs before paint, so a surface already on screen hides the dock with no flash.
   useIsoLayoutEffect(() => {
     const el = section.current;
     if (!active || !el) {

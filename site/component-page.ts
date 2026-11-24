@@ -2,13 +2,13 @@
 // one fixed pattern (bin/docs.mjs keeps the doc files to it), every part of it read from the code:
 //   component: name and one line; live preview with its code; Installation; Usage; Examples; API reference; Accessibility
 //   primitive: name and one line; Anatomy; Data attributes; Keyboard; API
+import { escapeHtml as esc } from "@dustinedwards/site-runtime/html";
 import { existsSync, readFileSync } from "node:fs";
 import { iconChevronLeft, iconChevronRight } from "../components/icons/icons.ts";
 import { codeRegion } from "./markdown.ts";
 import {
   FOOTER,
   codeBox,
-  esc,
   header,
   part,
   prose,

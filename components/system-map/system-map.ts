@@ -9,7 +9,7 @@
 // Next step a flow, lighting the parts each step touches. No framework, no storage.
 
 import { enhance as enhanceTabs, select } from "../tabs/tabs.ts";
-import { stepText } from "./system-map-data.ts";
+import { ids, stepText } from "./system-map-data.ts";
 import { type Wires, wires } from "./system-map-wires.ts";
 
 export {
@@ -52,7 +52,6 @@ export { hexLayout } from "./system-map-hex.ts";
 export type { HexCell, HexLayout } from "./system-map-hex.ts";
 
 const READY = "data-cap-ready";
-const ids = (v: string | undefined) => (v ?? "").split(" ").filter(Boolean);
 
 export interface SystemMapController {
   // The system whose ties are lit on the network, or null to clear.

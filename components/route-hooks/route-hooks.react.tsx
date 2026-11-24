@@ -11,6 +11,7 @@ import {
   type SubmitTarget,
 } from "react-router";
 import { filterParams, pagePending, withParam } from "../form-hooks/form-hooks.ts";
+import { hashId } from "../hooks/hooks.ts";
 
 // The hooks that read the address, a fetcher or loader data (React Router 8). The ones that need
 // no router are capsomer/react/form-hooks and capsomer/react/state-hooks.
@@ -152,16 +153,6 @@ export function usePagePending(pathname?: string): boolean {
   const { state } = useRevalidator();
   const here = useLocation().pathname;
   return pagePending(navigation, state, pathname ?? here);
-}
-
-// The element id a hash names: percent-decoded, or as written when it is not valid
-// percent-encoding ("#%E0"), where decodeURIComponent throws.
-function hashId(hash: string): string {
-  try {
-    return decodeURIComponent(hash);
-  } catch {
-    return hash;
-  }
 }
 
 /**

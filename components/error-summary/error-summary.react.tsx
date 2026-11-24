@@ -13,12 +13,15 @@ export function ErrorSummary({ errors, title = "There is a problem" }: ErrorSumm
   const ref = useRef<HTMLDivElement>(null);
   const titleId = useId();
   useEffect(() => (ref.current ? wireSummary(ref.current) : undefined), []);
+  // Keyed on which fields are in error, not on the array: a parent that re-renders with a new array
+  // of the same errors must not pull focus off the field being edited.
+  const fields = errors.map((e) => e.id).join("\n");
   useEffect(() => {
-    if (errors.length === 0) return;
+    if (!fields) return;
     ref.current?.focus();
     setTitleError(true);
     return () => setTitleError(false);
-  }, [errors]);
+  }, [fields]);
   return (
     <div
       className="cap-error-summary"

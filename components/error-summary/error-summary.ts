@@ -4,6 +4,8 @@
 // server rendered with errors writes the same markup with `autofocus`, and enhance() wires its
 // links. No framework; the React wrapper uses the same functions.
 
+import { hashId } from "../hooks/hooks.ts";
+
 export interface SummaryItem {
   control: HTMLElement;
   text: string;
@@ -23,7 +25,7 @@ export function setTitleError(on: boolean): void {
 // into view with it, so the question is seen as well as the box.
 function onClick(e: MouseEvent): void {
   const link = (e.target as Element | null)?.closest<HTMLAnchorElement>("a[href^='#']");
-  const target = link ? document.getElementById(decodeURIComponent(link.hash.slice(1))) : null;
+  const target = link ? document.getElementById(hashId(link.hash.slice(1))) : null;
   if (!target) return;
   e.preventDefault();
   const head = target.closest(".cap-field")?.querySelector(":scope > .cap-field-label") ?? target;

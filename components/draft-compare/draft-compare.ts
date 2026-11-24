@@ -10,8 +10,8 @@
 // The HTML holds every view (side by side, inline, changes only) so a reader without script
 // still gets all of it; the radios in the bar choose which one shows, in CSS.
 
-import { isImeEnter } from "../shortcuts/shortcuts.ts";
-import { singleKeysOff } from "../row-list/row-list.ts";
+import { singleKeysOff } from "../shortcuts/shortcuts.ts";
+import { isTypingKey, listOwnsKeys } from "../row-list/row-list.ts";
 import { type CompareView, STORAGE_KEY, VIEWS } from "./draft-compare-render.ts";
 import { enhanceEach, readStored, writeStored } from "../hooks/hooks.ts";
 
@@ -98,19 +98,6 @@ export function setView(root: Element, view: CompareView): void {
   if (radio) radio.checked = true;
 }
 
-const isTextEntry = (e: KeyboardEvent): boolean => {
-  if (e.ctrlKey || e.metaKey || e.altKey || e.isComposing || isImeEnter(e)) return true;
-  const t = e.target as HTMLElement | null;
-  if (!t) return false;
-  if (
-    t.isContentEditable ||
-    /^(TEXTAREA|SELECT)$/.test(t.tagName) ||
-    t.closest("[role='combobox'], [role='textbox']")
-  )
-    return true;
-  return t.tagName === "INPUT" && !/^(radio|checkbox|button)$/.test((t as HTMLInputElement).type);
-};
-
 function attach(root: HTMLElement): () => void {
   const live = root.querySelector<HTMLElement>("[data-cap-part='live']");
   const total = root.querySelectorAll<HTMLElement>("[data-jump]").length;
@@ -181,13 +168,7 @@ function attach(root: HTMLElement): () => void {
   // and act only when focus is inside the compare or it is the page's primary one.
   const onKey = (e: KeyboardEvent) => {
     if (e.defaultPrevented || (e.key !== "n" && e.key !== "p")) return;
-    if (isTextEntry(e) || singleKeysOff() || total === 0) return;
-    const active = document.activeElement;
-    const owns =
-      (active && root.contains(active)) ||
-      (root.hasAttribute("data-cap-primary") &&
-        !active?.closest("dialog[open], [role='dialog'], [role='menu'], [role='listbox']"));
-    if (!owns) return;
+    if (isTypingKey(e) || singleKeysOff() || total === 0 || !listOwnsKeys(root)) return;
     e.preventDefault();
     if (e.key === "n") goTo(current + 1);
     else goTo(current === 0 ? total : current - 1);

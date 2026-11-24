@@ -160,8 +160,6 @@ export function dayLabel(
   return formatDate(t, { style: "weekday", year }) as string;
 }
 
-// A slot's time in words: "9:00 AM to 10:30 AM", "From 9:00 AM", "Until 10:30 AM", or
-// `none` when it has no time.
 // A slot's time as words and the moments they name: "9:00 AM to 10:30 AM", "From 9:00 AM",
 // "Until 5:00 PM" or `none`. slotLabel joins them; the React schedule puts each moment in a <time>.
 export type SlotPart = string | { at: number; text: string };

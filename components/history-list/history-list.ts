@@ -231,10 +231,9 @@ export function appendEntries(
   const more = root.querySelector<HTMLElement>("[data-cap-part='older']");
   if (more) {
     more.removeAttribute("aria-busy");
-    if (opts.more === false) more.remove();
-    else
-      (more as HTMLAnchorElement).href =
-        `?before=${encodeURIComponent((entries[entries.length - 1] as HistoryEntry).id)}`;
+    const last = entries[entries.length - 1];
+    if (opts.more === false || !last) more.remove();
+    else (more as HTMLAnchorElement).href = `?before=${encodeURIComponent(last.id)}`;
   }
   syncPicks(root);
 }

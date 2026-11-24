@@ -10,7 +10,7 @@
 // (dashboard/src/ui/anchors.tsx), which learned that mounting the bar could otherwise tip the
 // rule it was mounted by.
 
-import { reducedMotion } from "../hooks/hooks.ts";
+import { hashId, reducedMotion } from "../hooks/hooks.ts";
 
 // The nearest ancestor that scrolls, or null for the window.
 export function scrollParent(el: Element | null | undefined): HTMLElement | null {
@@ -182,7 +182,7 @@ export function enhance(root: ParentNode = document): () => void {
     let pairs: Array<{ a: HTMLAnchorElement; h: HTMLElement }> = [];
     const resolve = () => {
       pairs = Array.from(nav.querySelectorAll<HTMLAnchorElement>("a[href^='#']"))
-        .map((a) => ({ a, h: document.getElementById(decodeURIComponent(a.hash.slice(1))) }))
+        .map((a) => ({ a, h: document.getElementById(hashId(a.hash.slice(1))) }))
         .filter((p): p is { a: HTMLAnchorElement; h: HTMLElement } => p.h !== null);
     };
     if (auto) fill();

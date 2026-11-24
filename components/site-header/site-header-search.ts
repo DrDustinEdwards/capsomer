@@ -3,7 +3,7 @@
 // site-header.ts.
 import { plural } from "@drdustinedwards/site-helpers/text";
 import { listenInto } from "../hooks/hooks.ts";
-import { isImeEnter } from "../shortcuts/shortcuts.ts";
+import { isImeEnter, registerKey } from "../shortcuts/shortcuts.ts";
 import { hideTip } from "../tooltip/tooltip.ts";
 import {
   type SearchHit,
@@ -168,16 +168,8 @@ export function wireSearch(
     if (isOpen(panel)) close();
     else open();
   });
-  // "/" opens search from anywhere, but not while a person types in a field.
-  on(document, "keydown", (e: KeyboardEvent) => {
-    if (e.key !== "/" || e.ctrlKey || e.metaKey || e.altKey || e.defaultPrevented) return;
-    if (
-      (e.target as Element | null)?.closest?.("input, textarea, select, [contenteditable='true']")
-    )
-      return;
-    e.preventDefault();
-    open();
-  });
+  // "/" opens search from anywhere: through the registry, so typing, a modal and the single-keys switch hold it back.
+  undo.push(registerKey({ key: "/", label: "Search", group: "General", run: open }));
   on(input, "input", () => {
     window.clearTimeout(timer);
     timer = window.setTimeout(ask, SUGGEST_DELAY_MS);

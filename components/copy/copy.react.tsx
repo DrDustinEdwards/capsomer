@@ -113,7 +113,7 @@ export function CopyButton(props: CopyButtonProps) {
   const onClick = async () => {
     if (share) {
       const outcome = await doShare(share);
-      onCopied?.(outcome !== "failed");
+      onCopied?.(outcome === "shared" || outcome === "copied");
       return;
     }
     const value = typeof text === "function" ? text() : (text ?? "");

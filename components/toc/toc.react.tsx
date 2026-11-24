@@ -23,7 +23,7 @@ export function Toc({ items, variant, title = "Contents", min = MIN_ITEMS }: Toc
   const ref = useRef<HTMLElement>(null);
   const id = useId();
   // This list only: a sibling's own effect attaches the sibling.
-  useEffect(() => (ref.current ? attach(ref.current) : undefined), []);
+  useEffect(() => (ref.current ? attach(ref.current) : undefined), [items, variant, min]);
   if (items.length < min) return null;
   const list = (
     <ol className="cap-toc-list">

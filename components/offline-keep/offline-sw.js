@@ -20,7 +20,13 @@ self.addEventListener("activate", (event) => {
       .then((names) =>
         Promise.all(
           names
-            .filter((name) => PREFIX && name.startsWith(PREFIX) && name !== KEPT)
+            .filter(
+              (name) =>
+                PREFIX &&
+                name !== KEPT &&
+                name.startsWith(PREFIX) &&
+                /^v\d+$/.test(name.slice(PREFIX.length)),
+            )
             .map((name) => caches.delete(name)),
         ),
       )

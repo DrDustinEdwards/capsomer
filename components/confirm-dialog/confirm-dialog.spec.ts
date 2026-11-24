@@ -20,7 +20,8 @@ async function openLive(page: Page, theme: "light" | "dark") {
 }
 
 test("behavior: the typed word as an HTML pattern says what wordMatches says", () => {
-  const re = (w: string) => new RegExp(`^(?:${wordPattern(w)})$`);
+  // The browser compiles `pattern` with the v flag, where an escaped hyphen is a syntax error.
+  const re = (w: string) => new RegExp(`^(?:${wordPattern(w)})$`, "v");
   expect(wordPattern("delete")).toBe("[Dd][Ee][Ll][Ee][Tt][Ee]");
   for (const typed of ["delete", "DELETE", "Delete"]) expect(re("delete").test(typed)).toBe(true);
   for (const typed of ["delet", "deletee", "remove", " delete", ""])
@@ -30,6 +31,7 @@ test("behavior: the typed word as an HTML pattern says what wordMatches says", (
   expect(re("a.b").test("axb")).toBe(false);
   expect(re("x+y").test("xxy")).toBe(false);
   expect(re("x+y").test("X+y")).toBe(true);
+  expect(re("my-site.com").test("MY-site.com")).toBe(true);
   expect(wordMatches("DELETE", "delete")).toBe(true);
 });
 

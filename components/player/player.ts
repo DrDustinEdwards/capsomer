@@ -275,14 +275,13 @@ export function loadTrack(
   // The element is preload="none" until a reader reaches for a track; this is that moment.
   audio.preload = "metadata";
   audio.src = url;
-  audio.addEventListener(
-    "loadedmetadata",
-    () => {
-      const at = storage.resumeAt(track.id, audio.duration);
-      if (at !== null) audio.currentTime = at;
-    },
-    { once: true },
-  );
+  // One handler on the element, so a second press before the first track's metadata arrives
+  // replaces it: the first track's resume position never lands on the second.
+  audio.onloadedmetadata = () => {
+    audio.onloadedmetadata = null;
+    const at = storage.resumeAt(track.id, audio.duration);
+    if (at !== null) audio.currentTime = at;
+  };
 }
 
 // Plays a track inside the press with the remembered rate, volume and mute, and marks the element

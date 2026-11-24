@@ -153,8 +153,8 @@ export function ApprovalQueue({
           aria-labelledby={headingId}
           data-cap-primary=""
         >
-          {items.map((item) => {
-            const p = `${uid}-${item.id.replace(/[^a-zA-Z0-9_-]/g, "")}`;
+          {items.map((item, at) => {
+            const p = `${uid}-${at}`;
             const open = !closed.includes(item.id);
             const formId = `${p}-form`;
             return (

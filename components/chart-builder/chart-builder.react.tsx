@@ -154,7 +154,11 @@ export function ChartBuilder({
     if (!file) return;
     const problem = validateFiles([file], { accept: ".csv,text/csv", maxBytes }).rejected[0];
     if (problem) return setFileError(problem.message);
-    set({ csv: await file.text() });
+    try {
+      set({ csv: await file.text() });
+    } catch (error) {
+      setFileError(errorText(error));
+    }
   }
 
   return (
@@ -205,7 +209,11 @@ export function ChartBuilder({
                 className="cap-input"
                 type="file"
                 accept=".csv,text/csv"
-                onChange={(e) => void readFile(e.target.files?.[0])}
+                onChange={(e) => {
+                  const input = e.target;
+                  // Cleared after reading, so the same file chosen again is a change.
+                  void readFile(input.files?.[0]).then(() => (input.value = ""));
+                }}
               />
             </Field>
             {columns.length >= 2 ? (

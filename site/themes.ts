@@ -3,7 +3,8 @@
 // The tables are read from tokens/tokens.json (and the shadows from tokens/color.css); site/page.ts runs the controls
 // and paints each token's sample and current value from the board, so the table follows the family and theme chosen.
 import { readFileSync } from "node:fs";
-import { FOOTER, esc, header, part, sectionPage, table, titleBlock } from "./chrome.ts";
+import { escapeHtml as esc } from "@dustinedwards/site-runtime/html";
+import { FOOTER, header, part, sectionPage, table, titleBlock } from "./chrome.ts";
 import { firsts, type Data } from "./content.ts";
 import { networkBoard } from "./network-board.ts";
 

@@ -6,13 +6,15 @@
 // with a `cap:page-change` event so it can load that page. The React wrapper uses the same
 // pure functions.
 
+import { clamp } from "../hooks/hooks.ts";
+
 const READY = "data-cap-ready";
 
 export type PageItem = number | "gap-start" | "gap-end";
 
 // A page number held to 1 to `count`; a value that is not a number is page 1.
 function clampPage(page: number, count: number): number {
-  return Math.min(Math.max(1, Math.floor(page) || 1), count);
+  return clamp(Math.floor(page) || 1, 1, count);
 }
 
 // The numbers to show for `page` of `count`: always seven slots when there are more than

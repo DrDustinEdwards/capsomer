@@ -8,9 +8,9 @@
 //
 // The SVG is hidden from assistive technology: every wire is also words (a card's counts and its
 // system's page, a part's lines), so the drawing repeats what the text already says.
+import { ids } from "./system-map-data.ts";
 
 const SVG = "http://www.w3.org/2000/svg";
-const ids = (v: string | undefined) => (v ?? "").split(" ").filter(Boolean);
 
 interface Box {
   l: number;
@@ -37,8 +37,6 @@ export type WireTest = (a: string, b: string) => boolean;
 export interface Wires {
   // Light the wires the test passes, dim the rest; null lights none and dims none.
   light(test: WireTest | null): void;
-  draw(): void;
-  destroy(): void;
 }
 
 const mid = (b: Box) => (b.t + b.b) / 2;
@@ -63,10 +61,7 @@ function gapsOf(obstacles: Box[], top: number, bottom: number): [number, number]
   return out.filter(([a, b]) => b - a >= 8);
 }
 
-/**
- * Wires for the map under `host`, whose lanes are `lanes` (left to right as drawn). `selfSide`
- * picks the side a wire inside a lane bows out to.
- */
+/** Wires for the map under `host`, whose lanes are `lanes` (left to right as drawn); `signal` ends them. */
 export function wires(host: HTMLElement, lanes: () => HTMLElement[], signal: AbortSignal): Wires {
   const svg = document.createElementNS(SVG, "svg");
   svg.setAttribute("class", "cap-system-map-wires");
@@ -308,11 +303,6 @@ export function wires(host: HTMLElement, lanes: () => HTMLElement[], signal: Abo
     light(t) {
       test = t;
       paint();
-    },
-    draw,
-    destroy() {
-      ro.disconnect();
-      svg.remove();
     },
   };
 }

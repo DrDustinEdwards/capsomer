@@ -302,7 +302,6 @@ function Line({
 
 function RunLines({
   run,
-  deltas,
   prefix,
   now,
   open,
@@ -310,7 +309,6 @@ function RunLines({
   children,
 }: {
   run: Run;
-  deltas: (number | undefined)[];
   prefix: string;
   now?: number;
   open: boolean;
@@ -322,7 +320,6 @@ function RunLines({
   const title = runTitle(run);
   const names =
     run.who.length > 1 ? `${run.who[0]} and ${run.who.length - 1} more` : (run.who[0] ?? "");
-  void deltas;
   return (
     <>
       <li className="cap-row cap-hist-row" data-kind="run">
@@ -526,14 +523,13 @@ export function HistoryList({
           if (line.type === "entry") {
             return common(line.entry, starts[li] ?? 0);
           }
-          const start = starts[li] ?? 0;
           const id = `${prefix}-run-${(line.entries[0] as HistoryEntry).id}`;
           const isOpen = open[id] === true;
+          const start = starts[li] ?? 0;
           return (
             <RunLines
               key={id}
               run={line}
-              deltas={line.entries.map((_e, k) => deltaOf(entries, start + k))}
               prefix={prefix}
               now={now}
               open={isOpen}

@@ -20,6 +20,7 @@ test("a rule is found by its whole selector, and tokens resolve through var() ch
   );
   assert.deepEqual(resolveToken(light, "--link"), { value: "#1c1727", chain: ["--ink"] });
   assert.deepEqual(readDeclarations(CSS, '[data-theme="dark"]'), { "--ink": ["#f0f0f0"] });
+  assert.deepEqual(readDeclarations(":root{--a:1;--b:2}", ":root"), { "--a": ["1"], "--b": ["2"] });
 });
 
 test("rawValues names each raw design value with its token, and leaves tokens, relative units and derived values", async () => {

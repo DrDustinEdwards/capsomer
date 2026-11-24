@@ -10,7 +10,8 @@ import {
 import { attach as attachTip, hideTip } from "../tooltip/tooltip.ts";
 import { Time } from "../time/time.react.tsx";
 import { DEFAULT_PREF } from "../shell/shell.ts";
-import { groups, plainLink, useCollapsedPref, type LinkProps } from "../shell/shell.react.tsx";
+import { plainLink } from "../hooks/hooks.react.tsx";
+import { groups, useCollapsedPref, type LinkProps } from "../shell/shell.react.tsx";
 import {
   SheetGroup,
   SiteHeader,
@@ -59,8 +60,7 @@ export interface AdminEntry {
   group?: string;
 }
 
-// One app in the strip. The family's admin apps come from FAMILY_APPS (apps.tsx); this shape is
-// for a strip outside the family. `logo` is the product's mark (an svg using currentColor takes
+// One app in the strip. The family's apps come from FAMILY_APPS (apps.tsx); this is for any other. `logo` is the product's mark (an svg using currentColor takes
 // the tile's color). `count` is how many things in that app need you; the app you are in never
 // shows one.
 export interface AdminApp {

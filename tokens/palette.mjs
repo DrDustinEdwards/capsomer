@@ -18,14 +18,14 @@
 // chroma at the seed's hue; status hues are fixed and tuned by bisection against the
 // hardest surface each sits on. The OKLab conversion follows Bjorn Ottosson's reference.
 //
-//   node tokens/palette.mjs                       color.css (purple), family-<name>.css for every other family
+//   node tokens/palette.mjs                       color.css (purple), family-<name>.css for every other family,
+//                                                 family-marks.css, enarratio-theme.mjs, css/enarratio.css, components/email/colors.ts
 //   node tokens/palette.mjs --family=fox --out=f  Foxing's family as a root theme into f
 //   node tokens/palette.mjs --seed=#RRGGBB [--anchor=#RRGGBB] --out=f
 //   node tokens/palette.mjs --report              every pair, every family, both themes
 //
-// tokens/color.css is the purple family on :root (the default). tokens/family-fox.css,
-// tokens/family-teal.css, tokens/family-navy.css, tokens/family-forest.css, tokens/family-amber.css, tokens/family-magenta.css and
-// tokens/family-cerulean.css carry the same tokens scoped to [data-family="<name>"], so one element (the root, or a wrapper) can switch family for its
+// tokens/color.css is the purple family on :root (the default). tokens/family-<name>.css, one per entry
+// in FAMILIES (palette-core.mjs), carries the same tokens scoped to [data-family="<name>"], so one element (the root, or a wrapper) can switch family for its
 // subtree. Both themes follow the same pattern as color.css (prefers-color-scheme, then
 // [data-theme]). Everything inside a family block is a literal value, never a var() chain,
 // so a family on a wrapper does not inherit the root family's already-resolved values.

@@ -80,13 +80,14 @@ export function FeatureCard({
   title,
   text,
   tag,
+  id,
   attributes,
   headingLevel: H = "h3",
 }: FeatureCardItem & {
   headingLevel?: "h2" | "h3" | "h4" | "p";
 }) {
   return (
-    <li {...attributes} className="cap-feature-card">
+    <li {...attributes} id={id} className="cap-feature-card">
       {icon ? (
         <span className="cap-feature-card-icon" aria-hidden="true">
           {icon}

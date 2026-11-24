@@ -50,7 +50,19 @@ export async function subscribePush(opts: {
       "This browser did not allow notifications. Allow them for this site in the browser's settings, then try again.",
     );
   const reg = await navigator.serviceWorker.register(opts.worker, { scope: opts.scope });
-  await navigator.serviceWorker.ready;
+  // This registration's own worker, not `ready`: that waits for one that controls this page, and a scope
+  // narrower than the page never gives it.
+  const worker = reg.installing ?? reg.waiting;
+  if (worker)
+    await new Promise<void>((resolve) => {
+      const check = () => {
+        if (worker.state !== "activated" && worker.state !== "redundant") return;
+        worker.removeEventListener("statechange", check);
+        resolve();
+      };
+      worker.addEventListener("statechange", check);
+      check();
+    });
   const sub =
     (await reg.pushManager.getSubscription()) ??
     (await reg.pushManager.subscribe({

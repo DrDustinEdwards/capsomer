@@ -39,9 +39,6 @@ export function isTypingKey(e: KeyboardEvent): boolean {
   return e.ctrlKey || e.metaKey || e.altKey || e.isComposing || isImeEnter(e) || isTyping(e.target);
 }
 
-// Single-key shortcuts can be switched off (DEFAULTS.md): the shortcuts switch is the one source.
-export { singleKeysOff };
-
 // Whether j and k should act on this list now: focus is in it, or it is the page's primary
 // list and focus is in no other list and no open dialog.
 export function listOwnsKeys(list: HTMLElement): boolean {

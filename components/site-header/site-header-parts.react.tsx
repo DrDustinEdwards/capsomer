@@ -5,6 +5,7 @@ import type { LinkProps } from "../shell/shell.react.tsx";
 import { attach as attachTip, hideTip } from "../tooltip/tooltip.ts";
 import type { ThemeChoice, ThemeSave } from "../theme-switch/theme-switch.ts";
 import { type Suggest, badgeText, wirePanel } from "./site-header.ts";
+import { plainLink } from "../hooks/hooks.react.tsx";
 
 // One link in a panel, the sheet or the bottom bar. `count` is a bubble beside it (99+ past 99);
 // `countNote` says what it counts, for its accessible name: "Inbox, 4 need you".
@@ -227,8 +228,6 @@ export interface SiteHeaderProps {
   toolsEnd?: ReactNode;
   end?: ReactNode;
 }
-
-export const plainLink = ({ children, ...props }: LinkProps) => <a {...props}>{children}</a>;
 
 // Whether React wires the header in the browser (SiteHeader's `hydrate`). Where it does not, the
 // parts leave every listener to the behavior module, so nothing is wired twice.

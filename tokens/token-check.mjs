@@ -1,7 +1,8 @@
 // capsomer/token-check: reading a site's own CSS tokens, written once. Pure functions over CSS text (no
 // filesystem), so a site's gate reads its stylesheets and passes the text in (dustinedwards.info's token gate).
 
-const DECL = /(--[a-z0-9-]+)\s*:\s*([^;]+);/g;
+// The last declaration of a rule may have no semicolon: the body ends there.
+const DECL = /(--[a-z0-9-]+)\s*:\s*([^;]+?)\s*(?:;|$)/g;
 
 /** CSS without comments and with plain newlines, as every reader here expects. */
 export function stripCss(css) {

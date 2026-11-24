@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useId, useMemo, useRef, useState, useLayoutEffect } from "react";
 import { Dialog } from "../dialog/dialog.react.tsx";
+import { filterCommands, step } from "../listbox/listbox.ts";
 import { Listbox, ListboxEmpty, Option, OptionGroup } from "../listbox/listbox.react.tsx";
 import { isImeEnter, register } from "../shortcuts/shortcuts.ts";
 import { Keys } from "../shortcuts/shortcuts.react.tsx";
 import {
   ANSWER_LABEL,
   emptyText,
-  filterCommands,
   focusAnswer,
   groupCommands,
   markQuery,
@@ -14,7 +14,6 @@ import {
   rememberRecent,
   SEARCHING,
   startAnswer,
-  step,
   type AnswerRun,
   type AttachOptions,
   type Command,

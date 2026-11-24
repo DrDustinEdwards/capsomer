@@ -921,12 +921,6 @@ function Icon({ paths }: { paths: string[] }) {
   );
 }
 
-/**
- * Pasted HTML, parsed in an inert document (no script runs, nothing loads) through Capsomer's policy and
- * read by the editor's schema, which keeps only what it knows. ProseMirror's own paste would give the
- * string to the page's default Trusted Types policy, which escapes markup, so a formatted paste would
- * arrive as tags in the text.
- */
 // A popup's anchor at a document position: the caret's box there, read each time it is placed.
 function caretAnchor(editor: Editor, pos: number): VirtualAnchor {
   return {
@@ -937,6 +931,12 @@ function caretAnchor(editor: Editor, pos: number): VirtualAnchor {
   };
 }
 
+/**
+ * Pasted HTML, parsed in an inert document (no script runs, nothing loads) through Capsomer's policy and
+ * read by the editor's schema, which keeps only what it knows. ProseMirror's own paste would give the
+ * string to the page's default Trusted Types policy, which escapes markup, so a formatted paste would
+ * arrive as tags in the text.
+ */
 function pasteHtml(view: EditorView, html: string) {
   const body = inertDocument(html).body;
   let slice = SchemaParser.fromSchema(view.state.schema).parseSlice(body, {

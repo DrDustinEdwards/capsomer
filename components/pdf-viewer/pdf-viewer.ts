@@ -71,6 +71,7 @@ export function start(root: HTMLElement): () => void {
   let scale = DEFAULT_SCALE;
   let task: { cancel(): void } | null = null;
   let gone = false;
+  let failed: HTMLElement | null = null;
 
   const sync = () => {
     const ready = doc !== null;
@@ -131,6 +132,7 @@ export function start(root: HTMLElement): () => void {
     if (link) box.appendChild(link.cloneNode(true));
     status.textContent = "Not loaded";
     canvas.replaceWith(box);
+    failed = box;
   };
 
   const keys: Record<string, () => void> = {
@@ -185,6 +187,9 @@ export function start(root: HTMLElement): () => void {
   return () => {
     gone = true;
     task?.cancel();
+    // The canvas goes back, so the markup is what React rendered and a new `src` starts clean.
+    failed?.replaceWith(canvas);
+    if (failed) status.textContent = "Loading";
     for (const [el, type, f] of handlers) el.removeEventListener(type, f);
     started.delete(root);
     delete root.dataset.capReady;

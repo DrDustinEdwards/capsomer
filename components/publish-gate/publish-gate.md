@@ -36,7 +36,7 @@ replaces:
       <li class="cap-gate-section" data-section="sites">
         <h3 class="cap-gate-group-title" id="pg-g-sites">Destination</h3>
         <ul class="cap-gate-section-rows" role="list" aria-labelledby="pg-g-sites">
-          <li class="cap-row cap-gate-site" id="pg-s-example" data-site="example" data-name="example.com" data-state="blocked" data-first data-tone="crit">
+          <li class="cap-row cap-gate-site" id="pg-s-example" data-site="example" data-name="example.com" data-live-url="https://example.com/blog/why-the-editor-waits" data-state="blocked" data-first data-tone="crit">
             <span class="cap-row-status" id="pg-s-example-s">[status]Blocked</span>
             <div class="cap-row-title"><span class="cap-gate-site-name">example.com</span></div>
             <p class="cap-row-detail" id="pg-s-example-d">2 required checks failing: The cover image has no alt text; The title is empty</p>
@@ -83,6 +83,7 @@ import { enhance, attachPublishGate, gateState, sortChecks, describeGate, siteSt
 
 enhance(document, {
   publish: (siteIds) => api.publish(slug, siteIds), // resolve when it is live; reject with an Error saying why not
+  // A destination row's `data-live-url` is where its View link goes once the publish resolves.
   unpublish: (siteIds) => api.unpublish(slug, siteIds),
 });
 

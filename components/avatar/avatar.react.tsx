@@ -30,7 +30,9 @@ export function Avatar({
   badgeLabel,
   badgeTone,
 }: AvatarProps) {
-  const [failed, setFailed] = useState(false);
+  // The address that failed, so a new `src` gets its own try.
+  const [failedSrc, setFailedSrc] = useState<string | null>(null);
+  const failed = src != null && failedSrc === src;
   return (
     <span
       className="cap-avatar"
@@ -45,7 +47,7 @@ export function Avatar({
         {fallback ?? initials(name)}
       </span>
       {src && !failed ? (
-        <img className="cap-avatar-image" src={src} alt="" onError={() => setFailed(true)} />
+        <img className="cap-avatar-image" src={src} alt="" onError={() => setFailedSrc(src)} />
       ) : null}
       {badge != null ? (
         <span className="cap-avatar-badge" data-tone={badgeTone} aria-hidden="true">

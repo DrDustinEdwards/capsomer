@@ -422,3 +422,6 @@ export function networkLayout(data: SystemMapData, names: Record<MapRing, string
   }
   return lanes;
 }
+
+/** The space-separated keys in a `data-` attribute. */
+export const ids = (v: string | undefined): string[] => (v ?? "").split(" ").filter(Boolean);
