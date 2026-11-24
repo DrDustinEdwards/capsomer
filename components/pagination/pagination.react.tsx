@@ -90,7 +90,6 @@ export function Pagination({
     const off = !extra.current && (to < 1 || to > pageCount);
     if (links) {
       return off ? (
-        // oxlint-disable-next-line jsx-a11y/no-redundant-roles -- an <a> with no href has no link role; this disabled link keeps it
         <a {...common} role="link" aria-disabled="true">
           {content}
         </a>

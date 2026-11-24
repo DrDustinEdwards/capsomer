@@ -23,7 +23,9 @@ export function useSaveQueue(submit: () => void, saving: boolean): () => void {
     send.current = submit;
   });
   const queue = useRef<SaveQueue | null>(null);
-  queue.current ??= createSaveQueue(() => send.current());
+  useEffect(() => {
+    queue.current = createSaveQueue(() => send.current());
+  }, []);
   const wasSaving = useRef(saving);
   useEffect(() => {
     if (wasSaving.current && !saving) queue.current?.settled();

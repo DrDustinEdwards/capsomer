@@ -323,7 +323,6 @@ export function FlagList({
     state: "resolved",
     resolution,
     resolvedBy: viewer,
-    // oxlint-disable-next-line react/purity -- called from the resolve handlers only, never while rendering
     resolvedAt: new Date().toISOString(),
   });
   const reopened: Partial<FlagData> = {
