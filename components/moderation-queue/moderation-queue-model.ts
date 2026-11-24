@@ -1,6 +1,6 @@
 // The moderation queue's data, its pure helpers and the markup builders (moderation-queue.ts).
 
-import { GLYPHS, glyphSvg } from "../message/message.ts";
+import { statusEl as toneStatusEl, type GlyphName, type Tone } from "../status/status.ts";
 
 // The data and the pure helpers.
 
@@ -123,30 +123,25 @@ export function summaryText(c: Pick<Counts, "pending" | "unverified">): string {
 }
 
 export interface Status {
-  tone: "info" | "ok" | "crit" | "nodata" | "warn";
+  tone: Tone;
   word: string;
-  glyph: string;
+  glyph: GlyphName;
 }
-
-const NOTICE_GLYPH =
-  '<rect x="1.5" y="1.5" width="13" height="13" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><path fill="currentColor" d="M7.2 7h1.6v5H7.2zM7.2 4h1.6v1.7H7.2z"/>';
-const NODATA_GLYPH =
-  '<circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M5 8h6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>';
 
 // A status is a shape, a word and a color.
 export function statusOf(state: ModState): Status {
   const word = STATE_LABEL[state];
   switch (state) {
     case "pending":
-      return { tone: "info", word, glyph: NOTICE_GLYPH };
+      return { tone: "info", word, glyph: "info" };
     case "approved":
-      return { tone: "ok", word, glyph: GLYPHS.ok };
+      return { tone: "ok", word, glyph: "ok" };
     case "rejected":
-      return { tone: "crit", word, glyph: GLYPHS.failure };
+      return { tone: "crit", word, glyph: "crit" };
     case "unverified":
-      return { tone: "nodata", word, glyph: NODATA_GLYPH };
+      return { tone: "nodata", word, glyph: "nodata" };
     case "failed":
-      return { tone: "warn", word, glyph: GLYPHS.warning };
+      return { tone: "warn", word, glyph: "warn" };
   }
 }
 
@@ -269,7 +264,7 @@ export function h<K extends keyof HTMLElementTagNameMap>(
 
 export function statusEl(state: ModState): HTMLElement {
   const s = statusOf(state);
-  return h("span", { class: "cap-status", "data-tone": s.tone }, glyphSvg(s.glyph), s.word);
+  return toneStatusEl(s.tone, s.word, s.glyph);
 }
 
 // A decision's button: a real button with its key shown and announced (aria-keyshortcuts).

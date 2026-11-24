@@ -8,7 +8,7 @@
 // The transitions and their intents are publish-transition.ts, the gate's DOM-free half.
 
 import { confirm } from "../confirm-dialog/confirm-dialog.ts";
-import { statusEl } from "../flag-list/flag-list.ts";
+import { statusEl } from "../status/status.ts";
 import { fail, say } from "../message/message.ts";
 import { attachRowList } from "../row-list/row-list.ts";
 import { enhance as enhanceTime } from "../time/time.ts";

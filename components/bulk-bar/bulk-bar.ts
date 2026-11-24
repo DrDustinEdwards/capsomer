@@ -6,8 +6,8 @@
 // functions.
 
 import { confirm } from "../confirm-dialog/confirm-dialog.ts";
-import { GLYPHS, fail, say } from "../message/message.ts";
-import { setStaticHtml } from "../trusted-html/trusted-html.ts";
+import { fail, say } from "../message/message.ts";
+import { statusEl } from "../status/status.ts";
 
 const READY = "data-cap-ready";
 const SELECT = "input[type='checkbox'][data-cap-select]";
@@ -247,16 +247,6 @@ function hasOutcomes(bar: HTMLElement): boolean {
   return !!list && !list.hidden;
 }
 
-function svg(glyph: string): SVGSVGElement {
-  const el = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-  el.setAttribute("class", "cap-status-glyph");
-  el.setAttribute("viewBox", "0 0 16 16");
-  el.setAttribute("aria-hidden", "true");
-  el.setAttribute("focusable", "false");
-  setStaticHtml(el, glyph);
-  return el;
-}
-
 let resultsSeq = 0;
 
 // Writes the outcome list into the bar (the markup on the doc page), replacing any before it, and
@@ -278,10 +268,7 @@ export function showOutcomes(bar: HTMLElement, outcomes: readonly BulkOutcome[])
     for (const o of orderOutcomes(outcomes)) {
       const li = document.createElement("li");
       li.dataset.ok = String(o.ok);
-      const word = document.createElement("span");
-      word.className = "cap-status";
-      word.dataset.tone = o.ok ? "ok" : "crit";
-      word.append(svg(o.ok ? GLYPHS.ok : GLYPHS.failure), o.ok ? "Done" : "Not done");
+      const word = statusEl(o.ok ? "ok" : "crit", o.ok ? "Done" : "Not done");
       const label = document.createElement("span");
       label.className = "cap-bulk-result-label";
       label.textContent = o.label;

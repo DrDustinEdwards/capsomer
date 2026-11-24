@@ -26,7 +26,8 @@ import { bands, nextTile, type Direction } from "./media-grid.ts";
 import { createAutosave, type Autosave, type SaveState } from "./media-autosave.ts";
 import { applyBulkTag } from "./media-actions.ts";
 import { COPIED_MS, COPY_FAILED_MS, copyText } from "../copy/copy.ts";
-import { buildTile, glyph, part, recordOf, syncTile, writeRecord } from "./media-tile.ts";
+import { glyphEl } from "../status/status.ts";
+import { buildTile, part, recordOf, syncTile, writeRecord } from "./media-tile.ts";
 import {
   fillInspector,
   readFields,
@@ -39,7 +40,7 @@ export * from "./media-grid.ts";
 export * from "./media-autosave.ts";
 export * from "./media-actions.ts";
 export * from "./media-crop.ts";
-export { buildTile, glyph, recordOf, syncTile, writeRecord } from "./media-tile.ts";
+export { buildTile, recordOf, syncTile, writeRecord } from "./media-tile.ts";
 
 const READY = "data-cap-ready";
 
@@ -707,13 +708,11 @@ export function attachMedia(root: HTMLElement, options: MediaOptions = {}): Medi
     await Promise.resolve();
     const ok = await copyText(value);
     if (status) {
-      if (ok) status.replaceChildren(glyph("ok"), document.createTextNode(`Copied the ${what}.`));
+      if (ok) status.replaceChildren(glyphEl("ok"), document.createTextNode(`Copied the ${what}.`));
       else {
         status.replaceChildren(
-          glyph("crit"),
-          document.createTextNode(
-            "Could not copy. The address is selected: press Ctrl+C or Cmd+C.",
-          ),
+          glyphEl("crit"),
+          "Could not copy. The address is selected: press Ctrl+C or Cmd+C.",
         );
         ins<HTMLInputElement>("address")?.select();
       }

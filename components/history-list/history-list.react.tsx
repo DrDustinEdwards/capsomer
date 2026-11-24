@@ -1,5 +1,5 @@
 import { useEffect, useId, useMemo, useRef, useState, type ReactNode } from "react";
-import { GLYPHS } from "../message/message.ts";
+import { Status } from "../status/status.react.tsx";
 import { useMessage } from "../message/message.react.tsx";
 import { Time } from "../time/time.react.tsx";
 import { initials } from "../avatar/avatar.ts";
@@ -91,15 +91,6 @@ const Glyph = ({ d, size = 14 }: { d: string; size?: number }) => (
     dangerouslySetInnerHTML={markup(d)}
   />
 );
-
-function Status({ tone, glyph, word }: { tone: string; glyph: string; word: string }) {
-  return (
-    <span className="cap-status" data-tone={tone}>
-      <Glyph d={glyph} />
-      {word}
-    </span>
-  );
-}
 
 function Who({ id, name, ai }: { id: string; name: string; ai?: boolean }) {
   return (
@@ -239,11 +230,9 @@ function Line({
           Published to{" "}
           {(e.destinations ?? []).map((d) => (
             <span key={d.name} className="cap-hist-dest">
-              <Status
-                tone={destinationTone(d.status)}
-                glyph={destinationGlyph(d.status)}
-                word={destinationWord(d.status)}
-              />{" "}
+              <Status tone={destinationTone(d.status)} glyph={destinationGlyph(d.status)}>
+                {destinationWord(d.status)}
+              </Status>{" "}
               {d.name}{" "}
             </span>
           ))}
@@ -261,7 +250,7 @@ function Line({
       <When id={`${p}-t`} iso={e.at} now={now} />
       <div className="cap-row-actions">
         {current ? (
-          <Status tone="ok" glyph={GLYPHS.ok} word="Current" />
+          <Status tone="ok">Current</Status>
         ) : readOnly ? null : loadHref ? (
           <a
             className="cap-btn"

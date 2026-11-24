@@ -1,13 +1,13 @@
 import {
   Children,
   isValidElement,
-  useEffect,
   useLayoutEffect,
   useRef,
   useState,
   type ReactElement,
   type ReactNode,
 } from "react";
+import { useRemembered } from "../hooks/hooks.react.tsx";
 import { Switch } from "../switch/switch.react.tsx";
 import {
   KINDS,
@@ -123,19 +123,9 @@ export function Authorship({
   children,
 }: AuthorshipProps) {
   const [own, setOwn] = useState(defaultShown);
-  const on = shown ?? own;
+  const [saved, save] = useRemembered(STORAGE_KEY);
   const keep = remember && shown === undefined;
-  // The remembered choice is read after mount, so a server render and the first client render agree.
-  useEffect(() => {
-    if (!keep) return;
-    try {
-      const v = localStorage.getItem(STORAGE_KEY);
-      // oxlint-disable-next-line react/set-state-in-effect -- the remembered choice is read after mount, so the server and the first client render agree
-      if (v === "on" || v === "off") setOwn(v === "on");
-    } catch {
-      // Storage blocked: the default stands.
-    }
-  }, [keep]);
+  const on = shown ?? (keep && (saved === "on" || saved === "off") ? saved === "on" : own);
   const runs: RunInput[] = [];
   collect(children, null, runs);
   const summary = summarize(runs.filter((r) => KINDS.includes(r.kind)));
@@ -147,14 +137,8 @@ export function Authorship({
           checked={on}
           onCheckedChange={(next) => {
             setOwn(next);
+            if (keep) save(next ? "on" : "off");
             onShownChange?.(next);
-            if (keep) {
-              try {
-                localStorage.setItem(STORAGE_KEY, next ? "on" : "off");
-              } catch {
-                // Not remembered; the choice still applies now.
-              }
-            }
           }}
         />
         <Meter summary={summary} />

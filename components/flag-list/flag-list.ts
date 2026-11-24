@@ -12,6 +12,7 @@ import { plural } from "@drdustinedwards/site-helpers/text";
 import { confirm } from "../confirm-dialog/confirm-dialog.ts";
 import { type SayOptions, fail, say } from "../message/message.ts";
 import { attachRowList } from "../row-list/row-list.ts";
+import { statusEl } from "../status/status.ts";
 import { enhance as enhanceTime, parse as parseTime, text as timeText } from "../time/time.ts";
 import {
   type Flag,
@@ -24,7 +25,6 @@ import {
   revertSuggestion,
   summaryLine,
 } from "./flag-list-model.ts";
-import { setStaticHtml } from "../trusted-html/trusted-html.ts";
 
 export {
   groupFlags,
@@ -47,42 +47,6 @@ export type {
 } from "./flag-list-model.ts";
 
 // The page.
-
-const SVG = "http://www.w3.org/2000/svg";
-const GLYPHS: Record<string, string> = {
-  crit: '<path fill="currentColor" fill-rule="evenodd" d="M5 1h6l4 4v6l-4 4H5l-4-4V5zM7.2 4h1.6v5H7.2zM7.2 10.4h1.6V12H7.2z"/>',
-  warn: '<path fill="currentColor" fill-rule="evenodd" d="M8 1.2 15.4 14H.6zM7.3 6h1.4v4H7.3zM7.3 11h1.4v1.4H7.3z"/>',
-  info: '<rect x="1.5" y="1.5" width="13" height="13" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><path fill="currentColor" d="M7.2 7h1.6v5H7.2zM7.2 4h1.6v1.7H7.2z"/>',
-  ok: '<path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/>',
-  nodata:
-    '<circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M5 8h6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>',
-  running:
-    '<circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" stroke-width="1.6" opacity="0.35"/><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" d="M8 1.8a6.2 6.2 0 0 1 6.2 6.2"/>',
-};
-
-// The status component's glyph, the same drawing (components/status).
-export function glyph(name: keyof typeof GLYPHS | (string & {})): SVGSVGElement {
-  const svg = document.createElementNS(SVG, "svg");
-  svg.setAttribute("class", "cap-status-glyph");
-  svg.setAttribute("viewBox", "0 0 16 16");
-  svg.setAttribute("aria-hidden", "true");
-  svg.setAttribute("focusable", "false");
-  setStaticHtml(svg, GLYPHS[name] ?? "");
-  return svg;
-}
-
-// A status: glyph, word, color.
-export function statusEl(
-  tone: "crit" | "warn" | "ok" | "info" | "nodata",
-  word: string,
-  glyphName: string = tone,
-): HTMLSpanElement {
-  const s = document.createElement("span");
-  s.className = "cap-status";
-  s.dataset.tone = tone;
-  s.append(glyph(glyphName), word);
-  return s;
-}
 
 const READY = "data-cap-ready";
 const part = <T extends HTMLElement = HTMLElement>(el: ParentNode, name: string) =>

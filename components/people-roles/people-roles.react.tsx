@@ -6,7 +6,6 @@ import { Pill } from "../status/status.react.tsx";
 import { Table } from "../table/table.react.tsx";
 import { Time } from "../time/time.react.tsx";
 import { enhance as enhanceFields } from "../field/field.ts";
-import { confirm } from "../confirm-dialog/confirm-dialog.ts";
 import { FormMenu } from "../menu/menu.react.tsx";
 import { Glyph, type Tone } from "../status/status.react.tsx";
 import {
@@ -18,8 +17,6 @@ import {
   dayText,
   endHelp,
   endsSoon,
-  removeBody,
-  removeTarget,
   rowActions,
   syncText,
   tallyText,
@@ -130,7 +127,14 @@ export function PeopleRoles({
     if (!form.checkValidity()) return;
     if (intent === "remove" && fields.get("confirmed") !== "yes") {
       e.preventDefault();
-      void (onIntent ? confirmRemoveInPlace(form, onIntent) : confirmRemove(form));
+      void (onIntent
+        ? confirmRemove(form, async () => {
+            const fields = new FormData(form);
+            fields.set("intent", "remove");
+            fields.set("confirmed", "yes");
+            await onIntent("remove", fields);
+          })
+        : confirmRemove(form));
       return;
     }
     if (!onIntent || e.defaultPrevented) return;
@@ -210,26 +214,6 @@ export function PeopleRoles({
       ) : null}
     </section>
   );
-}
-
-// Asks, then hands the post to the app with `confirmed=yes`.
-function confirmRemoveInPlace(
-  form: HTMLFormElement,
-  onIntent: NonNullable<PeopleRolesProps["onIntent"]>,
-): Promise<boolean> {
-  const { name, email } = removeTarget(form);
-  return confirm({
-    title: `Remove ${name}?`,
-    body: removeBody(name, email),
-    action: "Remove",
-    returnTo: form.closest<HTMLElement>("[data-cap='people-roles']"),
-    perform: async () => {
-      const fields = new FormData(form);
-      fields.set("intent", "remove");
-      fields.set("confirmed", "yes");
-      await onIntent("remove", fields);
-    },
-  });
 }
 
 interface RowProps {

@@ -6,7 +6,7 @@
 // action creates: the picks, the restore, the group that opens, a page of older lines.
 // No framework; the React wrapper uses the same helpers.
 import { toggleGroup } from "../disclosure/disclosure.ts";
-import { GLYPHS, ensureRegion, say } from "../message/message.ts";
+import { ensureRegion, say } from "../message/message.ts";
 import { attachRowList } from "../row-list/row-list.ts";
 import { enhance as enhanceTime, nowFor, parse } from "../time/time.ts";
 import {
@@ -23,7 +23,8 @@ import {
   restoredMessage,
   stamp,
 } from "./history-list-model.ts";
-import { actionFor, buildRow, buildRun, statusEl } from "./history-list-rows.ts";
+import { actionFor, buildRow, buildRun } from "./history-list-rows.ts";
+import { statusEl } from "../status/status.ts";
 
 export {
   wordDelta,
@@ -97,7 +98,7 @@ function setCurrent(root: HTMLElement, row: HTMLLIElement, current: boolean): vo
   const now = nowFor(root).now;
   if (current) {
     row.dataset.current = "";
-    actions.replaceChildren(statusEl("ok", GLYPHS.ok, "Current"));
+    actions.replaceChildren(statusEl("ok", "Current"));
   } else {
     delete row.dataset.current;
     actions.replaceChildren(

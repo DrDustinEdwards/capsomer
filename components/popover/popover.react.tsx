@@ -4,6 +4,8 @@ import {
   useEffect,
   useId,
   useRef,
+  Children,
+  isValidElement,
   type ComponentProps,
   type ReactNode,
 } from "react";
@@ -70,6 +72,16 @@ export interface PopoverContentProps extends Omit<ComponentProps<"div">, "popove
   arrow?: boolean;
 }
 
+// Whether a PopoverTitle sits anywhere in the content, so the dialog is labeled by it, and by
+// nothing dangling when there is none.
+function hasTitle(children: ReactNode): boolean {
+  return Children.toArray(children).some(
+    (c) =>
+      isValidElement<{ children?: ReactNode }>(c) &&
+      (c.type === PopoverTitle || hasTitle(c.props.children)),
+  );
+}
+
 export function PopoverContent({
   side,
   align,
@@ -88,7 +100,9 @@ export function PopoverContent({
       id={id}
       popover={tip ? "manual" : "auto"}
       role={tip ? "tooltip" : "dialog"}
-      aria-labelledby={tip || props["aria-label"] ? undefined : `${id}-title`}
+      aria-labelledby={
+        tip || props["aria-label"] || !hasTitle(children) ? undefined : `${id}-title`
+      }
       data-variant={tip ? "tooltip" : undefined}
       data-side={side}
       data-align={align}
@@ -111,7 +125,7 @@ export function PopoverHeader({ className, ...props }: ComponentProps<"div">) {
   );
 }
 
-// Names the dialog: PopoverContent points aria-labelledby at it.
+// Names the dialog: PopoverContent points aria-labelledby at it when it is there.
 export function PopoverTitle({ className, children, ...props }: ComponentProps<"h2">) {
   const { id } = useContext(Ctx);
   return (

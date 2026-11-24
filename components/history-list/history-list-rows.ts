@@ -1,7 +1,8 @@
 // The history list's rows, built as the server would render them (history-list.ts).
 
 import { initials } from "../avatar/avatar.ts";
-import { GLYPHS, glyphSvg } from "../message/message.ts";
+import { statusEl, type GlyphName, type Tone } from "../status/status.ts";
+import { setStaticHtml } from "../trusted-html/trusted-html.ts";
 import { parse, relative } from "../time/time.ts";
 import {
   type Destination,
@@ -34,9 +35,6 @@ export function h<K extends keyof HTMLElementTagNameMap>(
   return el;
 }
 
-const QUEUED_GLYPH =
-  '<circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" stroke-width="1.6"/>';
-
 export const SIGN_GLYPH: Record<Sign, string> = {
   plus: '<path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" d="M8 3v10M3 8h10"/>',
   minus:
@@ -44,15 +42,22 @@ export const SIGN_GLYPH: Record<Sign, string> = {
   zero: '<path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" d="M3 6h10M3 10h10"/>',
 };
 
-export function destinationGlyph(s: Destination["status"]): string {
-  return s === "live" ? GLYPHS.ok : s === "failed" ? GLYPHS.failure : QUEUED_GLYPH;
+export function destinationGlyph(s: Destination["status"]): GlyphName {
+  return s === "live" ? "ok" : s === "failed" ? "crit" : "queued";
 }
-export function destinationTone(s: Destination["status"]): string {
+export function destinationTone(s: Destination["status"]): Tone {
   return s === "live" ? "ok" : s === "failed" ? "crit" : "nodata";
 }
 
-export function statusEl(tone: string, glyph: string, word: string): HTMLElement {
-  return h("span", { class: "cap-status", "data-tone": tone }, glyphSvg(glyph), word);
+function signEl(sign: Sign): SVGSVGElement {
+  const s = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  s.setAttribute("viewBox", "0 0 16 16");
+  s.setAttribute("width", "12");
+  s.setAttribute("height", "12");
+  s.setAttribute("aria-hidden", "true");
+  s.setAttribute("focusable", "false");
+  setStaticHtml(s, SIGN_GLYPH[sign]);
+  return s;
 }
 
 function avatarEl(name: string, ai?: boolean): HTMLElement {
@@ -88,7 +93,7 @@ function deltaEl(id: string, n: number | undefined): HTMLElement {
   return h(
     "span",
     { class: "cap-hist-delta", id, "data-sign": sign },
-    glyphSvg(SIGN_GLYPH[sign], 12),
+    signEl(sign),
     h("span", {}, deltaText(n)),
   );
 }
@@ -139,8 +144,8 @@ function detailFor(e: HistoryEntry, id: string, now: number): HTMLElement | null
           { class: "cap-hist-dest" },
           statusEl(
             destinationTone(d.status),
-            destinationGlyph(d.status),
             destinationWord(d.status),
+            destinationGlyph(d.status),
           ),
           " ",
           d.name,
@@ -252,7 +257,7 @@ export function buildRow(
   const actions = h(
     "div",
     { class: "cap-row-actions" },
-    o.current ? statusEl("ok", GLYPHS.ok, "Current") : actionFor(e, now, o),
+    o.current ? statusEl("ok", "Current") : actionFor(e, now, o),
   );
   li.append(pickEl(e, now), whoEl(`${p}-who`, [e.who], e.ai), title);
   if (detail) li.append(detail);
