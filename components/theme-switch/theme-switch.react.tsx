@@ -1,6 +1,6 @@
 import { useEffect, useId, useRef, useState, type ReactNode, type Ref } from "react";
 import { attach as attachTip } from "../tooltip/tooltip.ts";
-import { themeColorTags } from "./theme-server.ts";
+import { themeColorTags } from "./theme-cookie.ts";
 import {
   applyTheme,
   chooseTheme,
@@ -347,7 +347,7 @@ export interface ThemeColorProps {
   ground: { light: string; dark: string };
 }
 
-// The <meta name="theme-color"> tags for a React Layout's head: themeColorTags (theme-server.ts) as elements, so a
+// The <meta name="theme-color"> tags for a React Layout's head: themeColorTags (theme-cookie.ts) as elements, so a
 // site stops hand-writing the light and dark pair.
 export function ThemeColor({ choice = null, ground }: ThemeColorProps) {
   return (
