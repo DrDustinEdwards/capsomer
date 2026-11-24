@@ -72,7 +72,7 @@ export interface PopoverContentProps extends Omit<ComponentProps<"div">, "popove
   arrow?: boolean;
 }
 
-// Whether a PopoverTitle sits anywhere in the content, so the dialog is labelled by it, and by
+// Whether a PopoverTitle sits anywhere in the content, so the dialog is labeled by it, and by
 // nothing dangling when there is none.
 function hasTitle(children: ReactNode): boolean {
   return Children.toArray(children).some(
