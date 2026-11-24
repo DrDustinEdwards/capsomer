@@ -146,7 +146,7 @@ export function tallyText(keep: number, remove: number, open: number): string {
 }
 
 // The removal's confirm, from the server's own words: who, and what follows.
-export function removeBody(name: string, email: string): string[] {
+function removeBody(name: string, email: string): string[] {
   return [
     `${name} is refused on their next request.`,
     `${email} comes off the allow list and their Cloudflare seat is freed.`,
@@ -155,7 +155,7 @@ export function removeBody(name: string, email: string): string[] {
 }
 
 // Who a removal is for, from the row the form sits in (or the form's own data).
-export function removeTarget(form: HTMLFormElement): { name: string; email: string } {
+function removeTarget(form: HTMLFormElement): { name: string; email: string } {
   const row = form.closest<HTMLElement>("tr[data-email]");
   const email =
     row?.dataset.email ??
@@ -167,18 +167,22 @@ export function removeTarget(form: HTMLFormElement): { name: string; email: stri
 
 // Asks before a removal; on Remove, posts the form with `intent=remove` and `confirmed=yes`.
 // Without script the form posts without `confirmed` and the server answers with the confirm page.
-export async function confirmRemove(form: HTMLFormElement): Promise<boolean> {
+// An app that posts the removal itself passes `perform`.
+export async function confirmRemove(
+  form: HTMLFormElement,
+  perform: () => Promise<void> = async () => {
+    setHidden(form, "intent", "remove");
+    setHidden(form, "confirmed", "yes");
+    form.submit();
+  },
+): Promise<boolean> {
   const { name, email } = removeTarget(form);
   return confirm({
     title: `Remove ${name}?`,
     body: removeBody(name, email),
     action: "Remove",
     returnTo: form.closest<HTMLElement>("[data-cap='people-roles']"),
-    perform: async () => {
-      setHidden(form, "intent", "remove");
-      setHidden(form, "confirmed", "yes");
-      form.submit();
-    },
+    perform,
   });
 }
 

@@ -3,7 +3,8 @@
 
 import { copySnippets, parseTags, type MediaFields, type MediaRecord } from "./media-record.ts";
 import { SAVE_TEXT, type SaveState } from "./media-autosave.ts";
-import { glyph, part } from "./media-tile.ts";
+import { glyphEl } from "../status/status.ts";
+import { part } from "./media-tile.ts";
 import { formatBytes } from "../format/format.ts";
 import { linkable } from "../hooks/hooks.ts";
 
@@ -37,9 +38,9 @@ export function renderSave(inspector: ParentNode | null, state: SaveState, error
     if (state === "failed") status.replaceChildren();
     else {
       const kids: Node[] = [];
-      if (state === "saving") kids.push(glyph("running"));
-      else if (state === "saved") kids.push(glyph("ok"));
-      else if (state === "dirty") kids.push(glyph("info"));
+      if (state === "saving") kids.push(glyphEl("running"));
+      else if (state === "saved") kids.push(glyphEl("ok"));
+      else if (state === "dirty") kids.push(glyphEl("info"));
       kids.push(document.createTextNode(SAVE_TEXT[state]));
       status.replaceChildren(...kids);
     }
@@ -47,7 +48,7 @@ export function renderSave(inspector: ParentNode | null, state: SaveState, error
   if (alert) {
     if (state === "failed")
       alert.replaceChildren(
-        glyph("crit"),
+        glyphEl("crit"),
         document.createTextNode(
           `Could not save${error ? `: ${error.replace(/\.$/, "")}` : ""}. What you typed is still here.`,
         ),

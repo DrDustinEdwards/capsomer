@@ -10,6 +10,7 @@
 // it, whatever happens after it: the missing audit row is the one fact that cannot be
 // found later by looking.
 import { isTyping, singleKeysOff } from "../shortcuts/shortcuts.ts";
+import { glyphParts, type GlyphName } from "../status/status.ts";
 import { setStaticHtml } from "../trusted-html/trusted-html.ts";
 
 export type ReturnFocus = HTMLElement | (() => HTMLElement | null);
@@ -54,7 +55,7 @@ export interface Message {
   clears: boolean;
 }
 
-export const CLEARS_AFTER_MS = 4000;
+const CLEARS_AFTER_MS = 4000;
 
 export function newMessage(id: number, text: string, opts: SayOptions = {}): Message {
   const warning = opts.warning ?? null;
@@ -83,14 +84,60 @@ export function withMessage(all: Message[], m: Message): Message[] {
   return [m, ...all.filter(lasting)];
 }
 
-export function undoneText(text: string, undone?: string): string {
+function undoneText(text: string, undone?: string): string {
   return undone ? `Undone. ${undone}` : `Undone: ${text}`;
 }
 
 // An Undo that threw: nothing was undone, so Undo stays and this says why.
-export function undoErrorText(err: unknown): string {
+function undoErrorText(err: unknown): string {
   const why = err instanceof Error && err.message ? ` ${err.message}` : "";
   return `Could not undo that.${why} Try again.`;
+}
+
+// The transitions of an Undo, as pure functions of the list, shared by the script and the React
+// provider.
+export function undoBusy(all: Message[], id: number): Message[] {
+  return all.map((x) => (x.id === id ? { ...x, busy: true, error: null } : x));
+}
+
+// Nothing was undone, so Undo stays available, and the message says why.
+export function undoFailed(all: Message[], id: number, err: unknown): Message[] {
+  return all.map((x) => (x.id === id ? { ...x, busy: false, error: undoErrorText(err) } : x));
+}
+
+// The list once the Undo ran: the message says what was undone. A result that carried a warning
+// keeps it, without its Undo, and the Undo's own result arrives beside it (it takes `nextId()`).
+export function undoDone(all: Message[], m: Message, nextId: () => number): Message[] {
+  const said = undoneText(m.text, m.undone);
+  if (m.warning === null) return all.map((x) => (x.id === m.id ? newMessage(m.id, said) : x));
+  const kept = all.map((x) => (x.id === m.id ? { ...x, undo: null, busy: false, error: null } : x));
+  return withMessage(kept, newMessage(nextId(), said));
+}
+
+// Keeps one timer per message that clears itself, and drops the timers of messages that are gone.
+export function syncTimers(
+  timers: Map<number, number>,
+  next: Message[],
+  onClear: (id: number) => void,
+): void {
+  const ids = new Set(next.map((m) => m.id));
+  for (const [id, t] of timers) {
+    if (!ids.has(id)) {
+      window.clearTimeout(t);
+      timers.delete(id);
+    }
+  }
+  for (const m of next) {
+    if (!m.clears || timers.has(m.id)) continue;
+    const id = m.id;
+    timers.set(
+      id,
+      window.setTimeout(() => {
+        timers.delete(id);
+        onClear(id);
+      }, CLEARS_AFTER_MS),
+    );
+  }
 }
 
 export function resolveFocus(f: ReturnFocus | undefined): HTMLElement | null {
@@ -118,30 +165,12 @@ export function currentUndo(all: Message[]): Message | undefined {
   return all.find((m) => m.undo && !m.busy);
 }
 
-// The leading glyph per kind, drawn in currentColor with the mark cut out (the same shapes
-// as Status: a tick in a circle, a triangle, an octagon). Hidden from screen readers.
+// The leading glyph per kind: the shapes of Status (a tick in a circle, a triangle, an octagon),
+// as the inner markup of an svg. Hidden from screen readers.
 export type MessageKind = "ok" | "warning" | "failure";
 
-export const GLYPHS: Record<MessageKind, string> = {
-  ok: '<path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/>',
-  warning:
-    '<path fill="currentColor" fill-rule="evenodd" d="M8 1.2 15.4 14H.6zM7.3 6h1.4v4H7.3zM7.3 11h1.4v1.4H7.3z"/>',
-  failure:
-    '<path fill="currentColor" fill-rule="evenodd" d="M5 1h6l4 4v6l-4 4H5l-4-4V5zM7.2 4h1.6v5H7.2zM7.2 10.4h1.6V12H7.2z"/>',
-};
-
-// A 16-unit glyph from one of the drawings above (or any inner SVG), hidden from assistive tech:
-// the word beside it says what it means. The moderation queue and the history list draw theirs with it.
-export function glyphSvg(inner: string, size = 14): SVGSVGElement {
-  const s = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-  s.setAttribute("viewBox", "0 0 16 16");
-  s.setAttribute("width", String(size));
-  s.setAttribute("height", String(size));
-  s.setAttribute("aria-hidden", "true");
-  s.setAttribute("focusable", "false");
-  setStaticHtml(s, inner);
-  return s;
-}
+const KIND_GLYPH: Record<MessageKind, GlyphName> = { ok: "ok", warning: "warn", failure: "crit" };
+export const kindGlyph = (kind: MessageKind): string => glyphParts(KIND_GLYPH[kind]);
 
 // What a message is, for its glyph and its edge: a failure; a warning or an Undo that
 // failed; otherwise a plain result.
@@ -234,7 +263,7 @@ function paint(it: Item, m: Message): void {
   const kind = messageKind(m);
   if (it.el.dataset.kind !== kind) {
     it.el.dataset.kind = kind;
-    setStaticHtml(it.glyph, GLYPHS[kind]);
+    setStaticHtml(it.glyph, kindGlyph(kind));
   }
   if (it.said.textContent !== m.text) it.said.textContent = m.text;
   if (m.failure) it.said.setAttribute("role", "alert");
@@ -303,28 +332,13 @@ function set(r: Region, next: Message[], settle: Settle = {}): void {
   const hadFocus = focusInside(r);
   r.messages = next;
   render(r);
-  const ids = new Set(next.map((m) => m.id));
-  for (const [id, t] of r.timers) {
-    if (!ids.has(id)) {
-      window.clearTimeout(t);
-      r.timers.delete(id);
-    }
-  }
-  for (const m of next) {
-    if (!m.clears || r.timers.has(m.id)) continue;
-    const id = m.id;
-    r.timers.set(
-      id,
-      window.setTimeout(() => {
-        r.timers.delete(id);
-        set(
-          r,
-          r.messages.filter((x) => x.id !== id),
-          { origin: true },
-        );
-      }, CLEARS_AFTER_MS),
-    );
-  }
+  syncTimers(r.timers, next, (id) =>
+    set(
+      r,
+      r.messages.filter((x) => x.id !== id),
+      { origin: true },
+    ),
+  );
   if (settle.to || hadFocus) settleFocus(r, settle);
 }
 
@@ -378,41 +392,23 @@ async function undoIn(r: Region, id: number): Promise<boolean> {
   const m = r.messages.find((x) => x.id === id);
   if (!m?.undo || m.busy) return false;
   const run = m.undo;
-  set(
-    r,
-    r.messages.map((x) => (x.id === id ? { ...x, busy: true, error: null } : x)),
-  );
+  set(r, undoBusy(r.messages, id));
   try {
     await run();
   } catch (err) {
-    // Nothing was undone, so Undo stays available, and the message says why. It stays too.
-    if (r.messages.some((x) => x.id === id)) {
-      set(
-        r,
-        r.messages.map((x) => (x.id === id ? { ...x, busy: false, error: undoErrorText(err) } : x)),
-      );
-    }
+    // The message stays too, so it can say why.
+    if (r.messages.some((x) => x.id === id)) set(r, undoFailed(r.messages, id, err));
     return false;
   }
   const to = resolveFocus(m.returnFocus);
   // The Undo may have said something itself, which replaced this message: then there is
   // nothing more to say. Either way it has run.
-  if (!r.messages.some((x) => x.id === id)) return true;
-  const said = undoneText(m.text, m.undone);
-  if (m.warning !== null) {
-    // A result that carried a warning keeps it, without its Undo, and the Undo's own result
-    // arrives beside it.
-    const kept = r.messages.map((x) =>
-      x.id === id ? { ...x, undo: null, busy: false, error: null } : x,
-    );
-    set(r, withMessage(kept, newMessage(r.nextId++, said)), { to, id });
-  } else {
+  if (r.messages.some((x) => x.id === id))
     set(
       r,
-      r.messages.map((x) => (x.id === id ? newMessage(id, said) : x)),
+      undoDone(r.messages, m, () => r.nextId++),
       { to, id },
     );
-  }
   return true;
 }
 

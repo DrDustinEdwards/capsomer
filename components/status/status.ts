@@ -230,6 +230,36 @@ export function glyphHtml(name: GlyphName): string {
   return `<svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false">${glyphParts(name)}</svg>`;
 }
 
+// The glyph as a DOM element, for the scripts that build rows and results; `size` sets its width
+// and height in px where CSS does not.
+export function glyphEl(name: GlyphName, size?: number): SVGSVGElement {
+  const ns = "http://www.w3.org/2000/svg";
+  const svg = document.createElementNS(ns, "svg");
+  svg.setAttribute("class", "cap-status-glyph");
+  svg.setAttribute("viewBox", "0 0 16 16");
+  svg.setAttribute("aria-hidden", "true");
+  svg.setAttribute("focusable", "false");
+  if (size) {
+    svg.setAttribute("width", String(size));
+    svg.setAttribute("height", String(size));
+  }
+  for (const { tag, attrs } of STATUS_GLYPH[name]) {
+    const el = document.createElementNS(ns, tag);
+    for (const [k, v] of Object.entries(attrs)) el.setAttribute(k, v);
+    svg.append(el);
+  }
+  return svg;
+}
+
+// A status as a DOM element: glyph, word, tone.
+export function statusEl(tone: Tone, word: string, glyph: GlyphName = tone): HTMLSpanElement {
+  const s = document.createElement("span");
+  s.className = "cap-status";
+  s.dataset.tone = tone;
+  s.append(glyphEl(glyph), word);
+  return s;
+}
+
 export interface StatusHtmlOptions {
   // Running is an info tone drawn with an arc.
   running?: boolean;

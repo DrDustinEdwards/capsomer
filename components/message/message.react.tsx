@@ -10,16 +10,17 @@ import {
   type RefObject,
 } from "react";
 import {
-  CLEARS_AFTER_MS,
-  GLYPHS,
+  kindGlyph,
   currentUndo,
   isUndoKey,
   messageKind,
   lasting,
   newMessage,
   resolveFocus,
-  undoErrorText,
-  undoneText,
+  syncTimers,
+  undoBusy,
+  undoDone,
+  undoFailed,
   withMessage,
   type Message,
   type SayOptions,
@@ -79,28 +80,13 @@ export function MessageProvider({ children, region = true, undoKey = true }: Mes
       if (s?.to || regionRef.current?.contains(document.activeElement)) settle.current = s ?? {};
       live.current = next;
       setMessages(next);
-      const ids = new Set(next.map((m) => m.id));
-      for (const [id, t] of timers.current) {
-        if (!ids.has(id)) {
-          window.clearTimeout(t);
-          timers.current.delete(id);
-        }
-      }
-      for (const m of next) {
-        if (!m.clears || timers.current.has(m.id)) continue;
-        const id = m.id;
-        timers.current.set(
-          id,
-          window.setTimeout(() => {
-            timers.current.delete(id);
-            // oxlint-disable-next-line react/immutability -- the timer calls commit long after it is defined
-            commit(
-              live.current.filter((x) => x.id !== id),
-              { origin: true },
-            );
-          }, CLEARS_AFTER_MS),
-        );
-      }
+      syncTimers(timers.current, next, (id) =>
+        // oxlint-disable-next-line react/immutability -- the timer calls commit long after it is defined
+        commit(
+          live.current.filter((x) => x.id !== id),
+          { origin: true },
+        ),
+      );
     },
     [],
   );
@@ -141,35 +127,21 @@ export function MessageProvider({ children, region = true, undoKey = true }: Mes
         id === undefined ? currentUndo(live.current) : live.current.find((x) => x.id === id);
       if (!m?.undo || m.busy) return;
       const run = m.undo;
-      commit(live.current.map((x) => (x.id === m.id ? { ...x, busy: true, error: null } : x)));
+      commit(undoBusy(live.current, m.id));
       try {
         await run();
       } catch (err) {
-        // Nothing was undone, so Undo stays available, and the message says why. It stays too.
-        if (live.current.some((x) => x.id === m.id))
-          commit(
-            live.current.map((x) =>
-              x.id === m.id ? { ...x, busy: false, error: undoErrorText(err) } : x,
-            ),
-          );
+        // The message stays too, so it can say why.
+        if (live.current.some((x) => x.id === m.id)) commit(undoFailed(live.current, m.id, err));
         return;
       }
       const to = resolveFocus(m.returnFocus);
       // The Undo may have said something itself, which replaced this message.
       if (!live.current.some((x) => x.id === m.id)) return;
-      const said = undoneText(m.text, m.undone);
-      if (m.warning !== null) {
-        // A result that carried a warning keeps it, without its Undo; the Undo's own result arrives beside it.
-        const kept = live.current.map((x) =>
-          x.id === m.id ? { ...x, undo: null, busy: false, error: null } : x,
-        );
-        commit(withMessage(kept, newMessage(nextId.current++, said)), { to, id: m.id });
-      } else {
-        commit(
-          live.current.map((x) => (x.id === m.id ? newMessage(m.id, said) : x)),
-          { to, id: m.id },
-        );
-      }
+      commit(
+        undoDone(live.current, m, () => nextId.current++),
+        { to, id: m.id },
+      );
     },
     [commit],
   );
@@ -269,7 +241,7 @@ export function MessageRegion() {
             viewBox="0 0 16 16"
             aria-hidden="true"
             focusable="false"
-            dangerouslySetInnerHTML={markup(GLYPHS[messageKind(m)])}
+            dangerouslySetInnerHTML={markup(kindGlyph(messageKind(m)))}
           />
           <p className="cap-message-text" data-cap-part="text">
             <span data-cap-part="said" role={m.failure ? "alert" : undefined}>

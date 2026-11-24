@@ -3,7 +3,7 @@
 // control reads the one provider (usePlayer). Transport and the scrubber take an optional `track`:
 // on a track's page they act on that track (switching the player to it on first use) without
 // taking over a different track that is playing; the dock passes none and drives the current one.
-import { useEffect, useId, useRef, type ReactNode, type RefObject } from "react";
+import { useId, type ReactNode } from "react";
 import { clamp } from "../hooks/hooks.ts";
 import {
   Icon,
@@ -19,7 +19,7 @@ import {
   iconVolume,
 } from "../icons/icons.react.tsx";
 import { Menu } from "../menu/menu.react.tsx";
-import { rangeFill } from "../range-slider/range-slider.ts";
+import { Range } from "../field/field.react.tsx";
 import { Popover, PopoverContent, PopoverTrigger } from "../popover/popover.react.tsx";
 import { plainLink } from "../hooks/hooks.react.tsx";
 import type { LinkProps } from "../shell/shell.react.tsx";
@@ -32,6 +32,7 @@ import {
   activeChapterIndex,
   formatRate,
   formatTime,
+  type PlayerChapter,
   sleepLabel,
   spokenTime,
   type PlayerTrack,
@@ -48,18 +49,6 @@ const PlayIcon = () => <Icon d={iconPlay} fill className="cap-player-icon" />;
 const PauseIcon = () => <Icon d={iconPause} fill className="cap-player-icon" />;
 const VolumeIcon = () => <Icon d={iconVolume} className="cap-player-icon" />;
 const MutedIcon = () => <Icon d={iconMute} className="cap-player-icon" />;
-
-// Sets --cap-range-fill on a range input through the CSSOM (the field's range fills to its thumb).
-function useRangeFill(
-  ref: RefObject<HTMLInputElement | null>,
-  value: number,
-  min: number,
-  max: number,
-) {
-  useEffect(() => {
-    ref.current?.style.setProperty("--cap-range-fill", rangeFill(value, min, max));
-  }, [ref, value, min, max]);
-}
 
 // Whether a control aimed at `track` acts on what is loaded.
 function useTarget(track?: PlayerTrack) {
@@ -172,11 +161,9 @@ export function PlayTrackButton({
 // in aria-valuetext, the time and length beside it, and chapter ticks on the track.
 export function Scrubber({ track, ticks = false }: { track?: PlayerTrack; ticks?: boolean }) {
   const { p, isThis } = useTarget(track);
-  const input = useRef<HTMLInputElement>(null);
   const dur = (isThis ? p.duration : 0) || track?.duration || p.current?.duration || 0;
   const pos = isThis ? p.currentTime : 0;
   const chapters = (isThis ? (track ?? p.current)?.chapters : track?.chapters) ?? [];
-  useRangeFill(input, Math.min(pos, dur || 1), 0, dur || 1);
   const seekTo = (s: number) => {
     const to = clamp(s, 0, dur || s);
     if (isThis) p.seek(to);
@@ -206,10 +193,8 @@ export function Scrubber({ track, ticks = false }: { track?: PlayerTrack; ticks?
     <div className="cap-player-scrubber">
       <span className="cap-player-time">{formatTime(pos)}</span>
       <span className="cap-player-track">
-        <input
-          ref={input}
-          className="cap-range cap-player-seek"
-          type="range"
+        <Range
+          className="cap-player-seek"
           min={0}
           max={dur || 1}
           step={1}
@@ -246,8 +231,6 @@ export function Scrubber({ track, ticks = false }: { track?: PlayerTrack; ticks?
 export function SpeedOptions() {
   const p = usePlayer();
   const name = useId();
-  const fine = useRef<HTMLInputElement>(null);
-  useRangeFill(fine, p.rate, RATE_MIN, RATE_MAX);
   return (
     <div className="cap-player-options">
       <fieldset className="cap-player-choices" data-layout="grid">
@@ -272,12 +255,9 @@ export function SpeedOptions() {
           );
         })}
       </fieldset>
-      <label className="cap-player-fine">
-        <span className="cap-sr-only">Fine playback speed</span>
-        <input
-          ref={fine}
-          className="cap-range"
-          type="range"
+      <span className="cap-player-fine">
+        <Range
+          aria-label="Fine playback speed"
           min={RATE_MIN}
           max={RATE_MAX}
           step={RATE_STEP}
@@ -285,7 +265,7 @@ export function SpeedOptions() {
           aria-valuetext={`${p.rate.toFixed(2)} times speed`}
           onChange={(e) => p.setRate(Number(e.target.value))}
         />
-      </label>
+      </span>
     </div>
   );
 }
@@ -316,10 +296,8 @@ export function SpeedControl({ side = "bottom" }: { side?: "top" | "bottom" }) {
 // HTMLMediaElement.volume).
 export function VolumeControl({ side = "bottom" }: { side?: "top" | "bottom" }) {
   const p = usePlayer();
-  const range = useRef<HTMLInputElement>(null);
   const silent = p.muted || p.volume === 0;
   const shown = p.muted ? 0 : p.volume;
-  useRangeFill(range, shown, 0, 1);
   return (
     <span className="cap-player-volume">
       <Popover>
@@ -342,15 +320,10 @@ export function VolumeControl({ side = "bottom" }: { side?: "top" | "bottom" }) 
             >
               {silent ? <MutedIcon /> : <VolumeIcon />}
             </button>
-            <label className="cap-player-fine">
-              <span className="cap-sr-only">Volume</span>
-              <input
-                ref={(el) => {
-                  range.current = el;
-                  el?.setAttribute("autofocus", "");
-                }}
-                className="cap-range"
-                type="range"
+            <span className="cap-player-fine">
+              <Range
+                aria-label="Volume"
+                ref={(el) => el?.setAttribute("autofocus", "")}
                 min={0}
                 max={1}
                 step={0.05}
@@ -358,7 +331,7 @@ export function VolumeControl({ side = "bottom" }: { side?: "top" | "bottom" }) 
                 aria-valuetext={`${Math.round(shown * 100)} percent`}
                 onChange={(e) => p.setVolume(Number(e.target.value))}
               />
-            </label>
+            </span>
           </div>
         </PopoverContent>
       </Popover>
@@ -456,6 +429,35 @@ export function ChaptersControl({ container }: { container?: HTMLElement | null 
   );
 }
 
+// The chapters as a list of buttons, the one playing marked aria-current.
+export function ChapterButtons({
+  chapters,
+  current,
+  onGo,
+}: {
+  chapters: readonly PlayerChapter[];
+  current: number;
+  onGo: (seconds: number) => void;
+}) {
+  return (
+    <ol className="cap-player-chapters">
+      {chapters.map((c, i) => (
+        <li key={`${c.start}-${c.title}`}>
+          <button
+            type="button"
+            className="cap-player-chapter"
+            aria-current={i === current ? "true" : undefined}
+            onClick={() => onGo(c.start)}
+          >
+            <span className="cap-player-at">{formatTime(c.start)}</span>
+            <span className="cap-player-chapter-title">{c.title}</span>
+          </button>
+        </li>
+      ))}
+    </ol>
+  );
+}
+
 // The chapters as buttons, for the phone's sheet: the one playing is aria-current.
 export function ChapterOptions({ onSelect }: { onSelect?: () => void }) {
   const p = usePlayer();
@@ -467,24 +469,14 @@ export function ChapterOptions({ onSelect }: { onSelect?: () => void }) {
       <p className="cap-player-legend" aria-hidden="true">
         Chapters
       </p>
-      <ul className="cap-player-chapters">
-        {chapters.map((c, i) => (
-          <li key={`${c.start}-${c.title}`}>
-            <button
-              type="button"
-              className="cap-player-chapter"
-              aria-current={i === cur ? "true" : undefined}
-              onClick={() => {
-                p.seek(c.start);
-                onSelect?.();
-              }}
-            >
-              <span className="cap-player-at">{formatTime(c.start)}</span>
-              <span className="cap-player-chapter-title">{c.title}</span>
-            </button>
-          </li>
-        ))}
-      </ul>
+      <ChapterButtons
+        chapters={chapters}
+        current={cur}
+        onGo={(seconds) => {
+          p.seek(seconds);
+          onSelect?.();
+        }}
+      />
     </section>
   );
 }

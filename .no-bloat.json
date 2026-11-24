@@ -1,10 +1,10 @@
 {
   "baseline": {
-    "measured_at": "241dffc",
+    "measured_at": "ba5c687",
     "knip": {},
     "jscpd": {
-      "clones": 37,
-      "lines": 489,
+      "clones": 36,
+      "lines": 473,
       "percentage": 0.25,
       "unread": 24
     },
@@ -18,7 +18,7 @@
       "components/admin-shell/admin-shell.css": 593,
       "components/admin-shell/admin-shell.react.tsx": 746,
       "components/admin-shell/admin-shell.spec.ts": 1197,
-      "components/bulk-bar/bulk-bar.ts": 535,
+      "components/bulk-bar/bulk-bar.ts": 522,
       "components/catalog/catalog-core.ts": 824,
       "components/checklist-run/checklist-run.ts": 742,
       "components/combobox/combobox.react.tsx": 802,
@@ -31,8 +31,8 @@
       "components/field/field.react.tsx": 920,
       "components/field/field.ts": 601,
       "components/flag-list/flag-list.react.tsx": 572,
-      "components/flag-list/flag-list.ts": 682,
-      "components/history-list/history-list.react.tsx": 572,
+      "components/flag-list/flag-list.ts": 646,
+      "components/history-list/history-list.react.tsx": 561,
       "components/listbox/listbox.ts": 650,
       "components/manual/manual.css": 1260,
       "components/markdown-editor/markdown-editor.spec.ts": 1225,
@@ -44,11 +44,11 @@
       "components/media/media.css": 831,
       "components/media/media.react.tsx": 1032,
       "components/media/media.spec.ts": 1227,
-      "components/media/media.ts": 1032,
+      "components/media/media.ts": 1031,
       "components/mentions-list/mentions-list.react.tsx": 502,
       "components/moderation-queue/moderation-queue.ts": 564,
-      "components/people-roles/people-roles.react.tsx": 844,
-      "components/player/player-controls.react.tsx": 533,
+      "components/people-roles/people-roles.react.tsx": 828,
+      "components/player/player-controls.react.tsx": 525,
       "components/player/player.css": 889,
       "components/player/player.ts": 512,
       "components/popover/popover.ts": 533,
@@ -80,9 +80,9 @@
       "cases": 1742
     },
     "comments": {
-      "lines": 14578,
-      "code": 153424,
-      "percentage": 8.68
+      "lines": 14573,
+      "code": 153126,
+      "percentage": 8.69
     }
   }
 }

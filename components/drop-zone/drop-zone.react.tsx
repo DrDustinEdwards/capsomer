@@ -1,13 +1,5 @@
-import { useEffect, useId, useRef, useState, type ReactNode, useLayoutEffect } from "react";
-import {
-  acceptedText,
-  dragHasFiles,
-  rejectedLead,
-  setInputFiles,
-  validateFiles,
-  type Rejection,
-} from "./drop-zone.ts";
-import { formatBytes } from "../format/format.ts";
+import { useEffect, useId, useLayoutEffect, useRef, type ReactNode } from "react";
+import { attachDropZone, type DropDetail, type Rejection } from "./drop-zone.ts";
 
 export interface DropZoneProps {
   // The same list an input's accept attribute takes: "image/*,.pdf".
@@ -36,8 +28,6 @@ export interface DropZoneProps {
   id?: string;
 }
 
-const CRIT = "M5 1h6l4 4v6l-4 4H5l-4-4V5zM7.2 4h1.6v5H7.2zM7.2 10.4h1.6V12H7.2z";
-
 export function DropZone({
   accept,
   maxBytes,
@@ -56,115 +46,51 @@ export function DropZone({
 }: DropZoneProps) {
   const own = useId();
   const base = id ?? own;
-  const input = useRef<HTMLInputElement>(null);
   const root = useRef<HTMLDivElement>(null);
-  const [over, setOver] = useState(false);
-  const [accepted, setAccepted] = useState<File[]>([]);
-  const [rejected, setRejected] = useState<Rejection[]>([]);
-  // The handlers read the latest props through a ref, so the listeners attach once.
-  const latest = useRef({ accept, maxBytes, maxFiles, multiple, disabled, onAccepted, onRejected });
+  // The behavior module does the dropping, pasting and checking; the callbacks reach it through a ref.
+  const latest = useRef({ onAccepted, onRejected });
   useLayoutEffect(() => {
-    latest.current = { accept, maxBytes, maxFiles, multiple, disabled, onAccepted, onRejected };
+    latest.current = { onAccepted, onRejected };
   });
 
   useEffect(() => {
     const el = root.current;
     if (!el) return;
-    const take = (files: ArrayLike<File>, fromInput = false) => {
-      const l = latest.current;
-      const rules = {
-        accept: l.accept,
-        maxBytes: l.maxBytes,
-        maxFiles: l.maxFiles ?? (l.multiple ? undefined : 1),
-      };
-      const result = validateFiles(Array.from(files), rules);
-      if (input.current && (!fromInput || result.rejected.length > 0))
-        setInputFiles(input.current, result.accepted);
-      setAccepted(result.accepted);
-      setRejected(result.rejected);
-      if (result.accepted.length > 0) l.onAccepted?.(result.accepted, result.rejected);
-      if (result.rejected.length > 0) l.onRejected?.(result.rejected, result.accepted);
+    const detach = attachDropZone(el);
+    const tell = (e: Event) => {
+      const { accepted, rejected } = (e as CustomEvent<DropDetail>).detail;
+      if (e.type === "cap-drop-accepted") latest.current.onAccepted?.(accepted, rejected);
+      else latest.current.onRejected?.(rejected, accepted);
     };
-    const page = scope === "page";
-    const target: EventTarget = page ? window : el;
-    let depth = 0;
-    const onEnter = (e: Event) => {
-      if (!dragHasFiles(e as DragEvent) || latest.current.disabled) return;
-      depth += 1;
-      setOver(true);
-    };
-    const onOver = (e: Event) => {
-      if (!dragHasFiles(e as DragEvent) || latest.current.disabled) return;
-      e.preventDefault();
-    };
-    const onLeave = (e: Event) => {
-      if (depth === 0 || !dragHasFiles(e as DragEvent)) return;
-      depth = Math.max(0, depth - 1);
-      if (depth === 0) setOver(false);
-    };
-    const onDrop = (e: Event) => {
-      const ev = e as DragEvent;
-      depth = 0;
-      setOver(false);
-      if (ev.defaultPrevented) return;
-      const files = ev.dataTransfer?.files;
-      if (!files || files.length === 0) {
-        const editable =
-          ev.target instanceof Element &&
-          ev.target.closest("input, textarea, [contenteditable='true']");
-        if (page && !editable) ev.preventDefault();
-        return;
-      }
-      if (latest.current.disabled) return;
-      ev.preventDefault();
-      take(files);
-      input.current?.focus({ preventScroll: true });
-    };
-    const onPaste = (e: Event) => {
-      const files = (e as ClipboardEvent).clipboardData?.files;
-      if (!files || files.length === 0 || latest.current.disabled) return;
-      e.preventDefault();
-      take(files);
-    };
-    const inputEl = input.current;
-    const onChange = () => {
-      if (inputEl?.files) take(Array.from(inputEl.files), true);
-    };
-    target.addEventListener("dragenter", onEnter);
-    target.addEventListener("dragover", onOver);
-    target.addEventListener("dragleave", onLeave);
-    target.addEventListener("drop", onDrop);
-    inputEl?.addEventListener("change", onChange);
-    const pasteTarget: EventTarget | null = paste ? (page ? document : el) : null;
-    pasteTarget?.addEventListener("paste", onPaste);
+    el.addEventListener("cap-drop-accepted", tell);
+    el.addEventListener("cap-drop-rejected", tell);
     return () => {
-      target.removeEventListener("dragenter", onEnter);
-      target.removeEventListener("dragover", onOver);
-      target.removeEventListener("dragleave", onLeave);
-      target.removeEventListener("drop", onDrop);
-      inputEl?.removeEventListener("change", onChange);
-      pasteTarget?.removeEventListener("paste", onPaste);
+      el.removeEventListener("cap-drop-accepted", tell);
+      el.removeEventListener("cap-drop-rejected", tell);
+      detach();
     };
   }, [scope, paste]);
 
-  const state = over ? "over" : rejected.length > 0 ? "rejected" : "idle";
   return (
     <div
       ref={root}
       className="cap-drop"
-      data-state={state}
+      data-cap="drop-zone"
       data-scope={scope === "page" ? "page" : undefined}
+      data-max-bytes={maxBytes}
+      data-max-files={maxFiles}
+      data-paste={paste ? "" : undefined}
       data-accepted-list={acceptedList ? undefined : "off"}
     >
       <label className="cap-drop-label">
         <input
-          ref={input}
           className="cap-drop-input"
           type="file"
           name={name}
           multiple={multiple || (maxFiles ?? 1) > 1}
           accept={accept}
           disabled={disabled}
+          data-cap-part="input"
           aria-labelledby={`${base}-title`}
           aria-describedby={`${base}-hint`}
         />
@@ -196,44 +122,9 @@ export function DropZone({
         </span>
       </label>
       {acceptedList ? (
-        <div className="cap-drop-status" role="status">
-          {accepted.length > 0 ? (
-            <>
-              <p className="cap-drop-lead">{acceptedText(accepted)}</p>
-              <ul className="cap-drop-files">
-                {accepted.map((f, i) => (
-                  <li key={`${f.name}-${i}`}>
-                    <span className="cap-drop-file-name">{f.name}</span>
-                    <span className="cap-drop-file-size">{formatBytes(f.size)}</span>
-                  </li>
-                ))}
-              </ul>
-            </>
-          ) : null}
-        </div>
+        <div className="cap-drop-status" role="status" data-cap-part="status" />
       ) : null}
-      <div className="cap-drop-rejections" role="alert">
-        {rejected.length > 0 ? (
-          <>
-            <p className="cap-drop-lead" data-tone="crit">
-              <svg
-                className="cap-status-glyph"
-                viewBox="0 0 16 16"
-                aria-hidden="true"
-                focusable="false"
-              >
-                <path fill="currentColor" fillRule="evenodd" d={CRIT} />
-              </svg>
-              {rejectedLead(rejected.length)}
-            </p>
-            <ul className="cap-drop-files">
-              {rejected.map((r, i) => (
-                <li key={`${r.file.name}-${i}`}>{r.message}</li>
-              ))}
-            </ul>
-          </>
-        ) : null}
-      </div>
+      <div className="cap-drop-rejections" role="alert" data-cap-part="rejections" />
       {scope === "page" ? (
         <div className="cap-drop-overlay" aria-hidden="true">
           <div>

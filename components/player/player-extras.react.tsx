@@ -10,6 +10,7 @@ import {
   type PlayerChapter,
   type PlayerTrack,
 } from "./player.ts";
+import { ChapterButtons } from "./player-controls.react.tsx";
 import { usePlayer } from "./player-context.react.tsx";
 
 // Seeks the loaded track, or loads this one at that time.
@@ -49,21 +50,7 @@ export function ChapterList({
       <H className="cap-player-list-heading" id={id}>
         {heading}
       </H>
-      <ol className="cap-player-chapters">
-        {list.map((c, i) => (
-          <li key={`${c.start}-${c.title}`}>
-            <button
-              type="button"
-              className="cap-player-chapter"
-              aria-current={i === cur ? "true" : undefined}
-              onClick={() => go(c.start)}
-            >
-              <span className="cap-player-at">{formatTime(c.start)}</span>
-              <span className="cap-player-chapter-title">{c.title}</span>
-            </button>
-          </li>
-        ))}
-      </ol>
+      <ChapterButtons chapters={list} current={cur} onGo={go} />
     </section>
   );
 }

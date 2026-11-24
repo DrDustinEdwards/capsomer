@@ -8,6 +8,7 @@ import { formatBytes } from "../format/format.ts";
 
 import { plural } from "@drdustinedwards/site-helpers/text";
 import { listText } from "../hooks/hooks.ts";
+import { glyphEl } from "../status/status.ts";
 
 const READY = "data-cap-ready";
 
@@ -159,23 +160,6 @@ export interface DropDetail {
   rejected: Array<Rejection>;
 }
 
-const CRIT_GLYPH = "M5 1h6l4 4v6l-4 4H5l-4-4V5zM7.2 4h1.6v5H7.2zM7.2 10.4h1.6V12H7.2z";
-
-function glyph(): SVGSVGElement {
-  const ns = "http://www.w3.org/2000/svg";
-  const svg = document.createElementNS(ns, "svg");
-  svg.setAttribute("class", "cap-status-glyph");
-  svg.setAttribute("viewBox", "0 0 16 16");
-  svg.setAttribute("aria-hidden", "true");
-  svg.setAttribute("focusable", "false");
-  const p = document.createElementNS(ns, "path");
-  p.setAttribute("fill", "currentColor");
-  p.setAttribute("fill-rule", "evenodd");
-  p.setAttribute("d", CRIT_GLYPH);
-  svg.append(p);
-  return svg;
-}
-
 const part = <T extends HTMLElement = HTMLElement>(zone: HTMLElement, name: string) =>
   zone.querySelector<T>(`[data-cap-part='${name}']`);
 
@@ -229,7 +213,7 @@ function render(zone: HTMLElement, result: Validation): void {
       const lead = document.createElement("p");
       lead.className = "cap-drop-lead";
       lead.dataset.tone = "crit";
-      lead.append(glyph(), document.createTextNode(rejectedLead(result.rejected.length)));
+      lead.append(glyphEl("crit"), document.createTextNode(rejectedLead(result.rejected.length)));
       const list = document.createElement("ul");
       list.className = "cap-drop-files";
       for (const r of result.rejected) {

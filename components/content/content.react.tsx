@@ -11,7 +11,7 @@ import { BulkBar } from "../bulk-bar/bulk-bar.react.tsx";
 import type { BulkItem, BulkOutcome } from "../bulk-bar/bulk-bar.ts";
 import { ConfirmDialog, ConfirmPage } from "../confirm-dialog/confirm-dialog.react.tsx";
 import { useOptionalMessage } from "../message/message.react.tsx";
-import { GLYPHS, isUndoKey } from "../message/message.ts";
+import { isUndoKey, kindGlyph } from "../message/message.ts";
 import {
   intentForm,
   outcomesOf,
@@ -62,7 +62,7 @@ export function ResultBox({
             viewBox="0 0 16 16"
             aria-hidden="true"
             focusable="false"
-            dangerouslySetInnerHTML={markup(GLYPHS[kind])}
+            dangerouslySetInnerHTML={markup(kindGlyph(kind))}
           />
           <p className="cap-message-text" data-cap-part="text">
             <span data-cap-part="said" role={result.ok ? undefined : "alert"}>

@@ -8,90 +8,13 @@ import {
   parseTags,
   tileId,
   type AltState,
-  type Flag,
   type MediaRecord,
   type UsedIn,
 } from "./media-record.ts";
 import { formatBytes } from "../format/format.ts";
+import { glyphEl, statusEl } from "../status/status.ts";
 
 const NS = "http://www.w3.org/2000/svg";
-const GLYPHS: Record<string, string[]> = {
-  crit: ["M5 1h6l4 4v6l-4 4H5l-4-4V5zM7.2 4h1.6v5H7.2zM7.2 10.4h1.6V12H7.2z"],
-  warn: ["M8 1.2 15.4 14H.6zM7.3 6h1.4v4H7.3zM7.3 11h1.4v1.4H7.3z"],
-  ok: ["M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"],
-};
-
-// A status glyph, drawn in currentColor: a shape for each meaning, so color is never alone.
-export function glyph(kind: "crit" | "warn" | "info" | "ok" | "nodata" | "running"): SVGSVGElement {
-  const svg = document.createElementNS(NS, "svg");
-  svg.setAttribute("class", "cap-status-glyph");
-  svg.setAttribute("viewBox", "0 0 16 16");
-  svg.setAttribute("aria-hidden", "true");
-  svg.setAttribute("focusable", "false");
-  const add = (tag: string, attrs: Record<string, string>) => {
-    const el = document.createElementNS(NS, tag);
-    for (const [k, v] of Object.entries(attrs)) el.setAttribute(k, v);
-    svg.append(el);
-  };
-  const paths = GLYPHS[kind];
-  if (paths)
-    for (const d of paths) add("path", { fill: "currentColor", "fill-rule": "evenodd", d });
-  else if (kind === "info") {
-    add("rect", {
-      x: "1.5",
-      y: "1.5",
-      width: "13",
-      height: "13",
-      rx: "2",
-      fill: "none",
-      stroke: "currentColor",
-      "stroke-width": "1.6",
-    });
-    add("path", { fill: "currentColor", d: "M7.2 7h1.6v5H7.2zM7.2 4h1.6v1.7H7.2z" });
-  } else if (kind === "nodata") {
-    add("circle", {
-      cx: "8",
-      cy: "8",
-      r: "6.2",
-      fill: "none",
-      stroke: "currentColor",
-      "stroke-width": "1.6",
-    });
-    add("path", {
-      fill: "none",
-      stroke: "currentColor",
-      "stroke-width": "1.6",
-      "stroke-linecap": "round",
-      d: "M5 8h6",
-    });
-  } else {
-    add("circle", {
-      cx: "8",
-      cy: "8",
-      r: "6.2",
-      fill: "none",
-      stroke: "currentColor",
-      "stroke-width": "1.6",
-      opacity: "0.35",
-    });
-    add("path", {
-      fill: "none",
-      stroke: "currentColor",
-      "stroke-width": "1.8",
-      "stroke-linecap": "round",
-      d: "M8 1.8a6.2 6.2 0 0 1 6.2 6.2",
-    });
-  }
-  return svg;
-}
-
-function statusSpan(tone: Flag["tone"], word: string): HTMLSpanElement {
-  const span = document.createElement("span");
-  span.className = "cap-status";
-  span.dataset.tone = tone;
-  span.append(glyph(tone), document.createTextNode(word));
-  return span;
-}
 
 const CHECK_PATH = "M3.5 8.5l3 3 6-7";
 
@@ -224,7 +147,7 @@ export function syncTile(tile: HTMLElement): void {
     flags.id = `${tile.id || `tile-${Math.random().toString(36).slice(2, 8)}`}-flags`;
     tile.append(flags);
   }
-  const items: Node[] = flagsFor(r).map((f) => statusSpan(f.tone, f.word));
+  const items: Node[] = flagsFor(r).map((f) => statusEl(f.tone, f.word));
   if (r.state === "binned") {
     const restore = document.createElement("button");
     restore.type = "button";
@@ -277,7 +200,7 @@ export function syncTile(tile: HTMLElement): void {
     block.dataset.tone = "crit";
     const lead = document.createElement("p");
     lead.className = "cap-media-state-lead";
-    lead.append(glyph("crit"), document.createTextNode("Upload failed"));
+    lead.append(glyphEl("crit"), document.createTextNode("Upload failed"));
     const why = document.createElement("p");
     why.className = "cap-media-reason";
     why.textContent = r.error ?? "The server did not say why.";

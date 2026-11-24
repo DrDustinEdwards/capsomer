@@ -6,6 +6,7 @@ import {
   useState,
   type FieldsetHTMLAttributes,
   type InputHTMLAttributes,
+  type Ref,
   type KeyboardEvent,
   type ReactElement,
   type ReactNode,
@@ -18,8 +19,7 @@ import { countText, keyValue, revealedText, stepValue, toDateTimeLocal } from ".
 import { useHydrated } from "../hooks/hooks.react.tsx";
 import { rangeFill } from "../range-slider/range-slider.ts";
 
-// The props Field passes to its control. Any input, textarea or select (or a component
-// that forwards these to one) will do.
+// The props Field passes to its control: any input, textarea, select or component forwarding them.
 export interface FieldControlProps {
   id?: string;
   required?: boolean;
@@ -171,13 +171,13 @@ export function Check(
   );
 }
 
-// A slider (a native range input) whose track fills to the thumb: it sets --cap-range-fill
-// from value, min and max. Label it as any input, with Field or aria-label.
+// A native range input whose track fills to the thumb (--cap-range-fill). Label it as any input.
 export function Range(
   props: Omit<InputHTMLAttributes<HTMLInputElement>, "type" | "value" | "min" | "max"> & {
     value: number;
     min?: number;
     max?: number;
+    ref?: Ref<HTMLInputElement>;
   },
 ) {
   const { value, min = 0, max = 100, className, style, ...rest } = props;
