@@ -4,7 +4,7 @@
 // (ButtonHTMLAttributes and the like) are not listed; the table says which element's it also takes.
 import { existsSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
-import ts from "typescript";
+import { ts } from "@dustinedwards/devkit/node/syntax";
 
 interface Prop {
   name: string;
