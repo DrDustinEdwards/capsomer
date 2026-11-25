@@ -164,7 +164,7 @@
     color: var(--_tone);
   }
 
-  /* Alert default is the critical tone, as in 0.1. */
+  /* Alert default is the critical tone. */
   .cap-alert:not([data-tone]) {
     --_tone: var(--crit);
     --_soft: var(--crit-soft);

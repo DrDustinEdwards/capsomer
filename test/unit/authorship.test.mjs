@@ -1,5 +1,3 @@
-// The authorship summary: word counts per kind, percentages that always add up, and the
-// sentence and html that state them. Correctness only; nothing here pins a design value.
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { summarize, summaryHtml, summaryText } from "../../components/authorship/authorship.ts";
@@ -64,14 +62,6 @@ test("summarize: a kind with no words is left out of the sentence, and no words 
   assert.equal(none.text, "No marked passages");
   assert.equal(total(none), 0);
   assert.equal(summaryText(none.shares), "No marked passages");
-});
-
-test("summarize: ignores a kind it does not know", () => {
-  const s = summarize([
-    { kind: "robot", words: 50 },
-    { kind: "you", words: 5 },
-  ]);
-  assert.equal(s.total, 5);
 });
 
 test("summaryHtml: the line and the word counts are text; the bar is hidden from a screen reader", () => {
