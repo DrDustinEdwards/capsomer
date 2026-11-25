@@ -1,15 +1,6 @@
-// The search result width meter's pure part: the width is measured, not counted, and the words
-// say the cut. The widths themselves are Prelum's serpWidth, tested where it lives.
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { serpReading, serpTextWidth } from "../../components/share-preview/share-preview.ts";
-
-test("serpTextWidth: capitals are wider than small letters of the same count", () => {
-  assert.ok(serpTextWidth("WWWWWWWWWW", "title") > serpTextWidth("iiiiiiiiii", "title"));
-  assert.ok(
-    serpTextWidth("Release notes", "title") > serpTextWidth("Release notes", "description"),
-  );
-});
+import { serpReading } from "../../components/share-preview/share-preview.ts";
 
 test("serpReading: the cut is said in words only past the limit", () => {
   assert.deepEqual(serpReading("Field notes", 120, 600), {

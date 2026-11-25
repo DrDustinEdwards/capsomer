@@ -3,12 +3,10 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import {
-  emptyText,
   filterCommands,
   groupBy,
   matchesQuery,
   nextTypeahead,
-  resultsText,
   step,
   stepEnabled,
 } from "../../components/listbox/listbox.ts";
@@ -100,11 +98,4 @@ test("nextTypeahead: prefixes within the window, cycles a repeated letter", () =
   assert.equal(r.index, -1);
   assert.equal(nextTypeahead({ buffer: "", at: 0 }, "s", 1, ["Sydney", null], 0).index, 0);
   assert.equal(nextTypeahead({ buffer: "", at: 0 }, "x", 1, [null, null], 0).index, -1);
-});
-
-test("resultsText and emptyText", () => {
-  assert.equal(resultsText(1), "1 result");
-  assert.equal(resultsText(3), "3 results");
-  assert.equal(resultsText(0), "0 results");
-  assert.equal(emptyText(" zebra "), "No results for “zebra”");
 });

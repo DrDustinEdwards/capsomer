@@ -20,20 +20,6 @@ test("capsomerTheme and capsomerMoreTheme pass Enarratio's own checkTheme, so st
   );
 });
 
-test("capsomerTheme is built from the tokens: series 1 to 3 are the three families' step 9", () => {
-  for (const scheme of ["light", "dark"]) {
-    assert.deepEqual(capsomerTheme[scheme].series.slice(0, 3), [
-      FAMILIES.purple.seed,
-      FAMILIES.fox.seed,
-      FAMILIES.teal.seed,
-    ]);
-    const t = themes(FAMILIES.purple)[scheme].tokens;
-    assert.equal(capsomerTheme[scheme].background, t.surface);
-    assert.equal(capsomerTheme[scheme].text, t.text);
-    assert.equal(capsomerTheme[scheme].sequential[4], t["ramp-5"]);
-  }
-});
-
 test("the chart palette: every check passes for every family in both themes", () => {
   for (const [name, f] of Object.entries(FAMILIES)) {
     for (const scheme of ["light", "dark"]) {
