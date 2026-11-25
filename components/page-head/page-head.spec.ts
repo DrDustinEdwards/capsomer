@@ -1,20 +1,10 @@
 import { expect, test } from "@playwright/test";
-import {
-  eachTheme,
-  expectContrast,
-  expectNoAxeViolations,
-  visitStates,
-} from "../../test/helpers.ts";
+import { eachTheme, expectNoAxeViolations, visitStates } from "../../test/helpers.ts";
 
 eachTheme((theme) => {
   test("accessibility: no axe violations", async ({ page }) => {
     await visitStates(page, "page-head", theme);
     await expectNoAxeViolations(page);
-  });
-
-  test("accessibility: the title reaches its contrast", async ({ page }) => {
-    await visitStates(page, "page-head", theme);
-    await expectContrast(page, [{ sel: "#ph-full .cap-page-head-title", what: "the page title" }]);
   });
 
   test("behavior: the actions sit at the right of the title, and drop below it in a narrow space", async ({

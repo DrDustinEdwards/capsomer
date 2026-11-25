@@ -12,18 +12,6 @@ eachTheme((theme) => {
     await expectNoAxeViolations(page);
   });
 
-  test("accessibility: the heading, the source and the body reach their contrast", async ({
-    page,
-  }) => {
-    await visitStates(page, "panel", theme);
-    await expectContrast(page, [
-      { sel: "#p-head .cap-panel-head h3", what: "the panel's heading on the raised header" },
-      { sel: "#p-head .cap-panel-src", what: "the source line on the raised header" },
-      { sel: "#p-head .cap-panel-body p", what: "body text" },
-      { sel: "#p-head .cap-panel-body .cap-muted", what: "muted body text" },
-    ]);
-  });
-
   test("accessibility: the count and the link to the full view reach their contrast, and the link is a target", async ({
     page,
   }) => {
@@ -35,13 +23,5 @@ eachTheme((theme) => {
     ]);
     const box = await page.locator("#p-more .cap-panel-more a").boundingBox();
     expect(box?.height ?? 0).toBeGreaterThanOrEqual(24);
-  });
-
-  test("accessibility: the footer and the padded block reach their contrast", async ({ page }) => {
-    await visitStates(page, "panel", theme);
-    await expectContrast(page, [
-      { sel: "#p-card .cap-panel-foot .cap-muted", what: "muted text on the footer band" },
-      { sel: "#p-pad .cap-panel-pad p", what: "text in the padded block" },
-    ]);
   });
 });

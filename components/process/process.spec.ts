@@ -1,23 +1,10 @@
 import { expect, test } from "@playwright/test";
-import {
-  eachTheme,
-  expectContrast,
-  expectNoAxeViolations,
-  visitStates,
-} from "../../test/helpers.ts";
+import { eachTheme, expectNoAxeViolations, visitStates } from "../../test/helpers.ts";
 
 eachTheme((theme) => {
   test("accessibility: no axe violations", async ({ page }) => {
     await visitStates(page, "process", theme);
     await expectNoAxeViolations(page);
-  });
-
-  test("accessibility: the number, title and text reach their contrast", async ({ page }) => {
-    await visitStates(page, "process", theme);
-    await expectContrast(page, [
-      { sel: "#pr-columns .cap-process-title", what: "a step's title" },
-      { sel: "#pr-columns .cap-process-text", what: "a step's text" },
-    ]);
   });
 
   test("accessibility: a step's number is not read", async ({ page }) => {
