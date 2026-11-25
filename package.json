@@ -154,6 +154,7 @@
     "./ambient-blobs.css": "./components/ambient/ambient-blobs.css",
     "./ambient-equalizer.css": "./components/ambient/ambient-equalizer.css",
     "./check.css": "./components/field/check.css",
+    "./field-frame.css": "./components/field/field-frame.css",
     "./group.css": "./components/disclosure/group.css",
     "./admin-shell-strip.css": "./components/admin-shell/admin-shell-strip.css",
     "./shell-rail.css": "./components/shell/shell-rail.css",
