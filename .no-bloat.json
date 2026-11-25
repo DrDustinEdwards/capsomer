@@ -24,14 +24,6 @@
       "components/email/email.ts": 507,
       "components/flag-list/flag-list.react.tsx": 571,
       "components/flag-list/flag-list.ts": 646,
-      "components/media-library/examples.tsx": 1046,
-      "components/media-library/media-library-more.react.tsx": 506,
-      "components/media-library/media-library.react.tsx": 1367,
-      "components/media-library/media-library.ts": 593,
-      "components/media/media.css": 831,
-      "components/media/media.react.tsx": 1032,
-      "components/media/media.spec.ts": 1211,
-      "components/media/media.ts": 1031,
       "components/mentions-list/mentions-list.react.tsx": 502,
       "components/moderation-queue/moderation-queue.ts": 564,
       "components/popover/popover.ts": 533,
@@ -49,7 +41,7 @@
       "tokens/sites.mjs": 543
     },
     "tests": {
-      "files": 258,
+      "files": 259,
       "cases": 1669
     },
     "comments": {
