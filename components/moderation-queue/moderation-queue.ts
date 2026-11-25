@@ -30,7 +30,7 @@ import {
 import {
   rowsOf,
   listOf,
-  titleOf,
+  rowTitleButton,
   visible,
   resetOn,
   deleteOn,
@@ -137,7 +137,7 @@ function undoEntry(ctx: Ctx, entry: UndoEntry): void {
   refresh(root);
   // Focus goes to the first mention that came back, since Undo's own button is gone by now.
   const first = back.find(visible);
-  if (first) titleOf(first)?.focus();
+  if (first) rowTitleButton(first)?.focus();
   root.dispatchEvent(
     new CustomEvent("cap:mod-undone", { bubbles: true, detail: { ids: entry.ids, to } }),
   );
