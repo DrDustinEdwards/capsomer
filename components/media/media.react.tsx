@@ -1,10 +1,7 @@
 import {
   type KeyboardEvent,
-  type MouseEvent,
   type ReactNode,
   type Ref,
-  lazy,
-  Suspense,
   useEffect,
   useId,
   useImperativeHandle,
@@ -14,26 +11,18 @@ import {
 } from "react";
 import { PlainForm, type FormComponent } from "../plain-form/plain-form.react.tsx";
 import { openDialog, wireDialog } from "../dialog/dialog.ts";
-import { isImeEnter } from "../shortcuts/shortcuts.ts";
-import { Disclosure } from "../disclosure/disclosure.react.tsx";
-import { Glyph } from "../status/status.react.tsx";
 import {
   type Autosave,
   type MediaFields,
   type MediaRecord,
   type SaveState,
   copySnippets,
-  SAVE_TEXT,
   createAutosave,
-  parseTags,
 } from "./media.ts";
-import { COPIED_MS, COPY_FAILED_MS, copyText } from "../copy/copy.ts";
-import { MediaFocus, focusWords } from "./media-focus.react.tsx";
 import { formatBytes } from "../format/format.ts";
-import { linkable } from "../hooks/hooks.ts";
-
-// The crop editor, loaded the first time Crop is pressed, so a library page does not carry it.
-const MediaCrop = lazy(() => import("./media-crop.react.tsx"));
+import { AddressCopy, FactsUsed, Ident, InspectorFooter } from "./media-inspector-parts.react.tsx";
+import { InspectorFields } from "./media-inspector-fields.react.tsx";
+import { PictureTools, nestedTool } from "./media-picture-tools.react.tsx";
 
 export { MediaTile, MediaGrid } from "./media-grid.react.tsx";
 export type { MediaTileProps, MediaGroup, MediaGridProps } from "./media-grid.react.tsx";
@@ -130,17 +119,6 @@ export interface MediaInspectorProps {
     ident: (intent: string) => ReactNode;
     base: string;
   }) => ReactNode;
-}
-
-// The hidden fields every inspector form carries: what it is about and the version last seen.
-function Ident({ item, intent }: { item: MediaRecord; intent: string }) {
-  return (
-    <>
-      <input type="hidden" name="intent" value={intent} />
-      <input type="hidden" name="ids" value={item.key} />
-      {item.version ? <input type="hidden" name="versions" value={item.version} /> : null}
-    </>
-  );
 }
 
 export function MediaInspector(props: MediaInspectorProps) {
@@ -259,12 +237,10 @@ function InspectorBody({
     tags: item.tags,
   };
   const [fields, setFields] = useState<MediaFields>(initial);
-  const [tagText, setTagText] = useState("");
   const [state, setState] = useState<SaveState>(draft ? "failed" : "idle");
   const [error, setError] = useState<string | undefined>(
     draft ? "the last save did not go through" : undefined,
   );
-  const [copied, setCopied] = useState<ReactNode>(null);
   const latest = useRef(fields);
   useLayoutEffect(() => {
     latest.current = fields;
@@ -326,24 +302,6 @@ function InspectorBody({
     decorative: fields.decorative,
     name: item.name,
   });
-  const copy = async (value: string, what: string) => {
-    setCopied(null);
-    const ok = await copyText(value);
-    setCopied(
-      ok ? (
-        <>
-          <Glyph name="ok" />
-          Copied the {what}.
-        </>
-      ) : (
-        <>
-          <Glyph name="crit" />
-          Could not copy. The address is selected: press Ctrl+C or Cmd+C.
-        </>
-      ),
-    );
-    window.setTimeout(() => setCopied(null), ok ? COPIED_MS : COPY_FAILED_MS);
-  };
   const sub = [
     item.type.split("/").pop()?.toUpperCase(),
     formatBytes(item.bytes),
@@ -351,12 +309,6 @@ function InspectorBody({
   ]
     .filter(Boolean)
     .join(" · ");
-  const addTag = (text: string) => {
-    const add = parseTags(text);
-    if (add.length)
-      edit({ tags: [...fields.tags, ...add.filter((t) => !fields.tags.includes(t))] }, true);
-    setTagText("");
-  };
   const onKeyDown = (e: KeyboardEvent<HTMLElement>) => {
     if (
       e.altKey &&
@@ -416,617 +368,40 @@ function InspectorBody({
             </span>
           )}
         </div>
-        {img && shows.alt ? (
-          <Wrap
-            on={formMode}
-            F={F}
-            action={action}
-            label="Alt text"
-            intent="alt"
-            item={item}
-            save="Save alt text"
-          >
-            <div className="cap-field" data-cap-part="alt-field">
-              <label className="cap-field-label" htmlFor={`${base}-alt`}>
-                Alt text
-              </label>
-              <textarea
-                ref={(el) => {
-                  if (el && !el.disabled) firstRef.current = el;
-                }}
-                className="cap-input"
-                id={`${base}-alt`}
-                name="alt"
-                data-cap-part="alt"
-                rows={2}
-                placeholder="Describe what the picture shows"
-                aria-describedby={`${base}-alt-help`}
-                disabled={fields.decorative && !formMode}
-                value={fields.decorative ? "" : fields.alt}
-                onChange={(e) => edit({ alt: e.target.value })}
-              />
-              <p className="cap-field-help" id={`${base}-alt-help`}>
-                Leave out “image of”.
-              </p>
-            </div>
-            <div className="cap-field" data-cap-part="decorative-field">
-              <label className="cap-check">
-                <input
-                  type="checkbox"
-                  name="decorative"
-                  data-cap-part="decorative"
-                  checked={fields.decorative}
-                  onChange={(e) =>
-                    edit(
-                      { decorative: e.target.checked, alt: e.target.checked ? "" : fields.alt },
-                      true,
-                    )
-                  }
-                />{" "}
-                Decorative image
-              </label>
-            </div>
-          </Wrap>
-        ) : !img ? (
-          <p className="cap-field-help" data-cap-part="alt-document">
-            A document takes no alt text. What a reader hears is the link text, and that lives in
-            the post.
-          </p>
-        ) : null}
-        {shows.title || shows.caption ? (
-          <Wrap
-            on={formMode}
-            F={F}
-            action={action}
-            label={shows.title ? "Title and caption" : "Caption"}
-            intent={shows.title ? "save-details" : "caption"}
-            item={item}
-            save={shows.title ? "Save title and caption" : "Save caption"}
-          >
-            {shows.title ? (
-              <div className="cap-field">
-                <label className="cap-field-label" htmlFor={`${base}-title-field`}>
-                  Title
-                </label>
-                <input
-                  className="cap-input"
-                  id={`${base}-title-field`}
-                  data-cap-part="title-field"
-                  name="title"
-                  type="text"
-                  autoComplete="off"
-                  value={fields.title}
-                  onChange={(e) => edit({ title: e.target.value })}
-                />
-              </div>
-            ) : null}
-            {shows.caption ? (
-              <div className="cap-field">
-                <label className="cap-field-label" htmlFor={`${base}-caption`}>
-                  Caption
-                </label>
-                <textarea
-                  className="cap-input"
-                  id={`${base}-caption`}
-                  data-cap-part="caption"
-                  name="caption"
-                  rows={2}
-                  value={fields.caption}
-                  onChange={(e) => edit({ caption: e.target.value })}
-                />
-              </div>
-            ) : null}
-          </Wrap>
-        ) : null}
-        {shows.tags && formMode ? (
-          <Wrap on F={F} action={action} label="Tags" intent="tags" item={item} save="Save tags">
-            <div className="cap-field">
-              <label className="cap-field-label" htmlFor={`${base}-tags-text`}>
-                Tags
-              </label>
-              <input
-                className="cap-input"
-                id={`${base}-tags-text`}
-                name="tags"
-                type="text"
-                autoComplete="off"
-                aria-describedby={`${base}-tags-help`}
-                value={fields.tags.join(", ")}
-                onChange={(e) => edit({ tags: parseTags(e.target.value) })}
-              />
-              <p className="cap-field-help" id={`${base}-tags-help`}>
-                Separate tags with commas.
-              </p>
-            </div>
-          </Wrap>
-        ) : null}
-        {shows.tags && !formMode ? (
-          <div className="cap-media-section" role="group" aria-labelledby={`${base}-tags-l`}>
-            <span className="cap-field-label" id={`${base}-tags-l`}>
-              Tags
-            </span>
-            <ul className="cap-media-tags" data-cap-part="tags">
-              {fields.tags.map((t) => (
-                <li key={t}>
-                  <button
-                    type="button"
-                    className="cap-chip"
-                    aria-label={`Remove tag ${t}`}
-                    onClick={() => edit({ tags: fields.tags.filter((x) => x !== t) }, true)}
-                  >
-                    {t} <span aria-hidden="true">×</span>
-                  </button>
-                </li>
-              ))}
-            </ul>
-            <input
-              type="hidden"
-              name="tags"
-              value={fields.tags.join(", ")}
-              data-cap-part="tags-value"
-            />
-            <label className="cap-sr-only" htmlFor={`${base}-tag-input`}>
-              Add a tag
-            </label>
-            <input
-              className="cap-input"
-              id={`${base}-tag-input`}
-              type="text"
-              autoComplete="off"
-              placeholder="Add a tag, then press Enter"
-              data-cap-part="tag-input"
-              value={tagText}
-              onChange={(e) => setTagText(e.target.value)}
-              onKeyDown={(e) => {
-                // legacy-scan:keep ime-safe-enter-submit isImeEnter (shortcuts.ts) checks isComposing and keyCode 229; the scanner cannot follow it.
-                if ((e.key === "Enter" && !isImeEnter(e.nativeEvent)) || e.key === ",") {
-                  e.preventDefault();
-                  addTag(tagText);
-                }
-              }}
-              onBlur={() => tagText.trim() && addTag(tagText)}
-            />
-            <ul className="cap-media-tags" data-cap-part="suggestions">
-              {(item.suggestedTags ?? [])
-                .filter((t) => !fields.tags.includes(t))
-                .map((t) => (
-                  <li key={t}>
-                    <button
-                      type="button"
-                      className="cap-chip"
-                      aria-label={`Add suggested tag ${t}`}
-                      onClick={() => edit({ tags: [...fields.tags, t] }, true)}
-                    >
-                      + {t}
-                    </button>
-                  </li>
-                ))}
-            </ul>
-          </div>
-        ) : null}
+        <InspectorFields
+          item={item}
+          base={base}
+          fields={fields}
+          edit={edit}
+          formMode={formMode}
+          F={F}
+          action={action}
+          shows={shows}
+          firstRef={firstRef}
+        />
         {img && !binned && (tools.focus || tools.replace || tools.crop) && action ? (
           <PictureTools item={item} base={base} tools={tools} action={action} Tool={Tool} />
         ) : null}
         {more && action
           ? more({ Tool, ident: (intent) => <Ident item={item} intent={intent} />, base })
           : null}
-        <div className="cap-media-section" role="group" aria-labelledby={`${base}-addr-l`}>
-          <label className="cap-field-label" id={`${base}-addr-l`} htmlFor={`${base}-addr`}>
-            Address
-          </label>
-          <input
-            className="cap-input"
-            id={`${base}-addr`}
-            data-cap-part="address"
-            readOnly
-            value={url}
-          />
-          <div className="cap-media-copy">
-            {snippets.map((s) => (
-              <button
-                key={s.id}
-                type="button"
-                className="cap-btn"
-                data-size="sm"
-                data-cap-copy-kind={s.id}
-                aria-label={s.name}
-                onClick={() => void copy(s.value, s.name.replace(/^Copy (the )?/, ""))}
-              >
-                {s.label}
-              </button>
-            ))}
-          </div>
-          <p className="cap-media-copied" role="status" data-cap-part="copied">
-            {copied}
-          </p>
-        </div>
-        <dl className="cap-media-facts" data-cap-part="facts">
-          <dt>Key</dt>
-          <dd>{item.key}</dd>
-          <dt>Type</dt>
-          <dd>{item.type || "unknown"}</dd>
-          <dt>Size</dt>
-          <dd>{formatBytes(item.bytes)}</dd>
-          <dt>Dimensions</dt>
-          <dd>{item.width && item.height ? `${item.width} by ${item.height}` : "not measured"}</dd>
-          <dt>Uploaded</dt>
-          <dd>{item.uploaded ?? "ships with the site"}</dd>
-        </dl>
-        <section className="cap-media-section" aria-labelledby={`${base}-used-l`}>
-          <h3 id={`${base}-used-l`}>Used in</h3>
-          <div data-cap-part="used">
-            {item.usedUnknown ? (
-              <p className="cap-media-note">
-                Where it is used was not checked for this list. Open the file to see.
-              </p>
-            ) : item.used.length > 0 ? (
-              <ul className="cap-media-used">
-                {item.used.map((u) => (
-                  <li key={u.href}>
-                    {linkable(u.href) ? <a href={u.href}>{u.title}</a> : u.title}
-                    {u.how ? <span className="cap-media-used-how">{u.how}</span> : null}
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <>
-                <p className="cap-media-used-empty">Not used anywhere.</p>
-                <p className="cap-media-note">
-                  A page built in code can still use it: check before you delete it.{" "}
-                  {onShowUnattached ? (
-                    <button
-                      type="button"
-                      className="cap-btn"
-                      data-variant="link"
-                      onClick={onShowUnattached}
-                    >
-                      Show unattached files
-                    </button>
-                  ) : null}
-                </p>
-              </>
-            )}
-          </div>
-        </section>
+        <AddressCopy base={base} url={url} snippets={snippets} />
+        <FactsUsed item={item} base={base} onShowUnattached={onShowUnattached} />
       </BodyTag>
-      <div className="cap-dialog-footer">
-        {formMode ? null : (
-          <div className="cap-media-save" data-cap-part="save" data-state={state}>
-            <p role="status" data-cap-part="save-status">
-              {state !== "failed" ? (
-                <>
-                  {state === "saving" ? (
-                    <Glyph name="running" />
-                  ) : state === "saved" ? (
-                    <Glyph name="ok" />
-                  ) : state === "dirty" ? (
-                    <Glyph name="info" />
-                  ) : null}
-                  {SAVE_TEXT[state]}
-                </>
-              ) : null}
-            </p>
-            <p role="alert" data-cap-part="save-error">
-              {state === "failed" ? (
-                <>
-                  <Glyph name="crit" />
-                  Could not save{error ? `: ${error.replace(/\.$/, "")}` : ""}. What you typed is
-                  still here.
-                </>
-              ) : null}
-            </p>
-            <button
-              type="button"
-              className="cap-btn"
-              data-size="sm"
-              data-cap-part="retry-save"
-              hidden={state !== "failed"}
-              onClick={() => void saver.retry()}
-            >
-              Retry
-            </button>
-          </div>
-        )}
-        {action ? (
-          <>
-            {binned ? (
-              <F method="post" action={action} className="cap-media-act">
-                <Ident item={item} intent="restore" />
-                <button type="submit" className="cap-btn" data-cap-part="restore">
-                  Restore
-                </button>
-              </F>
-            ) : can.trash !== false ? (
-              <F method="post" action={action} className="cap-media-act">
-                <Ident item={item} intent="trash" />
-                <button type="submit" className="cap-btn" data-cap-part="bin">
-                  Move to Trash
-                </button>
-              </F>
-            ) : null}
-            {can.delete ? (
-              <F method="post" action={action} className="cap-media-act">
-                <Ident item={item} intent="delete" />
-                <button
-                  type="submit"
-                  className="cap-btn"
-                  data-variant="danger"
-                  data-cap-part="delete"
-                >
-                  Delete for good
-                </button>
-              </F>
-            ) : null}
-          </>
-        ) : binned ? (
-          <button
-            type="button"
-            className="cap-btn"
-            data-cap-part="restore"
-            onClick={() => onRestore?.(item.key)}
-          >
-            Restore
-          </button>
-        ) : (
-          <button
-            type="button"
-            className="cap-btn"
-            data-cap-part="bin"
-            onClick={() => onBin?.(item.key)}
-          >
-            Move to Trash
-          </button>
-        )}
-      </div>
-      {closeHref ? (
-        <a
-          className="cap-btn cap-dialog-close"
-          data-variant="quiet"
-          data-icon-only
-          data-cap-part="close"
-          aria-label="Close"
-          href={closeHref}
-          onClick={(e) => {
-            e.preventDefault();
-            onClose();
-          }}
-        >
-          <CloseGlyph />
-        </a>
-      ) : (
-        <button
-          type="button"
-          className="cap-btn cap-dialog-close"
-          data-variant="quiet"
-          data-icon-only
-          data-cap-part="close"
-          aria-label="Close"
-          onClick={onClose}
-        >
-          <CloseGlyph />
-        </button>
-      )}
+      <InspectorFooter
+        item={item}
+        state={state}
+        error={error}
+        onRetry={() => void saver.retry()}
+        formMode={formMode}
+        F={F}
+        action={action}
+        can={can}
+        onBin={onBin}
+        onRestore={onRestore}
+        onClose={onClose}
+        closeHref={closeHref}
+      />
     </>
   );
-}
-
-function CloseGlyph() {
-  return (
-    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" focusable="false">
-      <path
-        d="M4 4l8 8M12 4l-8 8"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-      />
-    </svg>
-  );
-}
-
-// In form mode, a group of fields is its own form with its own Save button, posting `intent`, the
-// file's id and its version; otherwise the fields sit in the inspector's one autosaving form.
-function Wrap({
-  on,
-  F,
-  action,
-  label,
-  intent,
-  item,
-  save,
-  children,
-}: {
-  on: boolean;
-  F: NonNullable<MediaInspectorProps["Form"]>;
-  action?: string;
-  label: string;
-  intent: string;
-  item: MediaRecord;
-  save: string;
-  children: ReactNode;
-}) {
-  if (!on || !action) return <>{children}</>;
-  return (
-    <F method="post" action={action} className="cap-media-field-form" aria-label={label}>
-      <Ident item={item} intent={intent} />
-      {children}
-      <button type="submit" className="cap-btn" data-size="sm">
-        {save}
-      </button>
-    </F>
-  );
-}
-
-// The tools that change the picture: the focal point, crop, and replace, each folded away (they are
-// used now and then, and open each is as tall as the rest of the inspector). In form mode each is its
-// own form; inside the autosaving form (`nested`) each is a group whose button hands its fields to
-// `onTool`, since a form cannot sit inside a form.
-function PictureTools({
-  item,
-  base,
-  tools,
-  action,
-  Tool,
-}: {
-  item: MediaRecord;
-  base: string;
-  tools: NonNullable<MediaInspectorProps["tools"]>;
-  action: string;
-  Tool: NonNullable<MediaInspectorProps["Form"]>;
-}) {
-  const [cropOpen, setCropOpen] = useState(false);
-  const [opener, setOpener] = useState<HTMLElement | null>(null);
-  const ident = (intent: string) => <Ident item={item} intent={intent} />;
-  const size =
-    item.width && item.height ? `${item.width} by ${item.height} pixels` : "the size of this one";
-  const crop = tools.crop;
-  return (
-    <div className="cap-media-section" data-cap-part="tools">
-      {tools.focus && item.thumb ? (
-        <Disclosure
-          summary={
-            <>
-              Focal point <span className="cap-media-summary-note">{focusWords(item.focus)}</span>
-            </>
-          }
-        >
-          <MediaFocus
-            key={`${item.key}:${item.version ?? ""}`}
-            name={item.name}
-            src={item.thumb}
-            focus={item.focus}
-            action={action}
-            Form={Tool}
-            ident={ident("focus")}
-            base={base}
-          />
-        </Disclosure>
-      ) : null}
-      {crop || tools.replace ? (
-        <Disclosure
-          summary={
-            crop && tools.replace
-              ? "Crop or replace the file"
-              : tools.replace
-                ? "Replace the file"
-                : "Crop"
-          }
-        >
-          {crop ? (
-            <div className="cap-media-tool" data-inline="">
-              <button
-                type="button"
-                className="cap-btn"
-                data-size="sm"
-                onClick={(e: MouseEvent<HTMLButtonElement>) => {
-                  setOpener(e.currentTarget);
-                  setCropOpen(true);
-                }}
-              >
-                Crop<span className="cap-sr-only"> {item.name}</span>
-              </button>
-              <p className="cap-media-note">
-                {tools.keepsSize
-                  ? "Cut out part of the picture as a new file. This site takes a replacement only at the original's size, so a crop never replaces this one."
-                  : `Cut out part of the picture, as a new file${crop.inPlace ? " or in place of this one" : ""}.`}
-              </p>
-              {opener ? (
-                <Suspense fallback={null}>
-                  <MediaCrop
-                    name={item.name}
-                    src={crop.src}
-                    asNew={crop.asNew}
-                    inPlace={crop.inPlace && !tools.keepsSize}
-                    keepsSize={tools.keepsSize}
-                    onSave={crop.onSave}
-                    open={cropOpen}
-                    opener={opener}
-                    onClose={() => setCropOpen(false)}
-                  />
-                </Suspense>
-              ) : null}
-            </div>
-          ) : null}
-          {tools.replace ? (
-            <Tool
-              method="post"
-              action={action}
-              encType="multipart/form-data"
-              className="cap-media-field-form cap-media-tool"
-              aria-label="Replace the file"
-              key={`replace:${item.key}:${item.version ?? ""}`}
-            >
-              {ident("replace")}
-              <div className="cap-field">
-                <label className="cap-field-label" htmlFor={`${base}-replace`}>
-                  The new file
-                </label>
-                <p className="cap-field-help" id={`${base}-replace-help`}>
-                  {tools.replace.hint}{" "}
-                  {tools.keepsSize
-                    ? `It must be ${size}: this site sizes its pages by them and refuses any other size. `
-                    : ""}
-                  It goes under the same address, so every page that shows this file shows the new
-                  one, and the old one is gone from the site. Alt text, caption and tags stay; the
-                  focal point is cleared. Readers who already loaded the old picture may see it
-                  until their browser's cache expires.
-                </p>
-                <input
-                  className="cap-input"
-                  id={`${base}-replace`}
-                  type="file"
-                  name="file"
-                  accept={tools.replace.accept}
-                  required
-                  aria-describedby={`${base}-replace-help`}
-                />
-              </div>
-              <div className="cap-media-tool-actions">
-                <button type="submit" className="cap-btn" data-size="sm" data-variant="danger">
-                  Replace<span className="cap-sr-only"> {item.name}</span>
-                </button>
-              </div>
-            </Tool>
-          ) : null}
-        </Disclosure>
-      ) : null}
-    </div>
-  );
-}
-
-// A tool inside the autosaving form: a group, not a form, whose submit buttons hand its named fields
-// (and the pressed button's) to the handler the ref holds.
-function nestedTool(handler: {
-  current: ((form: FormData) => void) | undefined;
-}): NonNullable<MediaInspectorProps["Form"]> {
-  return function NestedTool({ children, className, "aria-label": label }) {
-    return (
-      <div
-        className={className}
-        role="group"
-        aria-label={label}
-        onClickCapture={(e) => {
-          const button = (e.target as Element).closest("button");
-          if (!button || button.type !== "submit") return;
-          e.preventDefault();
-          e.stopPropagation();
-          const data = new FormData();
-          for (const el of (e.currentTarget as HTMLElement).querySelectorAll<HTMLInputElement>(
-            "input[name], textarea[name], select[name]",
-          )) {
-            if ((el.type === "checkbox" || el.type === "radio") && !el.checked) continue;
-            if (el.type === "file") {
-              if (!el.reportValidity()) return;
-              for (const f of el.files ?? []) data.append(el.name, f);
-            } else data.append(el.name, el.value);
-          }
-          if (button.name) data.append(button.name, button.value);
-          handler.current?.(data);
-          button.closest("details")?.removeAttribute("open");
-        }}
-      >
-        {children}
-      </div>
-    );
-  };
 }

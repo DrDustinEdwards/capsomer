@@ -150,6 +150,7 @@
     "./ambient-equalizer.css": "./components/ambient/ambient-equalizer.css",
     "./check.css": "./components/field/check.css",
     "./group.css": "./components/disclosure/group.css",
+    "./media-grid.css": "./components/media/media-grid.css",
     "./*.css": "./components/*/*.css",
     "./behavior/chart-enhance": {
       "types": "./dist/components/chart-frame/chart-enhance.d.ts",
