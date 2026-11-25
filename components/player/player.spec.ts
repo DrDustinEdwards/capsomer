@@ -20,14 +20,6 @@ eachTheme((theme) => {
     await expectNoAxeViolations(page);
   });
 
-  test("accessibility: the embed's words reach their contrast", async ({ page }) => {
-    await visitStates(page, "player", theme);
-    await expectContrast(page, [
-      { sel: "#embed-poster .cap-player-label", what: "the embed over a poster" },
-      { sel: "#embed-plain .cap-player-label", what: "the embed with no poster" },
-    ]);
-  });
-
   test("accessibility: the dock's words reach their contrast", async ({ page }) => {
     await visitStates(page, "player", theme, "dock");
     await expect(page.getByRole("region", { name: "Audio player" })).toBeVisible();

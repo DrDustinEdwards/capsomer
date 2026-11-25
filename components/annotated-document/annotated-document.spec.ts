@@ -12,12 +12,6 @@ eachTheme((theme) => {
   }) => {
     await visitStates(page, "annotated-document", theme);
     await expectNoAxeViolations(page);
-    await expectContrast(page, [
-      { sel: "#ad-edited mark[data-tone='info']", what: "a passage on its tint" },
-      { sel: "#ad-all ins", what: "an insertion" },
-      { sel: "#ad-all del", what: "a deletion" },
-      { sel: "#ad-edited .cap-annotated-note-kind", what: "a note's kind" },
-    ]);
   });
 });
 

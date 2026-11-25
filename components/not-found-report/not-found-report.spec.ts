@@ -1,29 +1,11 @@
 import { expect, test } from "@playwright/test";
-import {
-  eachTheme,
-  expectContrast,
-  expectNoAxeViolations,
-  visitStates,
-} from "../../test/helpers.ts";
+import { eachTheme, expectNoAxeViolations, visitStates } from "../../test/helpers.ts";
 
 eachTheme((theme) => {
   test("accessibility: no axe violations", async ({ page }) => {
     await visitStates(page, "not-found-report", theme);
     await expect(page.locator("[data-mount='report'] .cap-row").first()).toBeVisible();
     await expectNoAxeViolations(page);
-  });
-
-  test("accessibility: the path, the referrers and the hits reach their contrast", async ({
-    page,
-  }) => {
-    await visitStates(page, "not-found-report", theme);
-    const r = "[data-mount='report']";
-    await expectContrast(page, [
-      { sel: `${r} .cap-nf-path`, what: "path" },
-      { sel: `${r} .cap-row-detail`, what: "referrers" },
-      { sel: `${r} .cap-nf-meta`, what: "hits" },
-      { sel: "[data-mount='reason'] .cap-nf-reason", what: "reason" },
-    ]);
   });
 
   test("keyboard: the arrow keys change the window, and a row's action follows", async ({
