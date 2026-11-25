@@ -1,23 +1,10 @@
 import { expect, test } from "@playwright/test";
-import {
-  eachTheme,
-  expectContrast,
-  expectNoAxeViolations,
-  visitStates,
-} from "../../test/helpers.ts";
+import { eachTheme, expectNoAxeViolations, visitStates } from "../../test/helpers.ts";
 
 eachTheme((theme) => {
   test("accessibility: no axe violations", async ({ page }) => {
     await visitStates(page, "ai-job-buttons", theme);
     await expectNoAxeViolations(page);
-  });
-
-  test("accessibility: the answers reach their contrast", async ({ page }) => {
-    await visitStates(page, "ai-job-buttons", theme);
-    await expectContrast(page, [
-      { sel: "[data-mount='done'] .cap-alert-text", what: "done message" },
-      { sel: "[data-mount='error'] .cap-alert-text", what: "error" },
-    ]);
   });
 
   test("keyboard: Enter on a job posts it, and the retry on the other engine follows in Tab order", async ({

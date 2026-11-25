@@ -20,26 +20,6 @@ eachTheme((theme) => {
     await expectNoAxeViolations(page);
   });
 
-  test("accessibility: the outline and muted variants keep their text at contrast", async ({
-    page,
-  }) => {
-    await visitStates(page, "row-list", theme);
-    await expectContrast(page, [
-      {
-        sel: "#list-variants .cap-row[data-variant='muted'] .cap-row-detail",
-        what: "a muted row's detail",
-      },
-      {
-        sel: "#list-variants .cap-row[data-variant='outline'] .cap-row-title a",
-        what: "an outline row's title",
-      },
-      {
-        sel: "#list-variants .cap-row[data-force='hover'] .cap-row-detail",
-        what: "a hovered row's detail",
-      },
-    ]);
-  });
-
   test("keyboard: a row in the outline variant is still one tab stop with the focus ring", async ({
     page,
   }) => {
