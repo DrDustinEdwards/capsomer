@@ -149,6 +149,7 @@
     "./ambient-blobs.css": "./components/ambient/ambient-blobs.css",
     "./ambient-equalizer.css": "./components/ambient/ambient-equalizer.css",
     "./check.css": "./components/field/check.css",
+    "./field-frame.css": "./components/field/field-frame.css",
     "./group.css": "./components/disclosure/group.css",
     "./*.css": "./components/*/*.css",
     "./behavior/chart-enhance": {
