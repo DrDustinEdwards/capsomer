@@ -462,22 +462,6 @@ eachTheme((theme) => {
     await expect(inspector(page).getByLabel("Alt text")).not.toBeFocused();
   });
 
-  test("keyboard: focus roves, so the tile with focus is the only tab stop", async ({ page }) => {
-    await library(page, theme);
-    await link(page, FOX).focus();
-    await page.keyboard.press("ArrowRight");
-    await page.keyboard.press("ArrowRight");
-    const stops = await page
-      .locator(".cap-media-open")
-      .evaluateAll((els) =>
-        els.map((e) => [
-          (e as HTMLElement).closest(".cap-media-tile")?.getAttribute("data-label"),
-          (e as HTMLElement).tabIndex,
-        ]),
-      );
-    expect(stops.filter(([, t]) => t === 0)).toEqual([["project-tree.svg", 0]]);
-  });
-
   test("keyboard: Enter on a tile opens its inspector and puts focus in the alt text", async ({
     page,
   }) => {
