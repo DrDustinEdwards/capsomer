@@ -1,207 +1,14 @@
-/* Layer order repeated so this file is safe in any import order: the first statement fixes it (css/layers.css). */
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
-/* The checkbox and radio (.cap-check) are in check.css, which a page with only a box imports alone. */
+/* The checkbox and radio (.cap-check) are in check.css, which a page with only a box imports
+   alone (capsomer/check.css). The field's frame (label, help, error, the layouts of fields) is
+   field-frame.css. */
 @import "./check.css";
+@import "./field-frame.css";
 
-/* Form fields: a label above, help outside the control, an error beside it with an icon. .cap-input
-   styles input and textarea; .cap-check draws the box and tick itself; .cap-input-group is an input with addons. */
+/* The controls: the shared ring, the slider, input groups, date and search fields. */
 @layer cap.components {
-  .cap-field {
-    display: grid;
-    gap: var(--space-2);
-    min-width: 0;
-    margin: 0;
-    padding: 0;
-    border: 0;
-  }
-
-  .cap-field-label {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    gap: var(--space-3);
-    padding: 0;
-    color: var(--text);
-    font-weight: var(--weight-semibold);
-  }
-  fieldset.cap-field > legend.cap-field-label {
-    margin-bottom: var(--space-2);
-  }
-
-  /* The word "Required" beside the label. aria-hidden: the control's required attribute
-     already says it to a screen reader. */
-  .cap-field-required {
-    color: var(--muted);
-    font-size: var(--fs-detail);
-    font-weight: var(--weight-medium);
-  }
-
-  .cap-field-help,
-  .cap-field-description {
-    margin: 0;
-    color: var(--muted);
-    font-size: var(--fs-detail);
-  }
-
-  /* A character count below the control; over the limit it takes the error's color, weight and icon, so it is not color alone. */
-  .cap-field-count {
-    margin: 0;
-    color: var(--muted);
-    font-size: var(--fs-detail);
-
-    &[data-over="true"] {
-      display: flex;
-      align-items: flex-start;
-      gap: var(--space-2-5);
-      color: var(--crit);
-      font-weight: var(--weight-semibold);
-    }
-  }
-
-  .cap-field-error {
-    display: flex;
-    align-items: flex-start;
-    gap: var(--space-2-5);
-    margin: 0;
-    /* A refusal from the server can be long and unbroken; the Portal's .err sits in a row that wraps. */
-    overflow-wrap: anywhere;
-    color: var(--crit);
-    font-size: var(--fs-detail);
-    font-weight: var(--weight-medium);
-
-    &:empty {
-      display: none;
-    }
-  }
-  .cap-field-error::before,
-  .cap-field-count[data-over="true"]::before {
-    content: "!";
-    content: "!" / "";
-    flex: none;
-    display: inline-grid;
-    place-items: center;
-    width: 14px;
-    height: 14px;
-    margin-top: 1px;
-    border: var(--line-w) solid var(--crit);
-    border-radius: 50%;
-    background: var(--crit);
-    color: var(--surface);
-    font-size: var(--fs-tiny);
-    font-weight: var(--weight-heavy);
-    line-height: var(--leading-none);
-  }
-
-  .cap-label {
-    display: flex;
-    align-items: center;
-    gap: var(--space-3);
-    color: var(--text);
-    font-size: var(--fs-body);
-    font-weight: var(--weight-medium);
-    line-height: var(--leading-snug);
-    user-select: none;
-  }
-
-  .cap-field[data-invalid="true"] > .cap-field-label {
-    color: var(--crit);
-  }
-
-  .cap-field[data-orientation="horizontal"] {
-    display: flex;
-    align-items: center;
-    gap: var(--space-3);
-
-    &:has(> .cap-field-content) {
-      align-items: flex-start;
-    }
-    & > .cap-field-label {
-      flex: auto;
-    }
-  }
-  .cap-field-group {
-    display: flex;
-    flex-direction: column;
-    gap: var(--gap);
-    width: 100%;
-    container: cap-field-group / inline-size;
-  }
-  .cap-field[data-orientation="responsive"] {
-    @container cap-field-group (min-width: 28rem) {
-      display: flex;
-      align-items: center;
-      gap: var(--space-3);
-
-      &:has(> .cap-field-content) {
-        align-items: flex-start;
-      }
-      & > .cap-field-label {
-        flex: auto;
-      }
-    }
-  }
-  .cap-field-content {
-    display: flex;
-    flex: 1;
-    flex-direction: column;
-    gap: var(--space-1);
-    line-height: var(--leading-snug);
-  }
-  .cap-field-title {
-    display: flex;
-    align-items: center;
-    gap: var(--space-3);
-    font-weight: var(--weight-medium);
-  }
-  /* Fields side by side: as many columns of at least --fields-min as fit, one on a phone. They line up on their controls, whatever help one carries above its own. */
-  .cap-fields {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--fields-min, 16rem)), 1fr));
-    gap: var(--fields-gap, var(--space-5));
-    align-items: end;
-
-    & > .cap-check {
-      align-self: end;
-      min-height: var(--control);
-    }
-  }
-
-  /* Fields in a row: a filter or action bar at their own widths, lined up on their controls. .cap-field-wide takes the room the others leave. No column is stretched, so a button keeps its width. */
-  .cap-field-row {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: end;
-    gap: var(--space-3) var(--space-4);
-
-    & > .cap-field-wide {
-      flex: 1 1 16rem;
-      min-inline-size: 0;
-    }
-  }
-
-  .cap-field-separator {
-    position: relative;
-    display: flex;
-    align-items: center;
-    gap: var(--space-4);
-    color: var(--muted);
-    font-size: var(--fs-detail);
-
-    &::before,
-    &::after {
-      content: "";
-      flex: 1;
-      height: 1px;
-      background: var(--line);
-    }
-    &:empty::after {
-      display: none;
-    }
-  }
-  fieldset.cap-field > legend.cap-field-label[data-variant="legend"] {
-    font-size: var(--fs-lead);
-  }
-
+  /* The shared ring for a field: the edge in the accent and an opaque 3 px ring. */
   .cap-input,
   .cap-input-group {
     --cap-input-edge: var(--line-strong);
@@ -255,6 +62,7 @@
       border-style: dashed;
       cursor: not-allowed;
     }
+    /* A file input: the button part reads as a quiet button. */
     &[type="file"] {
       padding-inline-start: var(--space-2);
       line-height: calc(var(--control) - 2px);
@@ -287,8 +95,11 @@
     field-sizing: content;
   }
 
-  /* A native range input on a 4px track that fills to the thumb. The fill needs the value as a share:
-     --cap-range-fill (0% to 100%), set by the React Range or by plain HTML's own input listener. */
+  /* A slider: a native range input on a 4px track that fills with the primary color up to the
+     thumb. The fill needs the value as a share: --cap-range-fill (0% to 100%) on the input; the
+     React Range sets it, and plain HTML sets it from its own input listener. The thumb is a
+     20px disc ringed in the ground, which grows a soft ring under the pointer and shrinks a
+     little while held. Recova's calculator slider. */
   .cap-range {
     --cap-range-track: linear-gradient(to right, var(--primary) var(--cap-range-fill, 0%), var(--line-strong) 0);
     display: block;
@@ -397,6 +208,8 @@
     }
   }
 
+  /* A control with its one action (Field's `action`): the button after the control in one
+     row, wrapping under it when the row is too narrow for both. */
   .cap-field-row {
     display: flex;
     flex-wrap: wrap;
@@ -414,6 +227,8 @@
     }
   }
 
+  /* A slider in its field: the value read out at the end of the label's line, and words at the
+     two ends of the track under it. */
   .cap-range-field-head {
     display: flex;
     flex: 1;
@@ -435,7 +250,8 @@
     font-variant-numeric: tabular-nums;
   }
 
-  /* The menus are select.cap-select, so a page with one loads select.css too. */
+  /* A span from two menus (SpanField): From and To side by side, each menu the full width of its half.
+     The menus are select.cap-select, so a page with one loads select.css too. */
   .cap-span-field-ends {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -445,13 +261,15 @@
     min-width: 0;
   }
 
+  /* Radios or checkboxes in a fieldset.cap-field: one per line. */
   .cap-field-options {
     display: grid;
     justify-items: start;
     gap: var(--space-1);
   }
 
-  /* Input group: an input with addons inside one edge. The edge, ring and invalid state belong to the group. */
+  /* Input group: an input with addons (text, an icon, a button) inside one edge.
+     shadcn InputGroup. The edge, the ring and the invalid state belong to the group. */
   .cap-input-group {
     position: relative;
     display: flex;
@@ -488,6 +306,7 @@
       align-items: stretch;
     }
 
+    /* The control inside has no edge of its own. */
     & > .cap-input {
       flex: 1;
       min-height: calc(var(--control) - 2px);
@@ -497,7 +316,8 @@
       box-shadow: none;
       outline: none;
     }
-    /* Grows with its text where the browser can (field-sizing); elsewhere the person can drag it taller. */
+    /* Grows with its text (field-sizing, from textarea.cap-input), so the drag handle goes only where the browser can
+       do that; elsewhere the person can still drag it taller (Modern Web Guidance, browser-ui-theming). */
     & > textarea.cap-input {
       padding-block: var(--pad-y);
       @supports (field-sizing: content) {
@@ -548,6 +368,7 @@
     &:has(> .cap-btn) {
       cursor: default;
     }
+    /* A button in an addon is small and borderless, as shadcn's InputGroupButton. */
     & > .cap-btn {
       box-shadow: none;
     }
@@ -588,12 +409,15 @@
     letter-spacing: var(--tracking-sign);
   }
 
-  /* A part in error takes the invalid edge alone (aria-invalid on that input). */
+  /* A date input: day, month and year, each with its own label, in a fieldset.cap-field. A
+     part in error takes the invalid edge alone (aria-invalid on that input). */
   .cap-date-input {
     display: flex;
     flex-wrap: wrap;
     gap: var(--space-4);
   }
+  /* A part with its own small label over its control: a date input's day, month or year, and a span's From
+     or To. */
   .cap-date-input-part,
   .cap-span-field-end {
     display: grid;

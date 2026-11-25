@@ -1,11 +1,11 @@
 {
   "baseline": {
-    "measured_at": "110f9c82",
+    "measured_at": "e5f34e5e",
     "knip": {},
     "jscpd": {
       "clones": 36,
       "lines": 473,
-      "percentage": 0.25,
+      "percentage": 0.24,
       "unread": 24
     },
     "shared copies": {
@@ -17,18 +17,11 @@
       "bin/capsomer.mjs": 789,
       "components/catalog/catalog-core.ts": 811,
       "components/checklist-run/checklist-run.ts": 716,
-      "components/combobox/combobox.react.tsx": 767,
       "components/command-menu/command-menu.ts": 734,
       "components/confirm-dialog/confirm-dialog.react.tsx": 610,
       "components/email/email.ts": 507,
-      "components/field/field.css": 648,
-      "components/field/field.react.tsx": 879,
-      "components/field/field.ts": 562,
       "components/flag-list/flag-list.react.tsx": 571,
       "components/flag-list/flag-list.ts": 621,
-      "components/listbox/listbox.ts": 648,
-      "components/markdown-editor/markdown-editor.spec.ts": 1225,
-      "components/markdown-editor/markdown-editor.ts": 1024,
       "components/media-library/examples.tsx": 1028,
       "components/media-library/media-library-more.react.tsx": 506,
       "components/media-library/media-library.react.tsx": 1329,
@@ -39,8 +32,6 @@
       "components/media/media.ts": 1004,
       "components/moderation-queue/moderation-queue.ts": 537,
       "components/publish-gate/publish-gate.ts": 555,
-      "components/rich-editor/rich-editor-markdown.mjs": 627,
-      "components/rich-editor/rich-editor.react.tsx": 934,
       "components/site-header/examples.tsx": 868,
       "components/site-header/site-header-parts.react.tsx": 502,
       "components/site-header/site-header.react.tsx": 692,
@@ -54,13 +45,13 @@
       "tokens/sites.mjs": 534
     },
     "tests": {
-      "files": 257,
+      "files": 258,
       "cases": 1669
     },
     "comments": {
-      "lines": 9801,
-      "code": 152477,
-      "percentage": 6.04
+      "lines": 10049,
+      "code": 152861,
+      "percentage": 6.17
     }
   }
 }

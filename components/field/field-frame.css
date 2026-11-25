@@ -1,0 +1,218 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* Form fields: a label above, help outside the control, an error beside it with an icon.
+   .cap-input styles input and textarea; .cap-check a checkbox or radio with its label (the
+   box and the tick are drawn here, not by the browser); .cap-input-group an input with
+   addons. Matches shadcn Input, Textarea, Checkbox, RadioGroup, Label, Field and InputGroup.
+   From the Capsid Portal's .field and .siteform (dashboard/src/styles.css). */
+@layer cap.components {
+  .cap-field {
+    display: grid;
+    gap: var(--space-2);
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+
+  /* A label, or the legend of a fieldset.cap-field that groups radios or checkboxes. */
+  .cap-field-label {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--space-3);
+    padding: 0;
+    color: var(--text);
+    font-weight: var(--weight-semibold);
+  }
+  fieldset.cap-field > legend.cap-field-label {
+    margin-bottom: var(--space-2);
+  }
+
+  /* The word "Required" beside the label. aria-hidden: the control's required attribute
+     already says it to a screen reader. */
+  .cap-field-required {
+    color: var(--muted);
+    font-size: var(--fs-detail);
+    font-weight: var(--weight-medium);
+  }
+
+  .cap-field-help,
+  .cap-field-description {
+    margin: 0;
+    color: var(--muted);
+    font-size: var(--fs-detail);
+  }
+
+  /* A character count, below the control: how many are left, then, over the limit, how many
+     too many, in the error's color and weight with its icon, so it is not color alone. */
+  .cap-field-count {
+    margin: 0;
+    color: var(--muted);
+    font-size: var(--fs-detail);
+
+    &[data-over="true"] {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-2-5);
+      color: var(--crit);
+      font-weight: var(--weight-semibold);
+    }
+  }
+
+  /* The error: an icon, then what is wrong and what to do. */
+  .cap-field-error {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-2-5);
+    margin: 0;
+    /* A refusal from the server can be long and unbroken; the Portal's .err sits in a row that wraps. */
+    overflow-wrap: anywhere;
+    color: var(--crit);
+    font-size: var(--fs-detail);
+    font-weight: var(--weight-medium);
+
+    &:empty {
+      display: none;
+    }
+  }
+  .cap-field-error::before,
+  .cap-field-count[data-over="true"]::before {
+    content: "!";
+    content: "!" / "";
+    flex: none;
+    display: inline-grid;
+    place-items: center;
+    width: 14px;
+    height: 14px;
+    margin-top: 1px;
+    border: var(--line-w) solid var(--crit);
+    border-radius: 50%;
+    background: var(--crit);
+    color: var(--surface);
+    font-size: var(--fs-tiny);
+    font-weight: var(--weight-heavy);
+    line-height: var(--leading-none);
+  }
+
+  /* A label on its own, outside a .cap-field. */
+  .cap-label {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    color: var(--text);
+    font-size: var(--fs-body);
+    font-weight: var(--weight-medium);
+    line-height: var(--leading-snug);
+    user-select: none;
+  }
+
+  /* A field whose value is wrong: its label takes the error color too (shadcn's data-invalid). */
+  .cap-field[data-invalid="true"] > .cap-field-label {
+    color: var(--crit);
+  }
+
+  /* Fields side by side: a checkbox or switch beside its words. data-orientation="responsive"
+     stacks until its group is wide enough. */
+  .cap-field[data-orientation="horizontal"] {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+
+    &:has(> .cap-field-content) {
+      align-items: flex-start;
+    }
+    & > .cap-field-label {
+      flex: auto;
+    }
+  }
+  .cap-field-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap);
+    width: 100%;
+    container: cap-field-group / inline-size;
+  }
+  .cap-field[data-orientation="responsive"] {
+    @container cap-field-group (min-width: 28rem) {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+
+      &:has(> .cap-field-content) {
+        align-items: flex-start;
+      }
+      & > .cap-field-label {
+        flex: auto;
+      }
+    }
+  }
+  .cap-field-content {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: var(--space-1);
+    line-height: var(--leading-snug);
+  }
+  .cap-field-title {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    font-weight: var(--weight-medium);
+  }
+  /* Fields side by side (.cap-fields): as many columns of at least --fields-min (16rem) as fit, --fields-gap apart (--space-5),
+     one column on a phone. They line up on their controls, whatever help one carries above its
+     own, and a checkbox among them sits level with the inputs. */
+  .cap-fields {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--fields-min, 16rem)), 1fr));
+    gap: var(--fields-gap, var(--space-5));
+    align-items: end;
+
+    & > .cap-check {
+      align-self: end;
+      min-height: var(--control);
+    }
+  }
+
+  /* Fields in a row (.cap-field-row): a filter or action bar, the fields at their own widths, then
+     its buttons, lined up on their controls and wrapping on a narrow space. .cap-field-wide on one
+     field (the search) takes the room the others leave. Unlike .cap-fields, no column is stretched
+     to match another, so a button keeps its own width. */
+  .cap-field-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    gap: var(--space-3) var(--space-4);
+
+    & > .cap-field-wide {
+      flex: 1 1 16rem;
+      min-inline-size: 0;
+    }
+  }
+
+  /* A line between groups of fields, with an optional word in it. */
+  .cap-field-separator {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    color: var(--muted);
+    font-size: var(--fs-detail);
+
+    &::before,
+    &::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: var(--line);
+    }
+    &:empty::after {
+      display: none;
+    }
+  }
+  fieldset.cap-field > legend.cap-field-label[data-variant="legend"] {
+    font-size: var(--fs-lead);
+  }
+}

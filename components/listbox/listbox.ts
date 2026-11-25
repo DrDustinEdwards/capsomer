@@ -1,5 +1,6 @@
-// The shared listbox: options, groups, one active option, filtering, typeahead and selection over
-// `role="listbox"` markup. No framework and only two small imports, so the pure functions run in node too.
+// The shared listbox: options, groups, one active option, filtering, typeahead and selection,
+// over `role="listbox"` markup. Command menu, select, and any list a person picks from reuse
+// it. No framework, and no import but hooks' id counter and the shortcuts' IME check: the pure functions (listbox-model.ts) run in node as well as the browser.
 //
 // The active option is the one a key press would act on. It is marked `data-active` and,
 // where focus stays elsewhere, named by `aria-activedescendant` on the holder. `aria-selected`
@@ -7,233 +8,46 @@
 
 import { uid } from "../hooks/hooks.ts";
 import { isImeEnter } from "../shortcuts/shortcuts.ts";
+import {
+  TYPEAHEAD_MS,
+  emptyText,
+  filterCommands,
+  nextTypeahead,
+  resultsText,
+  stepEnabled,
+  type TypeaheadState,
+} from "./listbox-model.ts";
+import type {
+  Listbox,
+  ListboxItem,
+  ListboxMode,
+  ListboxOptions,
+  SelectDetail,
+  Selection,
+} from "./listbox-types.ts";
 
-// Pure functions.
-
-export interface Searchable {
-  label: string;
-  group?: string;
-  // Other words that find it: "home" finds Overview.
-  keywords?: readonly string[];
-}
-
-// Case-insensitive substring over the group, the label and the keywords, so the name of a
-// group finds all of it. An empty query matches all.
-export function matchesQuery(c: Searchable, query: string): boolean {
-  const needle = query.trim().toLowerCase();
-  if (!needle) return true;
-  return [c.group ?? "", c.label, ...(c.keywords ?? [])].some((t) =>
-    t.toLowerCase().includes(needle),
-  );
-}
-
-// A ranking hook: a score (higher first) for an item against the lower-cased, trimmed query,
-// or null to leave it out. Ties keep their order.
-export type Rank<T> = (item: T, needle: string) => number | null;
-
-// The items that match, in their own order; or, with a `rank`, the items it scores, best first.
-// The rank replaces the substring test, so it may match more loosely (a subsequence, say).
-export function filterCommands<T extends Searchable>(
-  items: readonly T[],
-  query: string,
-  rank?: Rank<T>,
-): T[] {
-  const needle = query.trim().toLowerCase();
-  if (!rank || !needle) return items.filter((c) => matchesQuery(c, query));
-  const scored: Array<{ item: T; at: number; score: number }> = [];
-  items.forEach((item, at) => {
-    const score = rank(item, needle);
-    if (score !== null) scored.push({ item, at, score });
-  });
-  return scored.sort((a, b) => b.score - a.score || a.at - b.at).map((s) => s.item);
-}
-
-// Items by group, in the order each group first appears. An item with no group falls under "".
-export function groupBy<T>(
-  items: readonly T[],
-  by: (item: T) => string | undefined = (i) => (i as { group?: string }).group,
-): Array<{ group: string; items: T[] }> {
-  const out: Array<{ group: string; items: T[] }> = [];
-  for (const item of items) {
-    const key = by(item) ?? "";
-    let g = out.find((x) => x.group === key);
-    if (!g) {
-      g = { group: key, items: [] };
-      out.push(g);
-    }
-    g.items.push(item);
-  }
-  return out;
-}
-
-// Moves an index by `by`. Stops at the ends, or with `wrap` goes round. From no index (-1) a
-// forward move lands on the first and a backward move on the last.
-export function step(index: number, by: number, count: number, wrap = false): number {
-  if (count <= 0) return -1;
-  if (index < 0) return by > 0 ? 0 : count - 1;
-  const next = index + by;
-  if (wrap) return ((next % count) + count) % count;
-  return Math.min(count - 1, Math.max(0, next));
-}
-
-// `step` over a row where some entries cannot be chosen. A single step lands on the next
-// enabled entry in that direction (wrapping if asked); a longer step (a page) lands on the
-// enabled entry nearest its target. Returns the current index when there is nowhere to go,
-// and -1 when nothing is enabled.
-export function stepEnabled(
-  disabled: readonly boolean[],
-  index: number,
-  by: number,
-  wrap = false,
-): number {
-  const n = disabled.length;
-  const first = disabled.indexOf(false);
-  if (first < 0) return -1;
-  if (index < 0) return by > 0 ? first : disabled.lastIndexOf(false);
-  const dir = by < 0 ? -1 : 1;
-  const w = wrap && Math.abs(by) === 1;
-  const scan = (from: number, d: number, round: boolean): number => {
-    for (let k = 0; k < n; k++) {
-      let i = from + d * k;
-      if (round) i = ((i % n) + n) % n;
-      else if (i < 0 || i >= n) return -1;
-      if (!disabled[i]) return i;
-    }
-    return -1;
-  };
-  const target = step(index, by, n, w);
-  let hit = scan(target, dir, w);
-  if (hit < 0 && Math.abs(by) > 1) hit = scan(target, -dir, false);
-  return hit < 0 ? index : hit;
-}
-
-export const TYPEAHEAD_MS = 700;
-
-export interface TypeaheadState {
-  buffer: string;
-  at: number;
-}
-
-// Typeahead over a list of labels (null for an entry that cannot be chosen). Characters typed within
-// `timeout` ms make one prefix; the first match from the current entry on wins, wrapping. Repeating one
-// letter cycles through entries that start with it. `index` is -1 when nothing matches.
-export function nextTypeahead(
-  state: TypeaheadState,
-  key: string,
-  now: number,
-  labels: ReadonlyArray<string | null>,
-  current: number,
-  timeout = TYPEAHEAD_MS,
-): { state: TypeaheadState; index: number } {
-  const buffer = (now - state.at > timeout ? "" : state.buffer) + key.toLowerCase();
-  const next = { buffer, at: now };
-  const n = labels.length;
-  const cycle = buffer.length === 1 || buffer === (buffer[0] ?? "").repeat(buffer.length);
-  const needle = cycle ? (buffer[0] ?? "") : buffer;
-  const from = cycle ? current + 1 : Math.max(current, 0);
-  for (let k = 0; k < n; k++) {
-    const label = labels[(from + k) % n];
-    if (label != null && label.trimStart().toLowerCase().startsWith(needle))
-      return { state: next, index: (from + k) % n };
-  }
-  return { state: next, index: -1 };
-}
-
-// The words a polite live region says after filtering.
-export function resultsText(count: number): string {
-  return count === 1 ? "1 result" : `${count} results`;
-}
-
-export function emptyText(query: string): string {
-  return `No results for “${query.trim()}”`;
-}
+export type { Searchable, Rank, TypeaheadState } from "./listbox-model.ts";
+export {
+  TYPEAHEAD_MS,
+  emptyText,
+  filterCommands,
+  groupBy,
+  matchesQuery,
+  nextTypeahead,
+  resultsText,
+  step,
+  stepEnabled,
+} from "./listbox-model.ts";
+export type {
+  Listbox,
+  ListboxItem,
+  ListboxMode,
+  ListboxOptions,
+  SelectDetail,
+  Selection,
+} from "./listbox-types.ts";
 
 // The controller.
-
-export type ListboxMode =
-  // Focus stays in a combobox input; the input names the active option (aria-activedescendant).
-  | "input"
-  // Focus is on the listbox, which names the active option (aria-activedescendant).
-  | "descendant"
-  // Focus moves to the options themselves (roving tabindex).
-  | "roving";
-export type Selection = "none" | "single" | "multi";
-
-export interface ListboxOptions {
-  // The combobox input that holds focus. Setting it makes the mode "input".
-  input?: HTMLInputElement | null;
-  mode?: ListboxMode;
-  selection?: Selection;
-  // Up from the first goes to the last, and the reverse. Off by default.
-  wrap?: boolean;
-  // Typing letters moves to a matching option. On unless an input holds focus.
-  typeahead?: boolean;
-  // With an input, Home and End move the caret unless this is set (the command menu sets it).
-  homeEnd?: boolean;
-  // With an input: typing in it filters the listbox. Needs `filter` to be called by the app
-  // otherwise.
-  filterInput?: boolean;
-  // Makes the first enabled option active after filtering. On with an input.
-  activateFirst?: boolean;
-  // Hide the listbox while nothing matches. On.
-  hideWhenEmpty?: boolean;
-  rank?: Rank<ListboxItem>;
-  // The element that receives "No results for ...". Found as a sibling `.cap-listbox-empty`.
-  empty?: HTMLElement | null;
-  // The polite live region for the result count. Made after the listbox when not given.
-  status?: HTMLElement | null;
-  announce?: (count: number, query: string) => string;
-  // Options moved per Page Up or Page Down. Measured from the list's height when omitted.
-  pageSize?: number;
-  onActive?: (option: HTMLElement | null) => void;
-  onFilter?: (count: number, query: string) => void;
-}
-
-export interface ListboxItem extends Searchable {
-  el: HTMLElement;
-  id: string;
-  value: string;
-  disabled: boolean;
-  selected: boolean;
-}
-
-export interface SelectDetail {
-  option: HTMLElement;
-  value: string;
-  label: string;
-  // Whether the option is chosen after this (always true when selection is "none").
-  selected: boolean;
-  // Every chosen value after this.
-  values: string[];
-}
-
-export interface Listbox {
-  readonly el: HTMLElement;
-  readonly mode: ListboxMode;
-  items(): ListboxItem[];
-  // The options a person can reach: those not hidden by a filter.
-  visible(): ListboxItem[];
-  active(): HTMLElement | null;
-  setActive(target: HTMLElement | number | null, o?: { scroll?: boolean; focus?: boolean }): void;
-  // Moves the active option: step(1) next, step(-1) previous, skipping disabled ones.
-  step(by: number): void;
-  first(): void;
-  last(): void;
-  // Shows the options that match and returns how many. Announces the count.
-  filter(query: string, rank?: Rank<ListboxItem>): number;
-  // Chooses (or with selection "none", just reports) the active or the given option.
-  select(target?: HTMLElement | null): void;
-  getValue(): string[];
-  setValue(value: string | readonly string[] | null): void;
-  // Puts focus where the listbox takes keys (the input, the list, or the active option).
-  focus(): void;
-  // Handles a key as the listbox would; returns true when it did. For an app that owns the
-  // keydown listener itself.
-  handleKey(e: KeyboardEvent): boolean;
-  // Re-reads the markup after the app changed it.
-  refresh(): void;
-  detach(): void;
-}
 
 const isDisabled = (o: HTMLElement) =>
   o.getAttribute("aria-disabled") === "true" || o.hasAttribute("data-disabled");

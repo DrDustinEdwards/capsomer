@@ -107,14 +107,20 @@ for (const width of [390, 1440]) {
     page,
   }) => {
     await page.setViewportSize({ width, height: 800 });
+    // Each shift is kept with the elements that moved, so a failure names them.
     await page.addInitScript(() => {
-      (window as unknown as { cls: number }).cls = 0;
+      const w = window as unknown as { shifts: string[] };
+      w.shifts = [];
       new PerformanceObserver((list) => {
         for (const e of list.getEntries() as unknown as {
           value: number;
           hadRecentInput: boolean;
+          sources: { node?: Element; previousRect: DOMRect; currentRect: DOMRect }[];
         }[])
-          if (!e.hadRecentInput) (window as unknown as { cls: number }).cls += e.value;
+          if (!e.hadRecentInput)
+            w.shifts.push(
+              `${e.value.toFixed(4)}: ${e.sources.map((s) => `${s.node?.nodeName}.${s.node?.className} y ${Math.round(s.previousRect.y)} to ${Math.round(s.currentRect.y)}`).join("; ")}`,
+            );
       }).observe({ type: "layout-shift", buffered: true });
     });
     await page.goto("./components/combobox/");
@@ -125,7 +131,9 @@ for (const width of [390, 1440]) {
       }
     });
     await page.waitForTimeout(1000);
-    expect(await page.evaluate(() => (window as unknown as { cls: number }).cls)).toBeLessThan(0.1);
+    const shifts = await page.evaluate(() => (window as unknown as { shifts: string[] }).shifts);
+    const total = shifts.reduce((n, line) => n + Number.parseFloat(line), 0);
+    expect(total, shifts.join("\n")).toBeLessThan(0.1);
   });
 }
 

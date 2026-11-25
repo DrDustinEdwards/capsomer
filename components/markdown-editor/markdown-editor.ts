@@ -1,36 +1,32 @@
-// The markdown editor's behavior: a labeled <textarea> in the page's HTML is upgraded in place to a
-// CodeMirror surface with a toolbar, link palette, slash menu, an image prompt that insists on alt
-// text, and a word count. The textarea stays, hidden and in step, so a form posts the markdown and a
-// page without script still has a working field. This file holds no CodeMirror: it imports
-// markdown-editor.view.ts with import() so the editor is its own chunk.
+// The markdown editor's behavior: a labeled <textarea>, delivered in the page's HTML, is
+// upgraded in place to a CodeMirror surface with a toolbar, a link palette, a slash menu, an
+// image prompt that insists on alt text, and a word count. The textarea stays in the page,
+// hidden and kept in step, so a form posts the markdown and a page without script still has
+// a working field; see markdown-editor.md.
+//
+// This file holds no CodeMirror: it imports markdown-editor.view.ts with import(), so the
+// editor is its own chunk. The pure helpers (edits, counting, filtering, roving) are
+// exported so the React wrapper and a node test can use them without the browser.
 
-import { clamp } from "../hooks/hooks.ts";
 import { plural, readingMinutes, wordCount } from "@drdustinedwards/site-helpers/text";
-import { type Listbox, createListbox } from "../listbox/listbox.ts";
-import { isImeEnter } from "../shortcuts/shortcuts.ts";
-import { place } from "../popover/popover.ts";
-import { attachToolbar, rovingIndex } from "../toolbar/toolbar.ts";
+import { type EditorContext, el } from "./markdown-editor-dom.ts";
 import {
   type Edit,
-  LINK_RESULT_LIMIT,
-  type LinkTarget,
   type MarkdownEditorHandle,
   type MarkdownEditorOptions,
   type Scaffold,
   blockEdit,
-  defaultImageMarkdown,
-  filterLinkTargets,
-  footnoteEdit,
-  headingEdit,
-  linkEdit,
-  looksLikeUrl,
   scaffoldCursor,
   slashBlockEdit,
-  wrapEdit,
 } from "./markdown-editor-edits.ts";
+import { createLinkPalette } from "./markdown-editor-link.ts";
+import { createToolbar } from "./markdown-editor-toolbar.ts";
+import { createSlashMenu } from "./markdown-editor-slash.ts";
+import { createUploader } from "./markdown-editor-upload.ts";
 import type { Surface } from "./markdown-editor.view.ts";
 
 export { rovingIndex } from "../toolbar/toolbar.ts";
+export { GLYPH } from "./markdown-editor-dom.ts";
 export {
   looksLikeUrl,
   filterLinkTargets,
@@ -54,60 +50,7 @@ export type {
   MarkdownEditorHandle,
 } from "./markdown-editor-edits.ts";
 
-const SVG_NS = "http://www.w3.org/2000/svg";
 let serial = 0;
-
-function el<K extends keyof HTMLElementTagNameMap>(
-  tag: K,
-  props: Record<string, string> = {},
-  ...kids: Array<Node | string>
-): HTMLElementTagNameMap[K] {
-  const node = document.createElement(tag);
-  for (const [k, v] of Object.entries(props)) node.setAttribute(k, v);
-  node.append(...kids);
-  return node;
-}
-
-function icon(paths: string[]): SVGSVGElement {
-  const svg = document.createElementNS(SVG_NS, "svg");
-  for (const [k, v] of Object.entries({
-    width: "16",
-    height: "16",
-    viewBox: "0 0 24 24",
-    fill: "none",
-    stroke: "currentColor",
-    "stroke-width": "2",
-    "stroke-linecap": "round",
-    "stroke-linejoin": "round",
-    "aria-hidden": "true",
-    focusable: "false",
-  })) {
-    svg.setAttribute(k, v);
-  }
-  for (const d of paths) {
-    const p = document.createElementNS(SVG_NS, "path");
-    p.setAttribute("d", d);
-    svg.append(p);
-  }
-  return svg;
-}
-
-export const GLYPH = {
-  bold: ["M6 4h7a4 4 0 0 1 0 8H6zM6 12h8a4 4 0 0 1 0 8H6z"],
-  italic: ["M15 4h-5M14 20H9M14 4 10 20"],
-  link: [
-    "M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1",
-    "M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1",
-  ],
-  heading: ["M6 4v16M18 4v16M6 12h12"],
-  code: ["m8 6-6 6 6 6M16 6l6 6-6 6"],
-  footnote: ["M4 6h10M4 12h10M4 18h7", "M18 5v6M21 8h-6"],
-  image: [
-    "M3 6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z",
-    "m3 16 5-5 5 5",
-    "M15.5 8.5h.01",
-  ],
-};
 
 function nonceFromPage(): string {
   if (typeof document === "undefined") return "";
@@ -115,22 +58,9 @@ function nonceFromPage(): string {
   return document.querySelector<HTMLScriptElement>("script[nonce]")?.nonce ?? "";
 }
 
-function messageOf(e: unknown): string {
-  return e instanceof Error && e.message ? e.message : "The image did not upload. Try again.";
-}
-
-interface Tool {
-  id: string;
-  label: string;
-  hint?: string;
-  keys?: string;
-  paths: string[];
-  glyph?: string;
-  run: () => void;
-}
-
-// Upgrades one editor (the element carrying data-cap="markdown-editor"). Resolves once CodeMirror has
-// loaded; if it cannot load, the textarea stays and the promise rejects.
+// Upgrades one editor: the element carrying data-cap="markdown-editor", holding a label and a
+// textarea. Resolves once CodeMirror has loaded and the surface is mounted; if it cannot
+// load, the textarea simply stays, and the promise rejects.
 export async function mountMarkdownEditor(
   host: HTMLElement,
   options: MarkdownEditorOptions = {},
@@ -139,10 +69,13 @@ export async function mountMarkdownEditor(
   if (!found) throw new Error("markdown-editor: no <textarea> inside the element");
   const ta: HTMLTextAreaElement = found;
   const labelEl = host.querySelector("label");
-  // A server build (import.meta.env.SSR) never reaches this line, so the bundler drops the CodeMirror chunk (about 300 KB) from a server bundle. Outside Vite `env` is undefined and the import runs.
+  // A server build (Vite sets import.meta.env.SSR) never reaches this line, since a surface mounts only in a browser,
+  // so the bundler drops the CodeMirror chunk from a server bundle: about 300 KB of Carrel's Worker was CodeMirror.
+  // Outside Vite `env` is undefined and the import runs as before.
   if ((import.meta as { env?: { SSR?: boolean } }).env?.SSR)
     throw new Error("markdown-editor: a surface mounts only in a browser");
   const { createSurface } = await import("./markdown-editor.view.ts");
+  // The element may have been detached or upgraded while CodeMirror loaded.
   if (!host.isConnected) throw new Error("markdown-editor: the element left the page");
   if (handles.has(host)) throw new Error("markdown-editor: the element is already an editor");
 
@@ -161,21 +94,6 @@ export async function mountMarkdownEditor(
 
   let surface: Surface | null = null;
   let quiet = false; // true while the app itself sets the text: no onChange for that
-  let upload: { token: number; panel: HTMLElement; abort: AbortController | null } | null = null;
-  let uploadToken = 0;
-  let link: {
-    from: number;
-    to: number;
-    panel: HTMLElement;
-    input: HTMLInputElement;
-    list: HTMLElement;
-    note: HTMLElement;
-    lb: Listbox;
-    matches: LinkTarget[];
-    ask: number;
-    stop: () => void;
-  } | null = null;
-  let slash: { from: number; menu: HTMLElement; stop: () => void } | null = null;
   let requiredMessage: HTMLElement | null = null;
 
   const readOnly = () => o.readOnly ?? ta.readOnly;
@@ -240,18 +158,26 @@ export async function mountMarkdownEditor(
   const apply = (edit: Edit) => surface?.apply(edit);
   const sel = () => surface?.selection() ?? { from: 0, to: 0 };
 
-  const commands = {
-    bold: () => apply(wrapEdit(doc(), sel().from, sel().to, "**")),
-    italic: () => apply(wrapEdit(doc(), sel().from, sel().to, "_")),
-    code: () => apply(wrapEdit(doc(), sel().from, sel().to, "`")),
-    heading: () => apply(headingEdit(doc(), surface?.caret().head ?? 0)),
-    footnote: () => apply(footnoteEdit(doc(), sel().from, sel().to)),
+  const ctx: EditorContext = {
+    host,
+    frame,
+    uid,
+    o,
+    surface: () => surface,
+    doc,
+    apply,
+    sel,
+    say,
+    locked: () => readOnly() || disabled(),
   };
+  const slash = createSlashMenu(ctx, (s) => insertScaffold(s, true));
+  const palette = createLinkPalette(ctx, slash.close);
+  const uploader = createUploader(ctx);
 
   function insertScaffold(s: Scaffold, replaceSlash = false) {
     if (!surface) return;
-    const fromSlash = replaceSlash && slash !== null;
-    closeSlash();
+    const fromSlash = replaceSlash && slash.isOpen();
+    slash.close();
     const cursor = scaffoldCursor(s);
     if (fromSlash) {
       const c = surface.caret();
@@ -261,524 +187,19 @@ export async function mountMarkdownEditor(
     }
   }
 
-  const TOOLS = ".cap-md-tool:not(:disabled)";
-  function tools(): Tool[] {
-    const t: Tool[] = [
-      {
-        id: "bold",
-        label: "Bold",
-        hint: "Ctrl or Cmd + B",
-        keys: "Control+B Meta+B",
-        paths: GLYPH.bold,
-        run: commands.bold,
-      },
-      {
-        id: "italic",
-        label: "Italic",
-        hint: "Ctrl or Cmd + I",
-        keys: "Control+I Meta+I",
-        paths: GLYPH.italic,
-        run: commands.italic,
-      },
-      {
-        id: "link",
-        label: "Link",
-        hint: "Ctrl or Cmd + K, searches pages",
-        keys: "Control+K Meta+K",
-        paths: GLYPH.link,
-        run: openLink,
-      },
-      {
-        id: "heading",
-        label: "Heading level",
-        hint: "Cycles h2, h3, h4, none",
-        paths: GLYPH.heading,
-        run: commands.heading,
-      },
-      {
-        id: "code",
-        label: "Code",
-        hint: "Ctrl or Cmd + E",
-        keys: "Control+E Meta+E",
-        paths: GLYPH.code,
-        run: commands.code,
-      },
-      {
-        id: "footnote",
-        label: "Footnote",
-        paths: GLYPH.footnote,
-        run: commands.footnote,
-      },
-    ];
-    if (o.onUpload)
-      t.push({
-        id: "image",
-        label: "Insert image",
-        paths: GLYPH.image,
-        run: () => file.click(),
-      });
-    return t;
-  }
-
-  function buildToolbar() {
-    const main = tools();
-    const blocks: Tool[] = (o.scaffolds ?? []).map((s) => ({
-      id: `scaffold-${s.id}`,
-      label: s.label,
-      hint: s.hint,
-      paths: s.icon ? [s.icon] : [],
-      glyph: s.label.slice(0, 1).toUpperCase(),
-      run: () => insertScaffold(s),
-    }));
-    const all = [...main, ...blocks];
-    // A rebuilt bar keeps its tab stop where it was.
-    const was = [...toolbar.querySelectorAll(".cap-md-tool")].findIndex(
-      (b) => b.getAttribute("tabindex") === "0",
-    );
-    const activeTool = clamp(was, 0, all.length - 1);
-    const nodes: Node[] = [];
-    all.forEach((t, i) => {
-      if (i === main.length && blocks.length > 0)
-        nodes.push(el("span", { class: "cap-md-sep", "aria-hidden": "true" }));
-      const b = el("button", {
-        type: "button",
-        class: "cap-md-tool",
-        "aria-label": t.label,
-        title: t.hint ? `${t.label}. ${t.hint}` : t.label,
-      });
-      if (t.keys) b.setAttribute("aria-keyshortcuts", t.keys);
-      b.tabIndex = i === activeTool ? 0 : -1;
-      b.disabled = disabled() || readOnly();
-      b.append(
-        t.paths.length > 0
-          ? icon(t.paths)
-          : el("span", { class: "cap-md-tool-glyph", "aria-hidden": "true" }, t.glyph ?? ""),
-      );
-      b.addEventListener("click", () => t.run());
-      nodes.push(b);
-    });
-    toolbar.replaceChildren(...nodes);
-    // With every button disabled there is no tab stop, and the toolbar says so by being empty of focus.
-  }
-
-  cleanups.push(attachToolbar(toolbar, TOOLS));
-
-  // A floating panel is the shared `.cap-popover` in the top layer, so the editor's clipping frame cannot cut it off; place() anchors it to the character at `pos`.
-  function floating(panel: HTMLElement, pos: number): () => void {
-    const anchor = {
-      getBoundingClientRect: () => {
-        const c = surface?.coords(pos);
-        return c ? new DOMRect(c.left, c.top, 0, c.bottom - c.top) : host.getBoundingClientRect();
-      },
-    } as unknown as Element;
-    panel.showPopover();
-    place(anchor, panel, { side: "bottom", align: "start" });
-    let frame = 0;
-    const follow = () => {
-      if (frame) return;
-      frame = requestAnimationFrame(() => {
-        frame = 0;
-        if (panel.isConnected) place(anchor, panel, { side: "bottom", align: "start" });
-      });
-    };
-    window.addEventListener("scroll", follow, true);
-    window.addEventListener("resize", follow);
-    return () => {
-      cancelAnimationFrame(frame);
-      window.removeEventListener("scroll", follow, true);
-      window.removeEventListener("resize", follow);
-    };
-  }
-
-  function dismiss(panel: HTMLElement) {
-    try {
-      if (panel.matches(":popover-open")) panel.hidePopover();
-    } catch {
-      // Already gone.
-    }
-    panel.remove();
-  }
-
-  async function resolveTargets(query: string): Promise<LinkTarget[]> {
-    const src = o.linkTargets;
-    if (!src) return [];
-    if (typeof src === "function") return (await src(query)).slice(0, LINK_RESULT_LIMIT);
-    return filterLinkTargets(src, query);
-  }
-
-  function renderLink() {
-    if (!link) return;
-    const l = link;
-    const typed = l.input.value;
-    const url = looksLikeUrl(typed);
-    l.list.replaceChildren(
-      ...l.matches.map((t) => {
-        const opt = el("div", {
-          class: "cap-option",
-          role: "option",
-          "data-value": t.href,
-          "data-label": t.title,
-        });
-        opt.append(
-          el("span", { class: "cap-option-label" }, t.title),
-          el(
-            "span",
-            { class: "cap-md-option-hint" },
-            t.hint ?? t.href,
-            t.note ? el("span", { class: "cap-md-option-note" }, ` ${t.note}`) : "",
-          ),
-        );
-        return opt;
-      }),
-    );
-    l.list.hidden = l.matches.length === 0;
-    l.input.setAttribute("aria-expanded", String(l.matches.length > 0));
-    l.lb.refresh();
-    l.lb.setActive(l.matches.length > 0 ? 0 : null);
-    l.note.textContent = url
-      ? "Enter to link to this address"
-      : l.matches.length > 0
-        ? `${plural(l.matches.length, "page")}. Up and Down choose, Enter links.`
-        : o.linkTargets
-          ? "No pages match. Type a URL to link out."
-          : "Type a URL to link to.";
-  }
-
-  async function refreshLink() {
-    if (!link) return;
-    const l = link;
-    const ask = ++l.ask;
-    const matches = await resolveTargets(l.input.value).catch(() => []);
-    if (link !== l || ask !== l.ask) return;
-    l.matches = matches;
-    renderLink();
-  }
-
-  function openLink() {
-    if (!surface || link || readOnly() || disabled()) return;
-    closeSlash();
-    const { from, to } = surface.selection();
-    const selected = doc().slice(from, to);
-    const panel = el("div", {
-      class: "cap-popover cap-md-palette",
-      popover: "manual",
-      role: "group",
-      "aria-label": "Insert a link",
-      "data-size": "lg",
-      "data-side": "bottom",
-      "data-align": "start",
-    });
-    const input = el("input", {
-      type: "text",
-      class: "cap-input",
-      id: `${uid}-link`,
-      role: "combobox",
-      "aria-autocomplete": "list",
-      "aria-expanded": "false",
-      "aria-controls": `${uid}-list`,
-      autocomplete: "off",
-      spellcheck: "false",
-      placeholder: "Search pages, or type a URL",
-    });
-    input.value = selected;
-    const label = el("label", { class: "cap-md-palette-label", for: input.id }, "Link to");
-    const list = el("div", {
-      class: "cap-listbox",
-      role: "listbox",
-      id: `${uid}-list`,
-      "aria-label": "Pages",
-      "data-wrap": "",
-    });
-    const note = el("p", { class: "cap-md-palette-note", role: "status" });
-    panel.append(label, input, list, note);
-    host.append(panel);
-    // Enter on a typed address is the palette's own; this listener goes first and the listbox does not also act once the event is defaultPrevented.
-    input.addEventListener("keydown", (e) => {
-      const l = link;
-      if (!l) return;
-      // legacy-scan:keep ime-safe-enter-submit isImeEnter (shortcuts.ts) checks isComposing and keyCode 229; the scanner cannot follow it.
-      if (e.key === "Enter" && !isImeEnter(e) && looksLikeUrl(l.input.value)) {
-        e.preventDefault();
-        insertLink(l.input.value.trim(), l.input.value.trim());
-      } else if (e.key === "Escape") {
-        // Stopped as well as prevented: the Escape must not also close a dialog around the editor.
-        e.preventDefault();
-        e.stopPropagation();
-        closeLink(true);
-      }
-    });
-    const lb = createListbox(list, {
-      input,
-      selection: "none",
-      wrap: true,
-      status: note,
-      hideWhenEmpty: false,
-    });
-    list.addEventListener("cap:option-select", ((
-      e: CustomEvent<{ value: string; label: string }>,
-    ) => insertLink(e.detail.value, e.detail.label)) as EventListener);
-    panel.addEventListener("focusout", (e) => {
-      const to = e.relatedTarget;
-      if (to instanceof Node && panel.contains(to)) return;
-      // Focus leaving the window (another tab) is not leaving the palette.
-      if (to === null && !document.hasFocus()) return;
-      closeLink(to === null);
-    });
-    link = {
-      from,
-      to,
-      panel,
-      input,
-      list,
-      note,
-      lb,
-      matches: [],
-      ask: 0,
-      stop: floating(panel, from),
-    };
-    input.focus();
-    renderLink();
-    void refreshLink();
-    input.addEventListener("input", () => void refreshLink());
-  }
-
-  function teardownLink(l: NonNullable<typeof link>) {
-    link = null;
-    l.stop();
-    l.lb.detach();
-    dismiss(l.panel);
-  }
-
-  function closeLink(restoreFocus: boolean) {
-    const l = link;
-    if (!l) return;
-    teardownLink(l);
-    if (!surface) return;
-    surface.select(l.from, l.to);
-    if (restoreFocus) surface.focus();
-  }
-
-  function insertLink(href: string, fallback: string) {
-    const l = link;
-    if (!l || !surface) return;
-    const selected = doc().slice(l.from, l.to);
-    teardownLink(l);
-    surface.apply(linkEdit(l.from, l.to, selected, href, fallback));
-  }
-
-  function syncSlash() {
-    if (!surface || !o.scaffolds?.length || readOnly() || disabled()) return closeSlash();
-    const c = surface.caret();
-    if (c.lineText !== "/" || c.head !== c.lineTo) return closeSlash();
-    if (!slash) {
-      const menu = el("ul", {
-        class: "cap-popover cap-md-slash",
-        popover: "manual",
-        role: "list",
-        "aria-label": "Insert a block",
-        "data-flush": "",
-        "data-size": "auto",
-        "data-side": "bottom",
-        "data-align": "start",
-      });
-      for (const s of o.scaffolds) {
-        const b = el(
-          "button",
-          { type: "button", class: "cap-md-slash-item" },
-          el("strong", {}, s.label),
-          el("span", { class: "cap-md-slash-hint" }, s.hint),
-        );
-        b.tabIndex = -1;
-        b.addEventListener("click", () => insertScaffold(s, true));
-        menu.append(el("li", {}, b));
-      }
-      menu.addEventListener("keydown", (e) => {
-        if (e.key === "Escape") {
-          e.preventDefault();
-          e.stopPropagation();
-          closeSlash();
-          surface?.focus();
-          return;
-        }
-        const items = [...menu.querySelectorAll<HTMLElement>(".cap-md-slash-item")];
-        const next = rovingIndex(
-          e.key,
-          items.findIndex((i) => i === document.activeElement),
-          items.length,
-          "vertical",
-        );
-        if (next === null) return;
-        e.preventDefault();
-        items[next]?.focus();
-      });
-      host.append(menu);
-      slash = { from: c.lineFrom, menu, stop: floating(menu, c.lineFrom) };
-      say("Block menu open. Press Down arrow to choose a block, Escape to close.");
-    }
-    slash.from = c.lineFrom;
-  }
-
-  function closeSlash() {
-    if (!slash) return;
-    // Cleared first: removing a focused item fires focusout, which comes back here.
-    const { menu, stop } = slash;
-    slash = null;
-    stop();
-    dismiss(menu);
-  }
-
-  // The person describes the image before it leaves the browser (ATAG 2.0 B.2.3; the server refuses an undescribed upload anyway), so nothing is uploaded for an image they cancel.
-  function clearUploadError() {
-    host.querySelector(".cap-md-upload-error")?.remove();
-  }
-
-  function cancelUpload(restoreFocus: boolean) {
-    if (!upload) return;
-    const { panel, abort } = upload;
-    upload = null;
-    uploadToken++;
-    abort?.abort();
-    panel.remove();
-    if (restoreFocus) surface?.focus();
-  }
-
-  function startUpload(f: File): void {
-    if (!o.onUpload || !surface) return;
-    cancelUpload(false);
-    clearUploadError();
-    const token = ++uploadToken;
-    const panel = el("div", {
-      class: "cap-md-upload",
-      role: "group",
-      "aria-label": "Describe the image",
-    });
-    upload = { token, panel, abort: null };
-    frame.after(panel);
-    showDescribeStep(panel, f, token);
-  }
-
-  function showDescribeStep(panel: HTMLElement, f: File, token: number) {
-    const name = f.name;
-    const alt = el("input", {
-      type: "text",
-      class: "cap-input",
-      id: `${uid}-alt`,
-      autocomplete: "off",
-      placeholder: "What the image shows",
-      "aria-describedby": `${uid}-alt-help`,
-    });
-    // A data: URL, not blob:, so the preview needs nothing a site's img-src does not already allow.
-    const thumb = el("img", { class: "cap-md-upload-thumb", alt: "" });
-    const reader = new FileReader();
-    reader.addEventListener("load", () => {
-      if (typeof reader.result === "string") thumb.src = reader.result;
-    });
-    reader.readAsDataURL(f);
-    const help = el(
-      "p",
-      { class: "cap-field-help", id: `${uid}-alt-help` },
-      `Describe ${name}, or insert it as decorative.`,
-    );
-    const wait = el("p", { class: "cap-md-upload-wait", hidden: "" }, `Uploading ${name}`);
-    const insert = el(
-      "button",
-      { type: "button", class: "cap-btn", "data-variant": "primary" },
-      "Insert image",
-    );
-    insert.disabled = true;
-    const decorative = el("button", { type: "button", class: "cap-btn" }, "Insert as decorative");
-    const cancel = el(
-      "button",
-      { type: "button", class: "cap-btn", "data-variant": "quiet" },
-      "Cancel",
-    );
-    const fields = el(
-      "div",
-      { class: "cap-md-upload-fields" },
-      el(
-        "label",
-        { class: "cap-field-label", for: alt.id },
-        "Alt text ",
-        el("span", { class: "cap-field-required", "aria-hidden": "true" }, "Required"),
-      ),
-      alt,
-      help,
-      wait,
-      el("div", { class: "cap-md-upload-actions" }, insert, decorative, cancel),
-    );
-    panel.replaceChildren(thumb, fields);
-    const busy = (on: boolean) => {
-      if (on) panel.setAttribute("aria-busy", "true");
-      else panel.removeAttribute("aria-busy");
-      wait.hidden = !on;
-      alt.readOnly = on;
-      insert.disabled = on || alt.value.trim() === "";
-      decorative.disabled = on;
-    };
-    const go = async (isDecorative: boolean) => {
-      const send = o.onUpload;
-      const text = isDecorative ? "" : alt.value.trim();
-      if (!send || !surface || !upload || upload.token !== token || panel.hasAttribute("aria-busy"))
-        return;
-      if (!isDecorative && !text) return;
-      panel.querySelector(".cap-md-upload-error")?.remove();
-      const abort = new AbortController();
-      upload.abort = abort;
-      busy(true);
-      say(`Uploading ${name}`);
-      try {
-        const result = await send(f, { alt: text, decorative: isDecorative }, abort.signal);
-        if (!upload || upload.token !== token) return;
-        const md = (o.imageMarkdown ?? defaultImageMarkdown)({
-          url: result.url,
-          alt: text,
-          decorative: isDecorative,
-          name,
-        });
-        cancelUpload(false);
-        apply(blockEdit(doc(), sel().from, sel().to, md));
-        say("Image added to the text.");
-      } catch (e) {
-        if (!upload || upload.token !== token) return;
-        upload.abort = null;
-        busy(false);
-        // The step stays, with what was typed, so a retry is one press.
-        fields.append(
-          el("p", { class: "cap-field-error cap-md-upload-error", role: "alert" }, messageOf(e)),
-        );
-        say("");
-        (isDecorative ? decorative : insert.disabled ? alt : insert).focus();
-      }
-    };
-    alt.addEventListener("input", () => {
-      insert.disabled = alt.value.trim() === "" || panel.hasAttribute("aria-busy");
-    });
-    alt.addEventListener("keydown", (e) => {
-      // legacy-scan:keep ime-safe-enter-submit isImeEnter (shortcuts.ts) checks isComposing and keyCode 229; the scanner cannot follow it.
-      if (e.key === "Enter" && !isImeEnter(e)) {
-        e.preventDefault();
-        void go(false);
-      }
-    });
-    insert.addEventListener("click", () => void go(false));
-    decorative.addEventListener("click", () => void go(true));
-    cancel.addEventListener("click", () => cancelUpload(true));
-    panel.addEventListener("keydown", (e) => {
-      if (e.key === "Escape") {
-        e.preventDefault();
-        e.stopPropagation();
-        cancelUpload(true);
-      }
-    });
-    // Focus goes to the alt field: the image cannot go in until it is answered.
-    alt.focus();
-    say(`Describe ${name} to add it to the text.`);
-  }
+  const tb = createToolbar(ctx, {
+    toolbar,
+    file,
+    openLink: palette.open,
+    insertScaffold: (s) => insertScaffold(s),
+  });
+  const { commands } = tb;
+  cleanups.push(tb.attach());
 
   listen(file, "change", () => {
     const f = file.files?.[0];
     file.value = "";
-    if (f) startUpload(f);
+    if (f) uploader.start(f);
   });
 
   function syncState() {
@@ -793,8 +214,8 @@ export async function mountMarkdownEditor(
     file.accept = o.accept ?? "image/*";
     updateStats(doc());
     if (disabled() || readOnly()) {
-      closeSlash();
-      closeLink(false);
+      slash.close();
+      palette.close(false);
     }
   }
 
@@ -824,7 +245,8 @@ export async function mountMarkdownEditor(
     syncState();
   }
 
-  // A required, empty textarea blocks the form, and the browser cannot focus a hidden one to say so. Focus the surface and say what is wrong.
+  // A required, empty textarea blocks the form, and the browser cannot focus a hidden one to
+  // say so. This does it for the editor: focus the surface and say what is wrong.
   listen(ta, "invalid", (e: Event) => {
     e.preventDefault();
     if (!requiredMessage) {
@@ -849,12 +271,8 @@ export async function mountMarkdownEditor(
   // Focus leaving the editor closes the slash menu; a click into the menu is not leaving.
   listen(host, "focusout", (e: FocusEvent) => {
     const to = e.relatedTarget;
-    if (
-      slash &&
-      !(to instanceof Node && slash.menu.contains(to)) &&
-      !(to instanceof Node && frame.contains(to))
-    )
-      closeSlash();
+    if (slash.isOpen() && !slash.holds(to) && !(to instanceof Node && frame.contains(to)))
+      slash.close();
   });
 
   const watch = new MutationObserver(syncState);
@@ -871,7 +289,7 @@ export async function mountMarkdownEditor(
     ],
   });
 
-  buildToolbar();
+  tb.build();
   surface = createSurface({
     parent: surfaceEl,
     doc: ta.value,
@@ -882,10 +300,10 @@ export async function mountMarkdownEditor(
     disabled: disabled(),
     attrs: attrs(),
     onDocChange,
-    onCaret: syncSlash,
+    onCaret: slash.sync,
     onFile: (f) => {
       if (!o.onUpload) return false;
-      startUpload(f);
+      uploader.start(f);
       return true;
     },
     onKey(name) {
@@ -900,7 +318,7 @@ export async function mountMarkdownEditor(
           if (!readOnly() && !disabled()) commands.code();
           return true;
         case "link":
-          openLink();
+          palette.open();
           return true;
         case "save": {
           const value = doc();
@@ -915,14 +333,14 @@ export async function mountMarkdownEditor(
         }
         case "escape":
           // Esc closes the menu or the palette first; only then does it fall through (to a dialog around the editor).
-          if (slash) {
-            closeSlash();
+          if (slash.isOpen()) {
+            slash.close();
             return true;
           }
           return false;
         case "down":
-          if (!slash) return false;
-          slash.menu.querySelector<HTMLElement>(".cap-md-slash-item")?.focus();
+          if (!slash.isOpen()) return false;
+          slash.focusFirst();
           return true;
       }
     },
@@ -957,16 +375,16 @@ export async function mountMarkdownEditor(
     },
     update(patch) {
       Object.assign(o, patch);
-      buildToolbar();
+      tb.build();
       syncState();
     },
     destroy() {
       watch.disconnect();
       for (const fn of cleanups.splice(0).reverse()) fn();
-      closeLink(false);
-      closeSlash();
-      cancelUpload(false);
-      clearUploadError();
+      palette.close(false);
+      slash.close();
+      uploader.cancel(false);
+      uploader.clearError();
       surface?.destroy();
       surface = null;
       frame.remove();
@@ -986,12 +404,15 @@ export async function mountMarkdownEditor(
 
 const handles = new WeakMap<HTMLElement, MarkdownEditorHandle>();
 
-// The handle of an editor that has finished loading, or undefined while it is still the plain textarea (listen for `cap-md-ready`).
+// The handle of an editor that has finished loading, or undefined while it is still the plain
+// textarea (listen for the bubbling `cap-md-ready` event to know when).
 export function getMarkdownEditor(host: Element): MarkdownEditorHandle | undefined {
   return host instanceof HTMLElement ? handles.get(host) : undefined;
 }
 
-// Upgrades every [data-cap="markdown-editor"] under root not yet upgraded; `options` apply to each, so pass a narrower `root` to differ. Returns an undo function.
+// Upgrades every [data-cap="markdown-editor"] under root not yet upgraded. The textarea is
+// the editor until CodeMirror has loaded, and again if it cannot. `options` apply to each one;
+// to give editors different options, pass a narrower `root`. Returns a function that undoes it.
 export function enhance(
   root: ParentNode = document,
   options: MarkdownEditorOptions = {},

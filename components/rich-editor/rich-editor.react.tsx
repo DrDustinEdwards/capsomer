@@ -1,89 +1,45 @@
-// The formatted editor: Tiptap over ProseMirror, showing formatted text with the Markdown underneath kept
-// byte for byte (rich-editor-markdown.mjs). Markdown it does not format sits in source blocks.
-// The server renders a labeled textarea holding the Markdown, so the page reads the same before the script
-// runs; the editor replaces it once it loads.
-// In a shared room (`room`, from the collab editor's useRoomEditing) the document is the room's copy and
-// `value` only feeds the word count. This file imports no Yjs, so an editor outside a room does not carry it.
+// The formatted editor: Tiptap's MIT core over ProseMirror, showing formatted text with the Markdown
+// underneath kept byte for byte (rich-editor-markdown.mjs). It keeps
+// what the Markdown editor did: the APG toolbar (bold, italic, link, heading, code, footnote, the app's
+// blocks, an image), Ctrl or Cmd B, I, E, K and S, the link palette over the app's pages, the block
+// menu on a lone "/", an image described before it is uploaded, the word count and
+// reading time, read-only, and Tab leaving the text. Markdown the editor does not format (front
+// matter, code, tables, directives, math) sits in source blocks, edited as Markdown in place.
+//
+// The server renders a labeled textarea holding the Markdown, so the page reads the same before the
+// script runs; the editor replaces it once it loads.
+//
+// In a shared room (`room`, made by the collab editor's useRoomEditing), the document is the room's
+// copy: the room brings the extensions that bind it (collaboration, carets, suggesting, comment marks)
+// and works out the Markdown, and `value` only feeds the word count. This file imports no Yjs, so an
+// editor outside a room does not carry it.
 
-import { plural, readingMinutes, wordCount } from "@drdustinedwards/site-helpers/text";
-import { Editor, type AnyExtension, type JSONContent } from "@tiptap/core";
+import { wordCount, readingMinutes } from "@drdustinedwards/site-helpers/text";
+import { Editor, type JSONContent } from "@tiptap/core";
 import { Placeholder } from "@tiptap/extensions";
-import { DOMParser as SchemaParser } from "@tiptap/pm/model";
-import type { EditorState } from "@tiptap/pm/state";
-import type { EditorView } from "@tiptap/pm/view";
 import { useEffect, useId, useLayoutEffect, useRef, useState } from "react";
 import {
-  GLYPH,
-  defaultImageMarkdown,
   filterLinkTargets,
   looksLikeUrl,
-  type ImageDescription,
-  type LinkTarget,
   type Scaffold,
 } from "../markdown-editor/markdown-editor.ts";
-import { openAt, type VirtualAnchor } from "../popover/popover.ts";
-import { isImeEnter } from "../shortcuts/shortcuts.ts";
-import { rovingIndex } from "../toolbar/toolbar.ts";
-import { inertDocument } from "../trusted-html/trusted-html.ts";
-
+import { openAt } from "../popover/popover.ts";
+import { caretAnchor, focusSourceBlock, pasteHtml } from "./rich-editor-dom.ts";
 import {
   fingerprints,
   fromDoc,
   pastedBlocks,
   toDoc,
-  type Dialect,
   type JsonNode,
 } from "./rich-editor-markdown.mjs";
+import { ImageStep, LinkPalette, SlashMenu } from "./rich-editor-panels.tsx";
 import { baseExtensions } from "./rich-editor-schema.mjs";
 import { sourceBlockView, SourceInlineView } from "./rich-editor-source-views.ts";
+import { Toolbar, formattingTools } from "./rich-editor-toolbar.tsx";
+import type { Palette, RichEditorProps } from "./rich-editor-types.ts";
+import { useImageStep } from "./rich-editor-upload.ts";
 
-export type RichEditorHandle = {
-  insertMarkdown: (markdown: string) => void;
-  focus: () => void;
-  editor: Editor;
-};
-
-/** The room an editor is in, as the collab editor's useRoomEditing makes it. The editor knows nothing of Yjs. */
-export type RichRoom = {
-  /** Made once per editor: the binding to the room's copy and what draws the others' work in it. */
-  extensions: () => AnyExtension[];
-  /** The Markdown a document stands for, with the room's bookkeeping. */
-  markdown: (json: JSONContent) => string;
-  /** Source blocks are read only (while suggesting, which cannot mark Markdown). */
-  sourceLocked: (state: EditorState) => boolean;
-  /** Brings the editor in step with the room; run once it is made and whenever `syncKey` changes. */
-  sync: (editor: Editor) => void;
-  syncKey: string;
-  /** Front matter edited in its own fields, so the text does not show it a second time. */
-  hideFrontMatter: boolean;
-};
-
-export type RichEditorProps = {
-  /** What the editing surface is called to a screen reader, for example "Post, formatted". */
-  ariaLabel: string;
-  value: string;
-  onChange: (next: string) => void;
-  readOnly: boolean;
-  dialect: Dialect;
-  placeholder?: string;
-  scaffolds?: Scaffold[];
-  linkTargets?: LinkTarget[];
-  onUpload?: (file: File, image: ImageDescription, signal: AbortSignal) => Promise<{ url: string }>;
-  imageMarkdown?: (image: {
-    url: string;
-    alt: string;
-    decorative: boolean;
-    name: string;
-  }) => string;
-  accept?: string;
-  onReady?: (handle: RichEditorHandle) => void;
-  room?: RichRoom;
-};
-
-type Palette = { from: number; to: number; query: string; active: number };
-// An image is described before it is sent (ATAG 2.0 B.2.3; site-api 0.19+ refuses an undescribed
-// upload): the step holds the file and a local preview until Insert, then sends it once.
-type Upload = { file: File; preview: string; sending: AbortController | null } | null;
+export type { RichEditorHandle, RichEditorProps, RichRoom } from "./rich-editor-types.ts";
 
 export function RichEditor(props: RichEditorProps) {
   const {
@@ -112,15 +68,6 @@ export function RichEditor(props: RichEditorProps) {
   const [words, setWords] = useState(() => wordCount(value));
   const [palette, setPalette] = useState<Palette | null>(null);
   const [slash, setSlash] = useState<number | null>(null);
-  const [upload, setUploadState] = useState<Upload>(null);
-  const uploadRef = useRef<Upload>(null);
-  const setUpload = (next: Upload) => {
-    uploadRef.current?.sending?.abort();
-    uploadRef.current = next;
-    setUploadState(next);
-  };
-  const [uploadError, setUploadError] = useState<string | null>(null);
-  const [alt, setAlt] = useState("");
   const [said, say] = useState("");
   const [activeTool, setActiveTool] = useState(0);
   // One editor's ids, so two editors on a page never share a label's or a listbox's target.
@@ -129,7 +76,12 @@ export function RichEditor(props: RichEditorProps) {
   const paletteRef = useRef<HTMLDivElement>(null);
   const slashRef = useRef<HTMLUListElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
-  const altRef = useRef<HTMLInputElement>(null);
+  const img = useImageStep({
+    props: propsRef,
+    editor: editorRef,
+    say,
+    insertMarkdown: (md) => insertMarkdown(md),
+  });
 
   /** The Markdown the document stands for: unchanged blocks as their bytes, the rest spelled again. */
   const markdown = (editor: Editor) =>
@@ -159,6 +111,7 @@ export function RichEditor(props: RichEditorProps) {
     setWords(wordCount(source));
   };
 
+  // The editor itself: made once, after the page is in the browser.
   useEffect(() => {
     if (!host.current) return;
     const loaded = toDoc(value, dialect);
@@ -174,6 +127,7 @@ export function RichEditor(props: RichEditorProps) {
         Placeholder.configure({ placeholder }),
         ...(inRoom ? inRoom.extensions() : []),
       ],
+      // In a room the content is the room's.
       ...(inRoom ? {} : { content: loaded.doc as JSONContent }),
       editable: !readOnly,
       // Sites keep style-src 'self': Tiptap's base rules are in rich-editor.css, not a style element.
@@ -209,7 +163,7 @@ export function RichEditor(props: RichEditorProps) {
             f.type.startsWith("image/"),
           );
           if (files[0] && propsRef.current.onUpload) {
-            startUpload(files[0]);
+            img.start(files[0]);
             return true;
           }
           // Markdown pasted as text becomes formatted blocks, as typing it in Markdown did.
@@ -234,7 +188,7 @@ export function RichEditor(props: RichEditorProps) {
           );
           if (files[0] && propsRef.current.onUpload) {
             event.preventDefault();
-            startUpload(files[0]);
+            img.start(files[0]);
             return true;
           }
           // Formatted text dragged in from elsewhere is read as a paste is; a drag inside the text is the editor's.
@@ -273,6 +227,7 @@ export function RichEditor(props: RichEditorProps) {
       editor.destroy();
       editorRef.current = null;
     };
+    // Made once; later values come in through the effects below.
     // oxlint-disable-next-line react/exhaustive-deps -- made once: the ProseMirror editor owns its state, and later values come in through the effects below
   }, []);
 
@@ -319,6 +274,7 @@ export function RichEditor(props: RichEditorProps) {
     const menu = slashRef.current;
     const editor = editorRef.current;
     if (!menu || !editor || slash === null) return;
+    // The anchor is read again on scroll, so the menu stays under the "/".
     const close = openAt(menu, caretAnchor(editor, slash + 1), { side: "bottom", align: "start" });
     say("Block menu open. Press Down arrow to choose a block, Escape to close.");
     return close;
@@ -339,23 +295,6 @@ export function RichEditor(props: RichEditorProps) {
     else chain.insertContent(block).run();
     setSlash(null);
     focusSourceBlock(editor, s);
-  }
-
-  /** Focus lands inside the new block's Markdown, where the block says (for example inside alt=""). */
-  function focusSourceBlock(editor: Editor, s: Scaffold) {
-    requestAnimationFrame(() => {
-      const areas = [
-        ...editor.view.dom.querySelectorAll<HTMLTextAreaElement>(".cap-rich-editor-src-text"),
-      ];
-      const area =
-        areas.find((a) => a.value === s.text && document.activeElement !== a) ?? areas.at(-1);
-      if (!area) return;
-      area.focus();
-      const at = s.cursorAfter
-        ? s.text.indexOf(s.cursorAfter) + s.cursorAfter.length
-        : (s.cursor ?? s.text.length);
-      area.setSelectionRange(at, at);
-    });
   }
 
   function insertMarkdown(md: string) {
@@ -408,180 +347,24 @@ export function RichEditor(props: RichEditorProps) {
         .insertContent({ type: "text", text: title, marks: [{ type: "link", attrs: { href } }] })
         .run();
     else chain.setLink({ href }).run();
+    // The cursor lands after the link, outside it.
     editor.commands.unsetMark("link", { extendEmptyMarkRange: false });
   }
 
-  function startUpload(file: File) {
-    if (!propsRef.current.onUpload) return;
-    setUploadError(null);
-    setAlt("");
-    // A data: URL, not blob:, so the preview needs nothing a site's img-src does not already allow.
-    const next: NonNullable<Upload> = { file, preview: "", sending: null };
-    setUpload(next);
-    const reader = new FileReader();
-    reader.addEventListener("load", () => {
-      if (uploadRef.current === next && typeof reader.result === "string") {
-        const shown = { ...next, preview: reader.result };
-        uploadRef.current = shown;
-        setUploadState(shown);
-      }
-    });
-    reader.readAsDataURL(file);
-    say(`Describe ${file.name} to insert it.`);
-    requestAnimationFrame(() => altRef.current?.focus());
-  }
-  function cancelUpload() {
-    setUpload(null);
-    setUploadError(null);
-    editorRef.current?.commands.focus();
-  }
-  async function insertImage(decorative: boolean) {
-    const current = uploadRef.current;
-    const send = propsRef.current.onUpload;
-    const text = decorative ? "" : alt.trim();
-    if (!current || current.sending || !send || (!decorative && !text)) return;
-    const sending = new AbortController();
-    const busy = { ...current, sending };
-    uploadRef.current = busy;
-    setUploadState(busy);
-    setUploadError(null);
-    say(`Uploading ${current.file.name}`);
-    try {
-      const { url } = await send(current.file, { alt: text, decorative }, sending.signal);
-      if (uploadRef.current !== busy) return;
-      const md = (propsRef.current.imageMarkdown ?? defaultImageMarkdown)({
-        url,
-        alt: text,
-        decorative,
-        name: current.file.name,
-      });
-      uploadRef.current = null;
-      setUploadState(null);
-      insertMarkdown(md);
-      say("Image inserted.");
-    } catch (error) {
-      if (uploadRef.current !== busy) return;
-      // The step stays, with what was typed, so a retry is one press.
-      const kept = { ...current, sending: null };
-      uploadRef.current = kept;
-      setUploadState(kept);
-      setUploadError(error instanceof Error ? error.message : "The upload failed.");
-      say("");
-    }
-  }
-
-  const run = (fn: (e: Editor) => void) => () => {
-    const editor = editorRef.current;
-    if (editor) fn(editor);
-  };
-  const tools = [
-    {
-      id: "bold",
-      label: "Bold",
-      hint: "Ctrl or Cmd + B",
-      keys: "Control+B Meta+B",
-      paths: GLYPH.bold,
-      run: run((e) => e.chain().focus().toggleBold().run()),
-    },
-    {
-      id: "italic",
-      label: "Italic",
-      hint: "Ctrl or Cmd + I",
-      keys: "Control+I Meta+I",
-      paths: GLYPH.italic,
-      run: run((e) => e.chain().focus().toggleItalic().run()),
-    },
-    {
-      id: "link",
-      label: "Link",
-      hint: "Ctrl or Cmd + K, searches pages",
-      keys: "Control+K Meta+K",
-      paths: GLYPH.link,
-      run: openPalette,
-    },
-    {
-      id: "heading",
-      label: "Heading level",
-      hint: "Cycles h2, h3, h4, none",
-      paths: GLYPH.heading,
-      run: run((e) => {
-        const level = e.isActive("heading", { level: 2 })
-          ? 3
-          : e.isActive("heading", { level: 3 })
-            ? 4
-            : e.isActive("heading", { level: 4 })
-              ? 0
-              : 2;
-        if (level === 0) e.chain().focus().setParagraph().run();
-        else
-          e.chain()
-            .focus()
-            .setHeading({ level: level as 2 | 3 | 4 })
-            .run();
-      }),
-    },
-    {
-      id: "code",
-      label: "Code",
-      hint: "Ctrl or Cmd + E",
-      keys: "Control+E Meta+E",
-      paths: GLYPH.code,
-      run: run((e) => e.chain().focus().toggleCode().run()),
-    },
-    {
-      id: "footnote",
-      label: "Footnote",
-      paths: GLYPH.footnote,
-      run: run((e) => {
-        const md = markdown(e);
-        const n = Math.max(0, ...[...md.matchAll(/\[\^(\d+)\]/g)].map((m) => Number(m[1]))) + 1;
-        e.chain()
-          .focus()
-          .insertContent({ type: "sourceInline", attrs: { text: `[^${n}]` } })
-          .run();
-        const end = e.state.doc.content.size;
-        e.chain()
-          .insertContentAt(end, {
-            type: "sourceBlock",
-            attrs: { text: `[^${n}]: `, kind: "Footnote" },
-          })
-          .run();
-        focusSourceBlock(e, { id: "footnote", label: "Footnote", hint: "", text: `[^${n}]: ` });
-      }),
-    },
-    ...(onUpload
-      ? [
-          {
-            id: "image",
-            label: "Insert image",
-            paths: GLYPH.image,
-            run: () => fileRef.current?.click(),
-          },
-        ]
-      : []),
-  ];
+  const tools = formattingTools({
+    editor: () => editorRef.current,
+    markdown,
+    openPalette,
+    chooseImage: onUpload ? () => fileRef.current?.click() : null,
+  });
   const blocks = scaffolds.map((s) => ({
     id: `scaffold-${s.id}`,
     label: s.label,
     hint: s.hint,
-    keys: undefined,
     paths: s.icon ? [s.icon] : [],
     glyph: s.label.slice(0, 1),
     run: () => insertScaffold(s, false),
   }));
-  const all = [...tools, ...blocks];
-  const onToolbarKey = (event: React.KeyboardEvent) => {
-    const buttons = [
-      ...(toolbar.current?.querySelectorAll<HTMLButtonElement>(".cap-md-tool:not(:disabled)") ??
-        []),
-    ];
-    const at = buttons.findIndex((b) => b === document.activeElement);
-    const rtl = toolbar.current ? getComputedStyle(toolbar.current).direction === "rtl" : false;
-    const next = rovingIndex(event.key, at, buttons.length, "horizontal", rtl);
-    if (next === null || at < 0) return;
-    event.preventDefault();
-    buttons[next]?.focus();
-  };
   const off = readOnly || !ready;
 
   return (
@@ -591,42 +374,14 @@ export function RichEditor(props: RichEditorProps) {
       data-hide-front={room?.hideFrontMatter ? "" : undefined}
     >
       <div className="cap-md-frame">
-        {/* oxlint-disable-next-line jsx-a11y/interactive-supports-focus -- a roving-tabindex toolbar: its buttons take focus, the arrow keys move between them */}
-        <div
-          className="cap-md-toolbar"
-          role="toolbar"
-          aria-label="Formatting"
-          ref={toolbar}
-          onKeyDown={onToolbarKey}
-        >
-          {all.map((t, i) => (
-            <span key={t.id} className="cap-rich-editor-slot">
-              {i === tools.length && blocks.length > 0 ? (
-                <span className="cap-md-sep" aria-hidden="true" />
-              ) : null}
-              <button
-                type="button"
-                className="cap-md-tool"
-                aria-label={t.label}
-                title={"hint" in t && t.hint ? `${t.label}. ${t.hint}` : t.label}
-                aria-keyshortcuts={t.keys}
-                tabIndex={i === activeTool ? 0 : -1}
-                disabled={off}
-                onFocus={() => setActiveTool(i)}
-                onMouseDown={(e) => e.preventDefault()}
-                onClick={t.run}
-              >
-                {t.paths.length > 0 ? (
-                  <Icon paths={t.paths} />
-                ) : (
-                  <span className="cap-md-tool-glyph" aria-hidden="true">
-                    {"glyph" in t ? String(t.glyph) : ""}
-                  </span>
-                )}
-              </button>
-            </span>
-          ))}
-        </div>
+        <Toolbar
+          tools={tools}
+          blocks={blocks}
+          active={activeTool}
+          setActive={setActiveTool}
+          off={off}
+          barRef={toolbar}
+        />
         {!ready ? (
           // Before the script: the Markdown itself, readable and selectable.
           <textarea
@@ -660,275 +415,43 @@ export function RichEditor(props: RichEditorProps) {
           onChange={(e) => {
             const f = e.target.files?.[0];
             e.target.value = "";
-            if (f) startUpload(f);
+            if (f) img.start(f);
           }}
         />
       ) : null}
-      {upload ? (
-        // oxlint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- Escape inside the image step closes it; the group only catches the key from its fields
-        <div
-          className="cap-md-upload"
-          role="group"
-          aria-label="Describe the image"
-          aria-busy={upload.sending ? "true" : undefined}
-          onKeyDown={(e) => {
-            if (e.key === "Escape") {
-              e.preventDefault();
-              e.stopPropagation();
-              cancelUpload();
-            }
-          }}
-        >
-          <img className="cap-md-upload-thumb" src={upload.preview || undefined} alt="" />
-          <div className="cap-md-upload-fields">
-            <label className="cap-field-label" htmlFor={`${uid}-alt`}>
-              Alt text{" "}
-              <span className="cap-field-required" aria-hidden="true">
-                Required
-              </span>
-            </label>
-            <input
-              ref={altRef}
-              id={`${uid}-alt`}
-              className="cap-input"
-              autoComplete="off"
-              placeholder="What the image shows"
-              aria-describedby={`${uid}-alt-help`}
-              value={alt}
-              readOnly={Boolean(upload.sending)}
-              onChange={(e) => setAlt(e.target.value)}
-              onKeyDown={(e) => {
-                // legacy-scan:keep ime-safe-enter-submit isImeEnter (shortcuts.ts) checks isComposing and keyCode 229; the scanner cannot follow it.
-                if (e.key === "Enter" && !isImeEnter(e.nativeEvent)) {
-                  e.preventDefault();
-                  void insertImage(false);
-                }
-              }}
-            />
-            <p className="cap-field-help" id={`${uid}-alt-help`}>
-              Describe {upload.file.name}, or insert it as decorative.
-            </p>
-            {upload.sending ? (
-              <p className="cap-md-upload-wait">Uploading {upload.file.name}</p>
-            ) : null}
-            {uploadError ? (
-              <p className="cap-field-error cap-md-upload-error" role="alert">
-                {uploadError}
-              </p>
-            ) : null}
-            <div className="cap-md-upload-actions">
-              <button
-                type="button"
-                className="cap-btn"
-                data-variant="primary"
-                disabled={!alt.trim() || Boolean(upload.sending)}
-                onClick={() => void insertImage(false)}
-              >
-                Insert image
-              </button>
-              <button
-                type="button"
-                className="cap-btn"
-                disabled={Boolean(upload.sending)}
-                onClick={() => void insertImage(true)}
-              >
-                Insert as decorative
-              </button>
-              <button type="button" className="cap-btn" data-variant="quiet" onClick={cancelUpload}>
-                Cancel
-              </button>
-            </div>
-          </div>
-        </div>
+      {img.upload ? (
+        <ImageStep
+          uid={uid}
+          upload={img.upload}
+          alt={img.alt}
+          setAlt={img.setAlt}
+          error={img.error}
+          altRef={img.altRef}
+          insert={(decorative) => void img.insert(decorative)}
+          cancel={img.cancel}
+        />
       ) : null}
       {palette ? (
-        // oxlint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- Escape and the arrow keys inside the link palette; the group only catches them from its input
-        <div
-          ref={paletteRef}
-          className="cap-popover cap-md-palette"
-          popover="manual"
-          role="group"
-          aria-label="Insert a link"
-          data-size="lg"
-          data-side="bottom"
-          data-align="start"
-          onBlur={(e) => {
-            if (!(e.relatedTarget instanceof Node && e.currentTarget.contains(e.relatedTarget)))
-              closePalette(false);
-          }}
-        >
-          <label className="cap-md-palette-label" htmlFor={`${uid}-link`}>
-            Link to
-          </label>
-          <input
-            id={`${uid}-link`}
-            type="text"
-            className="cap-input"
-            role="combobox"
-            aria-autocomplete="list"
-            aria-expanded={matches.length > 0}
-            aria-controls={`${uid}-link-list`}
-            aria-activedescendant={matches.length > 0 ? `${uid}-link-${palette.active}` : undefined}
-            autoComplete="off"
-            spellCheck={false}
-            placeholder="Search pages, or type a URL"
-            value={palette.query}
-            onChange={(e) => setPalette({ ...palette, query: e.target.value, active: 0 })}
-            onKeyDown={(e) => {
-              if (e.key === "Escape") {
-                e.preventDefault();
-                e.stopPropagation();
-                closePalette(true);
-              } else if (e.key === "ArrowDown" || e.key === "ArrowUp") {
-                e.preventDefault();
-                if (matches.length)
-                  setPalette({
-                    ...palette,
-                    active:
-                      (palette.active + (e.key === "ArrowDown" ? 1 : matches.length - 1)) %
-                      matches.length,
-                  });
-              } else if (e.key === "Enter" && !isImeEnter(e.nativeEvent)) {
-                e.preventDefault();
-                if (typedUrl) applyLink(typedUrl, typedUrl);
-                else if (matches[palette.active])
-                  applyLink(matches[palette.active]!.href, matches[palette.active]!.title);
-              }
-            }}
-          />
-          <div
-            className="cap-listbox"
-            role="listbox"
-            id={`${uid}-link-list`}
-            aria-label="Pages"
-            data-wrap=""
-          >
-            {matches.map((m, i) => (
-              // oxlint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/interactive-supports-focus -- a listbox option chosen by pointer; the palette's input drives it from the keyboard (aria-activedescendant)
-              <div
-                key={m.href}
-                id={`${uid}-link-${i}`}
-                className="cap-option"
-                role="option"
-                aria-selected={i === palette.active}
-                data-active={i === palette.active ? "" : undefined}
-                onMouseDown={(e) => e.preventDefault()}
-                onClick={() => applyLink(m.href, m.title)}
-              >
-                <span className="cap-option-label">{m.title}</span>
-                {m.note ? <span className="cap-md-option-note"> ({m.note})</span> : null}
-                {m.hint ? <span className="cap-md-option-hint">{m.hint}</span> : null}
-              </div>
-            ))}
-          </div>
-          <p className="cap-md-palette-note" role="status">
-            {typedUrl
-              ? `Enter links to ${typedUrl}.`
-              : matches.length === 0
-                ? "No page matches."
-                : `${plural(matches.length, "page")}.`}
-          </p>
-        </div>
+        <LinkPalette
+          uid={uid}
+          palette={palette}
+          setPalette={setPalette}
+          matches={matches}
+          typedUrl={typedUrl}
+          panelRef={paletteRef}
+          close={closePalette}
+          apply={applyLink}
+        />
       ) : null}
       {slash !== null ? (
-        // oxlint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- the block menu's keys come from the editor, which keeps focus while it is open
-        <ul
-          ref={slashRef}
-          className="cap-popover cap-md-slash"
-          popover="manual"
-          aria-label="Insert a block"
-          data-flush=""
-          data-size="auto"
-          data-side="bottom"
-          data-align="start"
-          onKeyDown={(e) => {
-            const items = [
-              ...e.currentTarget.querySelectorAll<HTMLButtonElement>(".cap-md-slash-item"),
-            ];
-            const at = items.findIndex((b) => b === document.activeElement);
-            if (e.key === "Escape") {
-              e.preventDefault();
-              e.stopPropagation();
-              setSlash(null);
-              editorRef.current?.commands.focus();
-            } else {
-              const next = rovingIndex(e.key, at, items.length, "vertical");
-              if (next === null) return;
-              e.preventDefault();
-              items[next]?.focus();
-            }
-          }}
-        >
-          {scaffolds.map((s) => (
-            <li key={s.id}>
-              <button
-                type="button"
-                className="cap-md-slash-item"
-                tabIndex={-1}
-                onClick={() => insertScaffold(s, true)}
-              >
-                <strong>{s.label}</strong>
-                <span className="cap-md-slash-hint">{s.hint}</span>
-              </button>
-            </li>
-          ))}
-        </ul>
+        <SlashMenu
+          scaffolds={scaffolds}
+          menuRef={slashRef}
+          editor={() => editorRef.current}
+          close={() => setSlash(null)}
+          choose={(s) => insertScaffold(s, true)}
+        />
       ) : null}
     </div>
-  );
-}
-
-// A toolbar icon, hidden because each button has a name.
-function Icon({ paths }: { paths: string[] }) {
-  return (
-    <svg
-      width="16"
-      height="16"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-      focusable="false"
-    >
-      {paths.map((d) => (
-        <path key={d} d={d} />
-      ))}
-    </svg>
-  );
-}
-
-// A popup's anchor at a document position: the caret's box there, read each time it is placed.
-function caretAnchor(editor: Editor, pos: number): VirtualAnchor {
-  return {
-    getBoundingClientRect: () => {
-      const at = editor.view.coordsAtPos(pos);
-      return new DOMRect(at.left, at.top, 0, at.bottom - at.top);
-    },
-  };
-}
-
-/**
- * Pasted HTML, parsed in an inert document (no script runs, nothing loads) through Capsomer's policy and
- * read by the editor's schema, which keeps only what it knows. ProseMirror's own paste would give the
- * string to the page's default Trusted Types policy, which escapes markup, so a formatted paste would
- * arrive as tags in the text.
- */
-function pasteHtml(view: EditorView, html: string) {
-  const body = inertDocument(html).body;
-  let slice = SchemaParser.fromSchema(view.state.schema).parseSlice(body, {
-    preserveWhitespace: true,
-  });
-  view.someProp("transformPasted", (f) => {
-    slice = f(slice, view, false);
-  });
-  view.dispatch(
-    view.state.tr
-      .replaceSelection(slice)
-      .scrollIntoView()
-      .setMeta("paste", true)
-      .setMeta("uiEvent", "paste"),
   );
 }
