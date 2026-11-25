@@ -16,13 +16,6 @@
     "size": {
       "bin/capsomer.mjs": 792,
       "components/catalog/catalog-core.ts": 824,
-      "components/combobox/combobox.react.tsx": 802,
-      "components/field/field.css": 683,
-      "components/field/field.react.tsx": 920,
-      "components/field/field.ts": 601,
-      "components/listbox/listbox.ts": 650,
-      "components/markdown-editor/markdown-editor.spec.ts": 1225,
-      "components/markdown-editor/markdown-editor.ts": 1043,
       "components/media-library/examples.tsx": 1046,
       "components/media-library/media-library-more.react.tsx": 506,
       "components/media-library/media-library.react.tsx": 1367,
@@ -31,8 +24,6 @@
       "components/media/media.react.tsx": 1032,
       "components/media/media.spec.ts": 1211,
       "components/media/media.ts": 1031,
-      "components/rich-editor/rich-editor-markdown.mjs": 638,
-      "components/rich-editor/rich-editor.react.tsx": 955,
       "site/frame-heights.css": 3109,
       "test/sweep.spec.ts": 1262,
       "tokens/palette-core.mjs": 1095,
@@ -40,7 +31,7 @@
       "tokens/sites.mjs": 543
     },
     "tests": {
-      "files": 257,
+      "files": 258,
       "cases": 1669
     },
     "comments": {
