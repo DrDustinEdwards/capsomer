@@ -1,5 +1,5 @@
 ﻿import { strict as assert } from "node:assert";
-import { readFileSync, readdirSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { test } from "node:test";
 
@@ -78,13 +78,19 @@ test("every scroll-driven animation keeps duration auto after minifying", async 
 
 // `./*.css` maps `capsomer/<name>.css` to `components/<name>/<name>.css`; a stylesheet named
 // otherwise (role-grid.css in people-roles/) needs its own export, or an import of it fails to resolve.
+// A part its component's own stylesheet imports (manual-page.css, by manual.css) is read through that one.
+const partOf = (dir, name) =>
+  existsSync(`components/${dir}/${dir}.css`) &&
+  readFileSync(`components/${dir}/${dir}.css`, "utf8").includes(`@import "./${name}";`);
 test("every component stylesheet can be imported by name", () => {
   const exports = JSON.parse(readFileSync("package.json", "utf8")).exports;
   for (const file of cssFiles("components")) {
     const [, dir, name] = file.split(/[\\/]/);
     const css = name.replace(/\.css$/, "");
     assert.ok(
-      dir === css || exports[`./${css}.css`] === `./${file.replace(/\\/g, "/")}`,
+      dir === css ||
+        partOf(dir, name) ||
+        exports[`./${css}.css`] === `./${file.replace(/\\/g, "/")}`,
       `${file} has no export: add "./${css}.css" to package.json`,
     );
   }

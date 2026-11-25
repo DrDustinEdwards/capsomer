@@ -1,19 +1,21 @@
-// The network as hexagons: the core in the middle of a honeycomb, the shared packages on a ring
-// around it, what people use on an outer ring in groups, other cells empty and faded. Each tie is
-// a line bent around cells it would cross. Pure: the SVG string is delivered by a server, so the
-// lines exist with no script, which only lights a cell's lines.
+// The network as hexagons (system-map.ts): the core in the middle of a honeycomb, the shared
+// packages on a ring around it, and what people use on an outer ring in its groups, every other
+// cell of the comb left empty and faded. Each tie is a line between two cells, bent around the
+// cells it would otherwise cross. Pure: the whole drawing is an SVG string a server delivers, so
+// the lines are there with no script; the script only lights a cell's lines.
 
 import { escapeHtml as e } from "@dustinedwards/site-runtime/html";
 import type { MapSystem, SystemMapData } from "./system-map-data.ts";
 import { tiePairs } from "./system-map-data.ts";
+import { search, type Axial } from "./system-map-hex-search.ts";
 
-// A cell's radius (center to corner) in the drawing's units. Text sizes (18 name, 16 group) are in
-// system-map.css so no text is under 12 px at the narrowest map (44rem); they are CSS, not a style
-// attribute, so a page whose CSP forbids inline styles draws it whole.
+// A cell's radius (center to corner) in the drawing's own units. The drawing scales to its box;
+// the text sizes, in the same units, are in system-map.css (18 for a name, 16 for a group), set
+// so that at the narrowest map that shows it (44rem) no text is under 12 px. They are CSS, not a
+// style attribute, so a page whose Content Security Policy forbids inline styles draws it whole.
 const R = 58;
 const SQRT3 = Math.sqrt(3);
 
-type Axial = [number, number];
 const DIRS: Axial[] = [
   [1, 0],
   [1, -1],
@@ -23,6 +25,7 @@ const DIRS: Axial[] = [
   [0, 1],
 ];
 
+/** The cells of ring k around the center, in order around it. */
 export function ringCells(k: number): Axial[] {
   if (k === 0) return [[0, 0]];
   const out: Axial[] = [];
@@ -43,7 +46,7 @@ const angleOf = (c: Axial) => {
   const [x, y] = xy(c);
   return Math.atan2(y, x);
 };
-// Angles run clockwise from the top, 0 to 2π.
+// Angles measured clockwise from the top, 0 to 2π, so rings read from twelve o'clock.
 const fromTop = (a: number) => (a + Math.PI / 2 + 4 * Math.PI) % (2 * Math.PI);
 const byAngle = (cells: Axial[]) =>
   [...cells].sort((a, b) => fromTop(angleOf(a)) - fromTop(angleOf(b)));
@@ -63,158 +66,20 @@ export interface HexCell {
 
 export interface HexLayout {
   cells: HexCell[];
+  // The empty cells of the comb, drawn faded.
   comb: Axial[];
   groups: { name: string; x: number; y: number }[];
   lines: { a: string; b: string; d: string }[];
   box: [number, number, number, number];
 }
 
-const hexDist = (a: Axial, b: Axial) =>
-  (Math.abs(a[0] - b[0]) + Math.abs(a[1] - b[1]) + Math.abs(a[0] + a[1] - b[0] - b[1])) / 2;
-
-// A seeded random source (mulberry32), so the same network always lays out the same way.
-function random(seed: number) {
-  let t = seed >>> 0;
-  return () => {
-    t = (t + 0x6d2b79f5) >>> 0;
-    let r = Math.imul(t ^ (t >>> 15), 1 | t);
-    r = (r + Math.imul(r ^ (r >>> 7), 61 | r)) ^ r;
-    return ((r ^ (r >>> 14)) >>> 0) / 4294967296;
-  };
-}
-
 /**
- * The placement, searched by simulated annealing from the barycenter's start, keeping whichever
- * costs least: the lines' total length in grid steps. Adding a crossing cost made routed lines
- * longer and cross more. Many placements tie on length, so hexLayout runs a few seeds and keeps
- * the one whose routed lines cross least.
- */
-function search(
-  place: Map<string, Axial>,
-  net: {
-    groups: MapSystem[][];
-    shared: MapSystem[];
-    outerRing: Axial[];
-    sharedRing: Axial[];
-    sharedStep: number;
-    pairs: [string, string][];
-  },
-  seed: number,
-) {
-  const { groups, shared, outerRing, sharedRing, sharedStep, pairs } = net;
-  const G = groups.length;
-  const used = groups.reduce((n, g) => n + g.length, 0);
-  const spare = outerRing.length - used;
-  if (!G && !shared.length) return;
-  interface State {
-    order: number[];
-    gaps: number[];
-    members: MapSystem[][];
-    turn: number;
-    sOrder: MapSystem[];
-    sTurn: number;
-  }
-  const turnOf = (c: Axial | undefined, ring: Axial[]) =>
-    Math.max(
-      0,
-      ring.findIndex((r) => c && r[0] === c[0] && r[1] === c[1]),
-    );
-  const sStart = shared.length
-    ? Math.min(...shared.map((x) => turnOf(place.get(x.id), sharedRing)))
-    : 0;
-  let state: State = {
-    order: groups.map((_, i) => i),
-    gaps: groups.map(
-      (_, i) => Math.floor(spare / Math.max(1, G)) + (i < spare % Math.max(1, G) ? 1 : 0),
-    ),
-    members: groups.map((g) => [...g]),
-    turn: 0,
-    sOrder: [...shared].sort(
-      (a, b) =>
-        ((turnOf(place.get(a.id), sharedRing) - sStart + sharedRing.length) % sharedRing.length) -
-        ((turnOf(place.get(b.id), sharedRing) - sStart + sharedRing.length) % sharedRing.length),
-    ),
-    sTurn: sStart,
-  };
-  const apply = (st: State) => {
-    let i = st.turn;
-    for (const gi of st.order) {
-      for (const x of st.members[gi]!) place.set(x.id, outerRing[i++ % outerRing.length]!);
-      i += st.gaps[gi]!;
-    }
-    st.sOrder.forEach((x, k) =>
-      place.set(x.id, sharedRing[(st.sTurn + k * sharedStep) % sharedRing.length]!),
-    );
-  };
-  const cost = (st: State) => {
-    apply(st);
-    let c = 0;
-    for (const [a, b] of pairs) {
-      const p = place.get(a);
-      const q = place.get(b);
-      if (p && q) c += hexDist(p, q);
-    }
-    return c;
-  };
-  const rnd = random(seed);
-  const pick = (n: number) => Math.floor(rnd() * n);
-  const clone = (st: State): State => ({
-    order: [...st.order],
-    gaps: [...st.gaps],
-    members: st.members.map((m) => [...m]),
-    turn: st.turn,
-    sOrder: [...st.sOrder],
-    sTurn: st.sTurn,
-  });
-  const move = (st: State) => {
-    const n = clone(st);
-    const kind = pick(6);
-    const swap = <T>(list: T[]) => {
-      if (list.length < 2) return;
-      const i = pick(list.length);
-      const j = pick(list.length);
-      [list[i], list[j]] = [list[j]!, list[i]!];
-    };
-    if (kind === 0) swap(n.order);
-    else if (kind === 1 && G > 1) {
-      const from = pick(G);
-      const to = pick(G);
-      if (n.gaps[from]! > (spare >= G ? 1 : 0)) {
-        n.gaps[from]!--;
-        n.gaps[to]!++;
-      }
-    } else if (kind === 2) swap(n.members[pick(Math.max(1, G))] ?? []);
-    else if (kind === 3)
-      n.turn = (n.turn + (rnd() < 0.5 ? 1 : outerRing.length - 1)) % outerRing.length;
-    else if (kind === 4) swap(n.sOrder);
-    else n.sTurn = (n.sTurn + (rnd() < 0.5 ? 1 : sharedRing.length - 1)) % sharedRing.length;
-    return n;
-  };
-  let now = cost(state);
-  let best = state;
-  let bestCost = now;
-  const steps = 2000;
-  for (let k = 0; k < steps; k++) {
-    const temp = 3 * (1 - k / steps) + 0.01;
-    const next = move(state);
-    const c = cost(next);
-    if (c <= now || rnd() < Math.exp((now - c) / temp)) {
-      state = next;
-      now = c;
-      if (c < bestCost) {
-        best = next;
-        bestCost = c;
-      }
-    }
-  }
-  apply(best);
-}
-
-/**
- * Where each system stands in the honeycomb, and each tie's line. The core takes the middle, the
- * shared packages every other cell of the smallest ring with room (so lines pass between them),
- * and what people use the ring two out, in groups. Then each shared package moves toward its
- * users and each system within its group toward the packages it uses, so lines run short.
+ * Where each system stands in the honeycomb, and each tie's line. The core takes the middle (more
+ * than one core: the first ring). The shared packages take every other cell of the smallest ring
+ * with room for that, so lines pass between them. What people use takes the ring two out, each
+ * group a run of cells with empty cells between groups, in the groups' order from twelve o'clock.
+ * Then, by the barycenter idea on a circle, each shared package moves toward the systems that use
+ * it and each system within its group toward the packages it uses, so lines run short.
  */
 export function hexLayout(data: SystemMapData, groupOf: (s: MapSystem) => string): HexLayout {
   const core = data.systems.filter((s) => s.ring === "core");
@@ -239,6 +104,7 @@ export function hexLayout(data: SystemMapData, groupOf: (s: MapSystem) => string
   while (6 * ok < used.length + groups.length) ok++;
   const outerRing = byAngle(ringCells(ok));
 
+  // The outer ring: each group a run, the spare cells spread between groups.
   const spare = outerRing.length - used.length;
   const placeOuter = () => {
     let i = 0;
@@ -269,6 +135,7 @@ export function hexLayout(data: SystemMapData, groupOf: (s: MapSystem) => string
   const isUsed = new Set(used.map((s) => s.id));
   const isShared = new Set(shared.map((s) => s.id));
   for (let sweep = 0; sweep < 6; sweep++) {
+    // Shared packages in the order of where their users stand; the ring turned to fit the first.
     const want = new Map(
       shared.map((s) => [
         s.id,
@@ -321,8 +188,9 @@ export function hexLayout(data: SystemMapData, groupOf: (s: MapSystem) => string
       return [{ id: s.id, at, x, y }];
     });
     const taken = new Set(cells.map((c) => `${c.at[0]},${c.at[1]}`));
-    // Each group's name stands in the empty cell before its run on the outer ring, so the comb needs
-    // no ring for names. A name's cell carries no line.
+    // Each group's name stands in the empty cell just before its run on the outer ring (every group
+    // keeps one there), so the comb needs no ring of its own for names and draws larger. A name's
+    // cell carries no line.
     const ringAt = new Map(outerRing.map((c, i) => [`${c[0]},${c[1]}`, i]));
     const labels = groups.flatMap((g, gi) => {
       const mine = new Set(
@@ -343,14 +211,16 @@ export function hexLayout(data: SystemMapData, groupOf: (s: MapSystem) => string
       for (const c of ringCells(k))
         if (!cells.some((x) => x.at[0] === c[0] && x.at[1] === c[1])) comb.push(c);
 
-    // Each line takes the shortest path over the hex grid through empty cells, never under another
-    // system; a cell already carrying a line costs a little less, so lines gather into tracks.
-    // Lines sharing a cell stand side by side. Ties between neighbors are a straight line.
+    // Each line runs through the comb's empty cells, never under another system: the shortest path
+    // over the hex grid whose middle cells are all empty A cell already carrying a line costs a
+    // little less, so lines gather into tracks), drawn as straight runs with rounded corners. Lines
+    // sharing a cell stand side by side in it. Ties between neighbors are a straight line.
     const key = (c: Axial) => `${c[0]},${c[1]}`;
     const ringOf = ([q, r]: Axial) => Math.max(Math.abs(q), Math.abs(r), Math.abs(q + r));
     const load = new Map<string, number>();
     const at = new Map(cells.map((c) => [c.id, c]));
-    // Dijkstra over (cell, heading): a step costs 1, a turn a little more, so lines run straight.
+    // Dijkstra over (cell, heading): a step costs 1, a turn a little more, so lines run straight
+    // along the comb's channels and bundle there, like tracks, instead of wandering.
     const route = (from: Axial, to: Axial): Axial[] => {
       const goal = key(to);
       const sk0 = `${key(from)}|-1`;
@@ -390,6 +260,7 @@ export function hexLayout(data: SystemMapData, groupOf: (s: MapSystem) => string
       for (let st: string | undefined = end; st; st = prev.get(st)) path.unshift(cellOf.get(st)!);
       return path;
     };
+    // Longer ties first, so the short ones fit around them.
     const ordered = pairs
       .filter(([a, b]) => at.has(a) && at.has(b))
       .sort(
@@ -402,6 +273,7 @@ export function hexLayout(data: SystemMapData, groupOf: (s: MapSystem) => string
       for (const c of path.slice(1, -1)) load.set(key(c), (load.get(key(c)) ?? 0) + 1);
       return { a, b, path };
     });
+    // Where each line stands inside a shared cell: spread across it, in a steady order.
     const slots = new Map<string, number>();
     const f = (n: number) => Math.round(n * 10) / 10;
     const lines = paths.map(({ a, b, path }) => {
@@ -418,6 +290,7 @@ export function hexLayout(data: SystemMapData, groupOf: (s: MapSystem) => string
         const off = (slot - (n - 1) / 2) * Math.min(3, (R * 0.5) / Math.max(1, n));
         return [x - ((ny2 - py) / len) * off, y + ((nx2 - px) / len) * off] as [number, number];
       });
+      // Straight runs joined by rounded corners, as a track is drawn.
       let d = `M${f(pts[0]![0])} ${f(pts[0]![1])}`;
       for (let i = 1; i < pts.length - 1; i++) {
         const [px, py] = pts[i - 1]!;
@@ -431,6 +304,7 @@ export function hexLayout(data: SystemMapData, groupOf: (s: MapSystem) => string
       d += ` L${f(pts[pts.length - 1]![0])} ${f(pts[pts.length - 1]![1])}`;
       return { a, b, d, pts };
     });
+    // How many pairs of lines cross, counted on the routes as drawn.
     let crossings = 0;
     const o = (p: [number, number], q: [number, number], r: [number, number]) =>
       Math.sign((q[0] - p[0]) * (r[1] - p[1]) - (q[1] - p[1]) * (r[0] - p[0]));
@@ -467,6 +341,7 @@ export function hexLayout(data: SystemMapData, groupOf: (s: MapSystem) => string
   }
   const { cells, comb, labels, lines } = drawn!;
 
+  // The box: every cell of the comb, with a cell's room around it.
   const pts = [...comb, ...cells.map((c) => c.at)].map(xy);
   const x0 = Math.min(...pts.map((p) => p[0])) - R;
   const x1 = Math.max(...pts.map((p) => p[0])) + R;
@@ -481,7 +356,8 @@ const hexPoints = (x: number, y: number, r = R * 0.94) =>
     return `${Math.round((x + r * Math.cos(t)) * 10) / 10},${Math.round((y + r * Math.sin(t)) * 10) / 10}`;
   }).join(" ");
 
-/** A name in a cell: one line, or two split at a space when long (the space kept). */
+/** A name in a cell: one line, or two split at a space when it is long (the space kept, so the
+ * words read as the name they are). */
 function nameText(name: string, x: number, y: number): string {
   const words = name.split(" ");
   if (name.length <= 9 || words.length < 2)
@@ -497,10 +373,10 @@ function nameText(name: string, x: number, y: number): string {
 }
 
 /**
- * The honeycomb as an SVG string. Each system is a link (full name as its name, short name as
- * the text) with `data-id`, `data-ring` and `data-private`; each line has `data-a` and `data-b`.
- * The comb, lines and group names are hidden from assistive technology: the links and the plain
- * map hold the same ties as words.
+ * The honeycomb as an SVG string. Each system is a link (its full name as the link's name, its
+ * short name as the text) carrying `data-id`, `data-ring` and, when private, `data-private`; each
+ * line carries `data-a` and `data-b`. The comb, the lines and the group names are hidden from
+ * assistive technology: the cells' links and the plain map hold the same ties as words.
  */
 export function hexSvg(data: SystemMapData, layout: HexLayout, labelId: string): string {
   const byId = new Map(data.systems.map((s) => [s.id, s]));

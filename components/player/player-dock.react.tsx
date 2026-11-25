@@ -10,21 +10,23 @@ import { plainLink } from "../hooks/hooks.react.tsx";
 import { activeChapterIndex } from "./player.ts";
 import { usePlayer } from "./player-context.react.tsx";
 import {
-  ChapterOptions,
-  ChaptersControl,
   NextButton,
   PlayPauseButton,
   PlayerStatus,
   Scrubber,
   SkipButton,
+  TranscriptLink,
+  type RenderLink,
+} from "./player-controls.react.tsx";
+import {
+  ChapterOptions,
+  ChaptersControl,
   SleepControl,
   SleepOptions,
   SpeedControl,
   SpeedOptions,
-  TranscriptLink,
   VolumeControl,
-  type RenderLink,
-} from "./player-controls.react.tsx";
+} from "./player-settings.react.tsx";
 import type { PlayerTrack } from "./player.ts";
 
 // Below this width the dock's settings move into the sheet (player.css's container query agrees).

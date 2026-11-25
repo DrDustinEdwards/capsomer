@@ -1,6 +1,6 @@
 {
   "baseline": {
-    "measured_at": "f13163c",
+    "measured_at": "2515303",
     "knip": {},
     "jscpd": {
       "clones": 36,
@@ -23,7 +23,6 @@
       "components/combobox/combobox.react.tsx": 767,
       "components/command-menu/command-menu.ts": 734,
       "components/confirm-dialog/confirm-dialog.react.tsx": 610,
-      "components/draft-compare/draft-compare.css": 588,
       "components/email/email.ts": 507,
       "components/field/field.css": 648,
       "components/field/field.react.tsx": 879,
@@ -32,7 +31,6 @@
       "components/flag-list/flag-list.ts": 621,
       "components/history-list/history-list.react.tsx": 543,
       "components/listbox/listbox.ts": 648,
-      "components/manual/manual.css": 1200,
       "components/markdown-editor/markdown-editor.spec.ts": 1225,
       "components/markdown-editor/markdown-editor.ts": 1024,
       "components/media-library/examples.tsx": 1028,
@@ -45,26 +43,19 @@
       "components/media/media.ts": 1005,
       "components/moderation-queue/moderation-queue.ts": 537,
       "components/people-roles/people-roles.react.tsx": 807,
-      "components/player/player-controls.react.tsx": 505,
-      "components/player/player.css": 889,
       "components/posts-list/examples.tsx": 730,
       "components/posts-list/posts-list.react.tsx": 1119,
-      "components/prose-blocks/prose-blocks.css": 1302,
       "components/publish-gate/publish-gate.ts": 555,
       "components/rich-editor/rich-editor-markdown.mjs": 627,
       "components/rich-editor/rich-editor.react.tsx": 934,
       "components/shell/shell.css": 543,
-      "components/site-header-frame/site-header-frame.css": 913,
       "components/site-header/examples.tsx": 868,
       "components/site-header/site-header-parts.react.tsx": 502,
       "components/site-header/site-header.react.tsx": 692,
       "components/sortable-list/sortable-list.react.tsx": 827,
       "components/sortable-list/sortable-list.ts": 659,
-      "components/system-map/system-map-hex.ts": 535,
-      "components/system-map/system-map.css": 711,
       "components/time/time.ts": 502,
       "site/frame-heights.css": 3109,
-      "site/site.css": 742,
       "test/sweep.spec.ts": 1261,
       "tokens/palette-core.mjs": 1040,
       "tokens/scale.mjs": 656,
@@ -75,9 +66,9 @@
       "cases": 1697
     },
     "comments": {
-      "lines": 9341,
-      "code": 152761,
-      "percentage": 5.76
+      "lines": 9644,
+      "code": 152830,
+      "percentage": 5.94
     }
   }
 }

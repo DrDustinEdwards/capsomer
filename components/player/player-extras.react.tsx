@@ -10,7 +10,7 @@ import {
   type PlayerChapter,
   type PlayerTrack,
 } from "./player.ts";
-import { ChapterButtons } from "./player-controls.react.tsx";
+import { ChapterButtons } from "./player-settings.react.tsx";
 import { usePlayer } from "./player-context.react.tsx";
 
 function useSeekTrack(track: PlayerTrack) {
