@@ -14,20 +14,6 @@
     },
     "legacy": {},
     "size": {
-      "components/checklist-run/checklist-run.ts": 716,
-      "components/command-menu/command-menu.ts": 734,
-      "components/confirm-dialog/confirm-dialog.react.tsx": 610,
-      "components/email/email.ts": 507,
-      "components/flag-list/flag-list.react.tsx": 571,
-      "components/flag-list/flag-list.ts": 621,
-      "components/moderation-queue/moderation-queue.ts": 537,
-      "components/publish-gate/publish-gate.ts": 555,
-      "components/site-header/examples.tsx": 868,
-      "components/site-header/site-header-parts.react.tsx": 502,
-      "components/site-header/site-header.react.tsx": 692,
-      "components/sortable-list/sortable-list.react.tsx": 827,
-      "components/sortable-list/sortable-list.ts": 658,
-      "components/time/time.ts": 502,
       "site/frame-heights.css": 3109
     },
     "tests": {

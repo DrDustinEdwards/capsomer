@@ -1,5 +1,4 @@
 import { Fragment, type ReactNode, useCallback, useEffect, useId, useRef, useState } from "react";
-import { Dialog, DialogBody, DialogHeader } from "../dialog/dialog.react.tsx";
 import type { LinkProps } from "../shell/shell.react.tsx";
 import { ThemeButton, ThemeForm } from "../theme-switch/theme-switch.react.tsx";
 import { enhance as enhanceTheme, THEME_PREF } from "../theme-switch/theme-switch.ts";
@@ -7,18 +6,14 @@ import {
   CHEV,
   Disclosure,
   GroupList,
-  type HeaderExtra,
   HeaderHydrates,
   type HeaderLink,
   HeaderTip,
   MENU_ICON,
   PERSON_ICON,
   SEARCH_ICON,
-  SheetGroup,
   type SiteHeaderProps,
   countName,
-  headerItem,
-  part,
 } from "./site-header-parts.react.tsx";
 import {
   badgeText,
@@ -28,6 +23,14 @@ import {
   wireThemeKey,
 } from "./site-header.ts";
 import { plainLink } from "../hooks/hooks.react.tsx";
+import { HeaderSheet } from "./site-header-sheet.react.tsx";
+import {
+  accountPanelOf,
+  renderExtra,
+  renderLogo,
+  renderTrail,
+  signOutRow,
+} from "./site-header-slots.react.tsx";
 
 export { countName, HeaderTip, SheetGroup } from "./site-header-parts.react.tsx";
 export type {
@@ -138,50 +141,7 @@ export function SiteHeader(props: SiteHeaderProps) {
   const cta = extras.find((e) => e.kind === "button");
   const ctaClass = cta?.className ? `cap-site-header-cta ${cta.className}` : "cap-site-header-cta";
   const signOutLabel = account ? `Sign out (${account.name})` : "Sign out";
-  const signOut = account
-    ? account.signOutHref
-      ? { label: "Sign out", href: account.signOutHref }
-      : account.signOutAction
-        ? { label: "Sign out", action: account.signOutAction, fields: account.signOutFields }
-        : account.onSignOut
-          ? { label: "Sign out", onClick: account.onSignOut }
-          : undefined
-    : undefined;
-
-  const extra = (e: HeaderExtra) => {
-    const name = countName(e.label, e.count, e.countNote);
-    const inner = (
-      <>
-        {e.icon}
-        {e.count ? (
-          <span className="cap-count cap-site-header-badge" data-tone="need" aria-hidden="true">
-            {badgeText(e.count)}
-          </span>
-        ) : null}
-        <HeaderTip text={e.label} keys={e.keys} />
-      </>
-    );
-    return e.href ? (
-      <Fragment key={e.id}>
-        {renderLink({
-          href: e.href,
-          className: e.className ? `cap-site-header-icon ${e.className}` : "cap-site-header-icon",
-          "aria-label": name,
-          children: inner,
-        })}
-      </Fragment>
-    ) : (
-      <button
-        key={e.id}
-        type="button"
-        className={e.className ? `cap-site-header-icon ${e.className}` : "cap-site-header-icon"}
-        aria-label={name}
-        onClick={e.onClick}
-      >
-        {inner}
-      </button>
-    );
-  };
+  const signOut = account ? signOutRow(account) : undefined;
 
   // The letterhead's second row already shows View site beside the account button, so the menu omits it.
   const shownView = letterhead && trail?.viewSite ? trail.viewSite : undefined;
@@ -192,40 +152,7 @@ export function SiteHeader(props: SiteHeaderProps) {
     }))
     .filter((g) => g.links.length > 0);
 
-  const accountPanel = account
-    ? (account.panel ?? (
-        <>
-          <div className="cap-site-header-who">
-            <strong>{account.name}</strong>
-            {account.detail ? <small>{account.detail}</small> : null}
-          </div>
-          {panelGroups.map((g, i) => (
-            <Fragment key={g.label ?? i}>
-              <hr />
-              {g.label ? <div className="cap-site-header-panel-label">{g.label}</div> : null}
-              <ul className="cap-site-header-panel-list">
-                {g.links.map((l) => (
-                  <li key={l.label}>{headerItem(l, l.label, renderLink)}</li>
-                ))}
-              </ul>
-            </Fragment>
-          ))}
-          {signOut ? (
-            <>
-              <hr />
-              <ul className="cap-site-header-panel-list">
-                <li>
-                  {/* Plain link: Sign out leaves the app, so it is a full load, never the router's. */}
-                  {headerItem(signOut, "Sign out", plainLink, {
-                    disabled: account.signOutDisabled,
-                  })}
-                </li>
-              </ul>
-            </>
-          ) : null}
-        </>
-      ))
-    : null;
+  const accountPanel = account ? accountPanelOf(account, panelGroups, signOut, renderLink) : null;
 
   const sectionLinks = sections
     .filter((s) => !s.groups && !s.panel && s.href)
@@ -265,37 +192,7 @@ export function SiteHeader(props: SiteHeaderProps) {
             Skip to content
           </a>
         ) : null}
-        {renderLink({
-          href: logo.href,
-          className: logo.className
-            ? `cap-site-header-logo ${logo.className}`
-            : "cap-site-header-logo",
-          "aria-label":
-            logo.name ??
-            (letterhead
-              ? [logo.agency, logo.label, logo.app].filter(Boolean).join(" ")
-              : logo.label),
-          children: (
-            <>
-              {logo.mark}
-              {letterhead ? (
-                <span className="cap-site-header-names" aria-hidden="true">
-                  {logo.agency ? (
-                    <span className="cap-site-header-agency">{logo.agency}</span>
-                  ) : null}
-                  {/* A space, so the visible text matches the accessible name (WCAG 2.5.3). */}
-                  {logo.agency ? " " : null}
-                  <span className="cap-site-header-name">
-                    {logo.label}
-                    {logo.app ? <span className="cap-site-header-app"> {logo.app}</span> : null}
-                  </span>
-                </span>
-              ) : (
-                (logo.wordmark ?? <span aria-hidden="true">{logo.label}</span>)
-              )}
-            </>
-          ),
-        })}
+        {renderLogo(logo, letterhead, renderLink)}
         {switchers.length > 0 ? (
           <div className="cap-site-header-switcher">
             {switchers.map((s, i) => (
@@ -370,10 +267,10 @@ export function SiteHeader(props: SiteHeaderProps) {
           </nav>
         ) : null}
         <div className="cap-site-header-tools">
-          {ownSearch ? extra(ownSearch) : null}
+          {ownSearch ? renderExtra(ownSearch, renderLink) : null}
           {icons.length > 0 || cta ? (
             <div className="cap-site-header-extras" data-phone={cta?.phone}>
-              {icons.map(extra)}
+              {icons.map((e) => renderExtra(e, renderLink))}
               {cta ? (
                 cta.href ? (
                   renderLink({
@@ -497,147 +394,27 @@ export function SiteHeader(props: SiteHeaderProps) {
             </button>
           ) : null}
         </div>
-        {letterhead && trail ? (
-          <div className="cap-site-header-trail">
-            <nav aria-label="You are here">
-              <ol>
-                {trail.crumbs.map((c) => (
-                  <li key={c.label}>
-                    {c.href && !c.current ? (
-                      renderLink({ href: c.href, children: c.label })
-                    ) : (
-                      <span aria-current={c.current ? "page" : undefined}>{c.label}</span>
-                    )}
-                  </li>
-                ))}
-              </ol>
-            </nav>
-            {trail.viewSite
-              ? renderLink({
-                  href: trail.viewSite,
-                  className: "cap-site-header-view",
-                  children: "View site",
-                })
-              : null}
-          </div>
-        ) : null}
+        {letterhead && trail ? renderTrail(trail, renderLink) : null}
         {sheet ? (
-          <Dialog
+          <HeaderSheet
+            id={id}
             open={sheetOpen}
-            onOpenChange={(o) => !o && closeSheet()}
-            placement="bottom"
-            id={`${id}-sheet`}
-            className="cap-site-header-sheet"
-            aria-labelledby={`${id}-sheet-title`}
-            initialFocus={sheetTitle}
-          >
-            <DialogHeader>
-              <h2
-                id={`${id}-sheet-title`}
-                className="cap-dialog-title cap-site-header-sheet-title"
-                ref={sheetTitle}
-                tabIndex={-1}
-              >
-                {sheetName}
-              </h2>
-            </DialogHeader>
-            <DialogBody>
-              <nav aria-labelledby={`${id}-sheet-title`}>
-                {part(props.sheetStart, closeSheet)}
-                {switchers.map((s) =>
-                  s.groups.map((g, i) => (
-                    <SheetGroup
-                      key={`${s.id}-${i}`}
-                      label={g.label ?? s.sheetLabel ?? s.label}
-                      links={g.links}
-                      renderLink={renderLink}
-                      onClose={closeSheet}
-                    />
-                  )),
-                )}
-                {sections
-                  .filter((s) => s.groups)
-                  .map((s) => (
-                    <SheetGroup
-                      key={s.id}
-                      label={s.label}
-                      links={(s.groups ?? []).flatMap((g) => g.links)}
-                      renderLink={renderLink}
-                      onClose={closeSheet}
-                    />
-                  ))}
-                {sectionLinks.length > 0 ? (
-                  <SheetGroup
-                    label={linksLabel}
-                    links={sectionLinks}
-                    renderLink={renderLink}
-                    onClose={closeSheet}
-                  />
-                ) : null}
-                {part(props.sheetEnd, closeSheet)}
-                {cta?.href && cta.phone !== "bar"
-                  ? renderLink({
-                      href: cta.href,
-                      className: cta.className
-                        ? `cap-site-header-sheet-cta ${cta.className}`
-                        : "cap-site-header-sheet-cta",
-                      onClick: closeSheet,
-                      children: cta.label,
-                    })
-                  : null}
-              </nav>
-            </DialogBody>
-            {account || signIn ? (
-              <nav className="cap-site-header-sheet-account" aria-label="Account">
-                <ul className="cap-site-header-sheet-list">
-                  {account?.groups
-                    ?.flatMap((g) => g.links)
-                    .map((l) => (
-                      <li key={l.label}>
-                        {headerItem(
-                          l,
-                          <>
-                            <span className="cap-site-header-sheet-icon" aria-hidden="true" />
-                            <span className="cap-site-header-sheet-name">{l.label}</span>
-                          </>,
-                          renderLink,
-                          { onClose: closeSheet },
-                        )}
-                      </li>
-                    ))}
-                  {account && signOut ? (
-                    <li>
-                      {headerItem(
-                        signOut,
-                        <>
-                          <span className="cap-site-header-sheet-icon" aria-hidden="true" />
-                          <span className="cap-site-header-sheet-name">{signOutLabel}</span>
-                        </>,
-                        plainLink,
-                        { onClose: closeSheet, disabled: account.signOutDisabled },
-                      )}
-                    </li>
-                  ) : null}
-                  {!account && signIn ? (
-                    <li>
-                      {renderLink({
-                        href: signIn.href,
-                        onClick: closeSheet,
-                        children: (
-                          <>
-                            <span className="cap-site-header-sheet-icon" aria-hidden="true" />
-                            <span className="cap-site-header-sheet-name">
-                              {signIn.label ?? "Sign in"}
-                            </span>
-                          </>
-                        ),
-                      })}
-                    </li>
-                  ) : null}
-                </ul>
-              </nav>
-            ) : null}
-          </Dialog>
+            closeSheet={closeSheet}
+            titleRef={sheetTitle}
+            title={sheetName}
+            start={props.sheetStart}
+            end={props.sheetEnd}
+            switchers={switchers}
+            sections={sections}
+            sectionLinks={sectionLinks}
+            linksLabel={linksLabel}
+            cta={cta}
+            account={account}
+            signIn={signIn}
+            signOut={signOut}
+            signOutLabel={signOutLabel}
+            renderLink={renderLink}
+          />
         ) : null}
         {end}
       </header>

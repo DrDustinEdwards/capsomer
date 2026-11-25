@@ -11,10 +11,8 @@ import {
   VIEWS,
   VIEW_LABEL,
   actionsFor,
-  statusOf,
   summaryText,
   type Mention,
-  type ModState,
 } from "../moderation-queue/moderation-queue.ts";
 import { initials } from "../avatar/avatar.ts";
 import { queueKey } from "../row-list/row-list.ts";
@@ -30,8 +28,8 @@ import {
   sweepLabel,
   withMentions,
 } from "./mentions-list.ts";
-import { markup } from "../trusted-html/trusted-html.ts";
 import { useCleanId, useHydrated } from "../hooks/hooks.react.tsx";
+import { StatusWord } from "./mentions-list-status.react.tsx";
 
 export type { FormComponent, IntentResult, Mention, MentionsData, SubmitIntent };
 
@@ -46,23 +44,6 @@ export interface MentionsListProps {
   // The last result from the action, for the page that comes back after a post with no script.
   result?: IntentResult | null;
   now?: number;
-}
-
-function StatusWord({ state }: { state: ModState }) {
-  const s = statusOf(state);
-  return (
-    <span className="cap-status" data-tone={s.tone}>
-      <svg
-        viewBox="0 0 16 16"
-        width="14"
-        height="14"
-        aria-hidden="true"
-        focusable="false"
-        dangerouslySetInnerHTML={markup(s.glyph)}
-      />
-      {s.word}
-    </span>
-  );
 }
 
 const nameOf = (m: Mention) => `${m.author} (${m.host})`;

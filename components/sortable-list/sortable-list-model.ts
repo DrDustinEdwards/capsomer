@@ -1,0 +1,122 @@
+// The sortable list's pure functions: moving an id in an order, where a drag lands, moves between lists and the words
+// a live region says (sortable-list.ts has the DOM).
+import { clamp } from "../hooks/hooks.ts";
+
+export interface SortMove {
+  id: string;
+  from: number;
+  to: number;
+}
+
+export function moveId(order: readonly string[], id: string, to: number): string[] {
+  const from = order.indexOf(id);
+  if (from < 0) return [...order];
+  const out = order.filter((x) => x !== id);
+  out.splice(clamp(to, 0, out.length), 0, id);
+  return out;
+}
+
+export interface Box {
+  top: number;
+  left: number;
+  width: number;
+  height: number;
+}
+
+// Where an item dragged to (x, y) belongs, from the boxes of the other items in their
+// current order. Rows: how many other rows have their middle above the pointer. Cards (a
+// wrapping grid): how many other cards come before the pointer in reading order, that is
+// above its line, or on its line and left of it. Counting the others, never the dragged
+// item, keeps the answer steady as the list rearranges under the pointer.
+export function indexAtPoint(
+  others: readonly Box[],
+  x: number,
+  y: number,
+  layout: Layout = "rows",
+): number {
+  let n = 0;
+  for (const b of others) {
+    const midY = b.top + b.height / 2;
+    if (layout !== "cards") {
+      if (midY < y) n += 1;
+    } else if (b.top + b.height <= y) n += 1;
+    else if (b.top <= y && b.left + b.width / 2 < x) n += 1;
+  }
+  return n;
+}
+
+// "rows": one per line. "cards": a wrapping grid. "stack": one per line, each a card with its handle and
+// buttons on a head line over its content (a form row, a step with its own fields).
+export type Layout = "rows" | "cards" | "stack";
+
+export type Lists = Record<string, string[]>;
+
+export function locate(lists: Lists, id: string): { list: string; index: number } | null {
+  for (const [list, ids] of Object.entries(lists)) {
+    const index = ids.indexOf(id);
+    if (index >= 0) return { list, index };
+  }
+  return null;
+}
+
+export function moveBetween(lists: Lists, id: string, toList: string, to: number): Lists {
+  if (!locate(lists, id) || !(toList in lists)) return lists;
+  const out: Lists = {};
+  for (const [list, ids] of Object.entries(lists)) out[list] = ids.filter((x) => x !== id);
+  const target = out[toList] ?? [];
+  target.splice(clamp(to, 0, target.length), 0, id);
+  return out;
+}
+
+// The place a key moves an item that is up to, across lists: the position in its own list as
+// keyTarget gives it, and at either end of the list the same arrow goes on into the end of the
+// list before it or the start of the one after. `sizes` are the lengths of the lists in order,
+// `list` the position of the item's list among them. Null for a key that does not move it.
+export function keyMove(
+  key: string,
+  at: { list: number; index: number },
+  sizes: readonly number[],
+): { list: number; index: number } | null {
+  const count = sizes[at.list] ?? 0;
+  const to = keyTarget(key, at.index, count);
+  if (to === null) return null;
+  if (to !== at.index) return { list: at.list, index: to };
+  const back = key === "ArrowUp" || key === "ArrowLeft";
+  const forward = key === "ArrowDown" || key === "ArrowRight";
+  if (back && at.index === 0 && at.list > 0)
+    return { list: at.list - 1, index: sizes[at.list - 1] ?? 0 };
+  if (forward && at.index === count - 1 && at.list < sizes.length - 1)
+    return { list: at.list + 1, index: 0 };
+  return at;
+}
+
+export const sortText = {
+  help: "To move an item with the keyboard, press Space or Enter on its handle, move it with the arrow keys, and press Space or Enter to drop it. Escape puts it back.",
+  lift: (label: string, pos: number, count: number) =>
+    `Picked up ${label}. Position ${pos} of ${count}. Arrow keys move it, Space drops it, Escape puts it back.`,
+  over: (label: string, pos: number, count: number) => `${label}: position ${pos} of ${count}.`,
+  drop: (label: string, pos: number, count: number, moved: boolean) =>
+    moved
+      ? `Dropped ${label} at position ${pos} of ${count}.`
+      : `Dropped ${label}. It stays at position ${pos} of ${count}.`,
+  cancel: (label: string, pos: number, count: number) =>
+    `Put ${label} back at position ${pos} of ${count}.`,
+  step: (label: string, pos: number, count: number) =>
+    `Moved ${label} to position ${pos} of ${count}.`,
+  // Into another list of the same group: "Moved Abstract 4 to Posters: position 2 of 5."
+  moveTo: (label: string, list: string, pos: number, count: number) =>
+    `Moved ${label} to ${list}: position ${pos} of ${count}.`,
+  removed: (label: string, left: number) =>
+    left === 0 ? `Removed ${label}. The list is empty.` : `Removed ${label}. ${left} left.`,
+  added: (label: string, count: number) => `Added ${label}. ${count} in the list.`,
+};
+
+export type SortMessages = typeof sortText;
+
+export function keyTarget(key: string, index: number, count: number): number | null {
+  if (key === "ArrowUp" || key === "ArrowLeft") return Math.max(0, index - 1);
+  if (key === "ArrowDown" || key === "ArrowRight") return Math.min(count - 1, index + 1);
+  if (key === "Home") return 0;
+  if (key === "End") return count - 1;
+  return null;
+}
