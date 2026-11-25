@@ -1,0 +1,198 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+@layer cap.components {
+  /* The read-along transcript: search and copy, then the cues in a box of their own that scrolls.
+     Its own name: .cap-player-transcript is the link line under a player. */
+  :where(.cap-player-readalong) {
+    display: grid;
+    gap: var(--space-4);
+  }
+  /* A .cap-field-row: the search, the match count, then Copy at the end. */
+  :where(.cap-player-transcript-bar) {
+    & > .cap-btn:last-child {
+      margin-inline-start: auto;
+    }
+  }
+  :where(.cap-player-transcript-box) {
+    display: grid;
+    gap: var(--space-5);
+    max-block-size: 70dvh;
+    padding: var(--space-5);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    border: var(--line-w) solid var(--line);
+    border-radius: var(--radius-xl);
+  }
+  :where(.cap-player-para) {
+    display: grid;
+    gap: var(--space-2);
+  }
+  :where(.cap-player-para-chapter) {
+    margin: var(--space-3) 0 0;
+    color: var(--accent-text);
+    font-family: var(--cap-player-face, var(--ui));
+    font-size: var(--fs-body);
+    font-weight: var(--weight-semibold);
+  }
+  :where(.cap-player-speaker) {
+    margin: 0;
+    color: var(--accent-text);
+    font-size: var(--fs-label);
+    letter-spacing: var(--tracking-widest);
+    text-transform: uppercase;
+  }
+  :where(.cap-player-para-text) {
+    margin: 0;
+    line-height: var(--leading-loose);
+  }
+  /* A whole target (WCAG 2.5.8), though it sits in a line of text. */
+  :where(button.cap-player-at) {
+    display: inline-flex;
+    align-items: center;
+    min-inline-size: var(--target);
+    min-block-size: var(--target);
+    padding: 0 var(--space-1);
+    border: 0;
+    border-radius: var(--radius-s);
+    background: transparent;
+    vertical-align: baseline;
+    cursor: pointer;
+    &:hover {
+      background: var(--link-hover-bg);
+    }
+  }
+  /* A cue is a button in the running text: it reads as text, and the one playing is tinted. */
+  :where(.cap-player-cue) {
+    display: inline;
+    margin: 0;
+    padding: 0 var(--space-1);
+    border: 0;
+    border-radius: var(--radius-s);
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    text-align: start;
+    box-decoration-break: clone;
+    cursor: pointer;
+    &:hover {
+      background: color-mix(in oklab, var(--sunken) 60%, transparent);
+    }
+    &[aria-current="true"] {
+      background: var(--accent-soft);
+      color: var(--text);
+    }
+    &[data-kind="sound"] {
+      color: var(--muted);
+      font-style: italic;
+    }
+  }
+  :where(.cap-player-mark) {
+    border-radius: var(--radius-s);
+    background: color-mix(in oklab, var(--accent) 30%, transparent);
+    color: var(--text);
+  }
+  :where(.cap-player-jump) {
+    position: sticky;
+    inset-block-end: var(--space-5);
+    justify-self: end;
+  }
+  :where(.cap-player-transcript-raw) {
+    color: var(--muted);
+    white-space: pre-wrap;
+  }
+
+  /* The inline audio button: a small round speaker inside running text. A link to the clip with
+     no script, the button with it, the same box either way so the swap moves nothing. Playing, it
+     fills and its waves pulse (the pulse only without reduced motion). */
+  :where(.cap-player-clip) {
+    display: inline-flex;
+    vertical-align: middle;
+  }
+  :where(.cap-player-clip-link, .cap-player-clip-button) {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    inline-size: max(var(--target), var(--control));
+    block-size: max(var(--target), var(--control));
+    padding: 0;
+    border: var(--line-w) solid var(--line-strong);
+    border-radius: var(--radius-full);
+    background: transparent;
+    color: var(--accent-text);
+    text-decoration: none;
+    cursor: pointer;
+    &[hidden] {
+      display: none;
+    }
+    &:hover {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+    }
+  }
+  :where(.cap-player-clip-button[aria-pressed="true"]) {
+    border-color: var(--primary-line);
+    background: var(--primary);
+    color: var(--primary-fg);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    :where(.cap-player-clip-link, .cap-player-clip-button) {
+      transition: background-color var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out);
+    }
+    :where(.cap-player-clip-button[aria-pressed="true"] .cap-player-clip-wave) {
+      animation: cap-player-wave var(--dur-wait) var(--ease-in-out) infinite;
+    }
+    :where(.cap-player-clip-button[aria-pressed="true"] .cap-player-clip-wave[data-wave="2"]) {
+      animation-delay: calc(var(--dur-wait) / 5);
+    }
+  }
+  @keyframes cap-player-wave {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0;
+    }
+  }
+
+  /* Forced colors: states keep a shape or a system color, never a background alone. */
+  @media (forced-colors: active) {
+    :where(.cap-player-dock) {
+      background: Canvas;
+      backdrop-filter: none;
+    }
+    :where(.cap-player-btn[data-part="play"], .cap-player-clip-button[aria-pressed="true"]) {
+      forced-color-adjust: none;
+      border-color: Highlight;
+      background: Highlight;
+      color: HighlightText;
+    }
+    :where(.cap-player-cue[aria-current="true"], .cap-player-mark) {
+      forced-color-adjust: none;
+      background: Highlight;
+      color: HighlightText;
+    }
+    :where(.cap-player-wave-bar) {
+      fill: GrayText;
+      &[data-state] {
+        fill: Highlight;
+      }
+    }
+    :where(.cap-player-wave-region) {
+      fill: transparent;
+    }
+    :where(.cap-player-ticks, .cap-player-wave-marker) {
+      stroke: CanvasText;
+    }
+    :where(.cap-player-moment[aria-current="true"]) {
+      outline: var(--focus-width) solid Highlight;
+    }
+    /* A setting away from its default keeps a heavier edge in the system's highlight. */
+    :where(.cap-player-btn[data-active]),
+    .cap-player-menu[data-active] .cap-btn.cap-menu-trigger {
+      border: var(--line-w-thick) solid Highlight;
+    }
+  }
+}

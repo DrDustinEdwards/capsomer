@@ -1,0 +1,365 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* The site header: one header across the top of every public, app and admin page in the family
+   (docs/design/design-site-header.md; Dustin's ten answers of 2026-10-13). Capsomer fixes the
+   frame: the order, 56px tall at every width, sticky, full width with the logo 24px from the
+   window's edge (16px on a phone), the spacing, the type, the controls and how the panels behave.
+   Each site fills its slots: the logo, its color family, the band (--header-bg, --header-fg,
+   --header-fg-muted, --header-line; data-band="dark", data-translucent), its UI face (--font-ui),
+   up to two icon extras and one button, where the section links sit (data-links) and what each
+   panel holds. On a phone (under 768px) it is one row, with everything else in one sheet. */
+@layer cap.components {
+  .cap-site-header {
+    /* The band: the page's own ground by default. A site sets these four, or data-band="dark". */
+    --header-bg: var(--ground);
+    --header-fg: var(--text);
+    --header-fg-muted: var(--muted);
+    --header-line: var(--line);
+    /* A hovered control: a clear step off the band, in the band's own colors. */
+    --header-hover: color-mix(in srgb, var(--header-bg), var(--header-fg) 12%);
+    /* The current link's underline (3:1 against the band), the one button, the avatar. */
+    --header-accent: var(--accent);
+    --header-cta: var(--primary);
+    --header-cta-fg: var(--primary-fg);
+    --header-avatar: var(--accent-12);
+    --header-avatar-fg: var(--ground);
+    --header-fs: var(--fs-body);
+    --header-side: var(--space-6);
+    /* A site that keeps the bar's contents in its content column (bsw's 72rem) sets
+       --header-max-inline-size; the band still runs the full width. 100% is no column. */
+    --header-max-inline-size: 100%;
+    --header-inset: max(var(--header-side), (100% - var(--header-max-inline-size)) / 2 + var(--header-side));
+    /* The section links' weight, and the current one's; their padding, the gap between them, and
+       their chevron's size and gap. */
+    --header-link-weight: var(--weight-regular);
+    --header-link-current-weight: var(--weight-medium);
+    --header-link-pad: 0;
+    --header-links-gap: var(--space-5-5);
+    --header-chev-size: var(--fs-small);
+    --header-link-gap: var(--space-2);
+    /* The phone sheet's group labels and rows. */
+    --header-sheet-label-ink: var(--muted);
+    --header-sheet-label-fs: var(--fs-detail);
+    --header-sheet-label-weight: var(--weight-medium);
+    --header-sheet-label-case: none;
+    --header-sheet-label-tracking: normal;
+    --header-sheet-row-fs: var(--fs-body);
+    --header-sheet-row-h: max(var(--control), var(--target));
+    /* The bottom edge, and once the page has scrolled (data-scrolled, set by the behavior) its
+       edge and shadow. A site whose edge shows only after a scroll sets --header-edge: transparent. */
+    --header-edge: var(--header-line);
+    --header-scrolled-edge: var(--header-edge);
+    --header-scrolled-shadow: none;
+    /* data-translucent: how much of the band shows (the rest is the page under it), before and
+       after a scroll, and the blur. */
+    --header-translucent-mix: 85%;
+    --header-scrolled-mix: var(--header-translucent-mix);
+    --header-blur: 12px;
+    position: sticky;
+    top: 0;
+    z-index: calc(var(--z-sticky) + 3);
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+    inline-size: 100%;
+    /* --header-h is the page's token (tokens/scale.css), so scroll-padding-top reads the same height:
+       a taller header sets it on :root (bsw: 4rem). */
+    block-size: var(--header-h);
+    padding-inline: var(--header-inset);
+    background: var(--header-bg);
+    color: var(--header-fg);
+    border-block-end: var(--line-w) solid var(--header-edge);
+    font-family: var(--font-ui, var(--ui));
+    font-size: var(--header-fs);
+    line-height: var(--leading-snug);
+
+    &[data-sticky="false"] {
+      position: relative;
+    }
+    /* The page's ground at 85%, blurred: the content shows through as it scrolls under. */
+    &[data-translucent] {
+      background: color-mix(in srgb, var(--header-bg) var(--header-translucent-mix), transparent);
+      backdrop-filter: blur(var(--header-blur));
+    }
+    &[data-scrolled] {
+      border-block-end-color: var(--header-scrolled-edge);
+      box-shadow: var(--header-scrolled-shadow);
+    }
+    &[data-translucent][data-scrolled] {
+      background: color-mix(in srgb, var(--header-bg) var(--header-scrolled-mix), transparent);
+    }
+    & :focus-visible {
+      outline: var(--focus-width) solid var(--ring);
+      outline-offset: var(--focus-offset);
+    }
+  }
+
+  /* Dark in both themes (Foxhound): the darkest step of the site's family in light, the dark
+     theme's own surface in dark. The controls on it read in the band's colors. */
+  .cap-site-header[data-band="dark"] {
+    color-scheme: dark;
+    --header-bg: var(--accent-12);
+    --header-fg: var(--accent-1);
+    --header-fg-muted: color-mix(in srgb, var(--accent-1) 74%, var(--accent-12));
+    --header-line: color-mix(in srgb, var(--accent-1) 18%, var(--accent-12));
+    --header-avatar: var(--primary);
+    --header-avatar-fg: var(--primary-fg);
+  }
+  :root[data-theme="dark"] .cap-site-header[data-band="dark"] {
+    --header-bg: var(--surface);
+    --header-fg: var(--text);
+    --header-fg-muted: var(--muted);
+    --header-line: var(--line);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) .cap-site-header[data-band="dark"] {
+      --header-bg: var(--surface);
+      --header-fg: var(--text);
+      --header-fg-muted: var(--muted);
+      --header-line: var(--line);
+    }
+  }
+
+  /* Clear at rest (data-rest="clear"): at the top of the page the band shows the page under it, with
+     no line; once it is stuck it takes its ground and its line. A scroll-state query on the header,
+     with no scroll listener (Chrome's Modern Web Guidance, state-aware-sticky-headers). A container's
+     queries style only what is inside it, so the ground and the line are its first child,
+     .cap-site-header-ground, and only that child's opacity changes, so nothing moves. Where
+     scroll-state queries are missing the ground is drawn all the time, as an ordinary header:
+     content never scrolls under a clear band. */
+  .cap-site-header-ground {
+    display: none;
+  }
+  @supports (container-type: scroll-state) {
+    .cap-site-header[data-rest="clear"]:not([data-sticky="false"]) {
+      container: cap-site-header / scroll-state;
+      background: transparent;
+      border-block-end-color: transparent;
+      backdrop-filter: none;
+
+      & > .cap-site-header-ground {
+        display: block;
+        position: absolute;
+        inset: 0 0 -1px;
+        z-index: -1;
+        background: var(--header-bg);
+        border-block-end: var(--line-w) solid var(--header-line);
+        pointer-events: none;
+      }
+      &[data-translucent] > .cap-site-header-ground {
+        background: color-mix(in srgb, var(--header-bg) var(--header-translucent-mix), transparent);
+        backdrop-filter: blur(var(--header-blur));
+      }
+    }
+    /* At rest the ground is hidden; stuck, it shows. Same weight in both, so the query wins. */
+    .cap-site-header-ground {
+      opacity: 0;
+    }
+    @container cap-site-header scroll-state(stuck: top) {
+      .cap-site-header-ground {
+        opacity: 1;
+      }
+    }
+    @media (prefers-reduced-motion: no-preference) {
+      .cap-site-header-ground {
+        transition: opacity var(--dur-base) var(--ease-out);
+      }
+    }
+  }
+
+  /* A focused control or an anchor never lands under the header (WCAG 2.4.11). */
+  :root:has(.cap-site-header:not([data-sticky="false"])) {
+    scroll-padding-top: calc(var(--header-h) + var(--space-3));
+  }
+
+  /* A mark's parts drawn in the band's own family color: data-logo-fill="on" on a path or group of the site's SVG
+     takes the stripe's color (--on), as every network site draws its mark on the band; the rest keep their own. */
+  .cap-site-header [data-logo-fill="on"] {
+    fill: var(--on);
+  }
+
+  /* The logo: the site's mark and name, at most 24px tall and 160px wide; it links home. */
+  .cap-site-header-logo {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-3);
+    /* It gives way before the controls do, so the header never runs past a 320px window
+       (WCAG 1.4.10, reflow); the mark itself never shrinks, and is the part held to 160px, so
+       a written name keeps its room under a reader's own text spacing (WCAG 1.4.12). */
+    flex: 0 1 auto;
+    min-inline-size: 0;
+    min-block-size: 24px;
+    overflow: hidden;
+    border-radius: var(--radius-s);
+    color: var(--header-fg);
+    text-decoration: none;
+    white-space: nowrap;
+
+    & :is(svg, img) {
+      flex: none;
+      block-size: 24px;
+      inline-size: auto;
+      max-inline-size: 160px;
+    }
+    /* A mark in a <picture display: contents> would put its <source>s in the row (the UA stylesheet
+       does not hide them), each taking a gap before the image. */
+    & source {
+      display: none;
+    }
+  }
+
+  /* The switcher: buttons showing where you are, each opening the site's panel. 12px after the
+     logo; a thin slash between two (Foxhound: the business, then the product). */
+  .cap-site-header-switcher {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    margin-inline-start: var(--space-4);
+    min-inline-size: 0;
+  }
+  .cap-site-header-sep {
+    color: var(--header-fg-muted);
+    font-size: var(--fs-h3);
+  }
+  .cap-site-header-switch {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-3);
+    block-size: 32px;
+    padding: 0 var(--space-3-5);
+    border: var(--line-w) solid var(--header-line);
+    border-radius: var(--radius-m);
+    background: none;
+    color: var(--header-fg);
+    font: inherit;
+    white-space: nowrap;
+    cursor: pointer;
+
+    &:hover,
+    &[aria-expanded="true"],
+    &[data-force="hover"] {
+      background: var(--header-hover);
+    }
+    & > svg {
+      flex: none;
+      inline-size: 16px;
+      block-size: 16px;
+    }
+  }
+  /* A square is the business you are in, a circle is you (Dustin's answer 3). */
+  .cap-site-header-switch-tile {
+    display: grid;
+    place-items: center;
+    flex: none;
+    inline-size: 22px;
+    block-size: 22px;
+    border-radius: var(--radius-m);
+    background: var(--header-cta);
+    color: var(--header-cta-fg);
+    font-size: var(--fs-label);
+    font-weight: var(--weight-semibold);
+
+    /* The letter is drawn, not text: the button is named by the business, and a letter in the
+       HTML would be read as part of its visible label (WCAG 2.5.3). */
+    &::before {
+      content: attr(data-tile);
+    }
+  }
+  .cap-site-header-chev {
+    flex: none;
+    inline-size: var(--header-chev-size);
+    block-size: var(--header-chev-size);
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  /* An open panel turns its chevron up, as the combobox's does (combobox.css): the button's
+     aria-expanded, which wirePanel keeps in step with the panel, is the one state it reads. */
+  [aria-expanded="true"] > .cap-site-header-chev {
+    rotate: 180deg;
+  }
+
+  /* The section links: 24px after the switcher (left), centered in the header, or on the right
+     before the extras after a thin divider; 20px apart. The current page is weight 500 with a 2px
+     underline in the accent, so it is not told by color alone. */
+  .cap-site-header-sections {
+    margin-inline-start: var(--space-6);
+    min-inline-size: 0;
+
+    & > ul {
+      display: flex;
+      align-items: center;
+      gap: var(--header-links-gap);
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+  }
+  .cap-site-header[data-links="center"] .cap-site-header-sections {
+    position: absolute;
+    left: 50%;
+    margin: 0;
+    translate: -50% 0;
+  }
+  .cap-site-header[data-links="right"] .cap-site-header-sections {
+    margin-inline-start: auto;
+  }
+  .cap-site-header-link {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--header-link-gap);
+    min-block-size: max(36px, var(--target));
+    padding: var(--header-link-pad);
+    border: 0;
+    border-radius: var(--radius-s);
+    background: none;
+    color: var(--header-fg-muted);
+    font: inherit;
+    font-weight: var(--header-link-weight);
+    text-decoration: none;
+    white-space: nowrap;
+    cursor: pointer;
+
+    &:hover,
+    &[aria-expanded="true"],
+    &[data-force="hover"] {
+      color: var(--header-fg);
+    }
+    /* A site's --link-rule (off by default) grows an underline in under the pointer. */
+    /* It grows by scale, not width, so the change is composited and lays nothing out (Modern Web Guidance, motion). */
+    &:not([aria-current="page"], [data-current])::after {
+      content: "";
+      position: absolute;
+      inset-inline: 0;
+      bottom: var(--space-2);
+      block-size: var(--link-rule);
+      background: var(--header-accent);
+      scale: 0 1;
+      transform-origin: left center;
+    }
+    &:not([aria-current="page"], [data-current]):dir(rtl)::after {
+      transform-origin: right center;
+    }
+    &:not([aria-current="page"], [data-current]):is(:hover, :focus-visible)::after {
+      scale: 1 1;
+    }
+    &[aria-current="page"],
+    &[data-current] {
+      color: var(--header-fg);
+      font-weight: var(--header-link-current-weight);
+
+      &::after {
+        content: "";
+        position: absolute;
+        inset-inline: 0;
+        bottom: var(--space-2);
+        block-size: 2px;
+        background: var(--header-accent);
+      }
+    }
+  }
+}

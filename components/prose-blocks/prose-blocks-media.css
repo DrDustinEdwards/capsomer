@@ -1,0 +1,419 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+@layer cap.components {
+  :where([data-context="prose"]) {
+    /* Callouts (GitHub's five alerts): a rule in the tone's color, the title in words. The word
+       carries the kind; the color only repeats it. */
+    & :where(.callout) {
+      --_tone: var(--info);
+      --_soft: var(--info-soft);
+      max-inline-size: var(--measure);
+      margin-block: 0 var(--prose-flow, 1em);
+      padding: var(--space-3) var(--space-4);
+      border: var(--line-w) solid var(--_tone);
+      border-inline-start-width: var(--line-w-heavy);
+      border-radius: var(--prose-block-radius, var(--radius-m));
+      background: var(--_soft);
+      & > :last-child {
+        margin-block-end: 0;
+      }
+      & > p {
+        margin-block-end: 0.5em;
+      }
+    }
+    & :where(.callout-tip) {
+      --_tone: var(--ok);
+      --_soft: var(--ok-soft);
+    }
+    & :where(.callout-important) {
+      --_tone: var(--accent);
+      --_soft: var(--accent-soft);
+    }
+    & :where(.callout-warning) {
+      --_tone: var(--warn);
+      --_soft: var(--warn-soft);
+    }
+    & :where(.callout-caution) {
+      --_tone: var(--crit);
+      --_soft: var(--crit-soft);
+    }
+    & :where(.callout-title) {
+      margin-block-end: 0.25em;
+      font-family: var(--ui);
+      font-size: var(--fs-body);
+      font-weight: var(--weight-semibold);
+    }
+
+    /* Figures: a credit under the caption; wide and full widths break out of the measure. */
+    & :where(.figure-credit) {
+      display: block;
+      margin-block-start: var(--space-1);
+      font-family: var(--ui);
+      font-size: var(--fs-detail);
+    }
+    & :where(.image-link) {
+      display: block;
+      inline-size: fit-content;
+      text-decoration: none;
+    }
+    & :where(.width-wide, .width-full) {
+      max-inline-size: none;
+    }
+    & :where(.width-full) img {
+      inline-size: 100%;
+    }
+    /* An image drawn for one theme (Prelum's figure dark= twin and each diagram): the other one hides. */
+    & :where(.figure-dark, .diagram-dark) {
+      display: none;
+    }
+
+    /* A gallery: two to nine images in an even grid, each cropped to the same frame. */
+    & :where(.gallery-grid) {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(10rem, 100%), 1fr));
+      gap: var(--space-2);
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      & li {
+        margin: 0;
+      }
+      & .image-link {
+        inline-size: 100%;
+      }
+      & img {
+        inline-size: 100%;
+        aspect-ratio: 4 / 3;
+        object-fit: cover;
+      }
+    }
+
+    /* Video and audio: the native players at the column's width; the transcript link under the audio. */
+    & :where(.media video, .media audio) {
+      inline-size: 100%;
+      border-radius: var(--radius-m);
+    }
+    & :where(.media video) {
+      background: var(--sunken);
+    }
+    & :where(.media-transcript) {
+      margin: var(--space-2) 0 0;
+      font-family: var(--ui);
+      font-size: var(--fs-body);
+      /* A link on its own line: a full target, 44px on a touch screen. */
+      & a {
+        display: inline-flex;
+        align-items: center;
+        min-block-size: var(--target);
+      }
+    }
+
+    /* An embed: no request to the service until the reader asks. Until then a card the size of the
+       player it becomes, so nothing moves on the click: the site's own poster (never the service's
+       thumbnail), a play button for a video or a song, and a bar naming the service and the title,
+       drawn by capsomer/player.css. render/enhance swaps in the player; without script the link
+       opens the service. */
+    & :where(.embed) {
+      /* Each service's player: a screen (16:9), a map (4:3), a post (4:5, about the width the
+         services draw a post at), an upright video, or a strip as tall as the service's own player. */
+      --embed-ratio: 16 / 9;
+      --embed-block: auto;
+      --embed-max: none;
+      margin-inline: 0;
+      & > :where(figcaption) {
+        margin-block-start: var(--space-2);
+      }
+    }
+    & :where(.embed-link, .embed iframe) {
+      inline-size: 100%;
+      max-inline-size: var(--embed-max);
+      aspect-ratio: var(--embed-ratio);
+      block-size: var(--embed-block);
+      margin-inline: auto;
+      border-radius: var(--radius-m);
+    }
+    & :where(.embed iframe) {
+      display: block;
+      border: 0;
+      background: var(--sunken);
+    }
+    /* With no poster the box is held at the player's size all the same, so the page does not move on
+       the click, and the service and title sit at its center rather than in a bar along an empty
+       foot, the way click-to-load placeholders name what they will load (Embed Privacy's "content
+       from" placeholder, which keeps the embed's aspect ratio). A song's strip keeps its row. */
+    & :where(.embed:not(.embed-spotify, .embed-soundcloud, .embed-apple-podcasts, .embed-amazon-music) > .embed-link:has(.embed-label):not(:has(img))) {
+      grid-template: 1fr / 1fr;
+      & > :where(.embed-play) {
+        grid-area: 1 / 1;
+        align-self: end;
+        margin-block-end: var(--space-2);
+      }
+      & > :where(.embed-label) {
+        grid-area: 1 / 1;
+        align-self: center;
+        justify-self: center;
+        max-inline-size: 32ch;
+        border-block-start: 0;
+        background: none;
+        text-align: center;
+      }
+      &:has(.embed-play) > :where(.embed-label) {
+        align-self: start;
+        margin-block-start: var(--space-2);
+      }
+      &:has(.embed-play) {
+        grid-template: 1fr 1fr / 1fr;
+        & > :where(.embed-label) {
+          grid-area: 2 / 1;
+        }
+      }
+    }
+    /* HTML stored before Prelum 0.28: the link's text alone, centered, after a play mark. */
+    & :where(.embed-link:not(:has(.embed-label))) {
+      display: flex;
+      border: var(--line-w) solid var(--line-strong);
+      background: var(--sunken);
+      font-family: var(--ui);
+      text-decoration: none;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-4);
+      text-align: center;
+      text-wrap: balance;
+      &::before {
+        content: "";
+        flex: none;
+        inline-size: 0;
+        block-size: 0;
+        margin-inline-end: var(--space-3);
+        border-block: 0.6em solid transparent;
+        border-inline-start: 1em solid currentColor;
+      }
+      &:hover,
+      &[data-force="hover"] {
+        background: var(--accent-soft);
+      }
+      &:active,
+      &[data-force="pressed"] {
+        background: var(--accent-5);
+      }
+    }
+
+    /* The shapes. A map is 4:3. A post (X, Bluesky, Instagram) is 4:5 at most 34rem wide, about the
+       width each service draws one at. A TikTok video stands upright at its player's 9:16. */
+    & :where(.embed-google-maps) {
+      --embed-ratio: 4 / 3;
+    }
+    & :where(.embed-x, .embed-bluesky, .embed-instagram) {
+      --embed-ratio: 4 / 5;
+      --embed-max: 34rem;
+    }
+    & :where(.embed-tiktok) {
+      --embed-ratio: 9 / 16;
+      --embed-max: 20rem;
+    }
+    /* A song or a podcast is a strip at the height of the service's own player, in px because the
+       player lays itself out in px: Spotify 152 (a track or an episode) or 352 (a list), SoundCloud
+       166, Apple Podcasts 175 (an episode) or 450 (a show), Amazon Music 352 (the height in its Share >
+       Embed code). On the strip the
+       poster is a square at the start and the play button sits on it. */
+    & :where(.embed-spotify, .embed-soundcloud, .embed-apple-podcasts, .embed-amazon-music) {
+      --embed-ratio: auto;
+      & :where(.embed-link:has(.embed-label)) {
+        grid-template: 1fr auto / auto 1fr;
+        & > :where(picture, img) {
+          grid-area: 1 / 1 / -1 / 2;
+          inline-size: auto;
+          aspect-ratio: 1;
+        }
+        & > :where(.embed-play) {
+          grid-area: 1 / 1 / -1 / 2;
+          margin-inline: var(--space-4);
+        }
+        & > :where(.embed-label) {
+          grid-area: 1 / 2 / -1 / -1;
+          align-self: center;
+          border-block-start: 0;
+          background: none;
+        }
+      }
+    }
+    & :where(.embed-spotify, .embed-amazon-music) {
+      --embed-block: 352px;
+    }
+    & :where(.embed-spotify:has([data-embed-src*="/embed/track/"], [data-embed-src*="/embed/episode/"], iframe[src*="/embed/track/"], iframe[src*="/embed/episode/"])) {
+      --embed-block: 152px;
+    }
+    & :where(.embed-soundcloud) {
+      --embed-block: 166px;
+    }
+    & :where(.embed-apple-podcasts) {
+      --embed-block: 450px;
+    }
+    & :where(.embed-apple-podcasts:has([data-embed-src*="?i="], iframe[src*="?i="])) {
+      --embed-block: 175px;
+    }
+
+    /* A button link: the family's primary button, at a full control's height. */
+    & :where(.button-row) {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-2);
+    }
+    & :where(.button) {
+      display: inline-flex;
+      align-items: center;
+      min-block-size: var(--control);
+      padding: 0 var(--pad-x);
+      border: var(--line-w) solid var(--primary-line);
+      border-radius: var(--radius-m);
+      background: var(--primary);
+      color: var(--primary-fg);
+      font-family: var(--ui);
+      font-size: var(--fs-body);
+      font-weight: var(--weight-medium);
+      text-decoration: none;
+      &:hover {
+        background: var(--primary-hover);
+        color: var(--primary-fg);
+      }
+    }
+
+    /* A bookmark: a link card with the title, the description and the host. */
+    & :where(.bookmark-link) {
+      display: grid;
+      gap: var(--space-1);
+      padding: var(--space-3) var(--space-4);
+      border: var(--line-w) solid var(--line-strong);
+      border-radius: var(--radius-m);
+      background: var(--surface);
+      color: var(--text);
+      font-family: var(--ui);
+      text-decoration: none;
+      &:hover {
+        border-color: var(--accent);
+        color: var(--text);
+      }
+    }
+    & :where(.bookmark-title) {
+      color: var(--accent-text);
+      font-weight: var(--weight-semibold);
+    }
+    & :where(.bookmark-description) {
+      font-size: var(--fs-body);
+    }
+    & :where(.bookmark-host) {
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: var(--fs-detail);
+    }
+
+    /* Details and the FAQ: a bordered disclosure; each question a heading-weight term. The marker is
+       drawn, not the browser's triangle, which differs in every engine: a chevron that turns, or with
+       data-details="plus" on the article a mono plus and minus (the same width, so the summary does not
+       shift when it opens). data-details="ruled" draws them without a box, a rule above and below,
+       details that follow each other sharing one, the summary in the link color. */
+    & :where(.post-details) {
+      max-inline-size: var(--measure);
+      margin-block: 0 var(--prose-flow, 1em);
+      border: var(--line-w) solid var(--line-strong);
+      border-radius: var(--prose-block-radius, var(--radius-m));
+      & > summary {
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+        min-block-size: var(--target);
+        padding: var(--space-2) var(--space-4);
+        font-family: var(--ui);
+        font-weight: var(--weight-semibold);
+        list-style: none;
+        cursor: pointer;
+        &::-webkit-details-marker {
+          display: none;
+        }
+        &::before {
+          content: "";
+          flex: none;
+          inline-size: 7px;
+          block-size: 7px;
+          margin-inline: var(--space-1) var(--space-1-5);
+          border-inline-end: var(--line-w-mid) solid currentColor;
+          border-block-end: var(--line-w-mid) solid currentColor;
+          transform: rotate(-45deg);
+        }
+      }
+      &[open] > summary::before {
+        transform: rotate(45deg);
+      }
+      & > :not(summary) {
+        margin: 0;
+        padding: 0 var(--space-4) var(--space-3);
+      }
+    }
+    &:where([data-details~="plus"]) :where(.post-details) > summary {
+      align-items: baseline;
+      &::before {
+        content: "+";
+        inline-size: auto;
+        block-size: auto;
+        margin: 0;
+        border: 0;
+        font-family: var(--mono);
+        font-size: 0.875em;
+        font-weight: var(--weight-regular);
+        transform: none;
+      }
+    }
+    &:where([data-details~="plus"]) :where(.post-details[open]) > summary::before {
+      content: "\2212";
+    }
+    &:where([data-details~="ruled"]) :where(.post-details) {
+      border: 0;
+      border-block: var(--line-w) solid var(--line-strong);
+      border-radius: 0;
+      & + .post-details {
+        margin-block-start: calc(-1 * var(--prose-flow, 1em));
+        border-block-start: 0;
+      }
+      & > summary {
+        padding-inline: 0;
+        color: var(--accent-text);
+        font-weight: var(--weight-regular);
+        &:hover {
+          color: var(--accent-hover);
+        }
+      }
+      & > :not(summary) {
+        padding-inline: 0;
+      }
+    }
+    & :where(.faq) {
+      max-inline-size: var(--measure);
+      margin-block: 0 var(--prose-flow, 1em);
+    }
+    & :where(.faq-item) {
+      padding-block: var(--space-3);
+      border-block-start: var(--line-w) solid var(--line);
+      &:last-child {
+        border-block-end: var(--line-w) solid var(--line);
+      }
+      & dt {
+        font-family: var(--ui);
+        font-weight: var(--weight-semibold);
+      }
+      & dd {
+        margin: var(--space-1) 0 0;
+      }
+    }
+
+    /* Footnotes: a rule above and the smaller size. The reference and back links are the link system's. */
+    & :where(.footnotes) {
+      max-inline-size: var(--measure);
+      margin-block-start: 2em;
+      padding-block-start: var(--space-4);
+      border-block-start: var(--line-w) solid var(--line);
+      font-size: 0.9em;
+    }
+  }
+}
