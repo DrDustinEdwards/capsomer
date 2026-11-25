@@ -16,31 +16,30 @@ import { confirm } from "../confirm-dialog/confirm-dialog.ts";
 import { readStored, uid, writeStored } from "../hooks/hooks.ts";
 import { copyChildren, inertDocument } from "../trusted-html/trusted-html.ts";
 import {
-  clock,
   finishRun,
   newRun,
   parseRun,
-  pauseTimer,
-  resetTimer,
   runMarkdown,
   runProgress,
   runRecord,
-  setNote,
-  setRunNote,
   setScale,
   shownStep,
-  startTimer,
   stepBeside,
   tickTimers,
-  timerKey,
-  timerMs,
-  timerRemaining,
-  toggleDone,
   type Run,
   type StepInfo,
-  type StepTimer,
 } from "./checklist-run-model.ts";
 import { reducedMotion } from "../hooks/hooks.ts";
+import { beeper, button, el, screenLock } from "./checklist-run-dom.ts";
+import {
+  applyView,
+  buildTools,
+  drawAllTimers,
+  drawSummary,
+  roll,
+  stepRecordsOf,
+  type RunHost,
+} from "./checklist-run-tools.ts";
 
 export interface RunOptions {
   // What is being run, in the controls' words: "Run this procedure". Default "checklist"; also data-run-noun.
@@ -73,8 +72,6 @@ const DEFAULTS = {
   recordName: "checklist run",
 };
 
-type Drawn = HTMLElement & { draw?: () => void };
-
 // Makes `root` (with data-run-path, data-run-version and data-run-title) runnable. Returns a
 // function that ends the run view and takes every added control away; the stored run stays.
 export function start(root: HTMLElement, options: RunOptions = {}): () => void {
@@ -101,42 +98,9 @@ export function start(root: HTMLElement, options: RunOptions = {}): () => void {
   let oneAtATime = readStored(VIEW_KEY) === "step";
   let shownKey: string | null = null;
   let storageNote = "";
-  let wakeLock: WakeLockSentinel | null = null;
-  let audio: AudioContext | null = null;
   let ticker: number | undefined;
 
-  const el = <K extends keyof HTMLElementTagNameMap>(
-    tag: K,
-    props: Record<string, string> = {},
-    ...kids: Array<Node | string>
-  ) => {
-    const node = document.createElement(tag);
-    for (const [k, v] of Object.entries(props)) node.setAttribute(k, v);
-    node.append(...kids);
-    return node;
-  };
-  const button = (label: string, variant: string, part: string, onClick: () => void) => {
-    const b = el(
-      "button",
-      { type: "button", class: "cap-btn", "data-variant": variant, "data-run": part },
-      label,
-    );
-    b.addEventListener("click", onClick);
-    return b;
-  };
-  const stepText = (li: HTMLElement) =>
-    li.querySelector(o.stepText)?.textContent?.replace(/\s+/g, " ").trim() ?? "";
-  const sectionTitle = (li: HTMLElement) => {
-    const id = li.closest("section[aria-labelledby]")?.getAttribute("aria-labelledby");
-    return (id ? document.getElementById(id)?.textContent : "")?.replace(/\s+/g, " ").trim() ?? "";
-  };
-  const stepRecords = (): StepInfo[] =>
-    stepItems.map((li) => ({
-      key: keyOf(li),
-      number: Number(li.dataset.step),
-      section: sectionTitle(li),
-      text: stepText(li),
-    }));
+  const stepRecords = () => stepRecordsOf(stepItems, o.stepText, keyOf);
   const cannotSave = (error: unknown, why: string) =>
     `This run cannot be saved on this device (${error instanceof Error ? error.message : why}). Download the record before you leave.`;
 
@@ -179,6 +143,16 @@ export function start(root: HTMLElement, options: RunOptions = {}): () => void {
   const live = el("div", { class: "cap-sr-only", role: "status", "aria-live": "polite" });
   const alertRegion = el("div", { class: "cap-sr-only", role: "alert" });
   const bar = el("section", { class: "cap-run-bar", "aria-label": "Run", hidden: "" });
+  const sound = beeper();
+  const awake = screenLock(() =>
+    bar.append(
+      el(
+        "p",
+        { class: "cap-run-warning", role: "note" },
+        "This browser would not keep the screen on; it may sleep between steps.",
+      ),
+    ),
+  );
   const startButton = el(
     "button",
     { type: "button", class: "cap-btn cap-run-start", "data-variant": "primary" },
@@ -197,16 +171,6 @@ export function start(root: HTMLElement, options: RunOptions = {}): () => void {
   function say(message: string) {
     live.textContent = "";
     window.setTimeout(() => (live.textContent = message), 30);
-  }
-
-  // The run's roll blocks (manual.css .cap-roll), one a step: done, lit, or faint. Drawn only.
-  function roll(lit: HTMLElement | undefined) {
-    const blocks = el("ol", { class: "cap-roll cap-run-roll", "aria-hidden": "true" });
-    for (const li of stepItems) {
-      const state = run?.steps[keyOf(li)]?.done ? "done" : li === lit ? "now" : "ahead";
-      blocks.append(el("li", { "data-state": state }));
-    }
-    return blocks;
   }
 
   function renderBar() {
@@ -237,7 +201,7 @@ export function start(root: HTMLElement, options: RunOptions = {}): () => void {
           { class: "cap-run-progress" },
           `Step ${shown?.dataset.step ?? ""}, ${stepKeys.indexOf(shownKey ?? "") + 1} of ${total}; ${done} done`,
         ),
-        roll(shown),
+        roll(host, stepItems, shown),
         prev,
         next,
         toggle,
@@ -247,7 +211,7 @@ export function start(root: HTMLElement, options: RunOptions = {}): () => void {
     } else {
       bar.replaceChildren(
         el("p", { class: "cap-run-progress" }, `${done} of ${total} steps done`),
-        roll(current),
+        roll(host, stepItems, current),
         current
           ? button(`Go to step ${current.dataset.step}`, "primary", "go", () => focusStep(current))
           : el("span", { class: "cap-run-all" }, "Every step is done."),
@@ -256,37 +220,12 @@ export function start(root: HTMLElement, options: RunOptions = {}): () => void {
         stopButton,
       );
     }
-    applyView();
+    applyView(root, host, stepItems, stepKeys, checklist.title, oneAtATime, shownKey);
     if (storageNote) bar.append(el("p", { class: "cap-run-warning", role: "note" }, storageNote));
     for (const li of stepItems) {
       if (li === current) li.setAttribute("aria-current", "step");
       else li.removeAttribute("aria-current");
       li.classList.toggle("cap-run-step-done", run.steps[keyOf(li)]?.done === true);
-    }
-  }
-
-  // One step at a time, or every step; a step shown alone is a cue card under a strip naming the checklist.
-  function applyView() {
-    if (oneAtATime && run) root.dataset.view = "step";
-    else delete root.dataset.view;
-    for (const li of stepItems) {
-      const shown = oneAtATime && keyOf(li) === shownKey;
-      li.classList.toggle("cap-run-step-shown", shown);
-      li.classList.toggle("cap-cue", shown);
-      li.querySelector(":scope > .cap-cue-strip")?.remove();
-      if (shown)
-        li.prepend(
-          el(
-            "p",
-            { class: "cap-cue-strip", "aria-hidden": "true" },
-            el("span", {}, checklist.title),
-            el(
-              "span",
-              {},
-              `Step ${li.dataset.step}, card ${stepKeys.indexOf(keyOf(li)) + 1} of ${stepKeys.length}`,
-            ),
-          ),
-        );
     }
   }
 
@@ -319,123 +258,20 @@ export function start(root: HTMLElement, options: RunOptions = {}): () => void {
     li.querySelector<HTMLElement>(".cap-run-done input")?.focus({ preventScroll: true });
   }
 
-  function timerBox(li: HTMLElement, step: number, index: number, timer: StepTimer): HTMLElement {
-    const key = timerKey(keyOf(li), index);
-    timerStep.set(key, String(step));
-    const ms = timerMs(timer);
-    const box: Drawn = el("div", { class: "cap-run-timer", "data-timer": key });
-    if (ms === null) {
-      box.append(el("span", {}, `${timer.text} (not a timer this page can run)`));
-      return box;
-    }
-    const clockEl = el("span", { class: "cap-run-clock", role: "timer" }, "");
-    const act = el("button", {
-      type: "button",
-      class: "cap-btn",
-      "data-variant": "secondary",
-      "data-run": "timer",
-    });
-    const reset = el(
-      "button",
-      { type: "button", class: "cap-btn", "data-variant": "quiet", "data-run": "reset" },
-      "Reset",
-    );
-    const label = timer.label ? `${timer.label}, ${timer.text}` : timer.text;
-    box.draw = () => {
-      if (!run) return;
-      const t = run.timers[key];
-      const remaining = timerRemaining(run, key, Date.now());
-      box.dataset.state = t?.state ?? "idle";
-      clockEl.textContent = clock(remaining ?? ms);
-      // The visible words begin the name (WCAG 2.5.3); the step it belongs to follows, unseen.
-      act.replaceChildren(
-        !t
-          ? `Start ${label}`
-          : t.state === "running"
-            ? "Pause"
-            : t.state === "paused"
-              ? "Resume"
-              : "Done: start again",
-        el("span", { class: "cap-sr-only" }, `(step ${step})`),
-      );
-      reset.hidden = !t;
-    };
-    act.addEventListener("click", () => {
-      if (!run) return;
-      const t = run.timers[key];
-      ensureAudio();
-      if (t?.state === "running") update(pauseTimer(run, key, Date.now()));
-      else if (t?.state === "done") update(startTimer(resetTimer(run, key), key, ms, Date.now()));
-      else update(startTimer(run, key, ms, Date.now()));
-      drawAllTimers();
-      startTicker();
-    });
-    reset.addEventListener("click", () => {
-      if (run) update(resetTimer(run, key));
-      drawAllTimers();
-    });
-    box.append(clockEl, act, reset);
-    box.draw();
-    return box;
-  }
-
-  function drawAllTimers() {
-    for (const box of root.querySelectorAll<Drawn>(".cap-run-timer")) box.draw?.();
-  }
-
   const flushes: Array<() => void> = [];
-
-  function buildTools(li: HTMLElement) {
-    const step = Number(li.dataset.step);
-    const key = keyOf(li);
-    const timers: StepTimer[] = li.dataset.timers ? JSON.parse(li.dataset.timers) : [];
-    const done = el("input", { type: "checkbox", id: `cap-run-done-${key}` });
-    done.checked = run?.steps[key]?.done === true;
-    done.addEventListener("change", () => {
-      if (!run) return;
-      update(toggleDone(run, key, Date.now()));
-      say(done.checked ? `Step ${step} done.` : `Step ${step} not done.`);
-    });
-    const note = el("textarea", {
-      class: "cap-input",
-      rows: "2",
-      id: `cap-run-note-${key}`,
-      maxlength: "2000",
-      "aria-label": `Note for step ${step}`,
-    });
-    note.value = run?.steps[key]?.note ?? "";
-    let pending: number | undefined;
-    const flush = () => {
-      window.clearTimeout(pending);
-      if (run) update(setNote(run, key, note.value));
-    };
-    flushes.push(flush);
-    note.addEventListener("input", () => {
-      window.clearTimeout(pending);
-      pending = window.setTimeout(flush, 400);
-    });
-    note.addEventListener("blur", flush);
-    const tools = el(
-      "div",
-      { class: "cap-run-tools" },
-      el(
-        "label",
-        { class: "cap-run-done", for: done.id },
-        done,
-        el("span", {}, `Step ${step} done`),
-      ),
-      ...timers.map((t, i) => timerBox(li, step, i, t)),
-      el(
-        "details",
-        { class: "cap-run-note" },
-        el("summary", {}, note.value.trim() ? "Note (written)" : "Add a note"),
-        note,
-      ),
-    );
-    const text = li.querySelector(o.stepText);
-    if (text) text.after(tools);
-    else li.append(tools);
-  }
+  const drawAll = () => drawAllTimers(root);
+  const host: RunHost = {
+    stepText: o.stepText,
+    run: () => run,
+    update,
+    say,
+    keyOf,
+    timerStep,
+    flushes,
+    sound,
+    redraw: drawAll,
+    startTicker,
+  };
 
   function removeTools() {
     for (const tools of root.querySelectorAll(".cap-run-tools")) tools.remove();
@@ -443,26 +279,6 @@ export function start(root: HTMLElement, options: RunOptions = {}): () => void {
       li.removeAttribute("aria-current");
       li.classList.remove("cap-run-step-done");
     }
-  }
-
-  function ensureAudio() {
-    try {
-      audio ??= new AudioContext();
-      if (audio.state === "suspended") void audio.resume();
-    } catch {
-      audio = null;
-    }
-  }
-
-  function beep() {
-    if (!audio) return;
-    const osc = audio.createOscillator();
-    const gain = audio.createGain();
-    gain.gain.value = 0.15;
-    osc.frequency.value = 880;
-    osc.connect(gain).connect(audio.destination);
-    osc.start();
-    osc.stop(audio.currentTime + 0.35);
   }
 
   function tick() {
@@ -475,10 +291,10 @@ export function start(root: HTMLElement, options: RunOptions = {}): () => void {
         alertRegion.textContent = `The timer for step ${step} has finished.`;
         document.title = `Timer done, step ${step}: ${checklist.title}`;
         navigator.vibrate?.([220, 100, 220]);
-        beep();
+        sound.beep();
       }
     }
-    drawAllTimers();
+    drawAll();
     if (!Object.values(run.timers).some((t) => t.state === "running")) {
       window.clearInterval(ticker);
       ticker = undefined;
@@ -489,34 +305,9 @@ export function start(root: HTMLElement, options: RunOptions = {}): () => void {
     if (ticker === undefined) ticker = window.setInterval(tick, 500);
   }
 
-  async function keepAwake() {
-    try {
-      wakeLock = (await navigator.wakeLock?.request("screen")) ?? null;
-    } catch {
-      // Not every browser lets a page hold the screen. Said, not hidden.
-      wakeLock = null;
-      bar.append(
-        el(
-          "p",
-          { class: "cap-run-warning", role: "note" },
-          "This browser would not keep the screen on; it may sleep between steps.",
-        ),
-      );
-    }
-  }
-
-  async function letSleep() {
-    try {
-      await wakeLock?.release();
-    } catch {
-      // Already released by the browser.
-    }
-    wakeLock = null;
-  }
-
   const onVisible = () => {
     if (document.visibilityState === "visible" && run && !run.finishedAt) {
-      void keepAwake();
+      void awake.hold();
       tick();
     }
   };
@@ -581,12 +372,12 @@ export function start(root: HTMLElement, options: RunOptions = {}): () => void {
     bar.hidden = false;
     summary.hidden = true;
     removeTools();
-    for (const li of stepItems) buildTools(li);
+    for (const li of stepItems) buildTools(host, li);
     save();
     renderBar();
-    drawAllTimers();
+    drawAll();
     if (Object.values(run.timers).some((t) => t.state === "running")) startTicker();
-    void keepAwake();
+    void awake.hold();
     say(existing ? "Run resumed." : "Run started.");
     const stored = run.scale;
     if (stored !== null && scaleField && Number(scaleField.value) !== stored && scaleForm) {
@@ -611,7 +402,7 @@ export function start(root: HTMLElement, options: RunOptions = {}): () => void {
   function end() {
     window.clearInterval(ticker);
     ticker = undefined;
-    void letSleep();
+    void awake.release();
     for (const flush of flushes.splice(0)) flush();
     removeTools();
     delete root.dataset.run;
@@ -627,76 +418,21 @@ export function start(root: HTMLElement, options: RunOptions = {}): () => void {
     startButton.textContent = `Run this ${o.noun}`;
   }
 
-  function download(name: string, text: string, type: string) {
-    const url = URL.createObjectURL(new Blob([text], { type }));
-    const a = el("a", { href: url, download: name });
-    document.body.append(a);
-    a.click();
-    a.remove();
-    URL.revokeObjectURL(url);
-  }
-
   function finish() {
     if (!run) return;
     update(finishRun(run, Date.now()));
-    void letSleep();
-    const current = run;
-    const slug = checklist.path.split("/").filter(Boolean).pop() ?? "run";
-    const stamp = new Date(current.finishedAt ?? Date.now()).toISOString().slice(0, 10);
-    const runNote = el("textarea", {
-      class: "cap-input",
-      rows: "3",
-      id: summaryNoteId,
-      maxlength: "4000",
+    void awake.release();
+    drawSummary(summary, { headingId: summaryHeadingId, noteId: summaryNoteId }, host, {
+      path: checklist.path,
+      stepKeys,
+      stepRecords,
+      forget,
+      record: (r) =>
+        o.toRecord
+          ? o.toRecord(r, stepRecords(), location.origin)
+          : runRecord(r, stepRecords(), o.recordName),
+      markdown: (r) => runMarkdown(r, stepRecords(), o.markdownLabel),
     });
-    runNote.value = current.note;
-    runNote.addEventListener("input", () => run && update(setRunNote(run, runNote.value)));
-    const { done, total } = runProgress(current, stepKeys);
-    const record = () =>
-      run &&
-      (o.toRecord
-        ? o.toRecord(run, stepRecords(), location.origin)
-        : runRecord(run, stepRecords(), o.recordName));
-    summary.replaceChildren(
-      el("h2", { id: summaryHeadingId }, "Run record"),
-      el(
-        "p",
-        {},
-        `${done} of ${total} steps done${current.scale !== null ? `, at scale ${current.scale}` : ""}. Saved on this device only; nothing was sent anywhere.`,
-      ),
-      el("label", { for: runNote.id }, "Note on the whole run"),
-      runNote,
-      el(
-        "p",
-        { class: "cap-run-actions" },
-        button(
-          "Download as text",
-          "secondary",
-          "download",
-          () =>
-            run &&
-            download(
-              `${slug}-${stamp}.md`,
-              runMarkdown(run, stepRecords(), o.markdownLabel),
-              "text/markdown",
-            ),
-        ),
-        button(
-          "Download as JSON",
-          "secondary",
-          "download",
-          () =>
-            run &&
-            download(
-              `${slug}-${stamp}.json`,
-              `${JSON.stringify(record(), null, 2)}\n`,
-              "application/json",
-            ),
-        ),
-        button("Print", "secondary", "print", () => window.print()),
-        button("Start over", "quiet", "again", forget),
-      ),
-    );
     summary.hidden = false;
     summary.scrollIntoView({ block: "start" });
     say("Run finished. The record is ready to download or print.");

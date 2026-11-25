@@ -4,237 +4,28 @@
 // The list owns no storage: every finished move is a `cap:sortable-change` event with the
 // new order, and the host saves it. No framework; the React wrapper uses the same functions.
 
-import { clamp } from "../hooks/hooks.ts";
-
-// Pure functions.
-
-export interface SortMove {
-  id: string;
-  // Zero-based positions, before and after.
-  from: number;
-  to: number;
-}
-
-// The order with `id` moved to position `to` (clamped to the list).
-export function moveId(order: readonly string[], id: string, to: number): string[] {
-  const from = order.indexOf(id);
-  if (from < 0) return [...order];
-  const out = order.filter((x) => x !== id);
-  out.splice(clamp(to, 0, out.length), 0, id);
-  return out;
-}
-
-export interface Box {
-  top: number;
-  left: number;
-  width: number;
-  height: number;
-}
-
-// Where an item dragged to (x, y) belongs, from the boxes of the other items in their
-// current order. Rows: how many other rows have their middle above the pointer. Cards (a
-// wrapping grid): how many other cards come before the pointer in reading order, that is
-// above its line, or on its line and left of it. Counting the others, never the dragged
-// item, keeps the answer steady as the list rearranges under the pointer.
-export function indexAtPoint(
-  others: readonly Box[],
-  x: number,
-  y: number,
-  layout: Layout = "rows",
-): number {
-  let n = 0;
-  for (const b of others) {
-    const midY = b.top + b.height / 2;
-    if (layout !== "cards") {
-      if (midY < y) n += 1;
-    } else if (b.top + b.height <= y) n += 1;
-    else if (b.top <= y && b.left + b.width / 2 < x) n += 1;
-  }
-  return n;
-}
-
-// "rows": one per line. "cards": a wrapping grid. "stack": one per line, each a card with its handle and
-// buttons on a head line over its content (a form row, a step with its own fields).
-export type Layout = "rows" | "cards" | "stack";
-
-// A set of lists whose items can move between them: list id to the item ids in order.
-export type Lists = Record<string, string[]>;
-
-// Where an id is: its list and its zero-based place in it, or null.
-export function locate(lists: Lists, id: string): { list: string; index: number } | null {
-  for (const [list, ids] of Object.entries(lists)) {
-    const index = ids.indexOf(id);
-    if (index >= 0) return { list, index };
-  }
-  return null;
-}
-
-// The lists with `id` taken out of wherever it is and put in `toList` at `to` (clamped). Neither
-// the input nor an unknown id's lists are changed.
-export function moveBetween(lists: Lists, id: string, toList: string, to: number): Lists {
-  if (!locate(lists, id) || !(toList in lists)) return lists;
-  const out: Lists = {};
-  for (const [list, ids] of Object.entries(lists)) out[list] = ids.filter((x) => x !== id);
-  const target = out[toList] ?? [];
-  target.splice(clamp(to, 0, target.length), 0, id);
-  return out;
-}
-
-// The place a key moves an item that is up to, across lists: the position in its own list as
-// keyTarget gives it, and at either end of the list the same arrow goes on into the end of the
-// list before it or the start of the one after. `sizes` are the lengths of the lists in order,
-// `list` the position of the item's list among them. Null for a key that does not move it.
-export function keyMove(
-  key: string,
-  at: { list: number; index: number },
-  sizes: readonly number[],
-): { list: number; index: number } | null {
-  const count = sizes[at.list] ?? 0;
-  const to = keyTarget(key, at.index, count);
-  if (to === null) return null;
-  if (to !== at.index) return { list: at.list, index: to };
-  const back = key === "ArrowUp" || key === "ArrowLeft";
-  const forward = key === "ArrowDown" || key === "ArrowRight";
-  if (back && at.index === 0 && at.list > 0)
-    return { list: at.list - 1, index: sizes[at.list - 1] ?? 0 };
-  if (forward && at.index === count - 1 && at.list < sizes.length - 1)
-    return { list: at.list + 1, index: 0 };
-  return at;
-}
-
-// What a polite live region says. Positions are one-based here, as people count.
-export const sortText = {
-  help: "To move an item with the keyboard, press Space or Enter on its handle, move it with the arrow keys, and press Space or Enter to drop it. Escape puts it back.",
-  lift: (label: string, pos: number, count: number) =>
-    `Picked up ${label}. Position ${pos} of ${count}. Arrow keys move it, Space drops it, Escape puts it back.`,
-  over: (label: string, pos: number, count: number) => `${label}: position ${pos} of ${count}.`,
-  drop: (label: string, pos: number, count: number, moved: boolean) =>
-    moved
-      ? `Dropped ${label} at position ${pos} of ${count}.`
-      : `Dropped ${label}. It stays at position ${pos} of ${count}.`,
-  cancel: (label: string, pos: number, count: number) =>
-    `Put ${label} back at position ${pos} of ${count}.`,
-  step: (label: string, pos: number, count: number) =>
-    `Moved ${label} to position ${pos} of ${count}.`,
-  // Into another list of the same group: "Moved Abstract 4 to Posters: position 2 of 5."
-  moveTo: (label: string, list: string, pos: number, count: number) =>
-    `Moved ${label} to ${list}: position ${pos} of ${count}.`,
-  removed: (label: string, left: number) =>
-    left === 0 ? `Removed ${label}. The list is empty.` : `Removed ${label}. ${left} left.`,
-  added: (label: string, count: number) => `Added ${label}. ${count} in the list.`,
-};
-
-// What a host may say in its own words: any of the sentences above.
-export type SortMessages = typeof sortText;
-
-// The position a key moves a lifted item to, or null for a key that does not move it.
-// In cards every arrow is "previous" or "next" in reading order.
-export function keyTarget(key: string, index: number, count: number): number | null {
-  if (key === "ArrowUp" || key === "ArrowLeft") return Math.max(0, index - 1);
-  if (key === "ArrowDown" || key === "ArrowRight") return Math.min(count - 1, index + 1);
-  if (key === "Home") return 0;
-  if (key === "End") return count - 1;
-  return null;
-}
-
-// A pointer drag, shared with the tree. It starts once the pointer has moved a few pixels
-// (so a click stays a click), follows the pointer, and ends on release (drop), or on
-// Escape or a canceled pointer (cancel). After a drag, the click the release makes is
-// swallowed, so a dragged link is not followed.
-
-export interface DragHandlers {
-  onStart(): void;
-  onMove(x: number, y: number): void;
-  onDrop(x: number, y: number): void;
-  onCancel(): void;
-}
-
-export const DRAG_THRESHOLD = 4;
-
-// Puts `node` into `parent` before `ref` (null: at the end). Where the browser has moveBefore (Chrome 133, Firefox
-// 144; not Safari) the node keeps its state while it moves: focus, a running transition, an open popover. Elsewhere
-// it is the usual remove and insert, after which the caller puts focus back (Modern Web Guidance,
-// move-dom-element-without-losing-state).
-export function moveNode(parent: Element, node: Element, ref: Node | null): void {
-  const p = parent as Element & { moveBefore?: (node: Node, child: Node | null) => void };
-  if (typeof p.moveBefore === "function" && node.isConnected && parent.isConnected) {
-    try {
-      p.moveBefore(node, ref);
-      return;
-    } catch {
-      /* a move across documents or shadow roots throws: fall back */
-    }
-  }
-  parent.insertBefore(node, ref);
-}
-
-export function startPointerDrag(
-  down: PointerEvent,
-  h: DragHandlers,
-  threshold = DRAG_THRESHOLD,
-): void {
-  if (down.button !== 0) return;
-  const x0 = down.clientX;
-  const y0 = down.clientY;
-  let started = false;
-  const off = () => {
-    window.removeEventListener("pointermove", move, true);
-    window.removeEventListener("pointerup", up, true);
-    window.removeEventListener("pointercancel", cancel, true);
-    window.removeEventListener("keydown", key, true);
-  };
-  const swallowClick = () => {
-    const stop = (e: Event) => {
-      e.preventDefault();
-      e.stopPropagation();
-    };
-    window.addEventListener("click", stop, { capture: true, once: true });
-    setTimeout(() => window.removeEventListener("click", stop, true), 0);
-  };
-  // Only the pointer that started the drag moves it: a second finger or a pen is ignored. Capturing it keeps the
-  // drag's events coming when the pointer leaves the window (Modern Web Guidance, drag-and-drop).
-  const id = down.pointerId;
-  const holder = down.target instanceof Element ? down.target : null;
-  try {
-    holder?.setPointerCapture(id);
-  } catch {
-    /* a pointer already released cannot be captured */
-  }
-  const move = (e: PointerEvent) => {
-    if (e.pointerId !== id) return;
-    if (!started) {
-      if (Math.hypot(e.clientX - x0, e.clientY - y0) < threshold) return;
-      started = true;
-      h.onStart();
-    }
-    e.preventDefault();
-    h.onMove(e.clientX, e.clientY);
-  };
-  const up = (e: PointerEvent) => {
-    if (e.pointerId !== id) return;
-    off();
-    if (!started) return;
-    swallowClick();
-    h.onDrop(e.clientX, e.clientY);
-  };
-  const cancel = (e: PointerEvent) => {
-    if (e.pointerId !== id) return;
-    off();
-    if (started) h.onCancel();
-  };
-  const key = (e: KeyboardEvent) => {
-    if (e.key !== "Escape" || !started) return;
-    e.preventDefault();
-    e.stopPropagation();
-    off();
-    window.addEventListener("pointerup", swallowClick, { capture: true, once: true });
-    h.onCancel();
-  };
-  window.addEventListener("pointermove", move, true);
-  window.addEventListener("pointerup", up, true);
-  window.addEventListener("pointercancel", cancel, true);
-  window.addEventListener("keydown", key, true);
-}
+import {
+  type SortMove,
+  type Box,
+  indexAtPoint,
+  type Layout,
+  type Lists,
+  keyMove,
+  sortText,
+} from "./sortable-list-model.ts";
+import { moveNode, startPointerDrag } from "./sortable-drag.ts";
+export { DRAG_THRESHOLD, moveNode, startPointerDrag } from "./sortable-drag.ts";
+export type { DragHandlers } from "./sortable-drag.ts";
+export {
+  moveId,
+  indexAtPoint,
+  locate,
+  moveBetween,
+  keyMove,
+  sortText,
+  keyTarget,
+} from "./sortable-list-model.ts";
+export type { SortMove, Box, Layout, Lists, SortMessages } from "./sortable-list-model.ts";
 
 const boxOf = (el: Element): Box => {
   const r = el.getBoundingClientRect();
