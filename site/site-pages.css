@@ -1,0 +1,441 @@
+/* The accessibility statement (site/accessibility.ts): Prelum's sections in a reading measure. */
+.statement-page {
+  padding-block: var(--space-6) var(--space-9);
+
+  & > * {
+    max-width: 48rem;
+  }
+}
+.statement-title {
+  margin-block: 0 var(--space-5);
+}
+
+/* The search page (site/search.ts): the form, the count said aloud, then each result's title, the
+   heading it matched and the words around the match. */
+.search-page {
+  display: grid;
+  gap: var(--space-5);
+  padding-block: var(--space-6) var(--space-9);
+
+  & > * {
+    max-width: 48rem;
+  }
+}
+.search-title {
+  margin: 0;
+}
+.search-form {
+  display: grid;
+  gap: var(--space-2);
+}
+.search-row {
+  display: flex;
+  gap: var(--space-3);
+
+  & > .cap-input {
+    flex: 1;
+    min-width: 0;
+  }
+}
+.search-results {
+  display: grid;
+  gap: var(--space-5);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  & > li {
+    display: grid;
+    gap: var(--space-1);
+  }
+  & a {
+    font-weight: var(--weight-semibold);
+  }
+  & p {
+    margin: 0;
+    color: var(--muted);
+  }
+}
+.search-results mark {
+  background: none;
+  color: inherit;
+  font-weight: var(--weight-bold);
+}
+
+/* The network board (site/network-board.ts): one checkerboard after Bridget Riley's Movement in Squares (1961), each
+   network site a stretch in its family's primary, a site in trouble lit amber or red with its columns squeezed, and a
+   bar under each stretch with the site's name. Two rows of three on a narrow page. */
+.home-net {
+  margin-block: var(--space-7) 0;
+}
+.home-net-board {
+  display: flex;
+  block-size: clamp(144px, 18vw, 240px);
+
+  & > span {
+    display: flex;
+    flex: 1 1 0;
+    --net-fill: var(--primary);
+  }
+  & > span[data-state="caution"] {
+    --net-fill: var(--warn);
+  }
+  & > span[data-state="warning"] {
+    --net-fill: var(--crit);
+  }
+  /* A column is eight squares, every other one filled: a two-square tile, a quarter of the board's height. */
+  & i {
+    flex: 1 1 0;
+    background: linear-gradient(transparent 50%, var(--net-fill) 0) 0 0 / 100% 25%;
+  }
+  & i[data-lead] {
+    background-image: linear-gradient(var(--net-fill) 50%, transparent 0);
+  }
+  /* In trouble the stretch keeps its width and its columns narrow toward the middle (0.15 + distance / 3). */
+  & > span:not([data-state="normal"]) i {
+    &:nth-child(1),
+    &:nth-child(7) {
+      flex-grow: 1.15;
+    }
+    &:nth-child(2),
+    &:nth-child(6) {
+      flex-grow: 0.8167;
+    }
+    &:nth-child(3),
+    &:nth-child(5) {
+      flex-grow: 0.4833;
+    }
+    &:nth-child(4) {
+      flex-grow: 0.15;
+    }
+  }
+}
+.home-net-bar {
+  display: grid;
+  grid-auto-columns: minmax(0, 1fr);
+  grid-auto-flow: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  & li {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-1) var(--space-2);
+    min-block-size: 56px;
+    padding: var(--space-2) var(--space-3) var(--space-3);
+    background: var(--primary);
+    color: var(--primary-fg);
+  }
+  & li[data-state="caution"] {
+    background: var(--warn);
+    color: var(--surface);
+  }
+  & li[data-state="warning"] {
+    background: var(--crit);
+    color: var(--surface);
+  }
+  & a {
+    color: inherit;
+    font-weight: var(--weight-bold);
+    text-decoration: none;
+    overflow-wrap: anywhere;
+  }
+  /* The pointer outlines the site's part of the bar, as the footer's site tiles do; no underline in the network. */
+  & li:has(a:hover) {
+    box-shadow: inset 0 0 0 var(--line-w-bar) currentColor;
+  }
+}
+.home-net-state {
+  padding: 1px var(--space-2);
+  background: var(--surface);
+  color: var(--text);
+  font: var(--weight-bold) var(--fs-label) / var(--leading-compact) var(--mono);
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+}
+.home-net-narrow {
+  display: none;
+  gap: var(--space-3);
+}
+@media (max-width: 640px) {
+  .home-net-wide {
+    display: none;
+  }
+  .home-net-narrow {
+    display: grid;
+  }
+  .home-net-bar li {
+    padding-inline: var(--space-2);
+    font-size: var(--fs-body);
+  }
+}
+/* Forced colors drop the fills: the board goes, and the bar keeps its names and states in system colors. */
+@media (forced-colors: active) {
+  .home-net-board {
+    display: none;
+  }
+  .home-net-bar li {
+    border: var(--line-w) solid CanvasText;
+  }
+}
+
+/* A generated line under a table (an API table's "and every attribute of <button>"). */
+.comp-note {
+  margin: var(--space-2) 0 0;
+  color: var(--muted);
+  font-size: var(--fs-detail);
+}
+.comp-main h3 {
+  margin-block: var(--space-5) var(--space-3);
+}
+
+/* The Themes pages (site/themes.ts): the controls over the board, the board's tiles in a grid that folds to one
+   column on its own width, and each token's sample in its table. */
+.th-stage {
+  display: grid;
+  gap: var(--space-4);
+  padding-block-start: 0 !important;
+}
+.th-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4) var(--space-6);
+  align-items: end;
+
+  & .cap-field {
+    min-inline-size: 12rem;
+  }
+}
+.th-pair {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr));
+  gap: var(--space-4);
+}
+.th-board {
+  container-type: inline-size;
+  padding: var(--space-5);
+  border: var(--line-w) solid var(--line);
+  border-radius: var(--radius-xl);
+  background: var(--ground);
+  color: var(--text);
+}
+.th-board-cap {
+  margin: 0 0 var(--space-3);
+  color: var(--muted);
+  font-size: var(--fs-label);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-widest);
+  text-transform: uppercase;
+}
+.th-board-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-4);
+
+  @container (min-width: 44rem) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+.th-tile {
+  display: grid;
+  gap: var(--space-4);
+  align-content: start;
+  min-inline-size: 0;
+  padding: var(--space-5);
+  border: var(--line-w) solid var(--line);
+  border-radius: var(--radius-l);
+  background: var(--surface);
+
+  & .cap-tabs-panel {
+    display: grid;
+    gap: var(--space-4);
+    padding-block-start: var(--space-4);
+  }
+  & .cap-tabs-panel[hidden] {
+    display: none;
+  }
+}
+.th-wide {
+  grid-column: 1 / -1;
+}
+.th-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  align-items: center;
+}
+.th-val {
+  display: inline-flex;
+  gap: var(--space-2);
+  align-items: center;
+}
+.th-demo {
+  display: inline-block;
+  flex: none;
+  vertical-align: middle;
+
+  &[data-kind="color"] {
+    inline-size: 1.25rem;
+    block-size: 1.25rem;
+    border: var(--line-w) solid var(--line);
+    border-radius: var(--radius-s);
+  }
+  &[data-kind="radius"],
+  &[data-kind="shadow"] {
+    inline-size: 2.5rem;
+    block-size: 2.5rem;
+    border: var(--line-w) solid var(--line-strong);
+    background: var(--surface);
+  }
+  &[data-kind="space"] {
+    block-size: 0.75rem;
+    background: var(--accent);
+  }
+  &[data-kind="type"]::before {
+    content: "Aa";
+    line-height: var(--leading-none);
+  }
+  &[data-kind="none"] {
+    display: none;
+  }
+}
+
+/* Icons and Colors (site/swatches.ts). */
+.sw-page .comp-main {
+  max-inline-size: none;
+}
+.sw-tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4) var(--space-6);
+  align-items: end;
+
+  & .cap-field {
+    min-inline-size: min(100%, 18rem);
+  }
+}
+.sw-icons {
+  --icon-size: var(--title-3);
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(7.5rem, 1fr));
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.sw-icon {
+  display: grid;
+  gap: var(--space-2);
+  place-items: center;
+  inline-size: 100%;
+  min-block-size: 6rem;
+  padding: var(--space-3);
+  border: var(--line-w) solid var(--line);
+  border-radius: var(--radius-l);
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-size: var(--fs-detail);
+  overflow-wrap: anywhere;
+  cursor: pointer;
+
+  &:hover {
+    background: var(--raised);
+  }
+  &[data-copied=""] {
+    border-color: var(--accent);
+  }
+}
+.sw-family {
+  display: grid;
+  gap: var(--space-3);
+}
+.sw-scale {
+  table-layout: fixed;
+  min-inline-size: 60rem;
+
+  & th,
+  & td {
+    padding: var(--space-1);
+    vertical-align: bottom;
+  }
+  & thead th {
+    font-weight: var(--weight-regular);
+  }
+}
+.sw-n {
+  display: block;
+  font-weight: var(--weight-semibold);
+}
+.sw-job {
+  display: block;
+  color: var(--muted);
+  font-size: var(--fs-label);
+  line-height: var(--leading-tight);
+}
+.sw-step {
+  display: grid;
+  gap: var(--space-1);
+  inline-size: 100%;
+  min-inline-size: 4.5rem;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--text);
+  font: inherit;
+  font-size: var(--fs-label);
+  text-align: start;
+  cursor: pointer;
+
+  & code {
+    font-size: inherit;
+  }
+  &[data-copied=""] code {
+    color: var(--accent-text);
+    font-weight: var(--weight-semibold);
+  }
+}
+.sw-chip {
+  display: block;
+  block-size: 2.5rem;
+  border: var(--line-w) solid var(--line);
+  border-radius: var(--radius-m);
+}
+
+/* A component's Accessibility and Keyboard docs, rendered by Prelum: the reading context with the UI face and the family
+   table, so a doc reads as it did before Prelum rendered it (data table: components/table/table.css). */
+.site-doc {
+  --prose: var(--ui);
+  --prose-heading-face: var(--ui);
+  font-family: var(--ui);
+  font-size: var(--fs-body);
+
+  & .table-scroll {
+    max-inline-size: 100%;
+  }
+  & table {
+    inline-size: 100%;
+    border-collapse: collapse;
+    font-size: var(--fs-body);
+  }
+  & thead th {
+    padding: calc(var(--pad-y) + var(--space-1)) var(--pad-x);
+    border-bottom: var(--line-w) solid var(--line);
+    color: var(--muted);
+    font-family: var(--ui);
+    font-size: var(--fs-label);
+    font-weight: var(--weight-semibold);
+    letter-spacing: var(--tracking-widest);
+    text-align: start;
+    text-transform: uppercase;
+  }
+  & tbody :is(td, th) {
+    padding: calc(var(--pad-y) + var(--space-1)) var(--pad-x);
+    border-bottom: var(--line-w) solid var(--line);
+    text-align: start;
+    vertical-align: middle;
+  }
+}

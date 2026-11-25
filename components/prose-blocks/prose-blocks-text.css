@@ -1,0 +1,342 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+@layer cap.components {
+  :where([data-context="prose"]) {
+    /* A post is often a grid or flex item, whose min-width: auto would let a wide table or code block
+       widen the page instead of scrolling in its own box. */
+    min-inline-size: 0;
+    overflow-wrap: break-word;
+
+    & > :first-child {
+      margin-block-start: 0;
+    }
+    & > :last-child {
+      margin-block-end: 0;
+    }
+
+    /* A site's reading look, by token. Each one defaults to the family's look, so a site that shares
+       it sets none; a site with its own (bsw, foxhound, foxing, germomics) sets them where it puts
+       data-context="prose". The size, leading and face are the context's own: --fs-prose, --leading
+       and --prose. Links are the link system's (--accent-text, --link-weight, --link-decoration).
+         --prose-ink           body text (a muted body: var(--muted))
+         --prose-strong-ink    bold text, for a muted body
+         --prose-heading-face, --prose-heading-ink, --prose-heading-weight, --prose-heading-space (above),
+         --prose-heading-gap (below), --prose-heading-measure (css/prose.css: h1 to h3's line, 30ch)
+         --prose-link-ink, --prose-link-hover-ink, --prose-link-hover-decoration (css/prose.css)
+         --prose-h2-size, --prose-h3-size
+         --prose-flow          the space after each block
+         --prose-marker        list bullets and numbers (their color)
+         --prose-bullets, --prose-numbers   the list-style of a plain list and a numbered one (none
+                               for a site whose lists have always been bare; a numbered step then
+                               needs its number in the words)
+         --prose-item-space    the space after each list item
+         --prose-list-indent, --prose-item-indent   a list's indent (1.5em) and an item's own, after
+                               its marker (0)
+         --prose-quote-line, --prose-quote-ink, --prose-quote-style
+         --prose-code-bg, --prose-code-ink, --prose-code-radius   inline code
+         --prose-pre-bg, --prose-pre-pad (one length), --prose-block-radius    code blocks, callouts, details
+         --prose-image-radius
+         --prose-table-rule    the rule under a table's head
+       A color token left unset leaves the color to inherit, as it does today (an unset custom property
+       makes the declaration unset). */
+    color: var(--prose-ink);
+    & :where(p, ul, ol, blockquote, figure, pre, table) {
+      margin-block-end: var(--prose-flow, 1em);
+    }
+    /* The heading face, sizes and space are css/prose.css's (with their tokens); the ink and weight here. */
+    & :where(h1, h2, h3) {
+      color: var(--prose-heading-ink);
+      font-weight: var(--prose-heading-weight, var(--weight-bold));
+    }
+    & :where(strong, b) {
+      color: var(--prose-strong-ink);
+    }
+    & :where(h4, h5, h6) {
+      margin-block: 1.4em 0.5em;
+      color: var(--prose-heading-ink);
+      font-family: var(--ui);
+      font-size: 1em;
+      line-height: var(--leading-snug);
+    }
+    & :where(ul, ol) {
+      padding-inline-start: var(--prose-list-indent, 1.5em);
+    }
+    /* Markers held here, since a site's reset may strip them and a step read as "repeat steps 1 to 4"
+       needs its number. A classed list is a block's own (a task list, a gallery) and keeps its look. */
+    & :where(ul:not([class])) {
+      list-style: var(--prose-bullets, disc);
+    }
+    & :where(ul:not([class]) ul:not([class])) {
+      list-style: var(--prose-bullets, circle);
+    }
+    & :where(ol:not([class])) {
+      list-style: var(--prose-numbers, decimal);
+    }
+    & :where(li)::marker {
+      color: var(--prose-marker);
+    }
+    & :where(li) {
+      margin-block-end: var(--prose-item-space, 0.3em);
+      padding-inline-start: var(--prose-item-indent, 0);
+    }
+    & :where(li > ul, li > ol) {
+      margin-block: var(--prose-item-space, 0.3em) 0;
+    }
+    & :where(blockquote) {
+      margin-inline: 0;
+      padding-inline-start: var(--space-4);
+      border-inline-start: var(--line-w-bar) solid var(--prose-quote-line, var(--line-strong));
+      color: var(--prose-quote-ink, var(--muted));
+      font-style: var(--prose-quote-style);
+    }
+    & :where(hr) {
+      margin-block: 2em;
+      border: 0;
+      border-block-start: var(--line-w) solid var(--line-strong);
+    }
+    & :where(img, video) {
+      display: block;
+      max-inline-size: 100%;
+      block-size: auto;
+    }
+    & :where(img) {
+      border-radius: var(--prose-image-radius, 0);
+    }
+    /* Prelum's blurred placeholder, an inline background under the image until it paints over it. */
+    & :where(img.has-lqip) {
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: cover;
+    }
+    & :where(figure) {
+      margin-inline: 0;
+    }
+    & :where(figcaption) {
+      margin-block-start: var(--space-2);
+      line-height: var(--leading-normal);
+      & p {
+        margin: 0;
+      }
+    }
+    & :where(:not(pre) > code) {
+      padding: 0.1em 0.35em;
+      border-radius: var(--prose-code-radius, var(--radius-s));
+      background: var(--prose-code-bg, var(--sunken));
+      color: var(--prose-code-ink);
+      overflow-wrap: anywhere;
+    }
+    & :where(kbd) {
+      padding: 0.05em 0.4em;
+      border: var(--line-w) solid var(--line-strong);
+      border-block-end-width: var(--line-w-thick);
+      border-radius: var(--radius-s);
+      background: var(--raised);
+    }
+    & :where(mark) {
+      padding-inline: 0.15em;
+      background: var(--warn-soft);
+      color: inherit;
+    }
+    & :where(abbr[title]) {
+      text-decoration: none;
+      cursor: help;
+    }
+
+    /* Task lists: the checkbox in its label, no bullet. */
+    & :where(.contains-task-list) {
+      list-style: none;
+      padding-inline-start: 0.25em;
+    }
+    & :where(.task-list-item input) {
+      margin-inline-end: 0.4em;
+      accent-color: var(--accent);
+    }
+
+    /* A heading's link to itself: shown on the heading's hover and on focus, always under touch. */
+    & :where(.heading-anchor) {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-inline-size: var(--target);
+      min-block-size: var(--target);
+      margin-inline-start: 0.15em;
+      color: var(--muted);
+      font-family: var(--ui);
+      font-weight: var(--weight-regular);
+      text-decoration: none;
+      opacity: 0;
+    }
+    & :where(:hover > .heading-anchor, .heading-anchor:focus-visible, .heading-anchor[data-copied]) {
+      opacity: 1;
+    }
+    @media (hover: none) {
+      & :where(.heading-anchor) {
+        opacity: 1;
+      }
+    }
+    & :where(.heading-anchor[data-copied])::after {
+      content: " copied";
+      font-size: var(--fs-detail);
+    }
+
+    /* Tables scroll inside their own box (focusable, so a keyboard can scroll it), never the page. */
+    & :where(.table-scroll) {
+      max-inline-size: var(--measure);
+      margin-block: 0 var(--prose-flow, 1em);
+      overflow-x: auto;
+      &:focus-visible {
+        outline: var(--focus-width) solid var(--ring);
+        outline-offset: var(--focus-offset);
+      }
+      & table {
+        margin: 0;
+      }
+    }
+    & :where(table) {
+      inline-size: max-content;
+      min-inline-size: 100%;
+      border-collapse: collapse;
+      font-family: var(--ui);
+      font-size: var(--fs-body);
+      font-variant-numeric: var(--figures-column);
+    }
+    & :where(th, td) {
+      padding: var(--space-2) var(--space-3);
+      border-block-end: var(--line-w) solid var(--line);
+      text-align: start;
+    }
+    & :where(th) {
+      font-weight: var(--weight-semibold);
+    }
+    /* The head's rule only: a row header (th in tbody) keeps the rows' hairline. */
+    & :where(thead th) {
+      border-block-end: var(--line-w-thick) solid var(--prose-table-rule, var(--text));
+    }
+    /* A link in a header cell is bold already, so weight cannot tell it from the text beside it: italic
+       is its cue (WCAG 1.4.1, G183). */
+    & :where(th a) {
+      font-style: italic;
+    }
+    /* data-tables="manual" on the article: the manual's tables, a heavy rule over the head, mono labels in
+       capitals, hairlines between rows and no verticals. */
+    &:where([data-tables="manual"]) {
+      & :where(table) {
+        border-block-start: var(--line-w-thick) solid var(--text);
+      }
+      & :where(th, td) {
+        padding-inline: 0 var(--space-3);
+        vertical-align: top;
+      }
+      /* With no cell padding, a link in a cell is as short as its text: inline padding takes its hit
+         area to the 24 px minimum (WCAG 2.5.8) and leaves the row's height alone. */
+      & :where(th, td) > :where(a[href]) {
+        padding-block: calc((var(--space-6) - 1em) / 2);
+      }
+      /* Not a chart's data table: its text stays at the chart's size (12 px at least, B3). */
+      & :where(thead th:not(.enarratio *)) {
+        border-block-end: var(--line-w) solid var(--text);
+        color: var(--muted);
+        font: var(--weight-medium) var(--fs-label) / var(--leading-normal) var(--mono);
+        letter-spacing: var(--tracking-caps);
+        text-transform: uppercase;
+      }
+    }
+    /* data-headings="parts" on the article: each h2 a numbered part of the page, as the manual heads its
+       parts (.cap-part), its number and title over a rule in the ink. The number is drawn, so the
+       heading's text and its link stay its own; the footnotes' hidden heading counts as no part. */
+    &:where([data-headings="parts"]) {
+      counter-reset: cap-part;
+      & :where(h2) {
+        display: flex;
+        align-items: baseline;
+        gap: var(--space-4);
+        max-inline-size: var(--measure);
+        margin-block-start: 2.5em;
+        padding-block-start: var(--space-2);
+        border-block-start: var(--line-w) solid var(--text);
+        counter-increment: cap-part;
+      }
+      & :where(h2.sr-only) {
+        counter-increment: none;
+      }
+      & :where(h2)::before {
+        content: counter(cap-part) / "";
+        flex: none;
+        min-inline-size: 2ch;
+        font-size: 0.5em;
+        font-weight: var(--weight-regular);
+        letter-spacing: 0;
+      }
+    }
+    & :where(th, td)[align="right"] {
+      text-align: end;
+    }
+    & :where(th, td)[align="center"] {
+      text-align: center;
+    }
+
+    /* Code: a sunken block; shiki's two themes picked by the page's color-scheme. */
+    & :where(pre) {
+      position: relative;
+      padding: var(--prose-pre-pad, var(--space-4));
+      overflow-x: auto;
+      border: var(--line-w) solid var(--line);
+      border-radius: var(--prose-block-radius, var(--radius-m));
+      background: var(--prose-pre-bg, var(--sunken));
+      font-size: var(--fs-detail);
+      line-height: var(--leading-relaxed);
+      & code {
+        font-size: inherit;
+      }
+      &:focus-visible {
+        outline: var(--focus-width) solid var(--ring);
+        outline-offset: var(--focus-offset);
+      }
+    }
+    & :where(pre.shiki) {
+      background: var(--prose-pre-bg, light-dark(var(--shiki-light-bg), var(--shiki-dark-bg)));
+    }
+    & :where(.shiki, .shiki span) {
+      color: light-dark(var(--shiki-light), var(--shiki-dark));
+    }
+    /* A diff's scopes pair a color with their own background and are legible only on it. Only on a span
+       that carries one: the custom properties inherit. */
+    & :where(.shiki span:is([style*="--shiki-light-bg"], [style*="--shiki-dark-bg"])) {
+      background-color: light-dark(
+        var(--shiki-light-bg, transparent),
+        var(--shiki-dark-bg, transparent)
+      );
+    }
+    /* A marked line: a neutral band and a rule at its start, so it is told by more than a tint. */
+    & :where(.shiki .line.highlighted) {
+      display: inline-block;
+      min-inline-size: 100%;
+      background: color-mix(in srgb, currentColor 8%, transparent);
+      box-shadow: inset var(--line-w-bar) 0 0 var(--accent);
+    }
+    & :where(.code-frame) {
+      max-inline-size: var(--measure);
+      margin-block: 0 var(--prose-flow, 1em);
+      & pre {
+        max-inline-size: none;
+        margin: 0;
+        border-start-start-radius: 0;
+        border-start-end-radius: 0;
+      }
+    }
+    & :where(.code-title) {
+      margin: 0;
+      padding: var(--space-1) var(--space-4);
+      border: var(--line-w) solid var(--line);
+      border-block-end: 0;
+      border-start-start-radius: var(--prose-block-radius, var(--radius-m));
+      border-start-end-radius: var(--prose-block-radius, var(--radius-m));
+      background: var(--raised);
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: var(--fs-detail);
+    }
+
+  }
+}

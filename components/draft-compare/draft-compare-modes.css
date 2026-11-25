@@ -1,0 +1,230 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+@layer cap.components {
+  /* The patch mode: a unified git patch, one file at a time. The line is the unit, so a
+     changed line is tinted, opens with a literal plus or minus and says "added" or "removed"
+     to a screen reader; the tint is never the only sign. Each file's table scrolls in a
+     focusable, named region (a keyboard can only scroll what it can focus). */
+  .cap-patch-file {
+    display: grid;
+    gap: var(--space-2);
+    min-width: 0;
+  }
+  .cap-patch-path {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--space-1) var(--space-3);
+    margin: 0;
+    font-size: var(--fs-body);
+    font-weight: var(--weight-semibold);
+    overflow-wrap: anywhere;
+
+    & code {
+      font-family: var(--mono);
+    }
+  }
+  .cap-patch-kind,
+  .cap-patch-file-counts {
+    color: var(--muted);
+    font-size: var(--fs-detail);
+    font-weight: var(--weight-regular);
+  }
+  .cap-patch-note {
+    margin: 0;
+    color: var(--muted);
+  }
+  .cap-patch-scroll {
+    box-sizing: border-box;
+    max-block-size: min(70vh, 40rem);
+    overflow: auto;
+    border: var(--line-w) solid var(--line);
+    border-radius: var(--radius-m);
+    background: var(--surface);
+  }
+  .cap-patch-table {
+    inline-size: 100%;
+    min-inline-size: max-content;
+    border-collapse: collapse;
+    font-family: var(--mono);
+    font-size: var(--fs-detail);
+    line-height: var(--leading);
+  }
+  .cap-patch-hunk-head th {
+    padding: var(--space-1) var(--pad-x);
+    background: var(--sunken);
+    border-block: var(--line-w) solid var(--line);
+    color: var(--muted);
+    font-weight: var(--weight-regular);
+    text-align: start;
+  }
+  .cap-patch-no {
+    min-inline-size: 3.5ch;
+    padding-inline: var(--space-2);
+    color: var(--muted);
+    text-align: end;
+    font-variant-numeric: var(--figures);
+    user-select: none;
+    vertical-align: top;
+  }
+  .cap-patch-sign {
+    inline-size: 2ch;
+    padding-inline: var(--space-1);
+    font-weight: var(--weight-bold);
+    text-align: center;
+    vertical-align: top;
+  }
+  .cap-patch-code {
+    padding-inline: var(--space-2) var(--pad-x);
+    white-space: pre;
+    color: var(--text);
+
+    & code {
+      font: inherit;
+    }
+  }
+  .cap-patch-eol {
+    margin-inline-start: var(--space-3);
+    color: var(--muted);
+  }
+  .cap-patch-line[data-op="ins"] {
+    background: var(--ok-soft);
+    box-shadow: inset var(--line-w-bar) 0 0 var(--ok);
+  }
+  .cap-patch-line[data-op="del"] {
+    background: var(--crit-soft);
+    box-shadow: inset var(--line-w-bar) 0 0 var(--crit);
+  }
+  .cap-patch-line[data-op="del"] .cap-patch-code code {
+    text-decoration: line-through;
+    text-decoration-color: var(--crit);
+    text-decoration-thickness: var(--line-w);
+  }
+
+  @media (forced-colors: active) {
+    .cap-ins,
+    .cap-del,
+    .cap-compare-key-mark {
+      border: var(--line-w) solid transparent;
+      text-decoration-color: currentColor;
+    }
+    .cap-compare-row[data-op]:not([data-op="same"]),
+    .cap-compare-card {
+      border-inline-start-color: CanvasText;
+    }
+    .cap-compare-row[data-current],
+    .cap-compare-card:has([data-current]) {
+      border-inline-start-color: Highlight;
+      border-inline-start-width: var(--line-w-band);
+    }
+    .cap-compare-hunk[data-current] {
+      outline: var(--focus-width) solid Highlight;
+    }
+    .cap-patch-line[data-op="ins"],
+    .cap-patch-line[data-op="del"] {
+      box-shadow: none;
+      border-inline-start: var(--line-w-bar) solid CanvasText;
+    }
+    .cap-compare-jump-link[aria-current="true"] {
+      border-color: Highlight;
+      border-width: var(--line-w-bar);
+    }
+  }
+
+  /* The merge mode: each difference as two columns, mine and theirs, with the pick under them. The side
+     left out is set back on the sunken ground with a dashed edge, and its heading says so, so the merged
+     text reads down the kept sides without relying on the tint. */
+  .cap-merge {
+    container: cap-merge / inline-size;
+    display: grid;
+    gap: var(--space-4);
+    min-width: 0;
+    color: var(--text);
+  }
+  .cap-merge-intro {
+    margin: 0;
+    max-inline-size: var(--measure);
+  }
+  .cap-merge-list {
+    display: grid;
+    gap: var(--space-4);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .cap-merge-same {
+    color: var(--muted);
+    font-size: var(--fs-detail);
+    text-align: center;
+  }
+  .cap-merge-choice {
+    display: grid;
+    gap: var(--space-3);
+    padding: var(--space-3);
+    border: var(--line-w) solid var(--line);
+    border-radius: var(--radius-m);
+  }
+  .cap-merge-sides {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-3);
+
+    & > section {
+      min-width: 0;
+      padding: var(--space-2);
+      border: var(--line-w) solid transparent;
+      border-radius: var(--radius-s);
+    }
+    & > section:not([data-kept]) {
+      border-style: dashed;
+      border-color: var(--line-strong);
+      background: var(--sunken);
+    }
+  }
+  @container cap-merge (width < 40rem) {
+    .cap-merge-sides {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+  .cap-merge-side {
+    margin: 0 0 var(--space-2);
+    font-size: var(--fs-detail);
+    font-weight: var(--weight-semibold);
+  }
+  .cap-merge-text {
+    margin: 0;
+    font-size: var(--fs-detail);
+
+    & pre,
+    &:is(pre) {
+      margin: 0 0 var(--space-2);
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      font-family: var(--mono);
+    }
+  }
+  .cap-merge-empty {
+    font-style: italic;
+  }
+  .cap-merge-mark {
+    padding-inline: 0.1em;
+    border-radius: var(--radius-s);
+    background: var(--warn-soft);
+    color: var(--text);
+    box-decoration-break: clone;
+  }
+  .cap-merge-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+  @media (forced-colors: active) {
+    .cap-merge-sides > section:not([data-kept]) {
+      border-color: GrayText;
+    }
+    .cap-merge-mark {
+      outline: var(--line-w) solid CanvasText;
+    }
+  }
+}
