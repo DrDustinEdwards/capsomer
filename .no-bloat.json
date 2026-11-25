@@ -1,6 +1,6 @@
 {
   "baseline": {
-    "measured_at": "a2e520b0",
+    "measured_at": "110f9c82",
     "knip": {},
     "jscpd": {
       "clones": 36,
@@ -16,7 +16,7 @@
     "size": {
       "bin/capsomer.mjs": 789,
       "components/catalog/catalog-core.ts": 811,
-      "components/checklist-run/checklist-run.ts": 718,
+      "components/checklist-run/checklist-run.ts": 716,
       "components/combobox/combobox.react.tsx": 767,
       "components/command-menu/command-menu.ts": 734,
       "components/confirm-dialog/confirm-dialog.react.tsx": 610,
@@ -32,11 +32,11 @@
       "components/media-library/examples.tsx": 1028,
       "components/media-library/media-library-more.react.tsx": 506,
       "components/media-library/media-library.react.tsx": 1329,
-      "components/media-library/media-library.ts": 538,
+      "components/media-library/media-library.ts": 532,
       "components/media/media.css": 815,
       "components/media/media.react.tsx": 1001,
       "components/media/media.spec.ts": 1211,
-      "components/media/media.ts": 1005,
+      "components/media/media.ts": 1004,
       "components/moderation-queue/moderation-queue.ts": 537,
       "components/publish-gate/publish-gate.ts": 555,
       "components/rich-editor/rich-editor-markdown.mjs": 627,
@@ -45,7 +45,7 @@
       "components/site-header/site-header-parts.react.tsx": 502,
       "components/site-header/site-header.react.tsx": 692,
       "components/sortable-list/sortable-list.react.tsx": 827,
-      "components/sortable-list/sortable-list.ts": 659,
+      "components/sortable-list/sortable-list.ts": 658,
       "components/time/time.ts": 502,
       "site/frame-heights.css": 3109,
       "test/sweep.spec.ts": 1261,
@@ -59,7 +59,7 @@
     },
     "comments": {
       "lines": 9801,
-      "code": 152482,
+      "code": 152477,
       "percentage": 6.04
     }
   }
