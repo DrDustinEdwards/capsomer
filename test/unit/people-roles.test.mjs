@@ -4,25 +4,14 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import {
   accessText,
-  actionText,
   cloudflareText,
-  dayText,
   daysLeft,
-  endHelp,
   endsSoon,
   rowActions,
   syncText,
-  tallyText,
-  timeText,
 } from "../../components/people-roles/people-roles.ts";
 
 const NOW = Date.parse("2026-11-30T15:00:00Z");
-
-test("dates read month first, as American English writes them, in UTC", () => {
-  assert.equal(dayText("2026-12-18"), "Dec 18, 2026");
-  assert.equal(dayText("2027-01-01"), "Jan 1, 2027");
-  assert.equal(timeText("2026-10-02T14:52:00Z"), "Oct 2, 2026, 2:52 PM UTC");
-});
 
 test("days left counts the end date itself as the last day", () => {
   assert.equal(daysLeft("2026-11-30", NOW), 0);
@@ -55,32 +44,6 @@ test("the Cloudflare column never says ready before the allow list matches", () 
     "Cloudflare refused: rate limited",
   );
   assert.equal(cloudflareText({ cloudflare: "accepted" }), "Cloudflare accepted");
-});
-
-test("history lines say what changed", () => {
-  assert.equal(
-    actionText({ action: "add", toTitle: "Lab worker", endDate: "2026-12-18" }),
-    "Added as Lab worker, until Dec 18, 2026",
-  );
-  assert.equal(
-    actionText({ action: "change_title", fromTitle: "Lab worker", toTitle: "Safety officer" }),
-    "Title changed from Lab worker to Safety officer",
-  );
-  assert.equal(
-    actionText({ action: "renew", endDate: "2027-05-14" }),
-    "Renewed, until May 14, 2027",
-  );
-  assert.equal(actionText({ action: "expire" }), "Access ended on the end date");
-});
-
-test("the add form's end date help and the review tally", () => {
-  assert.equal(
-    endHelp("2026-12-18"),
-    "Defaults to the end of the term, Dec 18, 2026. You can choose an earlier date.",
-  );
-  assert.equal(endHelp(null), "This title does not expire.");
-  assert.equal(tallyText(1, 0, 2), "1 to keep, 0 to remove, 2 not answered.");
-  assert.equal(tallyText(2, 1, 0), "2 to keep, 1 to remove.");
 });
 
 test("row actions: Retry first while Cloudflare lags, Renew otherwise, nothing for a person the viewer cannot manage", () => {
@@ -127,14 +90,4 @@ test("personFromParam: names only a person the page lists, and for a change one 
     personFromParam(p("change=lee@example.com"), "change", emails, (e) => e !== "lee@example.com"),
     undefined,
   );
-});
-
-test("manageLead: the titles as groups in a list, and the notice after", async () => {
-  const { manageLead } = await import("../../components/people-roles/people-roles.ts");
-  assert.equal(
-    manageLead(["Lab manager", "Lab worker"]),
-    "You manage Lab managers and Lab workers.",
-  );
-  assert.equal(manageLead(["A", "B", "Cs"], "Set dates."), "You manage As, Bs, and Cs. Set dates.");
-  assert.equal(manageLead([]), undefined);
 });

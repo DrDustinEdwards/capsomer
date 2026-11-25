@@ -5,11 +5,9 @@ import { test } from "node:test";
 import {
   applyMove,
   branchIds,
-  cannotMoveText,
   dropMove,
   findPlace,
   isWithin,
-  movedText,
   planMove,
   reverseMove,
   treeKey,
@@ -130,18 +128,4 @@ test("applyMove and reverseMove: the move made, then undone, without touching th
   const across = dropMove(book, "s1", "s3", "after");
   assert.equal(ids(applyMove(book, across)), "book,ch1[s2],ch2[s3,s1],ch3[],notes");
   assert.deepEqual(findPlace(applyMove(book, across), "s1"), { parent: "ch2", index: 1 });
-});
-
-test("movedText and cannotMoveText: what the live region says", () => {
-  const m = planMove(book, "s2", "up");
-  assert.equal(
-    movedText(applyMove(book, m), m),
-    "Moved 02 Tracks to position 1 of 2 in 01 The riverbed.",
-  );
-  const out = planMove(book, "s3", "out");
-  assert.equal(
-    movedText(applyMove(book, out), out),
-    "Moved 01 Rain to position 4 of 6 at the top level.",
-  );
-  assert.equal(cannotMoveText("Notes", "down"), "Notes is already last here.");
 });

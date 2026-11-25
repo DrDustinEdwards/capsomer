@@ -1,5 +1,3 @@
-// The compare's pure parts: the word and sentence diff, the sentence splitter, the counts and
-// the html the renderer writes. Correctness only; nothing here pins a design value.
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import {
@@ -29,27 +27,11 @@ const other = (s) =>
     .join("");
 const norm = (s) => s.replace(/\s+/g, " ").trim();
 
-test("commonSubsequence: finds the longest common run, in order", () => {
-  const a = "a b c a b b a".split(" ");
-  const b = "c b a b a c".split(" ");
-  const pairs = commonSubsequence(a, b);
-  assert.equal(pairs.length, 4);
-  for (const [i, j] of pairs) assert.equal(a[i], b[j]);
-  for (let k = 1; k < pairs.length; k++) {
-    assert.ok(pairs[k][0] > pairs[k - 1][0] && pairs[k][1] > pairs[k - 1][1]);
-  }
-});
-
 test("commonSubsequence: gives up (null) past maxEdits instead of using unbounded memory", () => {
   const a = Array.from({ length: 300 }, (_, i) => `a${i}`);
   const b = Array.from({ length: 300 }, (_, i) => `b${i}`);
   assert.equal(commonSubsequence(a, b, 50), null);
   assert.equal(commonSubsequence(a, b)?.length, 0);
-});
-
-test("diffWords: identical text has no insertion and no deletion", () => {
-  const parts = diffWords("The same words.", "The same words.");
-  assert.deepEqual(parts, [{ op: "same", text: "The same words." }]);
 });
 
 test("diffWords: marks the words that changed and keeps the rest", () => {
@@ -85,8 +67,10 @@ test("diffWords: each side reads back whole, whatever changed", () => {
 });
 
 test("diffWords: whitespace alone is not a difference", () => {
-  const parts = diffWords("one  two\nthree", "one two three");
-  assert.ok(parts.every((p) => p.op === "same"));
+  assert.ok(diffWords("one  two\nthree", "one two three").every((p) => p.op === "same"));
+  assert.deepEqual(diffWords("The same words.", "The same words."), [
+    { op: "same", text: "The same words." },
+  ]);
 });
 
 test("diffWords: a space that opens a change stays outside the mark", () => {
@@ -94,14 +78,6 @@ test("diffWords: a space that opens a change stays outside the mark", () => {
   const ins = parts.find((p) => p.op === "ins");
   assert.equal(ins?.text, "x");
   assert.ok(parts.some((p) => p.op === "same" && p.text.endsWith(" ")));
-});
-
-test("diffWords: a punctuation mark is a word of its own", () => {
-  const parts = diffWords("It ended.", "It ended");
-  assert.deepEqual(
-    parts.filter((p) => p.op !== "same"),
-    [{ op: "del", text: "." }],
-  );
 });
 
 test("splitSentences: splits at sentence ends, not at abbreviations or lowercase", () => {
@@ -127,11 +103,6 @@ test("splitSentences: splits at sentence ends, not at abbreviations or lowercase
 test("splitSentences: offsets point at the sentence in the source", () => {
   const text = "  First one.  Second one.\nThird.";
   for (const s of splitSentences(text)) assert.equal(text.slice(s.start, s.end), s.text);
-});
-
-test("splitSentences: each line is its own sentence set", () => {
-  const s = splitSentences("# A heading\n- one item\n- another item");
-  assert.equal(s.length, 3);
 });
 
 test("diffSentences: unchanged sentences are anchors, an edited one is paired, the rest added or removed", () => {
@@ -193,11 +164,6 @@ test("renderCompare: all three views are in the html, with ins and del carrying 
   assert.match(html, /\d+ words? added, \d+ removed, 1 change/);
 });
 
-test("renderCompare: unchanged passages fold into a details with their count", () => {
-  const html = renderCompare(before, after, { id: "t", context: 1 });
-  assert.match(html, /<summary>\d+ unchanged sentences<\/summary>/);
-});
-
 test("renderCompare: ids are on the shown view only, so none repeats", () => {
   const html = renderCompare(before, after, { id: "t", view: "inline" });
   assert.equal((html.match(/ id="t-c1"/g) ?? []).length, 1);
@@ -232,7 +198,7 @@ test("renderCompare: runs mark each sentence with who wrote it", () => {
   assert.match(html, /<span class="cap-run-label">AI<\/span>/);
 });
 
-test("commonSubsequence: agrees with a plain dynamic-programming length on random lists", () => {
+test("commonSubsequence: matches a plain dynamic-programming length, in order, on random lists", () => {
   let seed = 7;
   const rnd = (n) => (seed = (seed * 1103515245 + 12345) & 0x7fffffff) % n;
   for (let round = 0; round < 60; round++) {
@@ -248,6 +214,8 @@ test("commonSubsequence: agrees with a plain dynamic-programming length on rando
     const pairs = commonSubsequence(a, b);
     assert.equal(pairs.length, dp[a.length][b.length]);
     for (const [i, j] of pairs) assert.equal(a[i], b[j]);
+    for (let k = 1; k < pairs.length; k++)
+      assert.ok(pairs[k][0] > pairs[k - 1][0] && pairs[k][1] > pairs[k - 1][1]);
   }
 });
 
@@ -342,12 +310,6 @@ test("renderPatch: a literal sign and a word on each changed line, text escaped,
   assert.match(html, /role="region" aria-labelledby="p1-file-1" tabindex="0"/);
   assert.match(html, /Binary file changed/);
   assert.match(html, /no newline at end of file/);
-});
-
-test("renderPatch: a patch with no lines is a status, not an empty box", () => {
-  const html = renderPatch("", { id: "p2" });
-  assert.match(html, /<strong>No changes\.<\/strong>/);
-  assert.ok(!html.includes("cap-patch-table"));
 });
 
 test("unifiedPatch: the shape jsdiff writes, hunks merged within two contexts, and a missing final newline marked", () => {

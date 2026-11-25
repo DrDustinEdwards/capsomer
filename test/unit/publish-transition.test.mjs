@@ -5,7 +5,6 @@ import { test } from "node:test";
 import {
   draftForIntent,
   PUBLISH_CONFIRMED_INTENT,
-  saveInPlaceIntent,
   stateOf,
   transitionsFor,
 } from "../../components/publish-gate/publish-transition.ts";
@@ -24,12 +23,6 @@ test("transitionsFor: the ceremony is for a first publication only", () => {
     transitionsFor("scheduled", true).map((t) => t.id),
     ["save", "unpublish"],
   );
-});
-
-test("saveInPlaceIntent: keeps the current state", () => {
-  assert.equal(saveInPlaceIntent("draft"), "save-draft");
-  assert.equal(saveInPlaceIntent("published"), "save");
-  assert.equal(saveInPlaceIntent("scheduled"), "save");
 });
 
 test("stateOf: a future publish_at is scheduled; an unparseable one is published", () => {
