@@ -21,7 +21,7 @@ function docMeta(md, fallback) {
 
 // Splits examples.html into the part that belongs in <main> and the elements that belong in
 // the head (<link>) or after the main (<script>). Anything inside a <template> is left alone.
-export function splitExamples(src) {
+function splitExamples(src) {
   const head = [];
   const scripts = [];
   const parts = src.split(/(<template\b[\s\S]*?<\/template>)/g);
