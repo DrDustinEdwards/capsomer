@@ -1,10 +1,8 @@
-/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+/* Layer order repeated so this file is safe in any import order: the first statement fixes it (css/layers.css). */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
-/* The tooltip has no rules of its own. It is the shared popover's tooltip variant
-   (components/popover/popover.css): `.cap-popover[data-variant="tooltip"]`, the inverted
-   surface at the detail size with a key cap and an optional arrow, placed by CSS anchor
-   positioning with a script fallback, fading and zooming in 100 ms. Load popover.css with it. */
+/* The tooltip has no rules of its own: it is the shared popover's tooltip variant
+   (components/popover/popover.css, `.cap-popover[data-variant="tooltip"]`). Load popover.css with it. */
 @layer cap.components {
   /* Nothing here: see the note above. */
 }

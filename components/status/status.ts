@@ -1,13 +1,11 @@
-// The status word as an HTML string, for pages built without React (a static explorer, a server
-// rendered table, an SVG drawing), and the one table of glyphs the React Status draws from too.
-// Escaped here, so a reason or a label can never become markup.
+// The status word as an HTML string for pages built without React, and the one table of glyphs
+// the React Status draws from too. Escaped here, so a reason or label can never become markup.
 import { escapeHtml as esc } from "@dustinedwards/site-runtime/html";
 
 // "muted" is the quiet gray for a state that is neither good nor bad: queued, unknown.
 export type Tone = "crit" | "warn" | "ok" | "info" | "nodata" | "muted";
-// A glyph is named by its tone, except running, which is an info tone with an arc, and the
-// marks a state or a kind of item has of its own (the Portal's queued, unknown, blocked,
-// and its inbox kinds). The quiet gray "muted" draws the no data circle unless a glyph is named.
+// A glyph is named by its tone, except running (an info tone with an arc) and the marks a state or
+// kind of item has of its own. "muted" draws the no data circle unless a glyph is named.
 export type GlyphName =
   | Tone
   | "running"
@@ -36,7 +34,6 @@ const ring = {
   "stroke-width": "1.6",
 };
 
-// A 1.5 stroke with round ends and joins: the outline marks (pr, report).
 const line = {
   fill: "none",
   stroke: "currentColor",
@@ -44,7 +41,6 @@ const line = {
   "stroke-linecap": "round",
   "stroke-linejoin": "round",
 };
-// The question mark of unknown and question.
 const question = {
   d: "M6.1 6.4a1.95 1.95 0 1 1 2.9 1.7c-.6.3-1 .7-1 1.4",
   fill: "none",
@@ -54,7 +50,6 @@ const question = {
 };
 const questionDot = { cx: "8", cy: "11.7", r: ".9", fill: "currentColor" };
 
-// No data: a ring with a dash. The quiet gray "muted" draws it too.
 const NODATA: readonly GlyphPart[] = [
   { tag: "circle", attrs: ring },
   {
@@ -70,7 +65,7 @@ const NODATA: readonly GlyphPart[] = [
 ];
 
 // One shape per meaning, so the shape carries it without color. Marks inside a filled shape are
-// cut out (evenodd), so the glyph reads on any background, a tint included. 16 by 16.
+// cut out (evenodd) so the glyph reads on any background. 16 by 16.
 export const STATUS_GLYPH: Readonly<Record<GlyphName, readonly GlyphPart[]>> = {
   crit: [
     {
@@ -212,8 +207,7 @@ export const STATUS_GLYPH: Readonly<Record<GlyphName, readonly GlyphPart[]>> = {
   ],
 };
 
-// A glyph's inner elements as markup, for a page that draws it inside its own <svg> (a box in a
-// graph at 12 px).
+// A glyph's inner elements as markup, for a page that draws it inside its own <svg>.
 export function glyphParts(name: GlyphName): string {
   return STATUS_GLYPH[name]
     .map(({ tag, attrs }) => {
@@ -230,8 +224,7 @@ export function glyphHtml(name: GlyphName): string {
   return `<svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false">${glyphParts(name)}</svg>`;
 }
 
-// The glyph as a DOM element, for the scripts that build rows and results; `size` sets its width
-// and height in px where CSS does not.
+// `size` sets width and height in px where CSS does not.
 export function glyphEl(name: GlyphName, size?: number): SVGSVGElement {
   const ns = "http://www.w3.org/2000/svg";
   const svg = document.createElementNS(ns, "svg");
@@ -251,7 +244,6 @@ export function glyphEl(name: GlyphName, size?: number): SVGSVGElement {
   return svg;
 }
 
-// A status as a DOM element: glyph, word, tone.
 export function statusEl(tone: Tone, word: string, glyph: GlyphName = tone): HTMLSpanElement {
   const s = document.createElement("span");
   s.className = "cap-status";
@@ -261,16 +253,11 @@ export function statusEl(tone: Tone, word: string, glyph: GlyphName = tone): HTM
 }
 
 export interface StatusHtmlOptions {
-  // Running is an info tone drawn with an arc.
   running?: boolean;
-  // Why: "the counter has not reported since 09:00". Follows the word as its own sentence.
   reason?: string;
-  // For a table cell: the word only, the reason for a screen reader and on hover.
   brief?: boolean;
 }
 
-// The status word, the same markup React's Status renders: the glyph, then the word, which is
-// the accessible text and is never empty.
 export function statusHtml(tone: Tone, label: string, options: StatusHtmlOptions = {}): string {
   const glyph = glyphHtml(options.running ? "running" : tone);
   const word = esc(label.trim() || (tone === "nodata" ? "No data" : tone));
@@ -281,7 +268,6 @@ export function statusHtml(tone: Tone, label: string, options: StatusHtmlOptions
   return reason ? `${status} <span class="cap-status-reason">${esc(reason)}</span>` : status;
 }
 
-// "startup_failure" as words: "Startup failure".
 const sentence = (key: string): string => {
   const words = key.replace(/_/g, " ");
   return words.charAt(0).toUpperCase() + words.slice(1);
@@ -293,11 +279,9 @@ export interface Outcome {
   label: string;
 }
 
-// The conclusion of a run (a CI check, a build, a backup copy, a scheduled task) as a status. The
-// words are GitHub's check-run conclusions and Cloudflare's build outcomes, which cover the rest:
-// success and neutral are ok, skipped did not run (no data), canceled and timed out stopped
-// before an answer (warning), and every other conclusion failed. No conclusion yet is running.
-// A site that words a state its own way passes `labels` ("Built", "Green").
+// The words are GitHub's check-run conclusions and Cloudflare's build outcomes. success and neutral
+// are ok, skipped is no data, canceled and timed out are warning, any other conclusion failed, and
+// none yet is running. A site that words a state its own way passes `labels`.
 export function outcomeStatus(
   conclusion: string | null | undefined,
   labels: Partial<Record<string, string>> = {},

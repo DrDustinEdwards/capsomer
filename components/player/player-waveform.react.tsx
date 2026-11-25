@@ -10,16 +10,12 @@ import { ratio } from "../meter/meter.ts";
 import { WAVEFORM_BARS, formatTime, normalizePeaks, syntheticPeaks } from "./player.ts";
 
 export interface WaveformProps {
-  // 0 to 100 integers or 0 to 1 floats. Missing or empty: a calm stand-in shape, labeled a preview.
   peaks: readonly number[] | null | undefined;
-  // How far it has played, 0 to 1.
   position: number;
   duration: number;
-  // The chapter playing, as [start, end] shares of the length.
   region?: [number, number] | null;
   onSeek: (share: number) => void;
   bars?: number;
-  // The note under a stand-in shape.
   previewLabel?: string;
 }
 
@@ -116,15 +112,12 @@ export function Waveform({
 
 export interface WaveformPreviewProps {
   peaks: readonly number[];
-  // Chapter positions as shares of the length, 0 to 1.
   markers?: readonly number[];
   label?: string;
-  // Shown when there are no peaks yet.
   empty?: string;
   bars?: number;
 }
 
-// A still waveform for an editor: what the stored peaks look like, with the chapters marked.
 export function WaveformPreview({
   peaks,
   markers = [],

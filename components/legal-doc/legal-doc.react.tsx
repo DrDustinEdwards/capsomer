@@ -1,12 +1,9 @@
 import { useId, type ReactNode } from "react";
 import { formatDate } from "../time/time.ts";
 
-// A legal or policy page (legal-doc.md): the title, the date it was last changed, a numbered
-// contents list and the numbered sections it links to. The numbers and the contents come from the
-// one `sections` list, so they cannot drift apart. Section bodies are prose (`.cap-prose` look).
+// A legal or policy page (legal-doc.md). The numbers and contents come from the one `sections` list, so they cannot drift apart.
 
 export interface LegalSection {
-  // The fragment the contents link to: "data-we-collect".
   id: string;
   title: string;
   body: ReactNode;
@@ -14,12 +11,10 @@ export interface LegalSection {
 
 export interface LegalDocProps {
   title: ReactNode;
-  // The day the text last changed, YYYY-MM-DD. The same date belongs in the sitemap's lastmod.
+  // The day the text last changed, YYYY-MM-DD; the sitemap's lastmod should match.
   updated: string;
   sections: readonly LegalSection[];
-  // Text before the contents (a summary card, an unnumbered preamble).
   intro?: ReactNode;
-  // Text after the last section (contact lines).
   outro?: ReactNode;
   contentsLabel?: string;
   updatedLabel?: string;
@@ -27,7 +22,6 @@ export interface LegalDocProps {
   className?: string;
 }
 
-// "November 11, 2026" for "2026-11-11", the same on the server and in every visitor's zone.
 export function updatedWords(updated: string): string {
   return formatDate(updated) ?? updated;
 }

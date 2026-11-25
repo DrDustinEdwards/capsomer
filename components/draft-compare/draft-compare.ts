@@ -1,14 +1,6 @@
-// Draft compare: two versions of a text, compared by sentence and then by word.
-//
-// Three parts, all plain TypeScript with no framework and nothing that touches the page at
-// import time, so a server (or node's test runner) can use the first two:
-//   1. the diff:      diffWords, diffSentences, splitSentences, analyze (draft-compare-diff.ts)
-//   2. the renderer:  renderCompare(before, after, options) returns the HTML string
-//                     (draft-compare-render.ts; renderPatch, for a git patch, in draft-compare-patch.ts)
-//   3. the behavior: enhance(root) wires the jump keys, the view memory and "expand all" (here)
-//
-// The HTML holds every view (side by side, inline, changes only) so a reader without script
-// still gets all of it; the radios in the bar choose which one shows, in CSS.
+// Draft compare: two versions of a text, compared by sentence then word. The diff (draft-compare-diff.ts) and renderer
+// (draft-compare-render.ts) touch nothing at import time, so a server can use them; enhance(root) wires the behavior here.
+// The HTML holds every view so a reader without script gets all of it; the bar's radios choose which shows, in CSS.
 
 import { singleKeysOff } from "../shortcuts/shortcuts.ts";
 import { isTypingKey, listOwnsKeys } from "../row-list/row-list.ts";
@@ -71,8 +63,6 @@ export type {
   UnifiedOptions,
 } from "./draft-compare-patch.ts";
 
-// The behavior
-
 function readView(): CompareView | null {
   const v = readStored(STORAGE_KEY);
   return v && (VIEWS as readonly string[]).includes(v) ? (v as CompareView) : null;
@@ -82,7 +72,6 @@ function writeView(v: CompareView): void {
   writeStored(STORAGE_KEY, v);
 }
 
-// The view the radios show now.
 export function currentView(root: Element): CompareView {
   const v = root.querySelector<HTMLInputElement>(
     ".cap-compare-bar input[type='radio']:checked",
@@ -90,7 +79,6 @@ export function currentView(root: Element): CompareView {
   return v && (VIEWS as readonly string[]).includes(v) ? (v as CompareView) : "side";
 }
 
-// Chooses a view (the radio the CSS reads). Fires no event.
 export function setView(root: Element, view: CompareView): void {
   const radio = root.querySelector<HTMLInputElement>(
     `.cap-compare-bar input[type='radio'][value='${view}']`,
@@ -109,7 +97,6 @@ function attach(root: HTMLElement): () => void {
   ))
     b.hidden = total === 0;
 
-  // The remembered view.
   const remember = root.dataset.remember !== "off";
   if (remember) {
     const stored = readView();
@@ -194,17 +181,14 @@ function attach(root: HTMLElement): () => void {
   return () => undo.forEach((f) => f());
 }
 
-// Opens every folded passage, or closes them all when every one is open.
 export function toggleAll(root: Element): void {
   const gaps = [...root.querySelectorAll<HTMLDetailsElement>("details[data-cap-part='gap']")];
   const open = !gaps.every((d) => d.open);
   for (const d of gaps) d.open = open;
 }
 
-// Attaches to every [data-cap="draft-compare"] under root (or root itself) not yet attached.
-// Returns a function that detaches them all.
-// The root is Element | Document | DocumentFragment, not ParentNode: under @cloudflare/workers-types
-// an HTMLFormElement does not type as a ParentNode, so a site could not pass its form.
+// Attaches to every [data-cap="draft-compare"] under root and returns a detach function. The root is Element | Document |
+// DocumentFragment, not ParentNode: under @cloudflare/workers-types an HTMLFormElement is not a ParentNode.
 export function enhance(root: Element | Document | DocumentFragment = document): () => void {
   return enhanceEach(root, "draft-compare", attach);
 }

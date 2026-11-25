@@ -1,11 +1,8 @@
-/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+/* Layer order, repeated so this file is safe in any import order. */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
-/* Document archive: past documents by category, each a row-list row (.cap-rows) linking to its
-   page, and a document's page with its download, the app's viewer and Previous and Next in its
-   category. From txasm's archive routes (archive.$category.tsx, archive.$category.$slug.tsx)
-   and components/document-list.tsx and document-detail.tsx. The rows are row-list's; this file
-   lays out the groups, the page and the pager. */
+/* Document archive: documents by category as row-list rows, and a document's page with its download,
+the app's viewer and Previous and Next. */
 @layer cap.components {
   .cap-archive {
     display: grid;
@@ -43,7 +40,6 @@
     color: var(--muted);
   }
 
-  /* A document's page. */
   .cap-docview {
     display: grid;
     gap: var(--space-6);
@@ -55,8 +51,7 @@
     gap: var(--space-3);
   }
 
-  /* The page's h1, at the page head's title size and face (page-head.css), so a document's page
-     reads like every other page in the shell. */
+  /* The page's h1 matches the page head's title size and face, so it reads like every other shell page. */
   .cap-docview-title {
     margin: 0;
     font-family: var(--display);

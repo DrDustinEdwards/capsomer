@@ -1,28 +1,16 @@
-/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+/* Layer order repeated so this file is safe in any import order: the first statement fixes it (css/layers.css). */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
-/* The site header's frame: everything a header has whatever its variant. site-header.css is this, the
-   family letterhead (site-header-letterhead.css) and the header's search (site-header-search.css); a
-   site whose header has neither loads this file alone and saves about 7 KB gzip. */
+/* The site header's frame, everything a header has whatever its variant. A site whose header needs no letterhead or search loads this file alone and saves about 7 KB gzip. */
 
-/* The site header: one header across the top of every public, app and admin page in the family
-   (docs/design/design-site-header.md; Dustin's ten answers of 2026-10-13). Capsomer fixes the
-   frame: the order, 56px tall at every width, sticky, full width with the logo 24px from the
-   window's edge (16px on a phone), the spacing, the type, the controls and how the panels behave.
-   Each site fills its slots: the logo, its color family, the band (--header-bg, --header-fg,
-   --header-fg-muted, --header-line; data-band="dark", data-translucent), its UI face (--font-ui),
-   up to two icon extras and one button, where the section links sit (data-links) and what each
-   panel holds. On a phone (under 768px) it is one row, with everything else in one sheet. */
+/* One header across every public, app and admin page, 56px tall at every width and sticky; each site fills the slots through the --header-* tokens and data-* attributes below. On a phone (under 768px) it is one row, with everything else in one sheet. */
 @layer cap.components {
   .cap-site-header {
-    /* The band: the page's own ground by default. A site sets these four, or data-band="dark". */
     --header-bg: var(--ground);
     --header-fg: var(--text);
     --header-fg-muted: var(--muted);
     --header-line: var(--line);
-    /* A hovered control: a clear step off the band, in the band's own colors. */
     --header-hover: color-mix(in srgb, var(--header-bg), var(--header-fg) 12%);
-    /* The current link's underline (3:1 against the band), the one button, the avatar. */
     --header-accent: var(--accent);
     --header-cta: var(--primary);
     --header-cta-fg: var(--primary-fg);
@@ -34,15 +22,12 @@
        --header-max-inline-size; the band still runs the full width. 100% is no column. */
     --header-max-inline-size: 100%;
     --header-inset: max(var(--header-side), (100% - var(--header-max-inline-size)) / 2 + var(--header-side));
-    /* The section links' weight, and the current one's; their padding, the gap between them, and
-       their chevron's size and gap. */
     --header-link-weight: var(--weight-regular);
     --header-link-current-weight: var(--weight-medium);
     --header-link-pad: 0;
     --header-links-gap: var(--space-5-5);
     --header-chev-size: var(--fs-small);
     --header-link-gap: var(--space-2);
-    /* The phone sheet's group labels and rows. */
     --header-sheet-label-ink: var(--muted);
     --header-sheet-label-fs: var(--fs-detail);
     --header-sheet-label-weight: var(--weight-medium);
@@ -50,13 +35,9 @@
     --header-sheet-label-tracking: normal;
     --header-sheet-row-fs: var(--fs-body);
     --header-sheet-row-h: max(var(--control), var(--target));
-    /* The bottom edge, and once the page has scrolled (data-scrolled, set by the behavior) its
-       edge and shadow. A site whose edge shows only after a scroll sets --header-edge: transparent. */
     --header-edge: var(--header-line);
     --header-scrolled-edge: var(--header-edge);
     --header-scrolled-shadow: none;
-    /* data-translucent: how much of the band shows (the rest is the page under it), before and
-       after a scroll, and the blur. */
     --header-translucent-mix: 85%;
     --header-scrolled-mix: var(--header-translucent-mix);
     --header-blur: 12px;
@@ -67,8 +48,7 @@
     align-items: center;
     box-sizing: border-box;
     inline-size: 100%;
-    /* --header-h is the page's token (tokens/scale.css), so scroll-padding-top reads the same height:
-       a taller header sets it on :root (bsw: 4rem). */
+    /* --header-h is the page's token (tokens/scale.css), so scroll-padding-top reads the same height; a taller header sets it on :root. */
     block-size: var(--header-h);
     padding-inline: var(--header-inset);
     background: var(--header-bg);
@@ -81,7 +61,6 @@
     &[data-sticky="false"] {
       position: relative;
     }
-    /* The page's ground at 85%, blurred: the content shows through as it scrolls under. */
     &[data-translucent] {
       background: color-mix(in srgb, var(--header-bg) var(--header-translucent-mix), transparent);
       backdrop-filter: blur(var(--header-blur));
@@ -125,13 +104,7 @@
     }
   }
 
-  /* Clear at rest (data-rest="clear"): at the top of the page the band shows the page under it, with
-     no line; once it is stuck it takes its ground and its line. A scroll-state query on the header,
-     with no scroll listener (Chrome's Modern Web Guidance, state-aware-sticky-headers). A container's
-     queries style only what is inside it, so the ground and the line are its first child,
-     .cap-site-header-ground, and only that child's opacity changes, so nothing moves. Where
-     scroll-state queries are missing the ground is drawn all the time, as an ordinary header:
-     content never scrolls under a clear band. */
+  /* Clear at rest (data-rest="clear"): the band shows the page under it with no line until stuck. A scroll-state query on the header, with no scroll listener. A container's queries style only its insides, so the ground and line are its first child, .cap-site-header-ground, and only its opacity changes. Without scroll-state queries the ground is always drawn, as an ordinary header. */
   .cap-site-header-ground {
     display: none;
   }
@@ -156,7 +129,6 @@
         backdrop-filter: blur(var(--header-blur));
       }
     }
-    /* At rest the ground is hidden; stuck, it shows. Same weight in both, so the query wins. */
     .cap-site-header-ground {
       opacity: 0;
     }
@@ -172,25 +144,19 @@
     }
   }
 
-  /* A focused control or an anchor never lands under the header (WCAG 2.4.11). */
   :root:has(.cap-site-header:not([data-sticky="false"])) {
     scroll-padding-top: calc(var(--header-h) + var(--space-3));
   }
 
-  /* A mark's parts drawn in the band's own family color: data-logo-fill="on" on a path or group of the site's SVG
-     takes the stripe's color (--on), as every network site draws its mark on the band; the rest keep their own. */
   .cap-site-header [data-logo-fill="on"] {
     fill: var(--on);
   }
 
-  /* The logo: the site's mark and name, at most 24px tall and 160px wide; it links home. */
   .cap-site-header-logo {
     display: inline-flex;
     align-items: center;
     gap: var(--space-3);
-    /* It gives way before the controls do, so the header never runs past a 320px window
-       (WCAG 1.4.10, reflow); the mark itself never shrinks, and is the part held to 160px, so
-       a written name keeps its room under a reader's own text spacing (WCAG 1.4.12). */
+    /* It gives way before the controls so the header never runs past a 320px window (WCAG 1.4.10); the mark never shrinks, so a written name keeps its room under a reader's text spacing (WCAG 1.4.12). */
     flex: 0 1 auto;
     min-inline-size: 0;
     min-block-size: 24px;
@@ -206,15 +172,12 @@
       inline-size: auto;
       max-inline-size: 160px;
     }
-    /* A mark in a <picture display: contents> would put its <source>s in the row (the UA stylesheet
-       does not hide them), each taking a gap before the image. */
+    /* A <picture display: contents> would put its <source>s in the row (the UA stylesheet does not hide them), each taking a gap. */
     & source {
       display: none;
     }
   }
 
-  /* The switcher: buttons showing where you are, each opening the site's panel. 12px after the
-     logo; a thin slash between two (Foxhound: the business, then the product). */
   .cap-site-header-switcher {
     display: flex;
     align-items: center;
@@ -251,7 +214,6 @@
       block-size: 16px;
     }
   }
-  /* A square is the business you are in, a circle is you (Dustin's answer 3). */
   .cap-site-header-switch-tile {
     display: grid;
     place-items: center;
@@ -264,8 +226,7 @@
     font-size: var(--fs-label);
     font-weight: var(--weight-semibold);
 
-    /* The letter is drawn, not text: the button is named by the business, and a letter in the
-       HTML would be read as part of its visible label (WCAG 2.5.3). */
+    /* The letter is drawn, not text: the button is named by the business, and a letter in the HTML would be read as part of its visible label (WCAG 2.5.3). */
     &::before {
       content: attr(data-tile);
     }
@@ -280,8 +241,6 @@
     stroke-linecap: round;
     stroke-linejoin: round;
   }
-  /* An open panel turns its chevron up, as the combobox's does (combobox.css): the button's
-     aria-expanded, which wirePanel keeps in step with the panel, is the one state it reads. */
   [aria-expanded="true"] > .cap-site-header-chev {
     rotate: 180deg;
   }
@@ -333,8 +292,7 @@
     &[data-force="hover"] {
       color: var(--header-fg);
     }
-    /* A site's --link-rule (off by default) grows an underline in under the pointer. */
-    /* It grows by scale, not width, so the change is composited and lays nothing out (Modern Web Guidance, motion). */
+    /* It grows by scale, not width, so the change is composited and lays nothing out. */
     &:not([aria-current="page"], [data-current])::after {
       content: "";
       position: absolute;
@@ -367,8 +325,6 @@
     }
   }
 
-  /* The right side: the site's extras, the theme, the account (always last), 8px apart. After
-     section links on the right, a thin divider. */
   .cap-site-header-tools {
     display: flex;
     align-items: center;
@@ -380,7 +336,6 @@
 
     &::before {
       content: "";
-      /* A site without the divider sets --header-sep: none. */
       display: var(--header-sep, block);
       inline-size: 1px;
       block-size: 16px;
@@ -393,9 +348,6 @@
     align-items: center;
     gap: var(--header-tools-gap, var(--space-3));
   }
-  /* The order of the tools: the icon extras, then the button extra, then the theme, by default. A site
-     may put its button first among the extras (--header-cta-order: -1) or the theme first among the
-     tools (--header-theme-order: -1), on a phone or everywhere. */
   .cap-site-header-extras > .cap-site-header-cta {
     order: var(--header-cta-order, 0);
   }
@@ -408,10 +360,6 @@
     stroke-width: var(--header-icon-stroke, 1.6);
   }
 
-  /* Every icon control: a 36px target, an 18px glyph from the family's icon set (24 box, 1.6
-     stroke), a name and a tip naming it and its key. The theme button wears this too. A site sets
-     its own size, glyph, stroke and fill with --header-icon-size, --header-icon-glyph, --header-icon-stroke
-     and --header-icon-bg. */
   .cap-site-header .cap-site-header-icon {
     position: relative;
     display: inline-grid;
@@ -445,8 +393,6 @@
     }
   }
 
-  /* A count on an icon: a count (count.css, 99+ past 99), its left edge 2px past the glyph and its
-     middle on the glyph's top edge, ringed in the band. */
   .cap-site-header-badge {
     --_bubble: var(--space-5);
     position: absolute;
@@ -455,7 +401,6 @@
     box-shadow: 0 0 0 var(--line-w-thick) var(--header-bg);
   }
 
-  /* The one button extra (Free audit, Join free). */
   .cap-site-header-cta {
     display: inline-flex;
     align-items: center;
@@ -477,20 +422,17 @@
     }
   }
 
-  /* The account: last on every site. Signed out, Sign in holds its place. */
   .cap-site-header-account {
     display: flex;
     align-items: center;
   }
-  /* A page with no sign-in at all (a personal site): the empty slot takes no room. */
   .cap-site-header-account:empty {
     display: none;
   }
   .cap-site-header .cap-site-header-avatar {
     border-radius: var(--radius-full);
 
-    /* The initials are drawn, not text, for the same reason as the business tile's letter: the
-       button is named "Your account". A picture, when the site gives one, covers them. */
+    /* The initials are drawn, not text, for the same reason as the business tile's letter. A picture, when the site gives one, covers them. */
     & > .cap-site-header-initials {
       position: relative;
       display: grid;
@@ -545,13 +487,10 @@
     }
   }
 
-  /* The phone's menu button: hidden on a desktop. */
   .cap-site-header .cap-site-header-menu {
     display: none;
   }
 
-  /* A panel: the site's contents under its button, in the top layer, lined up with the button's
-     edge and starting under the header's bottom edge, so it never covers the header. */
   .cap-site-header-panel {
     position: fixed;
     inset: auto;
@@ -589,11 +528,9 @@
       left: auto;
     }
   }
-  /* A row that posts (Sign out, an account switch): the form adds no box, its button is the row. */
   .cap-site-header-form {
     display: contents;
   }
-  /* The default contents: who you are, labeled groups of links, Sign out last. */
   .cap-site-header-panel-list {
     display: grid;
     gap: var(--space-1);
@@ -670,10 +607,6 @@
     margin-inline-start: auto;
   }
 
-  /* The phone's sheet: the shared dialog from the bottom, holding everything the top row does not:
-     the site's own rows first (the family's apps in your admin), the switchers, the section links
-     grouped as the desktop menus group them, the button extra full width; the account rows are
-     pinned under the list so Sign out is always in view. */
   .cap-site-header-sheet > .cap-dialog-body {
     padding: var(--space-3);
     padding-block-end: var(--space-5);
@@ -681,8 +614,7 @@
   .cap-site-header-sheet .cap-site-header-sheet-title {
     font-size: var(--fs-lead);
 
-    /* Focus starts here when the sheet opens, so a screen reader begins at its name; it is not
-       a control, so it shows no ring. */
+    /* Focus starts here when the sheet opens so a screen reader begins at its name; it is not a control, so it shows no ring. */
     &:focus {
       outline: none;
     }
@@ -736,7 +668,6 @@
     flex: 1;
     min-inline-size: 0;
   }
-  /* One label column: every row, with an icon or without, starts its label after the same 24px. */
   .cap-site-header-sheet-icon {
     display: grid;
     place-items: center;
@@ -758,7 +689,6 @@
   .cap-site-header[data-sheet-icons="auto"] .cap-site-header-sheet:not(:has(.cap-site-header-sheet-icon:not(:empty))) .cap-site-header-sheet-icon {
     display: none;
   }
-  /* Two classes, so the dialog's own link color (.cap-dialog-body nav a) does not win. */
   .cap-dialog-body .cap-site-header-sheet-cta {
     display: flex;
     justify-content: center;
@@ -777,13 +707,10 @@
     border-block-start: var(--line-w) solid var(--line);
   }
 
-  /* The bottom bar of a signed-in area on a phone: up to five of its top pages, and no More,
-     because the menu button opens the full list (Dustin's answer 5). Hidden on a desktop. */
   .cap-site-tabs {
     display: none;
   }
 
-  /* Under 360px a logo with a mark shows the mark alone; the link's label keeps the name. */
   @media (max-width: 359.98px) {
     .cap-site-header-logo > :is(svg, img) ~ * {
       display: none;
@@ -796,10 +723,7 @@
     }
   }
 
-  /* The phone's one row: the links, the switcher and the button extra go to the sheet behind the
-     menu button. Under 768px; a site whose bar holds more (bsw) collapses it under 1024px with
-     data-collapse="lg". A media query cannot read a custom property, so each width names the header
-     the row's container, and the row's rules are written once, for that container. */
+  /* A media query cannot read a custom property, so each width names the header the row's container and the row's rules are written once, for that container. */
   @media (max-width: 767.98px) {
     .cap-site-header {
       container: cap-site-header-row / inline-size;
@@ -810,9 +734,7 @@
       container: cap-site-header-row / inline-size;
     }
   }
-  /* A header clear at rest is already the cap-site-header scroll-state container, and that later,
-     narrower rule would drop the row's name: it keeps both. A browser without scroll-state queries
-     drops this declaration and keeps the row's alone. */
+  /* A header clear at rest is already the cap-site-header scroll-state container, and this later, narrower rule would drop the row's name, so it keeps both. A browser without scroll-state queries drops this declaration and keeps the row's alone. */
   @media (max-width: 767.98px) {
     .cap-site-header[data-rest="clear"]:not([data-sticky="false"]) {
       container: cap-site-header cap-site-header-row / scroll-state inline-size;
@@ -827,7 +749,6 @@
     .cap-site-header :is(.cap-site-header-switcher, .cap-site-header-sections, .cap-site-header-cta) {
       display: none;
     }
-    /* A button extra the site keeps in the top row (data-phone="bar"): compact, not in the sheet. */
     .cap-site-header .cap-site-header-extras[data-phone="bar"] .cap-site-header-cta {
       display: inline-flex;
       padding-inline: var(--space-4);
@@ -839,8 +760,6 @@
         display: none;
       }
     }
-    /* The links on the right are hidden here, so the tools keep to the window's edge and lose
-       the divider that stood between them and the links. */
     .cap-site-header[data-links="right"] .cap-site-header-sections + .cap-site-header-tools {
       margin-inline-start: auto;
 
@@ -848,8 +767,6 @@
         display: none;
       }
     }
-    /* The menu button can stand bare (--header-menu-line: transparent; --header-menu-bg: none) and
-       take its own size and glyph (--header-menu-size, --header-menu-glyph). */
     .cap-site-header .cap-site-header-menu {
       display: inline-grid;
       inline-size: var(--header-menu-size, var(--header-icon-size, 36px));
@@ -882,11 +799,9 @@
   }
 
   @media (max-width: 767.98px) {
-    /* A focused control never lands under the tab bar (WCAG 2.4.11): the bar is 61 to 79px. */
     :root:has(.cap-site-tabs) {
       scroll-padding-bottom: calc(5.5rem + env(safe-area-inset-bottom, 0px));
     }
-    /* A result sits above the bar, not under it: the region is sticky at the foot of the page, as the bar is. */
     :root:has(.cap-site-tabs) .cap-message {
       inset-block-end: calc(5.5rem + env(safe-area-inset-bottom, 0px));
     }
@@ -919,8 +834,6 @@
           color: var(--accent-text);
         }
       }
-      /* The icon sits in a pill (Material 3's active indicator): quiet until the tab is current,
-         where it takes the accent tint as well as the color. */
       & svg {
         box-sizing: content-box;
         inline-size: 20px;
@@ -936,14 +849,11 @@
       & a[aria-current="page"] svg {
         background: var(--accent-4);
       }
-      /* The badge rides the pill's top end corner, clear of the glyph. */
       & .cap-site-header-badge {
         top: 0;
         inset-inline-start: calc(50% + var(--space-4));
         box-shadow: 0 0 0 var(--line-w-thick) var(--surface);
       }
-      /* Under 360px a tab is 62px: the badge sits flush on the glyph's edge with tighter padding,
-         so the last tab's "99+" stays clear of the glyph and inside the window. */
       @media (max-width: 359.98px) {
         & .cap-site-header-badge {
           inset-inline-start: calc(50% + var(--space-3-5));
@@ -952,7 +862,6 @@
       }
     }
   }
-
 
   @media (prefers-reduced-motion: no-preference) {
     .cap-site-header :is(.cap-site-header-icon, .cap-site-header-link, .cap-site-header-switch, .cap-site-header-cta, .cap-site-header-signin),

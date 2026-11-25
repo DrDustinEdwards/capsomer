@@ -22,7 +22,6 @@ export interface TimeProps {
   now?: number;
 }
 
-// The clock, ticking every 30 seconds while a relative time is shown.
 function useClock(enabled: boolean): number {
   const [now, setNow] = useState(() => Date.now());
   useEffect(() => {
@@ -35,8 +34,7 @@ function useClock(enabled: boolean): number {
   return now;
 }
 
-// The exact time in a tooltip beside a time, on hover and keyboard focus. The behavior module
-// shows and hides it (Esc hides). The tip is a span, so it is valid inside a <p>.
+// The exact time in a tooltip beside a time, shown and hidden by the behavior module. A span, so it is valid inside a <p>.
 function TimeTip({ t, hydrated, children }: { t: number; hydrated: boolean; children: ReactNode }) {
   return (
     <Tooltip
@@ -63,20 +61,16 @@ export function Time({ at, format = "relative", now, empty, tip = false }: TimeP
   const clock = useClock(format === "relative" && now === undefined);
   const hydrated = useHydrated();
   const iso = Number.isFinite(t) ? new Date(t).toISOString() : undefined;
-  // No time at all says so in the host's words.
   if ((at === null || at === undefined || at === "") && empty !== undefined)
     return (
       <span className="cap-time" data-empty="">
         {empty}
       </span>
     );
-  // A time that cannot be read is said in words and is not a <time> (it has no datetime).
   if (!iso) return <span className="cap-time">{UNREADABLE}</span>;
-  // The server cannot know the viewer's zone. Until hydration is done the time is drawn in UTC
-  // on both sides ("October 2, 2026, 9:12 AM UTC", one text with no UTC part), so the markup the
-  // server sent and the browser's first render are the same and React does not throw (#418);
-  // then it redraws in the viewer's zone with the UTC part beside it. A relative time's words
-  // can still differ by the clock; they are text alone, and the browser's win without a warning.
+  // The server cannot know the viewer's zone. Until hydration the time is drawn in UTC on both sides, so the
+  // server markup and the browser's first render match and React does not throw (#418); then it redraws in
+  // the viewer's zone. A relative time's words can still differ by the clock; they are text alone.
   const zone = hydrated ? undefined : "UTC";
   const p = format === "exact" ? exactParts(t, zone) : null;
   const el = (

@@ -36,23 +36,17 @@ import { useCleanId, useHydrated } from "../hooks/hooks.react.tsx";
 export type { HistoryEntry, PersonRow, RoleGridPerson, RoleOption, RoleScope, TitleOption };
 
 export interface PeopleData {
-  // The app's name as the heading reads it: "Lab members".
   heading: string;
-  // One line under the heading: "You manage Lab workers."
   lead?: string;
   people: PersonRow[];
-  // The titles the viewer may give, below their own layer and within their permissions.
   titles: TitleOption[];
   // People whose review is open, with the date their access ends. Empty or absent: no review.
   review?: {
     endDate: string;
     people: Array<Pick<PersonRow, "email" | "name" | "title" | "renewTo">>;
   };
-  // One person's history, when the address asks for it (`?person=`).
   history?: { email: string; name: string; entries: HistoryEntry[] };
-  // The person whose title is being changed (`?change=`).
   changing?: string;
-  // The answer to the last post.
   result?: { ok: boolean; text: string };
 }
 
@@ -60,15 +54,11 @@ export interface PeopleRolesProps {
   data: PeopleData;
   // Where every form posts. Each carries `intent`: add, change_title, renew, remove, retry, review.
   action: string;
-  // Today, for "ends in 5 days". Defaults to now.
   now?: number;
-  // Builds the address that opens a person's history or change-title row. Defaults to `?person=` and `?change=`.
   hrefFor?: (kind: "person" | "change", email: string) => string;
-  // Where Close goes, from a history or a change-title row. Defaults to "?".
   closeHref?: string;
   // Runs a post in place instead of a page load. The page shows `data.result` when it comes back.
   onIntent?: (intent: string, fields: FormData) => void | Promise<void>;
-  // The `h` level of the heading. The cards and the history use the next one down.
   headingLevel?: 2 | 3;
 }
 
@@ -102,7 +92,6 @@ export function PeopleRoles({
   onIntent,
   headingLevel = 2,
 }: PeopleRolesProps) {
-  // The time the page was drawn, when the page does not pass one.
   const [drawnAt] = useState(() => Date.now());
   const now = nowProp ?? drawnAt;
   const id = useCleanId();
@@ -110,14 +99,12 @@ export function PeopleRoles({
   const Sub = `h${headingLevel + 1}` as "h3" | "h4";
   const live = data.people.filter((p) => p.status === "active").length;
   const root = useRef<HTMLElement>(null);
-  // The add and change-title forms check their fields beside each field.
   useEffect(
     () => (root.current ? enhanceFields(root.current) : undefined),
     [data.changing, data.titles.length],
   );
 
-  // Every form in the page posts through here: Remove asks first, and with `onIntent` the
-  // app runs the post in place instead of the browser loading a page.
+  // Every form posts through here: Remove asks first, and with `onIntent` the app runs the post in place.
   const onSubmitCapture = (e: FormEvent<HTMLElement>) => {
     const form = e.target as HTMLFormElement;
     const submitter = (e.nativeEvent as SubmitEvent).submitter as HTMLButtonElement | null;
@@ -638,23 +625,16 @@ function Field({
 export interface RoleGridProps {
   people: RoleGridPerson[];
   scopes: RoleScope[];
-  // The table's caption, for screen readers: "People, and their role on each project".
   caption: string;
-  // The first column's heading. Default "Person".
   personHeading?: string;
-  // The roles this person may have on this scope (a reviewer is offered no Editor). "" is no
-  // access and is always offered first.
+  // The roles this person may have on this scope (a reviewer is offered no Editor). "" is no access, always first.
   options: (person: RoleGridPerson, scope: RoleScope) => RoleOption[];
-  // With the script: a cell saves as soon as it changes. The grid says "Saved: ..." when it
-  // resolves. Without the script, each row's Save posts every scope's role at once (intent
-  // "roles", person, and role-<scope id> per scope).
+  // With script a cell saves as it changes and the grid says "Saved: ..."; without it each row's
+  // Save posts every scope's role at once (intent "roles", person, and role-<scope id>).
   onRoleChange?: (person: RoleGridPerson, scope: RoleScope, role: string) => void | Promise<void>;
-  // Disable and Enable. With the script it is called and Disable offers Undo; without it, the
-  // row's form posts intent "disable" or "enable" and person.
+  // With script it is called and Disable offers Undo; without it the row's form posts intent "disable" or "enable".
   onAccess?: (person: RoleGridPerson, intent: "disable" | "enable") => void | Promise<void>;
-  // Where the no-script forms post. Default: the page itself.
   action?: string;
-  // The words for no access. Default "No access".
   noAccess?: string;
 }
 
@@ -782,9 +762,8 @@ function GridRow({
   );
 }
 
-// People as rows, scopes (projects, sites) as columns, a role select in each cell that saves on
-// change; each row has Disable (with Undo) and, before the script runs, Save. The person stays in
-// view while the scopes scroll sideways. From Carrel's People page (routes/people.tsx).
+// People as rows, scopes as columns, a role select in each cell that saves on change. The person
+// stays in view while the scopes scroll sideways.
 export function RoleGrid({
   people,
   scopes,

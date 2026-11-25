@@ -1,12 +1,7 @@
-// The flag list's behavior and its pure helpers. A flag is raised against a draft by a check, a
-// reviewer or an AI, and stays on the record: resolving it keeps it, with who and when. A
-// suggestion a flag carries is inert until the owner applies it; nothing here applies one by
-// itself. The whole record is in the delivered HTML; this module only adds what a person does
-// to it (resolve, dismiss, reopen, apply, apply a batch) and keeps the anchors true to the
-// current text. No framework; the React wrapper reuses the pure functions.
-//
-// A result is said in a polite region, a refusal in an alert. A flag is a question for the
-// owner, never a decision; an open flag holds publish until it is fixed or dismissed.
+// The flag list's behavior and pure helpers. A flag is raised against a draft and stays on the record;
+// resolving keeps it, with who and when. A suggestion is inert until the owner applies it. A flag is a
+// question for the owner, never a decision; an open flag holds publish until fixed or dismissed.
+// A result is said in a polite region, a refusal in an alert.
 
 import { plural } from "@drdustinedwards/site-helpers/text";
 import { confirm } from "../confirm-dialog/confirm-dialog.ts";
@@ -46,8 +41,6 @@ export type {
   FlagCounts,
 } from "./flag-list-model.ts";
 
-// The page.
-
 const READY = "data-cap-ready";
 const part = <T extends HTMLElement = HTMLElement>(el: ParentNode, name: string) =>
   el.querySelector<T>(`[data-cap-part='${name}']`);
@@ -63,7 +56,6 @@ function el<K extends keyof HTMLElementTagNameMap>(
   return e;
 }
 
-// A flag read back from its row, so the DOM stays the one source of truth.
 export function readFlag(li: HTMLElement): Flag {
   const quote = li.querySelector(".cap-flag-quote-text")?.textContent ?? "";
   const after = li.querySelector(".cap-flag-after-text")?.textContent;
@@ -123,9 +115,7 @@ interface Ctx {
   ownerName: string;
 }
 
-// Rebuilds the parts of one row that depend on its state and anchor, from its data attributes:
-// the critical edge, the title (a link only while the passage is there), the resolution on the
-// right, the actions, the suggestion's footer, and the line that says who closed it and when.
+// Rebuilds the parts of one row that depend on its state and anchor, from its data attributes.
 export function renderFlag(li: HTMLElement, ctx: Ctx): void {
   const flag = readFlag(li);
   const status = anchorStatus(flag);
@@ -133,7 +123,6 @@ export function renderFlag(li: HTMLElement, ctx: Ctx): void {
   if (flag.kind === "blocking" && flag.state === "open") li.dataset.tone = "crit";
   else delete li.dataset.tone;
 
-  // Title: the link while the passage is found; plain words and "Anchor lost" otherwise.
   const title = li.querySelector<HTMLElement>(".cap-row-title");
   if (title && flag.anchor) {
     const describedby =
@@ -153,7 +142,6 @@ export function renderFlag(li: HTMLElement, ctx: Ctx): void {
     }
   }
 
-  // The state on the right.
   const meta = li.querySelector<HTMLElement>(".cap-row-meta");
   if (meta) {
     if (flag.state === "resolved") {
@@ -162,7 +150,6 @@ export function renderFlag(li: HTMLElement, ctx: Ctx): void {
     } else meta.replaceChildren();
   }
 
-  // The actions.
   const actions = li.querySelector<HTMLElement>(".cap-row-actions");
   if (actions) {
     actions.replaceChildren(
@@ -175,7 +162,6 @@ export function renderFlag(li: HTMLElement, ctx: Ctx): void {
     );
   }
 
-  // The quote's note and the suggestion's footer.
   const quoteNote = part(li, "anchor-note");
   if (quoteNote) {
     quoteNote.replaceChildren();
@@ -191,7 +177,6 @@ export function renderFlag(li: HTMLElement, ctx: Ctx): void {
     if (foot) {
       foot.replaceChildren();
       if (applied || flag.state === "resolved") {
-        // The flag's state says it: nothing to add under the suggestion.
       } else if (status !== "found")
         foot.append(
           el(
@@ -222,7 +207,6 @@ export function renderFlag(li: HTMLElement, ctx: Ctx): void {
     }
   }
 
-  // Who closed it, and when.
   const body = li.querySelector<HTMLElement>(".cap-flag-body");
   body?.querySelector(".cap-flag-resolution")?.remove();
   if (body && flag.state === "resolved") {
@@ -249,12 +233,10 @@ export interface FlagTextIO {
 }
 
 export interface FlagListHandle {
-  // Re-reads the current text and updates every flag's anchor, the counts and the batch button.
   refresh(): void;
   detach(): void;
 }
 
-// The text a `data-text-source` selector names: a textarea or input's value, else an element's text.
 function ioFor(selector: string | undefined): FlagTextIO | undefined {
   if (!selector) return undefined;
   const find = () => document.querySelector<HTMLElement>(selector);
@@ -322,7 +304,6 @@ export function attachFlagList(root: HTMLElement, io?: FlagTextIO): FlagListHand
     );
   };
 
-  // Group headings, the summary, the filter's counts and the batch button follow the rows.
   const tally = () => {
     const flags = readFlags(root);
     const c = countFlags(flags);
@@ -350,7 +331,6 @@ export function attachFlagList(root: HTMLElement, io?: FlagTextIO): FlagListHand
     if (note) note.hidden = owner || appliable(flags, text).length === 0;
   };
 
-  // Moves the open flags to the top of their group so the record reads open first.
   const order = () => {
     if (!list) return;
     for (const kind of ["blocking", "advisory"] as const) {
@@ -369,7 +349,6 @@ export function attachFlagList(root: HTMLElement, io?: FlagTextIO): FlagListHand
     }
   };
 
-  // Re-reads the text: a flag whose passage appeared or vanished is redrawn, then the counts.
   const refresh = () => {
     const text = io?.getText();
     if (text !== undefined) {
@@ -385,8 +364,7 @@ export function attachFlagList(root: HTMLElement, io?: FlagTextIO): FlagListHand
     tally();
   };
 
-  // Where focus goes if the row leaves the filtered view: chosen before the change, as the next
-  // visible row (or the one before it), so the order the rows are re-sorted into does not matter.
+  // Where focus goes if the row leaves the filtered view, chosen before the change (the next visible row, else the one before).
   const heirOf = (li: HTMLElement): HTMLElement | null => {
     const visible = (e: HTMLElement) => e.getClientRects().length > 0;
     const all = flagRows(root);
@@ -394,8 +372,7 @@ export function attachFlagList(root: HTMLElement, io?: FlagTextIO): FlagListHand
     return all.slice(here + 1).find(visible) ?? all.slice(0, here).reverse().find(visible) ?? null;
   };
 
-  // After a row's state changed: focus stays in the row on its new first action, or, when the row
-  // is no longer shown, goes to its heir. It is never left on nothing.
+  // After a state change focus stays in the row, or goes to its heir if the row is hidden; never nowhere.
   const settle = (li: HTMLElement, hadFocus: boolean, heir: HTMLElement | null) => {
     if (!hadFocus) return;
     const visible = (e: HTMLElement) => e.getClientRects().length > 0;
@@ -631,9 +608,7 @@ export function attachFlagList(root: HTMLElement, io?: FlagTextIO): FlagListHand
   };
 }
 
-// Attaches to every [data-cap="flag-list"] under root not attached yet. The text the anchors are
-// read against is the element named by data-text-source (a textarea's value, or an element's
-// text). Returns a function that detaches them all.
+// The anchors are read against the text named by data-text-source (a textarea's value or an element's text).
 export function enhance(root: ParentNode = document): () => void {
   const handles: FlagListHandle[] = [];
   for (const el of root.querySelectorAll<HTMLElement>(

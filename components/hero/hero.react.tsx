@@ -1,27 +1,17 @@
 import { useId, type ReactNode } from "react";
 
-// A landing page's first section (hero.md): the page's one h1, a lead and the actions, with an
-// aside beside them where there is room (a card, a picture, a product view)
-// and an optional decorative layer behind. The look comes from the site's tokens: --hero-title
-// size, --hero-align, the surface; the layer is the site's own drawing, aria-hidden.
+// A landing page's first section (hero.md): the page's one h1, a lead and the actions, an optional aside and a decorative layer.
 
 export interface HeroProps {
   title: ReactNode;
   lead?: ReactNode;
-  // More between the lead and the actions: further paragraphs, a price line.
   children?: ReactNode;
-  // Buttons or button links; the first is the primary.
   actions?: ReactNode;
-  // Beside the words from 60rem, under them before.
   aside?: ReactNode;
-  // Decorative, behind everything; hidden from assistive technology.
   backdrop?: ReactNode;
-  // Center the words (no aside). Default start.
   align?: "start" | "center";
-  // The words sit on a raised card over the backdrop (bsw's frosted card).
   card?: boolean;
   headingLevel?: "h1" | "h2";
-  // The section's id, for a skip or "back to top" link.
   id?: string;
   className?: string;
 }

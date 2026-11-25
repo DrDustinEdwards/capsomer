@@ -11,14 +11,12 @@ import {
 } from "react";
 import { enhance, type Align, type Side } from "./popover.ts";
 
-// Renders the HTML contract in popover.md: the content is in the markup, hidden by the
-// popover attribute, so it server-renders. Open or closed is the platform's popover state
-// (the behavior module shows, hides, places and returns focus), not React state.
+// Renders popover.md's contract: the content is in the markup, hidden by the popover attribute, so it server-renders.
+// Open or closed is the platform's popover state (the behavior module drives it), not React state.
 type Kind = "dialog" | "tooltip";
 const Ctx = createContext<{ id: string; kind: Kind }>({ id: "", kind: "dialog" });
 
 export interface PopoverProps {
-  // "dialog" (default): a click popover. "tooltip": detail on hover and keyboard focus.
   kind?: Kind;
   children: ReactNode;
 }
@@ -65,15 +63,12 @@ export function PopoverTrigger({
 export interface PopoverContentProps extends Omit<ComponentProps<"div">, "popover"> {
   side?: Side;
   align?: Align;
-  // Gap from the trigger in px. Default 4.
   offset?: number;
   size?: "sm" | "md" | "lg" | "auto";
-  // Draws the arrow pointing at the trigger.
   arrow?: boolean;
 }
 
-// Whether a PopoverTitle sits anywhere in the content, so the dialog is labeled by it, and by
-// nothing dangling when there is none.
+// Whether a PopoverTitle is in the content, so the dialog is labeled by it and by nothing dangling otherwise.
 function hasTitle(children: ReactNode): boolean {
   return Children.toArray(children).some(
     (c) =>
@@ -125,7 +120,6 @@ export function PopoverHeader({ className, ...props }: ComponentProps<"div">) {
   );
 }
 
-// Names the dialog: PopoverContent points aria-labelledby at it when it is there.
 export function PopoverTitle({ className, children, ...props }: ComponentProps<"h2">) {
   const { id } = useContext(Ctx);
   return (

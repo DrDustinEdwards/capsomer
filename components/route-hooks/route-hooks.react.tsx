@@ -13,8 +13,7 @@ import {
 import { filterParams, pagePending, withParam } from "../form-hooks/form-hooks.ts";
 import { hashId } from "../hooks/hooks.ts";
 
-// The hooks that read the address, a fetcher or loader data (React Router 8). The ones that need
-// no router are capsomer/react/form-hooks and capsomer/react/state-hooks.
+// Hooks that read the address, a fetcher or loader data (React Router 8). Router-free ones are capsomer/react/form-hooks and state-hooks.
 
 /** What a fetcher for the action `D` holds once it is idle (undefined before its first answer). */
 export type FetcherData<D> = ReturnType<typeof useFetcher<D>>["data"];

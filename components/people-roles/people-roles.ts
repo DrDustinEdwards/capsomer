@@ -1,9 +1,7 @@
-// The members page's behavior and the words it shows. Every action is a form post, so the
-// page works with no script; this module adds what a form cannot do alone: the confirm
-// before a removal, the add form's end date following the chosen title, and the review's
-// running tally. The rules (who may manage whom, what may be granted, which end dates are
-// allowed) live in the app's server, in site-runtime's `./members`; this module only shows
-// what the server already decided.
+// The members page's behavior and words. Every action is a form post, so the page works with no
+// script; this adds the removal confirm, the add form's end date following the title, and the
+// review's tally. The rules (who may manage whom, which end dates are allowed) live in the
+// server, in site-runtime's `./members`; this only shows what the server decided.
 
 import { plural } from "@drdustinedwards/site-helpers/text";
 import { listText } from "../hooks/hooks.ts";
@@ -17,40 +15,29 @@ import { DAY, formatDate } from "../time/time.ts";
 export interface PersonRow {
   email: string;
   name: string;
-  // The title's label, as the app names it: "Lab worker".
   title: string;
   // YYYY-MM-DD in UTC, or null for a title that does not expire.
   endDate: string | null;
   status: "active" | "expired" | "removed";
-  // Whether the allow list in Cloudflare matches this row yet.
   sync: "ready" | "waiting" | "failed";
-  // Cloudflare's answer when it refused, in its words.
   syncError?: string;
-  // The viewer may renew, change and remove this person.
   manageable: boolean;
   // Renew sets this end date; null when the title does not expire.
   renewTo?: string | null;
-  // The row is the viewer's own.
   you?: boolean;
-  // When the row was removed or expired, YYYY-MM-DD.
   endedOn?: string;
 }
 
 export interface TitleOption {
-  // The title's id, posted as `title`.
   value: string;
   label: string;
-  // The default end date for someone given this title today, or null if it does not expire.
   defaultEnd: string | null;
 }
 
 export interface HistoryEntry {
-  // ISO time.
   at: string;
-  // Who made the change, as a name or an actor id.
   by: string;
   action: "add" | "change_title" | "renew" | "remove" | "expire" | "review_keep";
-  // The title before and after, and the end date after, where the action has them.
   fromTitle?: string;
   toTitle?: string;
   endDate?: string | null;
@@ -59,15 +46,13 @@ export interface HistoryEntry {
   cloudflareError?: string;
 }
 
-// How long before an end date the row shows that it ends soon, matching the review (21 days).
+// Days before an end date a row shows it ends soon; matches the review.
 export const SOON_DAYS = 21;
 
 export const REASON_MISSING = "Type a reason. It is recorded with the change.";
 
-// "Dec 18, 2026", from a YYYY-MM-DD date, in UTC: American English, as the family writes dates.
 export const dayText = (date: string): string => formatDate(date, { style: "medium" }) ?? date;
 
-// "Oct 2, 2026, 2:52 PM UTC", from an ISO time.
 export const timeText = (iso: string): string =>
   formatDate(iso, { style: "medium", time: true, zoneName: true }) ?? iso;
 
@@ -76,7 +61,6 @@ export function daysLeft(endDate: string, now: number): number {
   return Math.floor((Date.parse(`${endDate}T00:00:00Z`) + DAY - 1 - now) / DAY);
 }
 
-// The Access column's words.
 export function accessText(
   p: Pick<PersonRow, "endDate" | "status" | "endedOn">,
   now: number,
@@ -93,20 +77,17 @@ export function accessText(
   return `Ends ${dayText(p.endDate)}`;
 }
 
-// Whether the end date is close enough to mark (the review is open).
 export function endsSoon(p: Pick<PersonRow, "endDate" | "status">, now: number): boolean {
   return p.status === "active" && p.endDate !== null && daysLeft(p.endDate, now) <= SOON_DAYS;
 }
 
-// The Cloudflare column's words. A removed or expired person is "Ready" once Cloudflare has
-// taken them off, so the column always answers "does Cloudflare match this row yet".
+// A removed or expired person is "Ready" once Cloudflare has taken them off.
 export function syncText(p: Pick<PersonRow, "sync" | "status">): string {
   if (p.sync === "waiting") return "Waiting for Cloudflare";
   if (p.sync === "failed") return "Cloudflare refused";
   return p.status === "active" ? "Ready: they can sign in" : "Ready: signed out";
 }
 
-// One history line's words.
 export function actionText(e: HistoryEntry): string {
   const until = e.endDate ? `, until ${dayText(e.endDate)}` : "";
   switch (e.action) {
@@ -131,21 +112,18 @@ export function cloudflareText(e: Pick<HistoryEntry, "cloudflare" | "cloudflareE
   return e.cloudflareError ? `Cloudflare refused: ${e.cloudflareError}` : "Cloudflare refused";
 }
 
-// The add form's help line under the end date.
 export function endHelp(defaultEnd: string | null): string {
   return defaultEnd
     ? `Defaults to the end of the term, ${dayText(defaultEnd)}. You can choose an earlier date.`
     : "This title does not expire.";
 }
 
-// The review's running count.
 export function tallyText(keep: number, remove: number, open: number): string {
   const parts = [`${keep} to keep`, `${remove} to remove`];
   if (open) parts.push(`${open} not answered`);
   return `${parts.join(", ")}.`;
 }
 
-// The removal's confirm, from the server's own words: who, and what follows.
 function removeBody(name: string, email: string): string[] {
   return [
     `${name} is refused on their next request.`,
@@ -154,7 +132,6 @@ function removeBody(name: string, email: string): string[] {
   ];
 }
 
-// Who a removal is for, from the row the form sits in (or the form's own data).
 function removeTarget(form: HTMLFormElement): { name: string; email: string } {
   const row = form.closest<HTMLElement>("tr[data-email]");
   const email =
@@ -165,7 +142,6 @@ function removeTarget(form: HTMLFormElement): { name: string; email: string } {
   return { name: row?.dataset.name ?? form.dataset.name ?? email, email };
 }
 
-// Asks before a removal; on Remove, posts the form with `intent=remove` and `confirmed=yes`.
 // Without script the form posts without `confirmed` and the server answers with the confirm page.
 // An app that posts the removal itself passes `perform`.
 export async function confirmRemove(
@@ -198,15 +174,13 @@ function setHidden(form: HTMLFormElement, name: string, value: string): void {
 }
 
 export interface RowAction {
-  // The menu item's value, posted as `intent`, or a link's key.
   value: string;
   label: string;
   href?: string;
   danger?: boolean;
 }
 
-// What a row offers: one action inline (Retry while Cloudflare has not caught up, else Renew),
-// and the rest in its Actions menu. A person the viewer may not manage gets neither.
+// One action inline (Retry while Cloudflare has not caught up, else Renew), the rest in the Actions menu.
 export function rowActions(
   p: Pick<PersonRow, "manageable" | "status" | "sync" | "renewTo">,
   canChangeTitle: boolean,
@@ -229,8 +203,6 @@ export function rowActions(
   return { primary, items };
 }
 
-// Moves the add form's end date to the chosen title's default: its value and its latest
-// allowed date, or hides the field for a title that does not expire.
 export function followTitle(form: HTMLFormElement): void {
   const select = form.querySelector<HTMLSelectElement>("select[name='title']");
   const end = form.querySelector<HTMLInputElement>("input[name='end_date']");
@@ -253,7 +225,6 @@ export function followTitle(form: HTMLFormElement): void {
   if (help) help.textContent = endHelp(fallback || null);
 }
 
-// Counts the review's answers into its tally line.
 export function updateTally(form: HTMLFormElement): void {
   const tally = form.querySelector<HTMLElement>("[data-cap-part='tally']");
   if (!tally) return;
@@ -269,17 +240,13 @@ export function updateTally(form: HTMLFormElement): void {
   tally.textContent = tallyText(keep, remove, open);
 }
 
-// Attaches to every [data-cap="people-roles"] under root that is not attached yet. Returns a
-// function that detaches them all.
 export function enhance(root: ParentNode = document): () => void {
   const undo: Array<() => void> = [];
   for (const el of root.querySelectorAll<HTMLElement>(
     "[data-cap='people-roles']:not([data-cap-ready])",
   )) {
     el.dataset.capReady = "";
-    // The add and change-title forms check their own fields (a required reason, an email).
     const fieldsOff = enhanceFields(el);
-    // Each row's Actions menu: Esc, the arrow keys, closing on a press outside.
     const menusOff = enhanceMenus(el);
     for (const form of el.querySelectorAll<HTMLFormElement>("form.cap-people-add"))
       followTitle(form);
@@ -312,23 +279,19 @@ export function enhance(root: ParentNode = document): () => void {
   return () => undo.forEach((f) => f());
 }
 
-// A title as a group of people: "Lab worker" is "Lab workers"; a title already plural stays.
+// "Lab worker" is "Lab workers"; a title already plural stays.
 export function pluralTitle(label: string): string {
   return label.endsWith("s") ? label : `${label}s`;
 }
 
-// The line under the heading: "You manage Lab workers and Lab managers." from the titles the
-// viewer may give, highest first. `notice` follows it when something must be set up first (no
-// term dates yet). Undefined when the viewer gives no title.
+// "You manage Lab workers and Lab managers.", titles highest first. `notice` follows when something
+// must be set up first. Undefined when the viewer gives no title.
 export function manageLead(titles: readonly string[], notice?: string): string | undefined {
   if (titles.length === 0) return undefined;
   return `You manage ${listText(titles.map(pluralTitle))}.${notice ? ` ${notice}` : ""}`;
 }
 
-// The person an address names (`?person=` opens their history, `?change=` their inline change
-// row), matched against the people the viewer may see and, for a change, `allowed` (whom the
-// viewer manages). Anything else names nobody, so an address can never show a person the page
-// would not list.
+// Anything else names nobody, so an address can never show a person the page would not list.
 export function personFromParam(
   params: URLSearchParams,
   name: "person" | "change",
@@ -340,7 +303,6 @@ export function personFromParam(
   return emails.some((e) => e.toLowerCase() === asked) && allowed(asked) ? asked : undefined;
 }
 
-// One column: a project, a site, an app.
 export interface RoleScope {
   id: string;
   name: string;
@@ -351,33 +313,27 @@ export interface RoleOption {
   label: string;
 }
 
-// One row of the grid.
 export interface RoleGridPerson {
   id: string;
   email: string;
   name?: string;
   // Each scope's role value; a scope that is absent is "" (no access).
   roles: Readonly<Record<string, string>>;
-  // Words shown as badges under the name: "Agent (AI)", "Reviewer (AI)".
   badges?: string[];
-  // When the person was disabled, ISO; a disabled person keeps their roles.
   disabledAt?: string;
   // A person whose roles are not set here (the Owner): this sentence spans the scopes, and the
   // row has no Save and no Disable.
   everyScope?: string;
 }
 
-// "Saved: Rosa Park on Field notes, Editor."
 export function roleSavedText(person: string, scope: string, role: string): string {
   return `Saved: ${person} on ${scope}, ${role}.`;
 }
 
-// A role change the app refused: the select goes back to the saved role.
 export function roleFailedText(person: string, scope: string): string {
   return `Not saved: ${person} on ${scope}. The role is back to what it was.`;
 }
 
-// The name the grid shows for a person.
 export function personName(p: Pick<RoleGridPerson, "name" | "email">): string {
   return p.name || p.email;
 }

@@ -1,10 +1,8 @@
-/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+/* Layer order repeated so this file is safe in any import order: the first statement fixes it (css/layers.css). */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
-/* The calculator: the form beside its result where there is room, above it where there is not.
-   Complete with script off: the server renders the form and its result, and nothing here waits on
-   a class a script adds. From dustinedwards.info (app/styles/phage-tools.css). The fields are
-   Field's (.cap-field, .cap-input) and Calculate is a Button. */
+/* The form beside its result where there is room, above it where there is not. Complete with script off:
+   nothing here waits on a class a script adds. The fields are Field's and Calculate is a Button. */
 @layer cap.components {
   /* The sidebar pattern: the form keeps about 17rem and the result takes the rest, until the
      result would be narrower than 20rem, when it wraps under the form. No breakpoint to tune. */

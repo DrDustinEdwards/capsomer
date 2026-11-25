@@ -1,18 +1,9 @@
-// The formatted editor: Tiptap's MIT core over ProseMirror, showing formatted text with the Markdown
-// underneath kept byte for byte (rich-editor-markdown.mjs). It keeps
-// what the Markdown editor did: the APG toolbar (bold, italic, link, heading, code, footnote, the app's
-// blocks, an image), Ctrl or Cmd B, I, E, K and S, the link palette over the app's pages, the block
-// menu on a lone "/", an image described before it is uploaded, the word count and
-// reading time, read-only, and Tab leaving the text. Markdown the editor does not format (front
-// matter, code, tables, directives, math) sits in source blocks, edited as Markdown in place.
-//
-// The server renders a labeled textarea holding the Markdown, so the page reads the same before the
-// script runs; the editor replaces it once it loads.
-//
-// In a shared room (`room`, made by the collab editor's useRoomEditing), the document is the room's
-// copy: the room brings the extensions that bind it (collaboration, carets, suggesting, comment marks)
-// and works out the Markdown, and `value` only feeds the word count. This file imports no Yjs, so an
-// editor outside a room does not carry it.
+// The formatted editor: Tiptap over ProseMirror, showing formatted text with the Markdown underneath kept
+// byte for byte (rich-editor-markdown.mjs). Markdown it does not format sits in source blocks.
+// The server renders a labeled textarea holding the Markdown, so the page reads the same before the script
+// runs; the editor replaces it once it loads.
+// In a shared room (`room`, from the collab editor's useRoomEditing) the document is the room's copy and
+// `value` only feeds the word count. This file imports no Yjs, so an editor outside a room does not carry it.
 
 import { plural, readingMinutes, wordCount } from "@drdustinedwards/site-helpers/text";
 import { Editor, type AnyExtension, type JSONContent } from "@tiptap/core";
@@ -47,18 +38,12 @@ import { baseExtensions } from "./rich-editor-schema.mjs";
 import { sourceBlockView, SourceInlineView } from "./rich-editor-source-views.ts";
 
 export type RichEditorHandle = {
-  /** Puts Markdown (a figure, an image) in as blocks at the cursor, as the editor's own blocks are put. */
   insertMarkdown: (markdown: string) => void;
   focus: () => void;
-  /** The editor itself, for the room's panels (comments, suggestions). */
   editor: Editor;
 };
 
-/**
- * The room an editor is in, as the collab editor's useRoomEditing makes it. The editor knows nothing of
- * Yjs: the room gives it its extensions, the Markdown of a document, and a step to run after each change
- * of `syncKey` (suggesting on or off, the carets and the comment marks drawn again).
- */
+/** The room an editor is in, as the collab editor's useRoomEditing makes it. The editor knows nothing of Yjs. */
 export type RichRoom = {
   /** Made once per editor: the binding to the room's copy and what draws the others' work in it. */
   extensions: () => AnyExtension[];
@@ -83,7 +68,6 @@ export type RichEditorProps = {
   placeholder?: string;
   scaffolds?: Scaffold[];
   linkTargets?: LinkTarget[];
-  /** Called once the image is described, as Capsomer's markdown editor calls it. */
   onUpload?: (file: File, image: ImageDescription, signal: AbortSignal) => Promise<{ url: string }>;
   imageMarkdown?: (image: {
     url: string;
@@ -175,7 +159,6 @@ export function RichEditor(props: RichEditorProps) {
     setWords(wordCount(source));
   };
 
-  // The editor itself: made once, after the page is in the browser.
   useEffect(() => {
     if (!host.current) return;
     const loaded = toDoc(value, dialect);
@@ -191,7 +174,6 @@ export function RichEditor(props: RichEditorProps) {
         Placeholder.configure({ placeholder }),
         ...(inRoom ? inRoom.extensions() : []),
       ],
-      // In a room the content is the room's.
       ...(inRoom ? {} : { content: loaded.doc as JSONContent }),
       editable: !readOnly,
       // Sites keep style-src 'self': Tiptap's base rules are in rich-editor.css, not a style element.
@@ -291,7 +273,6 @@ export function RichEditor(props: RichEditorProps) {
       editor.destroy();
       editorRef.current = null;
     };
-    // Made once; later values come in through the effects below.
     // oxlint-disable-next-line react/exhaustive-deps -- made once: the ProseMirror editor owns its state, and later values come in through the effects below
   }, []);
 
@@ -338,7 +319,6 @@ export function RichEditor(props: RichEditorProps) {
     const menu = slashRef.current;
     const editor = editorRef.current;
     if (!menu || !editor || slash === null) return;
-    // The anchor is read again on scroll, so the menu stays under the "/".
     const close = openAt(menu, caretAnchor(editor, slash + 1), { side: "bottom", align: "start" });
     say("Block menu open. Press Down arrow to choose a block, Escape to close.");
     return close;
@@ -428,7 +408,6 @@ export function RichEditor(props: RichEditorProps) {
         .insertContent({ type: "text", text: title, marks: [{ type: "link", attrs: { href } }] })
         .run();
     else chain.setLink({ href }).run();
-    // The cursor lands after the link, outside it.
     editor.commands.unsetMark("link", { extendEmptyMarkRange: false });
   }
 
@@ -899,7 +878,7 @@ export function RichEditor(props: RichEditorProps) {
   );
 }
 
-/** A toolbar icon: the markdown editor's 24-unit stroke paths, hidden because each button has a name. */
+// A toolbar icon, hidden because each button has a name.
 function Icon({ paths }: { paths: string[] }) {
   return (
     <svg

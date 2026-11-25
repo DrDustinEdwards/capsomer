@@ -1,12 +1,8 @@
-// The markdown editor's behavior: a labeled <textarea>, delivered in the page's HTML, is
-// upgraded in place to a CodeMirror surface with a toolbar, a link palette, a slash menu, an
-// image prompt that insists on alt text, and a word count. The textarea stays in the page,
-// hidden and kept in step, so a form posts the markdown and a page without script still has
-// a working field; see markdown-editor.md.
-//
-// This file holds no CodeMirror: it imports markdown-editor.view.ts with import(), so the
-// editor is its own chunk. The pure helpers (edits, counting, filtering, roving) are
-// exported so the React wrapper and a node test can use them without the browser.
+// The markdown editor's behavior: a labeled <textarea> in the page's HTML is upgraded in place to a
+// CodeMirror surface with a toolbar, link palette, slash menu, an image prompt that insists on alt
+// text, and a word count. The textarea stays, hidden and in step, so a form posts the markdown and a
+// page without script still has a working field. This file holds no CodeMirror: it imports
+// markdown-editor.view.ts with import() so the editor is its own chunk.
 
 import { clamp } from "../hooks/hooks.ts";
 import { plural, readingMinutes, wordCount } from "@drdustinedwards/site-helpers/text";
@@ -133,9 +129,8 @@ interface Tool {
   run: () => void;
 }
 
-// Upgrades one editor: the element carrying data-cap="markdown-editor", holding a label and a
-// textarea. Resolves once CodeMirror has loaded and the surface is mounted; if it cannot
-// load, the textarea simply stays, and the promise rejects.
+// Upgrades one editor (the element carrying data-cap="markdown-editor"). Resolves once CodeMirror has
+// loaded; if it cannot load, the textarea stays and the promise rejects.
 export async function mountMarkdownEditor(
   host: HTMLElement,
   options: MarkdownEditorOptions = {},
@@ -144,13 +139,10 @@ export async function mountMarkdownEditor(
   if (!found) throw new Error("markdown-editor: no <textarea> inside the element");
   const ta: HTMLTextAreaElement = found;
   const labelEl = host.querySelector("label");
-  // A server build (Vite sets import.meta.env.SSR) never reaches this line, since a surface mounts only in a browser,
-  // so the bundler drops the CodeMirror chunk from a server bundle: about 300 KB of Carrel's Worker was CodeMirror.
-  // Outside Vite `env` is undefined and the import runs as before.
+  // A server build (import.meta.env.SSR) never reaches this line, so the bundler drops the CodeMirror chunk (about 300 KB) from a server bundle. Outside Vite `env` is undefined and the import runs.
   if ((import.meta as { env?: { SSR?: boolean } }).env?.SSR)
     throw new Error("markdown-editor: a surface mounts only in a browser");
   const { createSurface } = await import("./markdown-editor.view.ts");
-  // The element may have been detached or upgraded while CodeMirror loaded.
   if (!host.isConnected) throw new Error("markdown-editor: the element left the page");
   if (handles.has(host)) throw new Error("markdown-editor: the element is already an editor");
 
@@ -371,10 +363,7 @@ export async function mountMarkdownEditor(
 
   cleanups.push(attachToolbar(toolbar, TOOLS));
 
-  // A floating panel is the shared `.cap-popover` (popover.css), shown with the Popover API in
-  // the top layer so the editor's clipping frame cannot cut it off, and placed by popover.ts's
-  // `place()` against a virtual anchor: the box of the character at `pos`. It follows the
-  // window's scroll and resize while it is open.
+  // A floating panel is the shared `.cap-popover` in the top layer, so the editor's clipping frame cannot cut it off; place() anchors it to the character at `pos`.
   function floating(panel: HTMLElement, pos: number): () => void {
     const anchor = {
       getBoundingClientRect: () => {
@@ -503,8 +492,7 @@ export async function mountMarkdownEditor(
     const note = el("p", { class: "cap-md-palette-note", role: "status" });
     panel.append(label, input, list, note);
     host.append(panel);
-    // Enter on a typed address is the palette's own; the listbox must not also act on it, and
-    // it does not once the event is defaultPrevented. This listener goes first.
+    // Enter on a typed address is the palette's own; this listener goes first and the listbox does not also act once the event is defaultPrevented.
     input.addEventListener("keydown", (e) => {
       const l = link;
       if (!l) return;
@@ -639,10 +627,7 @@ export async function mountMarkdownEditor(
     dismiss(menu);
   }
 
-  // The person describes the image before it leaves the browser (ATAG 2.0 B.2.3: the authoring
-  // tool prompts for the text alternative; the server refuses an undescribed upload anyway), so
-  // the file is sent once, with its alt text or its decorative choice, and nothing is uploaded
-  // for an image they cancel.
+  // The person describes the image before it leaves the browser (ATAG 2.0 B.2.3; the server refuses an undescribed upload anyway), so nothing is uploaded for an image they cancel.
   function clearUploadError() {
     host.querySelector(".cap-md-upload-error")?.remove();
   }
@@ -839,8 +824,7 @@ export async function mountMarkdownEditor(
     syncState();
   }
 
-  // A required, empty textarea blocks the form, and the browser cannot focus a hidden one to
-  // say so. This does it for the editor: focus the surface and say what is wrong.
+  // A required, empty textarea blocks the form, and the browser cannot focus a hidden one to say so. Focus the surface and say what is wrong.
   listen(ta, "invalid", (e: Event) => {
     e.preventDefault();
     if (!requiredMessage) {
@@ -1002,15 +986,12 @@ export async function mountMarkdownEditor(
 
 const handles = new WeakMap<HTMLElement, MarkdownEditorHandle>();
 
-// The handle of an editor that has finished loading, or undefined while it is still the plain
-// textarea (listen for the bubbling `cap-md-ready` event to know when).
+// The handle of an editor that has finished loading, or undefined while it is still the plain textarea (listen for `cap-md-ready`).
 export function getMarkdownEditor(host: Element): MarkdownEditorHandle | undefined {
   return host instanceof HTMLElement ? handles.get(host) : undefined;
 }
 
-// Upgrades every [data-cap="markdown-editor"] under root not yet upgraded. The textarea is
-// the editor until CodeMirror has loaded, and again if it cannot. `options` apply to each one;
-// to give editors different options, pass a narrower `root`. Returns a function that undoes it.
+// Upgrades every [data-cap="markdown-editor"] under root not yet upgraded; `options` apply to each, so pass a narrower `root` to differ. Returns an undo function.
 export function enhance(
   root: ParentNode = document,
   options: MarkdownEditorOptions = {},

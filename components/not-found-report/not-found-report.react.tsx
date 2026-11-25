@@ -12,27 +12,19 @@ export type { NotFoundRow };
 
 export interface NotFoundReportProps {
   rows: readonly NotFoundRow[];
-  // The window the rows count over, in days.
   days: number;
-  // The windows offered, with the change to make: a segmented control in the panel's head.
   windows?: readonly number[];
   onWindow?: (days: number) => void;
   title?: ReactNode;
-  // The source line; "Last 30 days" by default. The probes not listed always follow it.
   src?: ReactNode;
-  // Scanner probes the site counted and does not list.
   probes?: number | null;
-  // The report cannot be read: why, in a sentence. A state with a reason, never an empty list.
+  // The report cannot be read: why, in a sentence. Never an empty list.
   reason?: ReactNode;
   loading?: boolean;
-  // A row's own actions: "Add a redirect".
   actions?: (row: NotFoundRow) => ReactNode;
-  // A fixed "now" for the last-seen times.
   now?: number;
 }
 
-// The paths a site was asked for and does not have, most hits first, with who linked to each, so
-// a broken link or a moved page can be fixed.
 export function NotFoundReport({
   rows,
   days,

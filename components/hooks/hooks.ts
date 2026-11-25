@@ -1,5 +1,4 @@
-// Small helpers every React app in the network wrote its own copy of. No framework here: the React
-// hooks are in hooks.react.tsx.
+// Small helpers shared by every React app in the network. No framework; the hooks are in hooks.react.tsx.
 
 import { isHttpUrl, isSameOriginPath } from "@dustinedwards/site-runtime/url";
 
@@ -27,12 +26,8 @@ export function clamp(n: number, lo: number, hi: number): number {
   return Math.max(lo, Math.min(n, Math.max(lo, hi)));
 }
 
-/**
- * Runs `attach` on every `[data-cap="name"]` under `root`, or `root` itself, not yet marked
- * `data-cap-ready`, marks it, and returns one function that detaches them all and clears the marks.
- * The root is typed as the union, not ParentNode: under @cloudflare/workers-types an
- * HTMLFormElement does not type as a ParentNode, so a site could not pass its form.
- */
+/** Runs `attach` on every `[data-cap="name"]` under `root` (or `root`) not yet marked `data-cap-ready`; returns one detach function.
+The root is the union type, not ParentNode: under @cloudflare/workers-types an HTMLFormElement is not a ParentNode. */
 export function enhanceEach(
   root: ParentNode | Element | Document | DocumentFragment,
   name: string,
@@ -89,10 +84,7 @@ export function uid(prefix: string): string {
   return `${prefix}-${ids}`;
 }
 
-// A value kept in this browser. localStorage where it may be used, a page-long Map only where it is
-// refused (a private window, blocked storage, a full quota), so a choice still switches without
-// being kept. The Map never shadows storage that works, so a value changed or removed in another
-// tab reads as it is now.
+// localStorage where usable, a page-long Map where it is refused (private window, full quota), so a choice still switches. The Map never shadows working storage.
 const memory = new Map<string, string>();
 const listeners = new Set<() => void>();
 
@@ -111,7 +103,6 @@ export function writeStored(key: string, value: string | null): void {
     else localStorage.setItem(key, value);
     memory.delete(key);
   } catch {
-    // Not kept; still switched, from memory.
     if (value === null) memory.delete(key);
     else memory.set(key, value);
   }

@@ -1,14 +1,11 @@
-// The usage meter's behavior: a pure assessment of one usage figure against its free
-// limit (tone, projection by the reset, when it runs out, and the sentence that says so),
-// and `enhance`, which draws each row's bar through the shared meter (components/meter) from
-// its ARIA values through the CSSOM. No framework; the React wrapper uses the same functions.
-//
+// The usage meter: a pure assessment of one usage figure against its free limit (tone, projection by the reset,
+// when it runs out, and the sentence that says so), and `enhance`, which draws each row's bar through the shared meter.
 import { plural } from "@drdustinedwards/site-helpers/text";
 import { enhance as enhanceMeter, update as drawBar } from "../meter/meter.ts";
 import { DAY, HOUR, toMs } from "../time/time.ts";
 
-// The rules (approved for 0.1): warning at 75% used, or when the projection runs out before
-// the reset; critical at 90%; no projection until 7 days of history.
+// Rules: warning at 75% used or when the projection runs out before the reset; critical at 90%; no projection
+// until 7 days of history.
 
 export const MIN_HISTORY = 7;
 export const WARN_AT = 0.75;
@@ -35,13 +32,9 @@ export interface UsageInput {
 
 export interface UsageAssessment {
   tone: UsageTone;
-  // Used as a whole percentage of the limit.
   percent: number;
-  // The projected total at the reset, or null with no projection.
   projectedAtReset: number | null;
-  // When the limit is reached at the current rate (ms since the epoch), or null.
   fullAt: number | null;
-  // A short status word for a warning or critical row: "Runs out before the reset".
   label: string;
   // The "why" line. It starts with `lead`, the part shown in the tone's color.
   text: string;
@@ -50,8 +43,6 @@ export interface UsageAssessment {
   projection: string;
 }
 
-// A duration in plain words, rounded to the unit a person would say: "40 minutes",
-// "3 hours", "2 days".
 export function duration(span: number): string {
   const m = Math.max(0, Math.round(span / 60_000));
   if (m < 1) return "less than a minute";
@@ -155,8 +146,7 @@ export function assess(input: UsageInput): UsageAssessment {
   return out("ok", "On track", "On track", `On track: ${by}`);
 }
 
-// The rows as a table, Enarratio's DataTable shape (the first column holds the row headers), for
-// its dataTableBlock(): the meter is the picture, and this is its numbers as text (B30).
+// The rows as Enarratio's DataTable shape, for its dataTableBlock(): the meter is the picture, this its numbers as text.
 export function usageTable(items: Array<UsageInput & { name: string }>): {
   columns: string[];
   rows: string[][];
@@ -177,8 +167,6 @@ export function usageTable(items: Array<UsageInput & { name: string }>): {
   };
 }
 
-// Draws one row's bar from its aria-valuenow and aria-valuemax and its data-projected (the
-// projected total at the reset, in the same unit; absent with no projection).
 export const sizeBar: (bar: HTMLElement) => void = drawBar;
 
 // Attaches to every [data-cap="usage-meter"] under root that is not attached yet, and draws

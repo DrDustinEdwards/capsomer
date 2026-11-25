@@ -1,10 +1,7 @@
-// The field's behavior: check a field when it is left and every field on submit, with the
-// platform's constraint validation (required, type, pattern, min, max...), write the
-// message into the field's .cap-field-error, set aria-invalid, and on a failed submit move
-// focus to the first field in error, or, with two or more, to the error summary. The parts
-// that ride on a field are here too: Show and Hide on a password, a character count, number
-// steppers, a search field's Clear and a date input's real-date check. No framework; the
-// React wrapper and switch-reason use the same functions.
+// Field behavior: check a field when it is left and every field on submit with constraint
+// validation, show the message in .cap-field-error, set aria-invalid, and move focus on a failed
+// submit. Also the password toggle, character count, steppers, search clear and real-date check.
+// No framework; the React wrapper uses the same functions.
 
 import { plural, wordCount } from "@drdustinedwards/site-helpers/text";
 import {
@@ -18,8 +15,7 @@ import { say } from "../message/message.ts";
 
 export type Control = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
 
-// The ValidityState flags, in the order a message is chosen. A control can override each
-// with a data attribute: data-error-value-missing, data-error-type-mismatch, and so on.
+// Flags in the order a message is chosen; data-error-<flag> on a control overrides the words.
 const FLAGS = [
   "valueMissing",
   "typeMismatch",
@@ -42,8 +38,6 @@ export function isControl(el: unknown): el is Control {
   );
 }
 
-// What to say about a control, or "" when it is valid. The control's own words first,
-// then the browser's.
 export function messageFor(control: Control): string {
   const v = control.validity;
   if (v.valid) return "";
@@ -56,7 +50,6 @@ export function messageFor(control: Control): string {
   return control.dataset.error || control.validationMessage;
 }
 
-// The controls that share one message: a radio group, or the control alone.
 export function groupOf(control: Control): Control[] {
   if (
     control instanceof HTMLInputElement &&
@@ -73,7 +66,7 @@ export function groupOf(control: Control): Control[] {
   return [control];
 }
 
-// The control a check is about: the select behind an enhanced select's button.
+// The select behind an enhanced select's button is the control.
 function controlOf(el: unknown): Control | null {
   if (isControl(el)) return el;
   if (el instanceof HTMLElement && el.classList.contains("cap-select-trigger"))
@@ -92,9 +85,8 @@ function describe(control: Control, id: string): void {
   if (!ids.includes(id)) control.setAttribute("aria-describedby", [id, ...ids].join(" "));
 }
 
-// Shows a message beside a control. `announce` gives it role="alert": only for an error
-// that appears after a submit; one found on leaving a field is read through
-// aria-describedby when the field is next focused.
+// `announce` gives the message role="alert", only for an error after submit; one found on
+// leaving a field is read through aria-describedby when the field is next focused.
 export function showError(control: Control, text: string, announce = false): void {
   const el = errorFor(control);
   for (const c of groupOf(control)) c.setAttribute("aria-invalid", "true");
@@ -121,7 +113,6 @@ export function clearError(control: Control): void {
   el.hidden = true;
 }
 
-// Checks one control and shows or clears its message. True when it is valid.
 export function validate(control: Control, announce = false): boolean {
   const text = messageFor(control);
   if (text) showError(control, text, announce);
@@ -129,9 +120,8 @@ export function validate(control: Control, announce = false): boolean {
   return !text;
 }
 
-// Checks every field of a form. One field in error takes focus and its message is
-// announced; two or more are listed in the error summary, which takes focus instead. The
-// page title starts "Error: " until the form is valid. True when the form is valid.
+// One field in error takes focus; two or more are listed in the error summary, which takes
+// focus instead. The page title starts "Error: " until the form is valid.
 export function validateForm(form: HTMLFormElement): boolean {
   for (const g of form.querySelectorAll<HTMLElement>(".cap-date-input")) checkDate(g);
   const seen = new Set<string>();
@@ -161,12 +151,11 @@ export function validateForm(form: HTMLFormElement): boolean {
   return wrong.size === 0;
 }
 
-// A state change said in the page's one status region (Message), when the page has one.
 function announce(text: string): void {
   if (document.querySelector("[data-cap='message']")) say(text, { clears: true });
 }
 
-// The date a year, month and day make, or null when they make none (31 February).
+// Null when the parts make no date (31 February).
 export function dateFrom(year: number, month: number, day: number): Date | null {
   const d = new Date(Date.UTC(year, month - 1, day));
   return d.getUTCFullYear() === year && d.getUTCMonth() === month - 1 && d.getUTCDate() === day
@@ -174,9 +163,8 @@ export function dateFrom(year: number, month: number, day: number): Date | null 
     : null;
 }
 
-// A date input whose three parts are each well formed but make no real date is wrong on its
-// day, in the group's data-error-date words. The parts are found by data-cap-part, so their
-// order can follow the site's language (month first in American English).
+// Three well-formed parts that make no real date are wrong on the day. Parts are found by
+// data-cap-part, so their order can follow the site's language.
 export function checkDate(group: HTMLElement): void {
   const part = (name: string) =>
     group.querySelector<HTMLInputElement>(`input[data-cap-part='${name}']`);
@@ -189,8 +177,6 @@ export function checkDate(group: HTMLElement): void {
     day.setCustomValidity(group.dataset.errorDate || "Enter a real date.");
 }
 
-// Show and Hide on a password (GOV.UK Password input): the type, the words and the name change
-// together, and the change is said in the status region.
 export function setRevealed(input: HTMLInputElement, button: HTMLElement, shown: boolean): void {
   input.type = shown ? "text" : "password";
   button.textContent = shown ? "Hide" : "Show";
@@ -200,7 +186,6 @@ export function setRevealed(input: HTMLInputElement, button: HTMLElement, shown:
 export const revealedText = (shown: boolean): string =>
   shown ? "Your password is shown." : "Your password is hidden.";
 
-// What a character count says: how many are left, or how many too many (GOV.UK's words).
 export function countText(
   value: string,
   limit: number,
@@ -214,16 +199,13 @@ export function countText(
     : { text: `You have ${counted} remaining`, over: false };
 }
 
-// The limit a control counts against: data-maxlength (characters) or data-maxwords.
 export function limitOf(control: HTMLElement): { limit: number; words: boolean } | null {
   const words = control.dataset.maxwords;
   const limit = Number(words ?? control.dataset.maxlength);
   return limit > 0 ? { limit, words: words !== undefined } : null;
 }
 
-// The value a stepper or a key gives: `by` steps from the value, kept within min and max, to
-// the step's own decimals so 0.1 + 0.2 is 0.3, or the value's where it has more (a field with
-// step="any" steps 1.5 by 1 to 2.5).
+// `by` steps from the value within min and max, rounded to the step's decimals (0.1 + 0.2 is 0.3).
 export function stepValue(
   value: number,
   step: number,
@@ -240,8 +222,8 @@ export function stepValue(
   return v;
 }
 
-// The value Page Up, Page Down (ten steps), Home (min) or End (max) gives, as the APG
-// spinbutton has them; null for another key, or a bound that is not set.
+// The value Page Up/Down (ten steps), Home (min) or End (max) gives, as the APG spinbutton has
+// them; null for another key or an unset bound.
 export function keyValue(
   key: string,
   value: number,
@@ -255,7 +237,6 @@ export function keyValue(
   return stepValue(value, step, key === "PageUp" ? 10 : -10, min, max);
 }
 
-// The parts of a moment on the wall clock of a time zone (IANA name), to the minute.
 function wallClock(date: Date, timeZone: string): Record<string, string> {
   const parts = new Intl.DateTimeFormat("en-US", {
     timeZone,
@@ -291,7 +272,6 @@ export function fromDateTimeLocal(
   const check = new Date(asUtc);
   if (check.getUTCMonth() !== mo! - 1 || check.getUTCDate() !== d! || h! > 23 || mi! > 59)
     return null;
-  // The zone's offset (wall clock minus UTC) at a moment, to the minute.
   const offset = (at: number) => {
     const p = wallClock(new Date(at), timeZone);
     return (
@@ -304,11 +284,9 @@ export function fromDateTimeLocal(
   return new Date(asUtc - offset(guess));
 }
 
-// A plain GET search form (data-keep-focus) on a page with no client router loads its results
-// afresh, and focus would go to the top. This puts it back on the control the person sent the
-// form from (the field, caret at the end, or the button). Storage is read in try/catch: blocked,
-// the page simply loads without it. `skip` returns true when the router submits in place (a
-// hydrated app), where focus stays without help. Call once per page; returns the detach.
+// A GET search form (data-keep-focus) on a page with no client router reloads, and focus would
+// go to the top; this restores it to the control the form was sent from. `skip` returns true when
+// the router submits in place. Returns the detach.
 export function keepFocus({
   key = "cap-keep-focus",
   skip = () => false,
@@ -352,15 +330,13 @@ export function keepFocus({
 
 const bound = (s: string): number | undefined => (s === "" ? undefined : Number(s));
 
-// Sets a control's value as typing would, so the field's checks and a React onChange see it.
+// Sets a value as typing would, so checks and a React onChange see it.
 export function setValue(input: HTMLInputElement, value: string): void {
   Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")?.set?.call(input, value);
   input.dispatchEvent(new Event("input", { bubbles: true }));
   input.dispatchEvent(new Event("change", { bubbles: true }));
 }
 
-// A click on an input group's text or icon addon puts the cursor in its field, as a click
-// on the field itself would (a button in the addon keeps its own click).
 function groupClick(e: MouseEvent): void {
   const target = e.target as HTMLElement | null;
   const addon = target?.closest<HTMLElement>(".cap-input-addon");
@@ -368,8 +344,7 @@ function groupClick(e: MouseEvent): void {
   addon.parentElement?.querySelector<HTMLElement>("input, textarea")?.focus();
 }
 
-// Wires a password's Show button, which the markup holds `hidden` so a page with no script
-// shows nothing that does not work. A form that is sent hides the password again.
+// The markup holds Show `hidden` so a page with no script shows nothing that does not work.
 function wireReveal(button: HTMLElement): () => void {
   const input = document.getElementById(button.getAttribute("aria-controls") ?? "");
   if (!(input instanceof HTMLInputElement)) return () => undefined;
@@ -388,8 +363,6 @@ function wireReveal(button: HTMLElement): () => void {
   };
 }
 
-// A character count: the words beside the field change as it is typed in, the status region
-// says them once typing stops for a second, and a value over the limit is wrong on submit.
 function wireCount(
   control: HTMLInputElement | HTMLTextAreaElement,
   count: HTMLElement,
@@ -419,9 +392,7 @@ function wireCount(
   };
 }
 
-// Number steppers (APG spinbutton keys on a native number input): the buttons, held `hidden`
-// for a page with no script, step the value; Page Up and Page Down step by ten, Home and End
-// go to min and max. A stepper keeps focus in the field and stops at its bound.
+// The buttons are `hidden` for a page with no script; a stepper keeps focus in the field.
 function wireSteps(
   input: HTMLInputElement,
   down: HTMLButtonElement | null,
@@ -432,7 +403,6 @@ function wireSteps(
     if (down) down.disabled = input.min !== "" && v <= Number(input.min);
     if (up) up.disabled = input.max !== "" && v >= Number(input.max);
   };
-  // step="any" (or none) steps by 1.
   const step = () => Number(input.step) || 1;
   const onKey = (e: KeyboardEvent) => {
     const to = input.readOnly
@@ -472,8 +442,6 @@ function wireSteps(
   };
 }
 
-// A search field: Clear shows while there is text, and Esc in the field clears it (React Aria
-// SearchField). With no script the browser's own clear is left.
 function wireSearch(search: HTMLElement): () => void {
   const input = search.querySelector<HTMLInputElement>("input[type='search']");
   const clear = search.querySelector<HTMLElement>("[data-cap-part='clear']");
@@ -503,7 +471,6 @@ function wireSearch(search: HTMLElement): () => void {
   };
 }
 
-// Marks el as attached and records how to detach it.
 function attach(el: HTMLElement, undo: Array<() => void>, wire: () => () => void): void {
   el.dataset.capReady = "";
   const off = wire();
@@ -513,10 +480,6 @@ function attach(el: HTMLElement, undo: Array<() => void>, wire: () => () => void
   });
 }
 
-// Attaches to every form[data-cap="field"] under root that is not attached yet, and to every
-// input group, password, character count and search field. The form gets novalidate, so the
-// browser's own bubbles give way to the messages beside the fields. Returns a function that
-// detaches them all.
 // The root is Element | Document | DocumentFragment, not ParentNode: under @cloudflare/workers-types
 // an HTMLFormElement does not type as a ParentNode, so a site could not pass its form.
 export function enhance(root: Element | Document | DocumentFragment = document): () => void {
@@ -557,9 +520,8 @@ export function enhance(root: Element | Document | DocumentFragment = document):
     const hadNoValidate = form.noValidate;
     form.noValidate = true;
 
-    // A field is checked on leaving only once it has been changed, so tabbing through an
-    // empty form does not fill it with errors. A field showing an error is checked again
-    // as it is typed in, so the message goes as soon as it is fixed.
+    // Checked on leaving only once changed, so tabbing through an empty form shows no errors;
+    // a field in error is rechecked as it is typed in.
     const onInput = (e: Event) => {
       const c = e.target;
       if (!isControl(c)) return;
@@ -579,7 +541,6 @@ export function enhance(root: Element | Document | DocumentFragment = document):
         e.stopImmediatePropagation();
       }
     };
-    // A reset form holds no touched control.
     const onReset = () =>
       form.querySelectorAll("[data-cap-dirty]").forEach((c) => c.removeAttribute("data-cap-dirty"));
     form.addEventListener("reset", onReset);

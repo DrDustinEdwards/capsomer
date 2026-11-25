@@ -1,9 +1,7 @@
-// The tag group's behavior: a labeled list of tags, each with a remove button. The group is one
-// tab stop (the shared toolbar's roving focus over the remove buttons), Left and Right move between
-// tags, and Delete, Backspace, Enter or Space removes the focused one. Focus then goes to the next
-// tag, else the one before, else the element named by data-cap-then (the field that adds tags),
-// else the group, so it is never lost. A removal is reversible, so it happens at once and the
-// page's message region (when there is one) offers Undo (DEFAULTS.md). No framework.
+// The tag group's behavior: one tab stop (the shared toolbar's roving focus), Left and Right move between tags,
+// Delete, Backspace, Enter or Space removes the focused one. Focus then goes to the next tag, the one before,
+// the element named by data-cap-then, else the group, so it is never lost. A removal is reversible, so it
+// happens at once and the page's message region offers Undo.
 import { say } from "../message/message.ts";
 import { attachToolbar } from "../toolbar/toolbar.ts";
 
@@ -62,8 +60,6 @@ export function removeTag(group: HTMLElement, tag: HTMLElement): boolean {
   return true;
 }
 
-// Attaches to every [data-cap="tag-group"] under root not yet attached. Returns a function that
-// detaches them all.
 export function enhance(root: ParentNode = document): () => void {
   const undo: Array<() => void> = [];
   for (const group of root.querySelectorAll<HTMLElement>(

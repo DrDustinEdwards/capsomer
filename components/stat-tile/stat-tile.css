@@ -1,20 +1,15 @@
-/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+/* Layer order repeated so this file is safe in any import order: the first statement fixes it (css/layers.css). */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
-/* Stat tiles: figure and label on one line with a word for where it stands against its
-   threshold, the detail beneath, and a slot for Enarratio's sparkline. A tile is a link or
-   a button that goes to the view behind the figure. The compact tile, and the row that
-   wraps to more rows instead of cutting a word, are the Portal's (dashboard/src/styles.css,
-   "stat tiles", design D3); the word and its glyph, the no-data state and the chart slot
-   are Capsomer's. The tile wears shadcn's Item (outline variant, as a link): a hairline edge,
-   the large radius, the muted tint on hover, a 100 ms color transition, the focus ring. */
+/* Stat tiles: figure and label on one line with a word for where it stands against its threshold, the
+   detail beneath, and a slot for Enarratio's sparkline. A tile is a link or a button to the view behind
+   the figure. The row wraps to more rows instead of cutting a word. */
 @layer cap.components {
   .cap-tiles {
     min-width: 0;
   }
 
-  /* A tile is never narrower than its text (flex 1 0 auto), so the row wraps to more rows
-     instead of cutting a word; only a tile wider than the whole row wraps its detail. */
+  /* A tile is never narrower than its text, so the row wraps to more rows instead of cutting a word. */
   .cap-tiles-list {
     display: flex;
     flex-wrap: wrap;
@@ -48,7 +43,6 @@
     text-align: start;
     text-decoration: none;
 
-    /* Only a link or a button answers the pointer; a static tile (below) is text. */
     &:is(a, button) {
       cursor: pointer;
 
@@ -69,9 +63,6 @@
     }
   }
 
-  /* The figure, its label and its word on one line, each kept whole: the tile is as wide as
-     the line wants, so they stay together. Only in a tile wider than the whole row do they
-     wrap onto a second line, whole, rather than run out of the tile. */
   .cap-tile-line {
     display: flex;
     flex-wrap: wrap;
@@ -102,7 +93,6 @@
     color: var(--muted);
   }
 
-  /* The word for the threshold: "Over limit", "Near limit", "All up". */
   .cap-tile-word {
     display: inline-flex;
     align-items: center;
@@ -123,9 +113,8 @@
     overflow-wrap: anywhere;
   }
 
-  /* Enarratio's sparkline({ inline: true }) goes here as it comes, drawn in the tile's tone
-     (its series 1 is the slot's color). Decorative: the tile's description carries the same
-     numbers as a sentence. */
+  /* Enarratio's inline sparkline goes here as it comes, in the tile's tone. Decorative: the tile's
+        description carries the same numbers as a sentence. */
   .cap-tile-chart {
     --enarratio-series-1: currentColor;
     display: block;
@@ -156,20 +145,15 @@
       color: var(--crit);
     }
   }
-  /* No data: the figure says so in words, with the dashed glyph, and the detail says why. */
   .cap-tile[data-tone="nodata"] .cap-tile-figure {
     align-items: center;
     color: var(--nodata);
     letter-spacing: 0;
   }
 
-  /* The static variant: a figure that leads nowhere (a count on a page of figures, a rate in a
-     report, a card of a dashboard that is not a door to anything). A div, not a link, so it takes
-     no pointer, no focus and no hover. The label sits above the figure, then the figure with its
-     delta on one line, then the note: label, value, note, optional delta, optional icon. It is
-     the family's one stat card for everything that is not a link (Foxhound's four copies). A site
-     keeps its own look through tokens, set on the tile or any ancestor; each defaults to the
-     family's look:
+  /* The static variant: a figure that leads nowhere. A div, not a link, so it takes no pointer, focus or
+        hover. A site keeps its own look through tokens, set on the tile or any ancestor; each defaults to
+        the family's look:
        --tile-figure-size, --tile-figure-face, --tile-figure-weight   the figure
        --tile-label-face, --tile-label-size, --tile-label-weight, --tile-label-case,
        --tile-label-tracking   the label
@@ -228,7 +212,6 @@
       color: var(--ok);
     }
   }
-  /* The drawing before a label: decoration, so it is hidden from a screen reader. */
   .cap-tile-icon {
     display: inline-flex;
     flex: none;
@@ -240,13 +223,11 @@
       block-size: 1.15em;
     }
   }
-  /* The brand tone: the figure in the family's accent, for the one figure a row is about. */
   .cap-tile[data-tone="accent"] .cap-tile-figure {
     color: var(--accent-text);
   }
-  /* A row of static tiles in equal columns: two across on a phone, more as the room allows.
-     --tiles-columns sets the columns (a site's fixed grid, "repeat(5, minmax(0, 1fr))" from a
-     breakpoint) and --tiles-gap the space between tiles. */
+  /* A row of static tiles in equal columns: two across on a phone. --tiles-columns sets a fixed grid
+        and --tiles-gap the space between tiles. */
   .cap-tiles[data-layout="grid"] > .cap-tiles-list {
     display: grid;
     grid-template-columns: var(--tiles-columns, repeat(auto-fit, minmax(min(100%, 11rem), 1fr)));
@@ -257,9 +238,8 @@
     }
   }
 
-  /* With a mouse, a pointed-at tile also lifts on a small shadow (Arc's card, Radix Themes'
-     card); a touch never leaves it lifted. Pressed, it gives to 98.5% and springs back, less
-     than a button because it is wider (Arc scales a wide target less). */
+  /* With a mouse, a pointed-at tile lifts on a small shadow; touch never leaves it lifted. Pressed, it
+        gives to 98.5% and springs back, less than a button because it is wider. */
   @media (hover: hover) and (pointer: fine) {
     .cap-tile:is(a, button):is(:hover, [data-force="hover"]) {
       box-shadow: var(--shadow-s);

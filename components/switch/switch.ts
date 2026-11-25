@@ -5,7 +5,6 @@ export function stateWord(checked: boolean, on = "On", off = "Off"): string {
   return checked ? on : off;
 }
 
-// Writes the word for one switch's current state.
 export function syncWord(label: Element): void {
   const input = label.querySelector<HTMLInputElement>("input[role='switch']");
   const word = label.querySelector<HTMLElement>(".cap-switch-state");
@@ -32,8 +31,7 @@ export function setBusy(label: Element, busy: boolean): void {
   else input.removeAttribute("aria-busy");
 }
 
-// Attaches to every [data-cap="switch"] under root that is not attached yet. Returns a
-// function that detaches them all.
+
 export function enhance(root: ParentNode = document): () => void {
   const undo: Array<() => void> = [];
   for (const label of root.querySelectorAll<HTMLElement>(

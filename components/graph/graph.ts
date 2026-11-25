@@ -1,8 +1,5 @@
-// A directed graph drawn once, at build time or on a server, as an SVG string: boxes linked to
-// their pages and wires from one box to another, laid out by dagre (a layered layout, so wires
-// run one way). Each box can carry status lines (the status component's glyph and a word) and a
-// dashed ring that marks it (a module in an import cycle). The drawing is aria-hidden: the page
-// puts the same facts in a table or list beside it, and the links are out of the tab order.
+// A directed graph as an SVG string, drawn once at build time or on a server and laid out by dagre. The drawing is aria-hidden: the
+// page puts the same facts in a table or list beside it, and the links are out of the tab order.
 import dagre from "@dagrejs/dagre";
 import { escapeHtml as esc } from "@dustinedwards/site-runtime/html";
 import { isHttpUrl } from "@dustinedwards/site-runtime/url";
@@ -18,11 +15,8 @@ export interface GraphBox {
   id: string;
   label: string;
   href: string;
-  // Status lines under the label; the box is edged in the first line's tone.
   lines?: readonly GraphLine[];
-  // A second, quieter line under the label (a path).
   sub?: string;
-  // Rings the box in a dashed critical line, with `ringLabel` over it ("cycle").
   ring?: boolean;
 }
 
@@ -32,25 +26,20 @@ export interface GraphWire {
 }
 
 export interface GraphOptions {
-  // Unique in the page: it names the arrow marker and the caption.
   id: string;
   title: string;
   boxes: readonly GraphBox[];
   wires: readonly GraphWire[];
-  // The word over a ringed box (default "cycle").
   ringLabel?: string;
   // Wider than this, a top-to-bottom layout is tried left to right and the narrower kept.
   column?: number;
 }
 
-// Sizes before any browser measures: an average character of 13 px text, padding and line height.
 const CHAR = 7.4;
 const PAD = 14;
 const LINE = 18;
 
-// A box's address as the browser will read it (leading controls and spaces dropped, tabs and line
-// breaks removed, as the URL parser does), kept when it is a path or an http(s) address; null for
-// any other scheme (javascript:, data:), which draws the box without a link.
+// Kept when it is a path or an http(s) address as the browser reads it (leading controls and spaces dropped); null for javascript:, data: and the like.
 function boxHref(href: string): string | null {
   // oxlint-disable-next-line no-control-regex -- matching the control characters is the point: the URL parser drops them.
   const bare = href.replace(/^[\u0000-\u0020]+/, "").replace(/[\t\n\r]/g, "");
@@ -64,8 +53,6 @@ interface Point {
   y: number;
 }
 
-// A wire through dagre's points as one smooth curve (Catmull-Rom as cubic Béziers), so wires that
-// share a rank read as separate strands rather than a tangle of corners.
 export function smoothPath(pts: readonly Point[]): string {
   if (pts.length === 0) return "";
   let d = `M${f(pts[0]!.x)} ${f(pts[0]!.y)}`;
@@ -146,8 +133,7 @@ export function graphSvg(o: GraphOptions): string {
     const href = boxHref(b.href);
     return href === null ? box : `<a href="${esc(href)}" tabindex="-1">${box}</a>`;
   });
-  // The frame is every box and every wire's points with a margin: dagre can route a wire outside
-  // the size it reports.
+  // The frame covers every box and wire point with a margin: dagre can route a wire outside the size it reports.
   let [x0, y0, x1, y1] = [0, 0, g.graph().width ?? 0, g.graph().height ?? 0];
   for (const e of g.edges())
     for (const p of g.edge(e).points ?? [])

@@ -1,14 +1,10 @@
-// The rich text field's contract: a short text with a few inline tags and nothing else (no attributes, no links, no
-// blocks), the same on the server that stores it and in the browser that edits it. `sanitizeRichText` is what the
-// server runs on every save, so what a browser sends is never trusted; the field runs it on every input and paste.
-// No dependencies: a small allowlist tokenizer does the job, and the browser side builds DOM from its tree, so no
-// markup string reaches an injection sink (Trusted Types).
+// The rich text field's contract: short text with a few attribute-free inline tags, the same on the
+// server (`sanitizeRichText` runs on every save; a browser is never trusted) and in the browser. A small
+// allowlist tokenizer, and the browser builds DOM from its tree so no markup string reaches a Trusted Types sink.
 
-/** The tags a field may allow. Each is inline and takes no attribute. */
 export const RICH_TEXT_TAGS = ["em", "strong", "sup", "sub", "code"] as const;
 export type RichTextTag = (typeof RICH_TEXT_TAGS)[number];
 
-/** One node of a sanitized text: a run of plain text, or an allowed tag around more nodes. */
 export type RichTextNode = string | { tag: RichTextTag; children: RichTextNode[] };
 
 type Token =
@@ -22,8 +18,7 @@ const TAG = /<\/?([a-zA-Z][a-zA-Z0-9]*)\b[^>]*?>/g;
 // oxlint-disable-next-line no-control-regex -- matching the control characters is the point: they are stripped.
 const CONTROLS = /[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g;
 
-// The named references a browser's serializer, a word processor or a web page put in copied HTML. A name not here is
-// kept as written, so nothing is lost; numeric references are all read.
+// Named references that copied HTML carries; an unknown name is kept as written, numeric ones are all read.
 const NAMED: Readonly<Record<string, string>> = {
   amp: "&",
   lt: "<",
@@ -85,7 +80,6 @@ const NAMED: Readonly<Record<string, string>> = {
   Omega: "Ω",
 };
 
-/** `text` with its character references read (numeric, and the names above); an unknown name stays as written. */
 export function decodeEntities(text: string): string {
   return text.replace(/&(#\d+|#[xX][0-9a-fA-F]+|[a-zA-Z][a-zA-Z0-9]*);/g, (whole, ref: string) => {
     if (ref[0] === "#") {
@@ -105,10 +99,9 @@ export function decodeEntities(text: string): string {
 const escapeText = (text: string) =>
   text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
-/** Longest input the cleaner reads; the rest is dropped. No field holds this much. */
 export const RICH_TEXT_MAX_INPUT = 50_000;
 
-/** `text` up to and including its last `end`, or nothing without one. A lazy scan for a close that is not there re-reads the rest of the text at every opener, so the scans below run only through the last close. */
+/** `text` up to its last `end`: a lazy scan for a missing close would re-read the rest at every opener. */
 function through(text: string, end: string): string {
   const at = text.lastIndexOf(end);
   return at === -1 ? "" : text.slice(0, at + end.length);
@@ -131,14 +124,12 @@ function tokenize(input: string): Token[] {
   return tokens;
 }
 
-// What a word processor or a browser writes for these, read as the tag itself.
 const ALIASES: Readonly<Record<string, RichTextTag>> = { i: "em", b: "strong" };
 
 /**
- * `input` (HTML, or plain text with stray < and &) as a tree of plain text and the `allowed` tags only: any other tag
- * is dropped and its text kept, attributes and comments are dropped, `<i>` reads as `em` and `<b>` as `strong`, and
- * the tags are balanced (one closed out of order closes and reopens the ones inside it). Text in `<script>` and
- * `<style>` is dropped with them. Input past RICH_TEXT_MAX_INPUT characters is not read.
+ * `input` as a tree of plain text and the `allowed` tags only: other tags are dropped (text kept),
+ * `<i>` reads as `em` and `<b>` as `strong`, tags are balanced, script and style text is dropped.
+ * Input past RICH_TEXT_MAX_INPUT characters is not read.
  */
 export function parseRichText(input: string, allowed: readonly RichTextTag[]): RichTextNode[] {
   const allow = new Set<string>(allowed);
@@ -186,7 +177,6 @@ export function parseRichText(input: string, allowed: readonly RichTextTag[]): R
   return prune(root);
 }
 
-// Empty tags go; neighboring text joins.
 function prune(nodes: RichTextNode[]): RichTextNode[] {
   const out: RichTextNode[] = [];
   for (const n of nodes) {
@@ -202,7 +192,6 @@ function prune(nodes: RichTextNode[]): RichTextNode[] {
   return out;
 }
 
-/** A tree as HTML: text escaped, tags bare. */
 export function serializeRichText(nodes: readonly RichTextNode[]): string {
   return nodes
     .map((n) =>
@@ -213,30 +202,25 @@ export function serializeRichText(nodes: readonly RichTextNode[]): string {
     .join("");
 }
 
-/** `input` kept to the `allowed` tags, well formed, with the ends trimmed: what a server stores. */
 export function sanitizeRichText(input: string, allowed: readonly RichTextTag[]): string {
   return serializeRichText(parseRichText(input, allowed)).trim();
 }
 
-/** The plain text of a field's value, for counting, search and plain-text email. */
 export function richTextPlain(html: string): string {
   const text = (nodes: RichTextNode[]): string =>
     nodes.map((n) => (typeof n === "string" ? n : text(n.children))).join("");
   return text(parseRichText(html, RICH_TEXT_TAGS)).replace(/ /g, " ");
 }
 
-/** The words in a field's value. */
 export function richTextWords(html: string): number {
   const text = richTextPlain(html).trim();
   return text ? text.split(/\s+/).length : 0;
 }
 
-/** Whether a field's value has no text. */
 export function isEmptyRichText(html: string): boolean {
   return richTextPlain(html).trim() === "";
 }
 
-/** A tree as DOM nodes, for the browser: built with createElement and text nodes, never parsed from a string. */
 export function richTextNodes(doc: Document, nodes: readonly RichTextNode[]): Node[] {
   return nodes.map((n) => {
     if (typeof n === "string") return doc.createTextNode(n);
@@ -246,7 +230,6 @@ export function richTextNodes(doc: Document, nodes: readonly RichTextNode[]): No
   });
 }
 
-/** The tags that hold `node` inside `root`, innermost first. */
 export function tagsAround(node: Node | null, root: Element): RichTextTag[] {
   const out: RichTextTag[] = [];
   for (let at: Node | null = node; at && at !== root; at = at.parentNode) {
@@ -258,11 +241,7 @@ export function tagsAround(node: Node | null, root: Element): RichTextTag[] {
   return out;
 }
 
-/**
- * Toggles `tag` over the selection inside `root`: where the selection sits inside that tag, the tag is taken off
- * (its text stays); otherwise the selected text is wrapped in it and stays selected. A collapsed selection, or one
- * outside `root`, does nothing. Returns whether anything changed.
- */
+/** Toggles `tag` over the selection inside `root`. Returns whether anything changed. */
 export function toggleTag(root: Element, tag: RichTextTag, selection: Selection | null): boolean {
   if (!selection || selection.rangeCount === 0) return false;
   const range = selection.getRangeAt(0);
@@ -294,7 +273,6 @@ export function toggleTag(root: Element, tag: RichTextTag, selection: Selection 
   const wrapper = doc.createElement(tag);
   wrapper.append(range.extractContents());
   range.insertNode(wrapper);
-  // Inside the new tag, so the caret's tags (and the pressed button) include it.
   const r = doc.createRange();
   r.selectNodeContents(wrapper);
   selection.removeAllRanges();
@@ -302,7 +280,6 @@ export function toggleTag(root: Element, tag: RichTextTag, selection: Selection 
   return true;
 }
 
-/** Puts `nodes` where the selection is inside `root`, replacing what is selected, and the caret after them. */
 export function insertNodes(root: Element, nodes: Node[], selection: Selection | null): boolean {
   if (!selection || selection.rangeCount === 0) return false;
   const range = selection.getRangeAt(0);

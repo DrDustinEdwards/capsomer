@@ -1,8 +1,5 @@
-// Server-sent events read in the browser from a fetch() body, for a stream that a POST starts (EventSource only GETs).
-// The framing is the WHATWG HTML standard's (9.2 Server-sent events): lines end in CRLF, LF or CR; a blank line
-// dispatches; `event:` names the event ("message" when none); each `data:` line adds a line to the data; one space
-// after the colon is framing; a line starting with a colon is a comment; `id:` is kept and `retry:` is ignored.
-// No DOM: it runs in a Worker and on a phone as well.
+// Server-sent events read from a fetch() body, for a stream a POST starts (EventSource only GETs). Framing follows the WHATWG
+// HTML standard 9.2: a blank line dispatches, `event:` names it, `data:` lines join, `id:` is kept, `retry:` ignored. No DOM.
 
 export interface SseEvent {
   event: string;
@@ -10,7 +7,6 @@ export interface SseEvent {
   id?: string;
 }
 
-// One event block (its lines, without the blank line that ends it) as an event, or null when it has no data.
 export function parseEvent(block: string): SseEvent | null {
   let event = "message";
   let id: string | undefined;
@@ -29,7 +25,6 @@ export function parseEvent(block: string): SseEvent | null {
   return id === undefined ? { event, data: data.join("\n") } : { event, data: data.join("\n"), id };
 }
 
-// Takes the complete events off the front of a buffer, leaving the unfinished tail as `rest`.
 export function takeEvents(buffer: string): { events: SseEvent[]; rest: string } {
   const parts = buffer.split(/\r\n\r\n|\n\n|\r\r/);
   const rest = parts.pop() ?? "";

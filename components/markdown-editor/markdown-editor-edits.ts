@@ -1,15 +1,11 @@
-// The markdown editor's types and pure helpers: the edits each command makes, counted and checked without a page (markdown-editor.ts).
-
-// One edit to the document, in the document's own positions (every change refers to the text
-// as it was before any of them), and where the cursor goes after.
+// One edit to the document, in the document's own positions (every change refers to the text as it was before any of them), and where the cursor goes after.
 export interface Edit {
   changes: Array<{ from: number; to?: number; insert: string }>;
   anchor: number;
   head?: number;
 }
 
-// A page the link palette can offer: the app decides the address and the words. `note` is
-// said in words beside the title ("not live yet (draft)"), never color alone.
+// A page the link palette can offer; the app decides the address and words. `note` is said in words, never color alone.
 export interface LinkTarget {
   href: string;
   title: string;
@@ -17,11 +13,9 @@ export interface LinkTarget {
   note?: string;
 }
 
-// A block the slash menu and the toolbar insert. The app supplies them; the editor knows no
-// block syntax of its own. `cursor` is where the cursor lands, as an offset into `text`;
-// `cursorAfter` finds that offset from the first place the given text occurs. `icon` is the
-// `d` of one 24 by 24 SVG path for the toolbar button; without it the button shows the
-// label's first letter.
+// A block the slash menu and the toolbar insert; the editor knows no block syntax of its own. `cursor`
+// is an offset into `text`; `cursorAfter` finds it from the first occurrence of the given text. `icon`
+// is the `d` of one 24 by 24 SVG path; without it the button shows the label's first letter.
 export interface Scaffold {
   id: string;
   label: string;
@@ -36,45 +30,36 @@ export interface UploadResult {
   url: string;
 }
 
-// What the person said about an image before it was sent: alt text, or decorative (alt is then
-// ""). The server stores it with the file, so an upload always arrives described.
+// What the person said about an image before it was sent: alt text, or decorative (alt ""). The server stores it with the file.
 export interface ImageDescription {
   alt: string;
   decorative: boolean;
 }
 
 export interface MarkdownEditorOptions {
-  // The name of the editable surface; defaults to the label's text plus ", markdown".
   label?: string;
-  // Each of these defaults to the textarea's own attribute (placeholder, readonly, disabled,
-  // maxlength), which is also watched, so an app can change either.
+  // Each defaults to the textarea's own attribute, which is also watched, so an app can change either.
   placeholder?: string;
   readOnly?: boolean;
   disabled?: boolean;
   maxLength?: number;
   lineNumbers?: boolean;
   scaffolds?: Scaffold[];
-  // Pages to offer, or a function that searches them (it may be async; the newest answer wins).
   linkTargets?: LinkTarget[] | ((query: string) => LinkTarget[] | Promise<LinkTarget[]>);
-  // Uploads a pasted, dropped or chosen image once the person has described it, and says where it
-  // went. The signal aborts when they cancel while it is on its way. Without it, the image
-  // button, the drop hint and the describe step are absent.
+  // Uploads an image once the person has described it and says where it went; the signal aborts on cancel.
+  // Without it the image button, the drop hint and the describe step are absent.
   onUpload?: (file: File, image: ImageDescription, signal: AbortSignal) => Promise<UploadResult>;
-  // The markdown that goes into the text once the image is uploaded.
   imageMarkdown?: (image: {
     url: string;
     alt: string;
     decorative: boolean;
     name: string;
   }) => string;
-  // The file chooser's accept list.
   accept?: string;
   onChange?: (value: string) => void;
-  // Ctrl or Cmd + S. The key is always claimed (the browser's save-page is no use here); the
-  // page's own handler on window still sees it.
+  // Ctrl or Cmd + S. The key is always claimed (the browser's save-page is no use here); the page's own handler on window still sees it.
   onSave?: (value: string) => void;
-  // The CSP nonce for the styles CodeMirror injects. Defaults to the nonce on the page's first
-  // script that has one.
+  // The CSP nonce for the styles CodeMirror injects; defaults to the nonce on the page's first script that has one.
   nonce?: string;
   wordsPerMinute?: number;
 }
@@ -82,9 +67,7 @@ export interface MarkdownEditorOptions {
 export interface MarkdownEditorHandle {
   readonly root: HTMLElement;
   getValue(): string;
-  // Replaces the text. It does not call onChange: the app is the one setting it.
   setValue(value: string): void;
-  // Focuses the surface; "end" also puts the cursor after the last character.
   focus(at?: "start" | "end"): void;
   update(patch: Partial<MarkdownEditorOptions>): void;
   destroy(): void;
@@ -96,8 +79,7 @@ export function looksLikeUrl(text: string): boolean {
   return /^(https?:\/\/|mailto:|\/|#)/i.test(text.trim());
 }
 
-// The targets whose title, address or hint holds the query; all of them for an empty query.
-// A typed address matches nothing: it is committed as itself.
+// Targets whose title, address or hint holds the query; all for an empty query. A typed address matches nothing: it is committed as itself.
 export function filterLinkTargets(
   targets: LinkTarget[],
   query: string,
@@ -113,14 +95,12 @@ export function filterLinkTargets(
   return pool.slice(0, limit);
 }
 
-// The start and end of the line holding `pos`.
 export function lineBounds(doc: string, pos: number): { from: number; to: number } {
   const from = doc.lastIndexOf("\n", pos - 1) + 1;
   const nl = doc.indexOf("\n", pos);
   return { from, to: nl === -1 ? doc.length : nl };
 }
 
-// Marks around the selection; with none selected, the cursor lands between the marks.
 export function wrapEdit(
   doc: string,
   from: number,
@@ -136,7 +116,6 @@ export function wrapEdit(
   };
 }
 
-// Cycles the line's heading: none, h2, h3, h4, none.
 export function headingEdit(doc: string, head: number): Edit {
   const { from, to } = lineBounds(doc, head);
   const line = doc.slice(from, to);
@@ -150,9 +129,7 @@ export function headingEdit(doc: string, head: number): Edit {
   };
 }
 
-// A numbered reference at the selection and its definition at the end, with the cursor in the
-// definition, the part still to write. The number is one past the highest in the text (the
-// site counted every match, so its second footnote was numbered 3).
+// A numbered reference at the selection and its definition at the end, the cursor in the definition. The number is one past the highest in the text.
 export function footnoteEdit(doc: string, from: number, to: number): Edit {
   const used = [...doc.matchAll(/\[\^(\d+)\]/g)].map((m) => Number(m[1]));
   const n = (used.length ? Math.max(...used) : 0) + 1;
@@ -168,8 +145,6 @@ export function footnoteEdit(doc: string, from: number, to: number): Edit {
   };
 }
 
-// A block of text at the cursor, set apart by a blank line before it unless the cursor is on
-// one, and after it when text follows on the same line.
 export function blockEdit(
   doc: string,
   from: number,
@@ -188,7 +163,6 @@ export function blockEdit(
   };
 }
 
-// The slash line becomes the block, in its place.
 export function slashBlockEdit(
   lineFrom: number,
   lineTo: number,
@@ -209,8 +183,6 @@ export function scaffoldCursor(s: Scaffold): number | undefined {
   return s.cursor;
 }
 
-// A link at the selection, the cursor after it: the next keystroke is almost always the
-// sentence going on.
 export function linkEdit(
   from: number,
   to: number,
@@ -222,9 +194,7 @@ export function linkEdit(
   return { changes: [{ from, to, insert: markdown }], anchor: from + markdown.length };
 }
 
-// The markdown for an image when the app does not say: alt text with its brackets made safe. The
-// picker asks for alt text or decorative, so an empty alt is a decorative pick: Prelum reads
-// ![""](x) as decorative and refuses ![](x) as missing.
+// The markdown for an image when the app does not say. An empty alt is a decorative pick: Prelum reads ![""](x) as decorative and refuses ![](x) as missing.
 export function defaultImageMarkdown({ url, alt }: { url: string; alt: string }): string {
   const text = alt
     .replace(/[[\]\n]/g, " ")

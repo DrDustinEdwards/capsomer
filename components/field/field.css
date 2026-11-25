@@ -1,14 +1,10 @@
-/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+/* Layer order repeated so this file is safe in any import order: the first statement fixes it (css/layers.css). */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
-/* The checkbox and radio (.cap-check) are in check.css, which a page with only a box imports
-   alone (capsomer/check.css). */
+/* The checkbox and radio (.cap-check) are in check.css, which a page with only a box imports alone. */
 @import "./check.css";
 
-/* Form fields: a label above, help outside the control, an error beside it with an icon.
-   .cap-input styles input and textarea; .cap-check a checkbox or radio with its label (the
-   box and the tick are drawn here, not by the browser); .cap-input-group an input with
-   addons. Matches shadcn Input, Textarea, Checkbox, RadioGroup, Label, Field and InputGroup.
-   From the Capsid Portal's .field and .siteform (dashboard/src/styles.css). */
+/* Form fields: a label above, help outside the control, an error beside it with an icon. .cap-input
+   styles input and textarea; .cap-check draws the box and tick itself; .cap-input-group is an input with addons. */
 @layer cap.components {
   .cap-field {
     display: grid;
@@ -19,7 +15,6 @@
     border: 0;
   }
 
-  /* A label, or the legend of a fieldset.cap-field that groups radios or checkboxes. */
   .cap-field-label {
     display: flex;
     flex-wrap: wrap;
@@ -48,8 +43,7 @@
     font-size: var(--fs-detail);
   }
 
-  /* A character count, below the control: how many are left, then, over the limit, how many
-     too many, in the error's color and weight with its icon, so it is not color alone. */
+  /* A character count below the control; over the limit it takes the error's color, weight and icon, so it is not color alone. */
   .cap-field-count {
     margin: 0;
     color: var(--muted);
@@ -64,7 +58,6 @@
     }
   }
 
-  /* The error: an icon, then what is wrong and what to do. */
   .cap-field-error {
     display: flex;
     align-items: flex-start;
@@ -99,7 +92,6 @@
     line-height: var(--leading-none);
   }
 
-  /* A label on its own, outside a .cap-field. */
   .cap-label {
     display: flex;
     align-items: center;
@@ -111,13 +103,10 @@
     user-select: none;
   }
 
-  /* A field whose value is wrong: its label takes the error color too (shadcn's data-invalid). */
   .cap-field[data-invalid="true"] > .cap-field-label {
     color: var(--crit);
   }
 
-  /* Fields side by side: a checkbox or switch beside its words. data-orientation="responsive"
-     stacks until its group is wide enough. */
   .cap-field[data-orientation="horizontal"] {
     display: flex;
     align-items: center;
@@ -164,9 +153,7 @@
     gap: var(--space-3);
     font-weight: var(--weight-medium);
   }
-  /* Fields side by side (.cap-fields): as many columns of at least --fields-min (16rem) as fit, --fields-gap apart (--space-5),
-     one column on a phone. They line up on their controls, whatever help one carries above its
-     own, and a checkbox among them sits level with the inputs. */
+  /* Fields side by side: as many columns of at least --fields-min as fit, one on a phone. They line up on their controls, whatever help one carries above its own. */
   .cap-fields {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--fields-min, 16rem)), 1fr));
@@ -179,10 +166,7 @@
     }
   }
 
-  /* Fields in a row (.cap-field-row): a filter or action bar, the fields at their own widths, then
-     its buttons, lined up on their controls and wrapping on a narrow space. .cap-field-wide on one
-     field (the search) takes the room the others leave. Unlike .cap-fields, no column is stretched
-     to match another, so a button keeps its own width. */
+  /* Fields in a row: a filter or action bar at their own widths, lined up on their controls. .cap-field-wide takes the room the others leave. No column is stretched, so a button keeps its width. */
   .cap-field-row {
     display: flex;
     flex-wrap: wrap;
@@ -195,7 +179,6 @@
     }
   }
 
-  /* A line between groups of fields, with an optional word in it. */
   .cap-field-separator {
     position: relative;
     display: flex;
@@ -219,7 +202,6 @@
     font-size: var(--fs-lead);
   }
 
-  /* The shared ring for a field: the edge in the accent and an opaque 3 px ring. */
   .cap-input,
   .cap-input-group {
     --cap-input-edge: var(--line-strong);
@@ -273,7 +255,6 @@
       border-style: dashed;
       cursor: not-allowed;
     }
-    /* A file input: the button part reads as a quiet button. */
     &[type="file"] {
       padding-inline-start: var(--space-2);
       line-height: calc(var(--control) - 2px);
@@ -306,11 +287,8 @@
     field-sizing: content;
   }
 
-  /* A slider: a native range input on a 4px track that fills with the primary color up to the
-     thumb. The fill needs the value as a share: --cap-range-fill (0% to 100%) on the input; the
-     React Range sets it, and plain HTML sets it from its own input listener. The thumb is a
-     20px disc ringed in the ground, which grows a soft ring under the pointer and shrinks a
-     little while held. Recova's calculator slider. */
+  /* A native range input on a 4px track that fills to the thumb. The fill needs the value as a share:
+     --cap-range-fill (0% to 100%), set by the React Range or by plain HTML's own input listener. */
   .cap-range {
     --cap-range-track: linear-gradient(to right, var(--primary) var(--cap-range-fill, 0%), var(--line-strong) 0);
     display: block;
@@ -419,8 +397,6 @@
     }
   }
 
-  /* A control with its one action (Field's `action`): the button after the control in one
-     row, wrapping under it when the row is too narrow for both. */
   .cap-field-row {
     display: flex;
     flex-wrap: wrap;
@@ -438,8 +414,6 @@
     }
   }
 
-  /* A slider in its field: the value read out at the end of the label's line, and words at the
-     two ends of the track under it. */
   .cap-range-field-head {
     display: flex;
     flex: 1;
@@ -461,8 +435,7 @@
     font-variant-numeric: tabular-nums;
   }
 
-  /* A span from two menus (SpanField): From and To side by side, each menu the full width of its half.
-     The menus are select.cap-select, so a page with one loads select.css too. */
+  /* The menus are select.cap-select, so a page with one loads select.css too. */
   .cap-span-field-ends {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -472,15 +445,13 @@
     min-width: 0;
   }
 
-  /* Radios or checkboxes in a fieldset.cap-field: one per line. */
   .cap-field-options {
     display: grid;
     justify-items: start;
     gap: var(--space-1);
   }
 
-  /* Input group: an input with addons (text, an icon, a button) inside one edge.
-     shadcn InputGroup. The edge, the ring and the invalid state belong to the group. */
+  /* Input group: an input with addons inside one edge. The edge, ring and invalid state belong to the group. */
   .cap-input-group {
     position: relative;
     display: flex;
@@ -517,7 +488,6 @@
       align-items: stretch;
     }
 
-    /* The control inside has no edge of its own. */
     & > .cap-input {
       flex: 1;
       min-height: calc(var(--control) - 2px);
@@ -527,8 +497,7 @@
       box-shadow: none;
       outline: none;
     }
-    /* Grows with its text (field-sizing, from textarea.cap-input), so the drag handle goes only where the browser can
-       do that; elsewhere the person can still drag it taller (Modern Web Guidance, browser-ui-theming). */
+    /* Grows with its text where the browser can (field-sizing); elsewhere the person can drag it taller. */
     & > textarea.cap-input {
       padding-block: var(--pad-y);
       @supports (field-sizing: content) {
@@ -579,7 +548,6 @@
     &:has(> .cap-btn) {
       cursor: default;
     }
-    /* A button in an addon is small and borderless, as shadcn's InputGroupButton. */
     & > .cap-btn {
       box-shadow: none;
     }
@@ -620,15 +588,12 @@
     letter-spacing: var(--tracking-sign);
   }
 
-  /* A date input: day, month and year, each with its own label, in a fieldset.cap-field. A
-     part in error takes the invalid edge alone (aria-invalid on that input). */
+  /* A part in error takes the invalid edge alone (aria-invalid on that input). */
   .cap-date-input {
     display: flex;
     flex-wrap: wrap;
     gap: var(--space-4);
   }
-  /* A part with its own small label over its control: a date input's day, month or year, and a span's From
-     or To. */
   .cap-date-input-part,
   .cap-span-field-end {
     display: grid;

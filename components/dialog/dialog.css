@@ -1,16 +1,8 @@
-/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+/* Layer order repeated so this file is safe in any import order: the first statement fixes it (css/layers.css). */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
-/* The dialog: a native <dialog> opened with showModal(), shared by every Capsomer overlay.
-   One modal base (backdrop, surface, header, body, footer, close button) and five
-   placements: center (a dialog), right and left (a side sheet), bottom (a sheet on a phone)
-   and top (a palette). The look is rebuilt from shadcn/ui's Dialog, Alert Dialog and Sheet
-   (nova): the black-ish scrim with a light blur, the popover surface with a hairline ring and
-   the large shadow, the muted band under the footer, zoom-in-95 with a fade at 100 ms for a
-   dialog and a short slide with a fade at 200 ms for a sheet. In Capsomer's tokens, so
-   density moves the padding. */
+/* The dialog: a native <dialog> opened with showModal(), shared by every Capsomer overlay. One modal base and five placements: center, right and left (side sheet), bottom (phone sheet) and top (palette). Built on Capsomer's tokens, so density moves the padding. */
 @layer cap.components {
-  /* The surface, shared with the confirm dialog's page (a card, not an overlay). */
   :is(.cap-dialog, .cap-confirm-page) {
     border: var(--line-w) solid var(--line);
     border-radius: var(--radius-l);
@@ -73,7 +65,6 @@
       box-shadow: none;
     }
 
-    /* The backdrop: the scrim with a light blur, where the browser can. */
     /* A scroll over the backdrop does not scroll the page behind: overflow makes the backdrop a scroll container,
        which overscroll-behavior then contains (Chrome 144, Firefox 150; Modern Web Guidance,
        prevent-page-scroll-under-modal-dialog). The dialog itself contains its own scroll above. */
@@ -93,7 +84,6 @@
       --cap-dialog-w: 42rem;
     }
 
-    /* A side sheet: full height, on the edge, the rounded corner on the inside only. */
     &:is([data-placement="right"], [data-placement="left"]) {
       --cap-dialog-w: 35rem;
       inset-block: 0;
@@ -126,7 +116,6 @@
       --cap-dialog-to: translateX(calc(-1.25rem * var(--cap-dialog-dir)));
     }
 
-    /* A bottom sheet: the full width, as tall as its content up to the safe margin. */
     &[data-placement="bottom"] {
       inset-block: auto 0;
       inset-inline: 0;
@@ -139,7 +128,6 @@
       --cap-dialog-to: translateY(1.25rem);
     }
 
-    /* A palette: centered across, near the top, so what it filters stays in view below. */
     &[data-placement="top"] {
       inset-block: 0;
       margin-block: var(--cap-dialog-top) auto;
@@ -147,7 +135,6 @@
     }
   }
 
-  /* The header: the title, and the description under it. */
   .cap-dialog-header {
     display: flex;
     flex-direction: column;
@@ -155,7 +142,6 @@
     gap: var(--space-3);
     padding: var(--pad-card) var(--pad-card) 0;
 
-    /* With nothing between it and the footer, the header carries the space. */
     &:not(:has(~ .cap-dialog-body)) {
       padding-block-end: var(--pad-card);
     }
@@ -163,11 +149,9 @@
       padding-block-end: var(--pad-card);
       border-block-end: var(--line-w) solid var(--line);
     }
-    /* The Close button sits in the corner; the title keeps clear of it. */
     .cap-dialog:has(> .cap-dialog-close) > & {
       padding-inline-end: calc(var(--pad-card) + var(--target));
     }
-    /* A media tile (an icon) to the left of the title and description. */
     &:has(> .cap-dialog-media) {
       display: grid;
       grid-template-columns: auto minmax(0, 1fr);
@@ -270,10 +254,7 @@
     list-style: disc;
   }
 
-  /* The footer: a muted band under a dialog (as Alert Dialog's), a plain row under a sheet.
-     Actions stack on a phone in their source order (the main one last, nearest the thumb), so Tab
-     moves in the order they are seen, and sit in a row at the end from there up. data-align="between"
-     sets Cancel apart at the far end. */
+  /* The footer: a muted band under a dialog, a plain row under a sheet. Actions stack on a phone in source order (main one last, nearest the thumb) so Tab follows what is seen; data-align="between" sets Cancel apart. */
   .cap-dialog-footer {
     display: flex;
     flex: none;
@@ -310,7 +291,6 @@
     }
   }
 
-  /* The Close button: in the corner, half a padding in, as Dialog and Sheet place it. */
   .cap-dialog > .cap-dialog-close {
     position: absolute;
     inset-block-start: calc(var(--pad-card) / 2);
@@ -318,14 +298,7 @@
     z-index: 1;
   }
 
-  /* Open and close. A dialog rises 8 px and grows from 96% over 200 ms on the long ease-out
-     while it fades in 100 ms (Arc, Radix Themes); a sheet slides 2.5rem in from its edge over
-     200 ms. Closing is quicker and shorter: 100 ms, half the distance, to 98% (what leaves goes
-     faster than it came). The top palette, opened from the keyboard many times a day, only
-     fades, and goes at once (Raycast, by Emil Kowalski's rule: no motion on a keyboard action
-     done hundreds of times). The backdrop fades in 200 ms and out in 100 ms. @starting-style
-     gives the open frame; display and overlay with allow-discrete keep it on screen through the
-     close. Under reduced motion none of this applies: it appears and goes at once. */
+  /* Open and close: a dialog rises and grows in 200 ms while it fades, a sheet slides in from its edge; closing is quicker. The top palette, opened from the keyboard many times a day, only fades and goes at once. @starting-style gives the open frame; display and overlay with allow-discrete keep it on screen through the close. Under reduced motion it appears and goes at once. */
   @media (prefers-reduced-motion: no-preference) {
     .cap-dialog {
       opacity: 0;
@@ -403,7 +376,6 @@
     }
   }
 
-  /* A list of links in a sheet (the More sheet): each link is a full-width row, a target. */
   :where(.cap-dialog-body nav) ul {
     margin: 0;
     padding: 0;

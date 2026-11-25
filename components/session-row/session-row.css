@@ -1,4 +1,4 @@
-/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+/* Layer order repeated so this file is safe in any import order: the first statement fixes it (css/layers.css). */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
 /* Agent session rows: who is working, who failed, and who is waiting on you, with the
@@ -51,7 +51,6 @@
     min-width: 0;
   }
 
-  /* An identifier, so mono. */
   .cap-session-agent {
     font-family: var(--mono);
     font-size: var(--fs-detail);
@@ -68,13 +67,11 @@
     white-space: nowrap;
   }
 
-  /* What the agent is doing now, in plain words. */
   .cap-session-now {
     margin: 0;
     color: var(--text);
   }
 
-  /* Repeated steps collapsed with a count, and the sampling note. */
   .cap-session-steps,
   .cap-session-sample {
     margin: 0;
@@ -94,7 +91,6 @@
     font-variant-numeric: var(--figures);
   }
 
-  /* The question waiting on you, answered here without leaving the list. */
   .cap-session-ask {
     display: grid;
     gap: var(--space-3);
@@ -109,7 +105,6 @@
     color: var(--text);
     font-weight: var(--weight-medium);
   }
-  /* The exact command or question, as the agent sent it: mono, sunken, wrapping. */
   .cap-session-cmd {
     margin: 0;
     padding: var(--space-3) var(--space-4);
@@ -138,7 +133,6 @@
     color: var(--text);
   }
 
-  /* A narrow column: the age drops under the pill and the name. */
   @container cap-session (max-width: 420px) {
     .cap-session {
       padding-inline: var(--pad-x);

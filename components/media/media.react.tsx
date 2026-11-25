@@ -32,7 +32,6 @@ import { MediaFocus, focusWords } from "./media-focus.react.tsx";
 import { formatBytes } from "../format/format.ts";
 import { linkable } from "../hooks/hooks.ts";
 
-// The crop editor, loaded the first time Crop is pressed, so a library page does not carry it.
 const MediaCrop = lazy(() => import("./media-crop.react.tsx"));
 
 export { MediaTile, MediaGrid } from "./media-grid.react.tsx";
@@ -40,16 +39,13 @@ export type { MediaTileProps, MediaGroup, MediaGridProps } from "./media-grid.re
 
 export type { MediaFields, MediaRecord } from "./media.ts";
 
-// MediaInspector: the details of one file, in a pane beside the grid or a side sheet over it, saving
-// by itself. A failed save keeps what was typed, in the form and in `drafts`, so switching files
-// and coming back does not lose it.
+// MediaInspector: one file's details, saving by itself. A failed save keeps what was typed (in the form and `drafts`).
 
 const drafts = new Map<string, MediaFields>();
 
 export type MediaMode = "pane" | "sheet";
 
-// Reads how the inspector sits ("pane" or "sheet") from the layout's container query, and follows
-// it as the container resizes. Put the ref on the element with class cap-media-layout.
+// Reads how the inspector sits ("pane" or "sheet") from the layout's container query; put the ref on .cap-media-layout.
 export function useMediaMode(layout: { current: HTMLElement | null }): MediaMode {
   const [mode, setMode] = useState<MediaMode>("pane");
   useLayoutEffect(() => {
@@ -70,7 +66,6 @@ export function useMediaMode(layout: { current: HTMLElement | null }): MediaMode
 }
 
 export interface MediaInspectorProps {
-  // The file, or null for none.
   item: MediaRecord | null;
   open: boolean;
   mode: MediaMode;
@@ -79,35 +74,22 @@ export interface MediaInspectorProps {
   onClose: () => void;
   onBin?: (key: string) => void;
   onRestore?: (key: string) => void;
-  // The grid's Unattached filter, from the "Show unattached files" button.
   onShowUnattached?: () => void;
-  // The tile that opened a sheet: focus returns here.
   opener?: HTMLElement | null;
-  // Alt and an arrow in a field: the previous or next file. The app moves its active key.
   onStep?: (dir: "prev" | "next") => void;
   id?: string;
-  // focus() puts focus in the first field: call it when the person asked to open the inspector (Enter on a tile).
   ref?: Ref<{ focus: () => void }>;
-  // Which fields it shows. All by default; a site that keeps no title or caption leaves them out.
   show?: { alt?: boolean; title?: boolean; caption?: boolean; tags?: boolean };
-  // "auto" (the default) saves by itself through onSave. "form" is one form per field with its
-  // own Save button, posting to `action`, so it works with no script.
+  // "auto" saves through onSave; "form" is one form per field with its own Save, posting to `action`, so it works without script.
   saving?: "auto" | "form";
-  // Where its forms post: the fields in form mode, and Move to Trash, Restore and Delete in
-  // either mode (each a form with `intent`, `ids` and `version`). Without it those are buttons.
+  // Where forms post (fields in form mode; Move to Trash, Restore and Delete in either). Without it those are buttons.
   action?: string;
-  // The host router's form component, for those forms.
   Form?: FormComponent;
-  // Close as a link to this address (the list without ?inspect=), so it works with no script.
   closeHref?: string;
-  // What the footer offers. Trash and Restore by default; Delete only when given.
   can?: { trash?: boolean; delete?: boolean };
-  // The tools that change the picture itself, each offered only when given (site-api v0.10.0):
-  // the focal point (a form posting `intent=focus` with `x` and `y` in percent), replace (a
-  // multipart form posting `intent=replace` and `file`, with what it accepts in words), and crop
-  // (needs script: the editor reads `src`, the file's bytes on the page's own origin, and hands the
-  // crop to `onSave`). `keepsSize`: the site refuses a replacement of another size, so replace asks
-  // for the same size and a crop is only ever a new file.
+  // The tools that change the picture, each offered only when given: focal point (posts `intent=focus`, `x`, `y` in percent),
+  // replace (multipart, `intent=replace` and `file`), crop (needs script; the editor reads `src` from the page's origin and
+  // hands the crop to `onSave`). `keepsSize`: the site refuses another size, so replace asks for the same size.
   tools?: {
     focus?: boolean;
     replace?: { accept: string; hint: string } | null;
@@ -119,12 +101,9 @@ export interface MediaInspectorProps {
     } | null;
     keepsSize?: boolean;
   };
-  // In autosave mode the tools sit inside the inspector's own form, so they cannot be forms: their
-  // buttons hand the fields here instead (MediaLibrary posts them through `submit`).
+  // In autosave mode the tools sit inside the inspector's form, so their buttons hand the fields here instead.
   onTool?: (form: FormData) => void;
-  // More sections after the picture tools, built by the host from `Tool` (a form in form mode, a
-  // group that hands its fields to `onTool` inside the autosaving form) and `ident(intent)`, the
-  // hidden fields every inspector form carries. MediaLibrary's credit, turns, history and suggestions.
+  // More sections after the picture tools, built from `Tool` and `ident(intent)`, the hidden fields every inspector form carries.
   more?: (kit: {
     Tool: NonNullable<MediaInspectorProps["Form"]>;
     ident: (intent: string) => ReactNode;
@@ -132,7 +111,6 @@ export interface MediaInspectorProps {
   }) => ReactNode;
 }
 
-// The hidden fields every inspector form carries: what it is about and the version last seen.
 function Ident({ item, intent }: { item: MediaRecord; intent: string }) {
   return (
     <>
@@ -300,7 +278,6 @@ function InspectorBody({
       },
     }),
   );
-  // Leaving this file saves what is unsaved first.
   useEffect(
     () => () => {
       void saver.flush();
@@ -311,7 +288,6 @@ function InspectorBody({
     const next = { ...latest.current, ...patch };
     latest.current = next;
     setFields(next);
-    // In form mode each form's own Save button sends it.
     if (formMode) return;
     saver.schedule();
     if (now) void saver.flush();
@@ -373,7 +349,6 @@ function InspectorBody({
     }
   };
   const binned = item.state === "binned";
-  // One autosaving form, or (form mode) a plain block holding one form per group of fields.
   const BodyTag = formMode ? "div" : "form";
 
   return (
@@ -824,8 +799,6 @@ function CloseGlyph() {
   );
 }
 
-// In form mode, a group of fields is its own form with its own Save button, posting `intent`, the
-// file's id and its version; otherwise the fields sit in the inspector's one autosaving form.
 function Wrap({
   on,
   F,
@@ -857,10 +830,8 @@ function Wrap({
   );
 }
 
-// The tools that change the picture: the focal point, crop, and replace, each folded away (they are
-// used now and then, and open each is as tall as the rest of the inspector). In form mode each is its
-// own form; inside the autosaving form (`nested`) each is a group whose button hands its fields to
-// `onTool`, since a form cannot sit inside a form.
+// The picture tools, each folded away. In form mode each is its own form; inside the autosaving form (`nested`)
+// each is a group whose button hands its fields to `onTool`, since a form cannot sit inside a form.
 function PictureTools({
   item,
   base,
@@ -994,8 +965,6 @@ function PictureTools({
   );
 }
 
-// A tool inside the autosaving form: a group, not a form, whose submit buttons hand its named fields
-// (and the pressed button's) to the handler the ref holds.
 function nestedTool(handler: {
   current: ((form: FormData) => void) | undefined;
 }): NonNullable<MediaInspectorProps["Form"]> {

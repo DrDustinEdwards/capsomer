@@ -11,13 +11,10 @@ export interface ShellEntry {
   href: string;
   icon?: ReactNode;
   current?: boolean;
-  // A count beside the entry, and what it counts: "Queue, 2 blocked".
   count?: number;
   countNote?: string;
   tone?: "crit" | "warn";
-  // A group label over the entries that share it (Sidebar's group). Consecutive entries with
-  // the same `group` form one group; entries with none sit ungrouped. The label is hidden
-  // when the rail is collapsed.
+  // Consecutive entries with the same `group` form one group; the label is hidden when the rail is collapsed.
   group?: string;
 }
 
@@ -31,35 +28,27 @@ export interface LinkProps {
 }
 
 export interface ShellProps {
-  // The name beside the logo. Leave it null when the logo is the whole brand, and give `brandLabel`.
   brand: ReactNode;
   brandHref?: string;
   // The site's logo (an `<img alt="">` or an `<svg>`), before the name: held to the bar's height, in
   // proportion, and hidden from a screen reader because the name or `brandLabel` is the link's name.
   logo?: ReactNode;
-  // The brand link's name when `brand` is empty (the logo alone).
   brandLabel?: string;
   nav: ShellEntry[];
-  // At most four: the wrapper adds More as the fifth when `more` is given.
   tabs?: ShellEntry[];
-  // The views the tab bar has no room for, listed in the More sheet. `current` on one of
-  // them marks the More tab as current. The sheet's count reads "1 paused" (count, then countNote).
+  // The views the tab bar has no room for, in the More sheet. `current` on one marks the More tab current.
   more?: ShellEntry[];
   moreLabel?: string;
   moreIcon?: ReactNode;
   navLabel?: string;
-  // The top bar, left to right after the brand: a status, then actions. Put the theme
-  // switch, then Settings, then Sign out (where there is one) last in `actions`.
   status?: ReactNode;
   actions?: ReactNode;
   railFoot?: ReactNode;
   prefKey?: string;
-  // A router's link component; a plain <a> by default.
   renderLink?: (props: LinkProps) => ReactNode;
   // The rail's collapse key, shown on its toggle; the shell binds it (never while a person types, or with
   // single-key shortcuts off). false shows no key and binds none.
   collapseKey?: string | false;
-  // Controlled collapse.
   collapsed?: boolean;
   onCollapsedChange?: (collapsed: boolean) => void;
   children: ReactNode;
@@ -86,7 +75,6 @@ const MoreIcon = () => (
   </svg>
 );
 
-// Consecutive entries with the same `group` are one group.
 export function groups<E extends { group?: string }>(
   nav: E[],
 ): Array<{ label?: string; entries: E[] }> {
@@ -99,7 +87,6 @@ export function groups<E extends { group?: string }>(
   return out;
 }
 
-// The rail's collapsed state: the prop when the app controls it, else the stored preference.
 export function useCollapsedPref(
   prefKey: string,
   controlled: boolean | undefined,
@@ -160,7 +147,6 @@ export function Shell(props: ShellProps) {
             key: collapseKey,
             label: "Collapse the menu",
             group: "General",
-            // Not on a phone, where the rail is hidden.
             when: () =>
               (document.querySelector("[data-cap-part='rail-toggle']")?.getClientRects().length ??
                 0) > 0,
@@ -169,7 +155,7 @@ export function Shell(props: ShellProps) {
         : undefined,
     [collapseKey, collapsed, setCollapsed],
   );
-  // A phone tab bar holds at most five entries (rule 9): with a More sheet, four and More.
+  // A phone tab bar holds at most five entries: with a More sheet, four and More.
   const phoneTabs = tabs?.slice(0, more ? 4 : 5);
 
   const entry = (e: ShellEntry, phone: boolean) => {

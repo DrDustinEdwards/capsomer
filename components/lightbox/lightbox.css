@@ -1,9 +1,8 @@
-/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+/* Layer order repeated so this file is safe in any import order: the first statement fixes it (css/layers.css). */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
-/* The lightbox: the shared dialog with the picture as its only content. The surface is the
-   picture itself, so the dialog has no fill, edge or shadow of its own; the backdrop and the
-   focus ring are the dialog's. */
+/* The shared dialog with the picture as its only content: no fill, edge or shadow of its own; the
+   backdrop and focus ring are the dialog's. */
 @layer cap.components {
   .cap-lightbox {
     --cap-dialog-w: auto;
@@ -38,7 +37,6 @@
     }
   }
 
-  /* A picture that opens in the viewer. */
   :where([data-cap="lightbox"]) :is(a.image-link, img.diagram-image) {
     cursor: zoom-in;
   }

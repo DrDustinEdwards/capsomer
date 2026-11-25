@@ -1,6 +1,4 @@
-// Mounts the React specimen of the result of a form action: a form whose button answers with an
-// error or a success, as a React Router action would, and the line that says it, which takes
-// focus. The page holds the answer, as useActionData() would.
+// Mounts the React specimen of a form action's result: the button answers with an error or a success and the line that says it takes focus.
 import { StrictMode, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { FormStatus, useActionStatus } from "../form-status/form-status.react.tsx";

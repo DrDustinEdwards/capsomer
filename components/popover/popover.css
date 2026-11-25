@@ -1,4 +1,4 @@
-/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+/* Layer order repeated so this file is safe in any import order: the first statement fixes it (css/layers.css). */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
 /* The one floating surface. `.cap-popover` is the look (background, ring, shadow, radius,
@@ -68,7 +68,6 @@
       inline-size: fit-content;
     }
 
-    /* A list popup (menu, select, combobox) pads its own items. */
     &[data-flush] {
       padding: 0;
       gap: 0;

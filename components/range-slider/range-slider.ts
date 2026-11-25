@@ -11,12 +11,10 @@ export interface RangeCommitDetail {
   high: number;
 }
 
-// A value's share of the track, "0.00%" to "100.00%": the single slider's --cap-range-fill too.
 export function rangeFill(value: number, min: number, max: number): string {
   return `${(max > min ? ((value - min) / (max - min)) * 100 : 0).toFixed(2)}%`;
 }
 
-// The low and high values kept a step apart and inside the track.
 export function clampPair(
   low: number,
   high: number,
@@ -47,8 +45,6 @@ export function trackPick(
   return { which, value };
 }
 
-// The words for a value: data-currency (whole units of a currency, in cents when data-cents),
-// with "+" on the top of the track when data-open-top says the top means "and more".
 export function formatValue(root: HTMLElement, value: number, max: number): string {
   const cents = root.dataset.cents !== undefined;
   const n = cents ? value / 100 : value;
@@ -66,7 +62,6 @@ function parts(root: HTMLElement) {
   return { low, high, out };
 }
 
-// Writes the fill and the words from the inputs' values.
 export function paint(root: HTMLElement): void {
   const { low, high, out } = parts(root);
   if (!low || !high) return;

@@ -13,7 +13,6 @@ import {
 
 export type { CalculatorField, CalculatorResult, CalculatorRun, ViewNode } from "./calculator.ts";
 
-/** A view node as React: the same markup the behavior module builds. */
 export function renderNode(node: ViewNode | string, key: number): ReactNode {
   if (typeof node === "string") return <Fragment key={key}>{node}</Fragment>;
   const Tag = checkTag(node.tag);
@@ -43,28 +42,22 @@ function Hint({ field }: { field: CalculatorField }) {
 }
 
 export interface CalculatorProps {
-  // Keys the ids, so one calculator can sit on a page several times ("loan-step-3").
   id: string;
-  // The page that answers the form with script off: the form is a plain GET to it.
   action: string;
   fields: CalculatorField[];
-  // The opening values, usually from the address (initialValues(fields, params)).
   values: Record<string, string>;
-  // The site's arithmetic: values in, a result out. It runs on the server and on every input.
   run: CalculatorRun;
-  // The name a site's enhance() call looks up `run` by, on a page that is not hydrated.
   calculator?: string;
   // Inside another page (a procedure step): the form still submits to `action`, but typing does not
   // write the address.
   embedded?: boolean;
   submitLabel?: string;
-  // Shown after the result: a note, or a link to the calculator's own page (alone on its line,
-  // so a whole target: data-link="next", components/link).
+  // Shown after the result: a note, or a link to the calculator's own page (data-link="next").
   children?: ReactNode;
 }
 
-// The HTML contract in calculator.md. Hydrated, the values are React state and the result follows
-// them; server-rendered with no hydration, the site's enhance() call does the same with the same run.
+// The HTML contract is in calculator.md. Hydrated, values are React state; with no hydration, the
+// site's enhance() call does the same with the same run.
 export function Calculator(props: CalculatorProps) {
   const {
     id,

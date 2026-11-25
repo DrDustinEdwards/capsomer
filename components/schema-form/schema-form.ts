@@ -1,5 +1,4 @@
-// A form described as data: one FieldSpec per field, which the React part draws and readSpecs
-// reads back from a post, checked against the same spec. Safe on the server: no DOM.
+// A form described as data: one FieldSpec per field, drawn by the React part and read back by readSpecs. Safe on the server: no DOM.
 import { parseMoneyInput } from "@dustinedwards/site-runtime/money";
 import { dateFrom, fromDateTimeLocal } from "../field/field.ts";
 
@@ -28,17 +27,14 @@ export interface FieldOption {
 export interface FieldSpec {
   key: string;
   label: string;
-  // A kind above, or the app's own (drawn by a renderer it passes).
   kind: FieldKind | (string & {});
   help?: string;
   options?: FieldOption[];
   required?: boolean;
-  // Takes the whole row of a two-column form.
   wide?: boolean;
   placeholder?: string;
   min?: number;
   max?: number;
-  // datetime: the wall clock it is typed on (default UTC).
   timeZone?: string;
 }
 
@@ -47,13 +43,10 @@ export interface SpecError {
   text: string;
 }
 
-// The control's id for a field key, so an error summary's link and a "needs info" link land on it.
 export const specId = (key: string, prefix = "field"): string =>
   `${prefix}-${key.replace(/[^A-Za-z0-9_-]/g, "-")}`;
 
-// A JSON value posted in one field (a hidden input an editor fills), or null when it is
-// missing, does not parse, or does not pass `valid`. Null, never a fallback: an action that
-// saved [] for a broken field would erase what is stored.
+// A JSON value posted in one field, or null when missing or invalid. Null, never a fallback: saving [] for a broken field would erase what is stored.
 export function parseJsonField<T = unknown>(
   raw: FormDataEntryValue | null | undefined,
   valid: (value: unknown) => value is T = (_v: unknown): _v is T => true,
@@ -169,8 +162,6 @@ export function readSpec(form: FormData, spec: FieldSpec): { value: unknown; err
   }
 }
 
-// Every field of a post by its spec: the values by key (an empty field is left out) and the
-// errors in the form's order, for the error summary and the message beside each field.
 export function readSpecs(
   form: FormData,
   specs: readonly FieldSpec[],

@@ -58,7 +58,7 @@ export function chartChecks(t, contrast) {
       );
   }
   const ramp = Array.from({ length: 5 }, (_, i) => t[`ramp-${i + 1}`]);
-  // The least step is found against the surface too (0.56), so every cell reaches 3:1.
+  // The least step is found against the surface too, so every cell reaches 3:1.
   for (const bg of ["surface", "ground", "raised"])
     add(`ramp step 1 against --${bg}`, contrast(ramp[0], t[bg]), 3, `${ramp[0]} on ${t[bg]}`);
   add(

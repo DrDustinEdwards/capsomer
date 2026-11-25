@@ -1,4 +1,4 @@
-/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+/* Layer order repeated so this file is safe in any import order: the first statement fixes it (css/layers.css). */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
 /* The save bar: the foot of a settings form, its result, any other action and its Save button on
@@ -18,7 +18,6 @@
     }
   }
 
-  /* Sticky: on the window's bottom edge over the form, on the page's ground, a rule above. */
   .cap-save-bar[data-sticky] {
     position: sticky;
     bottom: env(safe-area-inset-bottom, 0px);

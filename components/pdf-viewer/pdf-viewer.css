@@ -1,9 +1,8 @@
-/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+/* Layer order repeated so this file is safe in any import order: the first statement fixes it (css/layers.css). */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
-/* The PDF viewer: a bar (Previous and Next, the page, zoom) over the current page, drawn by
-   PDF.js on a canvas, and a plain link to the PDF under it. Extracted from txasm's PdfViewer
-   (app/components/pdf-viewer.tsx, islands/pdf-viewer.ts, app.css .pdf-viewer). */
+/* A bar (Previous and Next, the page, zoom) over the current page, drawn by PDF.js on a canvas, and a
+   plain link to the PDF under it. */
 @layer cap.components {
   .cap-pdf {
     display: grid;

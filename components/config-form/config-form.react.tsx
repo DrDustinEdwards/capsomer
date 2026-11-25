@@ -3,32 +3,23 @@ import { Alert } from "../banner/banner.react.tsx";
 import { Button } from "../button/button.react.tsx";
 import { Panel } from "../panel/panel.react.tsx";
 
-// The editor state and form ids live in config-editor.react.tsx, so a list view that imports
-// only useEditor does not load this module's Button, Alert and Panel.
 export { useConfigForm, useEditor, type Editing } from "./config-editor.react.tsx";
 
 export interface ConfigFormProps {
   f: (k: string) => string;
   first: RefObject<HTMLInputElement | null>;
   title: string;
-  // Where the setting lives: "Saved in D1".
   src?: ReactNode;
-  // Why the draft cannot be sent yet ("A name is needed"), shown above the buttons and announced.
   hint: string | null;
   onSubmit: () => void;
   onClose: () => void;
   // The submit's words. "Preview" by default: it opens a confirm that shows what will change,
   // and changes nothing itself.
   submitLabel?: string;
-  // A Danger area under the buttons (Remove this site), apart from the form's own actions.
   danger?: ReactNode;
   children: ReactNode;
 }
 
-// The one shell of an operator's add and edit forms: a panel that scrolls into view and puts focus
-// in its first field when it opens and hands focus back to its opener when it closes, the fields
-// in a grid, a hint while the draft is not sendable, the submit and Cancel, and an optional Danger
-// area. Esc in a field cancels.
 export function ConfigForm({
   f,
   first,

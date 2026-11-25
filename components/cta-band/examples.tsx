@@ -1,4 +1,3 @@
-// Mounts the call to action band specimens.
 import { StrictMode, type ReactNode } from "react";
 import { createRoot } from "react-dom/client";
 import { CtaBand } from "./cta-band.react.tsx";

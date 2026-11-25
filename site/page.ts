@@ -1,7 +1,7 @@
-// The script of every page (the pages read whole without it; site/chrome.ts and the section modules write them). The
-// header, its search and its theme button are Capsomer's own site header. A Themes page's controls and its live token
-// values; a component page's example frames and their code; the section list's filter and the page's sections marked
-// as you read; the icons' search, size and copy; the colors' chips and copy; the front page's network board.
+// The script of every page; the pages read whole without it (site/chrome.ts and the section modules
+// write them). It adds the header's search and theme button, the Themes controls and live token
+// values, component example frames and code, the section filter and reading marker, the icons'
+// search and copy, the colors' copy and the front page's network board.
 import { staticSearch, type StaticSearchIndex } from "@drdustinedwards/site-helpers/search";
 import { copyText } from "../components/copy/copy.ts";
 import { enhance as enhanceHeader } from "../components/site-header/site-header.ts";
@@ -40,8 +40,7 @@ const syncFrame = (frame: HTMLIFrameElement) => {
   doc.documentElement.dataset.theme = effectiveTheme();
   // An example's own height: its section plus the page's padding (scrollHeight never drops below the frame).
   const shown = doc.querySelector(".cap-specimen-shown");
-  // Before the example has marked itself shown there is nothing to measure, so the reserved height stands (a 360 px
-  // fallback here made the frame jump open and back on a slow load).
+  // Before the example has marked itself shown there is nothing to measure, so the reserved height stands.
   if (frame.dataset.kind !== "only" && !shown) return;
   const tall =
     frame.dataset.kind === "only" || !shown

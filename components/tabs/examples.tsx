@@ -1,12 +1,9 @@
-// Mounts the tabs specimens that need React: the links form with an app's router link. Every
-// element with data-mount="<state>" gets that state.
+// Mounts the tabs specimens that need React; every element with data-mount="<state>" gets that state.
 import { StrictMode, useState, type ComponentProps } from "react";
 import { createRoot } from "react-dom/client";
 import { PageTabs, TabLink, TabsNav, type RenderTabLink } from "./tabs.react.tsx";
 import { tabParam } from "./tabs.ts";
 
-// A stand-in for a router's link: it keeps the tab's class and aria-current it is given, and
-// navigates without a page load (a click is handed to the router, which says where it went).
 function RouterLink({
   to,
   onNavigate,
@@ -36,7 +33,6 @@ const STATUSES = [
   { id: "spam", label: "Spam", count: 2 },
 ];
 
-// The app's router owns the location: here a state, and the page's own line says where it is.
 function RouterTabs({ perLink }: { perLink?: boolean }) {
   const [path, setPath] = useState("/mentions/waiting");
   const current = path.split("/").pop();
@@ -71,7 +67,6 @@ const AGENT_TABS = [
   { id: "history", label: "History" },
 ];
 
-// Page tabs on a router: the address is a state here; the first tab is the bare path.
 function PageTabsDemo() {
   const [address, setAddress] = useState("/agents?q=draft");
   const [path = "", search = ""] = address.split("?");

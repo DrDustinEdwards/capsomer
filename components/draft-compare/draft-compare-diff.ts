@@ -2,13 +2,9 @@
 
 import { plural, wordCount } from "@drdustinedwards/site-helpers/text";
 
-// The diff
-
 export type Op = "same" | "ins" | "del";
 
-// One stretch of a sentence: unchanged text, an insertion (only in `after`) or a deletion
-// (only in `before`). Joining the `same` and `del` parts gives the before text; joining the
-// `same` and `ins` parts gives the after text, up to whitespace.
+// One stretch of a sentence: unchanged, an insertion (only in `after`) or a deletion (only in `before`).
 export interface WordPart {
   op: Op;
   text: string;
@@ -16,11 +12,9 @@ export interface WordPart {
 
 interface Token {
   text: string;
-  // The whitespace before it ("" when it touches the token before).
   lead: string;
 }
 
-// A word (letters and digits, with an inner apostrophe or hyphen), or one punctuation mark.
 const TOKEN = /(\s*)([\p{L}\p{N}]+(?:['’-][\p{L}\p{N}]+)*|[^\s\p{L}\p{N}])/gu;
 
 export function tokenize(s: string): Token[] {
@@ -30,16 +24,13 @@ export function tokenize(s: string): Token[] {
 }
 
 export interface DiffOptions {
-  // The most edits (insertions plus deletions) the search will look for before it gives up
-  // and calls the whole stretch replaced. Bounds memory on two texts with nothing in common.
+  // The most edits the search tries before calling the whole stretch replaced; bounds memory on unrelated texts.
   maxEdits?: number;
 }
 
 const DEFAULT_MAX_EDITS = 2000;
 
-// The longest common subsequence of two lists of strings, as index pairs, by Myers' O(ND)
-// algorithm. Equal runs at either end are taken first. Returns null when more than
-// `maxEdits` edits would be needed.
+// The longest common subsequence as index pairs, by Myers' O(ND) algorithm; null when more than `maxEdits` edits are needed.
 export function commonSubsequence(
   a: readonly string[],
   b: readonly string[],
@@ -62,9 +53,7 @@ export function commonSubsequence(
   return out;
 }
 
-// The steps from `a` to `b`, in order: each item of `a` kept or removed, each of `b` added, the
-// removals of a changed run before its additions. `i` is the place in `a` (kept, removed) and `j`
-// in `b` (kept, added). Past `maxEdits`, all of `a` is removed and all of `b` added.
+// The steps from `a` to `b`, removals of a changed run before additions. Past `maxEdits`, all of `a` is removed and all of `b` added.
 export interface Edit {
   op: Op;
   i: number;
@@ -155,8 +144,7 @@ function middle(
 
 type Marked = { op: Op; text: string; lead: string };
 
-// Folds marked tokens into parts: a run of one op is one part, and the space that opens an
-// insertion or a deletion stays outside it, as plain text, so a mark never underlines a gap.
+// Folds marked tokens into parts; the space that opens an insertion or deletion stays outside it, so a mark never underlines a gap.
 function fold(tokens: Marked[]): WordPart[] {
   const parts: WordPart[] = [];
   const push = (op: Op, text: string) => {
@@ -177,10 +165,8 @@ function fold(tokens: Marked[]): WordPart[] {
       j++;
     }
     const lead = first ? "" : (tokens[i] as Marked).lead;
-    // The space before an insertion or a deletion is shared only when the text after it also
-    // follows a space on the other side. Before punctuation that touches the word before it
-    // ("nothing." becoming "nothing but notes."), or at the end, the space belongs to the
-    // changed side alone, so it goes in the part (the renderer draws it outside the mark).
+    // The space before a change is shared only when the text after it also follows a space on the other side. Before punctuation
+    // that touches the word before it ("nothing." becoming "nothing but notes."), the space goes in the part.
     const next = tokens[j];
     const own = op !== "same" && (!next || (next.op === "same" && next.lead === ""));
     if (own) push(op, lead + text);
@@ -194,9 +180,7 @@ function fold(tokens: Marked[]): WordPart[] {
   return parts;
 }
 
-// The words that differ between two strings. Whitespace is not compared (a double space or a
-// line break is not a change); punctuation marks are words of their own, so "end." becoming
-// "end" shows the full stop as removed.
+// The words that differ. Whitespace is not compared; punctuation marks are words, so "end." becoming "end" shows the full stop removed.
 export function diffWords(a: string, b: string, options: DiffOptions = {}): WordPart[] {
   const A = tokenize(a);
   const B = tokenize(b);
@@ -219,10 +203,8 @@ export function diffWords(a: string, b: string, options: DiffOptions = {}): Word
 
 export interface Sentence {
   text: string;
-  // Where it sits in the string it came from.
   start: number;
   end: number;
-  // It opens a paragraph: the first one, or the first after a blank line.
   para: boolean;
 }
 
@@ -230,9 +212,7 @@ const ABBREVIATION =
   /(?:\b(?:Dr|Mr|Mrs|Ms|Prof|St|vs|Fig|No|Inc|Ltd|Jr|Sr|e\.g|i\.e|cf)|\b\p{Lu})\.$/u;
 const BOUNDARY = /[.!?]+["'”’)\]]*(\s+)(?=["'“‘([]?[\p{Lu}\p{N}])/gu;
 
-// Splits text into sentences. Each line is its own set of sentences (a heading, a list item
-// or a paragraph line), a full stop, question mark or exclamation mark ends one when a capital
-// or a number follows, and a short list of abbreviations ("Dr.", "e.g.", an initial) does not.
+// Each line is its own set of sentences; a full stop, question or exclamation mark ends one when a capital or number follows, except common abbreviations.
 export function splitSentences(text: string): Sentence[] {
   const out: Sentence[] = [];
   let offset = 0;
@@ -267,14 +247,12 @@ export function splitSentences(text: string): Sentence[] {
 
 export type Entry =
   | { op: "same"; a: Sentence; b: Sentence }
-  // The sentence is in both, edited: its words, marked.
   | { op: "change"; a: Sentence; b: Sentence; parts: WordPart[] }
   | { op: "del"; a: Sentence; b?: undefined }
   | { op: "ins"; b: Sentence; a?: undefined };
 
 const squash = (s: string) => s.replace(/\s+/g, " ").trim();
 
-// How alike two sentences are, 0 to 1: shared words over all words.
 function similarity(a: string, b: string): number {
   const ka = tokenize(a).map((t) => t.text);
   const kb = tokenize(b).map((t) => t.text);
@@ -283,9 +261,7 @@ function similarity(a: string, b: string): number {
   return (2 * common) / (ka.length + kb.length);
 }
 
-// Two runs of sentences with no exact match between them: pair those that are the same
-// sentence edited (alike enough), leave the rest as removed or added. A best alignment by
-// similarity, in order.
+// Pairs sentences that are the same sentence edited (alike enough); the rest are removed or added.
 function align(as: Sentence[], bs: Sentence[], threshold: number): Entry[] {
   const n = as.length;
   const m = bs.length;
@@ -355,14 +331,10 @@ function align(as: Sentence[], bs: Sentence[], threshold: number): Entry[] {
 }
 
 export interface SentenceOptions extends DiffOptions {
-  // How alike (0 to 1) two sentences must be to count as one sentence edited rather than one
-  // removed and another added. Default 0.4.
+  // How alike (0 to 1) two sentences must be to count as one edited. Default 0.4.
   similarity?: number;
 }
 
-// Compares two texts sentence by sentence: sentences that match exactly (whitespace aside)
-// are anchors; between anchors, sentences alike enough are paired and compared by word, the
-// rest are removed or added.
 export function diffSentences(a: string, b: string, options: SentenceOptions = {}): Entry[] {
   const A = splitSentences(a);
   const B = splitSentences(b);
@@ -386,8 +358,6 @@ export function diffSentences(a: string, b: string, options: SentenceOptions = {
   return out;
 }
 
-// The analysis a view is drawn from
-
 export interface Counts {
   added: number;
   removed: number;
@@ -396,20 +366,15 @@ export interface Counts {
 
 export interface Analysis {
   entries: Entry[];
-  // For each entry: the number (from 1) of the change it belongs to, or 0 when unchanged.
-  // A change is a run of edited sentences in one paragraph.
   group: number[];
-  // Per change, from 1: its words added and removed.
   perChange: Array<{ added: number; removed: number }>;
   counts: Counts;
-  // Nothing differs, word for word.
   identical: boolean;
 }
 
 const wordsOf = (parts: WordPart[], op: Op) =>
   parts.reduce((n, p) => (p.op === op ? n + wordCount(p.text) : n), 0);
 
-// Counts what an entry adds and removes, in words.
 function entryWords(e: Entry): { added: number; removed: number } {
   if (e.op === "ins") return { added: wordCount(e.b.text), removed: 0 };
   if (e.op === "del") return { added: 0, removed: wordCount(e.a.text) };
@@ -449,7 +414,6 @@ export function analyze(before: string, after: string, options: SentenceOptions 
   return { entries, group, perChange, counts, identical: n === 0 };
 }
 
-// "14 words added, 9 removed, 3 changes".
 export function countsText(c: Counts): string {
   const w = (n: number) => plural(n, "word");
   return `${w(c.added)} added, ${c.removed} removed, ${plural(c.changes, "change")}`;

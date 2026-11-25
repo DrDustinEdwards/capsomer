@@ -1,4 +1,4 @@
-/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+/* Layer order repeated so this file is safe in any import order: the first statement fixes it (css/layers.css). */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
 /* Record facts: a record's labeled facts (year, venue, identifier, kind) as a narrow rail beside
@@ -30,7 +30,6 @@
     font-weight: var(--weight-medium);
     overflow-wrap: anywhere;
 
-    /* An identifier (a DOI, an accession, a version) is in the family's mono face. */
     &[data-mono] {
       font-family: var(--mono);
     }

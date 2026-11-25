@@ -1,8 +1,7 @@
-// Copy and share: one button that copies another element's text (or shares a link), and says
-// what happened in a status bubble beside it. Built to Chrome's Modern Web Guidance copy-button
-// guide: Invoker Commands (command="--copy" commandfor="<id>") with a click fallback, the Async
-// Clipboard API, one role="status" bubble outside the button for both outcomes, no disabled
-// state while the message shows, and a no-break space so VoiceOver reads a repeated message.
+// Copy and share: one button that copies another element's text (or shares a link) and says what happened
+// in a status bubble beside it. Follows Chrome's Modern Web Guidance copy-button guide: Invoker Commands
+// with a click fallback, one role="status" bubble outside the button, no disabled state while the message
+// shows, and a no-break space so VoiceOver reads a repeated message.
 
 // How long a message stays: a success is short news, a failure leaves time to copy by hand.
 export const COPIED_MS = 2500;
@@ -11,9 +10,8 @@ export const COPY_FAILED_MS = 8000;
 export type CopyOutcome = "copied" | "failed";
 export type ShareOutcome = "shared" | "copied" | "canceled" | "failed";
 
-// Writes text to the clipboard. Never throws, synchronously or not: a missing clipboard (an
-// insecure page) or a refused write is false. Sites are served over HTTPS, so there is no
-// execCommand fallback (the guide keeps that for pages that cannot control their protocol).
+// Writes text to the clipboard. Never throws: a missing clipboard (an insecure page) or a refused write
+// is false. Sites are served over HTTPS, so there is no execCommand fallback.
 export async function copyText(text: string): Promise<boolean> {
   try {
     if (!text) return false;
@@ -46,8 +44,8 @@ export async function shareLink(data: {
   return (await copyText(data.url)) ? "copied" : "failed";
 }
 
-// The text a target holds: a form control's value, a link's address, or the rendered text
-// (innerText keeps line breaks that textContent loses).
+// The text a target holds: a form control's value, a link's address, or its innerText (which keeps line
+// breaks textContent loses).
 export function textOf(target: Element): string {
   if (target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement)
     return target.value;
@@ -103,8 +101,7 @@ export function report(button: HTMLElement, outcome: CopyOutcome | ShareOutcome)
   );
 }
 
-// Runs one command from a button on its target: --copy copies the target's text, --share
-// shares the target link's address (or the page's) and copies it where sharing is missing.
+// Runs one command from a button on its target: --copy copies its text, --share shares its link.
 export async function run(button: HTMLElement, target: Element, command: string): Promise<void> {
   if (command === "--share") {
     const url = target instanceof HTMLAnchorElement ? target.href : textOf(target) || location.href;

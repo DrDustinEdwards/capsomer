@@ -1,33 +1,22 @@
-// htmlToBlocks: a body written as HTML (a sender's template, a model's draft) read into the email's Blocks, the only
-// shape renderEmail draws. Any site that lets
-// someone write an email body in HTML gets the same reader. Pure: no DOM, so it runs in a Worker.
+// htmlToBlocks: a body written as HTML (a sender's template, a model's draft) read into the email's Blocks.
+// Pure: no DOM, so it runs in a Worker.
 import { htmlAttributes, unescapeHtml } from "@dustinedwards/site-runtime/html";
 import { checkUrl, type Block } from "./email.ts";
 
-// A small reader for the HTML a site's senders and a model write, not a
-// general parser. What it keeps, and why:
-//   - p, div, li, td, th, blockquote: one paragraph each. A <br> starts a new
-//     paragraph, because Capsomer's paragraph has no line break inside it (so
-//     "Thanks,<br>Example Co" becomes two short paragraphs, same words).
-//   - h1 to h6: a heading. Nothing else becomes a heading; bold text is kept as
-//     plain text in its paragraph, since Capsomer has no bold run.
-//   - a link that is a block of its own: a button, label and address untouched.
-//   - a link inside a sentence: the sentence keeps the link's words as plain
-//     text, and a button with the same words and address follows the paragraph,
-//     because Capsomer has no link inside a paragraph.
-//   - a link Capsomer would refuse (anything but https: or mailto:, so tel:,
-//     http:, "#", a relative path, an unfilled {{placeholder}}, javascript:,
-//     data:): its words stay as text and no button is made. A generated body is
-//     cached and reused on every retry, so a throw here would fail the step on
-//     every attempt and never reach the template fallback.
-//     Links a site supplies outside the body (the unsubscribe link, the
-//     tracking URLs) still throw when refused.
+// A small reader for the HTML senders and a model write, not a general parser. What it keeps, and why:
+//   - p, div, li, td, th, blockquote: one paragraph each. A <br> starts a new paragraph, because
+//     Capsomer's paragraph has no line break inside it.
+//   - h1 to h6: a heading. Bold text stays plain, since Capsomer has no bold run.
+//   - a link that is a block of its own: a button. A link inside a sentence keeps its words as text and a
+//     button with the same words and address follows the paragraph (no link inside a paragraph).
+//   - a link Capsomer would refuse (not https: or mailto:, or an unfilled {{placeholder}}): its words stay
+//     as text and no button is made. A generated body is cached and reused on every retry, so a throw
+//     here would fail the step on every attempt and never reach the template fallback. Links a site
+//     supplies outside the body (unsubscribe, tracking URLs) still throw when refused.
 //   - <small> around a whole block: fine print.
-//   - two pieces of a table cell split by <span> (the digest's label and value)
-//     are kept apart by a space.
-// What it drops: script, style, head and title with their content, comments,
-// anything hidden (a hidden attribute, aria-hidden="true", or a style of
-// display:none or visibility:hidden), and images (their alt text is kept).
+//   - two pieces of a table cell split by <span> are kept apart by a space.
+// It drops script, style, head and title with their content, comments, anything hidden, and images
+// (their alt text is kept).
 
 type BlockKind = "paragraph" | "heading" | "fine";
 
@@ -201,7 +190,6 @@ function feedHidden(
 
 const squash = (s: string): string => s.replace(/\s+/g, " ").trim();
 
-/** Turn a body written as HTML into Capsomer blocks, in order. Pure. */
 export function htmlToBlocks(html: string): Block[] {
   const source = html.replace(/<!--[\s\S]*?-->/g, "").replace(DROPPED_WITH_CONTENT, "");
   const blocks: Block[] = [];
@@ -235,7 +223,6 @@ export function htmlToBlocks(html: string): Block[] {
     if (text.trim() && smallDepth === 0) p.allSmall = false;
   };
 
-  /** Close the open link, keeping its words in the block and its button. */
   const closeLink = (): void => {
     if (!link) return;
     const done: { url: string; label: string } = link;

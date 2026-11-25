@@ -4,18 +4,14 @@ import { Status, type Tone } from "../status/status.react.tsx";
 
 export interface VerdictProblem {
   key: string;
-  // Where it is fixed: a link or a button, named for the problem.
   label: ReactNode;
   tone?: "crit" | "warn";
 }
 
 export interface VerdictProps {
   problems: VerdictProblem[];
-  // The words when there are none: "All good".
   okLabel?: string;
-  // What all good means, after it: "Sites, backups and default branches were fine on the last pass."
   okNote?: ReactNode;
-  // The singular and plural: ["problem", "problems"].
   noun?: [string, string];
   // How many are named; the rest are "and 4 more".
   named?: number;
@@ -26,8 +22,6 @@ export interface VerdictProps {
   className?: string;
 }
 
-// The answer to "is anything wrong?" in one line: "All good" with what that covers, or how many
-// problems and the first few by name, each a way to where it is fixed. The worst tone leads.
 export function Verdict({
   problems,
   okLabel = "All good",

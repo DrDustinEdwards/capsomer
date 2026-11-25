@@ -1,13 +1,7 @@
-/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+/* Layer order repeated so this file is safe in any import order: the first statement fixes it (css/layers.css). */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
-/* The one meter bar. Every bar Capsomer draws (the meter, the usage meter, a stat tile's)
-   is this one: a label and a value in text, a track with a fill, and optionally a
-   threshold tick and a projection. The number is always in text; the bar repeats it.
-   Matches shadcn's Progress: a rounded track, a primary fill, the label and a tabular
-   value on one row. Positions come from three custom properties on the bar (0 to 1):
-   --cap-meter-ratio, --cap-meter-projected and --cap-meter-threshold, set through the
-   CSSOM by the behavior module or the React wrapper, never a style attribute. */
+/* The one meter bar. */
 @layer cap.components {
   .cap-meter {
     --cap-meter-color: var(--accent);
@@ -50,7 +44,6 @@
     text-align: end;
   }
 
-  /* The track. The role="meter" element, so its status word and note stay readable text. */
   .cap-meter-bar {
     position: relative;
     display: block;

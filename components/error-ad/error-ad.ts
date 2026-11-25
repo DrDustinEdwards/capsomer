@@ -1,8 +1,6 @@
 // The ad slot of an error page: one vintage-style ad as a corner piece at the foot of a utility
-// page (a 404, a 500). An ad is data (its parts, below) plus SVG symbols for its art; this module
-// checks an ad, draws a starburst, scopes an art file's ids, and picks the ad a request gets. Pure
-// functions, no framework, so a test and the server run the same code. The ads themselves are the
-// site's content. Extracted from dustinedwards.info's utility ads (app/utility-ads/model.mjs).
+// page. An ad is data plus SVG symbols for its art; this module checks an ad, draws a starburst,
+// scopes an art file's ids, and picks the ad a request gets. Pure, so a test and the server run the same code.
 
 export interface AdPart {
   kind: "text" | "burst" | "rect" | "use";
@@ -12,13 +10,12 @@ export interface AdPart {
   cy?: number;
   w?: number;
   h?: number;
-  // A symbol's id in the art (kind "use").
   ref?: string;
   anchor?: "start" | "middle" | "end";
   font?: "display" | "slab" | "serif";
   size?: number;
   leading?: number;
-  // A hex color, or "ink": the ad's own vintage ink (--cap-ad-ink, the navy its art is drawn in), cream in dark mode.
+  // A hex color, or "ink": the ad's own navy (--cap-ad-ink), cream in dark mode.
   fill?: string;
   stroke?: string;
   strokeWidth?: number;
@@ -40,7 +37,6 @@ export interface Ad {
   parts: AdPart[];
 }
 
-// The lettering: two self-hosted Open Font License faces (Bangers, Alfa Slab One) and the site's serif.
 export const AD_FONTS = ["display", "slab", "serif"] as const;
 const PART_KINDS = ["text", "burst", "rect", "use"];
 const ID = /^[a-z][a-z0-9-]*$/;
@@ -49,7 +45,6 @@ const isFill = (value: unknown) =>
   value === "ink" || (typeof value === "string" && HEX.test(value));
 
 // Everything wrong with an ad's data, as sentences; an empty list is a valid ad.
-// `ad` is a parsed ad.json, `art` its folder's raw art.svg.
 export function adProblems(ad: Partial<Ad> | null | undefined, art: string): string[] {
   const out: string[] = [];
   if (typeof ad?.id !== "string" || !ID.test(ad.id)) out.push("id must be kebab-case");
@@ -84,7 +79,6 @@ export function adProblems(ad: Partial<Ad> | null | undefined, art: string): str
   return out;
 }
 
-// The points of a starburst: `points` spikes alternating between `outer` and `inner` radius.
 export function burstPoints(
   cx: number,
   cy: number,
@@ -103,14 +97,14 @@ export function burstPoints(
   return out.join(" ");
 }
 
-// Prefixes an art file's ids (and its internal links) with the ad's id, so two ads' symbols never collide.
+// Prefixes an art file's ids and internal links with the ad's id, so two ads' symbols never collide.
 export function scopeArt(art: string, adId: string): string {
   return art
     .replace(/\bid="([^"]+)"/g, `id="ad-${adId}-$1"`)
     .replace(/href="#([^"]+)"/g, `href="#ad-${adId}-$1"`);
 }
 
-// The ad a request gets: the one `?ad=` names when it exists (so a link can show one), else a random one.
+// The ad `?ad=` names when it exists (so a link can show one), else a random one.
 export function chooseAd<T extends { id: string }>(
   ads: T[],
   search: string,

@@ -19,7 +19,6 @@ import { countText, keyValue, revealedText, stepValue, toDateTimeLocal } from ".
 import { useHydrated } from "../hooks/hooks.react.tsx";
 import { rangeFill } from "../range-slider/range-slider.ts";
 
-// The props Field passes to its control: any input, textarea, select or component forwarding them.
 export interface FieldControlProps {
   id?: string;
   required?: boolean;
@@ -29,38 +28,25 @@ export interface FieldControlProps {
 
 export interface FieldProps {
   label: ReactNode;
-  // The control's id, for a control drawn by a function (an element child keeps its own).
   id?: string;
-  // The label is read but not shown, for a field whose purpose the page already makes plain (a
-  // site's search box with its icon). Every other field shows its label.
+  // Read but not shown, for a field whose purpose the page makes plain (a search box with an icon).
   labelHidden?: boolean;
-  // Help, shown between the label and the control and read as its description.
   help?: ReactNode;
-  // The message for a wrong value: what is wrong and what to do. Shown beside the control.
   error?: ReactNode;
-  // Announce the error as it appears (role="alert"). Set it for errors found on submit;
-  // leave it off for errors found when a field is left.
+  // Gives the error role="alert": for errors found on submit, not on leaving a field.
   announce?: boolean;
-  // Marks the field required, on the label and on the control.
   required?: boolean;
-  // vertical (default), horizontal (a checkbox beside its words), or responsive.
   orientation?: "vertical" | "horizontal" | "responsive";
-  // One control: <input className="cap-input" />, a textarea or a select; or a function that
-  // is given the control's props and returns it inside its group (a password, a search).
   children:
     | ReactElement<FieldControlProps>
     | ((props: FieldControlProps & { id: string }) => ReactNode);
-  // Shown after the control, before the error: a character count.
   after?: ReactNode;
-  // A button in the control's row, after it (Add, Check, Apply): one action on this field only.
+  // One action on this field only (Add, Check, Apply), in the control's row.
   action?: ReactNode;
-  // Help between the label and the control (default), or under the control.
   helpPlacement?: "before" | "after";
-  // false keeps the control required but leaves the word "Required" off the label, for a form
-  // whose every field is required and says so once at the top.
+  // false keeps the control required but omits the word "Required", for a form that says it once.
   showRequired?: boolean;
-  // "short": a field that needs only its control's room (a kind, a color) beside a long one, as
-  // data-size="short", which a layout reads (inline-add-form.css).
+  // "short": a field that needs only its control's room, as data-size="short" (inline-add-form.css reads it).
   size?: "short";
 }
 
@@ -146,8 +132,7 @@ export function Field({
   );
 }
 
-// A checkbox or radio with its label: the box is drawn by CSS. `indeterminate` is set on the
-// element (it has no attribute). `variant="card"` makes the whole box the choice.
+// `indeterminate` is set on the element (it has no attribute).
 export function Check(
   props: Omit<InputHTMLAttributes<HTMLInputElement>, "type" | "style"> & {
     type?: "checkbox" | "radio";
@@ -171,7 +156,6 @@ export function Check(
   );
 }
 
-// A native range input whose track fills to the thumb (--cap-range-fill). Label it as any input.
 export function Range(
   props: Omit<InputHTMLAttributes<HTMLInputElement>, "type" | "value" | "min" | "max"> & {
     value: number;
@@ -194,7 +178,6 @@ export function Range(
   );
 }
 
-// An input with addons inside one edge. Put the control inside as <input className="cap-input" />.
 export function InputGroup(props: { label?: string; children?: ReactNode }) {
   return (
     <div className="cap-input-group" role="group" aria-label={props.label}>
@@ -222,7 +205,6 @@ export function InputGroupAddon(props: {
   );
 }
 
-// The words and checks every field part takes from Field.
 type FieldText = Pick<
   FieldProps,
   | "label"
@@ -235,7 +217,6 @@ type FieldText = Pick<
   | "showRequired"
 >;
 
-// Splits a field part's props into the words Field takes and the rest, for the control.
 function splitField<T extends FieldText>(props: T) {
   const {
     label,
@@ -261,8 +242,7 @@ function splitField<T extends FieldText>(props: T) {
   return [field, rest] as const;
 }
 
-// A password with Show and Hide (GOV.UK Password input). The change is said in the status
-// region when the app has a MessageProvider, and a form that is sent hides it again.
+// Show and Hide on a password (GOV.UK Password input); said in the status region when the app has a MessageProvider.
 export function PasswordInput(
   props: FieldText &
     Omit<InputHTMLAttributes<HTMLInputElement>, "type" | "style" | "autoComplete"> & {
@@ -319,9 +299,8 @@ export function PasswordInput(
   );
 }
 
-// A textarea with a character or word count (GOV.UK Character count). The count changes as it
-// is typed in and is said in the status region a second after typing stops. Over the limit is
-// the app's error on submit; nothing stops the typing or a paste.
+// A character or word count (GOV.UK Character count), said in the status region a second after
+// typing stops. Nothing stops typing or a paste; over the limit is an error on submit.
 export function CharacterCount(
   props: FieldText &
     Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, "style" | "value" | "maxLength"> & {
@@ -369,8 +348,7 @@ export function CharacterCount(
   );
 }
 
-// A number with steppers (native type="number", with APG spinbutton keys): the buttons are out
-// of the Tab order, since the arrow keys in the field do the same, and keep focus in it.
+// The buttons are out of the Tab order, since the arrow keys do the same, and keep focus in the field.
 export function NumberField(
   props: FieldText &
     Omit<
@@ -381,10 +359,8 @@ export function NumberField(
       onChange: (value: number | null) => void;
       min?: number;
       max?: number;
-      // "any" takes any value (1.5 servings passes the browser's step check); the steppers and
-      // Page Up and Page Down then step by 1.
+      // "any" takes any value (1.5 servings passes the step check); steppers then step by 1.
       step?: number | "any";
-      // The steppers' names. Default: "Decrease" and "Increase" with the label, when it is text.
       decrease?: string;
       increase?: string;
     },
@@ -471,9 +447,8 @@ const SEARCH_ICON = (
   </svg>
 );
 
-// A search field (React Aria SearchField): role="search" around one field, with Clear while
-// there is text, and Esc to clear. A form when `action` is given, so it works with no script;
-// otherwise a div for a filter that answers as it is typed in.
+// role="search" around one field (React Aria SearchField). A form when `action` is given, so it
+// works with no script; otherwise a div for a filter that answers as it is typed in.
 export function SearchField(
   props: Pick<FieldProps, "label" | "labelHidden" | "help"> &
     Omit<InputHTMLAttributes<HTMLInputElement>, "type" | "style" | "value" | "onChange"> & {
@@ -497,7 +472,6 @@ export function SearchField(
   const ready = useHydrated();
   const input = useRef<HTMLInputElement>(null);
   const Wrap = action ? "form" : "div";
-  // The landmark is named, as in the HTML contract: `landmark`, or else the field's own label.
   return (
     <Wrap
       className="cap-search"
@@ -566,9 +540,8 @@ export function SearchField(
 export type DatePart = "day" | "month" | "year";
 const DATE_LABELS: Record<DatePart, string> = { day: "Day", month: "Month", year: "Year" };
 
-// A date in three fields (GOV.UK Date input) in a fieldset with its legend. `invalid` names the
-// parts in error (default: all three when there is an error). `autoComplete="bday"` fills a
-// date of birth. `order` follows the site's language: month first in American English.
+// GOV.UK Date input. `invalid` names the parts in error (default: all three on an error).
+// `order` follows the site's language: month first in American English.
 export function DateInput(
   props: Omit<FieldText, "label"> & {
     legend: ReactNode;
@@ -622,9 +595,8 @@ export function DateInput(
   );
 }
 
-// Controls that answer one question together (a date's parts, a set of radios) in a fieldset:
-// the legend, Required, the help and the error, both read as the group's description (GOV.UK's
-// fieldset).
+// A fieldset for controls that answer one question together; the legend, Required, help and
+// error are read as the group's description (GOV.UK fieldset).
 export function FieldSet(
   props: Omit<FieldText, "label" | "helpPlacement" | "showRequired"> & {
     legend: ReactNode;
@@ -671,11 +643,9 @@ export function FieldSet(
   );
 }
 
-// A text input in its field: the label, help and error, and every input attribute on the input.
 export function TextField(
   props: FieldText &
     Omit<InputHTMLAttributes<HTMLInputElement>, "style"> & {
-      // A button in the input's row (Field's `action`).
       action?: ReactNode;
     },
 ) {
@@ -688,9 +658,8 @@ export function TextField(
   );
 }
 
-// A slider in its field: the value read out beside the label (an <output> tied to the slider),
-// and words at the two ends under it. `format` writes the value the way the page shows it
-// ("$12,000"); the slider says the same words through aria-valuetext.
+// An <output> tied to the slider shows the value; `format` writes it ("$12,000") and the
+// slider says the same words through aria-valuetext.
 export function RangeField(
   props: Omit<FieldText, "required" | "showRequired"> &
     Omit<
@@ -703,7 +672,6 @@ export function RangeField(
       max?: number;
       step?: number;
       format?: (value: number) => string;
-      // The words under each end of the track; default the formatted min and max.
       minLabel?: ReactNode;
       maxLabel?: ReactNode;
     },
@@ -757,17 +725,13 @@ export function RangeField(
   );
 }
 
-// A span chosen from two menus, From and To (years 2019 to 2024): a fieldset with the question as
-// its legend and a native select for each end, side by side, each with "Any" for an open end.
-// A form sends both with no script. Catalog's range facet is this field.
+// From and To selects in a fieldset, each with "Any" for an open end; a form sends both with no script.
 export function SpanField(
   props: Omit<FieldsetHTMLAttributes<HTMLFieldSetElement>, "children"> & {
     label: ReactNode;
-    // The two ends' parameter names.
     names: { from: string; to: string };
-    // Every value either end can take, in order, the same list for both.
     options: readonly { value: string; label: ReactNode }[];
-    // The chosen ends; null or "" for an open end.
+    // Null or "" for an open end.
     from?: string | number | null;
     to?: string | number | null;
   },
@@ -803,16 +767,14 @@ export function SpanField(
   );
 }
 
-// An address part (a slug): lower-case letters, digits and single hyphens, the one rule
-// Prelum's slugify and isSlug hold every site to. Given `from` (the title), it follows the
-// title until the person types in it, and goes back to following when they empty it.
+// A slug: lower-case letters, digits and single hyphens, the rule Prelum's slugify and isSlug
+// hold every site to. With `from`, it follows that title until the person types in it.
 export function SlugField(
   props: FieldText &
     Omit<InputHTMLAttributes<HTMLInputElement>, "type" | "style" | "value" | "onChange"> & {
       value: string;
       onChange: (value: string) => void;
       from?: string;
-      // The longest slug, cut back to a whole word (slugify's `max`).
       max?: number;
     },
 ) {
@@ -854,15 +816,13 @@ export function SlugField(
   );
 }
 
-// Money in dollars: a text box (inputMode decimal, never type="number", which drops what it
-// cannot read) with the currency sign inside its edge. The app keeps integer cents:
-// `defaultCents` fills it (site-runtime's moneyInputValue), and the server reads the posted text
-// with site-runtime's parseMoneyInput.
+// A text box (inputMode decimal, never type="number", which drops what it cannot read) with the
+// sign inside. The app keeps integer cents: `defaultCents` fills it (site-runtime's
+// moneyInputValue) and the server reads the text with parseMoneyInput.
 export function MoneyField(
   props: FieldText &
     Omit<InputHTMLAttributes<HTMLInputElement>, "type" | "style" | "defaultValue"> & {
       defaultCents?: number | null;
-      // The sign inside the edge. Default "$".
       symbol?: string;
     },
 ) {
@@ -895,9 +855,8 @@ export function MoneyField(
   );
 }
 
-// A date and time (datetime-local) on the wall clock of `timeZone` (default UTC, the Worker's
-// zone), which the help names, so what is typed is what is stored. The server reads the posted
-// value with fromDateTimeLocal(value, timeZone).
+// Datetime-local on the wall clock of `timeZone` (default UTC), which the help names, so what is
+// typed is what is stored. The server reads it with fromDateTimeLocal(value, timeZone).
 export function DateTimeField(
   props: FieldText &
     Omit<InputHTMLAttributes<HTMLInputElement>, "type" | "style" | "defaultValue"> & {

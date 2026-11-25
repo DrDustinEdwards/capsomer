@@ -1,4 +1,4 @@
-/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+/* Layer order repeated so this file is safe in any import order: the first statement fixes it (css/layers.css). */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
 /* The label color list: a person's own labels, each a pill (status.css) with one of the eight
@@ -7,7 +7,6 @@
    the word is --text. Extracted from Carrel (app/app.css .app-label, .app-label-dot,
    .app-label-list and .app-label-edit; components/writing/status-label.tsx). */
 @layer cap.components {
-  /* The list as it reads: the labels in order, as many to a line as fit. */
   .cap-color-label-list {
     display: flex;
     flex-wrap: wrap;
@@ -17,7 +16,6 @@
     list-style: none;
   }
 
-  /* The editor: one row per label, its name and its color side by side, with the dot it will take. */
   .cap-color-label-edit {
     display: grid;
     gap: var(--space-3);
@@ -37,7 +35,6 @@
     & > li > .cap-field + .cap-field {
       flex: 0 1 10rem;
     }
-    /* The color a row will take, as its dot, level with the middle of the controls. */
     & > li > .cap-pill {
       box-sizing: border-box;
       min-block-size: var(--control);

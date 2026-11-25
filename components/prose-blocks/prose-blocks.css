@@ -1,12 +1,10 @@
-/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+/* Layer order, repeated so this file is safe in any import order. */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
-/* Prose blocks: every class Prelum's renderer writes (README, "What writers get"), inside the reading
-   context <article data-context="prose"> that css/prose.css sets up. The class names are Prelum's
-   contract, stored in every site's rendered HTML, so they are not cap- prefixed; each selector is held
-   inside the prose context by :where(), which adds no specificity, so a site overrides one with a
-   single class. css/prose.css keeps the measure, the serif and the heading sizes; this file adds the
-   rest, except links, which are the link system's in every context. Colors, sizes and radii are tokens only. */
+/* Prose blocks: every class Prelum's renderer writes, inside <article data-context="prose">. The class names
+are Prelum's contract, stored in every site's rendered HTML, so they are not cap- prefixed; each selector
+is held inside the prose context by :where() (no specificity), so a site overrides one with a single
+class. Measure, serif and heading sizes are css/prose.css's; links are the link system's. Tokens only. */
 @layer cap.components {
   :where([data-context="prose"]) {
     /* A post is often a grid or flex item, whose min-width: auto would let a wide table or code block
@@ -1125,9 +1123,7 @@
     }
   }
 
-  /* render/enhance's furniture: the code block's language and Copy, the footnote preview, the image
-     viewer and the selection link. Copy moves to the copy part once Prelum's enhance renders it. The
-     reading progress bar is the reading-progress component's (.cap-reading-progress). */
+  /* render/enhance's furniture: the code block's language and Copy, the footnote preview, the image viewer and the selection link. */
   /* Room for the language and Copy is kept only on the blocks that get them (render/enhance decorates
      pre[data-lang] and marks it data-enhanced), and only where script runs, so the room is there before
      the furniture arrives and nothing shifts. */

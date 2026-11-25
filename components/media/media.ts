@@ -1,10 +1,5 @@
-// The media library's behavior: a grid of tiles with roving focus and two-dimensional arrow keys,
-// selection by real checkboxes, an inspector that sits beside the grid (a pane) or over it (a
-// side sheet) and SAVES BY ITSELF, the copy button, the filters, search, Trash and Restore.
-// The arrow keys read the rendered boxes, not a column count; alt text has three states; an
-// unattached file is not an unused one. The inspector saves after typing stops, with a live
-// status that never loses typed text. No framework; the React wrapper uses the same pure
-// functions.
+// The media library's behavior: a grid with roving focus and two-dimensional arrow keys (read from the
+// rendered boxes), real-checkbox selection, and an inspector that saves by itself after typing stops.
 
 import { countText } from "../content/content.ts";
 import { enhance as enhanceMeters, percent } from "../meter/meter.ts";
@@ -44,17 +39,13 @@ export { buildTile, recordOf, syncTile, writeRecord } from "./media-tile.ts";
 
 const READY = "data-cap-ready";
 
-// The controller.
 
 export interface MediaOptions {
-  // Sends the inspector's fields. Reject with an Error that says why. Default: a POST of the
-  // inspector's form to its action.
+  // Sends the inspector's fields; default is a POST of the inspector's form to its action.
   save?: (key: string, fields: MediaFields) => Promise<void>;
-  // Persist a move to Trash, a restore, a retry. Each rejects with an Error that says why.
   bin?: (keys: string[]) => Promise<void>;
   restore?: (keys: string[]) => Promise<void>;
   retry?: (key: string) => Promise<void>;
-  // Deletes files for good (the bulk bar's destructive action, after its preview).
   delete?: (keys: string[]) => Promise<void>;
 }
 
@@ -63,13 +54,10 @@ export interface MediaController {
   close(): void;
   setActive(key: string): void;
   selectedKeys(): string[];
-  // Adds a tile (an upload) at the start of the first grid.
   add(record: MediaRecord): HTMLElement;
-  // Changes a tile's facts and redraws it (progress, a finished upload, a failure).
   update(key: string, patch: Partial<MediaRecord>): void;
   bin(keys: string[]): Promise<boolean>;
   restore(keys: string[]): Promise<boolean>;
-  // The actions a bulk bar over this library runs: bin, restore, copy, add-tag, remove-tag.
   bulkHandlers(): Record<string, BulkHandler>;
   refresh(): void;
   detach(): void;
@@ -187,8 +175,6 @@ export function attachMedia(root: HTMLElement, options: MediaOptions = {}): Medi
 
   const renderSave = (state: SaveState, error?: string) => renderSaveState(inspector, state, error);
 
-  // Writes a record into the inspector's fields and lists. Idempotent: the server's own markup
-  // for the first file is what this would write.
   const fill = (tile: HTMLElement) => {
     if (!inspector) return;
     const r = recordOf(tile);
@@ -212,7 +198,6 @@ export function attachMedia(root: HTMLElement, options: MediaOptions = {}): Medi
     void fields;
   };
 
-  // Applies saved fields to the tile, so the grid, the filters and the next open read them.
   const applySaved = (tile: HTMLElement, f: MediaFields) => {
     writeRecord(tile, {
       altState: altStateOf(f.alt, f.decorative),
@@ -344,8 +329,7 @@ export function attachMedia(root: HTMLElement, options: MediaOptions = {}): Medi
       .join(" ")
       .toLowerCase();
 
-  // Where the active tile goes when it leaves the view (binned, filtered out): the next file that can be
-  // opened, else the one before it. An upload in progress is not a file to look at yet.
+  // Where the active tile goes when it leaves the view: the next openable file, else the one before. An upload in progress is not one.
   const settled = (t: HTMLElement) => t.dataset.state === "ready" || t.dataset.state === "binned";
   const successor = (from: HTMLElement): HTMLElement | null => {
     const list = shown();
@@ -474,7 +458,6 @@ export function attachMedia(root: HTMLElement, options: MediaOptions = {}): Medi
       );
       const sorted = list.slice().sort(cmp);
       if (sorted.every((t, i) => t === list[i])) continue;
-      // Each tile moves whole where the browser can (moveNode), keeping focus and state.
       for (const t of sorted) moveNode(grid, t, null);
     }
     // Moving a node can drop focus; put it back.
@@ -593,7 +576,6 @@ export function attachMedia(root: HTMLElement, options: MediaOptions = {}): Medi
 
   listen(root, "focusout", (e: FocusEvent) => {
     const t = e.target;
-    // A field that loses focus saves what was typed in it.
     if (
       t instanceof HTMLElement &&
       inspector?.contains(t) &&
@@ -621,7 +603,6 @@ export function attachMedia(root: HTMLElement, options: MediaOptions = {}): Medi
     const tile = tileOf(t);
     if (!tile || inspector?.contains(t)) return;
     if (tile !== active) setActive(tile);
-    // The inspector follows the tile that has focus; focus stays where it is.
     if (
       inspector?.open &&
       !inspector.matches(":modal") &&
@@ -720,8 +701,6 @@ export function attachMedia(root: HTMLElement, options: MediaOptions = {}): Medi
     }
   };
 
-  // The inspector's keys: Enter in the tag field adds a tag; Esc goes back to the grid (a sheet
-  // closes by itself); Alt and an arrow move to the next file without leaving the field.
   listen(root, "keydown", (e: KeyboardEvent) => {
     const t = e.target instanceof HTMLElement ? e.target : null;
     if (!t || e.defaultPrevented || e.isComposing || isImeEnter(e)) return;
@@ -757,7 +736,6 @@ export function attachMedia(root: HTMLElement, options: MediaOptions = {}): Medi
       }
       return;
     }
-    // Keys on a tile's own controls.
     const tile = tileOf(t);
     if (!tile || e.ctrlKey || e.metaKey || e.altKey) return;
     const isControl = t.matches(
@@ -874,7 +852,6 @@ export function attachMedia(root: HTMLElement, options: MediaOptions = {}): Medi
       const wasKey = t.dataset.key;
       writeRecord(t, patch);
       if (patch.state === "ready" && !t.querySelector(".cap-media-check")) {
-        // An upload that finished becomes a tile that can be opened and selected.
         const fresh = buildTile(recordOf(t));
         t.replaceWith(fresh);
         if (active === t) active = fresh;
@@ -968,7 +945,6 @@ export function attachMedia(root: HTMLElement, options: MediaOptions = {}): Medi
     },
   };
 
-  // Bulk tags: add or remove one tag across the selection; undo reverses exactly what changed.
   function tagHandler(adding: boolean): BulkHandler {
     const changed = new WeakMap<object, string[]>();
     const apply = async (items: readonly BulkItem[], value: string | undefined, add: boolean) => {
@@ -1021,8 +997,6 @@ export function attachMedia(root: HTMLElement, options: MediaOptions = {}): Medi
   return controller;
 }
 
-// Attaches to every [data-cap="media"] under root not yet attached (with the default save, a POST
-// of the inspector's form). Returns a function that detaches them all.
 export function enhance(root: ParentNode = document): () => void {
   const undo = Array.from(
     root.querySelectorAll<HTMLElement>("[data-cap='media']:not([data-cap-ready])"),

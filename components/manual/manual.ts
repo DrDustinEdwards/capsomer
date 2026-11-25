@@ -2,15 +2,11 @@ import { clamp } from "../hooks/hooks.ts";
 import { escapeHtml as esc } from "@dustinedwards/site-runtime/html";
 
 export interface PatchOptions {
-  /** A unique id on the page, for the patch's text paths. */
   id: string;
-  /** Set round the top, in capitals. */
   name: string;
-  /** Set round the foot, in capitals: the site or the series. */
   foot: string;
   /** The number on the disc, and the number of dots round it (at most 24). */
   count: number;
-  /** The word under the number, in capitals. */
   unit: string;
 }
 
@@ -23,11 +19,7 @@ export function patchDots(count: number): [string, string][] {
   });
 }
 
-/**
- * A project's round patch as SVG markup, as each Apollo crew wore its mission's (capsomer/manual.css
- * draws it). Plain string building, so a server or a static build can write it into the page. The
- * patch is decorative: the page says the same in words beside it, so it is hidden from screen readers.
- */
+/** A project's round patch as SVG markup (manual.css draws it). Decorative, so hidden from screen readers; the page says the same in words. */
 export function patchSvg({ id, name, foot, count, unit }: PatchOptions): string {
   const dots = patchDots(count)
     .map(([cx, cy]) => `<circle class="cap-patch-dot" cx="${cx}" cy="${cy}" r="3.4"/>`)
@@ -36,9 +28,7 @@ export function patchSvg({ id, name, foot, count, unit }: PatchOptions): string 
   return `<svg class="cap-patch" viewBox="0 0 140 140" aria-hidden="true" focusable="false"><defs><path id="${p}-top" d="M 22 70 A 48 48 0 0 1 118 70"/><path id="${p}-foot" d="M 27 74 A 43 43 0 0 0 113 74"/></defs><circle class="cap-patch-rim" cx="70" cy="70" r="68"/><circle class="cap-patch-field" cx="70" cy="70" r="61"/><circle class="cap-patch-disc" cx="70" cy="70" r="36"/>${dots}<text class="cap-patch-name" text-anchor="middle"><textPath href="#${p}-top" startOffset="50%">${esc(name.toUpperCase())}</textPath></text><text class="cap-patch-foot" text-anchor="middle"><textPath href="#${p}-foot" startOffset="50%">${esc(foot.toUpperCase())}</textPath></text><text class="cap-patch-count" x="70" y="77" text-anchor="middle">${count}</text><text class="cap-patch-unit" x="70" y="89" text-anchor="middle">${esc(unit.toUpperCase())}</text></svg>`;
 }
 
-// The manual's parts as HTML strings, for a page built without React (a static site's build script, a specimen, a
-// Worker's own page): the one place their markup is written, so a build script never hand-types the classes. Every
-// value is text and is escaped here; a link's href is escaped as an attribute. React pages write the same contract.
+// The manual's parts as HTML strings for a page built without React: the one place their markup is written. Every value is escaped here.
 
 const linkOr = (text: string, href?: string, attrs = "") =>
   href ? `<a href="${esc(href)}"${attrs}>${esc(text)}</a>` : `<strong>${esc(text)}</strong>`;

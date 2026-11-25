@@ -125,9 +125,8 @@ export async function expectNoAxeViolations(
   if (options.baseUi) builder = builder.exclude("[data-base-ui-focus-guard]").exclude("iframe");
   if (options.exclude) builder = builder.exclude(options.exclude);
   if (options.disableRules) builder = builder.disableRules(options.disableRules);
-  // axe reads colors as painted. A dialog fading in, or a control mid-transition, is read
-  // blended with what is behind it, so wait for every finite animation and transition to end
-  // first (the first CI run caught a danger button at 4.18:1 for this reason).
+  // axe reads colors as painted: a dialog fading in or a control mid-transition is read blended
+  // with what is behind it, so wait for every finite animation and transition to end first.
   await settled(page);
   const { violations } = await builder.analyze();
   const found = violations.map(

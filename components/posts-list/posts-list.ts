@@ -1,6 +1,5 @@
-// The posts list's pure helpers: the status of a post in words, the addresses of its filters,
-// which actions a person is offered here and why the others are withheld, and the forms the
-// script path posts. No DOM; the React component and a server render use the same functions.
+// The posts list's pure helpers: a post's status in words, its filters' addresses, which actions
+// a person is offered and why others are withheld, and the forms the script path posts. No DOM.
 import { DAY, toMs } from "../time/time.ts";
 import {
   countText,
@@ -14,14 +13,11 @@ import {
   type PostSort,
 } from "../content/content.ts";
 
-// Status.
-
 export interface ContentStatusWords {
-  // The status component's tone: Published is ok (a tick), Scheduled is a notice (a square),
-  // Draft is no data yet (an empty circle with a bar). Shape, word and color together.
+  // Tone: Published is ok (a tick), Scheduled a notice (a square), Draft no data (an empty circle);
+  // shape, word and color together.
   tone: "ok" | "info" | "nodata";
   word: string;
-  // For a scheduled post: when it goes out, "in 3 days", "today", "tomorrow", "due now".
   when?: string;
 }
 
@@ -38,8 +34,6 @@ export function inDays(at: string, now: number): string {
   return `in ${days} days`;
 }
 
-// The one mapping from a content status to its words, for every list and editor that shows one
-// (Carrel wrote it inline six times).
 export function contentStatus(
   status: ContentStatus,
   publishAt: string | null = null,
@@ -57,8 +51,6 @@ export function contentStatus(
   }
 }
 
-// A row's status on one line: the status word, then what is due, after a middle dot:
-// "Scheduled · in 3 days", "Published · update in 2 days".
 export function rowStatus(
   row: Pick<PostRow, "status" | "publishAt" | "scheduledUpdate">,
   now: number = Date.now(),
@@ -68,8 +60,6 @@ export function rowStatus(
     return { ...st, note: `update ${inDays(row.scheduledUpdate.publishAt, now)}` };
   return st.when ? { ...st, note: st.when } : st;
 }
-
-// Words.
 
 export const STATUS_TABS: ReadonlyArray<{ status: ContentStatus | undefined; label: string }> = [
   { status: undefined, label: "All" },
@@ -84,18 +74,14 @@ export const SORTS: ReadonlyArray<{ value: PostSort; label: string }> = [
   { value: "title", label: "Title" },
 ];
 
-// How long a post stays in the Trash before the site deletes it for good (site-api v0.17.0
-// TRASH_DAYS, run by the site's cron).
+// How long a post stays in the Trash before the site deletes it for good (site-api TRASH_DAYS).
 const TRASH_DAYS = 30;
 
-// The Trash view's line: what happens to what is in it.
 export function trashLine(labels?: ContentLabels): string {
   const { plural } = nounsOf(labels, "post");
   return `${plural.charAt(0).toUpperCase() + plural.slice(1)} in Trash are deleted for good ${TRASH_DAYS} days after they were moved there.`;
 }
 
-// "12 posts", "Showing 50 of 120 posts", "3 posts in Trash", and a note when the site could only
-// sort this page.
 export function countLine(
   data: Pick<PostsData, "rows" | "page"> & { query?: PostsQuery },
   labels?: ContentLabels,
@@ -105,16 +91,14 @@ export function countLine(
   return data.page.sortedOnPage ? `${base}, sorted on this page only` : base;
 }
 
-// A row's credits on one line, the primary name first: "By Alex Rivera", "By Alex Rivera
-// with Sam Lee". "" for a post that credits no one.
 export function authorLine(authors: readonly string[] | undefined): string {
   const [first, ...rest] = authors ?? [];
   if (!first) return "";
   return rest.length ? `By ${first} with ${rest.join(", ")}` : `By ${first}`;
 }
 
-// Filters in the query other than the page, the order and the view: what the empty state says is
-// hiding rows, and what Clear filters takes away.
+// Filters other than the page, order and view: what the empty state says is hiding rows, and what
+// Clear filters takes away.
 export function filtered(q: PostsQuery): boolean {
   return !!(q.q || q.kind || q.tag || q.author || q.from || q.to);
 }
@@ -128,7 +112,6 @@ export const NO_FILTERS: Partial<PostsQuery> = {
   to: undefined,
 };
 
-// The empty state's title, naming what is not there.
 export function emptyWords(
   q: PostsQuery,
   labels?: ContentLabels,
@@ -170,8 +153,6 @@ export function emptyWords(
   }
 }
 
-// Addresses.
-
 const QUERY_ORDER: ReadonlyArray<keyof PostsQuery> = [
   "q",
   "status",
@@ -185,12 +166,10 @@ const QUERY_ORDER: ReadonlyArray<keyof PostsQuery> = [
   "cursor",
 ];
 
-// The list's address with a query (content.ts, queryHref).
 export function postsHref(base: string, q: PostsQuery): string {
   return queryHref(base, q, QUERY_ORDER);
 }
 
-// A filter link changes one thing and starts again at the first page.
 export function withFilter(q: PostsQuery, change: Partial<PostsQuery>): PostsQuery {
   const next: PostsQuery = { ...q, ...change };
   delete next.cursor;
@@ -198,8 +177,6 @@ export function withFilter(q: PostsQuery, change: Partial<PostsQuery>): PostsQue
     if (change[k] === undefined) delete next[k];
   return next;
 }
-
-// What is offered.
 
 // The content kit's names (site-api runPostsIntent), so a host passes the form straight on.
 export type PostIntent =
@@ -221,11 +198,10 @@ export interface OfferedAction {
   destructive?: boolean;
 }
 
-// The bulk actions this person may run on this view of this site, in the bar's order, and a
-// sentence for each one held back, so a missing button is never a mystery. An action shows only
-// when the site offers it (data.offers) and the person may run it (data.can). Where the site has a
-// Trash (site-api v0.17.0), Move to Trash is the normal way out, an editor's since Restore undoes
-// it, and Delete for good is the delete role's, in the Trash only; elsewhere Delete stays as it was.
+// The bulk actions this person may run here, in the bar's order, with a sentence for each one held
+// back so a missing button is never a mystery. Shown only when the site offers it (data.offers)
+// and the person may run it (data.can). Where the site has a Trash, Move to Trash is the normal
+// way out and Delete for good is the delete role's, in the Trash only.
 export function postActions(
   data: Pick<PostsData, "offers" | "can"> & { query?: PostsQuery },
   labels?: ContentLabels,
@@ -263,12 +239,10 @@ export interface RowAction {
   value: string;
   href?: string;
   danger?: boolean;
-  // Reschedule: the time it moves from, which the menu's time field starts at.
   publishAt?: string;
 }
 
-// The time a row's schedule goes out: its waiting update's on a live post, its own on a scheduled
-// one. null when nothing is scheduled.
+// The time a row's schedule goes out: a live post's waiting update, or a scheduled post's own.
 export function scheduledTime(
   row: Pick<PostRow, "status" | "publishAt" | "scheduledUpdate">,
 ): string | null {
@@ -277,12 +251,9 @@ export function scheduledTime(
 }
 
 // One row's menu: Edit and View on the site go somewhere; the rest post an intent for this row.
-// With scheduled updates (site-api v0.10.0) a scheduled post or a live post's waiting update can
-// be moved (`reschedule`, with `publishAt`), and a live post's update canceled (`cancel-schedule`,
-// one-way, so it is a danger item); a scheduled post is canceled by Unpublish, as before.
-// site-api v0.17.0 adds Rename… (a dialog with script, the editor without; a live post's address
-// changes, so it needs a publisher), a preview link, and Move to Trash in place of Delete; a post
-// in the Trash offers only Restore and Delete for good.
+// A scheduled post or a live post's waiting update can be rescheduled (`publishAt`), and a live
+// post's update canceled (`cancel-schedule`, one-way, so a danger item). A live post's Rename…
+// needs a publisher, since its address changes. A post in the Trash offers only Restore and Delete for good.
 export function rowActions(row: PostRow, data: Pick<PostsData, "offers" | "can">): RowAction[] {
   const { offers, can } = data;
   const items: RowAction[] = [];

@@ -10,7 +10,6 @@ export interface PollOption {
 
 export interface PollProps {
   options: PollOption[];
-  // The reader's own vote or votes.
   mine?: string[];
   onVote?: (id: string) => void;
   closed?: boolean;
@@ -18,7 +17,6 @@ export interface PollProps {
   label?: string;
 }
 
-// The HTML contract in poll.md.
 export function Poll({ options, mine = [], onVote, closed, pending, label }: PollProps) {
   const ref = useRef<HTMLUListElement>(null);
   const key = options.map((o) => `${o.id}:${o.votes}`).join(",");

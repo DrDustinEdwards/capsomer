@@ -88,12 +88,11 @@ export function SiteHeader(props: SiteHeaderProps) {
   const headerRef = useRef<HTMLElement>(null);
   const menuButton = useRef<HTMLButtonElement>(null);
   const sheetTitle = useRef<HTMLHeadingElement>(null);
-  // A picture that fails to load gives way to the initials under it.
   const [failedAvatar, setFailedAvatar] = useState<string>();
   const [sheetOpen, setSheetOpen] = useState(false);
   const closeSheet = useCallback(() => setSheetOpen(false), []);
 
-  // A form in a panel or the sheet sends once (guardForms); Back and Forward close the sheet.
+  // Forms send once; Back and Forward close the sheet.
   useEffect(() => {
     if (!hydrate || !headerRef.current) return;
     const back = () => setSheetOpen(false);
@@ -107,14 +106,11 @@ export function SiteHeader(props: SiteHeaderProps) {
     };
   }, [hydrate]);
 
-  // The theme key, where the site binds single keys: not while a person types. It presses the
-  // header's theme control, so the key keeps the choice exactly as the control does.
   useEffect(() => {
     if (!hydrate || !theme || !themeKey || !headerRef.current) return;
     return wireThemeKey(headerRef.current, themeKey);
   }, [hydrate, theme, themeKey]);
 
-  // The no-script theme form is plain markup; with React running, the behavior wires it here.
   const saveRef = useRef(onThemeSave);
   useEffect(() => {
     saveRef.current = onThemeSave;
@@ -126,7 +122,6 @@ export function SiteHeader(props: SiteHeaderProps) {
     });
   }, [hydrate, theme, themeAction]);
 
-  // Search: the icon opens the field; where the site answers queries, its matches show as one types.
   const searchBox = useRef<HTMLDivElement>(null);
   const suggest = search?.suggest;
   useEffect(() => {
@@ -134,18 +129,15 @@ export function SiteHeader(props: SiteHeaderProps) {
     return wireSearchOnDemand(searchBox.current, suggest);
   }, [hydrate, suggest]);
 
-  // In the letterhead an app's own search (an extra with id "search", say a command menu) takes the
-  // search slot before the theme, where a site's search form sits, so it never moves between them.
+  // In the letterhead an app's own search extra (id "search") takes the search slot, so it never moves.
   const ownSearch =
     letterhead && !search
       ? extras.find((e) => e.id === "search" && e.kind !== "button")
       : undefined;
   const icons = extras.filter((e) => e.kind !== "button" && e !== ownSearch).slice(0, 2);
   const cta = extras.find((e) => e.kind === "button");
-  // The site's own class on its button extra (bsw's glass Get a Quote), in the bar and the sheet.
   const ctaClass = cta?.className ? `cap-site-header-cta ${cta.className}` : "cap-site-header-cta";
   const signOutLabel = account ? `Sign out (${account.name})` : "Sign out";
-  // Sign out as a row: a link, a form post (no script needed), or a button.
   const signOut = account
     ? account.signOutHref
       ? { label: "Sign out", href: account.signOutHref }
@@ -191,9 +183,7 @@ export function SiteHeader(props: SiteHeaderProps) {
     );
   };
 
-  // The letterhead's second row already shows View site wherever the account button is in the bar
-  // (from 768px; on a phone the account is in the sheet, which keeps the row), so the menu leaves
-  // it out rather than offering it twice.
+  // The letterhead's second row already shows View site beside the account button, so the menu omits it.
   const shownView = letterhead && trail?.viewSite ? trail.viewSite : undefined;
   const panelGroups = (account?.groups ?? [])
     .map((g) => ({
@@ -225,7 +215,7 @@ export function SiteHeader(props: SiteHeaderProps) {
               <hr />
               <ul className="cap-site-header-panel-list">
                 <li>
-                  {/* A plain link: Sign out leaves the app, so it is a full load, never the router's. */}
+                  {/* Plain link: Sign out leaves the app, so it is a full load, never the router's. */}
                   {headerItem(signOut, "Sign out", plainLink, {
                     disabled: account.signOutDisabled,
                   })}
@@ -240,8 +230,7 @@ export function SiteHeader(props: SiteHeaderProps) {
   const sectionLinks = sections
     .filter((s) => !s.groups && !s.panel && s.href)
     .map((s): HeaderLink => ({ id: s.id, label: s.label, href: s.href!, current: s.current }));
-  // A letterhead with section links keeps them in its own row at every width (they swipe on a phone), so it
-  // has no menu button and no sheet; the sheet is for the default header and the letterhead's admin.
+  // A letterhead with section links keeps them in its own row at every width, so it has no sheet.
   const sheet = !(letterhead && sections.length > 0);
   const sheetName = props.sheetTitle ?? `${logo.label} menu`;
   const linksLabel =
@@ -253,8 +242,7 @@ export function SiteHeader(props: SiteHeaderProps) {
 
   return (
     <HeaderHydrates.Provider value={hydrate}>
-      {/* data-cap-ready: React wires this header itself, so a page-wide enhance() leaves it alone.
-        Without hydration it is left off, and enhance() wires the same markup (with the theme key). */}
+      {/* data-cap-ready: React wires this header itself, so a page-wide enhance() leaves it alone. */}
       <header
         {...attributes}
         ref={headerRef}
@@ -295,7 +283,7 @@ export function SiteHeader(props: SiteHeaderProps) {
                   {logo.agency ? (
                     <span className="cap-site-header-agency">{logo.agency}</span>
                   ) : null}
-                  {/* A space, so the visible text reads "Dustin Edwards Capsid" as the name does (WCAG 2.5.3). */}
+                  {/* A space, so the visible text matches the accessible name (WCAG 2.5.3). */}
                   {logo.agency ? " " : null}
                   <span className="cap-site-header-name">
                     {logo.label}
@@ -384,7 +372,6 @@ export function SiteHeader(props: SiteHeaderProps) {
         <div className="cap-site-header-tools">
           {ownSearch ? extra(ownSearch) : null}
           {icons.length > 0 || cta ? (
-            // data-phone="bar": the button extra stays in the phone's top row.
             <div className="cap-site-header-extras" data-phone={cta?.phone}>
               {icons.map(extra)}
               {cta ? (
@@ -502,8 +489,7 @@ export function SiteHeader(props: SiteHeaderProps) {
               aria-haspopup="dialog"
               aria-expanded={sheetOpen}
               aria-controls={`${id}-sheet`}
-              // Without hydration the button opens the sheet with no script (invoker commands, Baseline
-              // newly available); enhance() takes the click over, and where neither runs nothing breaks.
+              // Without hydration the invoker command opens the sheet with no script; enhance() takes over.
               {...(hydrate ? {} : { commandfor: `${id}-sheet`, command: "show-modal" })}
               onClick={() => setSheetOpen(true)}
             >
@@ -659,14 +645,12 @@ export function SiteHeader(props: SiteHeaderProps) {
   );
 }
 
-// The account slot, last in the tools. A page with no sign-in at all (a personal site) renders none.
 function AccountSlot({ show, children }: { show: boolean; children: ReactNode }) {
   return show ? <div className="cap-site-header-account">{children}</div> : null;
 }
 
-// The bottom bar of a signed-in area on a phone: up to five of its top pages, no More (the menu
-// button opens the full list). Shown under 768px only. Put it last in the page, so it sticks to the
-// window's bottom edge.
+// The phone's bottom bar: up to five top pages; the menu button opens the full list. Under 768px
+// only. Put it last in the page so it sticks to the window's bottom edge.
 export function SiteTabs({
   tabs,
   label = "Sections",

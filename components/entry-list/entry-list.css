@@ -1,10 +1,9 @@
-/* The layout repeated so this file is safe whatever order an app imports it in (css/layers.css has the note). */
+/* Layer order, repeated so this file is safe in any import order. */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
-/* Entry list: dated entries under a heavy rule, the date in a narrow column, the title, a kicker above it (the
-   series), a summary and tag links below. A list of posts, publications, talks or a CV's entries. Its date column
-   matches the tracks' note rail (--tracks-rail-w and --tracks-gap-w), so a list on a tracks page lines up with it. Below
-   48rem the date sits over the entry. */
+/* Entry list: dated entries under a heavy rule, the date in a narrow column, a kicker above the title, a summary
+and tag links below. The date column matches the tracks' note rail (--tracks-rail-w, --tracks-gap-w), so a list on a
+tracks page lines up with it. Below 48rem the date sits over the entry. */
 @layer cap.components {
   .cap-entry-list {
     margin: 0;
@@ -28,7 +27,6 @@
     letter-spacing: var(--tracking-widest);
     text-transform: uppercase;
 
-    /* A second fact under the date (a reading time) and a mark (Featured) as a small sign. */
     > :is(.cap-entry-more, .cap-entry-mark) {
       display: block;
     }
@@ -59,10 +57,10 @@
     font-weight: var(--weight-heading);
     line-height: var(--leading-snug);
 
-    /* A target at least --target tall, so a title on a touch screen is 44px to tap (WCAG 2.5.8). */
     a {
       display: inline-flex;
       align-items: center;
+      /* A target at least --target tall, so a title on a touch screen is 44px to tap (WCAG 2.5.8). */
       min-block-size: var(--target);
       color: var(--text);
     }
@@ -87,7 +85,6 @@
     line-height: var(--leading-normal);
   }
 
-  /* Tags as ruled tabs: mono capitals in a hairline box, inked under the pointer. */
   .cap-entry-tags {
     display: flex;
     flex-wrap: wrap;

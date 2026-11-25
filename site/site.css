@@ -73,7 +73,6 @@ h3 {
 h1 {
   font: var(--weight-title) clamp(var(--display-5), 5vw, var(--display-2)) / var(--leading-none)
     var(--ui);
-  /* Light needs less tightening than the 800 it replaced. */
   letter-spacing: var(--tracking-tight);
 }
 h2:not(.cap-family-footer-heading) {

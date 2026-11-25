@@ -7,32 +7,24 @@ const noSubscribe = () => () => {};
 export interface PushDevice {
   id: string | number;
   label: ReactNode;
-  // "turned on 3 days ago, last alert an hour ago"
   detail?: ReactNode;
 }
 
 export type PushNote = { kind: "ok" | "crit"; text: ReactNode };
 
 export interface PushDevicesProps {
-  // The server's VAPID public key; null while it is not set up.
   publicKey: string | null;
-  // The worker to register (push-sw.js as the site serves it) and its scope.
   worker: string;
   scope: string;
   devices: PushDevice[];
-  // A request is in flight: the controls wait.
   busy?: boolean;
-  // The result of the last change, from the app (or set here when turning on fails).
   note?: PushNote | null;
-  // What the setup still needs, in the server's words.
   problem?: ReactNode;
-  // Send the new subscription to the server.
   onTurnOn: (subscription: PushSubscriptionJSON, label: string) => Promise<void> | void;
   onTurnOff: (id: PushDevice["id"]) => void;
   onTest: () => void;
 }
 
-// The HTML contract in web-push.md.
 export function PushDevices({
   publicKey,
   worker,

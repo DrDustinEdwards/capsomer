@@ -1,8 +1,7 @@
-// The date picker (APG Date picker dialog): a calendar in Capsomer's dialog, beside a text
-// input that takes a date as 2026-11-14. With no script the input is the whole control: it is
-// in the markup, the button is `hidden`, and the server reads the date as typed. Script shows
-// the button; the calendar is built the first time it opens. The dialog supplies the modal,
-// Tab staying inside, Esc and focus going back to the button.
+// The date picker (APG Date picker dialog): a calendar in Capsomer's dialog beside a text input that
+// takes 2026-11-14. With no script the input is the whole control and the button is `hidden`; script
+// shows the button and builds the calendar on first open. The dialog supplies the modal, Tab trap,
+// Esc and focus return.
 
 import { openDialog, wireDialog } from "../dialog/dialog.ts";
 import { uid } from "../hooks/hooks.ts";
@@ -17,7 +16,6 @@ import {
 
 const DAY = 86_400_000;
 
-// The date in 2026-11-14 (a month or day may be one digit), or null when it is not a real one.
 export function parseDate(text: string): Date | null {
   const m = /^(\d{4})-(\d{1,2})-(\d{1,2})$/.exec(text.trim());
   return m ? dateFrom(Number(m[1]), Number(m[2]), Number(m[3])) : null;
@@ -33,7 +31,6 @@ export function addMonths(d: Date, n: number): Date {
   return new Date(Date.UTC(y, m, Math.min(d.getUTCDate(), last)));
 }
 
-// Where a key in the grid moves the focused day (APG's table), or null for a key it ignores.
 export function moveDate(d: Date, key: string, shift = false): Date | null {
   const dow = d.getUTCDay();
   switch (key) {
@@ -101,7 +98,6 @@ function navButton(part: keyof typeof ICONS): HTMLButtonElement {
   return b;
 }
 
-// The dialog: the month between its buttons, the grid, Cancel and Choose.
 function build(lang: string): {
   dialog: HTMLDialogElement;
   heading: HTMLElement;
@@ -133,7 +129,6 @@ function build(lang: string): {
   const row = el("tr");
   const long = new Intl.DateTimeFormat(lang, { weekday: "long", timeZone: "UTC" });
   const short = new Intl.DateTimeFormat(lang, { weekday: "short", timeZone: "UTC" });
-  // 2026-11-01 is a Sunday: the week starts on Sunday.
   for (let i = 0; i < 7; i++) {
     const d = new Date(Date.UTC(2026, 10, 1 + i));
     row.append(el("th", { scope: "col", abbr: long.format(d), textContent: short.format(d) }));
@@ -160,9 +155,8 @@ function build(lang: string): {
   return { dialog, heading, body };
 }
 
-// Wires one picker: `group` (.cap-date-picker) holds the input and the [data-cap-part="open"]
-// button, in an input group; the dialog is added inside it. min and max
-// (data-min, data-max on the input, as 2026-11-14) make the days outside them unchoosable.
+// `group` (.cap-date-picker) holds the input and the [data-cap-part="open"] button. min and max
+// (data-min, data-max on the input) make the days outside them unchoosable.
 export function wirePicker(group: HTMLElement): () => void {
   const input = group.querySelector<HTMLInputElement>("input");
   const open = group.querySelector<HTMLButtonElement>("[data-cap-part='open']");
@@ -180,7 +174,6 @@ export function wirePicker(group: HTMLElement): () => void {
   let parts: ReturnType<typeof build> | null = null;
   let focus = today();
 
-  // The button's name says the date it would change, once there is one (APG).
   const name = () => {
     const d = parseDate(input.value);
     open.setAttribute("aria-label", d ? `Change date, ${full.format(d)}` : "Choose date");
@@ -284,8 +277,6 @@ export function wirePicker(group: HTMLElement): () => void {
   };
 }
 
-// Wires every [data-cap="date-picker"] under root not yet wired. Returns a function that
-// detaches them all.
 export function enhance(root: ParentNode = document): () => void {
   const undo: Array<() => void> = [];
   for (const group of root.querySelectorAll<HTMLElement>(

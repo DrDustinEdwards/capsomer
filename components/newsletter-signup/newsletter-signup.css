@@ -1,9 +1,7 @@
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
-/* A newsletter sign-up: an email field and its button on one row (stacked on a phone), the consent
-   line under them, and the answer (form status) in place of the form once it is sent. The site's action does
-   double opt-in: the form only asks for a confirmation link. Builds on the field, the button and the form status.
-   Extracted from germomics' subscribe page. */
+/* A newsletter sign-up: an email field and its button on one row (stacked on a phone), the consent line
+   under them, and the answer in place of the form once it is sent. The site's action does double opt-in. */
 @layer cap.components {
   .cap-newsletter {
     container-type: inline-size;
@@ -35,7 +33,6 @@
     gap: var(--space-3);
   }
 
-  /* The field's row (field.css) stacks the address over its button in a narrow card. */
   @container (width < 28rem) {
     .cap-newsletter .cap-field-row > * {
       flex: 1 1 100%;

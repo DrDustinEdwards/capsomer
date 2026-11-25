@@ -1,4 +1,4 @@
-/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+/* Layer order repeated so this file is safe in any import order: the first statement fixes it (css/layers.css). */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
 /* Reveal: a section fades and settles into place as it scrolls into view. All CSS: each element is
@@ -28,7 +28,6 @@
         animation-timeline: view(block);
         animation-range: entry 10% entry 90%;
       }
-      /* From above: settles downward into place. */
       :is(.cap-reveal, .cap-reveal-stack)[data-from="above"] {
         --reveal-distance: -1.5rem;
       }

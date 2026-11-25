@@ -34,9 +34,7 @@ export function PermissionList({ id, heading, items, allowed }: PermissionListPr
 }
 
 export interface ConsentScreenProps {
-  // The app asking: "Example Assistant".
   client: string;
-  // The site's name: "Example Co".
   product: string;
   // A client vouched for by a host that publishes its metadata names that host; a client that
   // registered itself has only its own claim to its name, and the screen says so.
@@ -50,13 +48,9 @@ export interface ConsentScreenProps {
   can: readonly ReactNode[];
   // The write grant, a separate choice: what it adds, its scope name, ticked by default when asked.
   write?: { items: readonly ReactNode[]; scope?: string; defaultChecked?: boolean; name?: string };
-  // The last post's refusal.
   error?: ReactNode;
-  // The OAuth request, carried through the post.
   hidden: Record<string, string | undefined>;
-  // Which button the person pressed, while the post is under way.
   submitting?: "allow" | "deny" | null;
-  // The site's mark or wordmark at the top.
   brand?: ReactNode;
   // A last line: "Example Co never shares your payment provider's token with other apps."
   footnote?: ReactNode;

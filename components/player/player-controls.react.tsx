@@ -1,8 +1,6 @@
-// The player's controls, one set for the docked player and a track's own player surface, so both
-// offer the same capability, icons, names and keys; they differ only in size and placement. Every
-// control reads the one provider (usePlayer). Transport and the scrubber take an optional `track`:
-// on a track's page they act on that track (switching the player to it on first use) without
-// taking over a different track that is playing; the dock passes none and drives the current one.
+// The player's controls, shared by the dock and a track's own surface so both offer the same capability and
+// keys. Transport and the scrubber take an optional `track`: on a track's page they act on that track
+// without taking over a different one that is playing; the dock passes none and drives the current one.
 import { useId, type ReactNode } from "react";
 import { clamp } from "../hooks/hooks.ts";
 import {
@@ -42,22 +40,18 @@ import { usePlayer } from "./player-context.react.tsx";
 
 export type RenderLink = (props: LinkProps) => ReactNode;
 
-// Icons, from the shared set. Each is aria-hidden; the control carries the name. player.css sizes
-// them (.cap-player-icon) and draws them at the player's stroke.
+// Icons are aria-hidden; the control carries the name.
 
 const PlayIcon = () => <Icon d={iconPlay} fill className="cap-player-icon" />;
 const PauseIcon = () => <Icon d={iconPause} fill className="cap-player-icon" />;
 const VolumeIcon = () => <Icon d={iconVolume} className="cap-player-icon" />;
 const MutedIcon = () => <Icon d={iconMute} className="cap-player-icon" />;
 
-// Whether a control aimed at `track` acts on what is loaded.
 function useTarget(track?: PlayerTrack) {
   const p = usePlayer();
   const isThis = !track || p.current?.id === track.id;
   return { p, isThis };
 }
-
-// Transport.
 
 // Play and pause: the name changes with the state and there is no aria-pressed (APG Button: one,
 // not both).
@@ -118,9 +112,8 @@ export function NextButton() {
   );
 }
 
-// Plays a track from a listing. With a queue it starts the whole queue at this track, so play goes
-// on to the next. data-play-intent, data-audio-src and data-track-id let a page with no React yet
-// start the press itself (startTrack in player.ts) and hand it to this button once React is live.
+// Plays a track from a listing. data-play-intent, data-audio-src and data-track-id let a page with no React
+// yet start the press itself (startTrack in player.ts) and hand it to this button once React is live.
 export function PlayTrackButton({
   track,
   queue,
@@ -157,8 +150,7 @@ export function PlayTrackButton({
   );
 }
 
-// The seek control: a native range with its own keys (no drag needed, WCAG 2.5.7), the time spoken
-// in aria-valuetext, the time and length beside it, and chapter ticks on the track.
+// The seek control: a native range with its own keys (no drag needed, WCAG 2.5.7).
 export function Scrubber({ track, ticks = false }: { track?: PlayerTrack; ticks?: boolean }) {
   const { p, isThis } = useTarget(track);
   const dur = (isThis ? p.duration : 0) || track?.duration || p.current?.duration || 0;
@@ -225,9 +217,6 @@ export function Scrubber({ track, ticks = false }: { track?: PlayerTrack; ticks?
   );
 }
 
-// Settings: inline in the phone's sheet, and behind a popover or a menu in the dock and on the surface.
-
-// The speed presets as radios (one tab stop, the arrow keys choose) and a fine range from 0.5 to 3.
 export function SpeedOptions() {
   const p = usePlayer();
   const name = useId();
@@ -348,7 +337,6 @@ const sleepItems = (noun: string) => [
   ...SLEEP_MINUTES.map((m) => ({ value: String(m), label: `${m} minutes` })),
 ];
 
-// The sleep timer as radios, for the phone's sheet.
 export function SleepOptions() {
   const p = usePlayer();
   const name = useId();
@@ -371,7 +359,6 @@ export function SleepOptions() {
   );
 }
 
-// The sleep timer as a menu of radio items (the shared menu).
 export function SleepControl({ container }: { container?: HTMLElement | null }) {
   const p = usePlayer();
   return (
@@ -395,7 +382,6 @@ export function SleepControl({ container }: { container?: HTMLElement | null }) 
   );
 }
 
-// The chapters as a menu of radio items: the one playing is checked, choosing one seeks to it.
 export function ChaptersControl({ container }: { container?: HTMLElement | null }) {
   const p = usePlayer();
   const chapters = p.current?.chapters ?? [];
@@ -429,7 +415,6 @@ export function ChaptersControl({ container }: { container?: HTMLElement | null 
   );
 }
 
-// The chapters as a list of buttons, the one playing marked aria-current.
 export function ChapterButtons({
   chapters,
   current,
@@ -458,7 +443,6 @@ export function ChapterButtons({
   );
 }
 
-// The chapters as buttons, for the phone's sheet: the one playing is aria-current.
 export function ChapterOptions({ onSelect }: { onSelect?: () => void }) {
   const p = usePlayer();
   const chapters = p.current?.chapters ?? [];
@@ -481,8 +465,6 @@ export function ChapterOptions({ onSelect }: { onSelect?: () => void }) {
   );
 }
 
-// The way to the read-along transcript: `href` (the track's transcript, or "#transcript" on its
-// own page), through the app's router link.
 export function TranscriptLink({
   href,
   renderLink = plainLink,
@@ -501,8 +483,6 @@ export function TranscriptLink({
   });
 }
 
-// The player's state in words for a screen reader, politely: rendered once (in the dock) so it is
-// never said twice, and outside anything the dock hides.
 export function PlayerStatus() {
   const p = usePlayer();
   const chapters = p.current?.chapters ?? [];

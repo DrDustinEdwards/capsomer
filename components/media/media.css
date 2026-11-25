@@ -1,4 +1,4 @@
-/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+/* Layer order repeated so this file is safe in any import order: the first statement fixes it (css/layers.css). */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
 /* The media library's parts: a grid of tiles, and an inspector beside it. The grid is a list
@@ -10,7 +10,6 @@
    tokens. Craft matched to shadcn/ui's Card (the tile), Checkbox, Badge, Sheet (the sheet
    mode) and Input / Textarea (the inspector's fields). */
 @layer cap.components {
-  /* The container: its width, not the window's, decides pane or sheet. */
   .cap-media {
     --cap-media-tile: 11rem;
     container: cap-media / inline-size;
@@ -40,7 +39,6 @@
     min-inline-size: 0;
   }
 
-  /* Wide: the grid and the inspector side by side, the inspector sticking as the grid scrolls. */
   @container cap-media (min-width: 56rem) {
     .cap-media-layout {
       --cap-media-mode: pane;
@@ -50,7 +48,6 @@
     }
   }
 
-  /* The search, the filters and the view, composed from the field, chips and segmented. */
   .cap-media-toolbar {
     display: flex;
     flex-wrap: wrap;
@@ -78,7 +75,6 @@
       display: none;
     }
   }
-  /* Groups are sections of the page, spaced as the family spaces sections. */
   .cap-media-group:not([hidden]) ~ .cap-media-group:not([hidden]) {
     margin-block-start: var(--space-7);
   }
@@ -139,7 +135,6 @@
     }
   }
 
-  /* The one tab stop of a tile: the thumbnail, the name and the size, as one link. */
   .cap-media-open {
     display: grid;
     gap: var(--space-2);
@@ -179,7 +174,6 @@
       object-fit: cover;
     }
   }
-  /* A file with no picture: its type, large, in the mono face. */
   .cap-media-doc {
     color: var(--muted);
     font-family: var(--mono);
@@ -347,7 +341,6 @@
     color: var(--text);
     overflow-wrap: anywhere;
   }
-  /* The shared meter, drawn small, in the tile. */
   .cap-media-state .cap-meter {
     row-gap: var(--space-2);
   }
@@ -432,7 +425,6 @@
     align-content: start;
     gap: var(--space-5);
   }
-  /* Form mode: a group of fields is its own form with its own Save button, under the fields. */
   .cap-media-field-form {
     display: grid;
     gap: var(--space-3);
@@ -443,7 +435,6 @@
       margin: 0;
     }
   }
-  /* Move to the bin, Restore and Delete as forms (they post with no script): each is its button. */
   .cap-media-act {
     display: contents;
   }
@@ -477,7 +468,6 @@
     }
   }
 
-  /* Tags: removable chips, then the field that adds one, then the suggestions. */
   .cap-media-inspector .cap-media-tags {
     display: flex;
     flex-wrap: wrap;
@@ -491,7 +481,6 @@
     }
   }
 
-  /* The facts the system assigns: read, not edited. */
   .cap-media-facts {
     display: grid;
     grid-template-columns: max-content minmax(0, 1fr);
@@ -525,7 +514,6 @@
     }
   }
 
-  /* Where the file is used: real links, or the plain statement that it is not. */
   .cap-media-inspector .cap-media-used {
     display: grid;
     gap: var(--space-2);
@@ -560,7 +548,6 @@
     font-weight: var(--weight-semibold);
   }
 
-  /* The save status: idle, unsaved, saving, saved, failed. A word and a shape each. */
   .cap-media-save {
     display: flex;
     flex-wrap: wrap;
@@ -592,7 +579,6 @@
     }
   }
 
-  /* The empty states: nothing yet, nothing matches, nothing in this view, the bin is empty. */
   /* With script the pane saves itself; the form's own Save button is for a page without it. */
   .cap-media[data-cap-ready] [data-cap-part="save-fallback"] {
     display: none;
@@ -630,7 +616,6 @@
     display: grid;
     gap: var(--space-3);
 
-    /* A button with its one-line note beside it. */
     &[data-inline] {
       grid-template-columns: auto minmax(0, 1fr);
       align-items: center;
@@ -781,7 +766,6 @@
     flex-wrap: wrap;
     gap: var(--space-3);
   }
-  /* On a phone the dialog's footer stacks every button full width, so the group gives way. */
   @media (max-width: 39.99rem) {
     .cap-media-crop-actions {
       display: contents;

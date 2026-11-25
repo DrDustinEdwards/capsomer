@@ -1,16 +1,11 @@
-// The network's icons, one place. Every drawing is one path on a 24-unit grid: the UI icons are
-// stroked (currentColor, 1.6, round), in the form the admin menus already drew (txasm, Carrel, the
-// Portal); the social marks are filled. Gathered from the sites' own inline SVGs (txasm's admin menu,
-// Foxing's account panel and header, julieedwards.info's header and priorities, the germomics and bsw footers), so
-// a site that moves onto them looks the same. A site's own mark (its logo) stays the site's.
+// The network's icons, one place. Every drawing is one path on a 24-unit grid: UI icons are stroked
+// (currentColor, 1.6, round), social marks are filled. A site's own logo stays the site's.
 //
-// The pictograms Foxhound, germomics and bsw drew with lucide-react (the ones the set lacked, from
-// account to webhook) are Lucide's drawings, each one's elements joined into one path. Lucide is ISC
-// licensed (some of its icons MIT, from Feather); both notices are in LICENSE-lucide.txt beside this file.
+// Pictograms from account to webhook are Lucide's drawings (ISC, some MIT from Feather; notices in
+// LICENSE-lucide.txt beside this file), each one's elements joined into one path.
 //
-// Each drawing is its own export, so a site's bundle holds only the icons it imports (an `Icon`
-// that looked a name up in one table shipped all of them to every site). UI icons are `icon` and
-// the name; the social marks are `mark` and the name, each with `fill`, so they spread onto `Icon`.
+// Each drawing is its own export, so a bundle holds only the icons it imports. UI icons are `icon` and the
+// name; social marks are `mark` and the name, each with `fill`, so they spread onto `Icon`.
 
 export const iconAccount =
   "M2 12a10 10 0 1 0 20 0a10 10 0 1 0-20 0M9 10a3 3 0 1 0 6 0a3 3 0 1 0-6 0M7 20.662V19a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v1.662";
@@ -223,9 +218,8 @@ export const markX = {
 
 const NS = "http://www.w3.org/2000/svg";
 
-// An icon as an <svg> element, built with the DOM (no markup string, so no Trusted Types sink), from
-// its path: `iconSvg(iconSearch)`, or a social mark `iconSvg(markX.d, markX)`. It is hidden from
-// assistive technology unless it is given a label, which names it as an image.
+// An icon as an <svg> built with the DOM (no markup string, so no Trusted Types sink); hidden from
+// assistive technology unless given a label.
 export function iconSvg(
   d: string,
   options: { label?: string; fill?: boolean; box?: number } = {},

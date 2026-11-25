@@ -1,18 +1,9 @@
 // @ts-check
 // Markdown in and out of the formatted editor.
-// The source stays the truth. Parsing splits a file into its top-level blocks with the parser family
-// the site renders with (micromark and mdast, as remark), and every block remembers its exact bytes
-// and the bytes before it. Saving writes each block the editor did not change as those bytes, and
-// only a changed or new block is spelled again, by the writer below, which is checked by parsing what
-// it wrote. So a save changes the bytes of the blocks a person edited and no others.
-//
-// Prose (paragraphs, headings, lists, block quotes, breaks, and bold, italic, strikethrough, code and
-// links inside them) becomes formatted text. Everything else becomes a source block, or inside a
-// paragraph a source atom, that holds its Markdown as written: front matter, fenced and indented
-// code, tables, directives, math, HTML, footnotes, images, references and bare links.
-//
-// Plain JavaScript with JSDoc types, so a site's server, its scripts and the tests run the same code.
-// It touches no DOM.
+// The source stays the truth: each top-level block remembers its exact bytes, and a block the editor
+// did not change is written back as those bytes. Only changed or new blocks are spelled again, then
+// checked by parsing. Prose becomes formatted text; everything else is a source block or atom that
+// keeps its Markdown as written. Plain JavaScript with JSDoc types, no DOM, so servers and tests share it.
 
 import { fromMarkdown } from "mdast-util-from-markdown";
 import { directiveFromMarkdown } from "mdast-util-directive";
@@ -215,7 +206,6 @@ function blockJson(node, source) {
   }
 }
 
-/** What a source block is, for its label: "Front matter", "Code", "Table", "Chart" and so on. */
 /** @param {any} node */
 function blockLabel(node) {
   if (node.type === "yaml") return "Front matter";
@@ -276,8 +266,8 @@ function print(node) {
 }
 
 /**
- * The prints of a freshly loaded document's blocks, by origin id. Taken from the editor's own nodes
- * after loading, so whatever the editor's schema fills in is in both sides of the comparison.
+ * The prints of a freshly loaded document's blocks, by origin id, taken from the editor's own nodes so
+ * schema defaults are on both sides.
  * @param {JsonNode} doc
  */
 export function fingerprints(doc) {
@@ -364,8 +354,8 @@ function canon(node) {
 }
 
 /**
- * Whether two blocks hold the same text and formatting, ignoring origins, the defaults the editor
- * fills in, and whitespace moved out of bold or italic.
+ * Whether two blocks hold the same text and formatting, ignoring origins, editor defaults and
+ * whitespace moved out of bold or italic.
  * @param {JsonNode} a
  * @param {JsonNode} b
  */
@@ -602,9 +592,8 @@ export function writeChecked(block, dialect) {
 }
 
 /**
- * The file the editor's document stands for. A block the editor did not change is written as the
- * bytes it was read from, with the bytes that came before it; a changed one keeps the bytes before
- * it and is spelled again; a new one follows a blank line.
+ * The file the editor's document stands for. Unchanged blocks are written as their original bytes;
+ * a changed one is spelled again; a new one follows a blank line.
  * @param {JsonNode} doc the editor's document as JSON
  * @param {string} tail what followed the last block when the file was read
  * @param {Map<number, string>} prints the blocks as they were loaded (fingerprints)

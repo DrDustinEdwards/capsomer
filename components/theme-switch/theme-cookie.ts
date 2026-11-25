@@ -1,16 +1,12 @@
-// The theme switch's cookie and meta half: what a server-rendered site needs so the first byte already carries the person's
-// theme. Read the cookie, write it, and the one-line pre-paint script for a site that remembers the choice in
-// localStorage instead. No DOM and no framework, so it runs in a Worker, in Node and in the browser alike.
-// dustinedwards.info, Foxhound and txasm each wrote this for themselves; it lives here once.
+// The theme switch's cookie and meta half: what a server-rendered site needs so the first byte carries the
+// person's theme. No DOM and no framework, so it runs in a Worker, Node and the browser.
 
 export type ThemeChoice = "light" | "dark";
 
-/** The localStorage key the theme switch remembers the choice under, unless a switch names its own (data-cap-pref). */
 export const THEME_PREF = "cap-theme";
 
 /** The cookie a site remembers the choice in, unless it has its own (txasm's "txasm_theme", Foxhound's "fh_theme"). */
 export const THEME_COOKIE = "theme";
-/** A year: the choice should outlast any visit gap a person would expect it to survive. */
 export const THEME_COOKIE_MAX_AGE = 60 * 60 * 24 * 365;
 
 export function isThemeChoice(value: unknown): value is ThemeChoice {
@@ -39,8 +35,6 @@ export function readThemeCookie(
   return null;
 }
 
-// The Set-Cookie value that remembers a choice: a year, the whole site, SameSite=Lax and Secure. A local http dev
-// server passes secure: false.
 export function themeCookie(
   choice: ThemeChoice,
   opts: { name?: string; maxAge?: number; secure?: boolean } = {},
@@ -55,11 +49,8 @@ export function colorSchemeContent(choice: ThemeChoice | null): "light" | "dark"
   return choice ?? "light dark";
 }
 
-// The <meta name="theme-color"> tags as descriptors ({ name, content, media }), so a phone's browser bar matches the
-// page's ground in both themes: one for a person's choice, or one per scheme (with its media query) when they never
-// chose. `ground` is the site's --ground in each theme, as literal colors: browser chrome resolves no custom property.
-// A React Layout renders them with <ThemeColor> (capsomer/react/theme-switch); a meta() can return them as they are.
-// The theme switch keeps the tags in step when the person switches (theme-switch.ts).
+// The <meta name="theme-color"> tags as descriptors, so a phone's browser bar matches the page ground in both
+// themes. `ground` is the site's --ground in each theme as literal colors: browser chrome resolves no custom property.
 export interface ThemeColorTag {
   name: "theme-color";
   content: string;
@@ -78,7 +69,6 @@ export function themeColorTags(
   }));
 }
 
-// The same tags as an HTML string, for a site that writes its head as text.
 export function themeColorMeta(
   choice: ThemeChoice | null,
   ground: { light: string; dark: string },

@@ -1,11 +1,7 @@
-// Cropping one image, in the browser (MediaInspector's Crop button; ported from Carrel's crop dialog).
-// It reads the file's own bytes from `src`, which must be on the page's own origin so the canvas can be
-// exported (the host serves them: MediaLibrary's `bytesHref`), draws them on a canvas, and cuts the chosen
-// rectangle at full resolution. The result is handed to `onSave` as a new file, or, where the site replaces
-// files and keeps any size, in place of this one. Drag on the picture to choose; the four fields say the
-// same in pixels and are the keyboard's way in. The picture is drawn on a canvas, not shown from a blob:
-// address, so an app's image policy need allow only its own sites. This module is loaded only when Crop is
-// first pressed (React.lazy in media.react.tsx), so a library page does not carry it.
+// Cropping one image in the browser. It reads the file's bytes from `src` (must be the page's own origin so the
+// canvas can be exported), draws them on a canvas and cuts the chosen rectangle at full resolution. The picture
+// is drawn on a canvas, not a blob: address, so an app's image policy need allow only its own sites. Loaded
+// only when Crop is first pressed.
 import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
 import { Alert } from "../banner/banner.react.tsx";
 import { Button } from "../button/button.react.tsx";
@@ -22,22 +18,17 @@ import { Field } from "../field/field.react.tsx";
 import { Select } from "../select/select.react.tsx";
 import { CROP_SHAPES, centered, cropName, fitRect, ratioOf, type CropRect } from "./media-crop.ts";
 
-// The width the picture is drawn at, at most; the crop itself is cut from the full-size original.
 const VIEW_WIDTH = 640;
 
 export interface MediaCropProps {
   name: string;
-  // The file's own bytes, on the page's own origin.
   src: string;
-  // The crop may be saved as a new file (an upload) and in place of this one (a replace).
   asNew: boolean;
   inPlace: boolean;
   // The site refuses a replace of another size, so a crop is never saved in place: said up front.
   keepsSize?: boolean;
-  // Saves the crop: reject with an Error that says why, and the dialog shows it and stays open.
   onSave: (file: File, how: "new" | "replace") => Promise<void>;
   open: boolean;
-  // The Crop button, which focus returns to.
   opener: HTMLElement | null;
   onClose: () => void;
 }
@@ -71,7 +62,6 @@ export default function MediaCrop({
   const ratio = ratioOf(shape, width, height);
   const scale = Math.min(1, VIEW_WIDTH / width);
 
-  // Reads the file once the dialog opens.
   useEffect(() => {
     if (!open || image) return;
     let canceled = false;
@@ -89,7 +79,6 @@ export default function MediaCrop({
     };
   }, [open, image, src]);
 
-  // Draws the picture, dims what the crop leaves out, and outlines the crop.
   useEffect(() => {
     const el = canvas.current;
     if (!el || !image) return;
@@ -168,7 +157,6 @@ export default function MediaCrop({
           const n = Number(event.target.value);
           if (!Number.isFinite(n)) return;
           const next = { ...rect, [key]: n };
-          // With a ratio, a new width sets the height and a new height the width.
           if (ratio && key === "w") next.h = n / ratio;
           if (ratio && key === "h") next.w = n * ratio;
           setRect(fitRect(next, width, height, ratio));

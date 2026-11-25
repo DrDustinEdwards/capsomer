@@ -1,11 +1,8 @@
-// Agent session rows: the order they are shown in (waiting on you first) and the answer
-// buttons of an ask block, which announce a typed event for the app to act on. No framework;
-// the React wrapper uses the same functions.
+// Agent session rows: their order (waiting on you first) and the answer buttons of an ask block.
 
 export type SessionState = "needs" | "failed" | "working" | "idle" | "stopped";
 
-// The word and tone of each state's pill. Stopped shares the no-data tone with Idle and
-// differs from it by its glyph (a filled square) and its word.
+// The word and tone of each state's pill; Stopped differs from Idle by its glyph and word.
 export const STATES: Record<
   SessionState,
   {
@@ -23,9 +20,8 @@ export const STATES: Record<
 
 const RANK: Record<SessionState, number> = { needs: 0, failed: 1, working: 2, idle: 3, stopped: 4 };
 
-// Waiting on you first, the longest wait at the top; then failed, working, idle and
-// stopped, each with the most recent first. `since` is a time in milliseconds: when the
-// session began waiting, failed, started or was last seen. Returns a new array.
+// Waiting on you first, the longest wait at the top; then failed, working, idle, stopped, newest first.
+// `since` is a time in milliseconds. Returns a new array.
 export function order<T extends { state: SessionState; since: number }>(
   sessions: readonly T[],
 ): T[] {
@@ -36,8 +32,7 @@ export function order<T extends { state: SessionState; since: number }>(
   });
 }
 
-// How a collapsed run of repeated steps is spoken: "Read file 12 times". The eye reads
-// "Read file ×12".
+// How a collapsed run is spoken: "Read file 12 times" (the eye reads "×12").
 export function spokenCount(count: number): string {
   return count === 1 ? "once" : `${count} times`;
 }
@@ -47,10 +42,8 @@ export interface AnswerDetail {
   answer: string;
 }
 
-// Attaches to every [data-cap="session-row"] list under root. A click (or Enter or Space)
-// on a button with data-cap-answer inside a row with data-session dispatches a bubbling
-// "cap-answer" event with { session, answer }; the app performs the answer and sets the
-// button's aria-busy while it is in flight. A busy or aria-disabled button does nothing.
+// A click on a button with data-cap-answer inside a row with data-session dispatches a bubbling "cap-answer"
+// event ({ session, answer }); the app performs it and sets the button's aria-busy while in flight.
 export function enhance(root: ParentNode = document): () => void {
   const undo: Array<() => void> = [];
   for (const list of root.querySelectorAll<HTMLElement>(

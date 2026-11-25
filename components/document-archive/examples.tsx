@@ -1,4 +1,3 @@
-// Mounts the document archive specimens. Every element with data-mount="<state>" gets that state.
 import { StrictMode, type ReactNode } from "react";
 import { createRoot } from "react-dom/client";
 import { seriesPlace } from "../series-nav/series-nav.ts";

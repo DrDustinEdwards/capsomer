@@ -1,18 +1,11 @@
-// The dictionary entry's speaker. The server renders a plain link to the clip, which any browser
-// plays with script off; this swaps in the button, which plays the clip in place on click, Enter or
-// Space (a native button gives all three). Nothing plays until asked and the clip is fetched on the
-// first press, not before. aria-pressed carries the state while it plays; a second press stops it.
-// A clip that cannot load or play brings the link back, so the reader still has a way to hear it.
+// The dictionary entry's speaker. The server renders a plain link to the clip (works with script off); this swaps
+// in a native button that plays the clip in place, fetched on the first press. aria-pressed carries the state.
+// A clip that cannot load or play brings the link back.
 
-/** The speaker's name: what it does and for which word. */
 export function listenLabel(term: string): string {
   return `Listen to the pronunciation of ${term}`;
 }
 
-/**
- * Wires one speaker pair: `button` (hidden in the markup, `data-src` the clip) and `link` (the
- * no-script link). Shows the button, hides the link, and returns a function that detaches.
- */
 export function wireListen(button: HTMLButtonElement, link: HTMLAnchorElement): () => void {
   const src = button.dataset.src || link.getAttribute("href") || "";
   let audio: HTMLAudioElement | null = null;
@@ -70,8 +63,6 @@ export function wireListen(button: HTMLButtonElement, link: HTMLAnchorElement): 
   };
 }
 
-// Attaches to every [data-cap="dictionary-entry"] under root not yet attached. Returns a function
-// that detaches.
 // The root is Element | Document | DocumentFragment, not ParentNode: under @cloudflare/workers-types
 // an HTMLFormElement does not type as a ParentNode, so a site could not pass its form.
 export function enhance(root: Element | Document | DocumentFragment = document): () => void {

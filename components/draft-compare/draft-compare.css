@@ -1,15 +1,7 @@
-/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+/* Layer order repeated so this file is safe in any import order: the first statement fixes it (css/layers.css). */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
-/* Two versions of a text, compared by word. Built from the segmented control (the view
-   switch), the disclosure (folded unchanged passages), the button and the key cap; the diff
-   marks, the rows and the jump list are this file's. The marks never rely on color: an
-   insertion is underlined, tinted and opens with a plus (and says "insertion start" and
-   "insertion end" to a screen reader); a deletion is struck through, tinted and opens with a
-   minus. The three views are all in the HTML and the radios choose which shows, in CSS, so
-   the component works before any script runs. A site's DiffBlock (a unified patch in a
-   focusable region) became these rows; the line tints and literal + and - prefixes became
-   the marks. */
+/* Two versions of a text, compared by word. */
 @layer cap.components {
   .cap-compare {
     container: cap-compare / inline-size;
@@ -138,7 +130,6 @@
     font-weight: var(--weight-semibold);
   }
 
-  /* The jump list and Expand all, at the end of the bar. */
   .cap-compare-tools {
     display: flex;
     flex-wrap: wrap;
@@ -152,7 +143,6 @@
     align-items: center;
     gap: var(--space-2) var(--space-3);
   }
-  /* "Jump to" is for the markup's reader; on the bar the buttons and numbers say it. */
   .cap-compare-jump-title {
     display: none;
   }
@@ -276,7 +266,6 @@
     font-weight: var(--weight-semibold);
   }
 
-  /* Folded unchanged sentences. */
   .cap-compare-gapitem {
     margin-block: var(--space-2);
     list-style: none;
@@ -294,7 +283,6 @@
     }
   }
 
-  /* Inline and changes only. */
   .cap-compare-flow {
     display: grid;
     gap: var(--space-3);
@@ -335,7 +323,6 @@
     }
   }
 
-  /* Nothing differs. */
   .cap-compare-none {
     margin: 0;
     padding: var(--space-3) var(--pad-x);

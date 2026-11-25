@@ -1,11 +1,9 @@
-/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+/* Layer order repeated so this file is safe in any import order: the first statement fixes it (css/layers.css). */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
-/* The members page: one app's people, their titles, when their access ends and whether
-   Cloudflare's allow list matches yet, with add, change title, renew, remove, the term
-   review and each person's history. Built from table, field, select, status, button and
-   the confirm dialog; this file holds only the layout between them. The design is capsid
-   docs/design/design-identity-roles.md, "The members page". */
+/* The members page: people, their titles, when access ends and whether Cloudflare's allow list matches
+   yet, with add, change title, renew, remove, the term review and history. This file holds only the
+   layout between table, field, select, status, button and the confirm dialog. */
 @layer cap.components {
   .cap-people {
     container: cap-people / inline-size;
@@ -33,7 +31,6 @@
     color: var(--muted);
   }
 
-  /* The answer to the last post, at the top of the list. */
   .cap-people-result {
     display: flex;
     align-items: baseline;
@@ -49,7 +46,6 @@
     }
   }
 
-  /* The table's cells. The person is a name over an email, both readable at a glance. */
   .cap-people-who {
     text-align: start;
     text-transform: none;
@@ -86,7 +82,6 @@
     }
   }
 
-  /* A removed or expired person stays in the list, quieter, so their work keeps their name. */
   .cap-people-table tr[data-status="removed"],
   .cap-people-table tr[data-status="expired"] {
     & .cap-people-name,
@@ -123,12 +118,10 @@
     }
   }
 
-  /* The change-title form opens as its own row under the person, across the table. */
   .cap-people-edit > td {
     background: var(--sunken);
   }
 
-  /* A .cap-field-row; its fields share the width. */
   .cap-people-change {
     white-space: normal;
 
@@ -143,7 +136,6 @@
     gap: var(--space-2);
   }
 
-  /* The review and the add form are cards. */
   .cap-people-card {
     display: grid;
     gap: var(--space-4);
@@ -206,13 +198,11 @@
     color: var(--muted);
   }
 
-  /* Its fields side by side: .cap-fields (field.css) at these sizes. */
   .cap-people-add-fields {
     --fields-min: 14rem;
     --fields-gap: var(--space-4);
   }
 
-  /* One person's history: a dated list of what changed and what Cloudflare said. */
   .cap-people-history {
     display: grid;
     gap: var(--space-3);

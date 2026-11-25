@@ -19,9 +19,7 @@ export interface ComboboxOption {
   value: string;
   label: string;
   disabled?: boolean;
-  // A heading to list this option under. Options without one come first, ungrouped.
   group?: string;
-  // A short note beside the label, in muted text: the city beside an institution.
   hint?: string;
 }
 
@@ -31,84 +29,63 @@ interface Group {
 }
 
 export interface ComboboxBaseProps {
-  // The visible label above the box. Required: a combobox always has one.
   label: string;
   items: ComboboxOption[];
-  // An example only, never the label (patterns.md, "Form").
   placeholder?: string;
   // What an empty result says. A function gets the typed text, to name the filter.
   emptyText?: ReactNode | ((query: string) => ReactNode);
-  // The items are still arriving: the popup says so instead of "no match".
   loading?: boolean;
   loadingText?: string;
-  // Help under the label, outside the box; also where a disabled box says why.
   help?: ReactNode;
-  // The error, beside the field: marks the box invalid and describes it.
   error?: ReactNode;
   disabled?: boolean;
   required?: boolean;
-  // The form field name of the hidden input that carries the value.
   name?: string;
   id?: string;
-  // Where the popup is portaled. Inside a modal <dialog> pass the dialog, or the popup
-  // renders under the top layer, out of sight.
+  // Where the popup is portaled. Inside a modal <dialog> pass the dialog, or the popup renders under the top layer.
   container?: HTMLElement | null;
-  // For specimens and tests: open on mount, with this text typed.
   defaultOpen?: boolean;
   defaultInputValue?: string;
-  // Options from a server as the person types, in place of filtering `items` here: `search`
-  // gets the typed text and an AbortSignal (a newer keystroke aborts the older request) and
-  // returns the matches. `items` then holds only options known before any search (the chosen
-  // one, so its label shows). Waits `searchDelay` ms (200) after the last key, and asks
-  // nothing for fewer than `minSearchLength` characters (1).
+  // Options from a server as the person types, in place of filtering `items`: `search` gets the typed text
+  // and an AbortSignal and returns the matches; `items` holds only options known before a search (the chosen one).
   search?: (query: string, signal: AbortSignal) => Promise<ComboboxOption[]>;
   searchDelay?: number;
   minSearchLength?: number;
-  // What the list says before a search can run, and when one fails.
   searchHint?: string;
   searchFailedText?: string;
 }
 
 export interface ComboboxProps extends ComboboxBaseProps {
-  // The chosen value, controlled. Leave undefined to let the combobox hold it
-  // (defaultValue). null is "nothing chosen".
+  // The chosen value, controlled; undefined lets the combobox hold it. null is nothing chosen.
   value?: string | null;
   defaultValue?: string | null;
   onValueChange?: (value: string | null) => void;
-  // A button in the box that clears the chosen value. It shows only while there is one.
   clearable?: boolean;
 }
 
-// No searchHint: a free text box says nothing while the text is short.
 export interface ComboboxFreeTextProps extends Omit<
   ComboboxBaseProps,
   "items" | "emptyText" | "searchHint"
 > {
-  // Suggestions to filter here. With `search` they are not needed.
   items?: ComboboxOption[];
-  // The typed text is the value: any text can be kept, and a suggestion only fills it in.
+  // The typed text is the value; a suggestion only fills it in.
   value?: string;
   defaultValue?: string;
   onValueChange?: (text: string) => void;
-  // A suggestion was picked, for filling the fields that come with it (an institution’s city).
-  // It runs after onValueChange, so what it sets stands.
+  // A suggestion was picked; runs after onValueChange, so what it sets stands.
   onPick?: (item: ComboboxOption) => void;
 }
 
 export interface ComboboxMultipleProps extends ComboboxBaseProps {
-  // The chosen values, controlled. Leave undefined to let the combobox hold them.
   values?: string[];
   defaultValues?: string[];
   onValuesChange?: (values: string[]) => void;
-  // A tag field: typed text that is not in `items` can be added as a value of its own. A first
-  // row, `Create “text”`, offers it; Enter takes it (text that matches an item, ignoring case, picks
-  // that item instead, so a tag is never made twice). The value of a made one is its text.
+  // A tag field: typed text not in `items` is offered as a `Create “text”` row (Enter takes it; text matching
+  // an item, ignoring case, picks that item, so a tag is never made twice).
   creatable?: boolean;
-  // The words of the create row, from the typed text.
   createLabel?: (text: string) => string;
 }
 
-// A made value's id in the list, before it becomes a value: the prefix plus its text.
 const MAKE = "\u0001make:";
 const tidy = (text: string) => text.trim().replace(/\s+/g, " ");
 
@@ -149,8 +126,7 @@ const defaultEmpty = (query: string): ReactNode =>
     ? `No match for “${query.trim()}”. Check the spelling, or clear the box to see every option.`
     : "Nothing to choose from yet.";
 
-// Options with a `group` are listed under that heading, in the order each heading first
-// appears; the rest come first, with no heading. With no group anywhere the list is flat.
+// Options with a `group` are listed under their heading in order of first appearance; the rest come first.
 function grouped(items: ComboboxOption[]): ComboboxOption[] | Group[] {
   if (!items.some((i) => i.group)) return items;
   const out: Group[] = [];
@@ -188,8 +164,7 @@ function Option({ item }: { item: ComboboxOption }) {
   );
 }
 
-// The popup: the shared popover surface around the shared listbox, with the loading and
-// empty messages in Base UI's own regions so a change is announced.
+// The popup: loading and empty messages sit in Base UI's own regions so a change is announced.
 function Popup({
   isGrouped,
   loading,
@@ -254,9 +229,8 @@ function Popup({
   );
 }
 
-// The options a search found for the typed text. The request runs from the input's change,
-// not an effect: a newer keystroke clears the wait and aborts the older request, so results
-// never arrive out of order. A failure says so instead of looking like "no match".
+// The options a search found. The request runs from the input's change, not an effect, so a newer
+// keystroke aborts the older request and results never arrive out of order. A failure is not "no match".
 interface Found {
   items: ComboboxOption[];
   loading: boolean;
@@ -311,8 +285,6 @@ function useOptionSearch(
   return [found, run];
 }
 
-// Found options and known ones, each value once, the found first (the search's own order), then
-// the known options it did not return (the chosen one, so its label shows).
 function pool(known: ComboboxOption[], found: ComboboxOption[]): ComboboxOption[] {
   const seen = new Set(found.map((i) => i.value));
   return [...found, ...known.filter((i) => !seen.has(i.value))];
@@ -367,9 +339,8 @@ function Field({
   );
 }
 
-// One combobox: a labeled text box that filters a list, where only a listed value can be
-// chosen. Typed text that matches nothing is not kept: when the list closes, the box shows
-// the chosen value's label again (or nothing).
+// One combobox: only a listed value can be chosen; unmatched typed text is not kept (the box shows the
+// chosen label again when the list closes).
 export function Combobox(props: ComboboxProps) {
   const {
     label,
@@ -429,7 +400,6 @@ export function Combobox(props: ComboboxProps) {
     if (!open.current) setQuery(selected?.label ?? "");
   }, [selected?.label]);
 
-  // The list shows what the search found; the chosen option is only looked up in `all`.
   const shown = search ? found.items : items;
   const list = useMemo(() => grouped(shown), [shown]);
   const isGrouped = shown.some((i) => i.group);
@@ -513,9 +483,8 @@ export function Combobox(props: ComboboxProps) {
   );
 }
 
-// A text box with suggestions: the typed text is the value, so a name that is not listed yet
-// is kept as typed. A picked suggestion fills the box with its label and calls onPick. The
-// list opens only when there is something to show, and says nothing while the text is short.
+// A text box with suggestions: the typed text is the value, so a name not listed is kept as typed.
+// The list opens only when there is something to show.
 export function ComboboxFreeText(props: ComboboxFreeTextProps) {
   const {
     label,
@@ -564,14 +533,12 @@ export function ComboboxFreeText(props: ComboboxFreeTextProps) {
       errorId={errorId}
     >
       <Free.Root<ComboboxOption>
-        // Grouped lists work here as in Combobox; the root's types name only the flat form.
         items={list as ComboboxOption[]}
         value={text}
         onValueChange={(next: string, details: { reason: string }) => {
           if (props.value === undefined) setOwn(next);
           props.onValueChange?.(next);
           if (details.reason === "item-press") {
-            // The highlighted option is the one pressed, by pointer or by Enter.
             const item = lit.current ?? all.find((i) => i.label === next);
             if (item) onPick?.(item);
           } else if (search) runSearch(next);
@@ -646,8 +613,7 @@ function FreeOption({ item }: { item: ComboboxOption }) {
   );
 }
 
-// Several values: each chosen option is a chip in the box with its own remove button, and
-// the input follows the chips. The list stays open after a choice, so more can be added.
+// Several values as chips with remove buttons; the list stays open after a choice.
 export function ComboboxMultiple(props: ComboboxMultipleProps) {
   const {
     label,
@@ -675,8 +641,7 @@ export function ComboboxMultiple(props: ComboboxMultipleProps) {
   const { creatable = false, createLabel = (text: string) => `Create “${text}”` } = props;
   const [own, setOwn] = useState<string[]>(props.defaultValues ?? []);
   const current = props.values !== undefined ? props.values : own;
-  // Tags made by typing: they are not in `items`, so they are kept here (or come back in
-  // `values`, which are shown as chips whether or not they are listed).
+  // Tags made by typing are not in `items`, so they are kept here.
   const [made, setMade] = useState<ComboboxOption[]>([]);
   const known = useMemo(() => {
     const out = [...items];

@@ -13,19 +13,14 @@ export interface SegmentedProps<V extends string> {
   // the context already says it (a theme switch in the top bar).
   legend: ReactNode;
   hideLegend?: boolean;
-  // Two to five.
   options: Array<SegmentedOption<V>>;
   value: V | null;
   onChange: (value: V) => void;
-  // The radios' name, for a form; one is made up otherwise.
   name?: string;
-  // The id of text that says why an option is disabled.
   describedBy?: string;
   size?: "sm" | "default" | "lg";
   orientation?: "horizontal" | "vertical";
-  // Fill the row, the segments sharing it.
   fill?: boolean;
-  // "cards": each option its own bordered card, two to a row and four from 640px.
   layout?: "segments" | "cards";
   // Wrong: marks the radios aria-invalid; say why in text that describedBy names.
   invalid?: boolean;

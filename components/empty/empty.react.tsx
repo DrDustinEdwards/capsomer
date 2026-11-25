@@ -10,9 +10,7 @@ interface EmptyBase {
   title?: ReactNode;
   // nothing-yet: the one way to add the first. no-match: Clear filter. failed: Try again.
   action?: ReactNode;
-  // An icon in a muted tile above the title (an svg). Decorative: the title says it.
   icon?: ReactNode;
-  // No edge, for inside a panel or a table that already has one.
   flush?: boolean;
   // The title's element: a paragraph by default, a heading where the empty area is the page's
   // subject (the error page's h1).
@@ -22,8 +20,7 @@ interface EmptyBase {
   role?: "status";
 }
 
-// An empty state is its title and its one action; the layout says the rest. Only a failure has a
-// line under the title: what failed (the error), which the title alone cannot say.
+// An empty state is its title and its one action; only a failure has a line under the title.
 export type EmptyProps =
   | (EmptyBase & { kind: "failed"; children?: ReactNode })
   | (EmptyBase & { kind: Exclude<EmptyKind, "failed">; children?: never });

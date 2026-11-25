@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState, type ReactElement, type ReactNode } from "react";
 
-// The image attributes a poster takes: pictureProps(...).img from site-runtime fits.
 export interface PosterProps {
   src: string;
   srcSet?: string;
@@ -11,11 +10,8 @@ export interface PosterProps {
 
 export interface VideoProps {
   src: string;
-  // The video's accessible name.
   title: string;
-  // The site's own still, shown before play: with it the page downloads none of the video until asked.
   poster: string;
-  // The video's own size, so the box holds its shape before the first frame.
   width: number;
   height: number;
   // Captions (WCAG 1.2.2). Leave out only for a video with no speech or sound that carries meaning.
@@ -34,7 +30,6 @@ export interface VideoProps {
 const mediaLoading = (loading: "lazy" | "eager") =>
   (loading === "lazy" ? { loading: "lazy" } : {}) as Record<string, string>;
 
-// A self-hosted video: the native player, its poster, captions, and nothing downloaded before play.
 export function Video({
   src,
   title,
@@ -89,7 +84,6 @@ export interface AudioProps {
   loading?: "lazy" | "eager";
 }
 
-// An audio file: the native player, nothing downloaded before play, and its transcript one link away.
 export function Audio({
   src,
   title,
@@ -109,17 +103,11 @@ export function Audio({
 }
 
 export interface EmbedProps {
-  // The service's name in the markup ("youtube", "vimeo", "spotify", "soundcloud").
   service: string;
-  // The page on the service: where the link goes with no script.
   href: string;
-  // The player address the iframe loads after the click (the no-cookie host for YouTube).
   player: string;
-  // What it shows; it names the player's iframe.
   title: string;
-  // The service's verb and name: "Watch on YouTube", "Listen on Spotify".
   action: string;
-  // The site's own poster, from its library. Never the service's thumbnail, which would call the service.
   poster?: PosterProps;
   caption?: ReactNode;
 }
@@ -188,7 +176,6 @@ export function Embed({
   );
 }
 
-// The persistent audio player and its parts, each in its own file, all reached from here.
 export { PlayerProvider, usePlayer } from "./player-context.react.tsx";
 export type { PlayerApi, PlayerProviderProps, PlayerState } from "./player-context.react.tsx";
 export {

@@ -1,11 +1,9 @@
-// The carousel: a native scroll-snap track, so it swipes, scrolls by trackpad and by keyboard before
-// (and without) script. This module wires the Previous and Next buttons and the markers, keeps the
-// current marker in step while the track scrolls, and says "Slide N of M" once a scroll settles.
-// Built to Chrome's Modern Web Guidance carousel guide: controls only start scrolling and never set
-// state; state is read from the settled scroll position; rapid presses build on the pending target;
-// with three or more slides (and sibling-count() support) Previous and Next loop by parking an end
-// slide beside the current one with CSS `order` (carousel.css reads --current), never cloning or
-// moving a slide in the DOM; otherwise the buttons disable at the ends.
+// A native scroll-snap track, so it swipes and scrolls by trackpad and keyboard before (and without)
+// script. This wires Previous, Next and the markers, keeps the current marker in step, and says "Slide
+// N of M" once a scroll settles. Following Chrome's carousel guide: controls only start scrolling and
+// never set state; state is read from the settled scroll position. With three or more slides (and
+// sibling-count() support) Previous and Next loop by parking an end slide beside the current one with
+// CSS `order` (carousel.css reads --current), never moving a slide in the DOM; else the buttons disable at the ends.
 
 export interface CarouselParts {
   root: HTMLElement;
@@ -31,14 +29,12 @@ export function partsOf(root: HTMLElement): CarouselParts | null {
   };
 }
 
-// The status message for a slide; a carousel may name its own with data-cap-status="Testimonial {n} of {total}".
 export function statusText(template: string | undefined, n: number, total: number): string {
   return (template ?? "Slide {n} of {total}")
     .replace("{n}", String(n))
     .replace("{total}", String(total));
 }
 
-// Whether the track can loop: three slides at least, and the parking rule's sibling-count().
 export function canLoop(count: number): boolean {
   return (
     count >= 3 && typeof CSS !== "undefined" && CSS.supports("order", "calc(sibling-count() * 1)")
@@ -48,7 +44,6 @@ export function canLoop(count: number): boolean {
 const vertical = (track: HTMLElement) =>
   track.closest<HTMLElement>(".cap-carousel")?.dataset.axis === "block";
 
-// The middle of an element and of the track's viewport, on the track's own scrolling axis only.
 function middle(el: HTMLElement, block: boolean): number {
   return block ? el.offsetTop + el.offsetHeight / 2 : el.offsetLeft + el.offsetWidth / 2;
 }
@@ -63,7 +58,6 @@ export function attach(parts: CarouselParts): () => void {
   const block = vertical(track);
   const loops = root.dataset.loop !== "off" && canLoop(slides.length);
   root.toggleAttribute("data-cap-loops", loops);
-  // Offsets are measured against the track.
   if (getComputedStyle(track).position === "static")
     track.style.setProperty("position", "relative");
 
@@ -79,7 +73,6 @@ export function attach(parts: CarouselParts): () => void {
     });
     return best;
   };
-  // Slides as they sit on screen, which differs from DOM order while one is parked.
   const visual = () =>
     [...slides].sort((a, b) => (block ? a.offsetTop - b.offsetTop : a.offsetLeft - b.offsetLeft));
 

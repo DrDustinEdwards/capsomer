@@ -1,6 +1,5 @@
-// The shared listbox: options, groups, one active option, filtering, typeahead and selection,
-// over `role="listbox"` markup. Command menu, select, and any list a person picks from reuse
-// it. No framework, and no import but hooks' id counter and the shortcuts' IME check: the pure functions below run in node as well as the browser.
+// The shared listbox: options, groups, one active option, filtering, typeahead and selection over
+// `role="listbox"` markup. No framework and only two small imports, so the pure functions run in node too.
 //
 // The active option is the one a key press would act on. It is marked `data-active` and,
 // where focus stays elsewhere, named by `aria-activedescendant` on the holder. `aria-selected`
@@ -115,10 +114,9 @@ export interface TypeaheadState {
   at: number;
 }
 
-// Typeahead over a list of labels (null for an entry that cannot be chosen). Characters
-// typed within `timeout` ms of each other make one prefix; the first match from the current
-// entry on wins, wrapping. One letter pressed again and again (or a single letter after a
-// pause) cycles through the entries that start with it. `index` is -1 when nothing matches.
+// Typeahead over a list of labels (null for an entry that cannot be chosen). Characters typed within
+// `timeout` ms make one prefix; the first match from the current entry on wins, wrapping. Repeating one
+// letter cycles through entries that start with it. `index` is -1 when nothing matches.
 export function nextTypeahead(
   state: TypeaheadState,
   key: string,

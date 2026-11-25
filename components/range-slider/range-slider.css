@@ -1,11 +1,10 @@
-/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+/* Layer order repeated so this file is safe in any import order: the first statement fixes it (css/layers.css). */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
-/* The two-handle range: a label with the chosen span over a track filled between the handles,
-   the track's ends under it. Two native range inputs share the track; the inputs' own tracks
-   are transparent and let pointer events through, so only the thumbs take them and each handle
-   drags on its own; a press on the rail itself moves the nearer handle there (WCAG 2.5.7). Extracted from Foxhound's DualRangeSlider (app/components/dual-range-slider.tsx,
-   Recova's AmountRangeSlider). The thumb is the single slider's (field.css .cap-range). */
+/* The two-handle range: a label with the chosen span over a track filled between the handles. Two native
+   range inputs share the track; their own tracks are transparent and let pointer events through, so only
+   the thumbs take them and each drags on its own; a press on the rail moves the nearer handle (WCAG
+   2.5.7). The thumb is the single slider's (field.css .cap-range). */
 @layer cap.components {
   .cap-range-slider {
     --cap-range-lo: 0%;
@@ -38,9 +37,7 @@
   .cap-range-slider-track {
     position: relative;
     block-size: var(--target);
-    /* A press on the rail moves the nearer handle there. */
     cursor: pointer;
-    /* The rail, and the fill between the two handles. */
     &::before {
       content: "";
       position: absolute;
@@ -56,7 +53,6 @@
         var(--line-strong) var(--cap-range-hi)
       );
     }
-    /* A right-to-left track runs from the right, as its inputs do. */
     &:dir(rtl)::before {
       background: linear-gradient(
         to left,
@@ -66,8 +62,7 @@
       );
     }
   }
-  /* Each handle is a field.css .cap-range (its thumb, hover, focus, press and 44px touch target), laid over the rail
-     with its own track hidden; only the thumbs take the pointer, so each drags on its own. */
+  /* Each handle is a field.css .cap-range laid over the rail with its own track hidden. */
   .cap-range.cap-range-slider-input {
     --cap-range-track: transparent;
     position: absolute;

@@ -1,8 +1,6 @@
-// Frontmatter fields' pure core: which box each top-level key gets, what the box shows, and the
-// block it writes back. Reading and writing go through Prelum's frontmatter module (readKey,
-// readList, setBlock), so a key whose box was not changed comes back byte for byte, and a key no
-// box can say (a nested map, a block scalar, a value with a comment) is never written by a box:
-// it is edited in the raw text only. No DOM.
+// Frontmatter fields' pure core: which box each top-level key gets, what it shows, and the block it
+// writes back, through Prelum's frontmatter module so an unchanged key comes back byte for byte. A key no
+// box can say (a nested map, a block scalar, a value with a comment) is edited in the raw text only.
 
 import {
   blocks as blocksOf,
@@ -113,7 +111,6 @@ export function labelOf(key: string): string {
   return words.charAt(0).toUpperCase() + words.slice(1);
 }
 
-// What a box shows for a key.
 export function readBox(front: string | null, key: string, box: BoxKind, flag?: FlagWords): string {
   if (box === "list") return readList(front, key).join(", ");
   if (box === "lines") return readList(front, key).join("\n");

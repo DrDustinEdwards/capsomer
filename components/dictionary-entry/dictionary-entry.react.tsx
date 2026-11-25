@@ -1,7 +1,6 @@
 import { useEffect, useRef, type ReactNode } from "react";
 import { listenLabel, wireListen } from "./dictionary-entry.ts";
 
-/** A plain string, or a word in another language as [lang, word], set in italics with its lang. */
 export type EtymologyPart = string | [lang: string, word: string];
 
 export interface DictionarySense {
@@ -11,9 +10,7 @@ export interface DictionarySense {
 }
 
 export interface DictionaryEntryProps {
-  // The word as it is spelled ("Almanac"); read by screen readers in lowercase.
   term: string;
-  // The headword as it is shown, with its syllable dots ("al·ma·nac"); hidden from screen readers.
   syllables?: string;
   ipa?: string;
   respelling?: string;
@@ -21,13 +18,11 @@ export interface DictionaryEntryProps {
   plural?: string[] | null;
   senses: DictionarySense[];
   etymology?: EtymologyPart[];
-  // The clip. Without it there is no speaker.
   audio?: string;
   // The speaker's name. Default: "Listen to the pronunciation of {term}".
   listen?: string;
 }
 
-/** A speaker with two sound waves; the waves carry the playing state in CSS. */
 export function SpeakerIcon() {
   return (
     <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false">

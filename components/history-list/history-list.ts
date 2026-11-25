@@ -1,10 +1,6 @@
-// The history list's behavior and its pure helpers. One line per change; autosaves fold
-// into one line that opens in place; any two lines can be picked to compare; restoring a
-// line makes a NEW version on top and offers Undo, so nothing is ever overwritten.
-//
-// The page is delivered with every line in the HTML. This module adds what only a person's
-// action creates: the picks, the restore, the group that opens, a page of older lines.
-// No framework; the React wrapper uses the same helpers.
+// The history list's behavior: autosaves fold into one line, any two lines can be picked to
+// compare, and a restore makes a NEW version on top with Undo, so nothing is overwritten. The page
+// is delivered with every line in the HTML; this adds what only a person's action creates.
 import { toggleGroup } from "../disclosure/disclosure.ts";
 import { ensureRegion, say } from "../message/message.ts";
 import { attachRowList } from "../row-list/row-list.ts";
@@ -69,8 +65,6 @@ export {
 } from "./history-list-rows.ts";
 export type { BuildOptions } from "./history-list-rows.ts";
 
-// The behavior.
-
 const READY = "data-cap-ready";
 
 const rowsOf = (root: HTMLElement) => root.querySelector<HTMLElement>(":scope > .cap-hist-list");
@@ -118,20 +112,17 @@ function currentRow(root: HTMLElement): HTMLLIElement | null {
 }
 
 export interface LoadDetail {
-  // The line whose text goes to the editor.
   entry: HistoryEntry;
 }
 
 export interface RestoreDetail {
-  // The line restored from, and the line a restore adds on top.
   source: HistoryEntry;
   entry: HistoryEntry;
 }
 
-// Restores a version: adds a new line on top, makes it current, says so with Undo. Nothing
-// is overwritten; the line restored from stays. Fires `cap:history-restored` (and
-// `cap:history-unrestored` on Undo) on the root, so the app can save or undo the new
-// version on its server. Returns the new line, or null when the id is unknown.
+// Restores a version: adds a new line on top, makes it current, says so with Undo. Fires
+// `cap:history-restored` (and `cap:history-unrestored` on Undo) on the root so the app can save or
+// undo on its server. Returns the new line, or null when the id is unknown.
 export function restoreVersion(root: HTMLElement, id: string): HTMLLIElement | null {
   const list = rowsOf(root);
   const sourceRow = rowById(root, id);
@@ -188,8 +179,7 @@ export function restoreVersion(root: HTMLElement, id: string): HTMLLIElement | n
   return row;
 }
 
-// Adds older lines at the foot (a page of history the app fetched). `more: false` removes
-// the Load older control, because there is nothing older. A page should start on a line
+// Adds older lines at the foot. `more: false` removes Load older. A page should start on a line
 // that is not an autosave, or a run is split in two at the join.
 export function appendEntries(
   root: HTMLElement,
@@ -239,8 +229,8 @@ export function appendEntries(
   syncPicks(root);
 }
 
-// Reads the picks from the checkboxes, applies the "at most two" rule to the rest of them,
-// and says what is picked. `blocked` says a third pick was just refused.
+// Reads the picks, applies the "at most two" rule, and says what is picked. `blocked` says a third
+// pick was just refused.
 export function syncPicks(root: HTMLElement, blocked = false): string[] {
   const boxes = Array.from(root.querySelectorAll<HTMLInputElement>("[data-cap-part='pick']"));
   const picked = boxes.filter((b) => b.checked).map((b) => b.value);
@@ -280,9 +270,7 @@ export function syncPicks(root: HTMLElement, blocked = false): string[] {
   return picked;
 }
 
-// Attaches to every [data-cap="history-list"] under root not yet attached: j and k on its
-// list, the group lines that open, the picks, Restore and Load older. Returns a function
-// that detaches them.
+// Attaches to every [data-cap="history-list"] under root not yet attached; returns a detach function.
 export function enhance(root: ParentNode = document): () => void {
   const undo: Array<() => void> = [];
   for (const el of root.querySelectorAll<HTMLElement>("[data-cap='history-list']")) {
@@ -290,8 +278,7 @@ export function enhance(root: ParentNode = document): () => void {
     el.setAttribute(READY, "");
     const list = rowsOf(el);
     if (list) undo.push(attachRowList(list));
-    // Before the script, Compare is a submit button of the picks' GET form; now the link,
-    // which says what is missing and orders the pair, takes its place.
+    // Before script, Compare is a submit button of a GET form; this link replaces it.
     for (const b of el.querySelectorAll<HTMLElement>("[data-cap-part='compare-submit']"))
       b.hidden = true;
     for (const a of el.querySelectorAll<HTMLElement>("a[data-cap-part='compare'][hidden]"))
@@ -304,7 +291,6 @@ export function enhance(root: ParentNode = document): () => void {
       if (group && el.contains(group)) return toggleGroup(group);
       const box = t.closest<HTMLInputElement>("[data-cap-part='pick']");
       if (box && box.getAttribute("aria-disabled") === "true") {
-        // A third pick: refused, and said.
         e.preventDefault();
         syncPicks(el, true);
         return;
@@ -313,8 +299,7 @@ export function enhance(root: ParentNode = document): () => void {
       if (restore) return void restoreVersion(el, restore.dataset.version ?? "");
       const load = t.closest<HTMLAnchorElement>("[data-cap-part='load']");
       if (load) {
-        // The app may load the text into its own editor: cancel the event and do it. Without
-        // a listener the link is followed, so the page works as delivered.
+        // The app may load the text itself: cancel the event. Without a listener the link is followed.
         const row = load.closest<HTMLElement>(".cap-hist-row");
         if (
           row &&
@@ -338,8 +323,7 @@ export function enhance(root: ParentNode = document): () => void {
       }
       const older = t.closest<HTMLAnchorElement>("[data-cap-part='older']");
       if (older) {
-        // The app may fetch the page itself: cancel the event and call appendEntries. Without
-        // a listener the link is followed, so the page works as delivered.
+        // The app may fetch the page itself: cancel the event. Without a listener the link is followed.
         const last = lineRows(el).at(-1)?.dataset.id ?? "";
         const handled = !el.dispatchEvent(
           new CustomEvent("cap:history-older", {

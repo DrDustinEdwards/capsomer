@@ -13,32 +13,22 @@ import {
 export type { AiJobAnswer, FormComponent, JobEngine };
 
 export interface AiJobButton {
-  // Posted as `job`: "continue", "edit".
   job: string;
   label: string;
 }
 
 export interface AiJobButtonsProps {
-  // Where the jobs post: the route that runs them on the engine the settings name.
   action: string;
   buttons: readonly AiJobButton[];
-  // Hidden fields the route needs, such as a file's path.
   fields?: Record<string, string>;
-  // The form to post with: a fetcher's Form (useFetcher().Form), so the page stays where it is.
-  // A plain <form> without it.
+  // The form to post with: a fetcher's Form keeps the page where it is; a plain <form> without it.
   Form?: FormComponent;
-  // The route's answer to the last post (fetcher.data, or the action's data with no script).
   answer?: AiJobAnswer | null;
-  // A post in flight (fetcher.state !== "idle").
   pending?: boolean;
-  // The engines' names, for the retry button: "Run it on the subscription".
   engineNames?: Record<JobEngine, string>;
-  // The words of the link to the result.
   openLabel?: string;
 }
 
-// A few buttons that each post one AI job, and what came of it: the message with a link to the
-// draft it saved, or the error, and a button that runs the same job on the other engine.
 export function AiJobButtons({
   action,
   buttons,

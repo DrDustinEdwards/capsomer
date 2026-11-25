@@ -1,16 +1,9 @@
-// The dialog: one native <dialog> opened with showModal(), shared by every Capsomer overlay
-// (confirm dialog, detail panel, command menu, shortcut sheet, the phone's More sheet). The
-// platform gives the top layer, the inert page behind it, the focus trap and Esc; this module
-// adds what it does not: focus placed on open and handed back on close, a click on the
-// backdrop that closes (unless the dialog is locked or busy), Esc held while a request runs,
-// an address entry that Back takes away, and a keyboard stop on a body that scrolls.
-// No framework; the React wrapper and the other overlays call the same functions.
-
-// Helpers every overlay shares.
+// The dialog: one native <dialog> opened with showModal(), shared by every Capsomer overlay. The platform gives the top layer,
+// inert page, focus trap and Esc; this adds focus placed on open and handed back on close, backdrop click, Esc held while busy,
+// a history entry that Back takes away, and a keyboard stop on a scrolling body.
 
 const openers = new WeakMap<HTMLDialogElement, Element | null>();
 
-// Remembers what had focus before the dialog opened, to hand focus back on close.
 export function rememberOpener(
   dialog: HTMLDialogElement,
   opener: Element | null = document.activeElement,
@@ -18,9 +11,8 @@ export function rememberOpener(
   openers.set(dialog, opener);
 }
 
-// Where focus goes when the opener has gone (a revoked agent loses its Revoke button): the
-// dialog's data-cap-return selector, the given fallback, the Close button of another dialog
-// that is still open behind this one (a detail panel), then the page's main region.
+// Where focus goes when the opener has gone (a revoked agent loses its Revoke button): data-cap-return, the fallback,
+// another open dialog's Close button, then the main region.
 function fallbackFor(dialog: HTMLDialogElement, fallback?: HTMLElement | null): HTMLElement[] {
   const sel = dialog.dataset.capReturn;
   const named = sel ? document.querySelector<HTMLElement>(sel) : null;
@@ -33,10 +25,8 @@ function fallbackFor(dialog: HTMLDialogElement, fallback?: HTMLElement | null): 
   );
 }
 
-// Hands focus back after a dialog closes. After the next frame, so whatever the action
-// changed has rendered first (a revoked agent's row, and its button, may be gone). Only when
-// focus is lost: if the browser already restored it, or a command opened another dialog,
-// that focus stands.
+// Hands focus back after the next frame, so the action's changes have rendered. Only when focus is lost: a restored focus
+// or a newly opened dialog stands.
 export function returnFocus(dialog: HTMLDialogElement, fallback?: HTMLElement | null): void {
   const from = openers.get(dialog);
   openers.delete(dialog);
@@ -55,28 +45,24 @@ export function returnFocus(dialog: HTMLDialogElement, fallback?: HTMLElement | 
   });
 }
 
-// True when a mouse event landed on the dialog's backdrop rather than its content.
 export function isBackdropClick(dialog: HTMLDialogElement, e: MouseEvent): boolean {
   if (e.target !== dialog) return false;
   const r = dialog.getBoundingClientRect();
   return e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom;
 }
 
-// The text of a thrown value, for the error shown inside a dialog.
 export function errorText(e: unknown): string {
   if (e instanceof Error && e.message) return e.message;
   if (typeof e === "string" && e) return e;
   return "Something went wrong and nothing says what.";
 }
 
-// A dialog is busy while its action runs: aria-busy on the dialog. Esc, Close, Cancel and the
-// backdrop all refuse until it is cleared.
+// Busy while its action runs: Esc, Close, Cancel and the backdrop all refuse.
 export function isBusy(dialog: HTMLDialogElement): boolean {
   return dialog.getAttribute("aria-busy") === "true";
 }
 
-// Sets or clears busy. The Close and Cancel parts say so with aria-disabled (not disabled, so
-// focus stays where it was).
+// Close and Cancel say busy with aria-disabled (not disabled), so focus stays where it was.
 export function setDialogBusy(dialog: HTMLDialogElement, on: boolean): void {
   for (const el of dialog.querySelectorAll<HTMLElement>(
     "[data-cap-part='close'], [data-cap-part='cancel']",
@@ -89,10 +75,8 @@ export function setDialogBusy(dialog: HTMLDialogElement, on: boolean): void {
   syncClosedBy(dialog);
 }
 
-// Where the browser has `closedby` (Chrome 134, Firefox 141; not Safari), it does the light dismiss itself: "any"
-// closes on a backdrop click or Esc, "closerequest" on Esc only (locked and alert dialogs), "none" on neither (busy,
-// so its answer is not lost). Elsewhere the click handler in wireDialog does it. An author's own closedby is kept.
-// (Modern Web Guidance, light-dismiss-a-dialog.)
+// Where the browser has `closedby` (Chrome 134, Firefox 141; not Safari) it does the light dismiss: "any" closes on backdrop or Esc,
+// "closerequest" on Esc only (locked and alert dialogs), "none" on neither (busy). Elsewhere wireDialog's click handler does it.
 export const NATIVE_LIGHT_DISMISS =
   typeof HTMLDialogElement !== "undefined" && "closedBy" in HTMLDialogElement.prototype;
 const OWN_CLOSEDBY = "data-cap-closedby";
@@ -102,9 +86,8 @@ export function syncClosedBy(dialog: HTMLDialogElement): void {
   dialog.setAttribute("closedby", value);
 }
 
-// True when a click outside the dialog (or a swipe down) must not close it: it is locked, it is an
-// alert dialog (one that asks a question the person must answer), it is busy, or a form in it has
-// unsaved input (field.ts marks a changed control data-cap-dirty). Esc, Close and Cancel still close.
+// True when a click outside (or a swipe down) must not close it: locked, an alert dialog, busy, or unsaved input
+// (field.ts marks a changed control data-cap-dirty). Esc, Close and Cancel still close.
 export function isLocked(dialog: HTMLDialogElement): boolean {
   return (
     dialog.hasAttribute("data-cap-modal-lock") ||
@@ -114,15 +97,12 @@ export function isLocked(dialog: HTMLDialogElement): boolean {
   );
 }
 
-// Opening and closing.
-
 export interface DialogOptions {
   // Pushes "#<prefix>-<id>" so Back closes the dialog. Default: the dialog's data-cap-history.
   history?: boolean;
   // Where focus goes on open. Default: the [autofocus] element; for an alert or destructive
   // dialog, Cancel; otherwise the first control.
   focus?: HTMLElement | null;
-  // Where focus goes on close when the opener has gone.
   returnTo?: HTMLElement | null;
 }
 
@@ -144,9 +124,7 @@ function stateOf(dialog: HTMLDialogElement): State {
   return s;
 }
 
-// The address a history-entry dialog pushes: data-cap-history may name the prefix
-// ("detail" gives #detail-<id>); the id is data-cap-history-id, data-cap-detail-id or the
-// dialog's id.
+// The address a history-entry dialog pushes: data-cap-history names the prefix, the id comes from data-cap-history-id, data-cap-detail-id or the dialog's id.
 export function historyHash(dialog: HTMLDialogElement): string {
   const prefix = dialog.dataset.capHistory || "dialog";
   return `#${prefix}-${dialog.dataset.capHistoryId ?? dialog.dataset.capDetailId ?? dialog.id}`;
@@ -161,10 +139,8 @@ function canFocus(el: HTMLElement): boolean {
   return el.getClientRects().length > 0;
 }
 
-// Puts focus where a person starts: the given element, the [autofocus] one, Cancel when the
-// dialog is an alert or marked destructive (Enter on arrival must not do the damage), else
-// the first control that is not the Close button or the scrolling body, else Close, the body,
-// the dialog itself.
+// Puts focus where a person starts: the given element, [autofocus], Cancel for an alert or destructive dialog (Enter on
+// arrival must not do the damage), else the first control that is not Close or the scrolling body.
 export function focusInitial(dialog: HTMLDialogElement, target?: HTMLElement | null): void {
   const cancel = dialog.querySelector<HTMLElement>("[data-cap-part='cancel']");
   const destructive =
@@ -185,8 +161,7 @@ export function focusInitial(dialog: HTMLDialogElement, target?: HTMLElement | n
   if (document.activeElement !== choice) dialog.focus();
 }
 
-// A body that scrolls must be reachable by keyboard: it takes tabindex="0" while it overflows
-// (and gives it back when it does not), so arrow keys scroll it.
+// A body that overflows takes tabindex="0" so arrow keys scroll it.
 export function syncScroll(dialog: HTMLDialogElement): void {
   const body = dialog.querySelector<HTMLElement>(".cap-dialog-body");
   if (!body) return;
@@ -200,9 +175,7 @@ export function syncScroll(dialog: HTMLDialogElement): void {
   }
 }
 
-// Wires one dialog: a click on a Close or Cancel part, a click on the backdrop, Esc held
-// while busy, and what happens on close (the address entry, focus back to the opener).
-// Returns a function that unwires it. Idempotent for a dialog that is already wired.
+// Wires one dialog and returns a function that unwires it. Idempotent.
 export function wireDialog(dialog: HTMLDialogElement, opts: DialogOptions = {}): () => void {
   const s = stateOf(dialog);
   s.opts = { ...s.opts, ...opts };
@@ -238,7 +211,6 @@ export function wireDialog(dialog: HTMLDialogElement, opts: DialogOptions = {}):
     }
     const wasDown = s.down;
     s.down = false;
-    // The browser closes it itself where it has closedby (syncClosedBy).
     if (NATIVE_LIGHT_DISMISS) return;
     if (wasDown && isBackdropClick(dialog, e) && !isLocked(dialog)) dialog.close("backdrop");
   };
@@ -250,8 +222,6 @@ export function wireDialog(dialog: HTMLDialogElement, opts: DialogOptions = {}):
   const onKey = (e: KeyboardEvent) => {
     if (e.key === "Escape" && isBusy(dialog)) e.preventDefault();
     if (e.key !== "Tab" || e.altKey || e.ctrlKey || e.metaKey) return;
-    // Tab past the last control comes back to the first (and the reverse), so focus never
-    // leaves for the browser's own controls: the page behind is inert.
     const stops = [...dialog.querySelectorAll<HTMLElement>(FOCUSABLE)].filter(canFocus);
     const first = stops[0];
     const last = stops[stops.length - 1];
@@ -265,7 +235,6 @@ export function wireDialog(dialog: HTMLDialogElement, opts: DialogOptions = {}):
       first.focus();
     }
   };
-  // A <form method="dialog"> closes natively; while busy it must not.
   const onSubmit = (e: SubmitEvent) => {
     if (isBusy(dialog) && (e.target as HTMLFormElement | null)?.method === "dialog")
       e.preventDefault();
@@ -277,12 +246,9 @@ export function wireDialog(dialog: HTMLDialogElement, opts: DialogOptions = {}):
     s.observer = null;
     if (s.onPop) window.removeEventListener("popstate", s.onPop);
     s.onPop = null;
-    // Submitted or canceled: the next opening starts with no unsaved input.
     for (const c of dialog.querySelectorAll<HTMLElement>("[data-cap-dirty]"))
       delete c.dataset.capDirty;
     syncClosedBy(dialog);
-    // Closed by Esc or Close: take back the entry the dialog pushed, so Back goes where it
-    // went before.
     if (s.pushed) {
       s.pushed = false;
       history.back();
@@ -290,9 +256,7 @@ export function wireDialog(dialog: HTMLDialogElement, opts: DialogOptions = {}):
     returnFocus(dialog, s.opts.returnTo);
   };
 
-  // A first edit locks the backdrop where the browser dismisses it itself (closedby).
   const onInput = () => syncClosedBy(dialog);
-  // (input: a first edit; reset: the form is clean again.)
   for (const t of ["input", "reset"]) dialog.addEventListener(t, onInput);
   dialog.addEventListener("mousedown", onDown);
   dialog.addEventListener("click", onClick);
@@ -334,8 +298,7 @@ export function wireDialog(dialog: HTMLDialogElement, opts: DialogOptions = {}):
   };
 }
 
-// Opens a dialog from the control that asked for it, remembering that control. Focus is
-// placed (see focusInitial); with history, "#<prefix>-<id>" is pushed so Back closes it.
+// Opens a dialog from the control that asked for it, remembering that control; with history, pushes "#<prefix>-<id>".
 export function openDialog(
   dialog: HTMLDialogElement,
   opener: Element | null = document.activeElement,
@@ -378,11 +341,8 @@ export function closeDialog(dialog: HTMLDialogElement, returnValue?: string): vo
   if (dialog.open) dialog.close(returnValue);
 }
 
-// Wires every dialog under root ([data-cap="dialog"]) and every trigger
-// [data-cap-dialog-open="<dialog id>"]. A dialog with data-cap-open (or the specimens'
-// data-specimen-open) opens now. A dialog with data-cap-inline and `open` is in the page until
-// this runs, then closed (see the markup on the doc page). A trigger that is a link keeps its href for a new tab; a plain
-// click opens the dialog. Returns a function that detaches them all.
+// Wires every dialog under root and every [data-cap-dialog-open="<dialog id>"] trigger; a dialog with data-cap-open opens now.
+// A trigger that is a link keeps its href for a new tab. Returns a function that detaches them all.
 export function enhance(root: ParentNode = document): () => void {
   const undo: Array<() => void> = [];
   for (const dialog of root.querySelectorAll<HTMLDialogElement>(

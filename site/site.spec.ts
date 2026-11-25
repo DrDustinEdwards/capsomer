@@ -101,8 +101,7 @@ test("behavior: the icon search finds an icon", async ({ page }) => {
   await expect(page.locator("#icon-n")).toHaveText(/^\d+ of \d+ icons$/);
 });
 
-// A component page does not shift as its example frames load: each frame's height is reserved (CLS). The bar is web.dev's
-// "good" 0.1; the page measured 0.1 to 0.4 before the heights were reserved.
+// A component page does not shift as its example frames load: each frame's height is reserved (CLS). The bar is web.dev's "good" 0.1.
 for (const width of [390, 1440]) {
   test(`layout: a component page's example frames do not shift the page (${width}px)`, async ({
     page,
@@ -130,10 +129,9 @@ for (const width of [390, 1440]) {
   });
 }
 
-// Cloudflare Web Analytics injects its beacon into every HTML page on this zone. A public
-// site allows its file and versioned path in script-src (Dustin's analytics ruling,
-// 2026-10-03; site-runtime writes the two sources); the beacon reports
-// to this origin's /cdn-cgi/rum, so connect-src gains nothing.
+// Cloudflare Web Analytics injects its beacon into every HTML page on this zone. A public site
+// allows its file and versioned path in script-src (site-runtime writes the two sources); the
+// beacon reports to this origin's /cdn-cgi/rum, so connect-src gains nothing.
 test("security: the CSP allows Cloudflare's Web Analytics beacon and nothing else new", () => {
   const directive = (name: string) =>
     CSP.split(";")

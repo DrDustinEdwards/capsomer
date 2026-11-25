@@ -40,29 +40,24 @@ export { ACCESS_LOGOUT, currentEntryId, startPageTransition } from "./admin-shel
 export { AdminErrorView, type AdminErrorViewProps } from "./admin-error.react.tsx";
 export { FAMILY_APPS, FIRST_PAGE, OWNER };
 
-// One of the current app's pages. `group` puts consecutive entries under one label.
 export interface AdminEntry {
   id: string;
   label: string;
   href: string;
   icon?: ReactNode;
-  // Whether this is the page you are on. Leave it out and give the shell `pathname`: the shell
-  // marks the entry the address is in (currentEntryId), the longest match winning.
+  // Whether this is the page you are on; leave it out and give the shell `pathname` (longest match wins).
   current?: boolean;
-  // What else counts as this entry when the shell derives `current`: path prefixes ("/books")
-  // or patterns (/^\/drafts\/\d+/). Default: the entry's own `href`.
+  // Other path prefixes ("/books") or patterns that count as this entry when the shell derives `current`.
   match?: ReadonlyArray<string | RegExp>;
-  // A count beside the entry, and what it counts: "Queue, 2 blocked". Every count is one bubble;
-  // a plain one is neutral, tone "need" is violet (it needs you), crit and warn are status colors.
+  // A count beside the entry, and what it counts ("Queue, 2 blocked"). Tone "need" is violet; crit and warn are status colors.
   count?: number;
   countNote?: string;
   tone?: "need" | "crit" | "warn";
   group?: string;
 }
 
-// One app in the strip. The family's apps come from FAMILY_APPS (apps.tsx); this is for any other. `logo` is the product's mark (an svg using currentColor takes
-// the tile's color). `count` is how many things in that app need you; the app you are in never
-// shows one.
+// One app in the strip, for any app not in FAMILY_APPS (apps.tsx). `logo` may be an svg using currentColor;
+// `count` is how many things in that app need you (never shown for the app you are in).
 export interface AdminApp {
   id: string;
   label: string;
@@ -71,7 +66,6 @@ export interface AdminApp {
   mono?: string;
   current?: boolean;
   count?: number;
-  // What the badge means, for the accessible name: "2 AI drafts waiting". Default "need you".
   countNote?: string;
 }
 
@@ -79,83 +73,58 @@ export interface AdminAccountLink {
   label: string;
   href?: string;
   onClick?: () => void;
-  // The page you are on (Settings, say).
   current?: boolean;
 }
 
-// What another app's tile says. One rule for every tile: a badge is always a number, how many
-// things in that app need you (a state with nothing to count, one failing check, is 1). No dots.
+// What another app's tile says: a badge is always a number, how many things need you; no dots.
 export interface AdminBadge {
   count?: number;
   countNote?: string;
 }
 
-// A level of the top bar's trail, before the page itself: "Components" above "Shell".
 export interface AdminCrumb {
   label: string;
   href: string;
 }
 
-// The avatar is the owner's (OWNER, "DE") unless a name and initials are given. Its menu, in the
-// header's top right: who you are; this app's rows (`appLinks`); View site and Help; Sign out last.
 export interface AdminAccount {
   name?: string;
   initials?: string;
-  // A picture of the person, over the initials (the header's `account.avatar`).
   avatar?: string;
   role?: string;
   email?: string;
   appLinks?: AdminAccountLink[];
-  // The label over `appLinks`: "This app" by default; a dashboard names the business ("Acme
-  // Supply Co."), so its settings sit under its name.
+  // The label over `appLinks`: "This app" by default; a dashboard names the business.
   appLabel?: string;
   onSignOut?: () => void;
-  // Behind Cloudflare Access: Sign out sends the browser to Access's own sign-out address
-  // (ACCESS_LOGOUT), which ends the Access session; `onSignOut` is then not needed.
+  // Behind Cloudflare Access, Sign out goes to Access's own address (ACCESS_LOGOUT), so `onSignOut` is not needed.
   accessLogout?: boolean;
-  // Sign out as a form post (the header's `account.signOutAction` and `signOutFields`), so it works
-  // before script and sends the site's CSRF fields.
+  // Sign out as a form post, so it works before script and sends the site's CSRF fields.
   signOutAction?: string;
   signOutFields?: Record<string, string>;
   signOutDisabled?: boolean;
 }
 
 export interface AdminShellProps {
-  // "owner" (your admin): the strip of the family's apps, then a 232px menu. "user" (a customer's
-  // own dashboard): no strip and a 288px menu, so the page starts at the same left edge in both.
+  // "owner": the strip of family apps and a 232px menu. "user": no strip and a 288px menu, so the page starts at the same left edge.
   variant?: "owner" | "user";
-  // The family app this is. The strip lists every family app (FAMILY_APPS) in one order with this
-  // one marked, and the header's logo is its mark and name unless `logo` is given.
+  // The family app this is: the strip marks it and the header's logo is its mark and name unless `logo` is given.
   app?: FamilyAppId;
-  // Other apps' badges, from Capsid's one "what needs the owner" answer. The current app's is
-  // never shown.
+  // Other apps' badges; the current app's is never shown.
   badges?: Partial<Record<FamilyAppId, AdminBadge>>;
-  // The app's name, for the tab title and the sheet. Default: the family app's. Set it only
-  // outside the family.
   title?: string;
-  // The strip for a site outside the family. Admin areas pass `app`.
   apps?: AdminApp[];
   nav: AdminEntry[];
-  // The address you are on (React Router's useLocation().pathname). Given, every entry without its
-  // own `current` is marked from it, and `page` defaults to the current entry's label.
+  // The address you are on (useLocation().pathname): entries without `current` are marked from it.
   pathname?: string;
-  // The page being shown: the tab title "<page> · <app>", and the last step of the trail.
   page?: string;
-  // Whether the shell writes the tab title from `page` and `title`. Default true. False leaves
-  // document.title to the app's routes; `title` still names the logo, the sheet and its groups.
+  // Whether the shell writes the tab title; false leaves document.title to the app's routes.
   documentTitle?: boolean;
-  // The levels above the page. Given, the top bar shows the trail ("Components / Shell"); a
-  // top-level page has none, so the bar never repeats the page's own heading.
+  // The levels above the page, shown as the top bar's trail; a top-level page has none.
   trail?: AdminCrumb[];
-  // The phone's bottom bar: up to five of this app's top pages, no More. Default: the first five.
   tabs?: AdminEntry[];
   navLabel?: string;
-  // The header (components/site-header): the site's logo, its band, a switcher (a dashboard's
-  // business and product), and its extras. Search and Inbox are the header's first two extras;
-  // Help is a row of the account menu.
   logo?: HeaderLogo;
-  // The family letterhead (components/site-header): the band as tall as the site's public pages,
-  // its second row holding where you are and View site; `search` is the header's search icon and field.
   letterhead?: boolean;
   search?: { action: string; label: string; name?: string; suggest?: Suggest };
   band?: "dark";
@@ -172,47 +141,35 @@ export interface AdminShellProps {
     shortcut?: string;
   };
   onHelp?: () => void;
-  // The account menu's View site row.
   viewSite?: string;
   account?: AdminAccount;
-  // The page bar: the trail and how fresh the data is on the left; then the page-wide controls
-  // and Refresh (shown when the page can refresh), last. `updated` is the one freshness line every
-  // app shows: "Updated 6 minutes ago", with "· refreshes itself" when `auto`. `status` is anything
-  // else true of the page.
+  // The page bar: the trail and freshness on the left, then page-wide controls and Refresh. `updated` is the one
+  // freshness line every app shows; `status` is anything else true of the page.
   updated?: { at: number | Date | string; auto?: boolean };
   status?: ReactNode;
   actions?: ReactNode;
   onRefresh?: () => void;
   refreshing?: boolean;
   refreshShortcut?: string;
-  // The theme button's localStorage key ("cap-theme" by default), and the single key the app lets
-  // the header bind to it ("T"); leave it out where the app binds its own.
+  // The theme button's localStorage key and the single key the header binds to it; leave out where the app binds its own.
   themePrefKey?: string;
   themeKey?: string;
-  // Passed to the site header: where the theme choice is kept besides this browser (a cookie, the
-  // account), the server's answer, the no-script theme form, and whether the header hydrates.
   themeCookie?: SiteHeaderProps["themeCookie"];
   onThemeSave?: SiteHeaderProps["onThemeSave"];
   themeInitial?: SiteHeaderProps["themeInitial"];
   themeAction?: SiteHeaderProps["themeAction"];
   hydrate?: SiteHeaderProps["hydrate"];
   prefKey?: string;
-  // G then 1 to 9 opens the app in that place (the key sequence of GitHub and Linear; Ctrl and a
-  // digit belong to the browser's tabs); on by default, and off with the shortcuts switch. false
-  // turns it off for this app alone.
+  // G then 1 to 9 opens the app in that place; on by default, off with the shortcuts switch, false turns it off here.
   jumpKeys?: boolean;
-  // The menu's collapse key, shown on the collapse control and in its tip. The shell binds it
-  // (never while a person types, or with single-key shortcuts off); false shows no key and binds none.
+  // The menu's collapse key, bound by the shell (never while typing or with single-key shortcuts off); false binds none.
   collapseKey?: string | false;
   renderLink?: (props: LinkProps) => ReactNode;
-  // The main region's own ref and handlers (an app that scrolls to a row, say). Its id, class and
-  // tab stop are the shell's.
   mainProps?: Omit<ComponentPropsWithRef<"main">, "id" | "className" | "tabIndex" | "children">;
   collapsed?: boolean;
   onCollapsedChange?: (collapsed: boolean) => void;
-  // Page transitions (View Transitions API): the content cross-fades between pages while the
-  // header, strip and menu stay put. Off by default; reduced motion and browsers without the API
-  // get no animation. The app wraps its page change in `startPageTransition` (a flushSync inside).
+  // Page transitions (View Transitions API): content cross-fades while header, strip and menu stay put. Off by
+  // default; the app wraps its page change in `startPageTransition`.
   transition?: boolean;
   children: ReactNode;
 }
@@ -222,7 +179,6 @@ const Icon = ({ d }: { d: string }) => (
     <path d={d} />
   </svg>
 );
-// The header's glyphs are the 24-box, 1.6-stroke family the header draws at 18px.
 const HeaderIcon = ({ d }: { d: string }) => (
   <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
     <path d={d} />
@@ -238,12 +194,9 @@ const REFRESH_D = "M20 12a8 8 0 1 1-2.3-5.6M20 4v4.5h-4.5";
 const countName = (label: string, count?: number, note?: string) =>
   count ? headerCountName(label, count, note) : undefined;
 
-// A control's name, shown beside it on hover and keyboard focus: Capsomer's one tooltip (the
-// shared popover's tooltip variant, in the top layer, so it is above every panel, tile and
-// badge). It is a child of its control and attaches to it; keys are key caps ("G", "2").
-// `describe` false leaves the control's description alone, where the tip repeats its name.
-// `offset` clears what sits beside the control: a strip tip starts past the strip's edge (and so
-// past the control's own badge), a menu tip past the menu's.
+// A control's name shown beside it on hover and keyboard focus: the shared popover's tooltip in the top layer,
+// a child of its control. `describe` false leaves the description alone where the tip repeats the name.
+// `offset` clears what sits beside the control (the strip's edge and badge, the menu's edge).
 function Tip({
   text,
   keys,
@@ -290,7 +243,6 @@ function Tip({
   );
 }
 
-// The strip: the family's apps in their one order, this one marked, others with their badges.
 function stripApps(
   app: FamilyAppId | undefined,
   badges: AdminShellProps["badges"],
@@ -350,7 +302,6 @@ export function AdminShell(props: AdminShellProps) {
     children,
   } = props;
   const owner = variant === "owner";
-  // The page you are on, from the address, for entries that do not say.
   const derived = pathname === undefined ? undefined : currentEntryId(pathname, props.nav);
   const nav =
     derived === undefined
@@ -369,8 +320,7 @@ export function AdminShell(props: AdminShellProps) {
     props.onCollapsedChange,
   );
 
-  // The tab says the page, then the app: "Queue · Capsid Portal".
-  // An app whose routes set their own titles turns this off with documentTitle={false}.
+  // The tab says the page, then the app; documentTitle={false} turns this off.
   useEffect(() => {
     if (documentTitle && title) document.title = page ? `${page} · ${title}` : title;
   }, [documentTitle, page, title]);
@@ -383,7 +333,6 @@ export function AdminShell(props: AdminShellProps) {
     applyStoredTheme(themePrefKey);
   }, [serverKept, themePrefKey]);
 
-  // G then a number jumps between apps (Esc hiding a shown name is the tooltip's own).
   const appsRef = useRef(apps);
   useLayoutEffect(() => {
     appsRef.current = apps;
@@ -402,8 +351,7 @@ export function AdminShell(props: AdminShellProps) {
     return () => document.removeEventListener("keydown", onKey);
   }, [jumpKeys, owner]);
 
-  // The collapse key, bound here so every app behaves the same; it presses nothing the person
-  // cannot see (the menu is hidden on a phone).
+  // The collapse key is bound here so every app behaves the same; the menu is hidden on a phone.
   const collapsedRef = useRef(collapsed);
   useLayoutEffect(() => {
     collapsedRef.current = collapsed;
@@ -452,10 +400,8 @@ export function AdminShell(props: AdminShellProps) {
     </Fragment>
   );
 
-  // The header: the logo (the app's mark and name), the extras (Search, Inbox, then the app's
-  // own), the theme, and the account menu last.
-  // In the letterhead the names stack as on the public pages: the agency over the site, then the app.
-  // The mark is the current app's in the strip, so an app that draws its own strip mark shows it here too.
+  // The header: the logo, the extras, the theme, the account menu last. In the letterhead the names stack
+  // (agency over site, then app), and the mark is the current app's strip mark.
   const stacked =
     props.letterhead && family?.names
       ? {
@@ -528,8 +474,7 @@ export function AdminShell(props: AdminShellProps) {
       }
     : undefined;
 
-  // The letterhead's second row: the levels above the page, else the current entry's group, then
-  // the page, else the current entry, so the row never stands empty.
+  // The letterhead's second row: the levels above the page, else the current group, then the page, so the row is never empty.
   const here = nav.find((e) => e.current);
   const heading = page ?? here?.label;
   const crumbs = [

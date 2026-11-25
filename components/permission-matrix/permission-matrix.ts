@@ -1,17 +1,13 @@
-// The permission matrix's behavior: the view switch (By agent, By permission), and the
-// pure helpers that turn a matrix into each view's sentences. No framework; the React
-// wrapper uses the same helpers.
+// The permission matrix's behavior: the view switch (By agent, By permission) and the pure helpers that build each view's sentences.
 
 export type PermView = "agent" | "permission";
 
 export interface PermAgent {
   name: string;
-  // The permissions this agent holds, by name.
   holds: readonly string[];
 }
 
 export interface PermMatrix {
-  // The permissions, in the order the columns show them.
   permissions: readonly string[];
   agents: readonly PermAgent[];
 }
@@ -28,7 +24,6 @@ export interface Holders {
   text: string;
 }
 
-// One entry per agent: what it holds, in column order, and the card's sentence.
 export function holdings(m: PermMatrix): Holding[] {
   return m.agents.map((a) => {
     const held = m.permissions.filter((p) => a.holds.includes(p));
@@ -40,7 +35,6 @@ export function holdings(m: PermMatrix): Holding[] {
   });
 }
 
-// One entry per permission: who holds it, in row order, and the card's sentence.
 export function holders(m: PermMatrix): Holders[] {
   return m.permissions.map((p) => {
     const agents = m.agents.filter((a) => a.holds.includes(p)).map((a) => a.name);
@@ -52,8 +46,7 @@ export function holders(m: PermMatrix): Holders[] {
   });
 }
 
-// Shows one view of one matrix and hides the other with the hidden attribute, so the
-// hidden view leaves the accessibility tree too.
+// Shows one view and hides the other with the hidden attribute, so the hidden view leaves the accessibility tree too.
 export function showView(root: HTMLElement, view: PermView): void {
   for (const el of root.querySelectorAll<HTMLElement>(".cap-perms-view[data-view]")) {
     if (el.closest("[data-cap='permission-matrix']") !== root) continue;
@@ -66,8 +59,6 @@ function isView(v: string): v is PermView {
   return v === "agent" || v === "permission";
 }
 
-// Attaches to every [data-cap="permission-matrix"] under root that is not attached yet.
-// Returns a function that detaches them all.
 export function enhance(root: ParentNode = document): () => void {
   const undo: Array<() => void> = [];
   for (const matrix of root.querySelectorAll<HTMLElement>(

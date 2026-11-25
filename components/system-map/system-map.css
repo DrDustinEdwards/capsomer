@@ -1,11 +1,9 @@
-/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+/* Layer order repeated so this file is safe in any import order: the first statement fixes it (css/layers.css). */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
-/* The system map: the network as cards (level 1) and one system as three columns (level 2).
-   Wires are drawn by the script under the cards (system-map-wires.ts). On the network a lit card is a heavier accent edge, a tint and a line of
-   words; a dimmed card goes muted. On a system, a step's parts are a heavier edge and a tint, the rest
-   go muted. Columns come from the space the map has (container queries), so a host's narrow column
-   stacks them as a phone does. No text is under 12 px. */
+/* The system map: the network as cards (level 1) and one system as three columns (level 2). The script
+   draws the wires under the cards (system-map-wires.ts). Columns come from the map's own space
+   (container queries), so a narrow host column stacks them. No text is under 12 px. */
 @layer cap.components {
   .cap-system-map {
     container: cap-system-map / inline-size;
@@ -56,10 +54,8 @@
     list-style: none;
   }
 
-  /* Level 1, a layered drawing: three lanes side by side, the shared packages in the middle, and
-     gutters between them where the wires run. The cards are small (a short name) so the whole
-     network is in view at once on a desktop and a phone alike, with no scrolling; what each system
-     is shows in the detail line when it is pointed at or focused. */
+  /* Level 1, a layered drawing: three lanes with gutters where the wires run. The cards are small so the
+     whole network is in view at once with no scrolling; the detail line says what a system is. */
   .cap-system-map-detail {
     min-height: calc(2 * 1.4em);
     max-width: var(--measure);
@@ -71,8 +67,7 @@
     &[hidden] {
       display: none;
     }
-    /* On the network the line also says what the system uses and what uses it: room for four
-       lines, the most any system needs at the measure, so lighting one moves nothing below. */
+    /* Room for four lines, the most any system needs at the measure, so lighting one moves nothing below. */
     .cap-system-map[data-level="network"] > & {
       min-height: calc(4 * 1.4em);
     }
@@ -83,10 +78,8 @@
     }
   }
 
-  /* The two views of the network, as tabs: the hexagons (the default) and the plain map. With no
-     script both panels show, one after the other. Where the map is narrower than 44rem the
-     hexagons' names would fall under 12 px, so the hexagons and the tab list go and the script
-     chooses the plain map. */
+  /* The two views as tabs. With no script both panels show. Where the map is narrower than 44rem the
+     hexagons' names would fall under 12 px, so the hexagons and tab list go and the script chooses the plain map. */
   .cap-system-map-views {
     display: grid;
     gap: var(--space-4);
@@ -107,8 +100,6 @@
     }
   }
 
-  /* The honeycomb: as tall as the screen allows below a site's header and the view tabs, so all of
-     it is in view once the tabs reach the top. */
   .cap-system-map-hex {
     display: grid;
     justify-items: center;
@@ -173,8 +164,7 @@
     text-anchor: middle;
   }
 
-  /* Lit: as on the plain map, the cell's lines accent and on top, its ties' cells with an accent
-     edge (heavier than a plain one, so color is not the only sign), the rest muted. */
+  /* Lit: the cell's lines accent and on top, its ties' cells with a heavier accent edge (not color alone). */
   .cap-system-map-comb[data-lit] {
     & .cap-system-map-wire:not([data-on]) {
       stroke: var(--line);
@@ -182,11 +172,9 @@
     & .cap-system-map-wire[data-on] {
       stroke: var(--accent);
       stroke-width: 2.6;
-      /* Dashes move from the system that uses to the one used: with tapering, the most readable
-         way to show an edge's direction, and the most accurate (Holten, Isenberg, van Wijk and
-         Fekete 2011). Their pattern: long dashes, short gaps, slow, each line out of step with
-         its neighbors so lines leaving one cell do not pulse together. A tie both ways stays
-         solid. Still under reduced motion: the detail line says which way each tie runs. */
+      /* Dashes move from the system that uses to the one used (with tapering, the most readable way to
+             show direction; Holten et al. 2011), each line out of step with its neighbors. A tie both ways stays
+             solid. Still under reduced motion: the detail line says which way each tie runs. */
       stroke-dasharray: 30 5;
       @media (prefers-reduced-motion: no-preference) {
         animation: cap-system-map-flow var(--dur-flow) linear infinite;
@@ -267,7 +255,6 @@
     }
   }
 
-  /* With room, the cards grow toward a desktop's height, still all in view. */
   @container cap-system-map (min-width: 44rem) {
     .cap-system-map-lane {
       gap: var(--space-5);
@@ -325,8 +312,6 @@
     stroke-width: 1;
   }
 
-  /* Lit: a card's wires go accent and heavier, on top; the rest fall back to the faint line color,
-     so the one path reads out of the whole network. */
   .cap-system-map-wires[data-lit] {
     & .cap-system-map-wire:not([data-on]) {
       stroke: var(--line);
@@ -359,7 +344,6 @@
       border-style: dashed;
     }
 
-    /* The name's link covers the card, so a tap anywhere on it opens the system. */
     &[data-link]:hover,
     &[data-force="hover"] {
       border-color: var(--line-strong);
@@ -391,7 +375,6 @@
     }
   }
 
-  /* In the detail line: the full name, what it is for, then its address and counts, each whole. */
   .cap-system-map-card-meta {
     color: var(--muted);
 
@@ -408,9 +391,7 @@
     font-weight: var(--weight-semibold);
   }
 
-  /* How a lit card is tied, set on its top edge as a label, so lighting never changes a card's size
-     and nothing below it moves. */
-  /* Where a card is narrower than its words, the detail line says it alone. */
+  /* The lit tie is a label on the card's top edge, so lighting never changes its size and nothing moves. */
   @container cap-system-map (max-width: 44rem) {
     .cap-system-map-card-tie {
       display: none;
@@ -436,7 +417,6 @@
     }
   }
 
-  /* Lit: the card under the pointer or focus, and every card it uses or is used by. */
   /* Dimmed by color, not opacity, so every card's words keep their contrast (WCAG 1.4.3): the
      rest lose their surface and their names go muted, while the lit ones keep both. */
   .cap-system-map[data-lit] .cap-system-map-card {
@@ -449,14 +429,12 @@
         color: var(--muted);
       }
     }
-    /* Tied: an accent edge one pixel heavier (an inset outline, so nothing moves), never color
-       alone. */
+    /* Tied: an accent edge one pixel heavier (an inset outline, so nothing moves), never color alone. */
     &[data-tie] {
       border-color: var(--accent);
       outline: var(--line-w) solid var(--accent);
       outline-offset: calc(-1 * var(--focus-offset));
     }
-    /* The heavier edge is an outline inside the border, so the card keeps its size. */
     &[data-tie="self"] {
       background: var(--accent-soft);
     }
@@ -465,9 +443,8 @@
     }
   }
 
-  /* Level 2. Used by, Inside (what runs, what stores, what is outside, side by side) and Uses
-     where there is room, with the wires in the gutters between; stacked, in that order and with
-     the ties in words alone, where there is not. */
+  /* Level 2: Used by, Inside and Uses side by side with the wires in the gutters; stacked, with the
+        ties in words alone, where there is no room. */
   .cap-system-map-columns {
     position: relative;
     display: grid;
@@ -513,8 +490,6 @@
     z-index: 1;
   }
 
-  /* A tie or a part held (pointed at or focused) keeps its wires lit; the step's lighting returns
-     when it is let go. */
   .cap-system-map-column-name [data-wire] {
     display: block;
   }
@@ -613,7 +588,6 @@
     font: var(--mono-size)/ var(--leading-snug) var(--mono);
   }
 
-  /* In the detail line: the part's full name, what it does, then its lines in words. */
   .cap-system-map-part-lines {
     color: var(--muted);
 
@@ -628,7 +602,6 @@
     font-size: var(--fs-detail);
   }
 
-  /* A step: its parts lit, the part it moves toward with the heaviest edge, the rest faded. */
   .cap-system-map[data-step] .cap-system-map-part {
     &:not([data-lit]) {
       background: transparent;

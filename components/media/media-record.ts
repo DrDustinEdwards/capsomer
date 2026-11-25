@@ -2,7 +2,6 @@
 import { escapeHtml } from "@dustinedwards/site-runtime/html";
 import { formatBytes } from "../format/format.ts";
 
-// The records, pure.
 
 export type AltState = "missing" | "decorative" | "set";
 export type TileState = "ready" | "uploading" | "failed" | "binned";
@@ -10,7 +9,6 @@ export type TileState = "ready" | "uploading" | "failed" | "binned";
 export interface UsedIn {
   title: string;
   href: string;
-  // How the post uses it: "image in the body", "cover".
   how?: string;
 }
 
@@ -35,19 +33,14 @@ export interface MediaRecord {
   suggestedTags?: string[];
   progress?: number;
   error?: string;
-  // The site's version of the file's metadata (site-api v0.4): a form posts it back as the
-  // version it last saw.
+  // The site's version of the file's metadata; a form posts back the version it last saw.
   version?: string;
-  // Where it is used was not read (a list of files has no usedBy; the inspected one does): no
-  // Unattached flag, and the inspector says it was not checked.
+  // Where it is used was not read (a list's rows have no usedBy): no Unattached flag, and the inspector says so.
   usedUnknown?: boolean;
-  // The point a site's crops are cut around, "XxY" from 0 to 1 from the top left (site-api v0.10.0
-  // MediaFocus); null or absent for none, when the crop is the site's guess.
+  // The point a site's crops are cut around, "XxY" from 0 to 1 from the top left; null or absent for none.
   focus?: string | null;
-  // site-api v0.13.0, each where the site keeps it: how many places use the file (a list's rows carry
-  // it, so a tile can say Unattached without reading every use), who made it and the terms it is used
-  // under, where it came from, the day the license runs out (YYYY-MM-DD), when the picture was taken
-  // (from the file's own metadata), and the other files holding exactly its bytes.
+  // Where the site keeps them: how many places use the file (so a tile can say Unattached), who made it and the terms,
+  // its source, the day the license runs out (YYYY-MM-DD), when the picture was taken, and files with identical bytes.
   usedCount?: number;
   credit?: string;
   license?: string;
@@ -55,12 +48,10 @@ export interface MediaRecord {
   licenseExpires?: string | null;
   takenAt?: string | null;
   twins?: Array<{ key: string; name: string }>;
-  // Which way a picture lies, as the site's kit says (site-api v0.13.1 rows); absent for a file with
-  // no size. Capsomer never works it out from the size: the rule is site-api's orientationOf.
+  // Which way a picture lies, from the site's kit; never worked out from the size (the rule is site-api's orientationOf).
   orientation?: "landscape" | "portrait" | "square";
 }
 
-// What the inspector edits.
 export interface MediaFields {
   alt: string;
   decorative: boolean;
@@ -69,15 +60,13 @@ export interface MediaFields {
   tags: string[];
 }
 
-// A tile's id from its file's key, "tile-2026-09-a-png": the markup a server draws and the one a page
-// builds must agree.
+// A tile's id from its file's key; the markup a server draws and the one a page builds must agree.
 export const tileId = (key: string): string =>
   `tile-${key.replace(/[^a-z0-9]+/gi, "-").toLowerCase()}`;
 
 export const LARGE_BYTES = 1024 * 1024;
 
-// The state of a file's alt text. Missing and decorative are different: missing is a to-do,
-// decorative is a decision the author made.
+// Alt text state: missing is a to-do, decorative is a decision the author made.
 export function altStateOf(alt: string, decorative: boolean): AltState {
   if (decorative) return "decorative";
   return alt.trim() ? "set" : "missing";
@@ -92,12 +81,10 @@ export function parseTags(text: string): string[] {
   return out;
 }
 
-// What a tile says about the file besides its name: the things a person should not miss.
 export interface Flag {
   tone: "warn" | "info" | "nodata";
   word: string;
 }
-// A file nothing uses; where its use was not listed, by the count.
 export const unattached = (r: Pick<MediaRecord, "used" | "usedUnknown" | "usedCount">): boolean =>
   r.usedUnknown ? r.usedCount === 0 : r.used.length === 0;
 
@@ -115,7 +102,6 @@ export function flagsFor(
   return out;
 }
 
-// What a tile's controls are called, in one line a screen reader reads after the file's name.
 export function describeRecord(
   r: Pick<MediaRecord, "kind" | "type" | "bytes" | "state" | "progress" | "error">,
 ): string {
@@ -129,16 +115,14 @@ export function describeRecord(
 // Markdown link or alt text: the brackets and backslash that would end it early.
 const mdText = (text: string): string => text.replace(/[\\[\]]/g, "\\$&");
 
-// The three things a person copies: the address, the Markdown, the HTML. An image goes in as an
-// image and a document as a link: an <img> for a PDF breaks the page.
+// The three things a person copies. An image goes in as an image and a document as a link: an <img> for a PDF breaks the page.
 export function copySnippets(
   r: Pick<MediaRecord, "url" | "kind" | "alt" | "name"> & { decorative?: boolean },
 ): Array<{ id: string; label: string; name: string; value: string }> {
   const alt = r.alt.trim();
   // Prelum refuses ![](x) as missing alt text; ![""](x) is how Markdown says decorative.
   const mdAlt = !alt && r.decorative ? '""' : mdText(alt);
-  // A document's link text: "uptime-report.pdf" gives "uptime report". Never an image's alt text: a
-  // file's name says nothing of what the picture shows (the checklist's B2).
+  // A document's link text ("uptime-report.pdf" gives "uptime report"). Never an image's alt text: a file's name says nothing of the picture.
   const title = r.name
     .replace(/\.[a-z0-9]+$/i, "")
     .replace(/[-_]+/g, " ")

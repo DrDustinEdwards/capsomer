@@ -77,7 +77,6 @@ export interface WritingProgressProps {
   // The project's whole target and its deadline (YYYY-MM-DD), for a deadline's pace.
   projectTarget: number | null;
   deadline: string;
-  // The project's words now.
   wordsNow: number;
   // The zone the server counted in (the request's, or UTC). The panel counts again in the device's.
   zone: string;
@@ -87,7 +86,6 @@ export interface WritingProgressProps {
   // writingDays (repeated) and allowNegative.
   action?: string;
   Form?: FormComponent;
-  // The goal form's answer: the refusal to show, or that it was saved.
   error?: string | null;
   saved?: boolean;
   // A line in the goal form on where the project target and deadline are set.
@@ -97,14 +95,11 @@ export interface WritingProgressProps {
   // The chart's source line.
   source?: string;
   title?: ReactNode;
-  // How many days the chart shows. Default 7.
   days?: number;
   // A fixed "now", for a test or a specimen. Read once when the panel is drawn.
   now?: Date;
 }
 
-// Today's writing: words typed today against today's target, the streak, the pace a deadline asks
-// for, the last days as a chart, and the writer's own goal.
 export function WritingProgress({
   entries,
   goal,

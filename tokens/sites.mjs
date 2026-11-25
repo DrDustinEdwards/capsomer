@@ -5,15 +5,13 @@
 // runs palette.mjs's WCAG and APCA pairs on the site's colors merged into its family, in both themes
 // and under prefers-contrast: more.
 //
-// What goes in: only what a site differs on (faces, the display face, neutrals, the on state,
-// type sizes, space and radius, the hover touches in scale.mjs's `touch` group, --enarratio-*), as literal values, never a var() chain, so the file works on <html> or on
-// any wrapper. A brand color is never a site setting: it is a family (FAMILIES in
-// palette.mjs), which the site keeps choosing with data-family, unless the site's look is its own
-// in a way no family can draw (two hues): then `ownBrand` says why, and its brand roles are
-// checked by the same pairs. A site on the defaults has no entry. The selectors repeat the family files' shapes (plain, system dark, pinned dark), so a
-// site rule ties a family rule on specificity and wins on order, and each also matches a
-// [data-family] or [data-density] wrapper inside the site, so css/enarratio-tokens.css's wrapper
-// block cannot put Capsomer's own values back there.
+// Only what a site differs on, as literal values (never a var() chain, so the file works on <html>
+// or any wrapper). A brand color is never a site setting: it is a family (FAMILIES in palette.mjs),
+// unless the site needs two hues no family has: then `ownBrand` says why and its brand roles are
+// checked by the same pairs. The selectors repeat the family files' shapes so a site rule ties a
+// family rule on specificity and wins on order, and each also matches a [data-family] or
+// [data-density] wrapper inside the site, so css/enarratio-tokens.css's wrapper block cannot put
+// Capsomer's values back there.
 import { readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { FAMILIES, failures, fitNeutrals, themes } from "./palette.mjs";
@@ -67,10 +65,8 @@ const SITES = {
     on: "<html> on every page but the admin, where Foxhound's unlayered :root keeps the neutrals it shares a name with, and each .fh-cap wrapper, which takes them all",
     note: "Foxhound's own neutrals, DM faces and Recova's sizes under the amber family's accents, dark by default",
     defaultTheme: "dark",
-    // Recova's measures (Dustin, 2026-10-25: back to the old sizes): 13px secondary text and
-    // 14px controls and cells (its text-[0.8125rem] and 14px inputs), 38px controls (its py-2 and
-    // 10px/14px inputs), 44px rows (py-3) and 20px card padding (p-5). Labels stay 11px, as
-    // Recova's text-[0.6875rem]. Headings in DM Sans, as Recova's (Foxhound loads no Inter).
+    // Recova's measures: 13px secondary text, 14px controls and cells, 38px controls, 44px rows, 20px
+    // card padding, 11px labels; headings in DM Sans.
     all: {
       // "DM Sans Fallback" and "DM Mono Fallback" are metric-matched Arial faces (fallback-fonts.css),
       // so a cold visit that keeps the fallback sets the same lines as the real face.
@@ -78,8 +74,7 @@ const SITES = {
       "font-ui": '"DM Sans", "DM Sans Fallback", Arial, sans-serif',
       mono: '"DM Mono", "DM Mono Fallback", monospace',
       display: '"DM Sans", "DM Sans Fallback", Arial, sans-serif',
-      // The 404 title's poster face: Foxhound loads no Jost, so it is DM Sans like every heading
-      // (without it the 404 fell back to Futura or Century Gothic; parity audit, 2026-11-10).
+      // The 404 title's poster face: Foxhound loads no Jost, so it is DM Sans like every heading.
       poster: '"DM Sans", "DM Sans Fallback", Arial, sans-serif',
       "fs-detail": "0.8125rem",
       "fs-body": "0.875rem",
@@ -88,17 +83,16 @@ const SITES = {
       "pad-y": "8px",
       "pad-card": "20px",
       "row-h": "44px",
-      // Recova's 12px card corners and its hover touches: a linked card rises 4px and its edge
-      // turns amber (hover-spring), and the outlined button fills with amber from the left (btn-ghost).
+      // Recova's 12px card corners and hover touches: a linked card rises 4px and its edge turns amber;
+      // the outlined button fills with amber from the left.
       "radius-l": "12px",
       "card-lift": "-4px",
       "card-edge": "1",
       "btn-sweep": "1",
-      // Recova drew its icons with lucide-react at Lucide's own stroke, 2.
+      // Icons at Lucide's own stroke, 2.
       "icon-stroke": "2",
-      // Foxhound's links (Dustin, 2026-11-13: "the links should not be underlined ... underline on
-      // hover"): the network's semibold amber link, which is the cue that is not color (WCAG F73), and
-      // a line 2px under it on hover in place of the tint.
+      // Links stay the network's semibold amber (the cue that is not color, WCAG F73), with a 2px line
+      // on hover in place of the tint.
       "link-hover-decoration": "underline",
       "link-offset": "2px",
       "link-hover-bg": "transparent",
@@ -107,8 +101,7 @@ const SITES = {
     },
     coarse: { control: "44px" },
     // Text, muted, dim and the control border are Foxhound's own hues lifted to Capsomer's APCA
-    // floors (the dark mode plan, 2026-10-29): they were #e5e8e2, #a8a49e, #928d87 and #4a4c44,
-    // the last 2.02:1 on the surface, under WCAG's 3:1 for a control's edge.
+    // floors (the old border was 2.02:1 on the surface, under WCAG's 3:1).
     dark: {
       ground: "#111210",
       surface: "#181917",
@@ -136,11 +129,9 @@ const SITES = {
       "card-shadow": "0 1px 3px 0 rgb(0 0 0 / 8%), 0 1px 2px 0 rgb(0 0 0 / 5%)",
     },
   },
-  // germomics' own look (Dustin, 2026-10-04: the best-designed site in the network, which keeps
-  // its look on Capsomer): crystal violet buttons, cyan links, focus and now-playing, and
-  // violet-tinted neutrals, as its app.css drew them before the Tailwind move. Two hues, which no
-  // family has, so it sets its brand roles (ownBrand). The 55% and 12% mixes are the ones its
-  // site.css made with color-mix, written out.
+  // germomics' own look: crystal violet buttons, cyan links, focus and now-playing, and
+  // violet-tinted neutrals. Two hues no family has, so it sets its brand roles (ownBrand). The 55%
+  // and 12% mixes are its color-mix values written out.
   germomics: {
     family: "purple",
     on: "<html> on the public pages",
@@ -266,16 +257,16 @@ const SITES = {
       mono: '"DM Mono", "DM Mono Fallback", ui-monospace, monospace',
       "radius-l": "0.75rem",
       display: '"Fraunces Variable", "Fraunces", "Fraunces Fallback", Georgia, serif',
-      // design-system.md's text roles on a 1rem body: small 14px, tiny 12px, lead 18px, strong
-      // at DM Sans Medium, titles in Fraunces SemiBold.
+      // Text roles on a 1rem body: small 14px, tiny 12px, lead 18px, strong at DM Sans Medium, titles
+      // in Fraunces SemiBold.
       "text-tiny": "0.75rem",
       "text-small": "0.875rem",
       "text-lead": "1.125rem",
       "text-strong": "500",
       "title-weight": "600",
     },
-    // Rule 05's sky blue #43a1d8 is 2.7:1 on the cream ground, under the 3:1 a checked box needs,
-    // so the light theme takes Foxing's own hover blue for the fill and a step darker for hover.
+    // The sky blue #43a1d8 is 2.7:1 on the cream ground, under the 3:1 a checked box needs, so light
+    // takes Foxing's hover blue for the fill and a step darker for hover.
     light: {
       ground: "#faf6ee",
       surface: "#ffffff",
@@ -289,8 +280,8 @@ const SITES = {
       on: "#2b87bc",
       "on-hover": "#1f7fb8",
     },
-    // Dark muted and dim are Foxing's hues lifted to Capsomer's APCA text floor (the dark mode
-    // plan, 2026-10-29); they were #c4ae96 and #a28269 (Lc 58 and 36 on the raised surface).
+    // Dark muted and dim are Foxing's hues lifted to Capsomer's APCA text floor (they were Lc 58
+    // and 36 on the raised surface).
     dark: {
       ground: "#16100b",
       surface: "#1f1710",

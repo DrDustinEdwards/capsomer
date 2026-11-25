@@ -1,6 +1,4 @@
-// Mounts the inspector specimens. Every element with data-mount="<state>" gets that state. A phone
-// width is the same specimen in a narrow viewport: the spec sets it, so the sheet is tested where
-// it is drawn.
+// Mounts the inspector specimens; every element with data-mount="<state>" gets that state.
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { Inspector, type InspectorTab } from "./inspector.react.tsx";
@@ -9,7 +7,6 @@ const TABS: InspectorTab[] = [
   { value: "details", label: "Details", content: <p>Title, summary and tags.</p> },
   { value: "checks", label: "Checks", count: 2, content: <p>Two open checks.</p> },
   { value: "history", label: "History", content: <p>Twelve versions.</p> },
-  // A tab with nothing to show today is left out.
   { value: "comments", label: "Comments", content: null },
 ];
 

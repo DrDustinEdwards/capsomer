@@ -22,7 +22,6 @@ import { useBrowserZone } from "../hooks/hooks.react.tsx";
 export interface ScheduleDialogProps {
   open: boolean;
   onClose: () => void;
-  // Focus goes back here when it closes: the button that opened it.
   returnTo?: HTMLElement | null;
   // Sends the time, as an ISO string; the dialog closes when it resolves, and stays (with the
   // app's message said elsewhere) when it throws.
@@ -32,7 +31,6 @@ export interface ScheduleDialogProps {
   // A time already scheduled, as an ISO time: the field starts at it.
   current?: string | null;
   label?: string;
-  // The confirm's words. Default "Schedule".
   confirm?: ReactNode;
   // The line under the field once a time is chosen. Default "Goes live" and the time.
   lead?: string;
@@ -68,7 +66,6 @@ export function ScheduleDialog({
     // oxlint-disable-next-line react/exhaustive-deps -- only an opening resets it; `current` is read as it is then
   }, [open]);
   const [busy, setBusy] = useState(false);
-  // The input reads and writes the browser's own zone, so the field names it.
   const zone = useBrowserZone(null);
   const { at, problem } = checkSchedule(value, chosenAt);
   const past = problem === PAST_TIME;

@@ -17,7 +17,7 @@ import { ICON_TAGS, discoveryFiles, siteHead } from "./seo.ts";
 
 // One build for the site and every component's states page. The root is the repo, so a
 // states page sits at /components/<name>/states.html beside its component. The site is
-// served at the root of https://capsomer.dustinedwards.info (rulings.md, rule 16) by a
+// served at the root of https://capsomer.dustinedwards.info by a
 // static Cloudflare Worker; CAPSOMER_BASE overrides the base for another host.
 const root = fileURLToPath(new URL("..", import.meta.url));
 // The states pages are generated from each component's examples.html, so they are written

@@ -1,16 +1,11 @@
 import { ErrorPage, errorWords } from "../error-page/error-page.react.tsx";
 import { FIRST_PAGE } from "./apps.tsx";
 
-// The error page of an admin area's layout route (its ErrorBoundary export). The layout itself
-// failed, so the shell is not drawn: the page is the shared error page, its way out the admin's
-// first page, and a refusal's own words (a thrown data("Your account is not a member", 403)) are the
-// sentence, never a login page. Every admin area exports this, so each one fails the same way.
+// The error page of an admin area's layout route (its ErrorBoundary). The shell is not drawn because the layout
+// itself failed; a refusal's own words are the sentence, never a login page. Every admin area exports this.
 export interface AdminErrorViewProps {
-  // The ErrorBoundary's error.
   error: unknown;
-  // The admin's first page: "/admin".
   home: string;
-  // Its name on the way out. Default "Go to the Overview" (FIRST_PAGE).
   homeLabel?: string;
   dev?: boolean;
 }

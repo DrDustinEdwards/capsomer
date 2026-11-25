@@ -1,7 +1,6 @@
-// Editor workspace: the page around a writing surface. The Write, Split and Preview layout,
-// remembered in this browser; the site's own render beside the text in a sandboxed frame,
-// refreshed once the typing pauses; Ctrl or Cmd+S as a save in place; and the chrome that steps
-// back while someone types. The parts work with any surface (the markdown editor, a rich editor).
+// Editor workspace: the page around a writing surface. The Write, Split and Preview layout (remembered), the
+// site's render in a sandboxed frame refreshed once typing pauses, Ctrl or Cmd+S as a save in place, and
+// chrome that steps back while typing. The parts work with any surface.
 
 import { readStored, writeStored } from "../hooks/hooks.ts";
 import { register } from "../shortcuts/shortcuts.ts";
@@ -10,12 +9,10 @@ export type Layout = "write" | "split" | "preview";
 export const LAYOUTS: readonly Layout[] = ["write", "split", "preview"];
 export const LAYOUT_KEY = "cap-editor-layout";
 
-// A stored layout, or Write: what the server and the first paint show, so they agree.
 export function readLayout(stored: string | null | undefined): Layout {
   return stored === "split" || stored === "preview" ? stored : "write";
 }
 
-// The layout stored under `key`, or null when none is (or storage is refused).
 export function storedLayout(key = LAYOUT_KEY): Layout | null {
   const v = readStored(key);
   return v === null ? null : readLayout(v);
@@ -27,7 +24,6 @@ export function storeLayout(layout: Layout, key = LAYOUT_KEY): void {
   writeStored(key, layout);
 }
 
-// The preview's address with the refresh stamp in it, so a new stamp loads the frame again.
 export function previewUrl(base: string, stamp: string, param = "at"): string {
   const hash = base.indexOf("#");
   const path = hash === -1 ? base : base.slice(0, hash);
@@ -42,7 +38,6 @@ export function onSaveKey(save: () => void): () => void {
   return register({ key: "Mod+s", label: "Save", group: "Editor", run: () => save() });
 }
 
-// The surfaces whose typing counts: the markdown editor's and any element the app marks.
 export const TYPING_SURFACE = ".cm-editor, .cap-rich-editor-surface, [data-cap-typing-surface]";
 export const TYPING_ATTR = "data-cap-typing";
 
@@ -69,10 +64,6 @@ export function typingRecede(options: { surface?: string; root?: HTMLElement } =
   };
 }
 
-// Without a framework: every [data-cap="editor-workspace"] takes its layout from the radios in
-// its [data-cap-layout] group, remembered under its data-key (or LAYOUT_KEY), and shows only the
-// panes ([data-pane="write"], [data-pane="preview"]) that layout holds. Without script the
-// layout the HTML was written with stays.
 // The root is Element | Document | DocumentFragment, not ParentNode: under @cloudflare/workers-types
 // an HTMLFormElement does not type as a ParentNode, so a site could not pass its form.
 export function enhance(root: Element | Document | DocumentFragment = document): () => void {

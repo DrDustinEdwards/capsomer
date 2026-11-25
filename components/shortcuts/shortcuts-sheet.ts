@@ -13,7 +13,6 @@ import {
   singleKeysOn,
 } from "./shortcuts.ts";
 
-// Fills a sheet's list from the registry: one group heading and one description list each.
 export function renderSheetList(container: HTMLElement): void {
   container.replaceChildren();
   for (const g of grouped()) {
@@ -53,8 +52,6 @@ function syncSwitch(sheet: HTMLElement): void {
   if (word) word.textContent = on ? "On" : "Off";
 }
 
-// Builds the sheet's markup, exactly the contract on the doc page: the shared dialog with a
-// header, the list as its body, the switch in its footer, and the corner Close button.
 export function buildSheet(): HTMLDialogElement {
   const id = uid("cap-keys");
   const d = document.createElement("dialog");
@@ -129,9 +126,6 @@ export function buildSheet(): HTMLDialogElement {
   return d;
 }
 
-// Wires one sheet: the shared dialog's rules (Close, the backdrop, Esc, focus returned on
-// close), its list, the switch, and the Ctrl or Cmd shortcuts that still work over it. Returns
-// a function that unwires it.
 export function wireSheet(sheet: HTMLDialogElement): () => void {
   const unwireBase = wireDialog(sheet);
   const box = sheet.querySelector<HTMLInputElement>("[data-cap-part='single-keys']");
@@ -159,7 +153,6 @@ export function wireSheet(sheet: HTMLDialogElement): () => void {
   };
 }
 
-// Opens the sheet: the one in the page's markup, or one built on first use.
 export function openShortcutSheet(
   opener: Element | null = document.activeElement,
 ): HTMLDialogElement {

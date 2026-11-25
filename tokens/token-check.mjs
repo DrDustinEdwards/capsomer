@@ -1,5 +1,5 @@
-// capsomer/token-check: reading a site's own CSS tokens, written once. Pure functions over CSS text (no
-// filesystem), so a site's gate reads its stylesheets and passes the text in (dustinedwards.info's token gate).
+// capsomer/token-check: reads a site's own CSS tokens. Pure functions over CSS text (no filesystem),
+// so a site's gate reads its stylesheets and passes the text in.
 
 // The last declaration of a rule may have no semicolon: the body ends there.
 const DECL = /(--[a-z0-9-]+)\s*:\s*([^;]+?)\s*(?:;|$)/g;
@@ -56,14 +56,12 @@ export function resolveToken(block, name) {
   return { value: null, chain };
 }
 
-// Every design value in a stylesheet that is written as a literal where a token exists for its kind: colors, spaces,
-// font sizes, weights, line heights, tracking, radii, line widths, focus offsets, layers, durations, easings, shadows
-// and opacities (the W3C design tokens format's types: color, dimension, fontWeight, number, duration, cubicBezier,
-// shadow), and a blur. Not checked, on purpose: a component's own geometry (a dialog's width, an avatar's size, grid tracks, an
-// aspect ratio, a transform, a clip path), which is a component token where a site may change it; values relative to
-// the text or the box (em, ch, %, vw, vh), which scale with what they sit in; 0, 1px hairline offsets, and the
-// font metric overrides in an @font-face. Defining a custom property with a literal is how a token is made, so only
-// a component token whose name says its kind (…-gap, …-weight, …-radius) is checked.
+// Every design value written as a literal where a token exists for its kind (color, space, font
+// size, weight, line height, tracking, radius, line width, focus offset, layer, duration, easing,
+// shadow, opacity, blur). Not checked: a component's own geometry, values relative to the text or
+// box (em, ch, %, vw, vh), 0, 1px hairline offsets and @font-face metric overrides. Defining a
+// custom property with a literal is how a token is made, so only a component token whose name says
+// its kind (…-gap, …-weight, …-radius) is checked.
 
 const REM = 16;
 const toPx = (n, unit) => (unit === "rem" ? n * REM : n);

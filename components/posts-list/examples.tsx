@@ -108,8 +108,6 @@ const ROWS: PostRow[] = [
   },
 ];
 
-// A site with site-api v0.17.0's ideas: a Trash, rename, preview links, the author and date
-// filters, and rows that carry their authors and excerpt.
 const IDEAS: PostOffers = {
   delete: true,
   schedule: true,
@@ -224,7 +222,6 @@ let copies = 0;
 // The in-memory site: what the content kit would do through site-api, enough to try each action.
 function useSite(initial: PostRow[] = ROWS) {
   const [rows, setRowsState] = useState(initial);
-  // The site's truth between renders: an Undo posted later reads the rows as they are then.
   const live = useRef(initial);
   const setRows = (f: (rs: PostRow[]) => PostRow[]) => {
     live.current = f(live.current);
@@ -299,7 +296,6 @@ function useSite(initial: PostRow[] = ROWS) {
       case "tag-remove": {
         if (!tag) return { ok: false, message: "Type a tag first. Nothing was changed." };
         const adding = intent === "tag-add";
-        // The site refuses a post with no front matter (Carrel's bulk.server.ts does).
         const refused: string[] = ids.filter((id) => id === "spring-survey");
         const changed = ids.filter(
           (id) =>
@@ -368,7 +364,6 @@ function useSite(initial: PostRow[] = ROWS) {
       }
       case "trash":
       case "restore": {
-        // Each is the other's Undo, as the kit's are.
         const binning = intent === "trash";
         setRows((rs) =>
           rs.map((r) =>
@@ -434,7 +429,6 @@ function useSite(initial: PostRow[] = ROWS) {
         };
       }
       case "reschedule": {
-        // One time for every post, or (its Undo) one per post in the order of ids, as the kit takes them.
         const times = form.getAll("publishAts").map(String);
         const at = (id: string) =>
           (times.length ? times[ids.indexOf(id)] : String(form.get("publishAt") ?? "")) ?? "";
@@ -487,8 +481,6 @@ function Editor() {
   return <PostsList data={dataOf(rows)} action="/posts" submit={submit} now={NOW} />;
 }
 
-// A site that keeps an update waiting on a live post (site-api v0.10.0): the row says so, and its
-// menu moves or cancels it.
 function Updates() {
   const { rows, submit } = useSite();
   return (
@@ -539,7 +531,6 @@ const CRUMBS = [
   { label: "Scheduled update" },
 ];
 
-// The page of one waiting update, with a host that moves it and cancels it.
 function UpdateView() {
   const [data, setData] = useState<ScheduledUpdateView | null>(UPDATE_VIEW);
   const submit = async (form: FormData): Promise<IntentResult> => {
@@ -595,7 +586,6 @@ const outcomeResult: IntentResult = {
   },
 };
 
-// The v0.15.0 site, live or its Trash, with every action.
 function Ideas({ trash = false }: { trash?: boolean }) {
   const { rows, submit } = useSite(IDEA_ROWS);
   const live = rows.filter((r) => !r.trashedAt);
@@ -623,8 +613,6 @@ function Ideas({ trash = false }: { trash?: boolean }) {
   );
 }
 
-// The same site's list as a server sends it after the filters were used, and after a preview link
-// was made with no script.
 const ideaRows = IDEA_ROWS.filter((r) => !r.trashedAt);
 const ideaCounts = { all: 4, draft: 1, scheduled: 1, published: 2, trash: 2 };
 const filteredIdeas = dataOf(

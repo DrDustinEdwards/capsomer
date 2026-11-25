@@ -1,10 +1,7 @@
-/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+/* Layer order, repeated so this file is safe in any import order. */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
-/* The site header, whole: the frame every header has, the family letterhead (data-variant="letterhead")
-   and the header's search, in that order. A site whose header is not the letterhead, or has no search,
-   loads the parts it draws instead: site-header-frame.css, then site-header-letterhead.css and
-   site-header-search.css as needed (site-header.md, "Loading"). */
+/* The whole header. A site without the letterhead or search can import the parts it draws instead. */
 @import "../site-header-frame/site-header-frame.css";
 @import "../site-header-letterhead/site-header-letterhead.css";
 @import "../site-header-search/site-header-search.css";

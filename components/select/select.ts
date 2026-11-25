@@ -1,10 +1,7 @@
-// The select's behavior: a real <select class="cap-select"> stays in the page (its options
-// are the HTML, it submits with the form, it works with no script); this module hides it and
-// puts a button (role="combobox") and a popup in its place, built from the shared listbox
-// (options, groups, check, typeahead, keyboard) and the shared popover (surface, placement,
-// open and close, focus return). Choosing writes the value back to the native select and
-// fires `input` and `change` on it, so a form, the field's checks and an app's own handlers
-// see what they always saw.
+// The select's behavior: a real <select class="cap-select"> stays in the page (it submits with the form and
+// works with no script); this module hides it and puts a button (role="combobox") and a popup in its
+// place, built from the shared listbox and popover. Choosing writes the value back to the native select
+// and fires `input` and `change` on it, so forms and handlers see what they always saw.
 //
 // Markup: <div class="cap-select-wrap" data-cap="select"><select class="cap-select">...</select></div>.
 // Add `data-native` to the wrapper to keep the browser's own select (a phone, say).
@@ -60,8 +57,6 @@ export function readOptions(select: HTMLSelectElement): Array<SelectItem | Selec
   return out;
 }
 
-// The words the trigger shows: the chosen option's label, or the placeholder (the empty
-// option's label) when the value is empty.
 export function triggerText(select: HTMLSelectElement): { text: string; placeholder: boolean } {
   const o = select.selectedOptions[0];
   if (!o) return { text: "", placeholder: true };
@@ -110,7 +105,6 @@ export interface SelectControl {
   readonly select: HTMLSelectElement;
   readonly trigger: HTMLButtonElement;
   readonly popup: HTMLElement;
-  // Re-reads the native select (its value, its options, disabled) into the trigger and the popup.
   sync(): void;
   open(): void;
   close(): void;
@@ -123,7 +117,6 @@ export function selectControlFor(select: Element | null): SelectControl | undefi
   return select instanceof HTMLSelectElement ? controls.get(select) : undefined;
 }
 
-// Builds the trigger and the popup for one native select and wires them.
 export function createSelect(wrap: HTMLElement, select: HTMLSelectElement): SelectControl {
   const n = ++serial;
   const nativeId = select.id;

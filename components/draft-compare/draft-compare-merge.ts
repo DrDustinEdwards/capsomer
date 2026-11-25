@@ -1,9 +1,5 @@
-// The compare's merge mode: two texts that both moved on from one version (a person's unsaved text, "mine", and a
-// newer copy saved elsewhere, "theirs") set side by side, block by block, so nothing is lost and the person takes
-// each difference from where they want it. A block is one top-level key of the frontmatter, or one run of the body
-// between blank lines. With the version both started from (the base), a block only one side changed starts on that
-// side, a block both changed the same way is not a choice, and a block both changed differently starts on mine.
-// Without a base, every difference starts on mine. Pure, so a server can plan and the browser can apply the picks.
+// The merge mode: two texts that both moved on from one version, set side by side block by block so nothing is lost. A block is a
+// frontmatter key or a body run between blank lines. With a base, a block one side changed starts on that side; otherwise on mine.
 
 import { splitSource } from "@drdustinedwards/site-helpers/frontmatter";
 import { diffWords, editScript, type WordPart } from "./draft-compare-diff.ts";
@@ -110,7 +106,6 @@ const same = (a: MergeBlock, b: MergeBlock) => a.front === b.front && a.text ===
 const equal = (a: MergeBlock[], b: MergeBlock[]) =>
   a.length === b.length && a.every((x, i) => same(x, b[i]!));
 
-// Blocks are few (a post has tens, a book chapter hundreds), so the search is never cut short.
 const NO_LIMIT = Number.MAX_SAFE_INTEGER;
 
 type Part = { kind: "same" | "del" | "ins"; blocks: MergeBlock[] };

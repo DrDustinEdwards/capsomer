@@ -64,17 +64,12 @@ export type { ContentLabels, IntentResult, PostRow, PostsData, ScheduledUpdateVi
 export type { FormComponent };
 
 export interface PostsListProps {
-  // The loader's view data: one page of one site.
   data: PostsData;
-  // Where the forms post, and the list's own address: usually the route itself.
   action: string;
-  // The host router's form component. Without it a plain <form> is rendered.
   Form?: FormComponent;
   // The script path: posts a form and resolves with the action's result (a useFetcher wrapper).
-  // With it, outcomes, Undo and the confirm dialog happen in place; without it every form posts
-  // and the page comes back with `result`.
+  // Without it every form posts and the page comes back with `result`.
   submit?: SubmitIntent;
-  // The last result from the action, for the page that comes back after a post with no script.
   result?: IntentResult | null;
   labels?: ContentLabels;
   // A fixed "now" for the times and "in 3 days", for a test or a server's clock.
@@ -109,9 +104,8 @@ function HeadCheck({
   );
 }
 
-// The new time for a reschedule, in the person's own zone; the UTC time it means is posted as
-// publishAt. As delivered (the update page with no script) it is a text field in UTC that starts
-// at the time it moves from, since a form with no script cannot add the zone the site needs.
+// The new time for a reschedule, in the person's zone; the UTC time it means is posted as
+// publishAt. With no script it is a UTC text field, since a form cannot add the zone.
 function RescheduleField({ id, at }: { id: string; at: string }) {
   const [local, setLocal] = useState<string | null>(null);
   const zone = useBrowserZone(null);
@@ -168,7 +162,6 @@ function RescheduleField({ id, at }: { id: string; at: string }) {
   );
 }
 
-// What Reschedule… is moving: one post, its name and the time it goes out now.
 interface Moving {
   id: string;
   name: string;
@@ -176,8 +169,6 @@ interface Moving {
   version?: string;
 }
 
-// The small dialog Reschedule… opens: the time field and Reschedule. Its form posts inside the
-// list (or the update page), so the script path runs it like any other intent.
 function RescheduleDialog({
   moving,
   action,
@@ -230,8 +221,6 @@ function RescheduleDialog({
   );
 }
 
-// What Rename… is moving: one post, its name, its id and the address it has now (null for a post
-// never published).
 interface Renaming {
   id: string;
   name: string;
@@ -239,11 +228,8 @@ interface Renaming {
   version?: string;
 }
 
-// A slug as the contract's ContentId takes it ("notes-on-the-survey"). The kit checks it again.
 const SLUG = "[A-Za-z0-9][A-Za-z0-9._\\-]{0,199}";
 
-// The small dialog Rename… opens (site-api v0.17.0): the new slug, starting at the old one, and
-// what happens to the old address. It posts `rename` with `newId` inside the list, as Reschedule does.
 function RenameDialog({
   renaming,
   action,
@@ -320,9 +306,8 @@ function RenameDialog({
   );
 }
 
-// The preview link the last post made (`preview-link`, site-api v0.17.0): its address in a field
-// that selects whole, Copy with script, and when it stops working in the reader's own zone. A status
-// region, so the new link and a copy are said where the person is looking.
+// The preview link the last post made: selects whole, Copy with script, and shows when it stops
+// working in the reader's zone. A status region, so the new link is said where the person looks.
 function PreviewLinkBox({
   link,
   name,
@@ -397,10 +382,9 @@ const cancelRequest = (
   fields: version ? { ids: [id], versions: [version] } : { ids: [id] },
 });
 
-// One page of one site's posts: status tabs with counts, search and filters, the table with its
-// row menus, the bulk bar with each item's outcome, Undo, and the confirmation for what cannot be
-// undone. Every action is a form post, so it all works with no script; `submit` adds the in-place
-// path. The site and the person decide what is offered (data.offers, data.can).
+// One page of one site's posts: tabs, search and filters, the table, the bulk bar, Undo and the
+// confirmation for what cannot be undone. Every action is a form post, so it works with no
+// script; `submit` adds the in-place path.
 export function PostsList({
   data,
   action,
@@ -416,7 +400,6 @@ export function PostsList({
   const title = plural.charAt(0).toUpperCase() + plural.slice(1);
   // False on the server and while hydrating, true once hydrated.
   const mounted = useHydrated();
-  // The time the list was drawn, when the page does not pass one.
   const [drawnAt] = useState(() => Date.now());
   const clock = now ?? drawnAt;
 
@@ -451,9 +434,8 @@ export function PostsList({
   });
   const [moving, setMoving] = useState<Moving | null>(null);
   const [renaming, setRenaming] = useState<Renaming | null>(null);
-  // Where focus goes when a post leaves the list under it (Move to Trash, Restore, Delete for good,
-  // with script): the title of the post that took its place, or of the one before when it was the
-  // last; after the bulk bar, the table; with nothing left, the current tab. Never the page's top.
+  // Where focus goes when a post leaves the list under it: the post that took its place, else the
+  // one before, else the table, else the current tab. Never the page's top.
   const lastRow = useRef(-1);
   const placeFocus = useRef<number | null>(null);
   const onFocus = (e: FocusEvent<HTMLElement>) => {
@@ -965,29 +947,21 @@ export function PostsList({
 }
 
 export interface PostScheduledUpdateProps {
-  // site-api's loadScheduledUpdate(source, id): the update's source, the live one, the patch and
-  // the times.
   data: ScheduledUpdateView;
-  // Where Reschedule and Cancel post: the posts list's action, which runs the kit's intents.
   action: string;
   Form?: FormComponent;
   submit?: SubmitIntent;
   result?: IntentResult | null;
-  // When the live version went out (the row's publishedAt), for the live side's heading.
   liveSince?: string | null;
-  // The trail above the title: the posts list, then this post.
   crumbs?: Array<{ label: string; href?: string }>;
-  // The title's level: the page's h1 by default.
   headingLevel?: "h1" | "h2" | "h3";
   labels?: ContentLabels;
   now?: number;
 }
 
-// The page of the update waiting on a live post: a page head with the post's title and its
-// actions, then the update beside the live post (with when it goes live) in the draft compare,
-// with the unified patch under it. Reschedule… opens the dialog and Cancel the update asks
-// first, posting the posts list's own intents; with no script both are plain forms under the
-// head.
+// The page of the update waiting on a live post: the post's title and actions, then the update
+// beside the live post in the draft compare, with the unified patch. With no script Reschedule
+// and Cancel are plain forms under the head.
 export function PostScheduledUpdate({
   data,
   action,
@@ -1008,7 +982,6 @@ export function PostScheduledUpdate({
   // False on the server and while hydrating, true once hydrated.
   const mounted = useHydrated();
   const [moving, setMoving] = useState<Moving | null>(null);
-  // The time the list was drawn, when the page does not pass one.
   const [drawnAt] = useState(() => Date.now());
   const clock = now ?? drawnAt;
   const scripted = mounted && !!submit;

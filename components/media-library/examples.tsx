@@ -1,7 +1,4 @@
-// Mounts the specimens: MediaLibrary as a host would hold it, with a small in-memory site standing
-// in for the content kit, and a stand-in router (links and GET forms inside a specimen change its
-// query in place), so every action can be tried on one page. The kit's words here are a
-// specimen's, not a contract.
+// Mounts the specimens: MediaLibrary with an in-memory site standing in for the content kit and a stand-in router, so every action can be tried on one page.
 import {
   StrictMode,
   useRef,
@@ -116,7 +113,6 @@ const FILES: MediaRecord[] = [
   file("2026/08/scan-0042.png", "#ece5ff", { state: "binned", bytes: 6291456 }),
 ];
 
-// Two more, in another month and another folder, for the grouped specimens.
 const GROUPED: MediaRecord[] = [
   ...FILES,
   file("2026/08/plot-notebook.png", "#c9b8ef", {
@@ -149,8 +145,7 @@ const OFFERS: MediaData["offers"] = {
   replace: true,
 };
 
-// A file's own bytes, as a host serves them on its own origin for the crop editor: a PNG drawn here,
-// since the tiles' pictures are SVG, which a canvas does not crop.
+// A PNG drawn here for the crop editor, since the tiles' pictures are SVG, which a canvas does not crop.
 const pngs = new Map<string, string>();
 function bytesOf(key: string): string {
   const made = pngs.get(key);
@@ -174,7 +169,6 @@ function bytesOf(key: string): string {
   return url;
 }
 
-// The contract's lenses and sorts, as the site would answer them (site-api v0.6.0).
 const LENS: Record<string, (f: MediaRecord) => boolean> = {
   unattached: (f) => (f.usedCount != null ? f.usedCount === 0 : !USES[f.key]?.length),
   "no-alt": (f) => f.kind === "image" && f.altState === "missing",
@@ -191,8 +185,6 @@ const BY: Record<string, (a: MediaRecord, b: MediaRecord) => number> = {
   used: (a, b) => (b.usedCount ?? 0) - (a.usedCount ?? 0),
 };
 
-// This specimen site's orientation for its files, which have exact sizes (a real site's kit uses
-// site-api's orientationOf).
 const lies = (f: Pick<MediaRecord, "width" | "height">): MediaRecord["orientation"] =>
   !f.width || !f.height
     ? undefined
@@ -206,7 +198,6 @@ const placed = (f: MediaRecord): MediaRecord => ({
   ...(lies(f) ? { orientation: lies(f) } : {}),
 });
 
-// What the kit's loader would give for a query over these files.
 function load(files: MediaRecord[], query: MediaQuery, over: Partial<MediaData> = {}): MediaData {
   const trash = query.view === "trash";
   const inView = files.filter((f) => (trash ? f.state === "binned" : f.state !== "binned"));
@@ -268,8 +259,6 @@ const queryOf = (params: URLSearchParams): MediaQuery => {
   return { ...q, ...(q.suggest ? { suggest: q.suggest === "1" } : {}) } as MediaQuery;
 };
 
-// The stand-in router: a GET form or a link to the library's own address changes the specimen's
-// query instead of leaving the page.
 function useRouter(initial: MediaQuery) {
   const [query, setQuery] = useState(initial);
   // One component for the specimen's life, so a re-render never remounts a form.
@@ -300,7 +289,6 @@ function useRouter(initial: MediaQuery) {
 
 const fileWord = (n: number) => (n === 1 ? "file" : "files");
 
-// The in-memory site: what the content kit would do through site-api.
 let written = 1;
 function useSite(initial: MediaRecord[] = FILES, keepsSize = false) {
   // The files as drawn, and the same list in a ref for an intent that reads it after an await.
@@ -687,8 +675,6 @@ function Editor() {
   );
 }
 
-// A site whose replace must keep the picture's size (site-api v0.11.0 mediaReplaceKeepsSize), in form
-// mode as Carrel shows it: replace asks for the same size, and a crop is only ever a new file.
 function KeepsSize() {
   const { files, submit } = useSite();
   const { query, Form, onClickCapture } = useRouter({ inspect: "2026/09/launch-hero.png" });
@@ -706,7 +692,6 @@ function KeepsSize() {
   );
 }
 
-// The picked file with the site's model asked (`suggest`): the host loaded the kit's detail for it.
 function PickerSuggest() {
   const key = "2026/09/uptime-strip.png";
   const suggestions = {
@@ -746,8 +731,6 @@ function Picker() {
   );
 }
 
-// site-api v0.13.0: a site that offers every one of the media library's ideas, and whose addresses
-// carry the size (a quarter turn of a picture that is not square is saved as a new file).
 const IDEA_OFFERS: MediaData["offers"] = {
   ...OFFERS,
   lenses: ["unattached", "no-alt", "duplicates", "license-expired", "oversized"],
@@ -841,8 +824,7 @@ const loadIdeas = (files: MediaRecord[], query: MediaQuery): MediaData =>
       : {}),
   });
 
-// What the site would answer to loadMediaChanges: the test (or a person at the console) queues a
-// change with mediaChange(key, alt) or mediaRemove(key).
+// Queue a change with mediaChange(key, alt) or mediaRemove(key); loadMediaChanges answers it.
 const pending: KitMediaChanges = { rows: [], removed: [], changeCursor: "c0", more: false };
 const kitRow = (r: MediaRecord): KitMediaRow => ({
   id: r.key,

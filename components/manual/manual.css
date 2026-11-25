@@ -1,17 +1,9 @@
-/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+/* Layer order repeated so this file is safe in any import order: the first statement fixes it (css/layers.css). */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
-/* The manual theme: the public pages of the dustinedwards.info sites set after the NASA Graphics
-   Standards Manual (Danne & Blackburn, 1975). Opt-in: an app imports capsomer/manual.css only on
-   its public pages; nothing else in Capsomer reads it. Every color comes from the page's family, so
-   dustinedwards.info is purple and Capsid teal. Lifted from Capsid's explorer (capsid #560, #562,
-   #583). Its parts, in the order a page uses them: */
+/* The manual theme for the public pages of the dustinedwards.info sites. Opt-in: an app imports capsomer/manual.css only on its public pages; nothing else in Capsomer reads it. */
 
-/* The running head over a page: its section's number and name on the left in bold, the folio or
-   date on the right, over a hairline (the manual's index, page i). The sign variant sets it as
-   one of the manual's building signs (6.1): a dark panel of light type, the family's color in a
-   strip along its top, the number on a plate of its own. The signs take --sign and --on-sign, so
-   in dark they stay dark panels with an edge instead of turning into white slabs. */
+/* The running head over a page. */
 @layer cap.components {
   .cap-running-head {
     display: flex;
@@ -35,7 +27,6 @@
     min-inline-size: 2.5ch;
   }
 
-  /* The trail after the number reads lighter than it; under the mast on a tracks page (RunningHead). */
   .cap-running-head-trail {
     font-weight: var(--weight-regular);
   }
@@ -100,9 +91,7 @@
   }
 }
 
-/* A numbered part of a page, set as the NASA Graphics Standards Manual sets its pages (1975,
-   5.1): the number and title on the left over a rule across the whole width, what the part says
-   beside it, and its figures and lists full width below. */
+/* A numbered part of a page, set as the NASA Graphics Standards Manual sets its pages. */
 @layer cap.components {
   .cap-part {
     display: grid;
@@ -164,11 +153,7 @@
   }
 }
 
-/* Facts as a form's ruled boxes: a small label in the mono over each value, the boxes sharing
-   their rules (the manual's forms, 4.1; the Apollo flight plan's title block, MSC Form 29). Used
-   for a page's title block, a post's report documentation and a row of readings. The tones
-   variant steps the boxes from light to dark through one ink, as the manual sets type on stepped
-   grays (7.2). */
+/* Facts as a form's ruled boxes. */
 @layer cap.components {
   .cap-form-boxes {
     --cols: 4;
@@ -265,10 +250,7 @@
     }
   }
 
-  /* Readings as an instrument panel (the Apollo DSKY, study section 7b): the dark
-     sign in both themes, legends in drafting capitals as the DSKY's engraved Gorton markings, and each
-     value lit in seven segments (--readout) in the family's light color, the current-page sign's
-     (--on-sign-here), with a soft glow: the site's own hue, not the DSKY's green (Dustin, 2026-11-04).
+  /* Readings as an instrument panel: a dark sign in both themes, values lit in seven segments (--readout) in the family's light color.
      DSEG7 draws digits, minus, colon and period only: a value with letters keeps the UI face. */
   .cap-form-boxes[data-variant="panel"] {
     border-color: var(--sign-edge);
@@ -374,10 +356,7 @@
   }
 }
 
-/* A list of procedures as an Apollo checklist card: a ruled box, a dark strip naming the card,
-   and per step a box to tick, its number, its name, a dotted leader to what kind of step it is,
-   and a line under it. The box to tick is drawn, not a control: the card is a list of links.
-   */
+/* A list of procedures as a checklist card. The box to tick is drawn, not a control. */
 @layer cap.components {
   .cap-checklist {
     border: var(--line-w-thick) solid var(--text);
@@ -486,9 +465,7 @@
   }
 }
 
-/* A figure as a plate: the drawing or photograph in a ruled box on the raised surface, its plate
-   number in the mono at the top left, the caption under the box with the figure number at the
-   right. The manual boxes every diagram (5.17), as NASA's photo plates were boxed and numbered. */
+/* A figure as a plate. */
 @layer cap.components {
   .cap-plate {
     margin: 0;
@@ -537,9 +514,7 @@
   }
 }
 
-/* The ways on from a page, as the manual's directional signs (6.1, 6.2): a dark panel of light
-   type with an arrow, the way back pointing left and the way forward right, and the way forward
-   carrying the family's color along its top. */
+/* The ways on from a page, as the manual's directional signs. */
 @layer cap.components {
   .cap-signs {
     display: flex;
@@ -557,12 +532,10 @@
     border: var(--line-w) solid var(--sign-edge);
     background: var(--sign);
     color: var(--on-sign);
-    /* A way on is wayfinding: the airport sign face, bold. */
     font: var(--weight-bold) var(--title-6) / var(--leading-snug) var(--wayfinding);
     text-decoration: none;
     overflow-wrap: anywhere;
 
-    /* The family arrow (css/base.css), at the sign's outer edge in the way you go. */
     &[rel~="prev"]::before,
     &[rel~="next"]::after,
     &[data-variant="forward"]::after {
@@ -610,9 +583,7 @@
   }
 }
 
-/* A round patch for a project, as each Apollo crew wore its mission's: the name round the top,
-   a line round the foot, the count on a disc of the family's color, a dot round the disc for
-   each of the things counted. Drawn by patchSvg() (manual.ts). */
+/* A round patch for a project, as each Apollo crew wore its mission's. */
 @layer cap.components {
   .cap-patch {
     display: block;
@@ -671,8 +642,7 @@
   }
 }
 
-/* The foot of a page as the manual's letterhead (3.1): the site's name as the logotype, large and
-   bold, the address beside it in regular and medium, and the folio at the right. */
+/* The foot of a page as the manual's letterhead. */
 @layer cap.components {
   .cap-letterhead {
     display: grid;
@@ -718,10 +688,7 @@
   }
 }
 
-/* The head of a page drawn on the manual's layout grid (5.1), as it prints its grids in fine red
-   lines: twelve columns with their gutters and a baseline every 24 pixels, four columns on a
-   phone, and, where `data-labeled` is set, the grid's own label at its foot on the right. Red is the
-   manual's, not the family's: the grid is the printer's, under the page, never a mark on it. */
+/* The head of a page drawn on the manual's layout grid, as it prints its grids in fine red lines. */
 @layer cap.components {
   .cap-layout-grid {
     --cols: 12;
@@ -773,10 +740,7 @@
   }
 }
 
-/* The trail to a page as an airport's direction signs: Overpass Bold, the free
-   Highway Gothic that FAA airport signs are lettered in (AC 150/5345-44L, Appendix A), on a dark band,
-   white FAA arrows between the ways, and the page you are on as a location sign: light type and a light
-   outline on a dark gray box (a location sign is outlined; a filled one means "hold"). */
+/* The trail to a page as an airport's direction signs. */
 @layer cap.components {
   .cap-direction {
     padding: var(--space-2) var(--space-4);
@@ -829,7 +793,6 @@
       text-decoration: none;
       overflow-wrap: anywhere;
 
-      /* Every link's hover, on the dark band: a white tint behind the words. */
       &:hover {
         background: color-mix(in srgb, var(--on-sign) 18%, transparent);
       }
@@ -885,7 +848,6 @@
         background: CanvasText;
         forced-color-adjust: none;
       }
-      /* The inset shadow is dropped in forced colors; an outline keeps the location sign's frame. */
       [aria-current] {
         outline: var(--focus-width) solid CanvasText;
         outline-offset: calc(-1 * var(--focus-offset));
@@ -894,11 +856,7 @@
   }
 }
 
-/* The livery: an airliner's cheatline, three stripes wide to thin along the fuselage (Wikipedia,
-   "Aircraft livery"), across the foot of a page. The stripes are the family's chart ramp, steps 3, 2
-   and 1, so the foot of a page and its sequential charts share their tones and each site's stripes
-   come out in its own color (Dustin, 2026-11-04). A card carries a short length of the band along its
-   top as data-livery. */
+/* The livery. */
 @layer cap.components {
   .cap-livery {
     block-size: 43px;
@@ -918,10 +876,7 @@
   }
 }
 
-/* The roll blocks painted round a Saturn V, so the cameras could see how far it had turned: one
-   block a step, its opposite quarters filled for a step done and lit in the family's color for the
-   one you are on, a step ahead faint. Drawn, so it is hidden from screen readers and the page says
-   which step it is in words. */
+/* The roll blocks, one a step: done, lit or faint. Drawn, so hidden from screen readers. */
 @layer cap.components {
   .cap-roll {
     display: flex;
@@ -952,8 +907,7 @@
   }
 }
 
-/* Dated steps on the Apollo flight plan's time line: a ruled scale down the left, ticked every
-   10px, each step's mark (a year, a time or a number) at its tick, the step beside it. */
+/* Dated steps on the Apollo flight plan's time line. */
 @layer cap.components {
   .cap-timeline {
     margin: 0 0 0 calc(var(--space-5) + var(--space-2));
@@ -1007,9 +961,7 @@
   }
 }
 
-/* One step as an Apollo cue card: a ruled box, a dark strip naming the procedure and the card, the
-   step's title in capitals in the mono, and its lines each with a drawn box, a name in capitals, a
-   dotted leader and its value. The roll blocks may sit under the strip. */
+/* One step as an Apollo cue card. */
 @layer cap.components {
   .cap-cue {
     padding-block-end: var(--space-4);
@@ -1122,10 +1074,7 @@
   }
 }
 
-/* The runway holding position marking (FAA AIM 2-3-5): two solid lines on the side that holds and two
-   dashed lines on the side toward the runway. A divider at the end of a post, before what other sites
-   said; drawn in the page's ink, with no words (Dustin, 2026-11-04). On an hr it keeps the separator's
-   meaning; on any other element mark it aria-hidden. */
+/* The runway holding position marking. */
 @layer cap.components {
   .cap-hold {
     block-size: 26px;
@@ -1148,11 +1097,7 @@
   }
 }
 
-/* An annunciator panel: a cockpit's caution and warning panel, one labeled light per system in rows
-   and columns (SKYbrary, "Caution and Warning Panel"), lit amber for a caution and red for a warning
-   (14 CFR 27.1322). The dark sign panel in both themes. A tile at rest is unlit and says its state;
-   a lit tile takes the status color as its fill and edge and says its state too, so the state is shape,
-   word and color. Legends in the drafting face where the site loads it. */
+/* An annunciator panel. */
 @layer cap.components {
   .cap-annunciator {
     display: grid;
@@ -1214,12 +1159,7 @@
   }
 }
 
-/* A catalog in the manual (capsomer/catalog.css): beside the results, the facets sit in a ruled box under a dark
-   strip named "Filter", as the checklist card names itself; the facet names, the bar's field labels and the
-   table's head are mono capitals, as the form boxes' labels; each group's heading is large over a heavy rule. On a
-   phone the facets are the catalog's tray, which keeps its own head, and a group's heading over cards keeps
-   catalog.css's compact spacing. Each selector is more specific than the catalog.css rule it changes, so it wins
-   in the same layer whatever order the two files load in. */
+/* A catalog in the manual (capsomer/catalog.css). */
 @layer cap.components {
   @container cap-catalog (min-width: 56rem) {
     .cap-catalog .cap-catalog-filters {

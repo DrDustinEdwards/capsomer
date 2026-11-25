@@ -61,7 +61,6 @@ import {
 } from "./media-library.ts";
 import { useCleanId, useHydrated } from "../hooks/hooks.react.tsx";
 
-// The viewer's last layout and tile size, remembered in this browser (hooks' readStored).
 const LAYOUT_PREF = "cap-media-layout";
 const SIZE_PREF = "cap-media-size";
 
@@ -71,7 +70,6 @@ const SORT_WORDS: Record<MediaSort, string> = {
   size: "Largest",
   used: "Most used",
 };
-// How often the library asks for what others changed, with script and `changes` (site-api v0.13.0).
 const LIVE_MS = 15000;
 const GROUP_WORDS = { flat: "None", folder: "Folder", month: "Month" } as const;
 const KEYS: Array<[string | string[], string]> = [
@@ -86,15 +84,12 @@ const KEYS: Array<[string | string[], string]> = [
 export type { FormComponent, IntentResult, KitMediaChanges, MediaData, PickedMedia, SubmitIntent };
 
 export interface MediaLibraryProps {
-  // The loader's view data: one page of one site's files.
   data: MediaData;
-  // Where the forms post, and the library's own address: usually the route itself.
   action: string;
   Form?: FormComponent;
   // The script path: posts a form and resolves with the action's result. With it, outcomes, Undo,
   // the confirm dialog and the inspector's autosave happen in place.
   submit?: SubmitIntent;
-  // The last result from the action, for the page that comes back after a post with no script.
   result?: IntentResult | null;
   labels?: ContentLabels;
   // "library" (the default) manages files; "picker" offers images to insert, with an alt step.
@@ -125,12 +120,7 @@ export interface MediaLibraryProps {
   changes?: (cursor: string, signal: AbortSignal) => Promise<KitMediaChanges | { reload: true }>;
 }
 
-// One page of one site's files, the same component in Carrel and in every site admin: search, tag
-// chips, the library and Trash, the grid or list of tiles, upload checked against the site's limits,
-// the bulk bar with each file's outcome, the inspector (from ?inspect=) in form or autosave mode,
-// Undo, and the confirmation for what cannot be undone. In picker mode, the same grid offers images
-// and asks for the alt text this use needs. Every action is a form post, so it works with no
-// script; `submit` adds the in-place path.
+// One page of one site's files, used in Carrel and every site admin. Every action is a form post, so it works with no script; `submit` adds the in-place path.
 // Upload or Import as decorative sends no alt text: the site refuses a file that is both, and a person who
 // typed some and then chose decorative has answered. With no script the site's own refusal says so.
 function dropAltIfDecorative(e: FormEvent<HTMLFormElement>) {
@@ -164,17 +154,14 @@ export function MediaLibrary({
   const { plural } = nounsOf(labels, "file");
   const title =
     mode === "picker" ? "Choose an image" : plural.charAt(0).toUpperCase() + plural.slice(1);
-  // False on the server and while hydrating, true once hydrated.
   const mounted = useHydrated();
   const { query, page, offers, can } = data;
   const path = action.split("?")[0] ?? action;
   const href = (q: MediaQuery) => mediaHref(path, q);
   const picker = mode === "picker";
 
-  // Live: what others changed, put over the page's rows until the page itself is loaded again.
   const [changed, setChanged] = useState<ReadonlyMap<string, MediaRecord | null>>(new Map());
   const [stale, setStale] = useState(false);
-  // A page load replaces what others changed, in the same render.
   const [loadedRows, setLoadedRows] = useState(data.rows);
   if (data.rows !== loadedRows) {
     setLoadedRows(data.rows);
@@ -231,7 +218,6 @@ export function MediaLibrary({
   const names = useMemo(() => new Map(rows.map((r) => [r.key, r.name])), [rows]);
 
   const [selected, setSelected] = useState<string[]>([]);
-  // New rows keep only the picks still in them, in the same render.
   const [pickedFrom, setPickedFrom] = useState(names);
   if (names !== pickedFrom) {
     setPickedFrom(names);
@@ -244,11 +230,7 @@ export function MediaLibrary({
     setAskedPick(query.pick);
     setChosen(query.pick);
   }
-  // The last result the script path got, for the links to what an upload, an import or a turn left
-  // to open; the page's own result otherwise.
   const [last, setLast] = useState<IntentResult | null>(null);
-  // The upload dialog, with script; the address opens it too (`upload=1`, the toolbar's link with
-  // no script).
   const [uploadOpen, setUploadOpen] = useState(!!query.upload);
   const [pageResult, setPageResult] = useState(result);
   if (result !== pageResult) {
@@ -272,9 +254,6 @@ export function MediaLibrary({
     onDone: () => setSelected([]),
   });
 
-  // Moving to another view of the library (open a file, close it) with script is a GET of the
-  // library's own form, so the host's router (React Router's <Form>) makes it a navigation in the
-  // app and the loader reads the file with where it is used.
   const goRef = useRef<HTMLDivElement>(null);
   const [goTo, setGoTo] = useState<MediaQuery | null>(null);
   useEffect(() => {
@@ -288,8 +267,6 @@ export function MediaLibrary({
   const insRef = useRef<{ focus: () => void }>(null);
   const pickAlt = useRef<HTMLTextAreaElement>(null);
   const inspected = picker ? null : (data.inspected ?? null);
-  // A file the person opened (Enter or a click) gets focus in its first field once it is here; one
-  // that came with the page leaves focus where the page put it.
   const opening = useRef(false);
   useEffect(() => {
     if (!opening.current) return;
@@ -303,8 +280,7 @@ export function MediaLibrary({
     changed.has(inspected.key) &&
     changed.get(inspected.key)?.version !== inspected.version;
 
-  // Grid or list and the tile size: the address's when a link set them, else this viewer's last
-  // choice (read after mount, so the server's HTML and the first paint agree).
+  // The address's layout and size when a link set them, else this viewer's last choice (read after mount, so server HTML and first paint agree).
   const [pref, setPref] = useState<Pick<MediaQuery, "layout" | "size">>({});
   useEffect(() => {
     const l = readStored(LAYOUT_PREF);
@@ -321,7 +297,6 @@ export function MediaLibrary({
     setPref((p) => ({ ...p, ...change }));
   };
 
-  // Quick search: the command menu over the host's matches, or focus in the search field.
   const [finding, setFinding] = useState(false);
   useShortcut(
     ["Mod+k", "/"],
@@ -339,7 +314,6 @@ export function MediaLibrary({
       when: () => shortcuts && !picker,
     },
   );
-  // Copying an address says so, in words, where the person is looking.
   const [copied, setCopied] = useState("");
   const copyAddress = async (r: MediaRecord) => {
     const ok = await copyText(r.url);
@@ -381,7 +355,6 @@ export function MediaLibrary({
     ];
   };
 
-  // Esc on a tile clears the selection first, then closes the file's details.
   const onGridKey = (e: KeyboardEvent<HTMLElement>) => {
     if (
       e.key !== "Escape" ||
@@ -399,10 +372,7 @@ export function MediaLibrary({
     }
   };
 
-  // The inspector's autosave posts the content kit's own intents, one for each field group that
-  // changed (`alt`, `caption`, `tags`), each on the version the last write made (site-api's
-  // Outcome.version), so a host passes every form straight on. What was saved, and on which version,
-  // is kept per file until the host's rows catch up.
+  // The autosave posts the content kit's own intents, one per changed field group, each on the version the last write made.
   const savedRef = useRef(
     new Map<
       string,
@@ -466,7 +436,6 @@ export function MediaLibrary({
     }
   };
 
-  // Picker mode with `onPick`: the alt step hands the file to the host instead of posting.
   const onSubmit = (e: FormEvent<HTMLElement>) => {
     const form = e.target;
     if (onPick && form instanceof HTMLFormElement && form.dataset.capPart === "pick") {
@@ -522,8 +491,6 @@ export function MediaLibrary({
         </p>
       </div>
     ) : null;
-  // Upload, one file with its alt text: inline in the picker, and in the library the upload dialog's
-  // form as delivered with no script (?upload=1).
   const uploadForm =
     canUpload && rules ? (
       <Form
@@ -634,7 +601,6 @@ export function MediaLibrary({
       .join(", ") || "everything";
   const toOpen = picker ? [] : filesToOpen(last ?? result);
   const nameOf = (id: string) => names.get(id) ?? id.split("/").pop() ?? id;
-  // The resize pass: every oversized picture on this page, from the oversized lens.
   const shrinkAll =
     !picker && query.lens === "oversized" && iOffers.resize != null
       ? rows.filter(
@@ -642,8 +608,6 @@ export function MediaLibrary({
             r.state === "ready" && !!r.version && oversized(r, iOffers.resize),
         )
       : [];
-  // The picture tools for the open file: the focal point, replace (the file's own type, the site's
-  // size limit) and crop (with script and the host's same-origin bytes).
   const tools = (item: MediaRecord) => {
     const type = bareType(item.type);
     const asNew = can.edit && !!offers.upload?.types.includes(type);
@@ -951,7 +915,6 @@ export function MediaLibrary({
             </Disclosure>
           ) : null}
           {!picker && trash && can.deleteMedia && offers.trash && rows.length > 0 ? (
-            // The kit lists every file in Trash and asks for the count before anything goes.
             <Form method="post" action={action} className="cap-media-lib-extra">
               <button
                 type="submit"
@@ -965,7 +928,6 @@ export function MediaLibrary({
             </Form>
           ) : null}
           {shrinkAll.length > 0 ? (
-            // The kit lists every picture and asks before any is stored again (site-api v0.13.0).
             <Form method="post" action={action} className="cap-media-lib-extra">
               <input type="hidden" name="intent" value="resize" />
               {shrinkAll.map((r) => (

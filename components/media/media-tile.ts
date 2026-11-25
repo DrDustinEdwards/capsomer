@@ -43,8 +43,6 @@ function checkBox(): HTMLElement[] {
 export const part = <T extends HTMLElement = HTMLElement>(root: ParentNode, name: string) =>
   root.querySelector<T>(`[data-cap-part='${name}']`);
 
-// Tiles. A tile's facts are its data attributes, so the page, the filters and the inspector read
-// one thing.
 
 export function recordOf(tile: HTMLElement): MediaRecord {
   const d = tile.dataset;
@@ -97,7 +95,6 @@ export function recordOf(tile: HTMLElement): MediaRecord {
   };
 }
 
-// Writes a record's facts onto a tile's attributes (the tile's markup is then redrawn by syncTile).
 export function writeRecord(tile: HTMLElement, r: Partial<MediaRecord>): void {
   const d = tile.dataset;
   if (r.key !== undefined) d.key = r.key;
@@ -124,8 +121,6 @@ export function writeRecord(tile: HTMLElement, r: Partial<MediaRecord>): void {
   if (r.error !== undefined) d.error = r.error;
 }
 
-// Redraws what a tile shows from its attributes: the flags, the meta line, the description the
-// link carries, and the progress or failure block. The thumbnail and the name are not touched.
 export function syncTile(tile: HTMLElement): void {
   const r = recordOf(tile);
   tile.dataset.used = String(r.used.length);
@@ -183,7 +178,6 @@ export function syncTile(tile: HTMLElement): void {
     const value = document.createElement("span");
     value.className = "cap-meter-value";
     value.textContent = `${pct}%`;
-    // A native progress bar (its role and value the browser's own), styled as the meter's track (meter.css).
     const bar = document.createElement("progress");
     bar.className = "cap-meter-bar";
     bar.max = 100;
@@ -219,8 +213,6 @@ export function syncTile(tile: HTMLElement): void {
   }
 }
 
-// Builds a tile for a record, as the server would render it. Used for uploads and anything the
-// page adds after it loaded.
 export function buildTile(r: MediaRecord): HTMLLIElement {
   const li = document.createElement("li");
   li.className = "cap-media-tile";

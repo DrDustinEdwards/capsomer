@@ -13,7 +13,6 @@ import {
 import { ChapterButtons } from "./player-controls.react.tsx";
 import { usePlayer } from "./player-context.react.tsx";
 
-// Seeks the loaded track, or loads this one at that time.
 function useSeekTrack(track: PlayerTrack) {
   const p = usePlayer();
   const active = p.current?.id === track.id;
@@ -25,14 +24,11 @@ function useSeekTrack(track: PlayerTrack) {
 
 export interface ChapterListProps {
   track: PlayerTrack;
-  // The track's chapters by default.
   chapters?: readonly PlayerChapter[];
   heading?: string;
-  // The heading's level, 2 by default.
   level?: 2 | 3;
 }
 
-// Every chapter, the one playing marked (aria-current) and a press seeks to it.
 export function ChapterList({
   track,
   chapters,
@@ -65,7 +61,6 @@ export interface KeyMomentsProps {
   moments: readonly KeyMoment[];
   heading?: string;
   level?: 2 | 3;
-  // The id of the player surface to bring into view after a jump.
   playerId?: string;
 }
 
@@ -131,7 +126,6 @@ export interface PlayerHost {
   role?: string;
   // Their own page: the link is rel="me".
   href?: string;
-  // A picture.
   img?: string;
 }
 
@@ -144,7 +138,6 @@ export interface HostsProps {
   avatar?: (host: PlayerHost) => ReactNode;
 }
 
-// Who hosts it: a picture, the name (linked to their own page) and their role.
 export function Hosts({ hosts, heading = "Hosts", level = 2, avatar }: HostsProps) {
   const id = useId();
   if (!hosts.length) return null;
@@ -207,9 +200,7 @@ const SpeakerIcon = () => (
 );
 
 export interface PlayClipProps {
-  // The short clip.
   src: string;
-  // What it plays: "Hear how Capsomer is pronounced".
   label: string;
 }
 

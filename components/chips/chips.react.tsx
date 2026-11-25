@@ -7,16 +7,11 @@ export interface ChipOption<V extends string> {
 }
 
 export interface FilterChipsProps<V extends string> {
-  // The visible label of the group: "Status".
   label: ReactNode;
-  // Up to six.
   options: Array<ChipOption<V>>;
-  // Controlled: the pressed values, in any order.
   value: V[];
-  // Called with the pressed values in the options' order. Keep them in the address
-  // (writeParam from "capsomer/behavior/chips" makes ?status=blocked,running).
+  // Called with the pressed values in the options' order; keep them in the address (writeParam from "capsomer/behavior/chips").
   onChange: (value: V[]) => void;
-  // What the filter leaves, in words: "3 of 14 jobs". Announced politely as it changes.
   count: ReactNode;
   size?: "sm" | "default" | "lg";
 }
@@ -36,8 +31,7 @@ export function FilterChips<V extends string>({
       "FilterChips: chips hold at most six values; use a select or a combobox for more.",
     );
   const pressed = new Set(value);
-  // A pressed value that no option carries (from a shared address) still shows, pressed,
-  // after the options, so a filter is never active without a chip to say so and release it.
+  // A pressed value no option carries (from a shared address) still shows, so a filter is never active without a chip to release it.
   const known = new Set(options.map((o) => o.value));
   const extra = value.filter((v) => !known.has(v));
   const set = (next: Set<V>) =>
@@ -103,17 +97,12 @@ export function FilterChips<V extends string>({
 }
 
 export interface LinkChip {
-  // The address with this filter applied (or released, for the current one).
   href: string;
   label: ReactNode;
-  // How many items this filter leaves, shown after the label.
   count?: number;
   current?: boolean;
 }
 
-// Filters kept in the address, as links (no script needed): a labeled list of link chips, the
-// current one marked aria-current="true" and drawn pressed, each with an optional count.
-// `renderLink` draws a router link (capsomer/react/link Link); a plain a otherwise.
 export function LinkChips({
   label,
   showLabel = false,
@@ -122,7 +111,6 @@ export function LinkChips({
   renderLink,
 }: {
   label: string;
-  // Show the label before the chips (as FilterChips does); it then names the nav.
   showLabel?: boolean;
   chips: readonly LinkChip[];
   size?: "sm" | "default" | "lg";
@@ -182,8 +170,6 @@ export function LinkChips({
   );
 }
 
-// Checkbox chips (chips.md): a filter in a form that works with no script, each chip sending
-// `name=value`, with an optional count. The fieldset's legend names the group.
 export function CheckChips({
   legend,
   name,
@@ -194,7 +180,6 @@ export function CheckChips({
   legend: ReactNode;
   name: string;
   options: ReadonlyArray<{ value: string; label: ReactNode; count?: number; disabled?: boolean }>;
-  // The values checked now (from the address).
   checked: readonly string[];
   size?: "sm" | "default" | "lg";
 }) {

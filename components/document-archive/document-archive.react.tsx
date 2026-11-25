@@ -7,11 +7,8 @@ import { plainLink } from "../hooks/hooks.react.tsx";
 export interface ArchiveDoc {
   key: string;
   title: string;
-  // The document's page in the archive.
   href: string;
-  // The line under the title: "Fall 2026 · Editor: Sam Lee".
   detail?: ReactNode;
-  // The trailing fact: "PDF, 2.4 MB", or the year.
   meta?: ReactNode;
 }
 
@@ -25,15 +22,12 @@ export interface ArchiveLinkProps {
 
 export interface DocumentListProps {
   docs: readonly ArchiveDoc[];
-  // The list's name: the id of the heading over it (preferred), or a label.
   labelledBy?: string;
   label?: string;
-  // What an empty category says.
   empty?: ReactNode;
   renderLink?: (props: ArchiveLinkProps) => ReactNode;
 }
 
-// One category's documents: a row list, each row's title the link to the document's page.
 export function DocumentList({
   docs,
   labelledBy,
@@ -62,22 +56,17 @@ export interface ArchiveGroup {
   id: string;
   title: string;
   docs: readonly ArchiveDoc[];
-  // The category's own page, when this view shows only its first few.
   href?: string;
-  // The link's words: "All 24 programs".
   more?: string;
   empty?: ReactNode;
 }
 
 export interface DocumentArchiveProps {
   groups: readonly ArchiveGroup[];
-  // The categories' heading level. Default 2.
   level?: 2 | 3;
   renderLink?: (props: ArchiveLinkProps) => ReactNode;
 }
 
-// Every category, each under its heading with its list and, when it is cut short, a link to
-// the rest.
 export function DocumentArchive({
   groups,
   level = 2,
@@ -118,25 +107,18 @@ export interface PagerDoc {
 
 export interface DocumentViewerProps {
   title: ReactNode;
-  // The page's heading level for the title. Default 1: the document is the page.
   level?: 1 | 2;
-  // Above the title: the page's breadcrumb.
   before?: ReactNode;
   download?: { href: string; format?: string; bytes?: number | null; label?: string };
-  // The viewer itself (the app's PDF viewer), or a cover and summary.
   children?: ReactNode;
   prev?: PagerDoc | null;
   next?: PagerDoc | null;
-  // The category's name, for the signs' name: "More in Programs".
   collection: string;
-  // The words a screen reader hears before a neighbor's title. Default "Previous" and "Next".
   prevLabel?: string;
   nextLabel?: string;
   renderLink?: (props: ArchiveLinkProps) => ReactNode;
 }
 
-// One document's page: its title, the download, the viewer the app gives it, and Previous and
-// Next in its category.
 export function DocumentViewer({
   title,
   level = 1,

@@ -1,5 +1,3 @@
-// The history list's rows, built as the server would render them (history-list.ts).
-
 import { initials } from "../avatar/avatar.ts";
 import { statusEl, type GlyphName, type Tone } from "../status/status.ts";
 import { setStaticHtml } from "../trusted-html/trusted-html.ts";
@@ -16,8 +14,6 @@ import {
   runTitle,
   stamp,
 } from "./history-list-model.ts";
-
-// DOM.
 
 type Attrs = Record<string, string | boolean | undefined>;
 
@@ -86,7 +82,6 @@ function whoEl(id: string, names: string[], ai?: boolean): HTMLElement {
 }
 
 function deltaEl(id: string, n: number | undefined): HTMLElement {
-  // No word count: an empty cell keeps the columns in place and says nothing.
   if (n === undefined)
     return h("span", { class: "cap-hist-delta", "data-sign": "none", "aria-hidden": "true" });
   const sign = deltaSign(n);
@@ -117,16 +112,13 @@ function whenEl(id: string, iso: string, now: number, chevron = false): HTMLElem
 }
 
 export interface BuildOptions {
-  // Prefix for the ids the line makes, so two lists on a page do not collide.
+  // Prefix for ids the line makes, so two lists on a page do not collide.
   prefix: string;
   current?: boolean;
   now?: number;
-  // The address a line's title opens (the version's own page); "?version=" by default.
   versionHref?: string;
-  // Load-into-editor mode: the action on an earlier line is a link to this address plus the
-  // version's id (`?load=` is the usual tail), in place of Restore.
+  // Load-into-editor mode: the earlier line's action links to this address plus the version's id.
   loadHref?: string;
-  // A read-only history: an earlier line has no action at all, neither Restore nor Load.
   readOnly?: boolean;
 }
 
@@ -197,8 +189,7 @@ function restoreButton(e: HistoryEntry, now: number): HTMLElement {
   );
 }
 
-// Load into editor: a link, so the page works as delivered. Nothing is added to the history;
-// the text goes to the editor and a save is what makes the version.
+// Load into editor: a link, so the page works as delivered. Nothing is added to the history.
 function loadLink(e: HistoryEntry, href: string, now: number): HTMLElement {
   return h(
     "a",
@@ -220,7 +211,6 @@ export function actionFor(e: HistoryEntry, now: number, o: BuildOptions): HTMLEl
   return o.loadHref ? loadLink(e, o.loadHref, now) : restoreButton(e, now);
 }
 
-// One line, exactly the markup the doc page shows (and the page is delivered with).
 export function buildRow(
   e: HistoryEntry,
   delta: number | undefined,
@@ -265,7 +255,6 @@ export function buildRow(
   return li;
 }
 
-// The group line of a run of autosaves, and the region that holds its lines.
 export function buildRun(
   run: Run,
   deltas: (number | undefined)[],

@@ -1,18 +1,13 @@
-// The player's behavior, plain TypeScript with no framework: what the persistent audio player
-// remembers (resume position, rate, volume, mute), its time and label helpers, the Media Session
-// surface, the waveform's peaks, the transcript's paragraphs, the start of a press before React
-// loads, and the inline audio button (enhance). The React parts (player.react.tsx and the
-// player-*.react.tsx files it re-exports) use these; a site's own pre-React script imports them too.
+// The player's behavior, plain TypeScript: remembered state, time and label helpers, Media Session, waveform peaks,
+// transcript paragraphs, the press before React loads, and the inline audio button. The React files use these.
 
 import { clamp, readStored, writeStored } from "../hooks/hooks.ts";
 import { ratio } from "../meter/meter.ts";
 import { SEC, duration, timecode } from "../time/time.ts";
 
-// The track.
 
 export interface PlayerChapter {
   title: string;
-  // Seconds from the start.
   start: number;
 }
 
@@ -27,18 +22,14 @@ export interface PlayerTrack {
   // Stable per track: the resume position is remembered under it.
   id: string | number;
   title: string;
-  // The audio file.
   src: string;
   // The lock screen's second and third lines. Missing, the provider's own `artist` and `album`.
   artist?: string;
   album?: string;
   // A picture's address, or the Media Session's list. Missing, the provider's `artwork`.
   artwork?: string | PlayerArtwork[];
-  // Sorted by start.
   chapters?: PlayerChapter[];
-  // The track's own page: the dock's title links to it.
   href?: string;
-  // Where its transcript is read: the dock's Transcript link goes there.
   transcript?: string;
   // Seconds, when known before the file's metadata loads (the scrubber's length until then).
   duration?: number;
@@ -52,11 +43,8 @@ export const RATE_MAX = 3;
 export const RATE_STEP = 0.05;
 export const SPEEDS = [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2, 2.5, 3];
 export const SLEEP_MINUTES = [5, 10, 15, 30, 45, 60];
-// A resume position this close to the end starts the track over instead.
 export const RESUME_TAIL_SECONDS = 5;
-// The position is saved at most this often while playing.
 export const RESUME_SAVE_SECONDS = 5;
-// Previous restarts the track instead when it is past this point.
 export const RESTART_SECONDS = 3;
 
 export const clampRate = (r: number): number => Math.min(RATE_MAX, Math.max(RATE_MIN, r));
@@ -71,7 +59,6 @@ export interface PlayerStorage {
   rate(): number | null;
   volume(): number | null;
   muted(): boolean | null;
-  // Where to resume a track of `duration` seconds, or null.
   resumeAt(id: string | number, duration: number): number | null;
   saveRate(rate: number): void;
   saveVolume(volume: number): void;
@@ -112,27 +99,21 @@ export function playerStorage(prefix = "cap-player-"): PlayerStorage {
   };
 }
 
-// Time and labels.
 
-// "1:02:03" or "4:05".
 export const formatTime = (seconds?: number | null): string => timecode(Number(seconds) * SEC);
 
-// "3 minutes, 12 seconds", for aria-valuetext.
 export const spokenTime = (seconds?: number | null): string => duration(Number(seconds) * SEC);
 
-// "1.0x", "1.25x".
 export function formatRate(r: number): string {
   return `${Number.isInteger(r) ? r.toFixed(1) : String(r)}x`;
 }
 
-// The sleep timer in words: "off", "end of episode", "15 minutes".
 export function sleepLabel(mode: SleepMode | null, noun = "track"): string {
   if (mode == null) return "off";
   if (mode === "end") return `end of ${noun}`;
   return `${mode} minutes`;
 }
 
-// The chapter playing at `t`, or -1. Chapters are sorted by start.
 export function activeChapterIndex(chapters: readonly { start: number }[], t: number): number {
   let idx = -1;
   for (let i = 0; i < chapters.length; i++) {
@@ -185,8 +166,6 @@ export interface MetadataDefaults {
   artwork?: PlayerArtwork[];
 }
 
-// The metadata for a track: its own artist, album and artwork or the site's, and its chapters as
-// chapterInfo (Media Session's chapter list, where the browser has it).
 export function trackMetadata(
   track: PlayerTrack,
   defaults: MetadataDefaults = {},
@@ -211,7 +190,6 @@ export interface SessionHandlers {
   stop: () => void;
   previoustrack: () => void;
   nexttrack: () => void;
-  // Seconds to move; the browser's offset when it sends one.
   seekbackward: (offset?: number) => void;
   seekforward: (offset?: number) => void;
   seekto: (seconds: number, fast: boolean) => void;
@@ -236,7 +214,6 @@ export function setSessionHandlers(handlers: SessionHandlers): () => void {
     try {
       session.setActionHandler(action, fn);
     } catch {
-      // An action this browser does not know.
     }
   };
   set("play", () => handlers.play());
@@ -258,13 +235,9 @@ export function setSessionHandlers(handlers: SessionHandlers): () => void {
 // inside the press itself (Safari and iOS refuse a play() that comes later), on the one element the
 // provider renders, which then adopts it as it is.
 
-// On the provider's <audio> while it plays a press started before React: the provider adopts it.
 export const STARTED_ATTRIBUTE = "data-cap-player-started";
-// The provider's one audio element.
 export const AUDIO_SELECTOR = "audio[data-cap-player-audio]";
 
-// Points the element at a track, resuming where the reader left off once its metadata is in, as
-// the provider would. Nothing happens when it already has that source.
 export function loadTrack(
   audio: HTMLAudioElement,
   track: { id: string | number; src: string },
@@ -272,7 +245,6 @@ export function loadTrack(
 ): void {
   const url = new URL(track.src, location.href).href;
   if (audio.src === url) return;
-  // The element is preload="none" until a reader reaches for a track; this is that moment.
   audio.preload = "metadata";
   audio.src = url;
   // One handler on the element, so a second press before the first track's metadata arrives
@@ -284,8 +256,6 @@ export function loadTrack(
   };
 }
 
-// Plays a track inside the press with the remembered rate, volume and mute, and marks the element
-// for the provider. Pressing the same playing track again pauses it. Returns whether the press
 // still needs the app (false once it paused).
 export function startTrack(
   audio: HTMLAudioElement,
@@ -361,7 +331,6 @@ export async function decodePeaks(
   }
 }
 
-// A file's duration in whole seconds from its metadata alone, or null.
 export function probeDuration(file: Blob): Promise<number | null> {
   return new Promise((resolve) => {
     const audio = document.createElement("audio");
@@ -394,7 +363,6 @@ export function normalizePeaks(
   });
 }
 
-// A calm shape for a track with no stored peaks yet: two sines, never flat, never like real data.
 export function syntheticPeaks(bars = WAVEFORM_BARS): number[] {
   return Array.from({ length: bars }, (_, i) => {
     const t = i / bars;
@@ -409,14 +377,10 @@ export interface TranscriptCue {
   start: number;
   end: number;
   text: string;
-  // "Alex Rivera", from a voice tag or a "Name:" prefix, when the parser found one.
   speaker?: string | null;
-  // A sound, not speech: "[music]", "(laughs)".
   nonVerbal?: boolean;
 }
 
-// The start of the last cue at or before `t`, or null: the active cue where the browser has no
-// VTTCue to follow.
 export function playheadCue(cues: readonly { start: number }[], t: number): number | null {
   let active: number | null = null;
   for (const c of cues) {
@@ -426,14 +390,10 @@ export function playheadCue(cues: readonly { start: number }[], t: number): numb
   return active;
 }
 
-// The label of the hidden metadata track the transcript mirrors its cues onto.
 export const TRANSCRIPT_TRACK_LABEL = "cap-player-transcript";
 
-// The inline audio button: a small play button inside running text that plays a short clip (a
-// pronunciation). The server writes a plain link to the clip, which works with no script; this
-// shows the button in its place, which plays in place on a press (a native button: click, Enter,
-// Space). Nothing is fetched before the first press. aria-pressed carries the playing state; a
-// second press stops it. A clip that cannot load or play brings the link back.
+// The inline audio button: the server writes a plain link to a short clip (works with no script); this
+// swaps in a native button that plays it in place. A clip that cannot load or play brings the link back.
 
 export function wireClip(root: HTMLElement): () => void {
   const button = root.querySelector<HTMLButtonElement>(".cap-player-clip-button");

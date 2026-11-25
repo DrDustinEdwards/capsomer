@@ -1,21 +1,14 @@
-// Structured data for a page: one `<script type="application/ld+json">` from a value, in place of a
-// hand-written `dangerouslySetInnerHTML` in every route.
+// Structured data for a page: one `<script type="application/ld+json">` from a value.
 import { scriptJson } from "@dustinedwards/site-runtime/html";
 import { markup } from "../trusted-html/trusted-html.ts";
 
 export interface JsonLdProps {
-  // A schema.org node, or a list of nodes (one block, a JSON array). Plain data only: it is serialized
-  // as JSON, so a function or undefined is dropped as JSON.stringify drops it.
+  // A schema.org node or a list of them. Plain data only: a function or undefined is dropped as JSON.stringify drops it.
   data: unknown;
 }
 
-/**
- * The value as a JSON-LD data block. site-runtime's `scriptJson` escapes `<`, `>`, `&` and U+2028/9, so a
- * string in the data that holds `</script>` cannot close the element; the data is unchanged when parsed.
- * The text goes through the `capsomer` Trusted Types policy (`markup`), because React sets it with
- * `innerHTML` when it renders in the browser. A data block is not script: no nonce, and `script-src`
- * does not gate it.
- */
+/** The value as a JSON-LD data block. site-runtime's `scriptJson` escapes `<`, `>`, `&` and U+2028/9 so `</script>` in the data cannot close the element.
+The text goes through the `capsomer` Trusted Types policy because React sets it with `innerHTML` in the browser. A data block is not script: no nonce. */
 export function JsonLd({ data }: JsonLdProps) {
   return <script type="application/ld+json" dangerouslySetInnerHTML={markup(scriptJson(data))} />;
 }

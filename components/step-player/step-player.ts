@@ -1,18 +1,13 @@
-// A Play button that walks a set of steps on its own (a flow's steps, a tour, a slideshow of
-// states): Play, Pause, and "Play again" at the end. It stops at the last step, when the tab is
-// hidden and whenever the person moves themselves (a key, a step link), because motion a person did
-// not start must be easy to stop (WCAG 2.2.2). Under reduced motion it waits half as long again on
-// each step. The page owns the steps; the player only calls go(n).
+// A Play button that walks a set of steps on its own: Play, Pause and "Play again". It stops at the last step,
+// when the tab is hidden and whenever the person moves themselves (WCAG 2.2.2). Under reduced motion it
+// waits half as long again. The page owns the steps; the player only calls go(n).
 
 import { clamp, reducedMotion } from "../hooks/hooks.ts";
 
 export interface StepPlayerOptions {
-  // The button. Rendered hidden: with no script there is nothing to play, so it is shown here.
   button: HTMLButtonElement | null;
-  // The step showing now, from 1.
   current: () => number;
   total: number;
-  // Shows step n (1 to total).
   go: (n: number) => void;
   // Milliseconds on each step (3600). Reduced motion multiplies it by `reducedFactor` (1.5).
   interval?: number;
@@ -24,7 +19,6 @@ export interface StepPlayer {
   start(): void;
   stop(): void;
   playing(): boolean;
-  // Removes the listeners and stops; the button is hidden again.
   destroy(): void;
 }
 
@@ -93,9 +87,8 @@ export function stepPlayer(options: StepPlayerOptions): StepPlayer {
   };
 }
 
-// Attaches a player to every [data-cap="step-player"] root: its steps are the [data-step] children
-// (one shown, the rest hidden), its button [data-step-play]. A key pressed in the root, or a click on
-// a [data-step-go] link, stops it: the person has taken over.
+// Its steps are the [data-step] children, its button [data-step-play]. A key in the root or a click on a
+// [data-step-go] link stops it: the person has taken over.
 export function enhance(root: ParentNode = document): () => void {
   const undo: Array<() => void> = [];
   for (const host of root.querySelectorAll<HTMLElement>(
@@ -116,7 +109,6 @@ export function enhance(root: ParentNode = document): () => void {
       go: show,
       interval: Number(host.dataset.stepInterval) || undefined,
     });
-    // The play button's own Enter and Space are its click, which plays or pauses.
     const onKey = (event: KeyboardEvent) => {
       if (!(event.target as Element).closest("[data-step-play]")) player.stop();
     };

@@ -1,11 +1,8 @@
-/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+/* Layer order repeated so this file is safe in any import order: the first statement fixes it (css/layers.css). */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
-/* Buttons. Matches shadcn/ui Button (variants default, outline, secondary, ghost, destructive,
-   link; sizes xs, sm, default, lg and the icon sizes) and ButtonGroup, in Capsomer's tokens.
-   Variants map: default = shadcn outline, primary = shadcn default, secondary, quiet = ghost,
-   danger = destructive, link. Each variant sets local properties; the states below read them,
-   so a state works on every variant. */
+/* Buttons, in Capsomer's tokens: variants default, primary, secondary, quiet, danger and link, and
+   ButtonGroup. Each variant sets local properties and the states below read them, so a state works on every variant. */
 @layer cap.components {
   .cap-btn {
     --cap-btn-fg: var(--text);
@@ -53,7 +50,6 @@
     & kbd {
       margin-inline-start: var(--space-1);
     }
-    /* An icon beside the label pulls the padding in on its side, as shadcn's data-icon does. */
     &:has(> svg[data-icon="start"]) {
       padding-inline-start: calc(var(--pad-x) - var(--space-1-5));
     }
@@ -61,7 +57,7 @@
       padding-inline-end: calc(var(--pad-x) - var(--space-1-5));
     }
 
-    /* Sizes. xs and sm never go under the target; on a touch screen --control and --target are 44. */
+    /* xs and sm never go under the target; on a touch screen --control and --target are 44. */
     &[data-size="xs"] {
       --cap-btn-h: max(var(--target), calc(var(--control) - 8px));
       --cap-btn-fs: var(--fs-detail);
@@ -88,32 +84,28 @@
       text-align: center;
       padding-block: var(--pad-y);
     }
-    /* Fills its row: the one action of a narrow card or a phone form. */
     &[data-block] {
       display: flex;
       inline-size: 100%;
     }
 
-    /* A link to another site drawn as a button (ButtonLink away): the away mark after the words. */
     & .cap-btn-away {
       font-weight: var(--weight-regular);
       font-variant-emoji: text;
     }
 
-    /* The main action of a view: one per view. shadcn "default". */
     &[data-variant="primary"] {
       --cap-btn-fg: var(--primary-fg);
       --cap-btn-bg: var(--primary);
-      /* The edge is the fill everywhere but amber's light theme, where the fill is lightened for
-         its dark label and the edge keeps the 3:1 step 9 against the page. */
+      /* The edge is the fill everywhere but amber's light theme, where the fill is lightened for its dark
+             label and the edge keeps the 3:1 step 9 against the page. */
       --cap-btn-line: var(--primary-line);
       --cap-btn-hover: var(--primary-hover);
       --cap-btn-press: var(--primary-hover);
       font-weight: var(--weight-semibold);
     }
 
-    /* A tinted fill in the accent, for the second action beside a primary. shadcn "secondary".
-       Its edge is the accent line (3:1), since a soft fill alone is not an edge. */
+    /* Its edge is the accent line (3:1), since a soft fill alone is not an edge. */
     &[data-variant="secondary"] {
       --cap-btn-fg: var(--accent-text);
       --cap-btn-bg: var(--accent-soft);
@@ -122,9 +114,8 @@
       --cap-btn-press: var(--accent-6);
     }
 
-    /* Starts something that cannot be undone: it opens the confirm dialog, it does not act.
-       shadcn "destructive". The hover is a thicker edge, not a deeper fill: a deeper tint
-       would take the label under 4.5:1. */
+    /* Starts something that cannot be undone: it opens the confirm dialog, it does not act. The hover is
+           a thicker edge, not a deeper fill, which would take the label under 4.5:1. */
     &[data-variant="danger"] {
       --cap-btn-fg: var(--crit);
       --cap-btn-bg: var(--crit-soft);
@@ -138,7 +129,6 @@
       }
     }
 
-    /* A secondary action in a toolbar or a row: no border until the pointer is on it. shadcn "ghost". */
     &[data-variant="quiet"] {
       --cap-btn-bg: transparent;
       --cap-btn-line: transparent;
@@ -150,7 +140,6 @@
       }
     }
 
-    /* Reads as a link, still a button. shadcn "link". The color carries the hover. */
     &[data-variant="link"] {
       --cap-btn-fg: var(--accent-text);
       --cap-btn-bg: transparent;
@@ -163,9 +152,8 @@
       }
     }
 
-    /* The states, after the variants: a variant sets --cap-btn-bg with the same specificity as
-       these, so a state written above the variants lost to every variant's resting fill and a
-       primary, secondary or danger button never changed under the pointer. */
+    /* The states come after the variants: a variant sets --cap-btn-bg with the same specificity, so a
+           state written above lost to every variant's resting fill. */
     &:hover,
     &[data-force="hover"] {
       --cap-btn-bg: var(--cap-btn-hover);
@@ -174,18 +162,15 @@
     &[data-force="pressed"] {
       --cap-btn-bg: var(--cap-btn-press);
     }
-    /* A button that owns a popup shows it is open, as shadcn's aria-expanded does. */
     &[aria-expanded="true"] {
       --cap-btn-bg: var(--cap-btn-press);
     }
 
-    /* An icon button: square, and it needs an accessible name (aria-label). */
     &[data-icon-only] {
       width: var(--cap-btn-h);
       padding: 0;
     }
 
-    /* An invalid state set by the app (a button that submits an invalid form). */
     &[aria-invalid="true"] {
       --cap-btn-line: var(--crit);
     }
@@ -242,7 +227,6 @@
     }
   }
 
-  /* A label on its way out (morphLabel in button.ts): over the button, centered, out of the way. */
   .cap-btn > .cap-btn-label[data-leaving] {
     position: absolute;
     inset: 0;
@@ -251,14 +235,12 @@
     pointer-events: none;
   }
 
-  /* The default look has the quiet shadow shadcn's outline button has in its roomy style. */
   .cap-btn:where(:not([data-variant]), [data-variant="default"]):not(:disabled, [aria-disabled="true"]) {
     box-shadow: var(--shadow-xs);
   }
 
-  /* A site's sweep (--btn-sweep, off by default): under the pointer the default button fills with
-     the primary color from the left and its label and edge turn to match, as Recova's ghost
-     button did. Off, the fill has no width and nothing changes. */
+  /* A site's sweep (--btn-sweep, off by default): under the pointer the default button fills with the
+        primary color from the left. Off, the fill has no width and nothing changes. */
   .cap-btn:where(:not([data-variant]), [data-variant="default"]):not(:disabled, [aria-disabled="true"]) {
     background-image: linear-gradient(var(--primary), var(--primary));
     background-repeat: no-repeat;
@@ -270,13 +252,11 @@
       background-size: calc(var(--btn-sweep) * 100%) 100%;
     }
   }
-  /* The reason a button is disabled, written beside it. */
   .cap-btn-reason {
     color: var(--muted);
     font-size: var(--fs-detail);
   }
 
-  /* A button that looks like a link inside a sentence: Undo in a message, Clear beside a filter. */
   .cap-link-btn {
     display: inline-flex;
     align-items: center;
@@ -304,7 +284,6 @@
     }
   }
 
-  /* Button group: buttons sharing one edge. shadcn ButtonGroup. */
   .cap-btn-group {
     display: flex;
     width: fit-content;
@@ -341,7 +320,6 @@
       }
     }
   }
-  /* A label that sits in a group beside the buttons: ButtonGroupText. */
   .cap-btn-group-text {
     display: inline-flex;
     align-items: center;
@@ -375,9 +353,8 @@
         background-size var(--dur-slow) var(--ease-in-out),
         scale var(--dur-slow) var(--ease-spring);
     }
-    /* The press: down to 97% at once, back on a spring when released (Emil Kowalski's 0.97, Arc's
-       quick press and spring release). Not on a button that owns a popup: it anchors the popup,
-       which must not measure a shrunken trigger. */
+    /* The press: down to 97% at once, back on a spring. Not on a button that owns a popup: it anchors
+           the popup, which must not measure a shrunken trigger. */
     .cap-btn:is(:active, [data-force="pressed"]):not([aria-haspopup]):not([aria-disabled="true"]):not(:disabled) {
       scale: 0.97;
       transition-duration: var(--dur-fast);

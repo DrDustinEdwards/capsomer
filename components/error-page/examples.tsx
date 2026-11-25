@@ -1,5 +1,4 @@
-// Mounts the error page specimens: each template's data-mount names the error it is given.
-// The route errors are shaped as React Router's (status, statusText, data), with no router.
+// Mounts the error page specimens; the route errors are shaped as React Router's, with no router.
 import { StrictMode, type ReactNode } from "react";
 import { createRoot } from "react-dom/client";
 import { SiteHeader } from "../site-header/site-header.react.tsx";
