@@ -1,11 +1,11 @@
 {
   "baseline": {
-    "measured_at": "e5f34e5e",
+    "measured_at": "71ef0401",
     "knip": {},
     "jscpd": {
       "clones": 36,
       "lines": 473,
-      "percentage": 0.24,
+      "percentage": 0.23,
       "unread": 24
     },
     "shared copies": {
@@ -22,14 +22,6 @@
       "components/email/email.ts": 507,
       "components/flag-list/flag-list.react.tsx": 571,
       "components/flag-list/flag-list.ts": 621,
-      "components/media-library/examples.tsx": 1028,
-      "components/media-library/media-library-more.react.tsx": 506,
-      "components/media-library/media-library.react.tsx": 1329,
-      "components/media-library/media-library.ts": 532,
-      "components/media/media.css": 815,
-      "components/media/media.react.tsx": 1001,
-      "components/media/media.spec.ts": 1211,
-      "components/media/media.ts": 1004,
       "components/moderation-queue/moderation-queue.ts": 537,
       "components/publish-gate/publish-gate.ts": 555,
       "components/site-header/examples.tsx": 868,
@@ -45,13 +37,13 @@
       "tokens/sites.mjs": 534
     },
     "tests": {
-      "files": 258,
+      "files": 259,
       "cases": 1669
     },
     "comments": {
-      "lines": 10049,
-      "code": 152861,
-      "percentage": 6.17
+      "lines": 10277,
+      "code": 153387,
+      "percentage": 6.28
     }
   }
 }

@@ -1,4 +1,7 @@
-// The media library's pure helpers (view addresses, offered actions, copy, picker files). No DOM.
+// The media library's pure helpers: the addresses of its views and filters, which actions a person
+// is offered here and why the others are withheld, the count, the empty state, the upload rules in
+// words, and which files the picker offers. No DOM; the React component and a server render use the
+// same functions.
 import {
   countText,
   nounsOf,
@@ -7,14 +10,15 @@ import {
   type MediaData,
   type MediaOffers,
   type MediaQuery,
-  type MediaRevision,
-  type MediaSuggestions,
-  type MediaUse,
 } from "../content/content.ts";
 import { acceptLabel } from "../drop-zone/drop-zone.ts";
 import { formatBytes } from "../format/format.ts";
-import { altStateOf, type MediaRecord, type UsedIn } from "../media/media-record.ts";
+import { type MediaRecord } from "../media/media-record.ts";
 import { formatDate } from "../time/time.ts";
+
+export * from "./media-library-kit.ts";
+
+// Addresses.
 
 const QUERY_ORDER: ReadonlyArray<keyof MediaQuery> = [
   "q",
@@ -37,6 +41,8 @@ const QUERY_ORDER: ReadonlyArray<keyof MediaQuery> = [
 
 export type MediaSort = NonNullable<MediaQuery["sort"]>;
 
+// The way each of the contract's sorts runs when no direction is given (site-api v0.6.0): newest
+// first, A to Z, largest first, and (v0.13.0) most used first.
 export const SORT_DIR: Record<MediaSort, "asc" | "desc"> = {
   added: "desc",
   name: "asc",
@@ -44,11 +50,13 @@ export const SORT_DIR: Record<MediaSort, "asc" | "desc"> = {
   used: "desc",
 };
 
+// The direction a query sorts in: its own, or its sort's.
 export function dirOf(q: Pick<MediaQuery, "sort" | "dir">): "asc" | "desc" {
   return q.dir ?? SORT_DIR[q.sort ?? "added"];
 }
 
-// The library's address for a query: keys in one fixed order, empty or default ones left out, so a view has one address.
+// The library's address with a query, its keys in one fixed order and the empty or default ones
+// left out, so the same view is always the same address. `base` is the route.
 export function mediaHref(base: string, q: MediaQuery): string {
   const params = new URLSearchParams();
   for (const k of QUERY_ORDER) {
@@ -69,15 +77,19 @@ export function mediaHref(base: string, q: MediaQuery): string {
   return s ? `${path}?${s}` : path || "?";
 }
 
+// The keys that only change how the page is drawn, not which files it holds.
 const DISPLAY: ReadonlyArray<keyof MediaQuery> = ["layout", "size", "group"];
 
-// A filter, sort or view change returns to page 1 and closes the inspector and pick; a display change keeps both.
-// The model's suggestions are for one file, so any other change drops them.
+// A filter, sort or view change starts again at the first page, with the inspector and the pick
+// closed; opening a file (`inspect`, `pick`) and a display change (layout, size, grouping) keep the
+// page it is on and the open file. A new sort starts in its own direction unless `dir` is given. The
+// model's suggestions are for one file: anything but asking for them again leaves them behind.
 export function withMedia(q: MediaQuery, change: Partial<MediaQuery>): MediaQuery {
   const next: MediaQuery = { ...q, ...change };
   if ("sort" in change && !("dir" in change)) delete next.dir;
   if (!("suggest" in change)) delete next.suggest;
-  // The upload dialog is open only on the address that opened it.
+  // The upload dialog is open only on the address that opened it: any other change closes it,
+  // and opening it closes the inspector.
   if (!("upload" in change)) delete next.upload;
   else if (change.upload) delete next.inspect;
   const keys = Object.keys(change) as Array<keyof MediaQuery>;
@@ -97,6 +109,8 @@ export function withMedia(q: MediaQuery, change: Partial<MediaQuery>): MediaQuer
   return next;
 }
 
+// What is offered.
+
 // The content kit's names (site-api runMediaIntent), so a host passes the form straight on.
 export type MediaIntent = "tag-add" | "tag-remove" | "trash" | "restore" | "delete";
 
@@ -106,7 +120,10 @@ export interface OfferedAction {
   destructive?: boolean;
 }
 
-// Trash and Restore are an editor's (reversible); Delete is for good and the delete role's, from Trash where the site has one.
+// The bulk actions this person may run on this view of this site, in the bar's order, and a
+// sentence for each one held back. Trash and Restore are an editor's (reversible, as the kit says);
+// Delete is for good and the delete role's: from Trash where the site has one, from
+// the library only where it has none.
 export function mediaActions(
   data: Pick<MediaData, "offers" | "can" | "query">,
   labels?: ContentLabels,
@@ -139,8 +156,10 @@ export function mediaActions(
   return { bulk, withheld };
 }
 
-// Replacing, turning, reverting or shrinking a file changes every page that shows it and cannot be undone here, so it needs the delete role.
-// Credit and the model's suggestions are an editor's.
+// What a file's inspector may do here. Replacing a file's bytes changes every page that shows it and
+// cannot be undone here, so it needs the delete role, as the content kit says.
+// A turn, a revert and a shrink change every page that uses the file too (site-api v0.13.0), so they
+// need the delete role as well; credit and the model's suggestions are an editor's.
 export function inspectorOffers(data: Pick<MediaData, "offers" | "can">): {
   alt: boolean;
   tags: boolean;
@@ -176,6 +195,9 @@ export function inspectorOffers(data: Pick<MediaData, "offers" | "can">): {
   };
 }
 
+// Words.
+
+// "24 files", "Showing 48 of 210 files", "3 files in Trash".
 export function countLine(
   data: Pick<MediaData, "rows" | "page" | "query">,
   labels?: ContentLabels,
@@ -188,6 +210,7 @@ export function filtered(q: MediaQuery): boolean {
   return !!(q.q || q.tag || q.lens || q.kind || q.orientation);
 }
 
+// The empty state's title, naming what is not there.
 export function emptyWords(
   q: MediaQuery,
   labels?: ContentLabels,
@@ -216,7 +239,8 @@ export function emptyWords(
   return { kind: "nothing-yet", title: `No ${plural} yet` };
 }
 
-// The upload rules in words; null when the site takes no images.
+// The site's upload rules in words, for the drop zone's hint: "PNG, JPEG and WebP, up to 5 MB".
+// The picker takes images only; null when the site takes none.
 export function uploadRules(
   limits: NonNullable<MediaOffers["upload"]>,
   imagesOnly = false,
@@ -227,11 +251,15 @@ export function uploadRules(
   return { accept, hint: `${acceptLabel(accept)}, up to ${formatBytes(limits.maxBytes)}.` };
 }
 
-// Images that are in the library and uploaded, nothing in Trash or on its way.
+// The picker's files: images that are in the library and uploaded, nothing in Trash or on its
+// way.
 export function pickable(rows: readonly MediaRecord[]): MediaRecord[] {
   return rows.filter((r) => r.kind === "image" && r.state === "ready");
 }
 
+// The view: lenses, groups, and what the address says about how to draw the page.
+
+// The site-api contract's lenses (v0.6.0 MEDIA_LENSES), in words: what each chip shows.
 export const LENS_WORDS: Record<string, { label: string; hint?: string }> = {
   unattached: {
     label: "Unattached",
@@ -253,6 +281,15 @@ export const LENS_WORDS: Record<string, { label: string; hint?: string }> = {
   },
 };
 
+// The sorts, in words, as the toolbar's Sort row and the Display summary say them.
+export const SORT_WORDS: Record<MediaSort, string> = {
+  added: "Newest",
+  name: "A to Z",
+  size: "Largest",
+  used: "Most used",
+};
+
+// The filters (site-api v0.13.0 MEDIA_KINDS and MEDIA_ORIENTATIONS), in words, in the toolbar's order.
 export const KIND_WORDS: Record<NonNullable<MediaQuery["kind"]>, string> = {
   image: "Images",
   document: "Documents",
@@ -265,6 +302,7 @@ export const ORIENTATION_WORDS: Record<NonNullable<MediaQuery["orientation"]>, s
   square: "Square",
 };
 
+// The lens chips: the contract's lenses the site names, then a host's own, each once.
 export function lensChips(
   data: Pick<MediaData, "offers" | "extra">,
 ): Array<{ id: string; label: string; hint?: string; count?: number }> {
@@ -278,17 +316,19 @@ export function lensChips(
   return out;
 }
 
+// The folder a file's id puts it in: everything before its last "/", or "Top level".
 export function folderOf(key: string): string {
   const at = key.lastIndexOf("/");
   return at > 0 ? key.slice(0, at) : "Top level";
 }
 
-// UTC, so a heading does not move with the reader's time zone.
+// The month a file was uploaded, in UTC, so a heading does not move with the reader's time zone.
 export function monthOf(uploaded: string | undefined): string {
   return formatDate(uploaded, { style: "monthYear" }) ?? "No upload date";
 }
 
-// Page-local on purpose: a group never spans a page, and its count is this page's.
+// The page's files under headings, each group in the order its first file came, so the sort still
+// reads down the page. Page-local on purpose: a group never spans a page, and its count is this page's.
 export function groupRows(
   rows: readonly MediaRecord[],
   group: MediaQuery["group"],
@@ -304,7 +344,8 @@ export function groupRows(
   return [...groups].map(([label, items]) => ({ label, items }));
 }
 
-// What the address says about drawing the page, which the content kit's readMediaQuery leaves to the component.
+// What the address says about drawing the page, which the content kit's readMediaQuery leaves to the
+// component: the layout, the tile size, the grouping and the open upload dialog (`upload=1`). A host merges it into the kit's query.
 export function readMediaView(
   search: URLSearchParams,
 ): Pick<MediaQuery, "layout" | "size" | "group" | "upload"> {
@@ -319,140 +360,11 @@ export function readMediaView(
   };
 }
 
-// A site-api MediaItem typed by shape, so Capsomer needs no site-api import.
-export interface KitMediaRow {
-  id: string;
-  url: string;
-  src: string;
-  filename: string | null;
-  contentType: string;
-  bytes: number;
-  width: number | null;
-  height: number | null;
-  alt: string;
-  uploadedAt: string | null;
-  version?: string;
-  tags?: string[];
-  trashedAt?: string | null;
-  focus?: string | null;
-  caption?: string;
-  usedCount?: number;
-  credit?: string;
-  license?: string;
-  sourceUrl?: string | null;
-  licenseExpires?: string | null;
-  takenAt?: string | null;
-  orientation?: "landscape" | "portrait" | "square";
-}
+// v0.13.0: live changes, uploads that were already stored, turns, shrinking and licenses.
 
-export interface KitMediaData {
-  site: { name: string };
-  query: Omit<MediaQuery, "layout" | "size" | "group" | "pick" | "upload">;
-  rows: KitMediaRow[];
-  page: MediaData["page"];
-  detail?:
-    | (KitMediaRow & {
-        usedBy: MediaUse[];
-        twins?: Array<{ id: string; filename: string | null }>;
-        history?: MediaRevision[];
-        suggestions?: MediaSuggestions | null;
-      })
-    | null;
-  offers: MediaOffers & { media?: boolean };
-  can: MediaData["can"];
-}
-
-// The loadMediaChanges answer by shape. `{ reload: true }`: load the page again.
-export interface KitMediaChanges {
-  rows: KitMediaRow[];
-  removed: string[];
-  changeCursor: string;
-  more: boolean;
-}
-
-// `url` is the site's own address (what Markdown carries), `thumb` the absolute one a browser loads.
-// A list has no usedBy, so tiles carry no Unattached flag unless the site counts uses.
-export function recordOfKit(row: KitMediaRow, used?: UsedIn[]): MediaRecord {
-  return {
-    key: row.id,
-    name: row.filename ?? row.id,
-    url: row.url,
-    thumb: row.src,
-    kind: row.contentType.startsWith("image/") ? "image" : "document",
-    type: row.contentType,
-    bytes: row.bytes,
-    ...(row.width != null ? { width: row.width } : {}),
-    ...(row.height != null ? { height: row.height } : {}),
-    ...(row.uploadedAt ? { uploaded: row.uploadedAt } : {}),
-    alt: row.alt,
-    altState: altStateOf(row.alt, false),
-    title: "",
-    caption: row.caption ?? "",
-    tags: row.tags ?? [],
-    used: used ?? [],
-    state: row.trashedAt ? "binned" : "ready",
-    ...(row.version ? { version: row.version } : {}),
-    ...(used ? {} : { usedUnknown: true }),
-    focus: row.focus ?? null,
-    ...(row.usedCount != null ? { usedCount: row.usedCount } : {}),
-    ...(row.credit !== undefined ? { credit: row.credit } : {}),
-    ...(row.license !== undefined ? { license: row.license } : {}),
-    ...(row.sourceUrl !== undefined ? { sourceUrl: row.sourceUrl } : {}),
-    ...(row.licenseExpires !== undefined ? { licenseExpires: row.licenseExpires } : {}),
-    ...(row.takenAt !== undefined ? { takenAt: row.takenAt } : {}),
-    ...(row.orientation ? { orientation: row.orientation } : {}),
-  };
-}
-
-// The kit's page as MediaLibrary's data. The chosen tag stays in the chip row even when no file here carries it.
-export function mediaDataOfKit(
-  kit: KitMediaData,
-  options: {
-    usedHref?: (use: MediaUse) => string;
-    view?: Pick<MediaQuery, "layout" | "size" | "group" | "pick" | "upload">;
-  } = {},
-): MediaData {
-  const counts = new Map<string, number>();
-  for (const r of kit.rows) for (const t of r.tags ?? []) counts.set(t, (counts.get(t) ?? 0) + 1);
-  if (kit.query.tag && !counts.has(kit.query.tag)) counts.set(kit.query.tag, 0);
-  const href = options.usedHref ?? (() => "");
-  const { media: _media, ...offers } = kit.offers;
-  const detail = kit.detail;
-  return {
-    site: { name: kit.site.name },
-    query: { ...kit.query, ...options.view },
-    rows: kit.rows.map((r) => recordOfKit(r)),
-    page: kit.page,
-    tags: [...counts]
-      .sort(([a], [b]) => a.localeCompare(b))
-      .map(([tag, count]) => ({ tag, count })),
-    offers,
-    can: kit.can,
-    ...(detail !== undefined
-      ? {
-          inspected: detail
-            ? {
-                ...recordOfKit(
-                  detail,
-                  detail.usedBy.map((u) => ({
-                    title: u.title || u.id,
-                    href: href(u),
-                    how: u.detail,
-                  })),
-                ),
-                ...(detail.twins
-                  ? { twins: detail.twins.map((t) => ({ key: t.id, name: t.filename ?? t.id })) }
-                  : {}),
-              }
-            : null,
-        }
-      : {}),
-    ...(detail?.history ? { history: detail.history } : {}),
-    ...(detail && detail.suggestions !== undefined ? { suggestions: detail.suggestions } : {}),
-  };
-}
-
-// Whether a changed file belongs in this view. A search or lens is the site's to answer, so a file that was on the page stays.
+// Whether a file as it is now belongs in this view: Trash or the library, and the chosen tag, kind
+// and orientation. A search or a lens is the site's to answer, so a changed file that was on the
+// page stays on it.
 function inView(r: MediaRecord, q: MediaQuery): boolean {
   if ((q.view === "trash") !== (r.state === "binned")) return false;
   if (q.tag && !r.tags.includes(q.tag)) return false;
@@ -461,7 +373,10 @@ function inView(r: MediaRecord, q: MediaQuery): boolean {
   return true;
 }
 
-// A changed file not on this page is counted, never added: where it sorts and whether search matches it are the site's to say.
+// The page's files with what others changed put in place: a changed file replaces its tile where it
+// still belongs in this view and leaves where it does not (moved to Trash, restored, untagged); a
+// file deleted for good leaves. A changed file not on this page is counted, never added, since where
+// it would sort and whether the site's search would match it are the site's to say.
 export function applyChanges(
   rows: readonly MediaRecord[],
   changed: ReadonlyMap<string, MediaRecord | null>,
@@ -484,7 +399,9 @@ export function applyChanges(
   return { rows: out, elsewhere, updated };
 }
 
-// A quarter turn saves a new file on a site whose addresses carry the size, for a picture that is not square.
+// True when a quarter turn saves the turned picture as a new file: a site whose addresses carry the
+// size (offers.replaceKeepsSize) turns a picture that is not square that way (site-api v0.13.0), by
+// the orientation the kit gives.
 export function turnMakesCopy(
   item: Pick<MediaRecord, "orientation">,
   offers: Pick<MediaOffers, "replaceKeepsSize">,
@@ -492,6 +409,7 @@ export function turnMakesCopy(
   return !!offers.replaceKeepsSize && item.orientation !== "square";
 }
 
+// True when a picture has an edge longer than the site keeps (the oversized lens's rule).
 export function oversized(
   item: Pick<MediaRecord, "kind" | "width" | "height">,
   maxEdge: number | null,
@@ -503,7 +421,8 @@ export function oversized(
   );
 }
 
-// UTC, as the license-expired lens counts it.
+// True when a license's end day (YYYY-MM-DD) is before `today`'s, in UTC, as the license-expired lens
+// counts it.
 export function licenseEnded(
   licenseExpires: string | null | undefined,
   today: Date = new Date(),
@@ -511,7 +430,9 @@ export function licenseEnded(
   return !!licenseExpires && licenseExpires < today.toISOString().slice(0, 10);
 }
 
-// The files an upload, import or turn left to open: a file already stored (`duplicate`), a new file, a turned copy (`copyId`).
+// The files an upload, an import or a turn left to open, read from the kit's outcomes (site-api
+// v0.13.0): a file already stored (`duplicate`, whose outcome is that file), a new file, and a turned
+// copy (`copyId`).
 export function filesToOpen(
   result: Pick<IntentResult, "outcomes"> | null | undefined,
 ): Array<{ id: string; why: "duplicate" | "new" | "copy" }> {
@@ -525,8 +446,10 @@ export function filesToOpen(
   return out;
 }
 
-// UTC, so it reads the same in every zone. The string itself when it holds no date.
+// A day as words, in UTC, so it reads the same in every zone: "May 1, 2026". The string itself when it
+// holds no date.
 export const dayWords = (iso: string): string => formatDate(iso) ?? iso;
 
+// A moment in UTC, as words: "Oct 29, 2026, 2:05 PM UTC".
 export const momentWords = (iso: string): string =>
   formatDate(iso, { style: "medium", time: true, zoneName: true }) ?? iso;
