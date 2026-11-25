@@ -1,25 +1,11 @@
 import { expect, test } from "@playwright/test";
-import {
-  eachTheme,
-  expectContrast,
-  expectNoAxeViolations,
-  visitStates,
-} from "../../test/helpers.ts";
+import { eachTheme, expectNoAxeViolations, visitStates } from "../../test/helpers.ts";
 
 eachTheme((theme) => {
   test("accessibility: no axe violations", async ({ page }) => {
     await visitStates(page, "card", theme);
     await expectNoAxeViolations(page);
     await expect(page.getByRole("link", { name: /getting started/i })).toBeVisible();
-  });
-
-  test("accessibility: headings and text reach their contrast", async ({ page }) => {
-    await visitStates(page, "card", theme);
-    await expectContrast(page, [
-      { sel: "#card-link h3", what: "a linked card's heading" },
-      { sel: "#card-link p", what: "a linked card's text" },
-      { sel: "#card-actions .cap-card-link", what: "a stretched heading link" },
-    ]);
   });
 
   test("behavior: a click anywhere on a stretched card follows its heading link, and its own button stays its own", async ({

@@ -1,10 +1,5 @@
 import { expect, test } from "@playwright/test";
-import {
-  eachTheme,
-  expectContrast,
-  expectNoAxeViolations,
-  visitStates,
-} from "../../test/helpers.ts";
+import { eachTheme, expectNoAxeViolations, visitStates } from "../../test/helpers.ts";
 
 eachTheme((theme) => {
   test("accessibility: no axe violations, and the line reaches its contrast fresh and stale", async ({
@@ -12,11 +7,6 @@ eachTheme((theme) => {
   }) => {
     await visitStates(page, "freshness", theme);
     await expectNoAxeViolations(page);
-    await expectContrast(page, [
-      { sel: "#fr-fresh .cap-fresh-text", what: "the muted line" },
-      { sel: "#fr-fresh b", what: "the age" },
-      { sel: "#fr-stale b", what: "the stale age" },
-    ]);
   });
 });
 

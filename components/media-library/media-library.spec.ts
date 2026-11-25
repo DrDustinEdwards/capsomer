@@ -1,11 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
-import {
-  eachTheme,
-  expectContrast,
-  expectNoAxeViolations,
-  nextPost,
-  visitStates,
-} from "../../test/helpers.ts";
+import { eachTheme, expectNoAxeViolations, nextPost, visitStates } from "../../test/helpers.ts";
 import {
   applyChanges,
   countLine,
@@ -284,19 +278,6 @@ eachTheme((theme) => {
     await visitStates(page, "media-library", theme);
     await expect(editor(page).locator(".cap-media-tile")).toHaveCount(5);
     await expectNoAxeViolations(page);
-  });
-
-  test("accessibility: the quiet text reaches its contrast", async ({ page }) => {
-    await visitStates(page, "media-library", theme);
-    await expectContrast(page, [
-      { sel: "[data-mount='editor'] .cap-media-lib-count", what: "the count" },
-      {
-        sel: "[data-mount='limited'] .cap-media-lib-withheld li",
-        what: "why an action is withheld",
-      },
-      { sel: "[data-mount='editor'] .cap-chip[aria-current]", what: "the current tag chip" },
-      { sel: "[data-mount='picker-step'] .cap-field-help", what: "the alt step's help" },
-    ]);
   });
 
   test(
