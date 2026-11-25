@@ -192,21 +192,23 @@ export function Embed({
 export { PlayerProvider, usePlayer } from "./player-context.react.tsx";
 export type { PlayerApi, PlayerProviderProps, PlayerState } from "./player-context.react.tsx";
 export {
-  ChapterOptions,
-  ChaptersControl,
   NextButton,
   PlayPauseButton,
   PlayTrackButton,
   PlayerStatus,
   Scrubber,
   SkipButton,
+  TranscriptLink,
+} from "./player-controls.react.tsx";
+export {
+  ChapterOptions,
+  ChaptersControl,
   SleepControl,
   SleepOptions,
   SpeedControl,
   SpeedOptions,
-  TranscriptLink,
   VolumeControl,
-} from "./player-controls.react.tsx";
+} from "./player-settings.react.tsx";
 export type { RenderLink } from "./player-controls.react.tsx";
 export { DOCK_SHEET_BELOW, PlayerDock, PlayerSurface } from "./player-dock.react.tsx";
 export type { PlayerDockProps, PlayerSurfaceProps } from "./player-dock.react.tsx";
