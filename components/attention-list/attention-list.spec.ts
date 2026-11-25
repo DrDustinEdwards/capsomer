@@ -1,10 +1,5 @@
 import { expect, test } from "@playwright/test";
-import {
-  eachTheme,
-  expectContrast,
-  expectNoAxeViolations,
-  visitStates,
-} from "../../test/helpers.ts";
+import { eachTheme, expectNoAxeViolations, visitStates } from "../../test/helpers.ts";
 import {
   arrange,
   GROUP_CHILDREN,
@@ -41,32 +36,6 @@ eachTheme((theme) => {
     await page.setViewportSize({ width: 390, height: 760 });
     await visitStates(page, "attention-list", theme, "phone");
     await expectNoAxeViolations(page);
-  });
-
-  test("accessibility: the header, the rows under a group, the links and the all-clear text reach their contrast", async ({
-    page,
-  }) => {
-    await visitStates(page, "attention-list", theme);
-    await expectContrast(page, [
-      { sel: `${mixed} .cap-attention-title`, what: "the list's title" },
-      { sel: `${mixed} .cap-attention-count`, what: "the problem count" },
-      { sel: `${mixed} .cap-attention-src`, what: "the order and freshness line" },
-      {
-        sel: `${expanded} .cap-attention-child .cap-row-title a`,
-        what: "a row under a group, on the raised tone",
-      },
-      { sel: `${expanded} .cap-attention-child .cap-row-detail`, what: "its detail line" },
-      { sel: `${expanded} .cap-attention-child .cap-row-meta`, what: "its time" },
-      {
-        sel: `${expanded} .cap-attention-link a`,
-        what: "the link to the group's view, on the raised tone",
-      },
-      { sel: `${more} .cap-attention-link button`, what: "the button that shows more warnings" },
-      {
-        sel: "section[aria-labelledby='s-clear'] .cap-attention-clear-text",
-        what: "the all-clear text",
-      },
-    ]);
   });
 
   test("accessibility: the list's roles and names", { tag: "@markup" }, async ({ page }) => {

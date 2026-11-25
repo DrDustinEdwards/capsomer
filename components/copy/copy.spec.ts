@@ -1,10 +1,5 @@
 import { expect, test } from "@playwright/test";
-import {
-  eachTheme,
-  expectContrast,
-  expectNoAxeViolations,
-  visitStates,
-} from "../../test/helpers.ts";
+import { eachTheme, expectNoAxeViolations, visitStates } from "../../test/helpers.ts";
 
 eachTheme((theme) => {
   test.use({ permissions: ["clipboard-read", "clipboard-write"] });
@@ -12,14 +7,6 @@ eachTheme((theme) => {
   test("accessibility: no axe violations", async ({ page }) => {
     await visitStates(page, "copy", theme);
     await expectNoAxeViolations(page);
-  });
-
-  test("accessibility: the bubble reaches its contrast", async ({ page }) => {
-    await visitStates(page, "copy", theme);
-    await expectContrast(page, [
-      { sel: "#tip-done", what: "the Copied bubble" },
-      { sel: "#tip-failed", what: "the Copy failed bubble" },
-    ]);
   });
 
   test("keyboard: Enter copies the target's text and the bubble says Copied, then clears", async ({

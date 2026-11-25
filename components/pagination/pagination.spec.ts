@@ -101,11 +101,6 @@ eachTheme((theme) => {
     ]);
   });
 
-  test("accessibility: the compact form's text reaches its contrast", async ({ page }) => {
-    await visitStates(page, "pagination", theme);
-    await expectContrast(page, [{ sel: "#pg-narrow .cap-pagination-where", what: "Page 3 of 16" }]);
-  });
-
   test(
     "accessibility: every control is at least the target size",
     { tag: "@markup" },

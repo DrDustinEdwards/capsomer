@@ -102,9 +102,17 @@ export function apiOf(root: string, names: string[]): Map<string, Api> {
       if (!sf) continue;
       const moduleSymbol = checker.getSymbolAtLocation(sf);
       if (!moduleSymbol) continue;
-      for (const sym of checker.getExportsOfModule(moduleSymbol)) {
+      const dir = path.slice(0, path.lastIndexOf("/") + 1);
+      for (const exported of checker.getExportsOfModule(moduleSymbol)) {
+        const followed =
+          react && /^[A-Z]/.test(exported.name) && exported.flags & ts.SymbolFlags.Alias;
+        const sym = followed ? checker.getAliasedSymbol(exported) : exported;
         const decl = sym.valueDeclaration;
-        if (!decl || decl.getSourceFile() !== sf) continue;
+        if (
+          !decl ||
+          !(followed ? decl.getSourceFile().fileName.startsWith(dir) : decl.getSourceFile() === sf)
+        )
+          continue;
         const type = checker.getTypeOfSymbolAtLocation(sym, decl);
         const sig = type.getCallSignatures()[0];
         if (!sig) continue;

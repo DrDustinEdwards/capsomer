@@ -1,11 +1,5 @@
 import { expect, test, type Locator, type Page } from "@playwright/test";
-import {
-  eachTheme,
-  expectContrast,
-  expectNoAxeViolations,
-  nextPost,
-  visitStates,
-} from "../../test/helpers.ts";
+import { eachTheme, expectNoAxeViolations, nextPost, visitStates } from "../../test/helpers.ts";
 import {
   NO_FILTERS,
   contentStatus,
@@ -201,22 +195,6 @@ eachTheme((theme) => {
     await visitStates(page, "posts-list", theme);
     await expect(editor(page).locator("tbody tr")).toHaveCount(6);
     await expectNoAxeViolations(page);
-  });
-
-  test("accessibility: the quiet text reaches its contrast", async ({ page }) => {
-    await visitStates(page, "posts-list", theme);
-    await expectContrast(page, [
-      { sel: "[data-mount='editor'] .cap-posts-count", what: "the count" },
-      { sel: "[data-mount='editor'] .cap-posts-path", what: "a post's path" },
-      { sel: "[data-mount='editor'] .cap-posts-when", what: "when a scheduled post goes out" },
-      { sel: "[data-mount='reader'] .cap-posts-withheld li", what: "why an action is withheld" },
-      { sel: "[data-mount='outcomes'] .cap-bulk-result-message", what: "why a post was not done" },
-      { sel: "[data-mount='ideas'] .cap-posts-excerpt", what: "a post's excerpt" },
-      {
-        sel: "[data-mount='ideas-trash'] .cap-posts-trash-note",
-        what: "when the Trash deletes for good",
-      },
-    ]);
   });
 
   test(

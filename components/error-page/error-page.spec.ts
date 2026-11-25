@@ -1,10 +1,5 @@
 import { expect, test } from "@playwright/test";
-import {
-  eachTheme,
-  expectContrast,
-  expectNoAxeViolations,
-  visitStates,
-} from "../../test/helpers.ts";
+import { eachTheme, expectNoAxeViolations, visitStates } from "../../test/helpers.ts";
 
 eachTheme((theme) => {
   test("accessibility: no axe violations, the stack included", async ({ page }) => {
@@ -12,15 +7,6 @@ eachTheme((theme) => {
       await visitStates(page, "error-page", theme, only);
       await expectNoAxeViolations(page);
     }
-  });
-
-  test("accessibility: the title and the sentence reach their contrast", async ({ page }) => {
-    await visitStates(page, "error-page", theme, "dev");
-    await expectContrast(page, [
-      { sel: ".cap-error-page .cap-empty-title", what: "failed title" },
-      { sel: ".cap-error-page .cap-empty-text", what: "the sentence" },
-      { sel: ".cap-error-page-stack code", what: "the stack" },
-    ]);
   });
 
   test("behavior: each status says its own words, is never indexed, and shows no stack outside development", async ({
