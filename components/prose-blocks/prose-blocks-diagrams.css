@@ -1,0 +1,354 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+@layer cap.components {
+  :where([data-context="prose"]) {
+    /* The editorial pack: a side note, a pull quote, a color swatch, a diagram. */
+    & :where(.post-note) {
+      max-inline-size: var(--measure);
+      margin-block: 0 var(--prose-flow, 1em);
+      padding: var(--space-3) var(--space-4);
+      border-inline-start: var(--line-w-bar) solid var(--accent-line);
+      background: var(--raised);
+      font-size: 0.9em;
+      & p {
+        margin: 0;
+      }
+    }
+    & :where(.post-note-kind) {
+      display: block;
+      color: var(--accent-text);
+      font-family: var(--ui);
+      font-size: var(--fs-detail);
+    }
+    & :where(.pull-quote) {
+      margin-block: 0.5em 1em;
+      padding: 0;
+      border: 0;
+      color: var(--accent-text);
+      font-size: 1.3em;
+      line-height: var(--leading-snug);
+      text-wrap: balance;
+    }
+    & :where(.swatch) {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3em;
+    }
+    & :where(.swatch-chip) {
+      flex: none;
+      inline-size: 0.85em;
+      block-size: 0.85em;
+      border: var(--line-w) solid var(--line-strong);
+      border-radius: var(--radius-s);
+      background: var(--swatch, transparent);
+    }
+    & :where(.diagram-title) {
+      margin: 0 0 var(--space-2);
+      color: var(--text);
+      font-family: var(--diagram-title-face, var(--ui));
+      font-size: var(--diagram-title-size, 1em);
+      font-weight: var(--weight-semibold);
+      text-align: var(--diagram-title-align, start);
+    }
+    /* A :::diagram's drawings (Prelum's .diagram-figure, two <img>s, one per theme): each keeps the size
+       its width and height attributes give, shrinks to the column and is never stretched (no width:
+       even auto drops the attribute's size until the image loads). */
+    & :where(.diagram-figure) {
+      margin-inline: 0;
+    }
+    & :where(.diagram-image) {
+      max-inline-size: 100%;
+      block-size: auto;
+      margin-inline: auto;
+      border-radius: 0;
+    }
+
+    /* A diagram drawn in the page: one inline SVG, <figure class="blog-diagram" role="img">, whose parts read
+       the page's colors, so one drawing serves both themes. The SVG keeps its own width and only shrinks.
+       A site sets its drawing's look with the --diagram-* tokens; a part is drawn by its class (below),
+       or the SVG reads the tokens itself (fill="var(--diagram-accent)"). Each tone has a fill, a line and
+       an ink: neutral, accent, success, warning, info, critical. Also --diagram-arrow, --diagram-rule,
+       --diagram-ink, --diagram-ink-muted, --diagram-ground, --diagram-face, --diagram-stroke (a node's and
+       a line's width) and --diagram-label-weight. A corner's radius stays the drawing's own rx. */
+    & :where(.blog-diagram) {
+      --diagram-neutral: var(--surface);
+      --diagram-neutral-line: var(--line-strong);
+      --diagram-neutral-ink: var(--text);
+      --diagram-accent: var(--accent-soft);
+      --diagram-accent-line: var(--accent);
+      --diagram-accent-ink: var(--text);
+      --diagram-success: var(--ok-soft);
+      --diagram-success-line: var(--ok);
+      --diagram-success-ink: var(--text);
+      --diagram-warning: var(--warn-soft);
+      --diagram-warning-line: var(--warn);
+      --diagram-warning-ink: var(--text);
+      --diagram-info: var(--info-soft);
+      --diagram-info-line: var(--info);
+      --diagram-info-ink: var(--text);
+      --diagram-critical: var(--crit-soft);
+      --diagram-critical-line: var(--crit);
+      --diagram-critical-ink: var(--text);
+      --diagram-arrow: var(--line-strong);
+      --diagram-rule: var(--line);
+      --diagram-ink: var(--text);
+      --diagram-ink-muted: var(--muted);
+      --diagram-face: var(--ui);
+      --diagram-ground: var(--surface);
+      --diagram-stroke: 1px;
+      --diagram-label-weight: var(--weight-medium);
+      margin-inline: 0;
+      overflow: visible;
+      & svg {
+        display: block;
+        max-inline-size: 100%;
+        block-size: auto;
+        margin-inline: auto;
+        font-family: var(--diagram-face);
+      }
+    }
+    /* A diagram with its credit under it, held to a drawing's width and centered. */
+    & :where(.blog-diagram-block) {
+      max-inline-size: min(100%, 42.5rem);
+      margin: 0 auto var(--prose-flow, 1em);
+      & > .blog-diagram {
+        margin: 0;
+      }
+    }
+    & :where(.blog-diagram-credit) {
+      margin: var(--space-3) 0 0;
+      color: var(--muted);
+      font-family: var(--ui);
+      font-size: var(--fs-label);
+      line-height: var(--leading-normal);
+      text-align: center;
+    }
+
+    /* The parts. A node (a rect, or a <g> whose shapes inherit its fill and stroke) takes its tone; its
+       color is the tone's line too, for a glyph inside it drawn in currentColor. */
+    & :where(.blog-diagram) {
+      & :where(.node, .node-neutral, .node-accent, .node-success, .node-warning, .node-info, .node-critical) {
+        stroke-width: var(--diagram-stroke);
+        vector-effect: non-scaling-stroke;
+      }
+      & :where(.node, .node-neutral) {
+        color: var(--diagram-neutral-line);
+        fill: var(--diagram-neutral);
+        stroke: var(--diagram-neutral-line);
+      }
+      & :where(.node-accent) {
+        color: var(--diagram-accent-line);
+        fill: var(--diagram-accent);
+        stroke: var(--diagram-accent-line);
+      }
+      & :where(.node-success) {
+        color: var(--diagram-success-line);
+        fill: var(--diagram-success);
+        stroke: var(--diagram-success-line);
+      }
+      & :where(.node-warning) {
+        color: var(--diagram-warning-line);
+        fill: var(--diagram-warning);
+        stroke: var(--diagram-warning-line);
+      }
+      & :where(.node-info) {
+        color: var(--diagram-info-line);
+        fill: var(--diagram-info);
+        stroke: var(--diagram-info-line);
+      }
+      & :where(.node-critical) {
+        color: var(--diagram-critical-line);
+        fill: var(--diagram-critical);
+        stroke: var(--diagram-critical-line);
+      }
+      /* Lines, rings and dots in the ink, or a tone's line with .accent, .success, .warning, .info, .critical. */
+      & :where(.ln, .ring, .dot, .connector, .glyph) {
+        fill: none;
+        stroke: var(--diagram-ink-muted);
+        stroke-width: var(--diagram-stroke);
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        vector-effect: non-scaling-stroke;
+      }
+      & :where(.ln *) {
+        vector-effect: non-scaling-stroke;
+      }
+      & :where(.dot) {
+        fill: var(--diagram-ink-muted);
+      }
+      /* A glyph is drawn in its node's color, at its own weight (it scales with the drawing); .glyph-bold
+         and .glyph-heavy are thicker strokes. */
+      & :where(.glyph) {
+        stroke: currentColor;
+        stroke-width: 1.75px;
+        vector-effect: none;
+      }
+      & :where(.glyph.glyph-bold) {
+        stroke-width: 3px;
+      }
+      & :where(.glyph.glyph-heavy) {
+        stroke-width: 4px;
+      }
+      /* A solid mark in its node's color; a hollow bead; a shape on the ground; a wide band. */
+      & :where(.mark) {
+        fill: currentColor;
+        stroke: none;
+      }
+      & :where(.bead) {
+        fill: var(--diagram-ground);
+        stroke: currentColor;
+        stroke-width: 1.5px;
+      }
+      & :where(.shape) {
+        fill: var(--diagram-neutral);
+        stroke: currentColor;
+        stroke-width: 1.5px;
+        stroke-linecap: round;
+      }
+      & :where(.band) {
+        fill: none;
+        stroke: var(--diagram-accent-line);
+        stroke-width: 6px;
+      }
+      & :where(:is(.ln, .ring, .dot, .connector).accent) {
+        stroke: var(--diagram-accent-line);
+      }
+      & :where(:is(.ln, .ring, .dot, .connector).success) {
+        stroke: var(--diagram-success-line);
+      }
+      & :where(:is(.ln, .ring, .dot, .connector).warning) {
+        stroke: var(--diagram-warning-line);
+      }
+      & :where(:is(.ln, .ring, .dot, .connector).info) {
+        stroke: var(--diagram-info-line);
+      }
+      & :where(:is(.ln, .ring, .dot, .connector).critical) {
+        stroke: var(--diagram-critical-line);
+      }
+      & :where(.dot.accent) {
+        fill: var(--diagram-accent-line);
+      }
+      & :where(.dot.success) {
+        fill: var(--diagram-success-line);
+      }
+      & :where(.dot.warning) {
+        fill: var(--diagram-warning-line);
+      }
+      & :where(.dot.info) {
+        fill: var(--diagram-info-line);
+      }
+      & :where(.dot.critical) {
+        fill: var(--diagram-critical-line);
+      }
+      & :where(.connector.quiet) {
+        stroke: var(--diagram-rule);
+      }
+      & :where(.arrow-head) {
+        fill: var(--diagram-arrow);
+      }
+      & :where(.arrow-head.accent) {
+        fill: var(--diagram-accent-line);
+      }
+      & :where(.connector.accent) {
+        stroke-width: calc(var(--diagram-stroke) * 1.5);
+      }
+      /* Rules, lanes, axes and baselines. */
+      & :where(.rule, .divider) {
+        fill: none;
+        stroke: var(--diagram-rule);
+        stroke-width: var(--diagram-stroke);
+        vector-effect: non-scaling-stroke;
+      }
+      & :where(.lane) {
+        fill: none;
+        stroke: var(--diagram-rule);
+        stroke-width: var(--diagram-stroke);
+        stroke-dasharray: 2 4;
+      }
+      & :where(.axis, .axis-tick, .axis-line) {
+        fill: none;
+        stroke: var(--diagram-neutral-line);
+        stroke-width: var(--diagram-stroke);
+      }
+      & :where(.baseline) {
+        fill: none;
+        stroke: var(--diagram-ink-muted);
+        stroke-width: var(--diagram-stroke);
+        stroke-dasharray: 3 3;
+      }
+      /* Text: a label, a quieter one, a small one, a figure, a header; a tone on a label or header with
+         .accent, .success, .warning, .info, .critical (each tone's line, which is its strongest color). */
+      & :where(text) {
+        font-family: var(--diagram-face);
+      }
+      & :where(.label, .label-primary, .header) {
+        fill: var(--diagram-ink);
+        font-size: var(--fs-detail);
+        font-weight: var(--diagram-label-weight);
+      }
+      & :where(.header) {
+        letter-spacing: var(--tracking-wider);
+      }
+      & :where(.label-secondary, .label-small) {
+        fill: var(--diagram-ink-muted);
+        font-size: var(--fs-label);
+        font-weight: var(--weight-regular);
+      }
+      & :where(.label-small) {
+        fill: var(--diagram-ink);
+        font-weight: var(--weight-semibold);
+      }
+      & :where(.label-mono) {
+        fill: var(--diagram-ink);
+        font-family: var(--mono);
+        font-size: var(--fs-label);
+        font-weight: var(--weight-medium);
+      }
+      & :where(.label-figure) {
+        fill: var(--accent-text);
+        font-size: var(--fs-h2);
+        font-weight: var(--weight-bold);
+        font-variant-numeric: var(--figures-column);
+      }
+      & :where(:is(.label, .label-primary, .label-secondary, .label-small, .header).accent) {
+        fill: var(--accent-text);
+        font-weight: var(--weight-semibold);
+      }
+      & :where(:is(.label, .label-primary, .label-secondary, .label-small, .header).success) {
+        fill: var(--diagram-success-ink);
+        font-weight: var(--weight-semibold);
+      }
+      & :where(:is(.label, .label-primary, .label-secondary, .label-small, .header).warning) {
+        fill: var(--diagram-warning-ink);
+        font-weight: var(--weight-semibold);
+      }
+      & :where(:is(.label, .label-primary, .label-secondary, .label-small, .header).info) {
+        fill: var(--diagram-info-ink);
+        font-weight: var(--weight-semibold);
+      }
+      & :where(:is(.label, .label-primary, .label-secondary, .label-small, .header).critical) {
+        fill: var(--diagram-critical-ink);
+        font-weight: var(--weight-semibold);
+      }
+    }
+    /* Half an em above and below: under WCAG 1.4.12's text spacing KaTeX's struts no longer hold the glyphs, and a
+       quarter em clipped a displayed formula's bottom edge (3 px of 80 on Prelum's specimen). */
+    & :where(.katex-display) {
+      overflow-x: auto;
+      overflow-y: hidden;
+      padding-block: 0.5em;
+    }
+
+    @media (forced-colors: active) {
+      & :where(.callout, .post-note, .embed-link, .bookmark-link) {
+        border-color: CanvasText;
+      }
+      & :where(.swatch-chip) {
+        border-color: CanvasText;
+        forced-color-adjust: none;
+      }
+    }
+  }
+
+}
