@@ -1,0 +1,299 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+
+/* The system map: the network as cards (level 1) and one system as three columns (level 2).
+   Wires are drawn by the script under the cards (system-map-wires.ts). On the network a lit card is a heavier accent edge, a tint and a line of
+   words; a dimmed card goes muted. On a system, a step's parts are a heavier edge and a tint, the rest
+   go muted. Columns come from the space the map has (container queries), so a host's narrow column
+   stacks them as a phone does. No text is under 12 px. */
+@layer cap.components {
+  .cap-system-map {
+    container: cap-system-map / inline-size;
+    display: grid;
+    gap: var(--space-5);
+    min-width: 0;
+    margin: 0;
+    color: var(--text);
+  }
+
+  .cap-system-map-head {
+    display: grid;
+    gap: var(--space-2);
+  }
+
+  .cap-system-map-title {
+    font-weight: var(--weight-semibold);
+  }
+
+  .cap-system-map-caption {
+    max-width: var(--measure);
+    margin: 0;
+    color: var(--muted);
+  }
+
+  .cap-system-map-group-name,
+  .cap-system-map-column-name,
+  .cap-system-map-place-name {
+    margin: 0 0 var(--space-3);
+    color: var(--muted);
+    font: var(--weight-heading) var(--fs-small)/ var(--leading-snug) var(--ui);
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+  }
+
+  .cap-system-map-group-count {
+    font-weight: var(--weight-regular);
+    letter-spacing: 0;
+  }
+
+  .cap-system-map-cards,
+  .cap-system-map-ties,
+  .cap-system-map-parts {
+    display: grid;
+    gap: var(--space-3);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  /* Level 1, a layered drawing: three lanes side by side, the shared packages in the middle, and
+     gutters between them where the wires run. The cards are small (a short name) so the whole
+     network is in view at once on a desktop and a phone alike, with no scrolling; what each system
+     is shows in the detail line when it is pointed at or focused. */
+  .cap-system-map-detail {
+    min-height: calc(2 * 1.4em);
+    max-width: var(--measure);
+    margin: 0;
+    color: var(--muted);
+    font-size: var(--fs-detail);
+    line-height: var(--leading-compact);
+
+    &[hidden] {
+      display: none;
+    }
+    /* On the network the line also says what the system uses and what uses it: room for four
+       lines, the most any system needs at the measure, so lighting one moves nothing below. */
+    .cap-system-map[data-level="network"] > & {
+      min-height: calc(4 * 1.4em);
+    }
+    & .cap-system-map-card-full,
+    & .cap-system-map-part-full {
+      color: var(--text);
+      font-weight: var(--weight-semibold);
+    }
+  }
+
+  /* The two views of the network, as tabs: the hexagons (the default) and the plain map. With no
+     script both panels show, one after the other. Where the map is narrower than 44rem the
+     hexagons' names would fall under 12 px, so the hexagons and the tab list go and the script
+     chooses the plain map. */
+  .cap-system-map-views {
+    display: grid;
+    gap: var(--space-4);
+  }
+
+  .cap-system-map-switch {
+    justify-self: start;
+
+    &[hidden] {
+      display: none;
+    }
+  }
+
+  @container cap-system-map (max-width: 44rem) {
+    .cap-system-map .cap-system-map-hex,
+    .cap-system-map .cap-system-map-switch {
+      display: none;
+    }
+  }
+
+  /* The honeycomb: as tall as the screen allows below a site's header and the view tabs, so all of
+     it is in view once the tabs reach the top. */
+  .cap-system-map-hex {
+    display: grid;
+    justify-items: center;
+  }
+
+  .cap-system-map-comb {
+    display: block;
+    width: 100%;
+    max-height: calc(100svh - 8rem);
+    overflow: visible;
+  }
+
+  .cap-system-map-comb-cells polygon {
+    fill: none;
+    stroke: var(--line);
+    stroke-width: 1;
+  }
+
+  .cap-system-map-comb-group {
+    fill: var(--muted);
+    font: var(--weight-semibold) var(--title-6)/ var(--leading-none) var(--ui);
+    letter-spacing: var(--tracking-caps);
+    text-anchor: middle;
+    text-transform: uppercase;
+  }
+
+  .cap-system-map-comb .cap-system-map-wire {
+    stroke-width: 1.4;
+  }
+
+  .cap-system-map-cell {
+    outline: none;
+
+    & polygon {
+      fill: var(--surface);
+      stroke: var(--line-strong);
+      stroke-width: 1.4;
+    }
+    &[data-ring="shared"] polygon {
+      fill: var(--accent-soft);
+    }
+    &[data-ring="core"] polygon {
+      fill: var(--accent-soft);
+      stroke: var(--accent);
+      stroke-width: 2.5;
+    }
+    &[data-private] polygon {
+      stroke-dasharray: 5 4;
+    }
+    &:hover polygon {
+      stroke: var(--text);
+    }
+    &:focus-visible polygon {
+      stroke: var(--ring);
+      stroke-width: 4;
+    }
+  }
+
+  .cap-system-map-cell-name {
+    fill: var(--text);
+    font: var(--weight-semibold) var(--fs-h3)/ var(--leading-none) var(--ui);
+    text-anchor: middle;
+  }
+
+  /* Lit: as on the plain map, the cell's lines accent and on top, its ties' cells with an accent
+     edge (heavier than a plain one, so color is not the only sign), the rest muted. */
+  .cap-system-map-comb[data-lit] {
+    & .cap-system-map-wire:not([data-on]) {
+      stroke: var(--line);
+    }
+    & .cap-system-map-wire[data-on] {
+      stroke: var(--accent);
+      stroke-width: 2.6;
+      /* Dashes move from the system that uses to the one used: with tapering, the most readable
+         way to show an edge's direction, and the most accurate (Holten, Isenberg, van Wijk and
+         Fekete 2011). Their pattern: long dashes, short gaps, slow, each line out of step with
+         its neighbors so lines leaving one cell do not pulse together. A tie both ways stays
+         solid. Still under reduced motion: the detail line says which way each tie runs. */
+      stroke-dasharray: 30 5;
+      @media (prefers-reduced-motion: no-preference) {
+        animation: cap-system-map-flow var(--dur-flow) linear infinite;
+        &:nth-child(3n + 1) {
+          animation-delay: -0.7s;
+        }
+        &:nth-child(3n + 2) {
+          animation-delay: -1.4s;
+        }
+      }
+    }
+    & .cap-system-map-wire[data-on][data-both] {
+      stroke-dasharray: none;
+      animation: none;
+    }
+    & .cap-system-map-cell:not([data-tie]) {
+      & polygon {
+        fill: var(--ground);
+        stroke: var(--line);
+      }
+      & .cap-system-map-cell-name {
+        fill: var(--muted);
+      }
+    }
+    & .cap-system-map-cell[data-tie] polygon {
+      stroke: var(--accent);
+      stroke-width: 3;
+    }
+    & .cap-system-map-cell[data-tie="self"] polygon {
+      fill: var(--accent-soft);
+      stroke-width: 4.5;
+    }
+  }
+
+  @keyframes cap-system-map-flow {
+    to {
+      stroke-dashoffset: -35;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cap-system-map-comb[data-lit] .cap-system-map-wire[data-on] {
+      animation: none;
+    }
+  }
+
+  .cap-system-map-graph {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 13rem));
+    justify-content: space-between;
+    align-items: center;
+    column-gap: clamp(var(--space-6), 10cqi, 10rem);
+    padding-inline: clamp(var(--space-3), 3cqi, var(--space-7));
+  }
+
+  .cap-system-map-lane {
+    display: grid;
+    gap: var(--space-4);
+    align-content: center;
+
+    & .cap-system-map-group-name {
+      margin-block-end: var(--space-2);
+    }
+    & .cap-system-map-cards {
+      gap: var(--space-3);
+    }
+  }
+
+  /* A card on the network: its name alone. Its words are for screen readers here (the detail line
+     shows them), so they are clipped, not removed. */
+  .cap-system-map-network .cap-system-map-card {
+    padding: var(--space-2);
+
+    & .cap-system-map-card-name {
+      font-size: var(--fs-detail);
+      overflow-wrap: anywhere;
+    }
+  }
+
+  /* With room, the cards grow toward a desktop's height, still all in view. */
+  @container cap-system-map (min-width: 44rem) {
+    .cap-system-map-lane {
+      gap: var(--space-5);
+
+      & .cap-system-map-cards {
+        gap: var(--space-4);
+      }
+    }
+
+    .cap-system-map-network .cap-system-map-card {
+      padding: var(--space-3) var(--space-4);
+
+      & .cap-system-map-card-name {
+        font-size: var(--fs-body);
+      }
+    }
+  }
+
+  .cap-system-map-card-about,
+  .cap-system-map-part-about {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+}
