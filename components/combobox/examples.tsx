@@ -1,6 +1,5 @@
 // Mounts the combobox specimens. Every element with data-mount="<state>" gets that state.
-// The open states sit in <template data-specimen> frames of their own, so one open popup
-// never covers another.
+// The open states sit in their own <template data-specimen> frames so one popup never covers another.
 import { StrictMode, useEffect, useRef, useState, type ReactNode } from "react";
 import { createRoot } from "react-dom/client";
 import {
@@ -30,14 +29,11 @@ const SITES: ComboboxOption[] = [
   { value: "writing-hub-preview", label: "Writing hub preview" },
 ];
 
-// The same sites under two headings, for the grouped list.
 const GROUPED: ComboboxOption[] = SITES.map((s, i) => ({
   ...s,
   group: i < 8 ? "Live sites" : "Previews and tools",
 }));
 
-// A combobox that holds its own value, as an app's form would, and writes the chosen value
-// beside it so a test can read what was chosen.
 function Held(props: Omit<ComboboxProps, "value" | "onValueChange"> & { initial?: string | null }) {
   const { initial = null, ...rest } = props;
   const [value, setValue] = useState<string | null>(initial);
@@ -51,7 +47,6 @@ function Held(props: Omit<ComboboxProps, "value" | "onValueChange"> & { initial?
   );
 }
 
-// Tag suggestions: a tag field takes these or anything typed.
 const TAGS: ComboboxOption[] = [
   { value: "news", label: "news" },
   { value: "release", label: "release" },
@@ -60,7 +55,6 @@ const TAGS: ComboboxOption[] = [
   { value: "uptime", label: "uptime" },
 ];
 
-// A tag field that holds its own values, with the values written beside it for a test.
 function Tags(props: {
   defaultValues?: string[];
   defaultOpen?: boolean;
@@ -88,8 +82,7 @@ function Tags(props: {
   );
 }
 
-// Highlights an option the way a keyboard does, for the static picture. The spec checks
-// the real keys.
+// Highlights an option as a keyboard would, for the static picture.
 function Highlighted() {
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -111,8 +104,7 @@ function Highlighted() {
   );
 }
 
-// A server stand-in: answers after a short wait, as a network would, and stops when aborted.
-// "fail" in the text makes it fail, for the failed state.
+// A server stand-in: answers after a short wait and stops when aborted; "fail" in the text makes it fail.
 function searchSites(query: string, signal: AbortSignal): Promise<ComboboxOption[]> {
   return new Promise((resolve, reject) => {
     const timer = setTimeout(() => {
@@ -126,7 +118,6 @@ function searchSites(query: string, signal: AbortSignal): Promise<ComboboxOption
   });
 }
 
-// Institutions with their city, for the free-text field.
 const PLACES: ComboboxOption[] = [
   { value: "north", label: "Example University", hint: "Austin, TX" },
   { value: "south", label: "Example State University", hint: "Denton, TX" },
@@ -147,7 +138,6 @@ function searchPlaces(query: string, signal: AbortSignal): Promise<ComboboxOptio
   });
 }
 
-// A free-text field that writes its text and the picked suggestion beside it for a test.
 function Institution() {
   const [text, setText] = useState("");
   const [city, setCity] = useState("");

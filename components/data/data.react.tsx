@@ -1,8 +1,6 @@
-// The data hooks every React app in the network wrote its own copy of: server-seeded queries,
-// optimistic writes that roll back, a route's Answer as a query, a page-wide flag, a live room
-// that reconnects, and a lazy part the page can load before it hydrates. TanStack Query is an
-// optional peer: only an app that imports this entry needs it. Nothing here touches the DOM, so a
-// React Native app's shared client uses it too.
+// Data hooks: server-seeded queries, optimistic writes that roll back, a route's Answer as a query,
+// a page-wide flag, a live room that reconnects, and lazy parts loadable before hydration.
+// TanStack Query is an optional peer. Nothing here touches the DOM, so React Native can use it.
 import {
   QueryCache,
   QueryClient,
@@ -40,16 +38,15 @@ export {
 export type { Answer, Failure, Flag } from "./data.ts";
 
 export interface QueryClientOptions {
-  /** How long a read stays fresh (30 s). Above 0, so a read the server made for this page is fresh
-   *  on hydration and not read again at once (TanStack Query, Advanced Server Rendering). */
+  /** How long a read stays fresh (30 s). Above 0, so a server-made read is not refetched on hydration. */
   staleTime?: number;
-  /** Retries for a failed read (2). A read `final` calls final is never retried. */
+  /** Retries for a failed read (2); a read `final` accepts is never retried. */
   retries?: number;
   /** A failure retrying cannot mend, such as a 4xx answer. */
   final?: (error: unknown) => boolean;
-  /** Read again when the tab comes back or the network returns (true, TanStack's default). */
+  /** Read again when the tab comes back or the network returns (default true). */
   refetchOnFocus?: boolean;
-  /** Every failed read, once: a SignedOut sets the page's signed-out flag here. */
+  /** Every failed read, once. */
   onError?: (error: unknown) => void;
 }
 
@@ -78,16 +75,12 @@ export function createQueryClient({
   });
 }
 
-/** With a seed the data is never undefined, so a seeded page reads `.data` directly. */
+/** With a seed the data is never undefined. */
 export type SeededResult<T, S> = [S] extends [T]
   ? UseQueryResult<T> & { data: T }
   : UseQueryResult<T>;
 
-/**
- * A query that starts from its route loader's data (server-rendered, no loading flash) and then
- * lives in the cache. A loader that runs again (a navigation, a search parameter) hands down a newer
- * object, which replaces what the cache holds for the same key.
- */
+/** A query seeded from its route loader's data (no loading flash). A newer loader object replaces the cache for the same key. */
 export function useSeededQuery<T, S extends T | undefined = undefined>(
   options: {
     queryKey: QueryKey;
@@ -114,11 +107,10 @@ export function useSeededQuery<T, S extends T | undefined = undefined>(
   return query as SeededResult<T, S>;
 }
 
-/** A cache patch: the key, how its data changes, and whether only that exact key. */
 export type Patch = readonly [QueryKey, (old: never) => unknown, boolean];
 
-/** Patches the one query at exactly this key: keys are prefixes, and ["library"] must not reach
- *  ["library", "book", id], whose data has another shape. Missing data stays missing. */
+/** Patches only the query at exactly this key: keys are prefixes, and ["library"] must not reach
+ *  ["library", "book", id], whose data has another shape. */
 export function patch<T>(key: QueryKey, update: (old: T) => T): Patch {
   return [key, update as (old: never) => unknown, true];
 }
@@ -151,7 +143,6 @@ export interface WriteSpec<V, R> {
   onSuccess?: (result: R, vars: V) => void;
 }
 
-/** The words for a failed write when an app gives none of its own. */
 export function writeFailureText(error: unknown): string | null {
   if (!error) return null;
   return error instanceof Error && error.message
@@ -159,11 +150,7 @@ export function writeFailureText(error: unknown): string | null {
     : "Could not save. Try again.";
 }
 
-/**
- * A write with optimistic cache patches that roll back on failure and a targeted read of only the
- * keys it touched, so a save never reloads the page. `words` turns the failure into the line the
- * reader sees.
- */
+/** A write with optimistic cache patches that roll back on failure, then rereads only the keys it touched. */
 export function useWrite<V = void, R = unknown>(
   spec: WriteSpec<V, R>,
   words: (error: unknown) => string | null = writeFailureText,
@@ -192,7 +179,6 @@ export function useWrite<V = void, R = unknown>(
       ),
     [mutateAsync],
   );
-  /** Fire and forget; the error shows through `error`. */
   const fire = useCallback((vars: V) => mutate(vars), [mutate]);
   return { run, fire, pending: m.isPending, error: words(m.error), reset: m.reset };
 }
@@ -206,8 +192,7 @@ export type Load<T> = { data: T | null; loading: boolean; error: string | null }
 
 /**
  * A route's Answer, cached under `key`. A new key keeps what is on screen and marks it loading
- * (`keep: false` starts empty); a failed read keeps it too and says why; a SignedOut is not shown
- * as an error (the client's onError sets the signed-out flag). `reread` reads it again now.
+ * (`keep: false` starts empty); a failed read keeps it too. A SignedOut is not shown as an error.
  */
 export function useAnswer<T>(
   key: readonly unknown[],
@@ -235,7 +220,6 @@ export function useAnswer<T>(
 }
 
 export interface LiveRoomOptions {
-  /** Each text frame the room sends. */
   onMessage: (data: string) => void;
   /** The socket closed (it reconnects on its own): clear what only a live room knows, such as presence. */
   onDrop?: () => void;
@@ -244,11 +228,7 @@ export interface LiveRoomOptions {
   pingMs?: number;
 }
 
-/**
- * A WebSocket that stays open: it reconnects after a drop with exponential backoff and jitter,
- * at once when the network comes back, and closes on unmount or when `room` changes. `room` null
- * opens nothing. `open` makes the socket (an app's own, which may add a session cookie).
- */
+/** A WebSocket that reconnects with backoff and jitter, at once when the network returns. `room` null opens nothing. */
 export function useLiveRoom(
   room: string | null,
   open: (room: string) => WebSocket,
@@ -315,12 +295,10 @@ export function useLiveRoom(
 }
 
 /**
- * A chunk of lazy components that the page can load before it hydrates. React.lazy suspends on its
- * first render, and an update reaching a boundary still suspended makes React drop the server's
- * HTML for the fallback until it renders again, so a chart drawn on the server would lose its
- * height for a moment. The client entry calls `load()` first on a page that needs the chunk; a part
- * made after that renders at once, because its factory answers with an already resolved thenable,
- * which React.lazy reads synchronously.
+ * Lazy components the page can load before it hydrates. React.lazy suspends on first render, and an
+ * update reaching a still-suspended boundary makes React drop the server HTML for the fallback, so
+ * a server-drawn chart would lose its height. The client entry calls `load()` first; parts made
+ * after that render at once, because the factory returns an already-resolved thenable.
  */
 // oxlint-disable-next-line typescript/no-explicit-any -- React.lazy's own constraint on a component
 type AnyComponent = ComponentType<any>;
@@ -329,7 +307,7 @@ export function preloadedLazy<M extends Record<string, unknown>>(importer: () =>
   let loaded: M | undefined;
   let loading: Promise<M> | undefined;
   const load = (): Promise<M> => {
-    // A failed chunk fetch is forgotten, so the next render tries again instead of failing until a reload.
+    // A failed chunk fetch is forgotten so the next render retries.
     loading ??= importer().then(
       (m) => (loaded = m),
       (error: unknown) => {

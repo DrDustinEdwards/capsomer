@@ -1,9 +1,5 @@
-// The media library's bulk tags and the clipboard: plain functions the behavior module and the React
-// wrapper share.
-
-// Bulk tags: add or remove one tag across a
-// selection. An item already in the wanted state is skipped, so it is not rewritten for nothing,
-// and one item's failure is recorded without stopping the rest.
+// Bulk tags: add or remove one tag across a selection. An item already in the wanted state is skipped, and one
+// item's failure is recorded without stopping the rest.
 export async function applyBulkTag<T>({
   ids,
   wanted,

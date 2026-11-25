@@ -1,8 +1,6 @@
-// The mentions list's pure helpers: the addresses of its tabs and pages, which view it opens on,
-// which actions a person is offered here and why the others are withheld, the count and the empty
-// state. The states, their words and the decisions are the moderation queue's (moderation-queue.ts),
-// which the list is built from. No DOM; the React component and a server render use the same
-// functions.
+// The mentions list's pure helpers: tab and page addresses, the opening view, which actions are offered and
+// why others are withheld, the count and the empty state. The states, words and decisions are the
+// moderation queue's (moderation-queue.ts). No DOM, so the component and a server render share them.
 import {
   queryHref,
   type ContentCan,
@@ -25,7 +23,6 @@ import {
 
 const QUERY_ORDER: ReadonlyArray<keyof MentionsQuery> = ["view", "cursor", "open"];
 
-// The list's address with a query (content.ts, queryHref).
 export function mentionsHref(base: string, q: MentionsQuery): string {
   return queryHref(base, q, QUERY_ORDER);
 }
@@ -43,8 +40,7 @@ export function withMentions(q: MentionsQuery, change: Partial<MentionsQuery>): 
   return next;
 }
 
-// The tab shown: the one asked for, else Waiting, else All when nothing waits (Carrel and
-// dustinedwards.info already agree on this).
+// The tab shown: the one asked for, else Waiting, else All when nothing waits.
 export function currentView(data: Pick<MentionsData, "query" | "counts">): ModView {
   const v = data.query.view;
   if (v && (VIEWS as readonly string[]).includes(v)) return v;
@@ -94,7 +90,6 @@ export function mentionActions(data: Pick<MentionsData, "offers" | "can" | "quer
 
 // Words.
 
-// "4 mentions", "Showing 50 of 212 mentions".
 export function countLine(data: Pick<MentionsData, "rows" | "query" | "counts">): string {
   const n = data.rows.length;
   const total = data.counts[currentView(data)];
@@ -108,7 +103,6 @@ export function emptyWords(view: ModView): {
   return { kind: view === "pending" ? "all-clear" : "nothing-yet", title: EMPTY_TITLE[view] };
 }
 
-// The sweep's button: "Remove 3 expired".
 export function sweepLabel(expiring: MentionsData["expiring"]): { n: number; label: string } {
   const n = expiring.failed + expiring.rejected;
   return { n, label: `Remove ${n} expired` };

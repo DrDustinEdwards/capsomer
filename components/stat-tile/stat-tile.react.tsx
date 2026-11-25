@@ -4,7 +4,6 @@ import { plainLink } from "../hooks/hooks.react.tsx";
 import { Glyph } from "../status/status.react.tsx";
 
 export type StatTone = "ok" | "warn" | "crit" | "nodata";
-// The static variant adds the brand tone, for the one figure a row is about.
 export type StaticTone = StatTone | "accent";
 
 export interface StatTileLinkProps {
@@ -18,23 +17,16 @@ export interface StatTileLinkProps {
 interface StatTileBase {
   label: string;
   tone?: StatTone;
-  // Where the figure stands against its threshold: "Over limit", "Near limit", "All up".
-  // Shown with a status glyph when the tone is warn or crit.
   word?: string;
   detail?: ReactNode;
-  // Enarratio's sparkline({ ..., inline: true }) output, an SVG string, placed in the chart slot
-  // as it comes: an inline primitive, role="img" named by a sentence with its numbers (its `alt`,
-  // or Enarratio's own from the values), so it needs no frame.
+  // An inline sparkline SVG string, placed as it comes: role="img" named by a sentence with its
+  // numbers (`alt`), so it needs no frame.
   chart?: string;
-  // One sentence with the chart's numbers, "Actions minutes per day, last 7 days: 260 rising to
-  // 340.", when the SVG's own name is not it: the slot becomes the image, named by this.
+  // A sentence with the chart's numbers, when the SVG's own name is not it.
   chartSummary?: string;
-  // The chart's numbers as Enarratio's table markup (dataTableBlock(table, "Actions minutes by
-  // day"), or sparklineTable(options).markup), visually hidden for screen readers and AI agents,
-  // under the tile, outside the link. Markup, not the table, so a module with only static tiles
-  // never loads Enarratio.
+  // The numbers as Enarratio's table markup, visually hidden for screen readers and AI agents, under
+  // the tile and outside the link. Markup, not the table, so static tiles never load Enarratio.
   chartTable?: string;
-  // Opens the view behind the figure: a link with href, or a button with onClick.
   href?: string;
   onClick?: () => void;
   renderLink?: (props: StatTileLinkProps) => ReactNode;
@@ -115,7 +107,6 @@ export function StatTile(props: StatTileProps) {
       </button>
     );
 
-  // With a table, its hidden table sits under the tile, never inside the link.
   if (hasChart && chartTable) {
     return (
       <div className="cap-data">
@@ -130,16 +121,10 @@ export function StatTile(props: StatTileProps) {
 interface StaticStatTileBase {
   label: string;
   tone?: StaticTone;
-  // "lg" for the one headline figure of a row.
   size?: "lg";
-  // A drawing before the label: any inline SVG. Hidden from a screen reader.
   icon?: ReactNode;
-  // How the figure moved, beside it: Capsomer's Delta (`<Delta current previous higherIsBetter />`).
   delta?: ReactNode;
-  // The figure above its label ("41%", then "Open rate"), for a row read by its numbers. Default:
-  // the label first.
   figureFirst?: boolean;
-  // The note under the figure.
   detail?: ReactNode;
 }
 
@@ -151,8 +136,6 @@ export type StaticStatTileProps =
     })
   | (StaticStatTileBase & { tone: "nodata"; reason: string; figure?: never; unit?: never });
 
-// The static variant: a label, a figure, an optional delta and note, and nothing to follow. A
-// figure that leads somewhere is a StatTile, always a link or a button.
 export function StaticStatTile(props: StaticStatTileProps) {
   const { label, icon, delta, detail, size, tone, figureFirst = false } = props;
   const nodata = props.tone === "nodata";
@@ -199,7 +182,6 @@ export function StaticStatTile(props: StaticStatTileProps) {
 }
 
 export interface StatTilesProps {
-  // Names the list for a screen reader: "Overview figures".
   label?: string;
   // "grid": equal columns, two across on a phone (for a row of static tiles). The default is a
   // row of tiles as wide as their text, wrapping onto more rows.
@@ -207,8 +189,6 @@ export interface StatTilesProps {
   children: ReactNode;
 }
 
-// The row of tiles: each as wide as its text, wrapping onto more rows instead of cutting a
-// word, so a phone gets two or one across without a breakpoint.
 export function StatTiles({ label, layout, children }: StatTilesProps) {
   return (
     <div className="cap-tiles" data-layout={layout}>

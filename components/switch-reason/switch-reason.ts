@@ -1,12 +1,8 @@
-// The automation switch's behavior. Clicking the switch, or Space on it, does not move it:
-// it opens a one-line reason beside it. Enter applies (a reason is required), Esc cancels
-// and returns focus to the switch. On apply it dispatches `cap:switch-applied` with
-// { checked, reason, waitUntil }, and the switch moves: at once, or, when a listener calls
-// waitUntil(promise), once that promise resolves. The app writes its audit row there and
-// offers Undo through the message region.
-//
-// The flow is the Capsid Portal's ui/Switch.tsx (AutomationSwitch and ReasonForm),
-// without its API calls: the app's own listener does the sending.
+// The automation switch's behavior. Clicking or Space does not move the switch: it opens a one-line
+// reason beside it. Enter applies (a reason is required), Esc cancels and returns focus to the
+// switch. On apply it dispatches `cap:switch-applied` with { checked, reason, waitUntil }; the
+// switch moves at once, or after the promise passed to waitUntil resolves. The app writes its audit
+// row and offers Undo there.
 
 import { clearError, showError } from "../field/field.ts";
 import { setBusy as setSwitchBusy, setSwitch } from "../switch/switch.ts";
@@ -17,17 +13,14 @@ export const EVENT = "cap:switch-applied";
 export const MISSING = "Type a reason. It is recorded with the change.";
 
 export interface SwitchAppliedDetail {
-  // The state the switch is moving to.
   checked: boolean;
   reason: string;
-  // Hold the switch until the app has saved the change. A rejection keeps the reason open
-  // with the error beside it.
+  // Hold the switch until the app has saved the change. A rejection keeps the reason open with the error.
   waitUntil(promise: Promise<unknown>): void;
 }
 
-// What the reason is for, as the label's first words: "Turning seat start on". The label
-// reads "<verb>. Reason:". An app with a better verb ("Pausing sample-d") sets data-verb-on
-// and data-verb-off on the root.
+// What the reason is for, as the label's first words. The label reads "<verb>. Reason:"; data-verb-on
+// and data-verb-off on the root override the default verb.
 export function verbFor(name: string, checked: boolean): string {
   return `Turning ${name} ${checked ? "on" : "off"}`;
 }
@@ -69,9 +62,8 @@ function partsOf(root: HTMLElement): Parts | null {
   };
 }
 
-// Attaches to every [data-cap="switch-reason"] under root that is not attached yet.
-// data-name on the root is the thing switched, as it reads in the label ("the improve
-// loop"); without it, the switch's label is used. Returns a function that detaches them all.
+// Attaches to every [data-cap="switch-reason"] under root not yet attached. data-name on the root is
+// the thing switched, as it reads in the label; without it the switch's label is used. Returns a detach function.
 export function enhance(root: ParentNode = document): () => void {
   const undo: Array<() => void> = [];
   for (const el of root.querySelectorAll<HTMLElement>(
@@ -87,8 +79,7 @@ export function enhance(root: ParentNode = document): () => void {
       (next ? el.dataset.verbOn : el.dataset.verbOff) ?? verbFor(name, next);
     form.noValidate = true;
     let busy = false;
-    // The state the flip asks for, fixed when the field opens, so a poll that lands
-    // meanwhile and moves the switch cannot turn "off" into "on".
+    // The state the flip asks for, fixed when the field opens, so a poll that lands meanwhile cannot turn "off" into "on".
     let target: boolean | null = null;
 
     const setBusy = (on: boolean) => {
@@ -103,9 +94,7 @@ export function enhance(root: ParentNode = document): () => void {
         apply?.removeAttribute("aria-busy");
       }
     };
-    // `next` is where the switch would move. A checkbox flips before its click handlers run
-    // and is put back when one cancels the click, so inside the handler sw.checked already
-    // holds the next state.
+    // A checkbox flips before its click handlers run and is put back if one cancels, so sw.checked already holds the next state.
     const open = (next: boolean) => {
       if (!form.hidden) return reason.focus();
       target = next;
@@ -123,14 +112,13 @@ export function enhance(root: ParentNode = document): () => void {
       sw.focus();
     };
 
-    // A click (and Space, which clicks) would move the switch: stop it and ask instead.
     const onSwitchClick = (e: MouseEvent) => {
       const next = sw.checked;
       e.preventDefault();
       open(next);
     };
-    // Held while the request runs, so its answer is not hidden. Stopped here either way, so
-    // an Esc that cancels the reason does not also close a panel the switch sits in.
+    // Held while the request runs so its answer is not hidden. Stopped either way, so an Esc that cancels
+    // the reason does not also close a panel the switch sits in.
     const onKey = (e: KeyboardEvent) => {
       if (e.key !== "Escape") return;
       e.preventDefault();

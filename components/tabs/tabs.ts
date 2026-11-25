@@ -1,11 +1,6 @@
-// The tabs' behavior (WAI-ARIA Authoring Practices, Tabs): one tab stop on the chosen tab
-// (a roving tabindex), arrow keys, Home and End move between tabs, a tab chosen shows its
-// panel and hides the rest. The markup arrives complete (chosen tab, `tabindex`, `hidden`
-// panels), so this module only adds what changes after a person acts; a progressive set
-// (data-progressive) arrives as links to every panel and is turned into tabs here. It also keeps
-// a remembered choice (data-remember) and drags the pill variant's mark. The keyboard is this
-// module's own on purpose: Chrome's focusgroup does not skip a disabled tab. No framework;
-// the React wrapper uses the same pure functions.
+// Tab behavior (WAI-ARIA Authoring Practices, Tabs): roving tabindex, arrow keys, Home and End. Markup arrives complete;
+// this adds what changes after a person acts, turns progressive sets (data-progressive) into tabs, remembers a choice
+// (data-remember) and drags the pill mark. The keyboard is our own on purpose: Chrome's focusgroup does not skip a disabled tab.
 
 import { hashId, readStored, subscribeStored, writeStored } from "../hooks/hooks.ts";
 import { startPointerDrag } from "../sortable-list/sortable-list.ts";
@@ -13,16 +8,13 @@ import { startPointerDrag } from "../sortable-list/sortable-list.ts";
 const READY = "data-cap-ready";
 const STOP = "data-cap-tabstop";
 
-// Where the browser has `hidden="until-found"` (Chrome, Edge, Firefox 148), an inactive panel is hidden that way, so
-// find-in-page and a link to text inside it still reach it: the browser fires `beforematch` on the panel, which
-// chooses its tab. Elsewhere (Safari) the panel is plainly `hidden`, as before. (Modern Web Guidance,
-// search-hidden-content.)
+// Where the browser has `hidden="until-found"` (Chrome, Edge, Firefox 148), an inactive panel is hidden that way so find-in-page
+// reaches it: `beforematch` chooses its tab. Elsewhere (Safari) the panel is plainly `hidden`.
 export const FINDS_HIDDEN =
   typeof HTMLElement !== "undefined" && "onbeforematch" in HTMLElement.prototype;
 
-// Remembered tabs (data-remember="<key>", or the React wrapper's `remember`): the reader's choice is kept on this
-// device under "capsomer.tabs.<key>" and chosen in every tab set on every page that names the same key, and in other
-// windows. Storage can be refused (a private window, blocked site data); the choice then lasts the page.
+// Remembered tabs: the choice is kept on this device under "capsomer.tabs.<key>" and followed by every set with the same key,
+// in other windows too. Storage can be refused (private window); the choice then lasts the page.
 const REMEMBER_PREFIX = "capsomer.tabs.";
 
 export function readRemembered(key: string): string | null {
@@ -45,10 +37,8 @@ export function onRemembered(key: string, fn: (value: string) => void): () => vo
   });
 }
 
-// The reader's system from the browser's report: "ios", "android", "windows", "macos" or "linux",
-// or null when it says none of those. Phones first: an iPhone says "like Mac OS X" and Android
-// says "Linux". data-remember-guess="platform" picks the tab whose value it is; web-push names a
-// device with it.
+// The reader's system: "ios", "android", "windows", "macos", "linux" or null. Phones first: an iPhone says
+// "like Mac OS X" and Android says "Linux".
 export function guessPlatform(
   ua: string = typeof navigator === "undefined" ? "" : navigator.userAgent,
 ): "ios" | "android" | "windows" | "macos" | "linux" | null {
@@ -60,18 +50,14 @@ export function guessPlatform(
   return null;
 }
 
-/** A tab's value: its `data-value`, else the id of the panel it controls. */
 export function tabValue(tab: HTMLElement): string {
   return tab.dataset.value ?? tab.getAttribute("aria-controls") ?? "";
 }
 
-// Page tabs (PageTabs, or links written by hand): each tab is the page's address with ?tab=<id>, the first tab the
-// bare address, other query parameters kept.
-/** The ?tab= value an address's query names, or null. */
+// Page tabs: each tab is the page's address with ?tab=<id>, the first tab the bare address, other parameters kept.
 export function tabParam(search: string, param = "tab"): string | null {
   return new URLSearchParams(search).get(param);
 }
-/** The address of a page tab: `path` with `search`'s other parameters and ?tab=id (none for the first tab). */
 export function pageTabHref(
   path: string,
   search: string,
@@ -93,11 +79,9 @@ function disabledTabOf(panel: HTMLElement): boolean {
   return !!tab && isDisabled(tab);
 }
 
-/** Shows a panel, or hides it in the way this browser can still search (not the panel of a disabled tab). */
 export function setPanelHidden(panel: HTMLElement, hide: boolean): void {
   if (!hide) {
     panel.hidden = false;
-    // Its tab stop back (taken below while it was hidden until found).
     if (panel.hasAttribute(STOP)) {
       panel.setAttribute("tabindex", panel.getAttribute(STOP) ?? "0");
       panel.removeAttribute(STOP);
@@ -117,11 +101,8 @@ export function setPanelHidden(panel: HTMLElement, hide: boolean): void {
 export type Orientation = "horizontal" | "vertical";
 export type Activation = "automatic" | "manual";
 
-// The tab to move to for a key, among the tabs that can be chosen. `enabled` holds the
-// positions of the tabs not disabled, in order; `current` is the position of the focused
-// tab. Left and Right move a horizontal list (swapped in a right-to-left page), Up and Down
-// a vertical one; Home and End go to the ends; the ends wrap. Returns the position to focus,
-// or null when the key is not one of these.
+// The position to focus for a key among the enabled tabs, or null for any other key. Left/Right move a horizontal list
+// (swapped in right-to-left), Up/Down a vertical one; Home and End go to the ends; the ends wrap.
 export function nextTab(
   enabled: number[],
   current: number,
@@ -153,7 +134,6 @@ function listOf(root: HTMLElement): HTMLElement | null {
   return root.querySelector<HTMLElement>(":scope > [role='tablist']");
 }
 
-// This tab set's own tabs and panels (not those of a tab set nested in a panel).
 export function tabsOf(root: HTMLElement): HTMLElement[] {
   return [...(listOf(root)?.querySelectorAll<HTMLElement>(":scope > [role='tab']") ?? [])];
 }
@@ -177,9 +157,7 @@ function isDisabled(tab: HTMLElement): boolean {
   );
 }
 
-// Chooses a tab: it becomes the one tab stop, its panel shows, the others hide. A disabled
-// tab is not chosen. Tells the page with a `cap:tabs-change` event (bubbles) carrying the
-// tab and its panel. Returns whether the tab was chosen.
+// Chooses a tab (never a disabled one) and fires a bubbling `cap:tabs-change`. Returns whether it was chosen.
 export function select(
   root: HTMLElement,
   tab: HTMLElement,
@@ -220,10 +198,8 @@ export function select(
   return true;
 }
 
-// Progressive tabs (data-progressive on .cap-tabs): the server sends the list as links to the panels (`href="#id"`)
-// and every panel showing, each under its own name (`.cap-tabs-panel-label`), which is the whole page with script off,
-// on paper and for a machine. This turns the links into tabs: the list a tablist (named by its aria-label, or its
-// data-label), each link a tab, each panel a tabpanel, one panel showing. Returns whether the set is tabs now.
+// Progressive tabs: the server sends links to every panel, each showing under its own name, which is the whole page with
+// script off. This turns the links into tabs. Returns whether the set is tabs now.
 export function upgrade(root: HTMLElement): boolean {
   if (listOf(root)) return true;
   if (!root.hasAttribute("data-progressive")) return false;
@@ -257,16 +233,13 @@ export function upgrade(root: HTMLElement): boolean {
   return true;
 }
 
-// The pill variant's mark follows a drag (data-variant="pill", a horizontal list): press anywhere on the list and
-// slide, and the mark moves with the pointer, held between the first and last tab; let go and the tab nearest the mark
-// is chosen through `pick`, and the mark settles on it. A press that does not move is a click, as on any tab. The mark's
-// place while dragging goes through the CSSOM (--cap-pill-start, --cap-pill-end); the tab under it carries data-near.
+// The pill mark follows a drag: let go and the tab nearest the mark is chosen through `pick`. A press that does not move is a
+// click. The mark moves through the CSSOM (--cap-pill-start, --cap-pill-end); the tab under it carries data-near.
 export function attachPillDrag(list: HTMLElement, pick: (tab: HTMLElement) => void): () => void {
   let near: HTMLElement | null = null;
   let live = true;
   const tabs = () =>
     [...list.querySelectorAll<HTMLElement>(":scope > [role='tab']")].filter((t) => !isDisabled(t));
-  // A tab's start, in the list's padding box (where its ::before is placed), taking the list's scroll into account.
   const xOf = (t: HTMLElement) =>
     t.getBoundingClientRect().left -
     list.getBoundingClientRect().left -
@@ -377,8 +350,6 @@ function attach(root: HTMLElement): () => void {
     const rtl = getComputedStyle(list).direction === "rtl";
     const to = nextTab(enabled, tabs.indexOf(tab), e.key, orientation(), rtl);
     if (to === null) {
-      // Manual activation: Enter and Space on a focused tab choose it (a button does this
-      // by itself; a tab that is not a button needs it).
       if ((e.key === "Enter" || e.key === " ") && tab.tagName !== "BUTTON" && select(root, tab)) {
         e.preventDefault();
         writeHash(tab);
@@ -389,13 +360,11 @@ function attach(root: HTMLElement): () => void {
     const target = tabs[to];
     if (!target) return;
     if (manual()) {
-      // Focus moves along the tabs; the chosen one stays the tab stop until Enter or Space.
       for (const t of tabs) t.tabIndex = t === target ? 0 : -1;
       target.focus();
     } else if (select(root, target, { focus: true })) writeHash(target);
   });
 
-  // In manual mode focus may leave a tab that was only focused: the chosen tab is the tab stop again.
   on<FocusEvent>("focusout", (e) => {
     if (!manual()) return;
     const next = e.relatedTarget as Node | null;
@@ -403,7 +372,6 @@ function attach(root: HTMLElement): () => void {
     for (const t of tabsOf(root)) t.tabIndex = t.getAttribute("aria-selected") === "true" ? 0 : -1;
   });
 
-  // Find-in-page or a text fragment matched inside an inactive panel: choose its tab first.
   if (FINDS_HIDDEN) {
     const panels = panelsOf(root);
     for (const p of panels) if (p.hidden) setPanelHidden(p, true);
@@ -417,8 +385,7 @@ function attach(root: HTMLElement): () => void {
     undo.push(() => root.removeEventListener("beforematch", onMatch));
   }
 
-  // Remembered: the reader's earlier choice (or the guess) on load, each new choice kept and followed by every set
-  // that remembers the same key. An address with the panel's hash, below, still wins.
+  // Remembered: the earlier choice (or the guess) on load; an address with the panel's hash still wins.
   const key = root.dataset.remember;
   if (key) {
     let applying = false;
@@ -458,9 +425,8 @@ function attach(root: HTMLElement): () => void {
   return () => undo.forEach((f) => f());
 }
 
-// Attaches every [data-cap="tabs"] under root not yet attached. Returns a function that
-// detaches them. Document | Element, not ParentNode: under the Workers types an HTMLElement is
-// not a ParentNode (their Element's append differs), so enhance(root) failed to typecheck in bsw.
+// Attaches every [data-cap="tabs"] under root not yet attached; returns a detach function. Document | Element, not ParentNode:
+// under the Workers types an HTMLElement is not a ParentNode, so enhance(root) failed to typecheck.
 export function enhance(root: Document | Element = document): () => void {
   const undo: Array<() => void> = [];
   for (const el of root.querySelectorAll<HTMLElement>("[data-cap='tabs']")) {

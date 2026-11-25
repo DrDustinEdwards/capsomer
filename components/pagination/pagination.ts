@@ -1,10 +1,6 @@
-// Pagination's behavior. A server-rendered pager made of links needs no script at all: the
-// links are the markup. This module is for the client-side form, a nav of buttons that
-// carries its state as data attributes (data-page, data-page-count, data-total,
-// data-per-page, data-noun): a click chooses a page, the list is drawn again, the "Showing
-// 21 to 40 of 312" line (a polite live region) says where the person is, and the app is told
-// with a `cap:page-change` event so it can load that page. The React wrapper uses the same
-// pure functions.
+// Pagination's behavior for the client-side form (a nav of buttons carrying state as data attributes).
+// A server-rendered pager of links needs no script. A click draws the list again, updates the live
+// "Showing 21 to 40 of 312" line and fires `cap:page-change` so the app can load that page.
 
 import { clamp } from "../hooks/hooks.ts";
 
@@ -12,14 +8,12 @@ const READY = "data-cap-ready";
 
 export type PageItem = number | "gap-start" | "gap-end";
 
-// A page number held to 1 to `count`; a value that is not a number is page 1.
 function clampPage(page: number, count: number): number {
   return clamp(Math.floor(page) || 1, 1, count);
 }
 
-// The numbers to show for `page` of `count`: always seven slots when there are more than
-// seven pages, so the list never changes width as a person moves. The first and last page
-// are always there; a gap stands for the pages between.
+// Always seven slots when there are more than seven pages, so the width never changes; the first
+// and last page are always there.
 export function pageItems(page: number, count: number): PageItem[] {
   const n = Math.max(0, Math.floor(count));
   if (n <= 7) return Array.from({ length: n }, (_, i) => i + 1);
@@ -29,7 +23,6 @@ export function pageItems(page: number, count: number): PageItem[] {
   return [1, "gap-start", p - 1, p, p + 1, "gap-end", n];
 }
 
-// The first and last item on `page`, counted from 1.
 export function showingRange(
   page: number,
   perPage: number,
@@ -40,7 +33,6 @@ export function showingRange(
   return { from: Math.min(from, total), to: Math.min(page * perPage, total) };
 }
 
-// "Showing 21 to 40 of 312 posts". A page with one item says "Showing 41 of 41 posts".
 export function statusText(page: number, perPage: number, total: number, noun = "items"): string {
   const { from, to } = showingRange(page, perPage, total);
   if (total <= 0) return `No ${noun}`;
@@ -53,9 +45,8 @@ export function pageCountOf(total: number, perPage: number): number {
   return perPage > 0 ? Math.max(1, Math.ceil(total / perPage)) : 1;
 }
 
-// The page an address asks for: `?page=` read strictly. Only whole digits count ("2", not "2.5",
-// "-1", "1e3" or "2abc"), and only a safe integer from 1; anything else is page 1. A loader then
-// keeps it inside the list with pageEnvelope (a page past the end shows the last page).
+// The page an address asks for, `?page=` read strictly: only whole digits from 1 count, else page 1.
+// A loader keeps it in range with pageEnvelope.
 export function parsePage(raw: string | null | undefined): number {
   if (raw == null || !/^\d+$/.test(raw)) return 1;
   const n = Number(raw);
@@ -63,23 +54,19 @@ export function parsePage(raw: string | null | undefined): number {
 }
 
 export interface PageEnvelope {
-  // The page shown, kept inside 1 to pageCount.
   page: number;
   perPage: number;
   total: number;
   // At least 1: an empty list still has its one page (an empty state, not a 404).
   pageCount: number;
-  // Rows to skip for this page (SQL OFFSET).
   offset: number;
-  // The first and last item on the page, counted from 1 (0 and 0 when the list is empty).
   from: number;
   to: number;
   hasPrev: boolean;
   hasNext: boolean;
 }
 
-// Everything a list page needs from its total: the page kept in range, the offset to query, the
-// range shown and whether there is a way back or on. `perPage` "all" shows the whole list on one page.
+// Everything a list page needs from its total. `perPage` "all" shows the whole list on one page.
 export function pageEnvelope(page: number, perPage: number | "all", total: number): PageEnvelope {
   const count = Math.max(0, Math.floor(total));
   const size = perPage === "all" ? Math.max(1, count) : Math.max(1, Math.floor(perPage));
@@ -99,9 +86,8 @@ export function pageEnvelope(page: number, perPage: number | "all", total: numbe
   };
 }
 
-// The address of one page of a list: the path, the list's other parameters with their empty or
-// default values left out, and `page` only past the first (page 1 is the bare address, so one
-// page has one address). Parameter order is kept, so the same list always has the same address.
+// The address of one page: empty or default parameters left out, `page` only past the first (one
+// page, one address), parameter order kept.
 export function pageHref(
   path: string,
   params: URLSearchParams | Record<string, string | number | boolean | null | undefined>,
@@ -121,8 +107,7 @@ export function pageHref(
   return query ? `${path}?${query}` : path;
 }
 
-// The pages before and after this one, for `<link rel="prev">` and `<link rel="next">` in the
-// head (a route's links export), so crawlers and readers that follow them find the series.
+// The pages before and after this one, for `<link rel="prev">` and `<link rel="next">` in the head.
 export function pageRelLinks(
   page: number,
   pageCount: number,
@@ -150,8 +135,6 @@ function numberOf(value: string | undefined, fallback: number): number {
   return Number.isFinite(n) && n > 0 ? Math.floor(n) : fallback;
 }
 
-// Draws the nav's list and status from its data attributes: the markup in pagination.md,
-// with buttons for links.
 export function render(nav: HTMLElement): void {
   const count = numberOf(nav.dataset.pageCount, 1);
   const page = Math.min(numberOf(nav.dataset.page, 1), count);
@@ -207,8 +190,7 @@ export function render(nav: HTMLElement): void {
   else nav.append(list);
 }
 
-// Goes to a page from script. Draws again, keeps focus on the control that had it (or on the
-// current page when that control is gone), and tells the page. Returns whether the page changed.
+// Goes to a page from script. Returns whether the page changed.
 export function setPage(
   nav: HTMLElement,
   page: number,
@@ -232,8 +214,6 @@ export function setPage(
   return true;
 }
 
-// Attaches every [data-cap="pagination"] under root not yet attached. Returns a function
-// that detaches them.
 export function enhance(root: ParentNode = document): () => void {
   const undo: Array<() => void> = [];
   for (const nav of root.querySelectorAll<HTMLElement>("[data-cap='pagination']")) {

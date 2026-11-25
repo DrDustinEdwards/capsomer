@@ -12,9 +12,7 @@ export type DeltaProps =
   | { delta: DeltaValue }
   | ({ current: number | null | undefined; previous: number | null | undefined } & CompareOptions);
 
-// The move beside a figure: an arrow and a percent, green when it is better and red when worse,
-// "no change" under the threshold, nothing when there is nothing to compare. The arrow is hidden;
-// the word "up" or "down" is read out, so the move is never color or shape alone.
+// The move beside a figure. The arrow is hidden and the word "up" or "down" is read out, so the move is never color or shape alone.
 export function Delta(props: DeltaProps) {
   const d = "delta" in props ? props.delta : compareFigures(props.current, props.previous, props);
   if (d.kind === "none") return null;
@@ -24,7 +22,6 @@ export function Delta(props: DeltaProps) {
         {deltaText(d)}
       </span>
     );
-  // deltaText's words, the direction read out and the figure shown beside the arrow.
   const [direction, figure] = deltaText(d).split(" ");
   return (
     <span className="cap-delta" data-kind="moved" data-tone={d.tone} data-direction={d.direction}>

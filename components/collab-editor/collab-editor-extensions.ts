@@ -1,10 +1,6 @@
-// What the formatted editor adds when it is in a file's room: the other people's carets and
-// selections, suggesting (tracked changes, collab-editor-suggest.ts), and the comment threads marked in
-// the text. The shared document itself is Tiptap's Collaboration extension over the room's Yjs copy.
-//
-// A caret's name is the room's word, never the other browser's: each caret is looked up by its Yjs
-// client id in the room's list of people (who the door let in), and a caret the room does not list is
-// not drawn.
+// What the formatted editor adds in a file's room: others' carets and selections, suggesting (tracked
+// changes), and the comment threads marked in the text. A caret's name is the room's word, never the other
+// browser's: each is looked up by Yjs client id in the room's list of people, and an unlisted caret is not drawn.
 
 import { Extension } from "@tiptap/core";
 import { Plugin, PluginKey, type EditorState } from "@tiptap/pm/state";
@@ -22,7 +18,6 @@ import { anchorJson } from "./collab-editor-doc.ts";
 
 import { suggestingDispatch, suggestionPlugins, type Suggester } from "./collab-editor-suggest.ts";
 
-/** A caret's person: their name and their color's slot (collab-editor-room.ts `personSlot`). */
 export type Who = (clientId: number) => { name: string; slot: number } | null;
 
 export function roomCarets(awareness: Awareness, who: () => Who) {
@@ -57,7 +52,6 @@ export function roomCarets(awareness: Awareness, who: () => Who) {
   });
 }
 
-/** Draws the carets again, after the room's list of people changed. */
 export function refreshCarets(state: EditorState) {
   return state.tr.setMeta(yCursorPluginKey, { awarenessUpdated: true });
 }

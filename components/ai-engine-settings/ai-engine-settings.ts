@@ -1,12 +1,10 @@
-// The AI engine settings' words and form: which engine runs each job (the subscription, the API, or
-// Automatic: the subscription first and the API when it is refused), the model and effort the API
-// uses for it, and the month's cap on API spend. The settings' shape is site-runtime's ai-engine
-// (EngineSettings), written out here so Capsomer needs no site-runtime to draw them.
+// The AI engine settings' words and form: which engine runs each job (subscription, API, or Automatic:
+// subscription first, API when refused), the API's model and effort, and the month's cap on API spend. The
+// shape is site-runtime's ai-engine (EngineSettings), written out here so Capsomer needs no site-runtime.
 
 export type Engine = "subscription" | "api" | "auto";
 
 export interface EngineSettingsLike {
-  // An Engine, or whatever the site stored.
   master: string;
   features: Record<string, string>;
   override: { engine: string; until: string } | null;
@@ -28,12 +26,10 @@ export const ENGINE_OPTIONS: ReadonlyArray<{ value: Engine; label: string }> = [
   { value: "api", label: "API" },
 ];
 
-// "$0.0042" under a cent, "$12.40" above.
 export function dollars(micros: number): string {
   return `$${(micros / 1_000_000).toFixed(micros < 10_000 ? 4 : 2)}`;
 }
 
-// The short name of an engine setting, for "Follow everything (Automatic)".
 export function engineWord(value: string): string {
   const label = ENGINE_OPTIONS.find((e) => e.value === value)?.label ?? value;
   return label.split(":")[0]!;

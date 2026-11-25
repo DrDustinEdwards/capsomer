@@ -1,26 +1,21 @@
-// The meter's behavior: where the fill, the projection and the threshold tick sit on the
-// bar, set through the CSSOM so apps keep style-src 'self'. The number itself is in the
-// markup's text and aria-valuetext; this only draws the bar. The usage meter, the stat tile
-// and any app's bar use these same functions.
+// The meter's behavior: positions the fill, projection and threshold tick through the CSSOM so apps keep style-src 'self'.
+// The number itself is in the markup's text and aria-valuetext; this only draws the bar.
 import { enhanceEach } from "../hooks/hooks.ts";
 
 export type MeterTone = "ok" | "warn" | "crit";
 
-// The share of a span as a whole percent, 0 to 100: an upload's progress for a meter's value and label.
 export function percent(value: number, max = 100, min = 0): number {
   return Math.round(ratio(value, max, min) * 100);
 }
 
-// The share of the span, from 0 to 1. A missing, negative or non-finite value is 0.
 export function ratio(value: number, max: number, min = 0): number {
   const span = max - min;
   if (!Number.isFinite(value) || !Number.isFinite(span) || span <= 0) return 0;
   return Math.min(1, Math.max(0, (value - min) / span));
 }
 
-// The tone a value earns by threshold: warning from `warnAt` of the span, critical from
-// `critAt` (both 0 to 1; the defaults are the usage meter's 75% and 90%). The caller still
-// writes the status word beside it: a tone is a word, a shape and a color, never color.
+// The tone a value earns: warning from `warnAt`, critical from `critAt` (0 to 1; defaults 75% and 90%). The caller still
+// writes the status word beside it: a tone is a word, a shape and a color, never color alone.
 export function toneFor(
   value: number,
   max: number,
@@ -39,13 +34,10 @@ export interface BarValues {
   value: number;
   max: number;
   min?: number;
-  // The projected value at the end of the period, in the same unit; null or absent: none.
   projected?: number | null;
-  // Where the threshold tick sits, in the same unit; null or absent: no tick.
   threshold?: number | null;
 }
 
-// Sets one bar's positions from its values.
 export function setBar(bar: HTMLElement, v: BarValues): void {
   const min = v.min ?? 0;
   bar.style.setProperty("--cap-meter-ratio", String(ratio(v.value, v.max, min)));
@@ -59,8 +51,6 @@ export function setBar(bar: HTMLElement, v: BarValues): void {
   else bar.style.setProperty("--cap-meter-threshold", String(ratio(v.threshold, v.max, min)));
 }
 
-// Reads a bar's aria-valuenow, aria-valuemin, aria-valuemax, data-projected and
-// data-threshold and draws it.
 export function update(bar: HTMLElement): void {
   const min = num(bar.getAttribute("aria-valuemin"));
   const projected = num(bar.dataset.projected);
@@ -82,8 +72,7 @@ const WATCHED = [
   "data-threshold",
 ];
 
-// Attaches to every [data-cap="meter"] under root (or root itself) not yet attached, draws
-// its bar, and redraws it whenever a value changes. Returns a function that detaches.
+// Attaches to every [data-cap="meter"] under root, draws its bar and redraws on a value change. Returns a detach function.
 export function enhance(root: ParentNode = document): () => void {
   return enhanceEach(root, "meter", (meter) => {
     const bar = meter.querySelector<HTMLElement>(".cap-meter-bar");

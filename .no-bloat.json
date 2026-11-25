@@ -1,11 +1,11 @@
 {
   "baseline": {
-    "measured_at": "a7747d7",
+    "measured_at": "71ef0401",
     "knip": {},
     "jscpd": {
       "clones": 36,
       "lines": 473,
-      "percentage": 0.24,
+      "percentage": 0.23,
       "unread": 24
     },
     "shared copies": {
@@ -14,24 +14,20 @@
     },
     "legacy": {},
     "size": {
-      "components/bulk-bar/bulk-bar.ts": 522,
-      "components/checklist-run/checklist-run.ts": 742,
-      "components/command-menu/command-menu.ts": 792,
-      "components/confirm-dialog/confirm-dialog.react.tsx": 648,
-      "components/confirm-dialog/confirm-dialog.ts": 513,
+      "components/checklist-run/checklist-run.ts": 716,
+      "components/command-menu/command-menu.ts": 734,
+      "components/confirm-dialog/confirm-dialog.react.tsx": 610,
       "components/email/email.ts": 507,
       "components/flag-list/flag-list.react.tsx": 571,
-      "components/flag-list/flag-list.ts": 646,
-      "components/mentions-list/mentions-list.react.tsx": 502,
-      "components/moderation-queue/moderation-queue.ts": 564,
-      "components/popover/popover.ts": 533,
-      "components/publish-gate/publish-gate.ts": 570,
-      "components/site-header/examples.tsx": 881,
-      "components/site-header/site-header-parts.react.tsx": 544,
-      "components/site-header/site-header.react.tsx": 708,
-      "components/sortable-list/sortable-list.react.tsx": 850,
-      "components/sortable-list/sortable-list.ts": 690,
-      "components/time/time.ts": 537,
+      "components/flag-list/flag-list.ts": 621,
+      "components/moderation-queue/moderation-queue.ts": 537,
+      "components/publish-gate/publish-gate.ts": 555,
+      "components/site-header/examples.tsx": 868,
+      "components/site-header/site-header-parts.react.tsx": 502,
+      "components/site-header/site-header.react.tsx": 692,
+      "components/sortable-list/sortable-list.react.tsx": 827,
+      "components/sortable-list/sortable-list.ts": 658,
+      "components/time/time.ts": 502,
       "site/frame-heights.css": 3109
     },
     "tests": {
@@ -39,9 +35,9 @@
       "cases": 1669
     },
     "comments": {
-      "lines": 14545,
-      "code": 152759,
-      "percentage": 8.69
+      "lines": 10277,
+      "code": 153387,
+      "percentage": 6.28
     }
   }
 }

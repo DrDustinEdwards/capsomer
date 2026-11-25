@@ -1,11 +1,8 @@
-/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+/* Layer order, repeated so this file is safe in any import order. */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
-/* The error page's ad slot: one vintage-style ad as decoration at the foot of a utility page, in
-   its own fonts. Link it from the page that shows an ad (never import it in a root boundary), so
-   only that page pays for it. Extracted from dustinedwards.info's utility ads
-   (app/utility-ads/utility-ads.css). The fonts are Bangers and Alfa Slab One, OFL 1.1
-   (fonts/OFL-bangers-alfa-slab-one.txt). */
+/* The error page's ad slot, in its own fonts (Bangers and Alfa Slab One, OFL 1.1). Link it from the page
+that shows an ad, never import it in a root boundary, so only that page pays for it. */
 @layer cap.components {
   @font-face {
     font-family: "Cap Ad Display";
@@ -22,7 +19,6 @@
     src: url("../../fonts/alfa-slab-one-latin-400-normal.woff2") format("woff2");
   }
   .cap-ad {
-    /* The ad's own ink: the text color, dark on a light page and light on a dark one. */
     --cap-ad-ink: var(--text);
     align-self: flex-end;
     inline-size: min(100%, 32rem);

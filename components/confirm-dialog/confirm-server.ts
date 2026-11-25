@@ -1,24 +1,17 @@
-// The confirm page's server half: what an action checks again after the page posts, because markup is not a guard
-// (confirm-dialog.md). No DOM, no framework: it runs in a Worker's action. A confirmation in a client handler is
-// feedback; the gate is this.
+// The confirm page's server half: what an action checks again after the page posts, because markup is not a
+// guard (confirm-dialog.md). No DOM; runs in a Worker's action. A client confirmation is feedback; the gate is this.
 
-/** The typed-word guard: case-insensitive, surrounding spaces ignored. No word, no guard. */
 export function wordMatches(typed: string, word: string | undefined): boolean {
   if (!word) return true;
   return typed.trim().toLowerCase() === word.trim().toLowerCase();
 }
 
-/** The names ConfirmPage gives its typed field and its reason. */
 export const CONFIRM_FIELD = "confirm";
 export const REASON_FIELD = "reason";
 
 const text = (value: unknown) => (typeof value === "string" ? value : "");
 
-/**
- * Whether the posted form typed the word (case-insensitive, surrounding spaces ignored, as the page's pattern), and
- * carried a reason when one is required. `{ ok: true, reason }` or `{ ok: false, problem }`, the problem in words the
- * page shows in its alert box.
- */
+/** Whether the posted form typed the word and carried a reason when one is required: `{ ok: true, reason }` or `{ ok: false, problem }`. */
 export function confirmTyped(
   form: FormData | URLSearchParams,
   { word, reasonRequired = false }: { word?: string; reasonRequired?: boolean },

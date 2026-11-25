@@ -1,11 +1,8 @@
 export * from "./icons.ts";
 
-// One icon, drawn from its path: `<Icon d={iconSearch} />`, a social mark `<Icon {...markX} />`, or a
-// drawing the set lacks (`box` for a grid other than 24, as Carrel's 16-unit menu). Each drawing is
-// its own export of icons.ts, so an app's bundle holds only the ones it imports. Hidden from
-// assistive technology (the button or link around it carries the name), or, with `label`, an image
-// named by it. In a button, `data-icon` says which side of the label it sits on, so the button pulls
-// its padding in on that side (button.css).
+// One icon, drawn from its path (`box` for a grid other than 24). Hidden from assistive technology unless
+// given a `label`. In a button, `data-icon` says which side of the label it sits on, so the button pulls its
+// padding in on that side (button.css).
 export function Icon(props: {
   d: string;
   box?: number;

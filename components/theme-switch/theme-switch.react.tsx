@@ -17,9 +17,7 @@ import {
 export type { ThemeChoice, ThemeSave };
 
 export interface ThemeSwitchProps {
-  // The localStorage key; "cap-theme" by default.
   prefKey?: string;
-  // The group's name, read by a screen reader; hidden from sight in a top bar.
   legend?: string;
   // What the server rendered (from a cookie), before the stored choice is read. Leave it out
   // and the control shows the operating system's theme once it mounts.
@@ -107,11 +105,9 @@ export function ThemeSwitch({
 }
 
 export interface ThemeButtonProps {
-  // The localStorage key; "cap-theme" by default.
   prefKey?: string;
   // The key the app binds to toggleTheme(), shown in the tip as a key cap ("T"). The app binds it.
   shortcut?: string;
-  // Extra classes: the site header adds its own icon-control class.
   className?: string;
   // What the server rendered (from a cookie); leave it out and the label follows the page once
   // it mounts. The icon follows the page by CSS either way.
@@ -152,7 +148,6 @@ const BUTTON_SUN = (
   </svg>
 );
 
-// The button's tip: its name again, and the key that does the same, shown on hover and keyboard focus.
 function ThemeTip({
   ref,
   label,
@@ -188,9 +183,7 @@ function ThemeTip({
   );
 }
 
-// The theme as one icon button (the site header's theme control, Dustin's answer 2 of
-// 2026-10-13): Light and Dark only, no System; it says what it does, "Switch to dark theme", in
-// its name and its tip.
+// The theme as one icon button (the site header's control): Light and Dark only; its name and tip say what it does.
 export function ThemeButton({
   prefKey = THEME_PREF,
   shortcut,
@@ -299,10 +292,8 @@ function FormButton({
   );
 }
 
-// The theme button for a site that keeps the choice in a cookie and works with no script
-// (data-variant="form"): two real submit buttons, one shown by CSS, each saying what it
-// does. Pure markup, so a server render and the browser agree; capsomer/behavior/theme-switch's
-// enhance() makes a press switch at once and write the cookie.
+// The theme button for a site that keeps the choice in a cookie and works with no script (data-variant="form"):
+// two real submit buttons, one shown by CSS. Pure markup, so a server render and the browser agree.
 export function ThemeForm({
   action = "/theme",
   cookie,
@@ -347,8 +338,6 @@ export interface ThemeColorProps {
   ground: { light: string; dark: string };
 }
 
-// The <meta name="theme-color"> tags for a React Layout's head: themeColorTags (theme-cookie.ts) as elements, so a
-// site stops hand-writing the light and dark pair.
 export function ThemeColor({ choice = null, ground }: ThemeColorProps) {
   return (
     <>

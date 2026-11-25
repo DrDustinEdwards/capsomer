@@ -160,10 +160,9 @@ for (const name of NAMES) {
           const found: string[] = [];
           for (const s of pages) {
             await open(page, s, theme);
-            // Not color-contrast: in forced colors the person's palette paints every color, and axe
-            // reads the author's colors the browser no longer paints (it read a primary button as
-            // #fdfdfe on #ffffff, 1.01:1, painted black on white). Contrast is scanned in both
-            // themes by every component's own axe test.
+            // Not color-contrast: in forced colors the person's palette paints every color, and axe reads
+            // the author's colors the browser no longer paints. Contrast is scanned in both themes by every
+            // component's own axe test.
             const misread = AXE_EXCLUDE[`${s.name}/${s.only}`];
             if (misread)
               await page.evaluate(

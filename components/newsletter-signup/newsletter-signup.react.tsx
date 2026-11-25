@@ -16,26 +16,20 @@ export interface NewsletterFormProps {
 export type NewsletterState = { ok: true } | { ok: false; error: string } | undefined;
 
 export interface NewsletterSignupProps {
-  // Where the form posts: the site's action, which sends the confirmation link (double opt-in).
   action?: string;
   title?: ReactNode;
-  // The consent line, a required checkbox (a link to the privacy page inside it).
   consent?: ReactNode;
-  // The action's answer: sent, or the error to show.
   state?: NewsletterState;
   done?: ReactNode;
   button?: ReactNode;
   placeholder?: string;
-  // Card (default) or on the page's own ground.
   plain?: boolean;
   headingLevel?: "h2" | "h3";
-  // Draw the form with the app's router form (React Router's Form), so the post needs no reload.
   renderForm?: (props: NewsletterFormProps) => ReactNode;
 }
 
-// The HTML contract in newsletter-signup.md: the field's TextField with its button as the row's
-// action and the error as the field's, the consent a Check, and the answer said by FormStatus,
-// whose region is in the page from the start and takes focus when the form is replaced by it.
+// The field's TextField with its button as the row's action, the consent a Check, and the answer said
+// by FormStatus, whose region is in the page from the start and takes focus when the form is replaced.
 export function NewsletterSignup({
   action,
   title = "Newsletter",

@@ -8,17 +8,11 @@ export interface FeedEvent {
   // an incident began, linked to the event it follows.
   kind?: "event" | "condensed" | "marker";
   tone: FeedTone;
-  // What happened, with its own words for the status: "api deployed 366b902",
-  // "blog deploy failed". For a marker, the link's words.
   what: ReactNode;
-  // Who, and any short detail: "Merged by seat."
   detail?: ReactNode;
-  // Relative time as shown ("53 minutes ago") and the instant it names.
   when: ReactNode;
   at: string;
-  // A condensed run's last instant: the row shows "09:10 to 11:40".
   until?: { when: ReactNode; at: string };
-  // A marker's incident page.
   href?: string;
   // A marker's event: the id of the deploy it follows, which describes the link.
   about?: string;
@@ -32,7 +26,6 @@ export interface FeedDay {
 
 export interface FeedProps {
   days: FeedDay[];
-  // The day headings' level: 4 inside a panel whose title is an h3.
   headingLevel?: 2 | 3 | 4 | 5 | 6;
 }
 

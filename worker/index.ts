@@ -1,17 +1,15 @@
 /**
- * The showcase site's Worker: site-runtime's `staticSite`, the one front door the family's static sites share. It
- * receives Content-Security-Policy violation reports at /csp-report (limited by CSP_REPORT_RATE_LIMIT), serves the
- * prefetch rules at /speculation-rules.json, and sends every page with the Speculation-Rules, Server-Timing and preload
- * Link headers (so Early Hints answers with a 103), and the security set from the site's registry entry
- * (@dustinedwards/site-runtime/sites, capsomer) with the TDMRep header, the set `_headers` is written from. A path with
- * no file gets site-dist/404.html with status 404 and `private, no-store`, and so does a page asked for with a cookie.
- * wrangler.jsonc runs it first for every path but /assets/*, the hashed files, which the asset server answers with the
- * immutable cache rule from `_headers`. Pages end in a slash (/icons/), which the asset server's auto-trailing-slash
- * redirect keeps, so there is no canonical redirect here.
+ * The showcase site's Worker: site-runtime's `staticSite`, the front door the family's static sites
+ * share. It takes CSP violation reports at /csp-report, serves /speculation-rules.json, and adds the
+ * Speculation-Rules, Server-Timing, preload Link (so Early Hints answers with a 103) and security
+ * headers from the site's registry entry. A path with no file, or a page asked for with a cookie,
+ * gets site-dist/404.html with status 404 and `private, no-store`. wrangler.jsonc runs it first for
+ * every path but /assets/* (hashed files, served immutable). Pages end in a slash, which the asset
+ * server's auto-trailing-slash redirect keeps, so there is no canonical redirect here.
  *
- * It also answers /network.json for the front page's network board (site/network-board.ts): each network site's lamp
- * from its own /health, read here because those answers carry no CORS header for a page to read them itself. The
- * answer is held at the edge for a minute, so readers never fan out to the six sites.
+ * It also answers /network.json for the front page's network board (site/network-board.ts): each
+ * site's lamp from its own /health, read here because those answers carry no CORS header. Held at
+ * the edge for a minute so readers never fan out to the six sites.
  */
 
 import { serveMarkdownCopies } from "@drdustinedwards/site-helpers/llms";

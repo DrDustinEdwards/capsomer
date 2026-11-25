@@ -9,13 +9,10 @@ export interface RingSlot {
 }
 
 export interface FromRingOptions {
-  // How many slots to draw; the ring is cut into this many equal runs (the last takes any rest).
   slots: number;
-  // The run's label: its first probe index, its probes seen and its probes down.
   label?: (run: { first: number; seen: number; down: number }) => string;
 }
 
-// The share of seen probes that were up, or null when nothing was seen: no data is never 0%.
 export function uptimeOf(ring: string): number | null {
   let up = 0;
   let seen = 0;
@@ -26,7 +23,6 @@ export function uptimeOf(ring: string): number | null {
   return seen ? up / seen : null;
 }
 
-// The ring padded on the left with "-" to `length` probes, or cut to its newest `length`.
 export function padRing(ring: string, length: number): string {
   const r = ring.slice(-length);
   return "-".repeat(length - r.length) + r;

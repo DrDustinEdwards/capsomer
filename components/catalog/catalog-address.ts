@@ -85,12 +85,10 @@ export function catalogHref<T>(def: CatalogDefinition<T>, state: CatalogState): 
   return query ? `${def.basePath}?${query}` : def.basePath;
 }
 
-// The address a request should have, or null when it already has it. A browser submitting the form with no script
-// sends every control, including the ones at their defaults (`?q=billing&sort=-updated&kind=`); a server answers
-// that with a redirect to the one address the state has, so what is shared and cached is the clean one.
-// `keepUnknown` leaves parameters the catalog does not read (a campaign tag, a cache buster) out of the
-// comparison, so they are served rather than redirected away; they are dropped only when a redirect
-// happens anyway.
+// The address a request should have, or null when it already has it. A form submitted with no script
+// sends every control, including defaults; the server redirects to the one clean address so what is
+// shared and cached is the clean one. `keepUnknown` leaves parameters the catalog does not read out of
+// the comparison, so they are served rather than redirected away.
 export function catalogRedirect<T>(
   def: CatalogDefinition<T>,
   url: URL,
@@ -108,7 +106,6 @@ export function catalogRedirect<T>(
   return `${url.pathname}${search}` === wanted ? null : wanted;
 }
 
-// Every URL parameter the catalog reads.
 function catalogParams<T>(def: CatalogDefinition<T>): Set<string> {
   const names = new Set<string>(RESERVED_PARAMS);
   for (const field of def.fields) {
@@ -133,8 +130,8 @@ export function oneOf<V extends string, F>(
     : fallback;
 }
 
-// A list parameter, sent either way a person or a form sends it: repeated (?tag=a&tag=b) or as one
-// comma list (?tag=a,b). Trimmed, deduplicated in first-seen order, and, with `known`, only values in it.
+// A list parameter, repeated (?tag=a&tag=b) or comma-separated (?tag=a,b). Trimmed, deduplicated in
+// first-seen order, and, with `known`, only values in it.
 export function listParam(
   params: URLSearchParams,
   key: string,

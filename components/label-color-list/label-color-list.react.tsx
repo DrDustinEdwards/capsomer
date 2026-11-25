@@ -1,5 +1,4 @@
-// The pill and the list, which a page that shows labels loads; the editor, with its fields and
-// select, is its own module (capsomer/react/label-color-editor), so showing a label loads none of it.
+// The pill and the list; the editor is its own module (capsomer/react/label-color-editor) so showing a label loads none of it.
 import { Pill } from "../status/status.react.tsx";
 import { labelFor, seriesOf, type ColorLabel } from "./label-color-list.ts";
 
@@ -7,14 +6,10 @@ export type { ColorLabel };
 
 export interface ColorLabelPillProps {
   labels: readonly ColorLabel[];
-  // The value to show: a scene's status: as written. Matched to a label ignoring case.
   value: string;
-  // Said after a value the list does not carry: " (not on the list)".
   unknownNote?: string;
 }
 
-// A value as the list names it: the label's word with its color as a dot. A value the list does
-// not carry is shown as written, in an outline pill; an empty one shows nothing.
 export function ColorLabelPill({
   labels,
   value,
@@ -33,7 +28,6 @@ export function ColorLabelPill({
   return <Pill series={seriesOf(label.color)}>{label.label}</Pill>;
 }
 
-// The list as it reads: every label in order.
 export function LabelColorList({
   labels,
   label = "Labels, in order",

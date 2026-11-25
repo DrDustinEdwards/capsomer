@@ -1,6 +1,5 @@
-// The table's behavior: a sort button in a column header sorts the body rows by that
-// column, toggling ascending and descending, and moves aria-sort to its header cell. Screen
-// readers announce aria-sort themselves, so nothing else is announced. No framework.
+// The table's behavior: a sort button in a column header sorts the body rows and moves aria-sort to its header
+// cell. Screen readers announce aria-sort themselves, so nothing else is announced.
 
 export type SortDirection = "ascending" | "descending";
 
@@ -22,7 +21,6 @@ export function compareValues(a: string | number, b: string | number): number {
   return collator.compare(String(a), String(b));
 }
 
-// Sorts every tbody's rows of `table` by column `index`. Stable: equal rows keep their order.
 export function sortRows(table: HTMLTableElement, index: number, direction: SortDirection): void {
   const sign = direction === "ascending" ? 1 : -1;
   for (const body of Array.from(table.tBodies)) {
@@ -33,7 +31,6 @@ export function sortRows(table: HTMLTableElement, index: number, direction: Sort
   }
 }
 
-// The column a header cell heads, counting the colspans before it.
 export function columnIndex(th: HTMLTableCellElement): number {
   let i = 0;
   for (let c = th.previousElementSibling; c; c = c.previousElementSibling)
@@ -92,9 +89,8 @@ function keepFocus(wrap: HTMLElement): () => void {
   };
 }
 
-// Attaches to every [data-cap="table"] under root that is not attached yet. Returns a
-// function that detaches them all. A table already marked sorted (aria-sort in its
-// markup) is expected to arrive in that order; it is not re-sorted on attach.
+// Attaches to every [data-cap="table"] under root. A table already marked sorted (aria-sort in its markup)
+// is expected to arrive in that order; it is not re-sorted on attach.
 export function enhance(root: ParentNode = document): () => void {
   const undo: Array<() => void> = [];
   for (const wrap of Array.from(

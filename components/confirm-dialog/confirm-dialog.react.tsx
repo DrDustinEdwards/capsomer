@@ -31,25 +31,16 @@ const MEDIA_GLYPH = (
 
 export interface ConfirmDialogProps {
   open: boolean;
-  // Names the action and the object: "Revoke deploy-agent?"
   title: string;
-  // An optional first sentence: "This cannot be undone."
   lead?: ReactNode;
-  // What will change, one line each.
   body: string[];
-  // The perform button's label, named for the action: "Revoke agent".
   action: string;
-  // For what cannot be recovered: the short word to type ("revoke").
   typeToConfirm?: string;
-  // Asks for a reason, required, before the action. perform receives it.
   reason?: { label?: string; note?: string };
   perform: (reason: string) => Promise<void>;
-  // Called once per close, with true when the action was performed.
   onClose: (performed: boolean) => void;
   cancelLabel?: string;
-  // Where focus goes when the opener has gone; the page's main region by default.
   returnTo?: HTMLElement | null;
-  // The icon tile beside the title. Default: shown.
   media?: boolean;
 }
 
@@ -84,7 +75,6 @@ export function ConfirmDialog(props: ConfirmDialogProps) {
   const [reason, setReason] = useState("");
   const matched = wordMatches(typed, typeToConfirm);
 
-  // A fresh dialog each time it opens.
   useEffect(() => {
     if (open) performed.current = false;
   }, [open]);
@@ -104,8 +94,7 @@ export function ConfirmDialog(props: ConfirmDialogProps) {
       typedRef.current?.focus();
       return;
     }
-    // Read from the field as well as from state, so a value the browser filled in without
-    // an input event still counts.
+    // Read from the field too, so a value filled in without an input event still counts.
     const why = (reasonRef.current?.value ?? reason).trim();
     if (reasonOpt && !why) {
       setError({
@@ -191,7 +180,6 @@ export function ConfirmDialog(props: ConfirmDialogProps) {
                 value={reason}
                 onChange={(e) => setReason(e.target.value)}
                 onKeyDown={(e) => {
-                  // Ctrl or Cmd with Enter performs; a plain Enter is a new line.
                   if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) {
                     e.preventDefault();
                     void run();
@@ -272,7 +260,6 @@ export function ConfirmDialog(props: ConfirmDialogProps) {
   );
 }
 
-// What ConfirmPage gives its form, plain or a router's.
 export interface ConfirmFormProps {
   className: string;
   "data-cap": string;
@@ -284,45 +271,33 @@ export interface ConfirmFormProps {
 }
 
 export interface ConfirmPageProps {
-  // Where the form posts, and the fields it carries with it (the intent, the ids, a return address).
-  // Left out, it posts to the page it is on.
+  // Where the form posts and the fields it carries; left out, it posts to the current page.
   action?: string;
   method?: "post" | "get";
   // A list value is one hidden field per item, under one name (the ticked `ids`).
   hidden?: Record<string, string | readonly string[]>;
-  // Names the action and the object: "Delete example.com?"
   title: string;
   lead?: ReactNode;
-  // What will change, one line each, from the server's own preview.
   body?: string[];
-  // The perform button's label, named for the action: "Delete site".
   action_label?: string;
   // Where Cancel goes: a link, so it works with no script.
   cancelHref: string;
   cancelLabel?: string;
-  // For what cannot be recovered: the short word to type. Checked by the browser (required and
-  // pattern) and again by the server.
+  // For what cannot be recovered: the word to type, checked by the browser and again by the server.
   typeToConfirm?: string;
-  // Asks for a reason, required, that the audit row carries. Posted as `reason`.
   reason?: { label?: string; note?: string };
-  // What the server found wrong the last time (the typed word did not match, no reason): shown in
-  // the alert box beside the buttons, so the page works with no script.
+  // What the server found wrong last time, shown in the alert box so the page works with no script.
   error?: ReactNode;
-  // The icon tile beside the title. Default: shown.
   media?: boolean;
   // `h1` when the confirmation is the whole page, `h2` when it sits under one.
   headingLevel?: "h1" | "h2";
-  // More fields for the form, beside `hidden`: a list a server renders as its own inputs.
   children?: ReactNode;
-  // Cancel without leaving the page: the link still goes to cancelHref with no script.
   onCancel?: () => void;
-  // The form element, for a router's own form (React Router's <Form>), so the post is a client
-  // navigation. It is given every prop the plain form would get.
+  // The form element for a router's own form, so the post is a client navigation.
   renderForm?: (props: ConfirmFormProps) => ReactElement;
 }
 
-// The confirmation as a form in the page, for a server that answers a destructive request with
-// its own page and works with no script. Pure markup, so a server render and the browser agree.
+// The confirmation as a form in the page, for a server that answers a destructive request with its own page; works with no script.
 export function ConfirmPage({
   action,
   method = "post",
@@ -464,11 +439,8 @@ export function ConfirmPage({
 
 export type ConfirmModalProps = Omit<ConfirmPageProps, "headingLevel">;
 
-// The confirm page as a modal, for a server that answers a destructive request by drawing
-// the confirmation over the page it came from. It is in the page until script runs (data-inline),
-// so a reader with no script still gets the second step; then it opens as a modal. Esc leaves the
-// way Cancel does, and focus goes back to the control that opened it, or to that control's menu
-// button when the control was in a menu that has closed, or to the page's main region.
+// The confirm page as a modal over the page it came from. It is in the page until script runs (data-inline),
+// so a reader with no script still gets the second step. Focus returns to the opener, else its closed menu button, else main.
 export function ConfirmModal(props: ConfirmModalProps) {
   const ref = useRef<HTMLDialogElement>(null);
   const [ready, setReady] = useState(false);
@@ -481,7 +453,6 @@ export function ConfirmModal(props: ConfirmModalProps) {
     const origin = active instanceof HTMLElement && active !== document.body ? active : null;
     const d = ref.current;
     if (d && !d.open) d.showModal();
-    // The typed word or the reason when there is one, else Cancel, as an alert dialog's.
     d?.querySelector<HTMLElement>(
       ".cap-confirm-typed input, .cap-confirm-reason textarea, .cap-dialog-footer .cap-btn",
     )?.focus();
@@ -524,17 +495,14 @@ export function ConfirmModal(props: ConfirmModalProps) {
   );
 }
 
-/** What the dialog is asking about and the control that opened it, or null when closed. */
 export interface ConfirmAsk<T> {
   subject: T;
   opener: HTMLElement | null;
 }
 
 /**
- * The state a page keeps for its confirm dialogs: what is being asked about and the control that
- * asked, so focus goes back to it. `ask(subject, event.currentTarget)` opens; spread `props` into
- * the ConfirmDialog whose `open` is your own test of `subject`. Carrel's editor, book file and
- * project flags pages use it.
+ * The state a page keeps for its confirm dialogs, so focus goes back to the control that asked.
+ * `ask(subject, event.currentTarget)` opens; spread `props` into the ConfirmDialog.
  */
 export function useConfirmAction<T>(): {
   subject: T | null;
@@ -553,23 +521,17 @@ export function useConfirmAction<T>(): {
   };
 }
 
-/** A failed step: the server's words, and whether the preview it rested on has expired. */
 export interface StepError {
   text: string;
   expired: boolean;
-  /** The failure is about a field (a reason, a typed word), shown beside it. */
   field?: boolean;
 }
 
-/** What a step's request came to: `capsomer/react/data`'s Answer. */
 type StepAnswer<T> = Answer<T>;
 
 /**
- * Preview, then perform: the preview writes nothing and answers what will change (and a token);
- * perform carries it out. Every press ends in something the person can see: the preview, the
- * result, a refusal in the server's words, or why it could not be sent. A perform refused because
- * its preview expired drops the preview, so the next press previews again. Answers that arrive
- * after the dialog has gone are ignored.
+ * Preview, then perform: the preview writes nothing; perform carries it out. A perform refused because its
+ * preview expired drops the preview, so the next press previews again. Answers after the dialog has gone are ignored.
  */
 export function useTwoStep<I, P, R>({
   preview,

@@ -1,9 +1,5 @@
-// The tree: nested items a person opens and closes, chooses, and (optionally) moves, after
-// the WAI-ARIA tree pattern. Delivered with no script it is nested lists with every level
-// shown and every link working; `enhance` adds the roles, the closed branches, one tab stop
-// with the arrow keys moving focus, selection, and moving by keyboard and by dragging. The
-// tree owns no storage: a move is a cancelable `cap:tree-move` event, and the host saves it.
-// No framework; the React wrapper uses the same pure functions.
+// The tree after the WAI-ARIA tree pattern. With no script it is nested lists with every link working; `enhance` adds roles,
+// closed branches, one tab stop, selection and moving. The tree owns no storage: a move is a cancelable `cap:tree-move` event.
 
 import { isImeEnter } from "../shortcuts/shortcuts.ts";
 import { TYPEAHEAD_MS, type TypeaheadState, nextTypeahead } from "../listbox/listbox.ts";
@@ -49,9 +45,7 @@ export type {
   DropZone,
 } from "./tree-model.ts";
 
-// The controller, over the HTML contract: `[data-cap="tree"]`, a `ul.cap-tree` of
-// `li.cap-tree-item[data-value]`, each holding its `.cap-tree-row` (a link, or a span) and,
-// for a branch, a `ul.cap-tree-group`.
+// Over the HTML contract: `[data-cap="tree"]` > `ul.cap-tree` > `li.cap-tree-item[data-value]` with `.cap-tree-row` and, for a branch, `ul.cap-tree-group`.
 
 export type TreeSelection = "none" | "single" | "multi";
 
@@ -69,8 +63,6 @@ export interface Tree {
   setExpanded(id: string, open: boolean): void;
   selected(): string[];
   focus(id?: string): void;
-  // Makes a move, as the keyboard or a drop would: emits cap:tree-move, and unless that is
-  // canceled, moves the item and says so. Returns whether it moved.
   move(move: TreeMove): boolean;
   refresh(): void;
   detach(): void;
@@ -126,7 +118,6 @@ export function createTree(el: HTMLElement): Tree {
     });
   let model: TreeNodeLike[] = [];
 
-  // Writes the roles and states from the model, the open set and the chosen set.
   const paint = () => {
     parts.clear();
     model = read(el);
@@ -172,7 +163,6 @@ export function createTree(el: HTMLElement): Tree {
     walk(model, 1);
     const rows = visibleRows(model, open);
     if (!current || !rows.some((r) => r.id === current)) {
-      // The tab stop: the chosen row if one shows, otherwise the first.
       current = rows.find((r) => chosen.has(r.id))?.id ?? rows[0]?.id ?? null;
     }
     for (const [id, p] of parts) p.row.tabIndex = id === current ? 0 : -1;
@@ -407,14 +397,11 @@ export function createTree(el: HTMLElement): Tree {
 
 const trees = new WeakMap<HTMLElement, Tree>();
 
-// The controller `enhance` made for this element, if any.
 export function treeFor(el: Element | null): Tree | undefined {
   return el instanceof HTMLElement ? trees.get(el) : undefined;
 }
 
-// Attaches to every `[data-cap="tree"]` under root not yet marked `data-cap-ready`.
-// Reads data-selection ("none", "single" by default, "multi") and data-movable. Returns a
-// function that detaches them all.
+// Attaches to every `[data-cap="tree"]` under root not yet marked ready; reads data-selection ("none", "single", "multi") and data-movable.
 export function enhance(root: ParentNode = document): () => void {
   const undo: Array<() => void> = [];
   for (const el of root.querySelectorAll<HTMLElement>("[data-cap='tree']:not([data-cap-ready])")) {

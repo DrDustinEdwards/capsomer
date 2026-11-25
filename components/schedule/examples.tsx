@@ -118,7 +118,6 @@ function Program({ zone = "UTC", name }: { zone?: string; name: string }) {
   );
 }
 
-// The builder's form: one day at a time, chosen from the nav; the app keeps the day in ?day=.
 function OneDay({ empty = false }: { empty?: boolean }) {
   const days = groupByDay(SESSIONS, times);
   const range = dayRange("2027-03-05T14:00:00Z", "2027-03-07T18:00:00Z");

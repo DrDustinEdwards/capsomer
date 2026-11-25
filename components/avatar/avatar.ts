@@ -23,9 +23,8 @@ export function enhance(root: ParentNode = document): () => void {
   return enhanceEach(root, "avatar", watch);
 }
 
-// The initials for a person: the first and last word's first letters ("Alex Rivera": AR), the
-// first two letters of a one-word name, else the email's first letter, else "?". Whole letters
-// (graphemes), not code units, so an accented or non-Latin name never shows half a letter.
+// The initials for a person: first and last word's first letters, else a one-word name's first two, else the
+// email's first letter, else "?". Whole graphemes, so an accented or non-Latin name never shows half a letter.
 export function initials(name?: string | null, email?: string | null): string {
   const words = (name ?? "").trim().split(/\s+/).filter(Boolean);
   if (words.length >= 2)
@@ -40,7 +39,6 @@ const graphemes = (word: string): string[] =>
     (g) => g.segment,
   );
 
-/** A word's first user-perceived character (an emoji with its modifiers, a letter with its accents). */
 function firstGrapheme(word: string): string {
   return graphemes(word)[0] ?? "";
 }

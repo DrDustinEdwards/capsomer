@@ -2,22 +2,18 @@ import { useEffect, useRef, type ReactNode } from "react";
 import { attach } from "./timeline.ts";
 
 export interface TimelineStep {
-  // The number in the node ("01").
   mark: ReactNode;
   title: ReactNode;
   children?: ReactNode;
-  // A decorative icon over the title (aria-hidden).
   icon?: ReactNode;
 }
 
 export interface TimelineProps {
   steps: TimelineStep[];
-  // The steps' heading level on the page.
   level?: "h2" | "h3" | "h4";
   className?: string;
 }
 
-// The HTML contract in timeline.md.
 export function Timeline({ steps, level: H = "h3", className }: TimelineProps) {
   const ref = useRef<HTMLOListElement>(null);
   // This timeline only: a sibling's own effect attaches the sibling.

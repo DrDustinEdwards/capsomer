@@ -1,9 +1,7 @@
-/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+/* Layer order, repeated so this file is safe in any import order. */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
-/* A toolbar (APG Toolbar): a row of the page's buttons and toggle buttons, one tab stop for the
-   lot, groups set apart by a separator. The buttons are .cap-btn (or a group of them); this file
-   lays them out and draws the separator. It wraps, so it never needs a sideways scroll. */
+/* A toolbar (APG Toolbar): a wrapping row of buttons with one tab stop and separators between groups. */
 @layer cap.components {
   .cap-toolbar {
     display: flex;
@@ -16,8 +14,7 @@
       align-items: stretch;
     }
   }
-  /* A toggle button in the bar (aria-pressed): pressed, it takes the chips' pressed look, the
-     accent edge and tint, with the edge doubled so pressed is a change of shape, not only of color. */
+  /* A pressed toggle gets the chips' pressed look with a doubled edge, so pressed is a change of shape, not only color. */
   .cap-toolbar .cap-btn[aria-pressed="true"] {
     --cap-btn-bg: var(--accent-soft);
     --cap-btn-line: var(--accent);

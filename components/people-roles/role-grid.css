@@ -1,7 +1,6 @@
-/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+/* Layer order repeated so this file is safe in any import order: the first statement fixes it (css/layers.css). */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
-/* The role grid (RoleGrid), on its own so an app that draws only the grid (Carrel) skips the members page's rules (people-roles.css). */
 @layer cap.components {
   /* The role grid (RoleGrid): people as rows, scopes as columns, a role select in each cell. The
      person stays in view while the scopes scroll sideways. */

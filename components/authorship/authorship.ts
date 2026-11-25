@@ -1,8 +1,6 @@
-// Authorship marks: who wrote each passage of a text, shown or hidden by one switch.
-//
-// A passage is a "run" (`.cap-run` with data-kind "you", "ai" or "quoted"). This module has the
-// pure counting (summarize, summaryText, summaryHtml: safe on a server and in node's
-// test runner) and the behavior (enhance: the switch, the remembered choice, the summary).
+// Authorship marks: who wrote each passage of a text, shown or hidden by one switch. A passage is a
+// "run" (`.cap-run` with data-kind "you", "ai" or "quoted"). Counting is pure (safe on a server and in
+// node's test runner); `enhance` adds the switch, the remembered choice and the summary.
 
 import { escapeHtml as esc } from "@dustinedwards/site-runtime/html";
 import { wordCount } from "@drdustinedwards/site-helpers/text";
@@ -12,13 +10,11 @@ import { enhanceEach, readStored, writeStored } from "../hooks/hooks.ts";
 export type Kind = "you" | "ai" | "quoted";
 export const KINDS: readonly Kind[] = ["you", "ai", "quoted"];
 
-// What each kind is called in the summary line, and on a run's label.
 export const KIND_WORD: Record<Kind, string> = { you: "you", ai: "AI", quoted: "quoted" };
 export const KIND_LABEL: Record<Kind, string> = { you: "You", ai: "AI", quoted: "Quoted" };
 
 export interface RunInput {
   kind: Kind;
-  // Either the words already counted, or the text to count.
   words?: number;
   text?: string;
 }
@@ -32,13 +28,10 @@ export interface Share {
 
 export interface Summary {
   total: number;
-  // All three kinds, in the order you, AI, quoted.
   shares: Share[];
-  // "62% you, 31% AI, 7% quoted by words": kinds with no words are left out.
   text: string;
 }
 
-// Word counts per kind, as percentages that add up to 100, and the sentence that says them.
 export function summarize(runs: readonly RunInput[]): Summary {
   const words: Record<Kind, number> = { you: 0, ai: 0, quoted: 0 };
   for (const r of runs) {
@@ -46,7 +39,6 @@ export function summarize(runs: readonly RunInput[]): Summary {
     words[r.kind] += r.words ?? wordCount(r.text ?? "");
   }
   const total = words.you + words.ai + words.quoted;
-  // Largest remainder: floor every share, then give the spare points to the biggest remainders.
   const raw = KINDS.map((kind) => ({ kind, exact: total === 0 ? 0 : (words[kind] / total) * 100 }));
   const floors = raw.map((r) => Math.floor(r.exact));
   let spare = total === 0 ? 0 : 100 - floors.reduce((a, b) => a + b, 0);
@@ -72,8 +64,7 @@ export function summaryText(shares: Share[]): string {
   return `${shown.map((s) => `${s.percent}% ${KIND_WORD[s.kind]}`).join(", ")} by words`;
 }
 
-// The summary as html, for a server to write: the line, the bar (drawn by enhance, which sets
-// each segment's width), and the word counts in text.
+// The summary as html, for a server to write; `enhance` draws the bar and sets each segment's width.
 export function summaryHtml(summary: Summary, label = "Authorship"): string {
   const segs = summary.shares
     .map(
@@ -91,8 +82,6 @@ export function summaryHtml(summary: Summary, label = "Authorship"): string {
   return `<div class="cap-meter cap-authorship-summary" data-cap-part="summary"><span class="cap-meter-label">${esc(label)}</span><span class="cap-meter-value" data-cap-part="text">${esc(summary.text)}</span><span class="cap-meter-bar" aria-hidden="true">${segs}</span><span class="cap-meter-note" data-cap-part="notes">${notes}</span></div>`;
 }
 
-// The behavior
-
 export const STORAGE_KEY = "cap-authorship";
 
 function stored(): boolean | null {
@@ -104,8 +93,8 @@ function remember(shown: boolean): void {
   writeStored(STORAGE_KEY, shown ? "on" : "off");
 }
 
-// Every run's words, counted once: text inside a run belongs to the nearest run around it, a
-// label never counts, and text outside any run is not marked so it is left out.
+// Every run's words, counted once: text inside a run belongs to the nearest run around it, a label
+// never counts, and text outside any run is left out.
 export function collectRuns(root: Element): RunInput[] {
   const totals = new Map<Element, number>();
   const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
@@ -124,8 +113,7 @@ export function collectRuns(root: Element): RunInput[] {
   return out;
 }
 
-// Draws the summary's bar: each segment's share of the width, through the CSSOM so apps keep
-// style-src 'self'.
+// Draws the summary's bar through the CSSOM so apps keep style-src 'self'.
 function drawBar(summary: Element, shares: Share[]): void {
   for (const seg of summary.querySelectorAll<HTMLElement>(".cap-authorship-seg")) {
     const share = shares.find((s) => s.kind === seg.dataset.kind);
@@ -134,7 +122,6 @@ function drawBar(summary: Element, shares: Share[]): void {
   }
 }
 
-// Counts the runs inside root and rewrites its summary (the line, the word counts, the bar).
 export function refresh(root: Element): Summary {
   const summary = summarize(collectRuns(root));
   const el = root.querySelector<HTMLElement>("[data-cap-part='summary']");
@@ -162,8 +149,7 @@ export function isShown(root: Element): boolean {
   return root.getAttribute("data-authorship") !== "off";
 }
 
-// Shows or hides the marks: data-authorship on the container, the switch to match. With
-// `persist` (the default, unless the container says data-remember="off") the choice is kept.
+// Shows or hides the marks. With `persist` (default, unless data-remember="off") the choice is kept.
 export function setShown(
   root: HTMLElement,
   shown: boolean,
@@ -189,9 +175,7 @@ function attach(root: HTMLElement): () => void {
   return () => input?.removeEventListener("change", onChange);
 }
 
-// Attaches to every [data-cap="authorship"] under root (or root itself) not yet attached:
-// applies the remembered choice, wires the switch, and counts the summary. Returns a function
-// that detaches them all.
+// Attaches to every [data-cap="authorship"] under root not yet attached. Returns a detach function.
 export function enhance(root: ParentNode = document): () => void {
   return enhanceEach(root, "authorship", attach);
 }

@@ -24,9 +24,8 @@ const CALENDAR = (
   </svg>
 );
 
-// A date picker: the text input with a calendar button, as on the doc page. The calendar is the
-// behavior module's (a choice sets the input's value as typing would, so onChange hears it);
-// with no script the input takes the date as typed.
+// The text input with a calendar button. A choice sets the input's value as typing would, so
+// onChange hears it; with no script the input takes the date as typed.
 export function DatePicker(
   props: Pick<FieldProps, "label" | "help" | "error" | "announce" | "required"> &
     Omit<InputHTMLAttributes<HTMLInputElement>, "type" | "style" | "min" | "max"> & {

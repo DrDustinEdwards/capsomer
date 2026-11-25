@@ -114,7 +114,7 @@
   h4 {
     font-weight: var(--weight-heading);
   }
-  /* A touch screen gets 16 px inputs, so iOS does not zoom into the field (decision 5). */
+  /* A touch screen gets 16 px inputs, so iOS does not zoom into the field. */
   @media (pointer: coarse) {
     input,
     select,
@@ -122,7 +122,7 @@
       font-size: max(var(--fs-input-coarse), 1em);
     }
   }
-  /* Still by default (design 4.1): each component writes its motion inside
+  /* Still by default: each component writes its motion inside
      prefers-reduced-motion: no-preference, case by case, so a fade of color can stay while a slide goes. There is no
      global 0.01ms override: it makes some animations end in a jump, more jarring than the motion it replaced, and it
      breaks scroll-driven effects (Modern Web Guidance, motion). Only smooth scrolling is turned off here. */

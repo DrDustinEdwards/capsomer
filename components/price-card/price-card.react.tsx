@@ -22,7 +22,6 @@ export interface PriceCardProps {
   headingLevel?: "h2" | "h3" | "h4";
 }
 
-// The HTML contract in price-card.md.
 export function PriceCard({
   name,
   price,

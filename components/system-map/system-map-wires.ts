@@ -1,13 +1,8 @@
-// The system map's wires: a line for every tie, drawn between the cards where the page's own
-// layout put them (system-map.ts). The markup says which nodes are tied (`data-wire`, the node's
-// key, and `data-wires`, the keys it is tied to); this draws them as one SVG under the cards and
-// redraws when the map changes size. The lanes are side by side, so most wires run from one lane
-// to the next. One that skips a lane passes it through a gap between that lane's cards, never
-// over one, and a wire inside a lane bows out to the lane's outer side. Where each wire meets a
-// card is sorted by where it goes, so wires leaving one card never cross each other there.
-//
-// The SVG is hidden from assistive technology: every wire is also words (a card's counts and its
-// system's page, a part's lines), so the drawing repeats what the text already says.
+// The system map's wires: a line for every tie, drawn between the cards where the page's layout put
+// them. The markup says which nodes are tied (`data-wire`, `data-wires`); this draws them as one SVG
+// under the cards and redraws on resize. A wire that skips a lane passes through a gap between that
+// lane's cards, and where each wire meets a card is sorted by where it goes, so wires never cross there.
+// The SVG is hidden from assistive technology: every wire is also words.
 import { ids } from "./system-map-data.ts";
 
 const SVG = "http://www.w3.org/2000/svg";
@@ -23,7 +18,6 @@ interface Node {
   key: string;
   el: HTMLElement;
   box: Box;
-  // The lane the node stands in, or -1 for a node as wide as several lanes (a system's own heading).
   lane: number;
 }
 
@@ -35,7 +29,6 @@ interface Port {
 export type WireTest = (a: string, b: string) => boolean;
 
 export interface Wires {
-  // Light the wires the test passes, dim the rest; null lights none and dims none.
   light(test: WireTest | null): void;
 }
 
@@ -45,10 +38,7 @@ const curve = (x0: number, y0: number, x1: number, y1: number) => {
   return `C ${x0 + dx} ${y0} ${x1 - dx} ${y1} ${x1} ${y1}`;
 };
 
-/**
- * The open spaces of a lane, top to bottom, between what stands in it (its cards and headings),
- * from just above the map's highest node to just below its lowest.
- */
+/** The open spaces of a lane, top to bottom, from just above the highest node to just below the lowest. */
 function gapsOf(obstacles: Box[], top: number, bottom: number): [number, number][] {
   const sorted = [...obstacles].sort((x, y) => x.t - y.t);
   const out: [number, number][] = [];
@@ -61,7 +51,6 @@ function gapsOf(obstacles: Box[], top: number, bottom: number): [number, number]
   return out.filter(([a, b]) => b - a >= 8);
 }
 
-/** Wires for the map under `host`, whose lanes are `lanes` (left to right as drawn); `signal` ends them. */
 export function wires(host: HTMLElement, lanes: () => HTMLElement[], signal: AbortSignal): Wires {
   const svg = document.createElementNS(SVG, "svg");
   svg.setAttribute("class", "cap-system-map-wires");
@@ -74,7 +63,6 @@ export function wires(host: HTMLElement, lanes: () => HTMLElement[], signal: Abo
     for (const p of svg.querySelectorAll<SVGElement>("[data-a]")) {
       const on = test ? test(p.dataset.a!, p.dataset.b!) : false;
       p.toggleAttribute("data-on", on);
-      // Lit wires on top, so the ones lit are never under the ones dimmed.
       if (on) svg.append(p);
     }
     svg.toggleAttribute("data-lit", !!test);
@@ -117,7 +105,6 @@ export function wires(host: HTMLElement, lanes: () => HTMLElement[], signal: Abo
         const pair = n.key < k ? `${n.key}\n${k}` : `${k}\n${n.key}`;
         if (seen.has(pair)) continue;
         seen.add(pair);
-        // A wide node always stands second; otherwise the wire runs left to right.
         edges.push(n.lane === -1 || (o.lane !== -1 && o.lane < n.lane) ? [o, n] : [n, o]);
       }
     }
@@ -141,7 +128,6 @@ export function wires(host: HTMLElement, lanes: () => HTMLElement[], signal: Abo
       return next ? (side === "r" ? next.l - here.r : here.l - next.r) : 48;
     };
 
-    // Each wire's route: its two ends' sides, and its waypoints through the lanes it skips.
     interface Route {
       a: Node;
       b: Node;
@@ -152,7 +138,6 @@ export function wires(host: HTMLElement, lanes: () => HTMLElement[], signal: Abo
       pb?: Port;
     }
     const routes: Route[] = edges.map(([a, b]) => {
-      // To a wide node, straight across to its near edge: the node is a heading over the lanes.
       if (b.lane === -1)
         return {
           a,
@@ -207,7 +192,6 @@ export function wires(host: HTMLElement, lanes: () => HTMLElement[], signal: Abo
       if (over > 0) for (const v of list) v.y -= over;
     }
 
-    // Ports: each card's wires on one side, spread down that side in the order of where they go.
     const ports = new Map<string, { r: Route; end: "a" | "b"; key: number }[]>();
     const toward = (r: Route, end: "a" | "b") =>
       end === "a" ? (r.via[0]?.y ?? mid(r.b.box)) : (r.via[r.via.length - 1]?.y ?? mid(r.a.box));
@@ -224,7 +208,6 @@ export function wires(host: HTMLElement, lanes: () => HTMLElement[], signal: Abo
       list.sort((x, y) => x.key - y.key);
       list.forEach((p, i) => {
         const box = p.r[p.end].box;
-        // A wide node (a heading) takes its wires at its middle; a card spreads them down its side.
         const y =
           p.r[p.end].lane === -1
             ? mid(box)

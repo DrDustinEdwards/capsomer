@@ -4,12 +4,9 @@ import { Table } from "../table/table.react.tsx";
 
 export interface MatrixCell {
   tone: Tone;
-  // A mark of its own in place of the tone's: "unknown" (a question mark) on the muted tone for
-  // a cell a check could not measure, which is neither a pass nor a failure.
+  // A mark of its own in place of the tone's: "unknown" is a question mark on the muted tone for a cell a check could not measure.
   glyph?: GlyphName;
-  // The status in words: "Done", "Partial", "Failing".
   label: string;
-  // Why, read with it and shown on hover: "3 of 17 sites have no llms.txt".
   reason?: string;
 }
 
@@ -20,9 +17,7 @@ export interface MatrixColumn {
 
 export interface MatrixRow {
   id: string;
-  // The row's header: a name, or a link to its detail.
   name: ReactNode;
-  // The row's name as text, for each cell's words ("Accessibility, example.com: Done").
   text: string;
   cells: Record<string, MatrixCell | undefined>;
 }
@@ -32,13 +27,10 @@ export interface StatusMatrixProps {
   showCaption?: boolean;
   columns: MatrixColumn[];
   rows: MatrixRow[];
-  // A cell with no status: not checked, or not applicable. Read as these words.
   emptyLabel?: string;
 }
 
-// Every row against every column at a glance (each area on each site): a table whose cells are
-// status glyphs, each one an image named with its row, its column, its status and why. The row
-// headers stay in view as the table scrolls sideways.
+// Every row against every column at a glance: a table whose cells are status glyphs, each an image named with its row, column, status and why. Row headers stay in view as the table scrolls sideways.
 export function StatusMatrix({
   caption,
   showCaption = false,
@@ -101,7 +93,6 @@ export function StatusMatrix({
   );
 }
 
-// The key under a matrix: each status's glyph and word, so the marks read without hovering.
 export function MatrixKey({
   items,
 }: {

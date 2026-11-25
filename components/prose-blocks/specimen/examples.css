@@ -3,7 +3,7 @@
   max-inline-size: 46rem;
 }
 
-/* A site's reading look, set by the prose tokens alone (the way bsw, foxhound, foxing and germomics set theirs). */
+/* A site's reading look, set by the prose tokens alone. */
 .specimen-site-look {
   --prose-ink: var(--muted);
   --prose-strong-ink: var(--text);

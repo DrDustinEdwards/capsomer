@@ -12,29 +12,20 @@ import { stateWord } from "../switch/switch.ts";
 import { MISSING, failedMessage, reasonLabel, verbFor } from "./switch-reason.ts";
 
 export interface ReasonFormProps {
-  // Shown and focused while true; hidden (and cleared for next time) while false.
   open: boolean;
-  // The label's first words: "Changing the overnight run to run on API". Reads "<verb>. Reason:".
   verb: string;
-  // Saves the change with its reason. A rejection keeps the form open with the error.
   onApply: (reason: string) => Promise<void>;
-  // Cancel, or Esc. Return focus to the control that opened the form here.
   onCancel: () => void;
-  // The words for a rejection. Defaults to the error's own message.
   failed?: (err: unknown) => string;
-  // The reason field's id; one is made up when left out.
   id?: string;
   placeholder?: string;
-  // Told when a request starts and ends, so the control beside the form can show it is busy.
   onPendingChange?: (pending: boolean) => void;
 }
 
 const ownMessage = (err: unknown) =>
   err instanceof Error && err.message ? err.message : String(err);
 
-// The one-line reason a change asks for, beside the control that changes it: a switch (as
-// SwitchWithReason), a radio group or any other control whose change is recorded with a reason.
-// Enter applies (a reason is required), Esc cancels.
+// The one-line reason a change asks for, beside the control that changes it. Enter applies (a reason is required), Esc cancels.
 export function ReasonForm({
   open,
   verb,
@@ -64,7 +55,6 @@ export function ReasonForm({
   useEffect(() => {
     if (open) reasonRef.current?.focus();
   }, [open]);
-  // Closing clears the reason and the error, in the same render.
   const [wasOpen, setWasOpen] = useState(open);
   if (open !== wasOpen) {
     setWasOpen(open);
@@ -101,8 +91,8 @@ export function ReasonForm({
       reasonRef.current?.focus();
     }
   };
-  // Held while the request runs, so its answer is not hidden. Stopped here either way, so an
-  // Esc that cancels the reason does not also close a panel the form sits in.
+  // Held while the request runs so its answer is not hidden. Stopped either way, so an Esc that cancels
+  // the reason does not also close a panel the form sits in.
   const onKey = (e: KeyboardEvent<HTMLFormElement>) => {
     if (e.key !== "Escape") return;
     e.preventDefault();
@@ -160,23 +150,16 @@ export function ReasonForm({
 }
 
 export interface SwitchWithReasonProps {
-  // A fixed noun: "Improve loop".
   label: string;
-  // The thing switched as it reads in the reason's label: "the improve loop". Defaults to label.
   name?: string;
-  // The label's first words, given where the next state is known: "Pausing sample-d". Reads
-  // "<verb>. Reason:". Defaults to "Turning <name> on" or "off".
   verb?: (next: boolean) => string;
   checked: boolean;
-  // Saves the change with its reason (write the audit row here). The switch moves when it
-  // resolves; a rejection keeps the reason open with the error. Offer Undo through the
-  // message region once it resolves.
+  // Saves the change with its reason (write the audit row here). The switch moves when it resolves;
+  // a rejection keeps the reason open with the error.
   onApply: (checked: boolean, reason: string) => Promise<void>;
   placeholder?: string;
-  // Shown beside the switch while no reason is being asked for: "Paused: looking at a regression".
   note?: ReactNode;
-  // The switch's id, for an app that focuses it again (after an Undo) or presses it from a
-  // command. The reason field is "<id>-why".
+  // The switch's id, for an app that focuses it again after an Undo. The reason field is "<id>-why".
   id?: string;
 }
 
@@ -193,8 +176,7 @@ export function SwitchWithReason({
   const noun = name ?? label;
   const [on, setOn] = useState(checked);
   const [asking, setAsking] = useState(false);
-  // The state the flip asks for, fixed when the reason opens, so a poll that lands meanwhile
-  // and moves the switch cannot turn "off" into "on".
+  // The state the flip asks for, fixed when the reason opens, so a poll that lands meanwhile cannot turn "off" into "on".
   const [target, setTarget] = useState(false);
   const [pending, setPending] = useState(false);
   const switchRef = useRef<HTMLInputElement>(null);

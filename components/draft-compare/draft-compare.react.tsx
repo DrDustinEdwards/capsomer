@@ -27,26 +27,19 @@ import { markup } from "../trusted-html/trusted-html.ts";
 export interface DraftCompareProps {
   before: CompareSide;
   after: CompareSide;
-  // Words for "Before" and "After" over each side.
   labels?: Partial<CompareLabels>;
   // The view shown. Give it (with onViewChange) to keep the choice in your own state; leave it
   // out and the component remembers the person's choice in localStorage.
   view?: CompareView;
   onViewChange?: (view: CompareView) => void;
-  // Unchanged sentences kept beside a change before the rest fold. Default 1.
   context?: number;
-  // Who wrote what, per side, by character offset: each sentence is marked with its run.
   runs?: { before?: RunSpan[]; after?: RunSpan[] };
-  // How alike two sentences must be (0 to 1) to count as one edited. Default 0.4.
   similarity?: number;
-  // Ids and radio names; give each compare on a page its own. Made up when left out.
   id?: string;
-  // false: the page names the sides itself (renderCompare's heads).
   heads?: boolean;
 }
 
-// Renders exactly the markup renderCompare writes, so a server render (renderToString) and the
-// browser agree, and the same behavior module wires it.
+// Renders exactly the markup renderCompare writes, so a server render and the browser agree.
 export function DraftCompare({
   before,
   after,
@@ -121,16 +114,11 @@ export function DraftCompare({
 }
 
 export interface DraftPatchProps {
-  // A unified git patch (git diff, git show, git format-patch).
   patch: string;
-  // What the patch is of; names the region.
   title?: string;
-  // Give each patch on a page its own id. Made up when left out.
   id?: string;
 }
 
-// The patch mode: a unified patch by line, with a literal plus or minus on each changed line.
-// Pure markup, so a server render and the browser agree; there is no behavior to attach.
 export function DraftPatch({ patch, title, id }: DraftPatchProps) {
   const own = useCleanId();
   const html = useMemo(
@@ -141,22 +129,16 @@ export function DraftPatch({ patch, title, id }: DraftPatchProps) {
 }
 
 export interface MergeLabels {
-  // The two sides' headings: whose text each is.
   mine: string;
   theirs: string;
-  // The three picks.
   keepMine: string;
   keepTheirs: string;
   keepBoth: string;
-  // A side with no passage at this difference.
   notInMine: string;
   notInTheirs: string;
-  // After a heading, when only that side changed the passage since the base.
   changedMine: string;
   changedTheirs: string;
-  // After a heading, when the pick leaves that side out.
   leftOut: string;
-  // Said above the differences when the version both started from could not be read.
   withoutBase: string;
   apply: string;
 }
@@ -186,12 +168,9 @@ export function mergeCountsText(plan: MergePlan): string {
 
 export interface DraftMergeProps {
   plan: MergePlan;
-  // Applies the picks, one per difference in order (merged(plan, picks) is the text).
   onApply: (picks: MergePick[]) => void;
-  // The apply is in flight.
   pending?: boolean;
   labels?: Partial<MergeLabels>;
-  // The side headings' level, under the section the merge sits in.
   level?: 3 | 4;
 }
 
@@ -233,13 +212,11 @@ function MergeSide({
   );
 }
 
-// The merge mode: give it a plan (mergePlan, on the server or here) and it holds the picks.
-// Key it by the plan's identity, so a new plan starts on its own picks.
+// Keyed by the plan's identity, so a new plan starts on its own picks.
 export function DraftMerge({ plan, onApply, pending = false, labels, level = 3 }: DraftMergeProps) {
   const l = { ...MERGE_LABELS, ...labels };
   const [picks, setPicks] = useState<MergePick[]>(() => startPicks(plan));
   const H = `h${level}` as const;
-  // Each choice's place among the choices, by its segment's place in the plan.
   const order = plan.segments.map(
     (_, i) => plan.segments.slice(0, i + 1).filter((x) => x.kind === "choice").length - 1,
   );

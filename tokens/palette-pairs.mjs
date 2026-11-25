@@ -12,10 +12,9 @@ export function pairs(t, level = "standard") {
     const lc = apca(t[fg], t[bg]);
     out.push({ fg, bg, min, what, ratio, lcMin, lc, pass: ratio >= min && Math.abs(lc) >= lcMin });
   };
-  // Rulings rule 18: accent text is step 11 (--accent-text) and its hover step 12; the
-  // primary button fill is step 10 with its label --primary-fg; step 9 (--accent, the brand
-  // color) is held to 3:1 for large fills and never carries text. Accent text reads at the link
-  // floor, except where it is the brand color itself (amber's dark theme, Recova's text color).
+  // Accent text is step 11 and its hover step 12; the primary fill is step 10 with --primary-fg;
+  // step 9 is held to 3:1 for large fills and never carries text. Accent text reads at the link
+  // floor, except where it is the brand color itself (amber dark).
   const link = t["accent-text"] === t.accent ? L.read : L.link;
   for (const bg of ["surface", "ground", "raised"]) {
     need("text", bg, 4.5, "text", L.body);
@@ -40,9 +39,8 @@ export function pairs(t, level = "standard") {
   for (const bg of ["surface", "ground", "raised"])
     need("on", bg, 3, "checked box or on switch against its surroundings");
   need("on-hover", "surface", 3, "on switch (hover) against its surroundings");
-  // A tick is a bold glyph inside a filled box; the box's fill carries the state, so the tick is
-  // held to the standard border floor at either level (amber's light step 9, the darkest amber
-  // that still stands 3:1 off a light page, gives its dark tick Lc 43.5).
+  // A tick is a bold glyph inside a filled box; the fill carries the state, so the tick is held to
+  // the standard border floor at either level.
   need("primary-fg", "on", 3, "tick on a checked box", LEVELS.standard.border);
   need("surface", "on", 3, "thumb of an on switch");
   need("surface", "on-hover", 3, "thumb of an on switch (hover)");

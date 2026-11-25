@@ -16,15 +16,12 @@ import {
 import { buttonAttrs, type ButtonLook } from "../button/button-look.ts";
 import { ABSOLUTE, mayPrefetch } from "./link.ts";
 
-// React Router's Link and NavLink, the same props, prefetching on hover and focus by default
-// (`prefetch="intent"`, which React Router has no app-wide setting for). A link mayPrefetch
-// refuses (link.ts) renders with prefetch="none" whatever it asked for; `prefetch` picks the
-// mode for the rest ("none", "render", "viewport").
+// React Router's Link and NavLink, prefetching on hover and focus by default (React Router has no
+// app-wide setting for `prefetch="intent"`). A link mayPrefetch refuses (link.ts) gets prefetch="none".
 
 const Exclude = createContext<readonly string[]>([]);
 
-// The app's own paths that act on a GET, for every Link and NavLink under it, beyond the
-// family's NEVER_PREFETCH: `<LinkPrefetch exclude={["/demos/:product"]}>` at the root.
+// The app's own paths that act on a GET, beyond NEVER_PREFETCH: `<LinkPrefetch exclude={["/demos/:product"]}>` at the root.
 export function LinkPrefetch({
   exclude,
   children,
@@ -68,9 +65,8 @@ export function NavLink(props: ComponentProps<typeof RouterNavLink>) {
   return <RouterNavLink {...props} prefetch={usePrefetch(props)} />;
 }
 
-// The renderLink every Capsomer part takes (shell, site header, admin shell, row and attention
-// lists), as React Router's Link with Capsomer's prefetch on intent: pass it as is,
-// `<SiteHeader renderLink={routerRenderLink} />`, instead of writing an adapter per site.
+// The renderLink every Capsomer part takes, as React Router's Link with prefetch on intent: pass it
+// as is (`<SiteHeader renderLink={routerRenderLink} />`) instead of an adapter per site.
 export function routerRenderLink({
   href,
   children,
@@ -83,9 +79,8 @@ export function routerRenderLink({
   );
 }
 
-// A link to another site (the `away` kind, link.md): ↗ after the words, and the words a screen
-// reader needs inside the link. `newTab` opens it in a new tab and says so; `sponsored` marks a
-// paid or affiliate link (rel="sponsored"). Both keep noopener and noreferrer.
+// A link to another site (the `away` kind): ↗ after the words, and the words a screen reader needs
+// inside the link. `newTab` says so; `sponsored` sets rel="sponsored". Both keep noopener and noreferrer.
 export interface AwayLinkProps extends Omit<
   AnchorHTMLAttributes<HTMLAnchorElement>,
   "rel" | "target" | "style"
@@ -104,7 +99,6 @@ export function awayWords(newTab = false): string {
   return newTab ? " (opens another site in a new tab)" : " (opens another site)";
 }
 
-// The words for a link on this site that opens in a new tab.
 export const NEW_TAB_WORDS = " (opens in a new tab)";
 
 export function AwayLink({ newTab = false, sponsored = false, children, ...rest }: AwayLinkProps) {
@@ -116,10 +110,8 @@ export function AwayLink({ newTab = false, sponsored = false, children, ...rest 
   );
 }
 
-// A link drawn as a button (`a.cap-btn`, button.md): the Button's variant, size, icon, wrap and
-// block, for moving to another view. `to` is a route (React Router's Link, prefetching as Link
-// does); `href` is a plain document link (a download, an export, another site). `away` marks a
-// link to another site, as AwayLink does, with ↗ after the words.
+// A link drawn as a button (`a.cap-btn`): `to` is a route (prefetching as Link does); `href` is a plain
+// document link (a download, an export, another site). `away` adds ↗ as AwayLink does.
 type ButtonLinkLook = ButtonLook & {
   label?: string;
   away?: boolean;

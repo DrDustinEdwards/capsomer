@@ -18,10 +18,7 @@ const logo = (viewBox: string, body: ReactNode) => (
   </svg>
 );
 
-// Two alternatives to Foxhound's x (which reads as close or delete), each drawn on the 24 grid
-// in one color. "track": a hound's paw print, for a service that tracks down failed payments;
-// "fox": a fox's head, the name. Shown beside the x here only; the one Dustin picks replaces
-// FOXHOUND in apps.tsx and the other is deleted.
+// Two alternatives to Foxhound's x, drawn on the 24 grid in one color: a paw print and a fox head.
 const FOXHOUND_MARKS = {
   track: logo(
     "0 0 24 24",
@@ -146,9 +143,7 @@ const key = (name: string) => `cap-admin-specimen-${name}`;
 const remember = (name: string, value: string) => {
   try {
     localStorage.setItem(key(name), value);
-  } catch {
-    // A blocked store: the specimen shows its default.
-  }
+  } catch {}
 };
 
 function Shell({
@@ -164,7 +159,6 @@ function Shell({
   );
 }
 
-// Shows the name a hovered control would show, for the picture; the spec checks real hover and focus.
 const showName = (sel: string, i: number) => {
   const frame = requestAnimationFrame(() => {
     const el = document.querySelectorAll<HTMLElement>(sel)[i];
@@ -177,13 +171,11 @@ function Tipped() {
   return <Shell name="tip" />;
 }
 
-// Collapsed, with a menu icon's name shown, for the picture.
 function CollapsedTip() {
   useEffect(() => showName(".cap-admin-menu a", 1), []);
   return <Shell name="collapsed-tip" collapsed />;
 }
 
-// Opens the header's account menu, for the picture: a press with no pointer, as a key gives.
 function AccountOpen() {
   useEffect(() => {
     const frame = requestAnimationFrame(() =>
@@ -204,8 +196,6 @@ function SheetOpen() {
   return <Shell name="phone-sheet" />;
 }
 
-// A reader's own area on a site outside the family: the user variant (no strip, the 288px menu),
-// the site's sections in the menu, a centered reading column.
 const reader: Partial<AdminShellProps> = {
   variant: "user",
   app: undefined,
@@ -223,8 +213,6 @@ const reader: Partial<AdminShellProps> = {
   page: "Articles",
 };
 
-// A customer's own dashboard (the user variant): no strip, the 288px menu, so its page starts at
-// the same x as your admin's; the business and product switchers sit in the header.
 const dashboard: Partial<AdminShellProps> = {
   variant: "user",
   app: undefined,
@@ -279,8 +267,6 @@ const dashboard: Partial<AdminShellProps> = {
   },
 };
 
-// Page transitions: the menu links and the button change the page inside startPageTransition, so
-// the content cross-fades and the strip and menu stay put.
 const PAGES = ["overview", "sites", "queue"];
 function Transitioning() {
   const [page, setPage] = useState(0);
@@ -321,9 +307,7 @@ function Transitioning() {
   );
 }
 
-// An app whose routes set their own tab titles: the shell leaves document.title alone, even as
-// the page changes. A layout effect runs before the shell's own effect would, so the shell, were
-// it still writing, would win.
+// An app whose routes set their own tab titles: the shell leaves document.title alone.
 function OwnTitle() {
   const [page, setPage] = useState(0);
   useLayoutEffect(() => {
@@ -352,7 +336,6 @@ function OwnTitle() {
   );
 }
 
-// Foxhound's mark: today's x beside the two alternatives, for Dustin to pick from.
 function FoxhoundMarks() {
   const today = FAMILY_APPS.find((a) => a.id === "foxhound")?.logo;
   const options: [string, string, ReactNode][] = [
@@ -426,7 +409,6 @@ const SPECIMENS: Record<string, () => ReactNode> = {
   ),
   transition: () => <Transitioning />,
   "own-title": () => <OwnTitle />,
-  // An app that passes only `app`: the strip still lists all seven, each with its real mark.
   minimal: () => (
     <AdminShell app="foxhound" nav={nav} page={FIRST_PAGE} prefKey={key("minimal")}>
       <Page />

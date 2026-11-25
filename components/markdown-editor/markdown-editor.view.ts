@@ -1,12 +1,7 @@
 // The CodeMirror half of the markdown editor. Only this file imports CodeMirror, and only
-// markdown-editor.ts's dynamic import() reaches it, so the editor stays its own chunk and a
-// bundle that never mounts one never carries it. It exposes a small `Surface` and nothing of
-// CodeMirror's own types, so the chrome (toolbar, link palette, slash menu, image prompt)
-// stays plain DOM in markdown-editor.ts.
-//
-// CodeMirror writes its styles into the page unlayered, and an unlayered rule beats a
-// `@layer cap.components` one. So the theme for CodeMirror's own parts is written through its
-// theme API below, from Capsomer's tokens only; everything else is in markdown-editor.css.
+// markdown-editor.ts's dynamic import() reaches it, so a bundle that never mounts an editor never
+// carries it. CodeMirror writes unlayered styles, which beat `@layer cap.components`, so its own
+// parts are themed through its theme API below, from Capsomer's tokens only.
 import { defaultKeymap, history, historyKeymap } from "@codemirror/commands";
 import { markdown, markdownLanguage } from "@codemirror/lang-markdown";
 import { HighlightStyle, syntaxHighlighting } from "@codemirror/language";
@@ -63,13 +58,10 @@ export interface SurfaceConfig {
   lineNumbers: boolean;
   readOnly: boolean;
   disabled: boolean;
-  // Attributes on the editable element: its name, aria-invalid, aria-describedby, and so on.
   attrs: Record<string, string>;
   onDocChange(value: string): void;
   onCaret(): void;
-  // Return true when the key was used, so CodeMirror does nothing more with it.
   onKey(name: KeyName): boolean;
-  // Return true to take a dropped or pasted image file.
   onFile(file: File): boolean;
 }
 
@@ -99,13 +91,10 @@ export interface Surface {
   destroy(): void;
 }
 
-// Every color, font and size is a Capsomer token, so both themes and every density follow
-// without a second copy. The focus ring sits inside the surface, which clips overflow: an
-// outside ring would be cut off (WCAG 2.4.7).
+// Every color, font and size is a Capsomer token. The focus ring sits inside the surface, which clips overflow: an outside ring would be cut off (WCAG 2.4.7).
 const capTheme = EditorView.theme({
   "&": {
-    // Color and ground come from the frame around it (markdown-editor.css), so read-only and
-    // disabled change them there, in one place.
+    // Color and ground come from the frame (markdown-editor.css), so read-only and disabled change them in one place.
     color: "inherit",
     backgroundColor: "transparent",
     fontSize: "var(--text-size)",
@@ -132,8 +121,7 @@ const capTheme = EditorView.theme({
     border: "none",
     borderRight: "1px solid var(--line)",
   },
-  // The selection is the accent mixed into the surface: the pale --sel token is nearly the
-  // surface color and would not show where the selection is.
+  // The selection is the accent mixed into the surface: the pale --sel token is nearly the surface color and would not show.
   "& .cm-content ::selection, & .cm-content::selection": {
     backgroundColor: "color-mix(in srgb, var(--accent) 36%, var(--surface))",
     color: "var(--text)",

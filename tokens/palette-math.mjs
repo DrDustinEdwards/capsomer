@@ -69,10 +69,8 @@ export function contrast(a, b) {
   return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05);
 }
 
-// APCA (0.0.98G-4g), the perceptual contrast WCAG 3's drafts tried: the Lc of text `txt` on
-// `bg`, signed (positive for dark on light, negative for light on dark). WCAG 2's ratio
-// overrates mid-grays on near-black, so the dark theme is held to both (the dark mode plan,
-// 2026-10-29). Myndex's reference: github.com/Myndex/apca-w3.
+// APCA (0.0.98G-4g): the signed Lc of text `txt` on `bg` (positive dark on light). WCAG 2's ratio
+// overrates mid-grays on near-black, so dark is held to both. Reference: github.com/Myndex/apca-w3.
 const apcaY = (hex) => {
   const [r, g, b] = hexToRgb(hex).map((c) => Math.pow(c, 2.4));
   const y = 0.2126729 * r + 0.7151522 * g + 0.072175 * b;
@@ -90,12 +88,9 @@ export function apca(txt, bg) {
   return c > -0.1 ? 0 : (c + 0.027) * 100;
 }
 
-// The APCA floors (|Lc|) each role is held to, at the standard contrast and under the viewer's
-// "increase contrast" setting (prefers-contrast: more). From APCA's levels: 90 for body text,
-// 75 for running text, 60 for any other text a person reads, 45 for fine detail such as a focus
-// ring or an icon, 30 for a control's border (Capsomer's mapping of APCA's 30 to non-text that
-// must be found) and 15 for something merely visible. Dividers are decoration and have no
-// floor at the standard contrast.
+// The APCA floors (|Lc|) per role, at standard contrast and under prefers-contrast: more:
+// 90 body text, 75 running text, 60 other text, 45 fine detail (focus ring, icon), 30 a control's
+// border, 15 merely visible. Dividers have no floor at standard contrast.
 export const LEVELS = {
   standard: { body: 90, link: 75, read: 60, ring: 45, border: 30, line: 0 },
   more: { body: 90, link: 90, read: 75, ring: 60, border: 45, line: 15 },

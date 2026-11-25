@@ -1,10 +1,6 @@
-// The read-along transcript. The cues come parsed (Prelum's WebVTT parser) and are grouped here into
-// paragraphs that keep each cue's time. The active cue follows the browser's own TextTrack: the cues
-// are mirrored onto a hidden metadata track on the player's <audio> and followed through cuechange
-// (the playhead stands in where there is no VTTCue). A press on any cue seeks there and plays. The
-// active cue scrolls into view inside the transcript's own box only while that box is on screen
-// (never moving the page), and a reader who scrolls away gets "Jump to current". Search filters it;
-// "Copy with link" copies the selection with a link to its time.
+// The read-along transcript. Cues come parsed (Prelum's WebVTT parser), grouped into paragraphs that keep each
+// cue's time. The active cue follows a hidden metadata TextTrack on the player's <audio> via cuechange, and
+// scrolls into view inside the transcript's own box only while that box is on screen (never moving the page).
 import { toParagraphs, type Cue } from "@drdustinedwards/site-helpers/vtt";
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { markQuery } from "../command-menu/command-menu.ts";
@@ -23,7 +19,6 @@ import {
 } from "./player.ts";
 import { usePlayer } from "./player-context.react.tsx";
 
-// The query's words marked in a cue's text, as the command menu marks them.
 function highlight(text: string, q: string): ReactNode {
   if (!q) return text;
   return markQuery(text, q).map((p, i) =>
@@ -40,13 +35,9 @@ function highlight(text: string, q: string): ReactNode {
 export interface PlayerTranscriptProps {
   cues: readonly TranscriptCue[];
   track: PlayerTrack;
-  // The raw text, shown as it is when there are no cues (a transcript that did not parse).
   fallback?: string;
-  // The link a copied quote carries: by default the track's page with ?t=<seconds>.
   shareUrl?: (seconds: number) => string;
-  // The line under a copied quote.
   attribution?: (title: string, url: string) => string;
-  // Leave out search, or copy.
   search?: boolean;
   copy?: boolean;
 }
@@ -62,7 +53,6 @@ export function PlayerTranscript({
 }: PlayerTranscriptProps) {
   const p = usePlayer();
   const { audioRef } = p;
-  // Prelum's paragraphs hold the very cue objects they were given, so they keep the transcript's own type.
   const paragraphs = useMemo(
     () => toParagraphs(cues as readonly Cue[]) as TranscriptCue[][],
     [cues],
@@ -196,7 +186,6 @@ export function PlayerTranscript({
       )
     : 0;
 
-  // A paragraph's chapter and speaker headings, only where they change.
   let lastChapter = -1;
   let lastSpeaker: string | null = null;
   const heads = shown.map((para) => {

@@ -48,7 +48,6 @@ export function components(root) {
     .filter((d) => d.isDirectory() && existsSync(join(dir, d.name, `${d.name}.md`)))
     .map((d) => {
       const css = join(dir, d.name, `${d.name}.css`);
-      // The component's root class is the first cap- class its CSS styles.
       const rootClass = existsSync(css)
         ? (inlineCss(css).match(/\.(cap-[\w-]+)/)?.[1] ?? null)
         : null;

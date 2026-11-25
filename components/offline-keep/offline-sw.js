@@ -1,9 +1,7 @@
-// Capsomer's offline worker (offline-keep). It is registered only when a reader presses "Keep on
-// this device", and it caches nothing on its own: the page stores itself and the files it uses in
-// the store named by this worker's address (?cache=, default "kept-v1"). The worker answers from
-// that store only when the network fails, so online the site behaves exactly as it does without
-// it, and a page nobody kept is never stored. A plain script, not a module; a site serves it from
-// the scope it registers (capsomer/offline-sw.js; offline-keep.md says how).
+// Capsomer's offline worker (offline-keep). Registered only when a reader presses "Keep on this
+// device"; the page stores itself and its files in the store named by this worker's address (?cache=,
+// default "kept-v1"). It answers from that store only when the network fails, so online the site is
+// unchanged and a page nobody kept is never stored. A plain script, not a module.
 
 const KEPT = new URL(self.location.href).searchParams.get("cache") || "kept-v1";
 const PREFIX = KEPT.replace(/v\d+$/, "");
@@ -13,7 +11,6 @@ self.addEventListener("install", () => {
 });
 
 self.addEventListener("activate", (event) => {
-  // A later version names a new store; the old one goes with the worker that wrote it.
   event.waitUntil(
     caches
       .keys()
@@ -34,7 +31,6 @@ self.addEventListener("activate", (event) => {
   );
 });
 
-// A page, or a file a page uses: what a kept page needs offline. Everything else passes by.
 const SUBRESOURCES = new Set(["style", "script", "font", "image"]);
 
 self.addEventListener("fetch", (event) => {
@@ -48,13 +44,12 @@ self.addEventListener("fetch", (event) => {
 });
 
 // The network's answer when there is one, else the kept copy. A kept page fetched online is stored
-// again, so the copy on the device follows the page; a page that was never kept is left alone.
+// again so the copy follows the page; a page never kept is left alone.
 async function networkFirst(request, page) {
   const cache = await caches.open(KEPT);
-  // A page is kept by its address alone (the same recipe at another serving size is still the kept
-  // page), and whatever the request's headers: a page that answers `Vary: Accept` is stored under
-  // its bare address with no Accept, and a navigation sends text/html, so a match that honored
-  // Vary would never find it offline.
+  // A page is kept by its bare address, whatever the request's headers: a page that answers `Vary:
+  // Accept` is stored with no Accept, and a navigation sends text/html, so a match honoring Vary
+  // would never find it.
   const options = page ? { ignoreSearch: true, ignoreVary: true } : undefined;
   try {
     const response = await fetch(request);

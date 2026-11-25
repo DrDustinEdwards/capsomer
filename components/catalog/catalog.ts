@@ -1,13 +1,10 @@
 import { copyChildren, trustedHtml } from "../trusted-html/trusted-html.ts";
-// The catalog's behavior: it makes a form that already works (a GET to the page's own address) update in place.
-// Typing in the search box, ticking a filter, choosing a sort, removing a chip, following a sort header or a page
-// link fetches the same address a person would have navigated to and swaps the regions of the page that changed.
-// The address is written with `history.replaceState`, so a filter change is not a step in the history, and what
-// is in the address is what a person shares. If the fetch fails for any reason the browser simply navigates there:
-// an error is never swallowed, and the page is never left showing a state its address does not describe.
-//
-// The core (field declarations, the address, the counts) is in catalog-core.ts and the downloads are in catalog-export.ts; both are re-exported here, so
-// `capsomer/behavior/catalog` is the one import for a site that renders its own markup.
+// The catalog's behavior: it makes a form that already works (a GET to the page's own address) update in
+// place. Each control fetches the address a person would have navigated to and swaps the regions that
+// changed; the address is written with `history.replaceState`, so a filter change is not a history step.
+// If the fetch fails the browser simply navigates there: an error is never swallowed. The core is in
+// catalog-core.ts and the downloads in catalog-export.ts, both re-exported here, so `capsomer/behavior/catalog`
+// is the one import.
 export * from "./catalog-core.ts";
 export * from "./catalog-export.ts";
 
@@ -15,8 +12,7 @@ const REGIONS = ["count", "chips", "results", "pages"] as const;
 const SEARCH_DELAY_MS = 250;
 const NARROW = "(max-width: 56rem)";
 
-// The form's state as an address: every named control with a value, in the order the form lists them. The
-// server reads it with parseCatalogParams, so a control that is not in the address is at its default.
+// The form's state as an address: every named control with a value, in the order the form lists them.
 export function formHref(form: HTMLFormElement): string {
   const params = new URLSearchParams();
   for (const [name, value] of new FormData(form)) {
@@ -221,7 +217,6 @@ export function attachCatalog(form: HTMLFormElement): () => void {
   };
 }
 
-// Attaches to every catalog under root that is not attached yet. Returns a function that detaches them all.
 export function enhance(root: ParentNode = document): () => void {
   const undo = Array.from(
     root.querySelectorAll<HTMLFormElement>("form[data-cap='catalog']:not([data-cap-ready])"),

@@ -2,8 +2,8 @@
 // the data tokens/palette-core.mjs builds each family's tokens from.
 
 export const FAMILIES = {
-  // defaultTheme is the theme checked first (rule 15). Purple follows the viewer's system
-  // setting, so its light theme is checked first as the default with no preference.
+  // defaultTheme is the theme checked first (rule 15). Purple follows the system setting,
+  // so light is its default.
   purple: {
     seed: "#8c5fd2",
     anchor: "#4F2D7F",
@@ -16,19 +16,15 @@ export const FAMILIES = {
     defaultTheme: "light",
     note: "Foxing, light by default (rules 14 and 15)",
   },
-  // Capsid's explorer (capsid.dustinedwards.info) since 2026-10-25; it was Foxhound's until amber came back.
   teal: {
     seed: "#008489",
     anchor: null,
     defaultTheme: "dark",
     note: "capsid.dustinedwards.info, dark by default (rule 15)",
   },
-  // Foxhound's amber, Recova's #f0b429. Bright enough that white cannot sit
-  // on it, so the primary button carries a dark label in both themes (label: "dark"), as Recova's
-  // did. In the light theme the seed is under 3:1 on the light surfaces, so step 9 there is the
-  // same hue and chroma darkened until it reaches 3:1 (lightStep9), and the button fills with it.
-  // Accent text is Recova's: #8a5c06 in light (the step 11 anchor) and the seed itself in dark,
-  // where it is 10:1 on the ground (a family with a dark label is light enough to be the text).
+  // Bright enough that white cannot sit on it, so the primary button carries a dark label (label: "dark").
+  // In light the seed is under 3:1 on the surfaces, so step 9 is darkened to 3:1 (lightStep9).
+  // Accent text is #8a5c06 in light and the seed in dark (10:1 on the ground).
   amber: {
     seed: "#f0b429",
     anchor: "#8a5c06",
@@ -36,30 +32,24 @@ export const FAMILIES = {
     defaultTheme: "dark",
     note: "Foxhound, dark by default; Recova's amber, with a dark button label",
   },
-  // txasm's navy: the brand #002868 is too dark to be step 9 (it fails 3:1 as a focus ring on
-  // the dark surface), so it is the light theme's step 11 anchor (links, headings, accent text)
-  // and step 9 is the same hue at the lightness and strength of purple and fox (OKLCH L 0.587, C 0.172).
+  // The brand #002868 is too dark for step 9 (fails 3:1 as a focus ring on dark), so it anchors
+  // step 11 in light; step 9 is the same hue at purple's lightness and chroma (OKLCH L 0.587, C 0.172).
   navy: {
     seed: "#3978e0",
     anchor: "#002868",
     defaultTheme: "light",
     note: "txasm, light by default; the brand navy #002868 is step 11 in light",
   },
-  // julieedwards.info's forest: the Bluff Dale ISD green #15532E is step 11 in light, as navy's
-  // #002868 is. Step 9 is its hue at purple and fox's lightness (OKLCH L 0.587); green runs out of
-  // sRGB at chroma 0.15 there, so it takes that, the strongest this green can be.
+  // The brand green #15532E anchors step 11 in light. Green runs out of sRGB at chroma 0.15 at
+  // L 0.587, so step 9 takes that.
   forest: {
     seed: "#06954f",
     anchor: "#15532E",
     defaultTheme: "light",
     note: "julieedwards.info, light by default; the school green #15532E is step 11 in light",
   },
-  // Two families for the public sites under dustinedwards.info, each its own color under the
-  // shared manual theme. Both are purple's lightness and strength (OKLCH L 0.587,
-  // C 0.172) at a hue no family had: magenta at 334 between purple and fox, cerulean at 230
-  // between teal and navy. A red was left out: it would read as the error color. Magenta was at
-  // 330; at 334 it sits as far from purple (CIEDE2000 13.3) as from rose (13.2), the closest
-  // pairs among the six public sites' colors.
+  // Both at purple's lightness and chroma (OKLCH L 0.587, C 0.172) at hues no family had. No red:
+  // it would read as the error color. Magenta at 334 sits as far from purple (CIEDE2000 13.3) as from rose (13.2).
   magenta: {
     seed: "#b64da6",
     anchor: null,
@@ -72,10 +62,8 @@ export const FAMILIES = {
     defaultTheme: "light",
     note: "Prelum's specimen site, light by default",
   },
-  // Two more for Carrel's and Enarratio's public sites (2026-10-26), at the same lightness and
-  // strength. Olive at 118, the green-gold of a library lamp, between amber and forest (sRGB holds
-  // it to C 0.136 there). Rose at 2, between magenta and fox: jade (176) sat next to teal and indigo
-  // (280) next to purple, and rose stays clear of the error color (CIEDE2000 14.8 from --crit).
+  // Same lightness and chroma. sRGB holds olive to C 0.136 at hue 118. Rose at 2 stays clear of
+  // the error color (CIEDE2000 14.8 from --crit).
   olive: {
     seed: "#768602",
     anchor: null,

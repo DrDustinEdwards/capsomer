@@ -1,11 +1,5 @@
-// The inspector: everything about a text that is not the text (its details, checks, comments, search
-// fields, history), in tabs beside the writing on a wide screen and in a sheet from the bottom on a
-// phone, so the writing comes first everywhere. An editor, a book file and an AI draft page that use
-// it put the same tab in the same place.
-//
-// `head` (saving and publishing) stays in the page on a phone, under the text, where it is reached by
-// scrolling; only the tabs go in the sheet. One copy of the tabs is drawn at a time, so no field is in
-// the page twice.
+// The inspector: a text's details, checks, comments and history in tabs beside the writing on a wide screen and in a bottom sheet on a phone.
+// `head` (saving, publishing) stays in the page on a phone; only the tabs go in the sheet, one copy at a time so no field is in the page twice.
 
 import { useEffect, useState, type ReactNode } from "react";
 import { Button } from "../button/button.react.tsx";
@@ -15,13 +9,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "../tabs/tabs.react.tsx
 export interface InspectorTab {
   value: string;
   label: string;
-  /** Shown on the tab, for what needs the person: open checks, comments. */
   count?: number;
-  /** null, undefined or false leaves the tab out (a tab with nothing to show today). */
   content: ReactNode;
 }
 
-/** The width from which the tabs sit beside the text; below it they open in a sheet. */
 export const INSPECTOR_WIDE = "(min-width: 1100px)";
 
 // The server draws the wide layout; a narrow screen moves the tabs into the sheet once it is live.
@@ -38,9 +29,7 @@ function useWide(query: string): boolean {
 }
 
 export interface InspectorProps {
-  /** Names the region and the sheet: "About this post". */
   label: string;
-  /** Above the tabs, and in the page on a phone: saving, publishing. */
   head?: ReactNode;
   tabs: InspectorTab[];
   defaultTab?: string;

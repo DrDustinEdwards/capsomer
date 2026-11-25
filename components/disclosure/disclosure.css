@@ -1,14 +1,11 @@
-/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+/* Layer order repeated so this file is safe in any import order: the first statement fixes it (css/layers.css). */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 /* The group row (.cap-group) is in group.css, which a page with groups and no <details>
    imports alone (capsomer/group.css). */
 @import "./group.css";
 
-/* Show and hide: a native <details> section (.cap-disclosure), and a group row in a list
-   (.cap-group, group.css) whose button shows or hides the rows it groups. Two levels at most.
-   Rebuilt in 0.2 to the craft of shadcn's Accordion and Collapsible: a smooth height
-   animation where the browser supports it, a flat accordion variant (rules between items,
-   the chevron at the end), a pressed state and a disabled one. */
+/* Show and hide: a native <details> section (.cap-disclosure), and a group row in a list (.cap-group,
+   group.css) whose button shows or hides the rows it groups. Two levels at most. */
 @layer cap.components {
   .cap-disclosure {
     border: var(--line-w) solid var(--line);
@@ -87,8 +84,7 @@
     }
   }
 
-  /* shadcn's Accordion look: no box, a rule between items, the title underlined on hover and
-     the chevron at the end, pointing down when closed and up when open. */
+  /* Accordion: no box, a rule between items, the chevron at the end. */
   .cap-disclosure[data-variant="accordion"] {
     border-width: 0 0 var(--line-w);
     border-radius: 0;
@@ -127,9 +123,7 @@
     }
   }
 
-  /* The card look (Recova's questions list): each section its own rounded card, apart from the
-     next (the list sets the gap), the title roomy with a plus at the end that turns to a cross
-     when open, and no rule between the title and the answer. */
+  /* Card: each section its own rounded card, with a plus that turns to a cross when open. */
   .cap-disclosure[data-variant="card"] {
     border-radius: var(--radius-l);
     overflow: clip;

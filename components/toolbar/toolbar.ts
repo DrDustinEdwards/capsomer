@@ -1,9 +1,7 @@
-// The toolbar's behavior (WAI-ARIA Authoring Practices, Toolbar): the bar is one tab stop (a
-// roving tabindex), Left and Right move between its controls (swapped right to left; Up and
-// Down in a vertical bar), Home and End go to the ends, and the ends wrap. The control last
-// focused keeps the stop. No framework; the markdown editor's toolbar uses it too.
+// The toolbar's behavior (WAI-ARIA APG Toolbar): one tab stop (roving tabindex), arrows move between
+// controls (swapped right to left; Up and Down in a vertical bar), Home and End go to the ends, and
+// the ends wrap. The control last focused keeps the stop.
 
-// Which item an arrow, Home or End moves to in a roving group (APG toolbar and menu). It wraps.
 export function rovingIndex(
   key: string,
   at: number,
@@ -21,25 +19,21 @@ export function rovingIndex(
   return null;
 }
 
-// The controls a bar's arrows move between: buttons and links that can take focus. A text field
-// keeps its own arrows, so it does not belong in a toolbar (APG).
+// The controls a bar's arrows move between. A text field keeps its own arrows, so it does not belong in a toolbar.
 const TOOLBAR_ITEMS = ":is(button, a[href]):not(:disabled, [hidden])";
 
 export interface ToolbarOptions {
-  // An editor's formatting bar: a press with a pointer does not take focus from the editor (its
-  // caret and selection stay), and a control used from the keyboard (Enter or Space) hands focus
-  // back to the editor once it has run. Returns the editor.
+  // An editor's formatting bar: a pointer press does not take focus from the editor (caret and
+  // selection stay), and a control used from the keyboard hands focus back to the editor after it runs.
   keepFocus?: () => HTMLElement | null;
 }
 
-// Gives one bar its single tab stop and arrow keys. `items` picks its controls. Returns a function
-// that detaches. Controls added later join it: the bar is read on every key.
+// Gives one bar its single tab stop and arrow keys; `items` picks its controls. Returns a detach
+// function. Controls added later join it: the bar is read on every key.
 //
-// Where the browser has focusgroup (Chrome 150, Edge 150), a plain toolbar takes `focusgroup="toolbar wrap"` and the
-// browser gives the single stop, the arrows (reversed right to left), Home, End and the wrap; this script then adds
-// no roving of its own, since two roving systems would fight (Modern Web Guidance, toolbar). A bar with its own item
-// set (the markdown editor's tools, a tag group's remove buttons) keeps the script, which picks only those items.
-// `keepFocus` works either way.
+// Where the browser has focusgroup (Chrome 150, Edge 150), a plain toolbar takes
+// `focusgroup="toolbar wrap"` and this script adds no roving, since two roving systems would fight.
+// A bar with its own item set keeps the script. `keepFocus` works either way.
 export const NATIVE_FOCUSGROUP =
   typeof HTMLElement !== "undefined" && "focusGroup" in HTMLElement.prototype;
 
@@ -48,7 +42,6 @@ function attachKeepFocus(bar: HTMLElement, items: string, keepFocus: ToolbarOpti
   const onDown = (e: PointerEvent) => {
     if ((e.target as Element).closest(items)) e.preventDefault();
   };
-  // After the control's own click handler has run (the editor has its command), focus goes back.
   const onUsed = (e: MouseEvent) => {
     if (e.detail !== 0 || !(e.target as Element).closest(items)) return;
     queueMicrotask(() => keepFocus()?.focus({ preventScroll: true }));
@@ -114,8 +107,6 @@ export function attachToolbar(
   };
 }
 
-// Attaches to every [data-cap="toolbar"] under root not yet attached. Returns a function that
-// detaches them all.
 export function enhance(root: ParentNode = document): () => void {
   const undo: Array<() => void> = [];
   for (const bar of root.querySelectorAll<HTMLElement>(

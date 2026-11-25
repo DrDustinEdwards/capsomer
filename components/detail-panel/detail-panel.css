@@ -1,15 +1,10 @@
-/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+/* Layer order, repeated so this file is safe in any import order. */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
-/* The detail panel: a record opened from its row, in the shared dialog as a side sheet on the
-   right (data-placement="right"). The surface, backdrop, slide, header, Close and body are the
-   shared dialog's; this file adds what a record needs inside it: the kind, title and identifier
-   in the header, the sections, the command block, the controls, the
-   source line and the before and after list. Reference: shadcn/ui Sheet (nova). Extracted
-   from the Capsid Portal's drawer (.kv, .kv.diff, .cmd). */
+/* The detail panel: a record opened from its row, in the shared dialog as a right side sheet. The
+dialog owns the surface, backdrop, slide, header, Close and body; this file adds what a record
+needs inside it. */
 @layer cap.components {
-  /* The heading: a small kind above the title, the title with its status beside it, and the
-     identifier beneath in mono. */
   .cap-detail-heading {
     display: grid;
     gap: var(--space-1);
@@ -42,8 +37,7 @@
     overflow-wrap: anywhere;
   }
 
-  /* The body is the shared dialog's scrolling part; here it also lays the sections out and is the
-     container the record's columns answer to. */
+  /* The body also lays the sections out and is the container the record's columns answer to. */
   .cap-detail-body {
     gap: var(--space-6);
     padding-block-end: var(--space-7);
@@ -64,7 +58,6 @@
     color: var(--muted);
   }
 
-  /* A command to run: mono, sunken, wraps rather than scrolls. */
   .cap-detail-cmd {
     margin: 0;
     padding: var(--space-3) var(--space-4);
@@ -79,9 +72,6 @@
     overflow-wrap: anywhere;
   }
 
-  /* The record (.cap-detail-record) is the summary list's form without rows: summary-list.css. */
-
-  /* Controls in a row; the destructive one at the far end, apart from the rest. */
   .cap-detail-controls {
     display: flex;
     flex-wrap: wrap;
@@ -106,9 +96,8 @@
     overflow-wrap: anywhere;
   }
 
-  /* An audit row before and after: the old value struck through above the new. The words
-     before and after are read, the strike-through and the tint are the sighted cue (a tint
-     alone would be color alone). */
+  /* An audit row before and after: the old value struck through above the new. The strike-through and
+  tint are the sighted cue; the words before and after are read. */
   .cap-detail-diff {
     display: grid;
     gap: var(--space-2);

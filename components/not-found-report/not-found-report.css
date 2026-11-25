@@ -1,10 +1,7 @@
-/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+/* Layer order, repeated so this file is safe in any import order. */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
-/* The 404 report: a panel of missing paths (the row list), most hits first. This file only sets
-   the path as code that may break anywhere, the hits beside the last-seen time, and the line said
-   when the report cannot be read. Extracted from Carrel (app/routes/project.not-found.tsx) and the
-   Capsid Portal (dashboard/src/views/NotFound.tsx). */
+/* The 404 report: missing paths as row-list rows, the path as code that may break anywhere, and the line said when the report cannot be read. */
 @layer cap.components {
   /* A path is what a stranger asked for: it wraps anywhere, so a long one never widens the page. */
   .cap-nf-path {

@@ -1,5 +1,3 @@
-// The media library's React grid: MediaTile and MediaGrid (media.react.tsx).
-
 import { type KeyboardEvent, type ReactNode, useCallback, useId, useRef } from "react";
 import { singleKeysOff } from "../shortcuts/shortcuts.ts";
 import { percent } from "../meter/meter.ts";
@@ -15,28 +13,20 @@ import {
 } from "./media.ts";
 import { formatBytes } from "../format/format.ts";
 
-// MediaTile: one file. Renders exactly the contract in the doc page: the open link (the tile's
-// one tab stop), the flags, the checkbox, and the progress or failure block.
-
 export interface MediaTileProps {
   item: MediaRecord;
   active?: boolean;
   selected?: boolean;
-  // The inspector is open on the active tile: the link says aria-current.
   inspecting?: boolean;
-  // Whether this tile's controls take Tab (roving: the active tile only).
   tabStop?: boolean;
   href?: string;
   onOpen?: (key: string) => void;
   onSelect?: (key: string, how: "toggle" | "range") => void;
   onRetry?: (key: string) => void;
-  // A binned tile's Restore. Without it the tile has no Restore button (restore it from the
-  // bulk bar or the inspector).
+  // A binned tile's Restore; without it there is no Restore button on the tile.
   onRestore?: (key: string) => void;
-  // The checkbox as a form field: named `ids`, in this form (by id), so a form post carries
-  // the ticked files with no script.
+  // The checkbox as a form field named `ids` in this form, so a form post carries the ticked files with no script.
   selectForm?: string;
-  // False for a list that only opens files (the picker): no checkbox.
   selectable?: boolean;
 }
 
@@ -229,7 +219,6 @@ export function MediaTile({
   );
 }
 
-// A native progress bar (its role and value the browser's own), styled as the shared meter's track (meter.css).
 function ProgressBar({ labelId, pct, name }: { labelId: string; pct: number; name: string }) {
   return (
     <progress
@@ -242,34 +231,26 @@ function ProgressBar({ labelId, pct, name }: { labelId: string; pct: number; nam
   );
 }
 
-// MediaGrid: the tiles, with roving focus and the arrow keys. Selection and the active file are the
-// app's state.
-
 export interface MediaGroup {
   label: string;
   items: readonly MediaRecord[];
 }
 
 export interface MediaGridProps {
-  // Either a flat list or groups under headings (a folder, a month).
   items?: readonly MediaRecord[];
   groups?: readonly MediaGroup[];
   activeKey: string;
   onActiveChange: (key: string) => void;
   selected: readonly string[];
   onSelectedChange: (keys: string[]) => void;
-  // Enter, or a click: open the inspector on this file.
   onOpen: (key: string) => void;
   inspecting?: boolean;
   onRetry?: (key: string) => void;
   onRestore?: (key: string) => void;
   size?: "s" | "m" | "l";
   label?: string;
-  // Where a tile's link goes with no script (its address); `?key=` by default.
   hrefFor?: (key: string) => string;
-  // The tiles' checkboxes post as `ids` in this form (by id).
   selectForm?: string;
-  // False: no checkboxes, Space and x do nothing (the picker opens a file and nothing else).
   selectable?: boolean;
 }
 

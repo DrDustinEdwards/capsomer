@@ -5,8 +5,7 @@ import { test } from "node:test";
 
 // Every Capsomer stylesheet fixes the layer order itself. A bundler may emit one component's
 // CSS before css/layers.css; if that file did not state the order, its own layer would come
-// first and base.css's `button { color: inherit }` would beat the component (found when a
-// primary button painted dark text on its accent fill).
+// first and base.css's `button { color: inherit }` would beat the component.
 const ORDER = "@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;";
 
 function cssFiles(dir) {

@@ -1,9 +1,7 @@
 // The page's side of a file's room (the app's y-partyserver room): the shared copy as a Yjs document kept in
-// step over one WebSocket, the people in the room and the comments, as the room says them.
-//
-// The editor is made only once the copy has arrived, so it never starts from an empty document and
-// writes that into the room. A change the room refuses (someone who suggests, typing plainly) leaves
-// this copy different from everyone else's, so the hook starts again from the room's, and says why.
+// step over one WebSocket, the people in the room and the comments. The editor is made only once the copy
+// has arrived, so it never writes an empty document into the room. A change the room refuses leaves this
+// copy different from everyone else's, so the hook starts again from the room's, and says why.
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import YProvider from "y-partyserver/provider";
@@ -203,7 +201,6 @@ export function useRoom(path: string, initial: string, initiallyUnsaved: boolean
   );
 }
 
-/** A person's color in the room, the same on every screen: one of eight, set in collab-editor.css by `data-who`. */
 export const personSlot = (id: number) => Math.abs(id) % 8;
 
 /**

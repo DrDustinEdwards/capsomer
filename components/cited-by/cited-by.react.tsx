@@ -11,7 +11,6 @@ export interface CitingWork {
   year?: number | string | null;
 }
 
-/** "Cited by 40", or "Cited by 25 of 40" when the list holds fewer than the count. */
 export function citedByHeading(total: number, shown: number): string {
   return total > shown ? `Cited by ${shown} of ${total}` : `Cited by ${total}`;
 }
@@ -30,7 +29,6 @@ export interface CitedByCountProps {
   readAt?: ReactNode;
 }
 
-// The one-line count near a record's head: "Cited by 12  OpenAlex, read 2026-11-01".
 export function CitedByCount({ count, href, source, readAt }: CitedByCountProps) {
   if (typeof count !== "number" || !(count >= 1)) return null;
   const words = `Cited by ${count}`;

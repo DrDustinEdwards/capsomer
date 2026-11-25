@@ -1,8 +1,5 @@
-// The AI answer panel's behavior: start a stream, show the answer as it arrives, then the sources, a follow-up and a
-// note when the model was cut off, and announce the start and the whole answer once each. Every write is textContent
-// or a DOM node: generated text is never markup, so the panel needs no Trusted Types policy at all.
-// What the site's stream means (which event carries the sources,
-// how its follow-up is marked) stays the site's, through `read` and `split`.
+// The AI answer panel: starts a stream, shows the answer as it arrives, then sources and a follow-up, and announces start and answer once.
+// Every write is textContent or a DOM node: generated text is never markup, so no Trusted Types policy is needed.
 
 import { answerDelta } from "@dustinedwards/site-runtime/ai-ask";
 import { isSameOriginPath } from "@dustinedwards/site-runtime/url";
@@ -13,11 +10,9 @@ import { jsonData, readSse, type SseEvent } from "../sse/sse.ts";
 export interface AskSource {
   url: string;
   title: string;
-  // A word after the title ("section").
   kind?: string;
 }
 
-// What one event adds: text to the answer, the sources, or that the model stopped before it finished.
 export interface AskRead {
   delta?: string;
   sources?: AskSource[];
@@ -52,13 +47,10 @@ export const ASK_WORDS: AskWords = {
 };
 
 export interface AskOptions {
-  // Starts the stream. dei's posts the question (a GET would be spendable by crawlers and prefetch).
+  // Starts the stream. A POST: a GET would be spendable by crawlers and prefetch.
   request: (signal: AbortSignal) => Promise<Response>;
-  // What an event adds. Default: a chat completion's text (`choices[0].delta.content`).
   read?: (event: SseEvent) => AskRead;
-  // Splits the answer so far into the answer and a follow-up question, if the site's model writes one.
   split?: (answer: string) => { answer: string; followUp?: string };
-  // Where a follow-up question links (dei's: its search page with the question).
   followUpHref?: (question: string) => string;
   // Only same-origin paths are shown as sources by default: an address that is not one did not come from the site.
   allowSource?: (url: string) => boolean;
@@ -67,7 +59,6 @@ export interface AskOptions {
 
 export interface AskHandle {
   cancel(): void;
-  // Settles when the stream has been read to its end, or has failed and said so.
   done: Promise<void>;
 }
 
@@ -84,7 +75,6 @@ function el<K extends keyof HTMLElementTagNameMap>(
   return node;
 }
 
-// Builds the panel in `container` and starts the stream.
 export function ask(container: HTMLElement, options: AskOptions): AskHandle {
   const w = { ...ASK_WORDS, ...options.words };
   const read = options.read ?? defaultRead;
@@ -103,9 +93,7 @@ export function ask(container: HTMLElement, options: AskOptions): AskHandle {
   const header = el("div", "cap-ask-header");
   header.append(el("span", "cap-ask-badge", w.badge), el("span", "cap-ask-note", w.note));
   const status = el("p", "cap-ask-status", w.working);
-  // Not live: rewritten on every token it would be read over and over. The announcer speaks once, with the whole
-  // answer or the failure; "Looking it up." stays visible text only, since an interstitial announcement is noise
-  // (Modern Web Guidance, accessibility: live regions). Focus on the panel already names it.
+  // Not live: rewritten on every token it would be read over and over. The announcer speaks once with the whole answer or failure.
   const body = el("p", "cap-ask-body");
   body.setAttribute("aria-busy", "true");
   const cutNote = el("p", "cap-ask-cut", w.cut);
@@ -217,9 +205,7 @@ export function ask(container: HTMLElement, options: AskOptions): AskHandle {
   };
 }
 
-// Wires every `[data-cap="ask"]` mount: its `[data-ask-trigger]` button starts `ask()` into its `[data-ask-container]`
-// with the question in the mount's `data-ask-question`, read at the click (a live search rewrites it). Guarded on the
-// DOM, so two bundles on one page never stream two answers for one click. `options` gives the request for a question.
+// Wires every `[data-cap="ask"]` mount. Guarded on the DOM, so two bundles on one page never stream two answers for one click.
 export function enhance(
   root: ParentNode = document,
   options: Omit<AskOptions, "request"> & {
@@ -260,7 +246,6 @@ export function enhance(
   };
 }
 
-// The request dei's Ask makes: a form post of the question, asking for an event stream.
 export function postQuestion(endpoint: string, field = "q") {
   return (question: string, signal: AbortSignal): Promise<Response> =>
     fetch(endpoint, {

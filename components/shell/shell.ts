@@ -1,13 +1,10 @@
-// The shell's behavior: the rail's collapse button, the remembered choice, the More sheet,
-// the density choice, and Esc to dismiss a collapsed rail's label (WCAG 1.4.13). No framework;
-// the React wrapper uses the same functions. Choices are kept with hooks' readStored and
-// writeStored.
+// The shell's behavior: the rail's collapse button, the remembered choice, the More sheet, the
+// density choice, and Esc to dismiss a collapsed rail's label (WCAG 1.4.13). No framework.
 import { closeDialog, openDialog, wireDialog } from "../dialog/dialog.ts";
 import { readStored, writeStored } from "../hooks/hooks.ts";
 
 export const DEFAULT_PREF = "cap-rail";
 
-// Collapses or expands the rail of one shell, and keeps its toggle's state and name true.
 export function setRail(shell: HTMLElement, collapsed: boolean, remember = true): void {
   if (collapsed) shell.dataset.rail = "collapsed";
   else delete shell.dataset.rail;
@@ -25,9 +22,8 @@ export function toggleRail(shell: HTMLElement): void {
   setRail(shell, shell.dataset.rail !== "collapsed");
 }
 
-// The phone tab bar's More sheet: the shared dialog (components/dialog) as a bottom sheet,
-// which the More button opens. The dialog gives Esc, the inert page, the backdrop click, the
-// focus trap and the hand-back of focus to More; this adds aria-expanded on the button.
+// The More sheet is the shared dialog (components/dialog) as a bottom sheet; it gives Esc, inert
+// page, focus trap and focus hand-back. This adds aria-expanded on the button.
 export function openMore(shell: HTMLElement): void {
   const button = shell.querySelector<HTMLButtonElement>("[data-cap-part='more']");
   const dialog = shell.querySelector<HTMLDialogElement>("dialog.cap-shell-more");
@@ -41,10 +37,9 @@ export function closeMore(shell: HTMLElement): void {
   if (dialog?.open) closeDialog(dialog);
 }
 
-// Density: the choice of how roomy the app is, on the root as data-density, remembered in
-// this browser like the theme. With no choice made the attribute is left off and the default
-// (compact) applies. An app puts the choice on its Settings page, and runs applyStoredDensity()
-// before first paint beside applyStoredTheme().
+// Density: how roomy the app is, on the root as data-density, remembered like the theme. With no
+// choice the attribute is left off and compact applies. An app runs applyStoredDensity() before
+// first paint beside applyStoredTheme().
 export type Density = "compact" | "comfortable";
 export const DENSITY_PREF = "cap-density";
 const isDensity = (v: string | null | undefined): v is Density =>
@@ -70,8 +65,6 @@ export function applyStoredDensity(key = DENSITY_PREF): Density | null {
   return d;
 }
 
-// Attaches to every [data-cap="shell"] under root that is not attached yet. Returns a
-// function that detaches them all.
 export function enhance(root: ParentNode = document): () => void {
   const undo: Array<() => void> = [];
   for (const shell of root.querySelectorAll<HTMLElement>(
@@ -87,10 +80,8 @@ export function enhance(root: ParentNode = document): () => void {
       const target = e.target as Element;
       if (target.closest("[data-cap-part='rail-toggle']")) toggleRail(shell);
       if (target.closest("[data-cap-part='more']")) openMore(shell);
-      // The dialog closes itself on Close and the backdrop; a link inside closes it too.
       if (more?.open && target.closest("a") && more.contains(target)) closeDialog(more);
     };
-    // Closed by Esc, Close, a link or the backdrop: More says so, and the dialog hands focus back to it.
     const onMoreClose = () => moreButton?.setAttribute("aria-expanded", "false");
     const unwireMore = more ? wireDialog(more) : null;
     more?.addEventListener("close", onMoreClose);

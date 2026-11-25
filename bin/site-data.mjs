@@ -9,7 +9,6 @@ export async function siteData() {
   const dataDir = join(PKG, "site", "data");
   mkdirSync(dataDir, { recursive: true });
   const pal = await import(pathToFileURL(join(PKG, "tokens", "palette.mjs")).href);
-  // Every family's seed and its 12 steps in light and dark, for the Colors page (site/content.ts).
   const scales = Object.fromEntries(
     Object.entries(pal.FAMILIES).map(([n, f]) => [
       n,
@@ -24,7 +23,6 @@ export async function siteData() {
     ? `${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}`
     : null;
 
-  // The test run, summarized per component, for --results-out (ci.yml keeps it with the run).
   const src = join(PKG, "test-results", "results.json");
   const results = {
     available: false,

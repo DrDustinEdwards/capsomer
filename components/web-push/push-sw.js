@@ -1,8 +1,6 @@
 // Capsomer's push service worker: phone alerts only. It shows each alert the site's server sends
-// ({ title, body, url, tag } as JSON) and, when one is tapped, opens the page it names on the
-// worker's own scope. It caches nothing and answers no fetch, so the site loads exactly as it does
-// without it. An alert never carries an action button: every answer is given on the site.
-// A site serves this file from the scope it registers (capsomer/push-sw.js; web-push.md says how).
+// ({ title, body, url, tag } as JSON) and opens the page it names on tap. It caches nothing and answers no fetch.
+// An alert never carries an action button: every answer is given on the site. Serve it from the scope it registers.
 
 self.addEventListener("install", () => self.skipWaiting());
 self.addEventListener("activate", (event) => event.waitUntil(self.clients.claim()));
@@ -16,9 +14,7 @@ self.addEventListener("push", (event) => {
   };
   try {
     alert = { ...alert, ...event.data.json() };
-  } catch {
-    // An alert that is not JSON still says something needs you.
-  }
+  } catch {}
   event.waitUntil(
     self.registration.showNotification(alert.title, {
       body: alert.body,
@@ -37,9 +33,7 @@ self.addEventListener("notificationclick", (event) => {
   try {
     const asked = typeof raw === "string" ? new URL(raw, scope).href : scope;
     if (asked.startsWith(scope)) url = asked;
-  } catch {
-    // A url that does not parse opens the scope.
-  }
+  } catch {}
   event.waitUntil(
     self.clients.matchAll({ type: "window", includeUncontrolled: true }).then((windows) => {
       // A tab already open on the site moves to the item, so the tap never lands on a page that

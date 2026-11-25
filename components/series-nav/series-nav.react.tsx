@@ -6,18 +6,13 @@ import { seriesPlace, type SeriesPart } from "./series-nav.ts";
 export type { SeriesPart };
 
 export interface SeriesNavProps {
-  // The series' name, and its own page (every part, in order).
   name: string;
   href: string;
-  // Every part, in reading order.
   parts: readonly SeriesPart[];
-  // The href of the part this page is.
   current: string;
 }
 
-// The HTML contract in series-nav.md: the series as a box, "Part 2 of 3: <series>", every part
-// with this one marked and not a link, then the parts either side as the manual's signs.
-// Renders nothing when this page is not one of the parts.
+// The series as a box, "Part 2 of 3", every part with this one marked and not a link, then the parts either side as signs. Renders nothing when this page is not one of the parts.
 export function SeriesNav({ name, href, parts, current }: SeriesNavProps) {
   const headingId = useId();
   const { index, previous, next } = seriesPlace(parts, current);

@@ -1,11 +1,10 @@
 /**
- * The site's search and AI surface, from Prelum (`@drdustinedwards/site-helpers`), the family's one
- * SEO module: the front page's head tags and JSON-LD, and the sitemap, robots.txt (the family bot
- * policy; Cloudflare puts its own lines first), ai.txt (citation welcome, training reserved, as the
- * tdm-reservation header in _headers says), llms.txt (https://llmstxt.org; llms-full.txt and each page's Markdown copy come from prelum-markdown after the build), security.txt and the
- * IndexNow key file. site/vite.config.ts writes them into the build. The pages are the five sections: Themes (the front
- * page at / and /themes/<part>/), Components (/components/<name>/, patterns too), Primitives (/primitives/<name>/), Icons
- * and Colors; search stays out of the index.
+ * The site's search and AI surface, from Prelum (`@drdustinedwards/site-helpers`): the front page's
+ * head tags and JSON-LD, sitemap, robots.txt (the family bot policy; Cloudflare puts its own lines
+ * first), ai.txt (citation welcome, training reserved, as the tdm-reservation header in _headers
+ * says), llms.txt, security.txt and the IndexNow key file. llms-full.txt and each page's Markdown
+ * copy come from prelum-markdown after the build. site/vite.config.ts writes them into the build;
+ * search stays out of the index.
  */
 import { defineHead, headHtml } from "@drdustinedwards/site-helpers/head";
 import { iconLinks, webManifest } from "@drdustinedwards/site-helpers/icons";
@@ -15,7 +14,7 @@ import { graph, jsonLd, thing, website } from "@drdustinedwards/site-helpers/sch
 import { sitemapDocument } from "@drdustinedwards/site-helpers/sitemap";
 import { securityTxt } from "@dustinedwards/site-runtime/security-txt";
 
-/** The production origin (rulings.md, rule 16): a workers.dev copy must not claim to be the page. */
+/** The production origin: a workers.dev copy must not claim to be the page. */
 const ORIGIN = "https://capsomer.dustinedwards.info";
 const REPO = "https://github.com/DrDustinEdwards/capsomer";
 /** The IndexNow key, served as /<key>.txt; .github/workflows/ci.yml's indexnow job reads it from here. Public by design. */

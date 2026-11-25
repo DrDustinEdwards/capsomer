@@ -1,21 +1,16 @@
-// Every token that is not a color: space, radius, type, control size, motion, layers,
-// focus, the reading context, and the two contexts' aliases. `node tokens/scale.mjs` writes
-// tokens/scale.css, tokens/themes.css and tokens/tokens.json; `--check` regenerates them in
-// memory and refuses any difference from the committed files.
+// Every token that is not a color: space, radius, type, control size, motion, layers, focus, the
+// reading context and the two contexts' aliases. `node tokens/scale.mjs` writes tokens/scale.css,
+// tokens/themes.css and tokens/tokens.json; `--check` refuses any difference from the committed files.
 //
-// The values and their reasons are in capsomer/research/design.md, section 1.5, as approved
-// on 2026-09-30. Each is a default: change it here, run `npm run tokens`, and record why.
+// Each value is a default: change it here, run `npm run tokens`, and record why.
 //
-// Density (release 0.2): the sizes a person feels (control height, padding, text size, gap,
-// row height) come in two sets. Compact is the default: the Capsid Portal's values, raised one
-// step on 2026-10-25 (14 px text, 34 px controls, 40 px rows, 20 px
-// cards); comfortable starts from shadcn's vega spacing (36 px controls, 14 px text, px-3).
-// `[data-density="comfortable"]` on the root or on any wrapper changes them for its subtree.
-// Every density token is written as a literal in both blocks, never as a var() chain, so a
-// wrapper does not inherit a value already resolved at the root.
+// Density: the sizes a person feels come in two sets. Compact is the default;
+// `[data-density="comfortable"]` on the root or any wrapper changes them for its subtree. Every
+// density token is a literal in both blocks, never a var() chain, so a wrapper does not inherit a
+// value already resolved at the root.
 //
-// Font sizes are in rem (16px each at the browser's default), so a person's own default text
-// size reaches every size (WCAG 1.4.4); spaces and controls stay in px.
+// Font sizes are in rem so a person's own default text size reaches every size (WCAG 1.4.4);
+// spaces and controls stay in px.
 import { readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { ELEVATION_ORDER, FAMILIES, moreLines, themes } from "./palette.mjs";
@@ -80,8 +75,7 @@ export function renderThemes() {
   return `${HEADER(`both themes pinned to an element, from the seed ${t.seed}`)}${block("light")}\n${block("dark")}\n@media (prefers-contrast: more) {\n${more("light")}\n${more("dark")}\n}\n`;
 }
 
-// The same values in the Design Tokens Community Group format (2025.10), for tools that
-// read it. The CSS is the contract; nothing in Capsomer reads this file (decision 15).
+// The same values in the Design Tokens Community Group format, for tools. Nothing in Capsomer reads this file.
 export function renderJson() {
   const t = themes(FAMILIES.purple);
   const out = {

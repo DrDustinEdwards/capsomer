@@ -1,22 +1,13 @@
-// One file's shared working copy, as a Yjs document.
-// The room's Durable Object holds it, and every editor open on the file holds a copy that Yjs keeps
-// the same. The same functions run in both places, so what an editor shows and what a save writes
-// are one computation.
-//
-// The document has two parts:
-// - `default`, the editor's blocks as Tiptap's Collaboration extension binds them. Every block keeps
-//   its origin (`md`: the bytes it was read from), so the source-preserving save works on the shared
-//   copy as it does on one person's: unchanged blocks are written as their bytes.
-// - `carrel` (the name rooms already store; renaming it would unseed every open room), what the save
-//   needs besides the blocks: the version the copy was started from (site-api's
-//   expectedVersion, or a book file's Git sha), the bytes after the last block, the dialect, the text
-//   as last saved or loaded (to tell whether anything is unsaved), and `prints`, each original block's
-//   fingerprint by origin id, which says whether a block still holds exactly what it was read from.
-//
-// A replacement (Discard, the site's newer version, an AI draft taken as the working copy) is made in
-// one Yjs transaction by the room's server, so everyone sees it at once and two people cannot make
-// it twice. `prosemirrorToYXmlFragment` changes only the blocks that differ, so the comments anchored
-// in the others stay where they were.
+// One file's shared working copy, as a Yjs document, held by the room's Durable Object and by every
+// editor open on the file. The same functions run in both places, so what an editor shows and what a save
+// writes are one computation. Two parts:
+// - `default`, the editor's blocks as Tiptap's Collaboration extension binds them. Every block keeps its
+//   origin (`md`), so unchanged blocks are written as their bytes.
+// - `carrel` (the name rooms already store; renaming it would unseed every open room): what the save needs
+//   besides the blocks: the version the copy started from, the bytes after the last block, the dialect,
+//   the text as last saved or loaded, and `prints` (each original block's fingerprint by origin id).
+// A replacement is made in one Yjs transaction by the room's server, so everyone sees it at once.
+// `prosemirrorToYXmlFragment` changes only the blocks that differ, so comments anchored in the others stay.
 
 import {
   absolutePositionToRelativePosition,
@@ -50,7 +41,6 @@ export type RoomMeta = {
 };
 
 let schema: ReturnType<typeof editorSchema> | null = null;
-/** The editor's schema, built once: the room's server has no editor to ask. */
 export function roomSchema() {
   return (schema ??= editorSchema());
 }
@@ -116,7 +106,6 @@ export function loadMarkdown(
   });
 }
 
-/** Adds the fingerprints of blocks an editor read in from Markdown typed in the Markdown view. */
 function addPrints(ydoc: Y.Doc, prints: Map<number, string>, tail?: string): void {
   const shared = metaOf(ydoc).get(PRINTS);
   if (!(shared instanceof Y.Map)) return;
@@ -215,7 +204,6 @@ export function anchorAt(ydoc: Y.Doc, from: number, to: number): string {
   return anchorJson(type, initProseMirrorDoc(type, roomSchema()).mapping, from, to);
 }
 
-/** A range as JSON relative positions in `type`, which follow the text as people type around it. */
 export function anchorJson(
   type: Y.XmlFragment,
   mapping: ProsemirrorMapping,
@@ -235,7 +223,6 @@ export function markSaved(ydoc: Y.Doc, version: string | null, markdown: string)
   });
 }
 
-/** The editor's document as JSON, straight out of the shared copy, suggestions and all. */
 export function roomJson(ydoc: Y.Doc): JsonDoc {
   return yXmlFragmentToProsemirrorJSON(ydoc.getXmlFragment(FRAGMENT)) as JsonDoc;
 }
@@ -247,7 +234,6 @@ export function roomMarkdown(ydoc: Y.Doc): string {
   return fromDoc(json as JsonNode, meta.tail, printsOf(ydoc), meta.dialect);
 }
 
-/** The Markdown for a document an editor holds as JSON, with the room's bookkeeping. */
 export function markdownOf(ydoc: Y.Doc, editorJson: JsonDoc): string {
   const meta = readMeta(ydoc);
   return fromDoc(

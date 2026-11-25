@@ -1,10 +1,8 @@
-/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+/* Layer order repeated so this file is safe in any import order: the first statement fixes it (css/layers.css). */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
-/* A count: a small number in a round bubble, on a tab, a menu row or an icon. The bubble is one
-   size and one shape everywhere; a plain count is a neutral gray, and the tone says what the number
-   means. Where it sits (beside a word, on an icon's corner, ringed in the bar's color) is the
-   host's. */
+/* A small number in a round bubble, on a tab, a menu row or an icon. One size and shape everywhere; a
+   plain count is neutral gray and the tone says what the number means. Where it sits is the host's. */
 @layer cap.components {
   .cap-count {
     display: inline-grid;

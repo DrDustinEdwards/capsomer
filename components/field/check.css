@@ -1,11 +1,10 @@
-/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+/* Layer order repeated so this file is safe in any import order: the first statement fixes it (css/layers.css). */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
 /* A checkbox or radio with its label (.cap-check), part of the form fields (field.css imports it).
    A page that needs only the box, not the fields, imports capsomer/check.css alone. */
 @layer cap.components {
-  /* A checkbox or radio with its label. The whole label is the hit area. The box and the
-     mark are drawn here so the edge, the fill and the tick are the same in every browser. */
+  /* The whole label is the hit area. The box and mark are drawn here so edge, fill and tick are the same in every browser. */
   .cap-check {
     display: inline-flex;
     align-items: center;
@@ -29,14 +28,13 @@
       color: var(--primary-fg);
       cursor: inherit;
 
-      /* The hit area: at least --target square (44px on a touch screen) around the 16px box, for a
-         box with no visible label beside it (a row's box); the box is drawn the same size. */
+      /* The hit area is at least --target square (44px on touch) around the 16px box, for a box with no
+                visible label beside it. */
       &::before {
         content: "";
         position: absolute;
         inset: calc(7px - var(--target) / 2);
       }
-      /* The tick (checkbox) and the dot (radio): drawn with borders and a circle, no image. */
       &::after {
         content: "";
         position: absolute;
@@ -72,7 +70,6 @@
       &:checked::after {
         opacity: 1;
       }
-      /* Mixed: a bar instead of a tick. */
       &[type="checkbox"]:indeterminate::after {
         opacity: 1;
         left: var(--space-1-5);
@@ -110,8 +107,7 @@
       cursor: not-allowed;
     }
 
-    /* A choice card: the whole box is the label and the chosen one takes the accent tint
-       (shadcn's field-label with a field inside). */
+    /* A choice card: the whole box is the label and the chosen one takes the accent tint. */
     &[data-variant="card"] {
       align-items: flex-start;
       box-sizing: border-box;

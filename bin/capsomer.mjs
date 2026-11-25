@@ -4,9 +4,9 @@
 // checks the app's CSS against the tokens.
 //
 //   capsomer report [--out capsomer-report.json] [--a11y <playwright json>] [--app <name>]
-//   capsomer token-check [paths...] [--fix] [--strict] warns on raw values (--strict fails on one) (rulings.md, rule 1); --fix writes the exact tokens.
+//   capsomer token-check [paths...] [--fix] [--strict] warns on raw values (--strict fails on one); --fix writes the exact tokens.
 //                                          Exits 1 on a declaration the browser drops (invalidValues), a bug, not a warning
-//   capsomer size [--dist <dir>]           reports and warns, always exits 0 (decision 12)
+//   capsomer size [--dist <dir>]           reports and warns, always exits 0
 //   capsomer states                        writes components/<name>/states.html from examples.html (capsomer repo only)
 //   capsomer site-data                     the site's data files (capsomer repo only)
 //   capsomer docs                          fails a component doc file that leaves the docs site's pattern (bin/docs.mjs; capsomer repo only)

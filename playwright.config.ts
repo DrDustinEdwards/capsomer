@@ -12,9 +12,9 @@ export default defineConfig({
   // theme only, and so do accessibility tests tagged @markup (roles, names, ARIA snapshots, hit
   // areas: nothing a palette paints). The axe scans and contrast checks run in both.
   grepInvert: [/dark theme .*(behavior|keyboard|lines|inside|layout):/, /dark theme .*@markup/],
-  // Every test opens its own page and shares nothing with the others in its file, so tests, not
-  // files, are spread over the workers (playwright.dev/docs/test-parallel). With files kept whole,
-  // the CI worker that drew the sweep's 466 tests ran 21 minutes while the other three ran about 10.
+  // Every test opens its own page and shares nothing, so tests, not files, are spread over the
+  // workers (playwright.dev/docs/test-parallel): with files kept whole, one CI worker ran the
+  // sweep's tests for 21 minutes while the others ran about 10.
   fullyParallel: true,
   workers: 1,
   forbidOnly: !!process.env.CI,

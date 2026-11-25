@@ -32,18 +32,10 @@ export {
 } from "./sortable-list.ts";
 export type { Layout, Lists, SortMessages, SortMove } from "./sortable-list.ts";
 
-// The sortable list's HTML contract, rendered from props. The items are the caller's: a
-// finished move calls `onReorder` with the new order, and the list shows the caller's
-// `items` again on the next render, so a host that does not save the order sees it go back.
-// While an item is up (keyboard) or under the pointer, the list holds a draft order of its
-// own. With `name`, every item carries a hidden `name` input with its id, and Move up and
-// Move down are submit buttons (`up=<id>`, `down=<id>`), so a server-rendered list inside a
-// form reorders with no script. Nothing here sets a `style` prop.
-//
-// One engine drives both exports: SortableList is one list, SortableBoard several lists whose
-// items move between them. Besides moving, a list can add and remove items (repeatable rows),
-// say what it says in a host's own words, take Alt and an arrow anywhere in an item, and show
-// an item as a card with its own head line.
+// The sortable list's HTML contract, rendered from props. The caller owns the items: a finished move calls
+// `onReorder`, and the list shows `items` again on the next render. With `name`, Move up and Move down are
+// submit buttons (`up=<id>`, `down=<id>`), so a server-rendered list in a form reorders with no script.
+// SortableList is one list; SortableBoard is several whose items move between them.
 
 export interface SortState {
   index: number;
@@ -54,9 +46,7 @@ export interface SortState {
 
 interface CoreProps<T> {
   getId: (item: T) => string;
-  // The words a person knows the item by: "Move {label}", "Picked up {label}".
   getLabel: (item: T) => string;
-  // The item's own content, beside the handle and the buttons. No drag handle of its own.
   renderItem: (item: T, state: SortState) => ReactNode;
   // A line between the handle and the buttons, in the item's head: "Step 3", an item's title. In
   // the "cards" and "stack" layouts the head sits over the content.
@@ -71,7 +61,6 @@ interface CoreProps<T> {
   altKeys?: boolean;
   // Shows the order with no handle and no buttons: a published book, a locked list.
   readOnly?: boolean;
-  // A move or save is under way: every control is disabled.
   busy?: boolean;
   // Remove: a button after Move down. `onRemove` hears it; the list says so and puts focus on the
   // next item. Not offered at `min` items or fewer.
@@ -79,9 +68,7 @@ interface CoreProps<T> {
   min?: number;
   // Said in place of an empty list: "No hosts yet."
   empty?: ReactNode;
-  // The first number of the ordered list (`start` of the `ol`).
   start?: number;
-  // The form field name for the order; turns the buttons into submit buttons.
   name?: string;
   className?: string;
   // How Move up and Move down are drawn: "quiet" icon buttons (the default), "bordered" icon
@@ -90,7 +77,6 @@ interface CoreProps<T> {
   // The grip; on by default. Off, the item has no drag handle and moves by its buttons (and Alt
   // and an arrow, with altKeys).
   grip?: boolean;
-  // A class of the site's own on an item, for a state it draws (an excluded entry).
   itemClassName?: (item: T, state: SortState) => string | undefined;
   // The site's own controls in the item's buttons, after the steps and the move-to select and
   // before Remove (a checkbox, say).
@@ -133,12 +119,10 @@ export interface SortableBoardProps<T> extends CoreProps<T> {
   lanes: readonly SortLane<T>[];
   // Every list's new order, and what moved. The host saves it.
   onMove: (lists: Lists, move: BoardMove) => void;
-  // The heading or heading and note above a list's items. Wrapped in the list's section.
   renderLaneHead?: (lane: SortLane<T>) => ReactNode;
   // A select in each item to move it to another list: the one-pointer way across lists
   // (WCAG 2.5.7). On by default.
   moveTo?: boolean;
-  // A class of the site's own on a list's section (.cap-sortable-lane), for its look.
   laneClassName?: string | ((lane: SortLane<T>) => string | undefined);
   "aria-label"?: string;
 }
@@ -319,7 +303,6 @@ function Core<T>({
   });
 
   const laneWords = (list: string) => laneOf.get(list)?.label ?? list;
-  // Words for where an item landed: its place, and its list when that changed.
   const landed = (next: Lists, id: string, fromList: string, kind: "over" | "step") => {
     const at = locate(next, id);
     if (!at) return "";
@@ -407,7 +390,6 @@ function Core<T>({
     finish(next, id, from);
   };
 
-  // The move-to select: the end of the chosen list.
   const toLane = (id: string, list: string, el: HTMLElement) => {
     const from = locate(ids, id);
     if (!from || from.list === list) return;
@@ -499,7 +481,6 @@ function Core<T>({
       else map.current.delete(key);
     };
 
-  // Leaving the list while an item is up puts it back.
   const onBlur = (e: FocusEvent<HTMLElement>) => {
     const to = e.relatedTarget as Node | null;
     if (lifted && to && !e.currentTarget.contains(to)) cancel();
@@ -714,7 +695,6 @@ function Core<T>({
   );
 }
 
-// The move-to select of an item in a board: the one-pointer way across lists.
 function MoveTo<T>({
   id,
   words,
@@ -759,7 +739,6 @@ function MoveTo<T>({
   );
 }
 
-// One list in order.
 export function SortableList<T>({
   items,
   onReorder,
@@ -785,9 +764,7 @@ export function SortableList<T>({
   );
 }
 
-// Several lists whose items move between them: a book's sections, a board's columns. Each list is
-// a section with the host's head (`renderLaneHead`) over its ordered list; an item is dragged
-// into another list, moved there by the arrow keys at the end of its list, or by its select.
+// Several lists whose items move between them: dragged, moved by the arrow keys at a list's end, or by the select.
 export function SortableBoard<T>({
   lanes,
   onMove,

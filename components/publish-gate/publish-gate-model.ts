@@ -7,27 +7,19 @@ export type CheckState = "failing" | "advisory" | "passed";
 
 export interface GateCheck {
   id: string;
-  // The rule's name in words the operator uses: "Alt text".
   name: string;
-  // Required checks block publishing; advisory ones do not.
   required: boolean;
   ok: boolean;
-  // What causes it, when failing: "The cover image has no alt text".
   cause: string;
-  // What it says when it passes: "Every image has alt text".
   pass?: string;
-  // Where the cause is: the passage, field or setting (href="#field-alt").
   href?: string;
-  // How to fix it: "Describe what the image shows."
   fix?: string;
-  // The destination it concerns. Without it the check applies to every destination.
   site?: string;
 }
 
 export interface GateHold {
   // A person or a schedule holds it.
   by?: string;
-  // "review", "legal check".
   reason?: string;
   // The time it is held until, ISO, and how it reads: "Fri 09:00".
   until?: string;
@@ -39,9 +31,7 @@ export interface GateHold {
 }
 
 export interface GatePublished {
-  // ISO.
   at: string;
-  // The live page.
   url: string;
 }
 
@@ -54,13 +44,10 @@ export interface GateSite {
   first?: boolean;
 }
 
-// Pure helpers.
-
 export function checkState(c: Pick<GateCheck, "ok" | "required">): CheckState {
   return c.ok ? "passed" : c.required ? "failing" : "advisory";
 }
 
-// Failing required checks first, then failing advisory ones, then the ones that pass. Stable.
 export function sortChecks<T extends Pick<GateCheck, "ok" | "required">>(
   checks: readonly T[],
 ): T[] {
@@ -121,18 +108,15 @@ export function countChecks(checks: readonly Pick<GateCheck, "ok" | "required">[
   };
 }
 
-// The headings: "Required, 2 failing", "Advisory, 3", "9 checks passed".
 export const requiredHeading = (n: number) => `Required, ${n} failing`;
 export const advisoryHeading = (n: number) => `Advisory, ${n}`;
 export const passedHeading = (n: number) => `${plural(n, "check")} passed`;
 
-// "Held for review by Rosa until Fri 09:00".
 export function holdText(h: GateHold): string {
   if (h.text) return h.text;
   return `Held${h.reason ? ` for ${h.reason}` : ""}${h.by ? ` by ${h.by}` : ""}${h.untilLabel ? ` until ${h.untilLabel}` : ""}`;
 }
 
-// Names in a sentence: "a", "a and b", "a, b and c", "4 sites" beyond three.
 export function nameList(names: readonly string[]): string {
   if (names.length <= 2) return names.join(" and ");
   if (names.length === 3) return `${names[0]}, ${names[1]} and ${names[2]}`;
@@ -154,7 +138,6 @@ export interface GateReading {
   rest: string;
 }
 
-// The one sentence for the whole region: "Blocked: 2 required checks failing on example.com".
 export function describeGate(
   sites: readonly GateSite[],
   checks: readonly GateCheck[],
@@ -185,7 +168,6 @@ export function describeGate(
   return { sites: read, state, rest };
 }
 
-// The line under a destination's name.
 export function siteDetail(
   state: GateState,
   failing: readonly GateCheck[],

@@ -1,5 +1,3 @@
-// Draft compare's renderer: renderCompare returns the HTML string for every view (draft-compare.ts).
-
 import { plural } from "@drdustinedwards/site-helpers/text";
 import { exact, parse } from "../time/time.ts";
 import {
@@ -13,25 +11,19 @@ import {
   countsText,
 } from "./draft-compare-diff.ts";
 
-// The renderer
-
 export type CompareView = "side" | "inline" | "changes";
 export const VIEWS: readonly CompareView[] = ["side", "inline", "changes"];
 
 export interface CompareSide {
-  // What the version is called: "Draft 3", "Published September 14".
   title: string;
-  // Who wrote or saved it.
   who?: string;
-  // When, as an ISO string (a time with no zone is read as UTC).
   time?: string;
   text: string;
 }
 
 export type RunKind = "you" | "ai" | "quoted";
 
-// A stretch of one side's text, by character offset, with who wrote it. Optional: when given,
-// each sentence is marked (the authorship component's runs) with its kind.
+// A stretch of one side's text by character offset, with its author; when given, each sentence is marked with its kind.
 export interface RunSpan {
   from: number;
   to: number;
@@ -44,18 +36,14 @@ export interface CompareLabels {
 }
 
 export interface CompareOptions extends SentenceOptions {
-  // Ids and radio names; give each compare on a page its own. Default "compare".
   id?: string;
-  // The view shown first. Default "side".
   view?: CompareView;
-  // Unchanged sentences kept either side of a change before the rest collapse. Default 1.
   context?: number;
   labels?: Partial<CompareLabels>;
   runs?: { before?: RunSpan[]; after?: RunSpan[] };
   // Leave the chosen view to the app (false): enhance() then does not read or write storage.
   remember?: boolean;
-  // Draw each side's name over its column (default). false leaves it to the page, which names
-  // the sides in its own words (the posts list's scheduled update, with times in the viewer's zone).
+  // Draw each side's name over its column (default); false leaves it to the page.
   heads?: boolean;
 }
 
@@ -89,7 +77,6 @@ function wholeDel(s: Sentence): string {
   return markup([{ op: "del", text: s.text }], "before");
 }
 
-// The html of one sentence entry on one side ("both": the inline view).
 function entryHtml(e: Entry, show: "before" | "after" | "both"): string {
   switch (e.op) {
     case "same":
@@ -130,8 +117,6 @@ function sideHead(role: string, s: CompareSide, which: "before" | "after"): stri
   return `<div class="cap-compare-side" data-side="${which}"><span class="cap-compare-side-role">${esc(role)}</span><span class="cap-compare-side-title">${esc(s.title)}</span>${meta ? `<span class="cap-compare-side-meta">${meta}</span>` : ""}</div>`;
 }
 
-// Which sentences collapse: a run of unchanged sentences keeps `context` of them beside each
-// change and folds the rest when that hides at least two.
 function hiddenFlags(entries: Entry[], context: number): boolean[] {
   const hidden = entries.map(() => false);
   let s = 0;
@@ -165,13 +150,11 @@ function changeLabel(ctx: Ctx, n: number): string {
   return `<span class="cap-compare-change-label">Change ${n} of ${ctx.total}</span><span class="cap-sr-only">, ${plural(c.added, "word")} added, ${c.removed} removed.</span>`;
 }
 
-// What marks a change's first element, in the one view that carries ids.
 function changeAttrs(ctx: Ctx, n: number, withId: boolean): string {
   const c = ctx.an.perChange[n - 1] as { added: number; removed: number };
   return `${withId ? ` id="${ctx.id}-c${n}"` : ""} data-change="${n}" data-added="${c.added}" data-removed="${c.removed}" tabindex="-1"`;
 }
 
-// A sentence wrapped in its author's run, with the label where the kind changes.
 function runWrap(
   kind: RunKind | null,
   prev: RunKind | null,
@@ -212,7 +195,6 @@ function renderSideRows(
   return out;
 }
 
-// Every segment of the entries: runs shown, runs folded.
 function segments(ctx: Ctx): Array<{ hidden: boolean; from: number; to: number }> {
   const flags = hiddenFlags(ctx.an.entries, ctx.opts.context ?? 1);
   const out: Array<{ hidden: boolean; from: number; to: number }> = [];
@@ -242,7 +224,6 @@ function renderSide(ctx: Ctx, withIds: boolean): string {
   return `<ol class="cap-compare-rows">${rows}</ol>`;
 }
 
-// The inline and changes views build paragraphs: entries between paragraph openers.
 function paragraphs(
   ctx: Ctx,
   from: number,
@@ -338,8 +319,7 @@ function viewRegion(view: CompareView, label: string, inner: string): string {
 const fmtCounts = (c: Counts) =>
   `<p class="cap-compare-counts" data-cap-part="counts">${esc(countsText(c))}</p>`;
 
-// The legend, on one line: the counts, then the key to the marks. What each view does is the
-// view switch's description (viewSwitch), for a screen reader; its labels say it to the eye.
+// The legend: the counts, then the key to the marks. What each view does is the view switch's description, for a screen reader.
 function legend(c: Counts): string {
   return `<div class="cap-compare-legend">
 ${fmtCounts(c)}
@@ -372,10 +352,7 @@ function viewSwitch(id: string, view: CompareView): string {
   return `<fieldset class="cap-seg" aria-describedby="${id}-views"><legend class="cap-sr-only">View</legend><div class="cap-seg-options" data-size="sm">${radios}</div><p class="cap-sr-only" id="${id}-views">Side by side: before on the left, after on the right, sentence by sentence. Inline: one column, with each removal and addition where it happened. Changes only: just the changed sentences.</p></fieldset>`;
 }
 
-// The compared versions, as the HTML a page delivers: both sides named, a switch between three
-// views, a legend with the counts, jump links to each change, and all three views in full.
-// Safe to call on a server; the string needs no script to read. Call enhance() in the page
-// for the jump keys, the remembered view and "expand all".
+// The compared versions as HTML a page delivers (all three views in full); needs no script, safe on a server. Call enhance() for jump keys and "expand all".
 export function renderCompare(
   before: CompareSide,
   after: CompareSide,

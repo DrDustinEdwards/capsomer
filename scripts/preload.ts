@@ -1,9 +1,7 @@
 /**
- * The home page's preload `Link` header (site-runtime `./preload`), from the built site: the stylesheet the home page
- * links and the two faces its first screen paints in, Inter (headings and interface) and Source Serif 4
- * (prose). Vite hashes their names, so they are read from site-dist after each build and written to
- * worker/preload.generated.json, which the Worker bundles. A build missing one of them fails rather than preloading
- * nothing.
+ * The home page's preload `Link` header (site-runtime `./preload`): the stylesheet and the two faces
+ * its first screen paints in. Vite hashes their names, so they are read from site-dist after each
+ * build into worker/preload.generated.json; a build missing one fails rather than preloading nothing.
  */
 
 import { preloads } from "@dustinedwards/site-runtime/preload";

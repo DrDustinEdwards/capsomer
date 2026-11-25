@@ -73,10 +73,8 @@ const ROLES = {
   ],
 };
 
-// Step 9 in the light theme: the seed, unless it is under 3:1 on the light theme's darkest
-// surface (--raised, below), when it is the seed's hue and chroma darkened until it reaches 3:1.
-// Every family but amber keeps its seed; a light seed like Recova's amber cannot be a focus ring
-// or a large fill on white.
+// Step 9 in light: the seed, unless it is under 3:1 on the darkest light surface (--raised),
+// when it is darkened to 3:1. Only amber needs it.
 export function lightStep9(seed) {
   const { L, C, H } = seedLch(seed);
   const raised = oklch(0.975, 0.008, H);
@@ -85,9 +83,8 @@ export function lightStep9(seed) {
     : tune(C, H, readsOn([raised], CONTROL + 0.05), L, 0.3);
 }
 
-// Step 9 in the dark theme, the same rule turned over: the seed, unless it is under 3:1 on the dark
-// theme's lightest surface (--raised), when it is lightened until it reaches 3:1. No family needs
-// it; the theme builder takes any color, and a navy or black seed would vanish on a dark ground.
+// Step 9 in dark, turned over: lightened to 3:1 on the lightest surface (--raised) if needed.
+// No family needs it; a navy or black custom seed would.
 export function darkStep9(seed) {
   const { L, C, H } = seedLch(seed);
   const raised = oklch(0.245, NEUTRAL_CHROMA, H);
@@ -116,9 +113,8 @@ const rgbList = (hex) =>
     .map((v) => Math.round(v * 255))
     .join(", ");
 
-// Elevation in the theme's own ink: Tailwind's xs, sm, md and lg shadows (the shadow scale
-// shadcn uses), tinted from --text in light and heavier on a dark ground, where a shadow
-// reads less. `ring` is the translucent focus glow (shadcn's ring-3 at 50%).
+// Elevation tinted from --text, heavier in dark where a shadow reads less. `ring` is the
+// translucent focus glow.
 function elevation(t, scheme) {
   const dark = scheme === "dark";
   const ink = dark ? "0, 0, 0" : rgbList(t.text);
@@ -133,8 +129,8 @@ function elevation(t, scheme) {
     "shadow-ring": `0 0 0 var(--ring-width) rgba(${rgbList(t.ring)}, 0.5)`,
     shadow: "var(--shadow-l)",
     scrim: `rgba(${ink}, ${dark ? "0.55" : "0.28"})`,
-    // A flat image (a screenshot, a diagram on white) dimmed a little in dark so it does not glow
-    // on the dark page, as Apple's guidance advises; .cap-img-flat (css/utilities.css) applies it.
+    // A flat image (screenshot, diagram on white) is dimmed in dark so it does not glow;
+    // .cap-img-flat (css/utilities.css) applies it.
     "img-filter": dark ? "brightness(0.88)" : "none",
   };
 }
@@ -159,12 +155,9 @@ export const ELEVATION_ORDER = [
   "img-filter",
 ];
 
-// The chart palette (tokens/chart.mjs): eight series colors, the family's five-step ramp, and
-// the label color that reads best on each. The three seeds are step 9 of the three families,
-// so a series color is the family color itself. Each series also has its ink (--series-ink-N):
-// the same hue and chroma, its lightness moved only as far as text needs (4.5:1 and the APCA
-// floor for other text on the surface, ground and raised surface), for a series' name or value
-// written beside its mark (a direct label). A swatch keeps the series color; its words take the ink.
+// The chart palette (tokens/chart.mjs): eight series colors, the family's five-step ramp and the
+// label color on each. Each series also has an ink (--series-ink-N): its hue and chroma with
+// lightness moved only as far as text needs (4.5:1 and the APCA floor), for a direct label.
 function chartTokens(t, scheme, { C, H }, level = "standard") {
   const out = {};
   const series = [
@@ -187,10 +180,9 @@ function chartTokens(t, scheme, { C, H }, level = "standard") {
   return out;
 }
 
-// The neutrals that carry text and edges, held to a contrast level against the theme's own
-// grounds: body text, muted and dim text, the control border and the divider. Each keeps its hue
-// and chroma and only moves away from the grounds, so a value that already passes is unchanged.
-// A site's own neutrals (tokens/sites.mjs) go through the same pass.
+// The neutrals for text and edges, each held to a contrast level against the theme's own grounds.
+// Each keeps its hue and chroma and only moves away from the grounds. Site neutrals
+// (tokens/sites.mjs) go through the same pass.
 export function fitNeutrals(t, scheme, level = "standard") {
   const L = LEVELS[level];
   const to = scheme === "dark" ? 1 : 0;
@@ -210,11 +202,9 @@ export function fitNeutrals(t, scheme, level = "standard") {
   return out;
 }
 
-// A visited link (--accent-visited): the link's hue turned 90 degrees toward violet (300), the web's
-// visited color, the shorter way, but kept 30 degrees clear of the error red so a visited link never
-// reads as a failure (purple stops at 355, olive at 57). Chroma 0.14, about accent text's own, from
-// step 11's lightness moved away from the grounds to the link floor: Lc 75 at both contrast levels,
-// since under "increase contrast" a dark theme's Lc 90 leaves no color between a link and the text.
+// A visited link: the link's hue turned toward violet (300) the shorter way, kept 30 degrees clear
+// of the error red so it never reads as a failure. Chroma 0.14; lightness is step 11's moved to the
+// link floor, Lc 75 at both levels (a dark theme's Lc 90 leaves no color between link and text).
 // apart() holds it clear of accent text and body text.
 const VISITED = { toward: 300, turn: 90, clear: 30, C: 0.14 };
 const hueGap = (a, b) => Math.abs(((a - b + 540) % 360) - 180);
@@ -241,7 +231,6 @@ export function familyTheme(seed, anchor, scheme, label = "light", level = "stan
   const t = {};
   const dark = scheme === "dark";
   const to = dark ? 1 : 0; // away from the grounds
-  // Neutrals at the seed's hue.
   t.ground = oklch(dark ? 0.16 : 0.985, NEUTRAL_CHROMA, H);
   t.surface = oklch(dark ? 0.205 : 0.995, dark ? NEUTRAL_CHROMA : 0.003, H);
   t.raised = oklch(dark ? 0.245 : 0.975, dark ? NEUTRAL_CHROMA : 0.008, H);
@@ -263,10 +252,8 @@ export function familyTheme(seed, anchor, scheme, label = "light", level = "stan
     : tune(0.02, H, readsOn([t.sunken], TEXT), 0.9, 0.2);
   t.sel = s[2];
   Object.assign(t, fitNeutrals(t, scheme, level));
-  // Step 11 is accent text: links, the active item, headings in the accent. It reads at the
-  // link floor on the grounds and at the text floor on its tints. In light it is often an
-  // anchor (purple's #4F2D7F), which already does; in dark the generated step is lifted until
-  // it does (the dark mode plan, 2026-10-29), so a link reads as well in dark as in light.
+  // Step 11 is accent text. It reads at the link floor on the grounds and the text floor on its
+  // tints; in dark the generated step is lifted until it does.
   s[10] = strengthen(
     s[10],
     (c) =>
@@ -274,13 +261,10 @@ export function familyTheme(seed, anchor, scheme, label = "light", level = "stan
       readsOn([s[3], s[2]], 4.5, L.read)(c),
     to,
   );
-  // The accent family, from the scale's roles. Step 9 is the brand color (large fills and
-  // shapes, held to 3:1); step 11 is accent text; the primary button fills with step 10, hovers
-  // to step 11, and carries --primary-fg: the surface tone in light, the ground tone in dark (a
-  // lighter fill takes a dark label). A family with a dark label (amber) fills with step 9 and
-  // hovers to step 10 in both themes, with the dark ground as its label, as Recova's amber
-  // button kept one near-black label in both themes; in dark its accent text is the seed
-  // itself, Recova's (held to the text floor rather than the link floor).
+  // Step 9 is the brand color (large fills, 3:1); step 11 is accent text. The primary button fills
+  // with step 10, hovers to 11, and carries --primary-fg. A family with a dark label (amber) fills
+  // with step 9 and hovers to 10 in both themes; in dark its accent text is the seed itself (held to
+  // the text floor, not the link floor).
   const darkLabel = label === "dark";
   t.accent = s[8];
   t["accent-hover"] = s[11]; // accent text on hover: step 12
@@ -299,10 +283,8 @@ export function familyTheme(seed, anchor, scheme, label = "light", level = "stan
     to,
   );
   t["primary-fg"] = dark || darkLabel ? oklch(0.16, NEUTRAL_CHROMA, H) : t.surface; // the dark ground, in either theme
-  // The fill moves away from its label until the label reads at the text floor: lighter under a
-  // dark label, darker under a light one. In dark that lifts step 10 (WCAG's 4.5:1 alone left
-  // the label near Lc 40); in light it lifts amber's step 9, whose edge (--primary-line) stays
-  // the 3:1 step 9 so the button still stands out from a light page.
+  // The fill moves away from its label until the label reads at the text floor. In light this lifts
+  // amber's step 9; its edge (--primary-line) stays the 3:1 step 9 so the button stands out.
   const labelReads = (fill) =>
     contrast(t["primary-fg"], fill) >= 4.5 &&
     Math.abs(apca(t["primary-fg"], fill)) >= L.read + MARGIN;
@@ -323,14 +305,11 @@ export function familyTheme(seed, anchor, scheme, label = "light", level = "stan
     ? hover
     : strengthen(shift(t.primary, labelTo ? 0.05 : -0.05), labelReads, labelTo);
   t["primary-line"] = darkLabel && !dark ? s[8] : t.primary;
-  // The on state: a checked box or radio, an on switch. The primary fill by default (amber's
-  // 3:1 step 9 in light, since a box has no label to find it by); a site may set its own
-  // (Foxing's sky blue, its Rule 05), checked by the pairs below with the tick (--primary-fg) and
-  // the switch's thumb (--surface) on it.
+  // The on state (checked box, radio, on switch): the primary fill by default (amber's 3:1 step 9
+  // in light, since a box has no label to find it by); a site may set its own, checked by the pairs below.
   t.on = t["primary-line"];
   t["on-hover"] = darkLabel && !dark ? s[9] : t["primary-hover"];
-  // The focus ring: the brand color where it reads as fine detail (most of light), else accent
-  // text, which is lighter in dark, as Apple, Material and Fluent lighten accents there.
+  // The focus ring: the brand color where it reads as fine detail, else accent text (lighter in dark).
   const ringReads = readsOn([t.surface, t.ground, t.raised], CONTROL, L.ring);
   t.ring = ringReads(t.accent) ? t.accent : strengthen(t["accent-text"], ringReads, to);
   for (const [k, hue] of Object.entries(STATUS)) {
@@ -360,25 +339,22 @@ export function familyTheme(seed, anchor, scheme, label = "light", level = "stan
   }
   t.nodata = t.dim;
   t["nodata-soft"] = oklch(dark ? 0.27 : 0.94, 0.006, H);
-  // The manual theme's signs (components/manual): a dark panel of light type in light, as the
-  // 1975 manual's building signs; in dark the panel stays dark, on the raised surface with an
-  // edge, rather than turning into a white slab (the letterhead's ruling, 2026-10-27).
+  // The manual theme's signs (components/manual): a dark panel of light type; in dark it sits on
+  // the raised surface with an edge rather than turning into a white slab.
   t.sign = dark ? t.raised : t.text;
   t["on-sign"] = dark ? t.text : t.ground;
   t["sign-edge"] = dark ? t["line-strong"] : t.text;
-  // The page you are on, in a direction strip: an FAA location sign, light type
-  // and a light outline on a dark gray box set into the dark strip. The box is a step lighter than the
-  // sign in both themes; the type is the family's hue at a light step, at AAA (7:1) on the box and on
-  // the sign (AC 150/5345-44L: a location sign is outlined, not filled).
+  // The page you are on, in a direction strip: light type and outline on a dark gray box (FAA
+  // location sign, AC 150/5345-44L), a step lighter than the sign in both themes; the type is the
+  // family hue at AAA (7:1).
   t["sign-here"] = oklch(dark ? 0.3 : 0.29, 0.02, H);
   const hereReads = (c) =>
     [t["sign-here"], t.sign].every(
       (bg) => contrast(c, bg) >= 7.05 && Math.abs(apca(c, bg)) >= L.read + MARGIN,
     );
   t["on-sign-here"] = strengthen(oklch(0.82, 0.1, H), hereReads, 1);
-  // Lit numbers on the dark sign, the same in every family (Dustin approved the set 2026-11-04): the
-  // Apollo DSKY's green electroluminescent readouts, and the KSC press-site countdown clock's warm
-  // incandescent bulbs (NASA photo 05pd1528). Held to 7:1 on the sign.
+  // Lit numbers on the dark sign, the same in every family: green DSKY readouts and warm
+  // countdown-clock bulbs. Held to 7:1 on the sign.
   const litReads = (c) =>
     contrast(c, t.sign) >= 7.05 && Math.abs(apca(c, t.sign)) >= L.read + MARGIN;
   t["lit-bulb"] = strengthen(oklch(0.93, 0.07, 82), litReads, 1);

@@ -23,14 +23,11 @@ import type { FormComponent } from "../plain-form/plain-form.react.tsx";
 import { markup } from "../trusted-html/trusted-html.ts";
 import { useHydrated } from "../hooks/hooks.react.tsx";
 
-// The loop every shared content component runs (posts, media, mentions): a post from inside the
-// list goes through the host's `submit` when there is one, or the browser's own form post when
-// there is not; the result is said in the message region (or the list's own box), Undo posts the
-// inverse the kit named, each item's outcome goes to the bulk bar, and a one-way intent the kit
-// answers with `confirm` is the confirm dialog with script and the confirm page without.
+// The loop every content list runs: posts go through the host's `submit`, or the browser's form post
+// without it; results are said in the message region or the list's own box; a `confirm` answer is
+// a dialog with script and a page without.
 
-// The result of the last action, in the page: the sentence, and Undo as a form that posts the
-// inverse, so it works with no script. With script the list's submit handler catches that post.
+// The last result in the page. Undo is a form that posts the inverse, so it works with no script.
 export function ResultBox({
   result,
   action,
@@ -105,42 +102,31 @@ export interface IntentsOptions {
   action: string;
   Form: FormComponent;
   submit?: SubmitIntent;
-  // The result that came with the page (a post with no script).
   result?: IntentResult | null;
-  // What each item is called, for the outcome list: read when the form is posted, so a deleted
-  // item keeps its name.
+  // Item names for the outcome list, read when the form is posted so a deleted item keeps its name.
   names: ReadonlyMap<string, string>;
-  // Where Cancel on the confirm page goes: the list as it was.
   cancelHref: string;
-  // After a script result that did something: the list empties its selection.
   onDone?: () => void;
 }
 
 export interface Intents {
-  // Put on the list's root element: catches every post from inside it.
+  // Goes on the list's root element: catches every post from inside it.
   onSubmit: (e: FormEvent<HTMLElement>) => void;
   rootRef: { current: HTMLElement | null };
-  // The same, as a callback ref, for a root that also keeps its own ref.
+  // Callback ref, for a root that also keeps its own ref.
   setRoot: (el: HTMLElement | null) => void;
   outcomes: BulkOutcome[];
   dismissOutcomes: () => void;
-  // The list's own result box, where it has one (no message region, or a result from the page).
   resultBox: ReactNode;
-  // Non-null while the page's result asks first: render it in place of the list.
+  // Non-null while the page's result asks first: render it instead of the list.
   confirmPage: ReactNode;
-  // The confirm dialog of the script path, while it is open.
   confirmDialog: ReactNode;
-  // The last result, from the script path or the page, for what a list shows of it beyond the
-  // sentence (the posts list's preview link).
   latest: IntentResult | null;
-  // Asks before a one-way intent the kit runs at once (the posts list's Cancel the update):
-  // the same confirm dialog, which posts the request's fields when confirmed.
+  // Asks before a one-way intent the kit runs at once; posts the request's fields when confirmed.
   ask: (request: ConfirmRequest) => void;
-  // Posts a form built in script (a crop's new file, a tool with no form of its own) the way a
-  // post from inside the list goes, and answers what the kit said; null with no `submit`.
+  // Posts a form built in script like any post from the list; null with no `submit`.
   run: (form: FormData) => Promise<IntentResult | null>;
-  // Says a result the list made itself from several posts (the media library's upload dialog, one
-  // post per file): the sentence, the outcome per item and onDone, as a post's own result.
+  // Says a result the list assembled from several posts, as a post's own result.
   show: (result: IntentResult) => void;
 }
 
@@ -154,7 +140,6 @@ export function useIntents({
   onDone,
 }: IntentsOptions): Intents {
   const message = useOptionalMessage();
-  // False on the server and while hydrating, true once hydrated.
   const mounted = useHydrated();
   const namesRef = useRef(names);
   useLayoutEffect(() => {
@@ -163,8 +148,7 @@ export function useIntents({
   const [outcomes, setOutcomes] = useState<BulkOutcome[]>(() =>
     result ? outcomesOf(result, names) : [],
   );
-  // The last result the script path got. It replaces `result` (which came with the page) until
-  // the page brings a new one.
+  // The script path's last result; replaces `result` until the page brings a new one.
   const [settled, setSettled] = useState<IntentResult | null>(null);
   const [pageResult, setPageResult] = useState(result);
   if (result !== pageResult) {
@@ -177,16 +161,14 @@ export function useIntents({
   const setRoot = useCallback((el: HTMLElement | null) => {
     rootRef.current = el;
   }, []);
-  // What the list's own result box says: the page's result, or with no message region on the
-  // page, the script path's too.
+  // The list's own result box shows the page's result, and the script path's when no message region exists.
   const box = settled ? (message ? null : settled) : result;
 
   const announce = (r: IntentResult) => {
     setSettled(r);
     if (!message) return;
     const inverse = r.undo;
-    // A result with nothing to undo that failed is a failure; one that did part of its work
-    // still offers Undo for that part, and the bar lists what was refused.
+    // A failure with nothing to undo is a failure; one that did part of its work still offers Undo.
     if (!r.ok && !inverse) return message.fail(r.message);
     message.say(r.message, {
       undo:
@@ -194,7 +176,6 @@ export function useIntents({
           ? async () => {
               const u = await submit(intentForm(inverse.intent, inverse.fields));
               if (!u.ok) throw new Error(u.message);
-              // The Undo's own result replaces the message it came from.
               message.say(u.message);
             }
           : undefined,
@@ -225,11 +206,9 @@ export function useIntents({
     return r;
   };
 
-  // With script, every post from inside the list goes through `submit` instead of a page load:
-  // the bulk bar, a row menu, Undo, a host action, an upload. A GET (the filters) navigates as
-  // before.
+  // With script, every post from inside the list goes through `submit`; a GET (filters) navigates.
   const onSubmit = (e: FormEvent<HTMLElement>) => {
-    // A form the host's own Form already sent (a router's <Form> prevents the default first) is not posted twice.
+    // A router's <Form> prevents the default first; do not post that form twice.
     if (
       !submit ||
       e.defaultPrevented ||
@@ -245,8 +224,7 @@ export function useIntents({
     void run(data);
   };
 
-  // z runs Undo when the list's script path says its own results (the message region does it
-  // otherwise).
+  // z runs Undo when the list says its own results; the message region does it otherwise.
   const keyHint = !!submit && !message && mounted && !!box?.undo;
   useEffect(() => {
     if (!keyHint) return;
@@ -263,8 +241,7 @@ export function useIntents({
     return () => document.removeEventListener("keydown", onKey);
   }, [keyHint]);
 
-  // The action asked first, so the page is its confirmation: with no script this is how a one-way
-  // intent is confirmed. With script the same form posts through `submit`.
+  // With no script this page is how a one-way intent is confirmed.
   const pageAsks = !settled && result?.confirm ? result.confirm : null;
   const confirmPage = pageAsks ? (
     <ConfirmPage
@@ -296,7 +273,7 @@ export function useIntents({
           ? { ...asking.fields, confirm: asking.typeToConfirm }
           : asking.fields;
         const r = await submit(intentForm(asking.intent, fields));
-        // Nothing done at all stays in the dialog with the reason and Try again.
+        // Nothing done: stay in the dialog with the reason.
         if (!r.ok && !(r.outcomes ?? []).some((o) => o.ok)) throw new Error(r.message);
         handle({ ...r, confirm: undefined }, at);
       }}
@@ -324,29 +301,26 @@ export function useIntents({
 }
 
 export interface ContentBulkBarProps {
-  // The id of the empty bulk form the list's boxes name with `form`, and where it posts.
+  // The empty bulk form the list's boxes name with `form`.
   formId: string;
   action: string;
   Form: FormComponent;
-  // The bulk form's class, for the list's own layout.
   formClass: string;
   items: readonly BulkItem[];
-  // Everything on the page that can be ticked, for "Select all N in view".
+  // Everything ticked-able on the page, for "Select all N in view".
   total: number;
   onSelectAll?: () => void;
   onClear: () => void;
-  // What the list holds ("posts", "files"): the bar's name and its words before script runs.
+  // What the list holds; the bar's name and words before script runs.
   plural: string;
   actions: ReadonlyArray<{ intent: string; label: string; destructive?: boolean }>;
-  // A Tag field beside the actions, posted as `tag` with them (`tagName` names it otherwise:
-  // the media kit reads `tags`).
+  // A Tag field beside the actions, posted as `tag` (or `tagName`).
   tag: boolean;
   tagName?: string;
   intents: Pick<Intents, "outcomes" | "dismissOutcomes">;
 }
 
-// The content components' bulk bar: an empty form the boxes post through, and the bar in form mode
-// with its actions as submit buttons, the optional Tag field, and each item's outcome.
+// The content lists' bulk bar in form mode: actions are submit buttons.
 export function ContentBulkBar({
   formId,
   action,

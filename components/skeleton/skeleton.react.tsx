@@ -1,7 +1,6 @@
 import type { ReactElement } from "react";
 
 export interface SpinnerProps {
-  // What is loading, in a word or two: "Loading", "Saving".
   label?: string;
   // The word is for screen readers only while the arc turns (inside a button that
   // already says what it does). Under reduced motion the word always shows.
@@ -50,7 +49,6 @@ export interface SkeletonProps {
   label?: string;
 }
 
-// Gray lines standing in for a page's content: busy, and "Loading" for a screen reader.
 export function Skeleton({ lines = 3, label = "Loading" }: SkeletonProps): ReactElement {
   return (
     <div className="cap-skeleton" aria-busy="true">

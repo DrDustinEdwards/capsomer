@@ -22,26 +22,17 @@ import {
 } from "./rich-text-field.ts";
 
 export interface RichTextFieldProps {
-  // The form field's name: a hidden input carries the sanitized value.
   name: string;
   label: ReactNode;
-  // The inline tags this field allows, in toolbar order. Italic only for a title.
   tags: readonly RichTextTag[];
-  // The stored value; sanitized again before it is shown.
   initialHTML?: string;
-  // Help, between the label and the field, read as its description.
   help?: ReactNode;
-  // What is wrong and what to do; marks the field invalid.
   error?: ReactNode;
   required?: boolean;
-  // "multi" wraps over several lines and starts taller (an abstract's body); "single" is one line's height (a title).
-  // Enter never adds a line break: the value holds inline text only.
+  // "multi" wraps over several lines; "single" is one line. Enter never adds a line break: the value is inline text only.
   lines?: "single" | "multi";
-  // A live word count under the field.
   wordCount?: boolean;
-  // Another description's id (a limit the page states).
   describedBy?: string;
-  // Every change, with the sanitized value.
   onValueChange?: (value: string) => void;
 }
 
@@ -74,8 +65,7 @@ const BUTTONS: Record<
   code: { label: "Code", key: "e", keyName: "E", glyph: <code>{"</>"}</code> },
 };
 
-// A short text with a few inline tags: the toolbar and the shortcuts put the real tag around the selection (or take
-// it off), and a paste is kept to the allowed tags. The server sanitizes again on save.
+// A short text with a few inline tags; a paste is kept to the allowed tags. The server sanitizes again on save.
 export function RichTextField({
   name,
   label,
@@ -115,7 +105,6 @@ export function RichTextField({
 
   useEffect(() => (bar.current ? attachToolbar(bar.current) : undefined), []);
 
-  // The pressed state follows the caret.
   useEffect(() => {
     const doc = box.current?.ownerDocument;
     if (!doc) return undefined;

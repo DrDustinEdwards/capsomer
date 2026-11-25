@@ -1,10 +1,7 @@
-// The docked player and a track's own player surface, both built from the same controls.
-// - PlayerDock: fixed to the bottom while something is loaded. It measures its height into
-//   --cap-player-dock-h on <html> (player.css pads the body and the scroll by it, so nothing ends
-//   under it), hides itself (inert) while the loaded track's own surface is on screen, and on a
-//   narrow screen keeps speed, sleep, chapters and the transcript in a bottom sheet (the dialog).
-// - PlayerSurface: the player on a track's page: a waveform over the scrubber, the transport, and
-//   the settings. It tells the provider when it is on screen, so the dock steps aside.
+// The docked player and a track's own player surface, built from the same controls.
+// - PlayerDock: fixed to the bottom while something is loaded; measures its height into --cap-player-dock-h on
+//   <html> so nothing ends under it, and hides itself (inert) while the track's own surface is on screen.
+// - PlayerSurface: the player on a track's page; it tells the provider when it is on screen so the dock steps aside.
 import { lazy, Suspense, useEffect, useRef, useState, type ReactNode } from "react";
 import { useIsoLayoutEffect } from "../hooks/hooks.react.tsx";
 import { Dialog, DialogBody, DialogHeader, DialogTitle } from "../dialog/dialog.react.tsx";
@@ -36,11 +33,8 @@ import type { PlayerTrack } from "./player.ts";
 export const DOCK_SHEET_BELOW = 768;
 
 export interface PlayerDockProps {
-  // The region's name.
   label?: string;
-  // The line under the title when no chapter is playing.
   idle?: string;
-  // The app's router link for the title and the transcript; a plain <a> by default.
   renderLink?: RenderLink;
 }
 
@@ -205,16 +199,11 @@ const LazyWaveform = lazy(() =>
 
 export interface PlayerSurfaceProps {
   track: PlayerTrack;
-  // The stored peaks; null shows the stand-in shape.
   peaks?: readonly number[] | null;
-  // Leave the waveform out.
   waveform?: boolean;
-  // The surface's name: "Player for <title>" by default, apart from the dock's "Audio player".
   label?: string;
-  // Where its Transcript link goes: "#transcript" when the transcript is on this page.
   transcriptHref?: string;
   renderLink?: RenderLink;
-  // Anything after the settings (Share, Save).
   children?: ReactNode;
 }
 

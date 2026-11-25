@@ -1,10 +1,8 @@
-/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+/* Layer order, repeated so this file is safe in any import order. */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
-/* A summary list (GOV.UK Summary list): a description list of labels and values, each row with an
-   optional Change link, as on a page that checks answers before they are sent. Without rows it
-   is the detail panel's record (.cap-detail-record): label and value side by side, stacked when
-   the panel is narrow. */
+/* A summary list (GOV.UK): a description list of labels and values, each row with an optional Change link.
+Without rows it is the detail panel's record, stacked when the panel is narrow. */
 @layer cap.components {
   :is(.cap-summary-list, .cap-detail-record) {
     margin: 0;
@@ -19,7 +17,6 @@
     }
   }
 
-  /* The record: the list is the grid, and it stacks under the panel's container query. */
   .cap-detail-record {
     display: grid;
     grid-template-columns: minmax(7em, 150px) minmax(0, 1fr);
@@ -36,8 +33,7 @@
     }
   }
 
-  /* Rows: each a label, a value and its actions, with a rule between (GOV.UK). The list is the
-     container its rows answer to, so it stacks wherever it is narrow. */
+  /* The list is the container its rows answer to, so it stacks wherever it is narrow. */
   .cap-summary-list {
     container-type: inline-size;
     font-size: var(--text-size);

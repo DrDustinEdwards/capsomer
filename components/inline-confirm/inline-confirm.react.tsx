@@ -19,9 +19,7 @@ export interface InlineConfirmProps {
   // "?confirm=<id>"), and Cancel a link to `closeHref`.
   openHref: string;
   closeHref: string;
-  // Open from the start: the page was asked for at openHref.
   defaultOpen?: boolean;
-  // The action is running: the confirm says pendingLabel and Cancel is withdrawn.
   pending?: boolean;
   pendingLabel?: ReactNode;
   // danger (default) for an action that loses something; default for one that does not.

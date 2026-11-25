@@ -7,9 +7,8 @@ export interface CatalogFacet<T = unknown> {
   // "range": a span of numbers (years) chosen from two menus, From and To; an item matches when its own
   // span overlaps the chosen one.
   kind?: "one" | "many" | "range";
-  // A range facet: the span an item covers (a post's year as [2024, 2024], a job held 2019 to now as
-  // [2019, Infinity]), or null for an item with none, which no range matches. Default: the field's
-  // numeric values, lowest to highest.
+  // A range facet: the span an item covers (e.g. [2019, Infinity]), or null for an item with none, which
+  // no range matches. Default: the field's numeric values, lowest to highest.
   span?: (item: T) => readonly [number, number] | null;
   // A range facet's two URL parameters. Default "<key>-from" and "<key>-to".
   params?: { from: string; to: string };

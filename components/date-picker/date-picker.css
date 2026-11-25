@@ -1,10 +1,8 @@
-/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+/* Layer order repeated so this file is safe in any import order: the first statement fixes it (css/layers.css). */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
-/* The date picker: an input group with a calendar button, and the calendar in a small
-   dialog (dialog.css draws the dialog). APG Date picker dialog. The chosen day is filled,
-   today is underlined and bold, and a day that cannot be chosen is struck through, so none
-   of them is color alone. */
+/* An input group with a calendar button, and the calendar in a small dialog (dialog.css). The chosen day
+   is filled, today underlined and bold, and an unchoosable day struck through, so none is color alone. */
 @layer cap.components {
   .cap-date-picker {
     display: block;

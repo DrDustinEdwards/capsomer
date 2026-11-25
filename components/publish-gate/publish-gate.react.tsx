@@ -35,23 +35,17 @@ function StateStatus({ state }: { state: GateState }) {
 }
 
 export interface PublishButtonProps {
-  // The gate this belongs to (its id) and the destination.
   gateId: string;
   site: GateSite;
   state: GateState;
   busy?: boolean;
-  // The id of the gate's summary, which describes a button that is not ready.
   summaryId: string;
-  // Name the destination in the buttons' accessible names (several destinations).
   named?: boolean;
-  // "sm" in a row; "default" for the page's own publish control.
   size?: "sm" | "default";
   onPublish: () => void;
   onUnpublish: () => void;
 }
 
-// The paired publish control for one destination: Publish, Publishing..., Publish blocked,
-// Publish held, or, once published, View and Unpublish.
 export function PublishButton({
   gateId,
   site,
@@ -160,10 +154,7 @@ export interface PublishGateProps {
   label: ReactNode;
   sites: GateSite[];
   checks: GateCheck[];
-  // Publish to these destinations. Resolve when it is live; reject with an Error saying why not.
-  // The app then passes the destination as published.
   publish?: (siteIds: string[]) => Promise<void>;
-  // Take it off the public site. Done at once, with Undo.
   unpublish?: (siteIds: string[]) => Promise<void>;
   // Where each destination's button is: in its row (default), or "none" when the page places
   // <PublishButton> itself (the editor bar's own publish control).
@@ -172,16 +163,11 @@ export interface PublishGateProps {
   // module's region (an element with data-cap="message") is used.
   say?: (text: string, opts?: SayOptions) => void;
   fail?: (text: string) => void;
-  // Make j and k work before focus is inside the list.
   primary?: boolean;
-  // The id used to pair a page-level <PublishButton> with this region. A made-up one by default.
   id?: string;
-  // The summary's id; given so a PublishButton placed elsewhere can describe itself with it.
   summaryId?: string;
 }
 
-// The gate as the doc page's markup describes it. Rendered from the checks and the destinations,
-// so the summary cannot say Ready while a required check fails.
 export function PublishGate({
   label,
   sites,
@@ -451,7 +437,6 @@ export function PublishGate({
   );
 }
 
-// The overall and per-destination states, for a page that places its own <PublishButton>.
 export function gateStates(
   sites: GateSite[],
   checks: GateCheck[],

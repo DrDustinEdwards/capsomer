@@ -1,9 +1,8 @@
-/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+/* Layer order, repeated so this file is safe in any import order. */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
-/* A status matrix (needs table.css and status.css): rows against columns, each cell a status
-   glyph. The row headers stick at the inline start as the table scrolls sideways; the column
-   headers wrap so many narrow columns fit. */
+/* A status matrix (needs table.css and status.css): rows against columns. Row headers stick at the
+inline start as the table scrolls sideways; column headers wrap so many narrow columns fit. */
 @layer cap.components {
   .cap-matrix {
     & th[scope="row"] {
@@ -25,7 +24,6 @@
       text-align: center;
     }
   }
-  /* A row header that links to its record is a full target on touch (WCAG 2.5.8). */
   @media (pointer: coarse) {
     .cap-matrix th[scope="row"] > a {
       display: inline-flex;
@@ -50,7 +48,6 @@
     list-style: none;
     font-size: var(--fs-detail);
   }
-  /* Narrow: the row headers wrap and the columns tighten, by the room the matrix has. */
   .cap-matrix {
     container: cap-matrix / inline-size;
   }

@@ -42,22 +42,16 @@ export {
 } from "./tree.ts";
 export type { DropZone, MoveDir, TreeMove, TreePlace, TreeSelection, VisibleRow } from "./tree.ts";
 
-// The tree's HTML contract, rendered from props, with the roles and states the behavior
-// module writes on the delivered markup. Which branches are open and which rows are chosen
-// can be the caller's (`expanded`, `selected`) or the tree's own (`defaultExpanded`,
-// `defaultSelected`). The nodes are always the caller's: a move calls `onMove`, and the
-// caller saves the new tree (`applyMove` makes it). Nothing here sets a `style` prop.
+// The tree's HTML contract from props, with the roles and states the behavior module writes. Expanded and selected can be the caller's or the tree's own; the nodes are always the caller's (a move calls `onMove`). No `style` prop is set.
 
 export interface TreeNode {
   id: string;
   label: string;
-  // Makes the row a link.
   href?: string;
   // Beside the label, read as part of the row's name: a status, a word count. No controls.
   meta?: ReactNode;
   icon?: ReactNode;
   disabled?: boolean;
-  // A branch, even when empty.
   children?: TreeNode[];
 }
 
@@ -72,7 +66,6 @@ export interface TreeProps {
   expanded?: string[];
   defaultExpanded?: string[];
   onExpandedChange?: (ids: string[]) => void;
-  // Turns on moving, by Alt with an arrow and by dragging a row. The caller saves the move.
   onMove?: (move: TreeMove, next: TreeNode[]) => void;
   // Refuses a move before it is offered (a scene may not sit at the top level, say).
   canMove?: (move: TreeMove) => boolean;
@@ -127,7 +120,6 @@ export function Tree({
   const prefix = useId();
   const movable = !!onMove;
 
-  // The tab stop: the focused row, else the chosen one that shows, else the first.
   const stop = rows.some((r) => r.id === current)
     ? current
     : (rows.find((r) => picked.includes(r.id))?.id ?? rows[0]?.id ?? null);

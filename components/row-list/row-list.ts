@@ -1,22 +1,18 @@
-// The row list's behavior: j and k move keyboard focus between the rows' title links.
-// Focus itself moves (there is no second selection), so Enter follows the link, the
-// browser scrolls the row into view, and a screen reader reads the row it lands on.
+// The row list's behavior: j and k move keyboard focus between the rows' title links. Focus itself
+// moves (no second selection), so Enter follows the link and a screen reader reads the row it lands on.
 // No framework; the React wrapper uses the same functions.
 import { isImeEnter, isTyping, singleKeysOff } from "../shortcuts/shortcuts.ts";
 
-// Every row's one link or button, in order, skipping rows hidden or disabled.
 export function rowTargets(list: ParentNode): HTMLElement[] {
   return Array.from(
     list.querySelectorAll<HTMLElement>(".cap-row-title :is(a[href], button:not([disabled]))"),
   ).filter((el) => el.getClientRects().length > 0);
 }
 
-// Moves focus to the next (1) or previous (-1) row's title. From outside the list, j starts
-// at the first row and k at the last (the Portal's rule, App.tsx "step"). At either end
-// focus stays where it is. Focus moves without the browser's own scroll, then the row is
-// scrolled the least distance that shows it ("nearest"), as the Portal does: a row already
-// in view does not jump, and the scroller's scroll-padding keeps it clear of a sticky bar.
-// Returns the element focused, or null when nothing moved.
+// Moves focus to the next (1) or previous (-1) row's title. From outside the list, j starts at the
+// first row and k at the last; at either end focus stays. The row scrolls the least distance that
+// shows it, and the scroller's scroll-padding keeps it clear of a sticky bar. Returns the element
+// focused, or null when nothing moved.
 export function moveRowFocus(list: ParentNode, step: 1 | -1): HTMLElement | null {
   const targets = rowTargets(list);
   if (targets.length === 0) return null;
@@ -32,15 +28,12 @@ export function moveRowFocus(list: ParentNode, step: 1 | -1): HTMLElement | null
   return el;
 }
 
-// A key typed into a field, or with a modifier, is never a list shortcut. A checkbox, a radio or a
-// button is not a field (shortcuts' isTyping), so a list key works from a box a person has just
-// ticked.
+// A key typed into a field, or with a modifier, is never a list shortcut. A checkbox, radio or
+// button is not a field, so a list key works from a box a person has just ticked.
 export function isTypingKey(e: KeyboardEvent): boolean {
   return e.ctrlKey || e.metaKey || e.altKey || e.isComposing || isImeEnter(e) || isTyping(e.target);
 }
 
-// Whether j and k should act on this list now: focus is in it, or it is the page's primary
-// list and focus is in no other list and no open dialog.
 export function listOwnsKeys(list: HTMLElement): boolean {
   const active = document.activeElement;
   if (active && list.contains(active)) return true;
@@ -51,9 +44,8 @@ export function listOwnsKeys(list: HTMLElement): boolean {
   return !list.closest("[inert]");
 }
 
-// The keys a queue's rows share (approval queue, mentions list, moderation queue): j and k move
-// through `list` as attachRowList does, and nothing acts on a held key, a key typed into a field,
-// or while single keys are off. Returns true when the key is the caller's to act on (a, r, d, x).
+// The keys a queue's rows share: j and k move through `list`, and nothing acts on a held key, a key
+// typed into a field, or while single keys are off. Returns true when the key is the caller's to act on.
 export function queueKey(e: KeyboardEvent, list: HTMLElement | null | undefined): boolean {
   if (!list || e.defaultPrevented || e.repeat || isTypingKey(e) || singleKeysOff()) return false;
   if (e.key !== "j" && e.key !== "k") return true;
@@ -81,8 +73,6 @@ export function attachRowList(list: HTMLElement): () => void {
   };
 }
 
-// Attaches to every [data-cap="row-list"] under root that is not attached yet. Returns a
-// function that detaches them all.
 export function enhance(root: ParentNode = document): () => void {
   const undo = Array.from(
     root.querySelectorAll<HTMLElement>("[data-cap='row-list']:not([data-cap-ready])"),

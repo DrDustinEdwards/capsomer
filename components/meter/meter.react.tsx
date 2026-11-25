@@ -10,11 +10,8 @@ export interface MeterProps {
   value: number | null;
   max: number;
   min?: number;
-  // What a screen reader hears, whole: "78,000 of 100,000 requests today. Near the limit."
   valueText: string;
-  // The number shown beside the label. Defaults to "value of max".
   display?: ReactNode;
-  // Overrides the tone from the thresholds.
   tone?: MeterTone;
   // Tone by threshold, as a share of the span: warning from warnAt, critical from critAt.
   // Without either, the tone is the `tone` prop or none.
@@ -24,16 +21,12 @@ export interface MeterProps {
   // comes from warnAt/critAt, or when this is given; with a plain `tone` prop and no
   // `words`, the word is the caller's, in `note`.
   words?: { warn: string; crit: string };
-  // A threshold tick and a projection, in the same unit as value.
   threshold?: number;
   projected?: number;
   size?: "sm" | "md" | "lg";
   // The value is being measured now: an indeterminate bar with the reason in `note`.
   measuring?: boolean;
-  // A line under the bar: what happens next, or why there is no data.
   note?: ReactNode;
-  // For compositions (the usage meter's row): extra class names, the root element, and
-  // content after the bar, inside the meter's row.
   className?: string;
   as?: "div" | "li";
   after?: ReactNode;

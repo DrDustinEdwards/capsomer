@@ -1,7 +1,6 @@
-// What every editor in a shared room needs: the room itself (collab-editor-room.ts), this person's way
-// of working in it (Editing or Suggesting, the revision round), the rich editor's binding to the room's
-// copy, and the bar and panels around the text. The page adds its own saving and publishing, and keeps
-// the person's choices (mode and round) where it keeps its other remembered choices.
+// What every editor in a shared room needs: the room (collab-editor-room.ts), this person's way of working
+// in it (Editing or Suggesting, the revision round), the rich editor's binding to the room's copy, and the
+// bar and panels around the text. The page adds its own saving and publishing.
 
 import {
   disableSuggestChanges,
@@ -85,9 +84,7 @@ export type RichRoomOptions = {
   awareness: Awareness | null;
   people: RoomPerson[];
   comments: RoomComment[];
-  /** This person's id, as the suggestions they make carry it. */
   by: string;
-  /** Typing makes suggestions. */
   suggest: boolean;
   round: string;
   /** The thread open in the comments panel, and choosing one by clicking its mark in the text. */
@@ -226,7 +223,6 @@ export function useRoomEditing(options: RoomEditingOptions): RoomEditing {
   return { room, rich, editor, setEditor, pending, markdownLocked, bar, panels };
 }
 
-/** The suggestions waiting in an editor's text, counted again on each change. */
 export function usePending(editor: Editor | null): number {
   const [pending, setPending] = useState(0);
   useEffect(() => {

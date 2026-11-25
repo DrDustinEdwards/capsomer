@@ -1,4 +1,3 @@
-// Mounts the status matrix specimen.
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { MatrixKey, StatusMatrix, type MatrixCell } from "./status-matrix.react.tsx";

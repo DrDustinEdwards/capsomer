@@ -21,7 +21,6 @@ export function enhance(root: ParentNode = document): () => void {
   for (const poll of polls) {
     poll.dataset.capReady = "";
     setShares(poll);
-    // A vote that changes a count updates the shares.
     const mo = new MutationObserver(() => setShares(poll));
     mo.observe(poll, { subtree: true, attributes: true, attributeFilter: ["data-votes"] });
     observers.push(mo);

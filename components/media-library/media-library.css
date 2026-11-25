@@ -1,11 +1,7 @@
-/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+/* Layer order repeated so this file is safe in any import order: the first statement fixes it (css/layers.css). */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
-/* The media library: one page of one site's files, assembled from the shared parts (tabs, field,
-   chips, drop zone, bulk bar, media grid and inspector, message, empty, confirm dialog, and the
-   content components' result box), whose stylesheets it needs beside this one. This file lays
-   them out: the filters, the chip rows, the line with the count and the layout links, the upload
-   form, the picker's alt step and the paging links. */
+/* The media library: one page of one site's files, assembled from the shared parts (tabs, field, chips, drop zone, bulk bar, media grid and inspector, message, empty, confirm dialog, and the content components' result box), whose stylesheets it needs beside this one. */
 @layer cap.components {
   .cap-media-lib {
     display: grid;
@@ -13,7 +9,6 @@
     min-inline-size: 0;
   }
 
-  /* The tag chips and a host's lenses, each a labeled list of link chips. */
   .cap-media-lib-chips {
     display: grid;
     gap: var(--space-3);
@@ -46,7 +41,6 @@
     gap: var(--space-3);
   }
 
-  /* The Display controls: each a labeled row of link chips (sort, direction, grouping, tile size). */
   .cap-media-lib-display {
     display: grid;
     gap: var(--space-3);
@@ -58,14 +52,12 @@
     font-weight: var(--weight-semibold);
   }
 
-  /* A line about the view: what the open lens means, or that the site sorted only this page. */
   .cap-media-lib-note {
     margin: 0;
     color: var(--muted);
     font-size: var(--fs-detail);
   }
 
-  /* The keyboard shortcuts: the keys, then what each does. */
   .cap-media-lib-keys {
     display: grid;
     gap: var(--space-2);
@@ -185,7 +177,6 @@
   .cap-media-upload-progress:empty {
     display: none;
   }
-  /* On a phone the row's Remove goes under the fields, beside the preview's column. */
   @media (width < 480px) {
     .cap-media-upload-row {
       grid-template-columns: 48px minmax(0, 1fr);
@@ -240,7 +231,6 @@
     }
   }
 
-  /* The links to what an upload, an import or a turn left to open, under the result. */
   .cap-media-lib-opened {
     display: flex;
     flex-wrap: wrap;
@@ -255,7 +245,6 @@
     display: contents;
   }
 
-  /* The file's byte history, newest first: what made each version, its size, and a way back. */
   .cap-media-lib-history {
     display: grid;
     gap: var(--space-3);

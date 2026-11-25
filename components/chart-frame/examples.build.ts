@@ -1,7 +1,6 @@
-// The chart frame's specimens, drawn by Enarratio when the states page is built (bin/states.mjs
-// fills each <!-- build:name --> in examples.html), so they are the package's live output in
-// every state: each kind of chart and primitive, the data open, a source, no data, a refusal,
-// and the same chart in every family. Invented, plausible data.
+// The chart frame's specimens, drawn by Enarratio when the states page is built (bin/states.mjs fills
+// each <!-- build:name --> in examples.html): each kind of chart and primitive, the data open, a source,
+// no data, a refusal, and the same chart in every family. Invented, plausible data.
 import { heatStrip, progressRing, sparkline, timeline, uptimeStrip } from "enarratio";
 import { escapeHtml } from "@dustinedwards/site-runtime/html";
 import { areaChart, type BarChartOptions, barChart, lineChart } from "enarratio/lite";
@@ -44,7 +43,6 @@ const barOptions = (id: string, extra: Partial<BarChartOptions<(typeof jobs)[num
   }) as BarChartOptions<(typeof jobs)[number]>;
 const bar = (id: string, extra: Partial<BarChartOptions<(typeof jobs)[number]>> = {}) =>
   barChart(barOptions(id, extra));
-// A light chart in the frame with the spec behavior/chart-enhance draws it again from at its width.
 const drawn = (chart: "bar" | "line" | "area", html: string, options: object) =>
   frameHtml(html, { redraw: { chart, options: options as Record<string, unknown> } });
 
@@ -169,11 +167,10 @@ const drawings: Record<string, string> = {
     "Requests per hour",
     "The health route has not reported yet, so there is nothing to draw.",
   ),
-  // Redrawn at the narrow column's width, as every server chart in a frame should be.
   narrow: drawn("bar", bar("cf-narrow"), barOptions("cf-narrow")),
   comfortable: frameHtml(sparkline({ ...minutes, id: "cf-comfy" })),
-  // What ChartFrame renders on the server, before it measures its column: the page reads with
-  // scripts off, and React replaces it when it mounts.
+  // What ChartFrame renders on the server before it measures its column, so the page reads with
+  // scripts off; React replaces it when it mounts.
   redraw: frameHtml(builds(640)), // ChartFrame's DEFAULT_WIDTH
   refused: (() => {
     let reason = "";
@@ -187,8 +184,8 @@ const drawings: Record<string, string> = {
   })(),
 };
 
-// The same chart in every family, for the palette: series 1 to 8 on each family's surface (the
-// same eight in every family, DEFAULTS.md), then the five-step ramp, which is in the family's hue.
+// The same chart in every family, for the palette: series 1 to 8 on each family's surface, then the
+// five-step ramp in the family's hue.
 const families = [
   "purple",
   "fox",

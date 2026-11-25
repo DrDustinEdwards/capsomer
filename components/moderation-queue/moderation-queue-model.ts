@@ -2,43 +2,29 @@
 
 import { statusEl as toneStatusEl, type GlyphName, type Tone } from "../status/status.ts";
 
-// The data and the pure helpers.
-
-// A mention's state on its site, in the contract's words (site-api MentionStatus). A mention
-// arrives unverified; the site reads its source and it becomes pending, or failed when the
-// source cannot be found. Only pending, approved and rejected can be decided.
+// A mention's state in the contract's words (site-api MentionStatus). Only pending, approved and rejected can be decided.
 export type ModState = "unverified" | "pending" | "approved" | "rejected" | "failed";
-// What the filter shows: one state each, and All. Not yet checked is in All only, and counted
-// in the live line, because there is nothing to decide about it yet.
+// Not yet checked is in All only and counted in the live line, because there is nothing to decide about it yet.
 export type ModView = "pending" | "failed" | "approved" | "rejected" | "all";
-// A decision. "reset" puts a decided mention back to waiting, where the site offers it
-// (site-api v0.6); without it a decision on a waiting mention cannot be undone.
+// "reset" puts a decided mention back to waiting, where the site offers it; without it a decision cannot be undone.
 export type ModAction = "approve" | "reject" | "reset";
 
 export interface Mention {
   id: string;
-  // Who sent it, as they gave it. Text, never a link.
   author: string;
-  // The source's host, as text.
   host: string;
-  // The full source address, as text; shown in the open row only. It is a link only when
-  // `external` is set, and then with rel="nofollow ugc noopener".
+  // Shown in the open row only. A link only when `external` is set, then with rel="nofollow ugc noopener".
   url?: string;
   external?: boolean;
   excerpt: string;
-  // The post it mentions, and its editor.
   post: string;
   postHref?: string;
-  // When it was received (the contract's receivedAt).
   at: string;
   state: ModState;
-  // When it was last decided.
   decidedAt?: string;
-  // Why the source was not found, as the site said it ("The page answered 404").
   failureReason?: string;
-  // The contract's version, posted with each decision so a stale one is refused.
+  // Posted with each decision so a stale one is refused.
   version?: string;
-  // The site's retention removes it at the next sweep.
   expiring?: boolean;
 }
 
@@ -62,14 +48,11 @@ export const STATE_LABEL: Record<ModState, string> = {
 
 export const ACTIONS: readonly ModAction[] = ["approve", "reject", "reset"];
 
-// The key that decides the row under focus. Back to waiting has none: it is the rare one.
 export const ACTION_KEY: Partial<Record<ModAction, string>> = { approve: "a", reject: "r" };
 
-// The key that deletes, after a confirm.
 export const DELETE_KEY = "d";
 
-// The transition table: every state to the states a decision can reach. The contract refuses a
-// decision on a mention not yet checked or whose source was not found (422), so they have none.
+// The contract refuses a decision (422) on a mention not yet checked or whose source was not found, so those have none.
 const TABLE: Record<ModState, Partial<Record<ModAction, ModState>>> = {
   unverified: {},
   pending: { approve: "approved", reject: "rejected" },
@@ -78,20 +61,15 @@ const TABLE: Record<ModState, Partial<Record<ModAction, ModState>>> = {
   failed: {},
 };
 
-// Where a decision takes a mention, or null where it does nothing (approving what is approved,
-// deciding what cannot be decided, or Back to waiting on a site that does not offer it).
 export function decide(state: ModState, action: ModAction, reset = false): ModState | null {
   if (action === "reset" && !reset) return null;
   return TABLE[state][action] ?? null;
 }
 
-// Which decisions a state offers, in the order the buttons show.
 export function actionsFor(state: ModState, reset = false): ModAction[] {
   return ACTIONS.filter((a) => decide(state, a, reset) !== null);
 }
 
-// The decisions the bulk bar offers in a view. In All they are the two decisions; a row they do
-// not apply to is left alone and said.
 export function bulkActionsFor(view: ModView, reset = false): ModAction[] {
   if (view === "all") return ["approve", "reject"];
   if (view === "failed") return [];
@@ -113,8 +91,6 @@ export function countStates(items: ReadonlyArray<Pick<Mention, "state">>): Count
   return c;
 }
 
-// The live line: what is left to do. "3 waiting", "3 waiting, 1 not yet checked", "Nothing
-// waiting".
 export function summaryText(c: Pick<Counts, "pending" | "unverified">): string {
   const parts: string[] = [];
   if (c.pending > 0) parts.push(`${c.pending} waiting`);
@@ -128,7 +104,6 @@ export interface Status {
   glyph: GlyphName;
 }
 
-// A status is a shape, a word and a color.
 export function statusOf(state: ModState): Status {
   const word = STATE_LABEL[state];
   switch (state) {
@@ -151,7 +126,6 @@ export const ACTION_LABEL: Record<ModAction, string> = {
   reset: "Back to waiting",
 };
 
-// What a decision says: "Rejected the mention from Rosa Park."
 export function decidedText(action: ModAction, who: string[]): string {
   const noun = who.length === 1 ? `the mention from ${who[0]}` : `${who.length} mentions`;
   switch (action) {
@@ -170,9 +144,7 @@ export function undoneText(who: string[]): string {
     : `${who.length} mentions are back where they were.`;
 }
 
-// The decision that puts a mention back in `from`: the opposite decision between approved and
-// rejected, which every site has; Back to waiting for a waiting one, only where the site offers
-// it. Null where nothing can.
+// The decision that puts a mention back in `from`; null where nothing can.
 export function undoAction(from: ModState, reset = false): ModAction | null {
   if (from === "approved") return "approve";
   if (from === "rejected") return "reject";
@@ -180,10 +152,8 @@ export function undoAction(from: ModState, reset = false): ModAction | null {
   return null;
 }
 
-// Said after a decision on a waiting mention, on a site that cannot put one back to waiting.
 export const NO_UNDO_TEXT = "This site cannot undo it.";
 
-// What one decision changed, so it can be reversed.
 export interface UndoEntry {
   ids: string[];
   who: string[];
@@ -200,8 +170,7 @@ export interface UndoStack<T> {
   readonly size: number;
 }
 
-// The decisions that can still be undone, newest last. The message region offers Undo for the
-// newest; once it is done the one before is offered, so z walks back through the list.
+// Decisions that can still be undone, newest last; z walks back through them.
 export function undoStack<T>(max = 20): UndoStack<T> {
   let items: T[] = [];
   return {
@@ -223,8 +192,7 @@ export function undoStack<T>(max = 20): UndoStack<T> {
   };
 }
 
-// What the retention sweep will remove, one line per kind, from the site's own counts (the
-// contract's `expiring`). Waiting and approved mentions are never swept.
+// What the retention sweep will remove, from the site's own counts. Waiting and approved mentions are never swept.
 export function sweepLines(expiring: { failed: number; rejected: number }): string[] {
   const out: string[] = [];
   if (expiring.failed) out.push(`${expiring.failed} whose source was not found`);
@@ -243,8 +211,6 @@ export const EMPTY_TITLE: Record<ModView, string> = {
   rejected: "Nothing rejected",
   all: "No mentions yet",
 };
-
-// DOM helpers.
 
 type Attrs = Record<string, string | boolean | undefined>;
 
@@ -267,7 +233,6 @@ export function statusEl(state: ModState): HTMLElement {
   return toneStatusEl(s.tone, s.word, s.glyph);
 }
 
-// A decision's button: a real button with its key shown and announced (aria-keyshortcuts).
 export function actionButton(
   action: ModAction | "delete",
   who: string,

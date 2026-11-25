@@ -4,22 +4,14 @@ import { Dialog, DialogBody, DialogHeader, DialogTitle } from "../dialog/dialog.
 
 export interface DetailPanelProps {
   open: boolean;
-  // Called once the panel has closed, by Esc, Close, the backdrop or Back.
   onClose: () => void;
-  // A stable identifier for the address (#detail-<id>) and the element ids.
   id: string;
-  // The title in plain words: "Push the capsomer branch and open a pull request".
   title: string;
-  // The record's identifier, shown under the title: "job_7f3a92c1d4e0".
   identifier?: string;
-  // A small label above the title: "Job, capsid".
   kind?: string;
-  // A status pill beside the title.
   badge?: ReactNode;
-  // Push "#detail-<id>" so Back closes the panel.
   history?: boolean;
   closeLabel?: string;
-  // The sections, in order: what to do first, the controls, the record, the source.
   children: ReactNode;
 }
 
@@ -35,7 +27,6 @@ export function DetailPanel({
   closeLabel = "Close",
   children,
 }: DetailPanelProps) {
-  // The panel's address is "#detail-<id>"; the shared dialog reads the prefix from the attribute.
   const mark = useCallback((el: HTMLDialogElement | null) => {
     if (el && el.hasAttribute("data-cap-history")) el.dataset.capHistory = "detail";
   }, []);
@@ -84,8 +75,7 @@ export function DetailSection({ title, children }: DetailSectionProps) {
   );
 }
 
-// A command to run, in a sunken mono block, with a Copy button and a line that says
-// whether it was copied.
+// A command to run in a sunken mono block, with a Copy button and a line saying whether it was copied.
 export function DetailCommand({
   text,
   copyLabel = "Copy command",

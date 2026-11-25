@@ -10,7 +10,6 @@ export interface DocumentScope {
   theme?: "light" | "dark" | null;
 }
 
-// The attributes for <html> or a wrapper. Undefined values are left out, so a spread writes only what is set.
 export function documentAttrs({ family, site, theme }: DocumentScope): Record<string, string> {
   const attrs: Record<string, string> = {};
   if (family) attrs["data-family"] = family;

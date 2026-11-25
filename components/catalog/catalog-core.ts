@@ -1,11 +1,6 @@
 // The catalog's core: one declaration of a collection's fields, and the pure functions that turn the
 // address's query string and the items into the page's state. No DOM and no framework, so a server
-// renders the same result a browser would, the filter works with no script, and every site that uses
-// the catalog gets the same counts, chips and addresses.
-//
-// A collection declares each field once (is it searched, is it a facet, is it a column, can it sort).
-// `parseCatalogParams` reads the address; `queryCatalog` applies it and returns what the page shows.
-// The result never depends on how it is drawn.
+// renders what a browser would and the filter works with no script.
 
 import type {
   CatalogChip,
@@ -33,7 +28,6 @@ export {
   yearParam,
 } from "./catalog-address.ts";
 
-// Folds case and accents, so "Report" matches "report" and "Genève" matches "geneve".
 export function fold(text: string): string {
   return text
     .normalize("NFD")
@@ -59,8 +53,7 @@ function inRange<T>(field: CatalogField<T>, item: T, value: string): boolean {
   return true;
 }
 
-// Checks a declaration once, at definition time, so a mistake is a thrown error where it is made and not a
-// filter that quietly does nothing.
+// Checks a declaration once, at definition time, so a mistake throws where it is made.
 export function defineCatalog<T>(def: CatalogDefinition<T>): CatalogDefinition<T> {
   const keys = new Set<string>();
   for (const field of def.fields) {

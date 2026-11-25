@@ -1,9 +1,6 @@
-// The persistent audio player's state: one <audio> element in a provider mounted once above the
-// router's outlet, so playback survives client-side navigation. A queue, play and pause, next and
-// previous, seek, skip, a rate from 0.5 to 3 and a volume and mute that are remembered, a sleep timer
-// by minutes or at the end of the track, buffering and error states, a resume position per track
-// (never in its last five seconds), and the whole Media Session surface: metadata with chapterInfo
-// and an artwork fallback, the position, every action handler and the playback state.
+// The persistent audio player's state: one <audio> element in a provider mounted once above the router's outlet,
+// so playback survives client-side navigation. Also the queue, remembered rate, volume and resume position,
+// the sleep timer, and the Media Session surface.
 import { clamp } from "../hooks/hooks.ts";
 import {
   createContext,
@@ -47,22 +44,17 @@ export interface PlayerState {
   buffering: boolean;
   errored: boolean;
   sleep: SleepMode | null;
-  // True only while the loaded track's own surface is on screen: the dock hides then.
   surfaceVisible: boolean;
 }
 
 export interface PlayerApi extends PlayerState {
-  // The one <audio> element, for the transcript's native TextTrack.
   audioRef: RefObject<HTMLAudioElement | null>;
-  // The word for a track in labels: "Next episode", "End of episode".
   noun: string;
   skipBack: number;
   skipForward: number;
-  // Seed the queue without playing (a listing seeds its tracks, newest first).
   setQueue: (tracks: PlayerTrack[]) => void;
   playTrack: (track: PlayerTrack) => void;
   playQueueAt: (tracks: PlayerTrack[], index: number) => void;
-  // Play a track from a time (a transcript line, a ?t= link).
   playTrackAt: (track: PlayerTrack, seconds: number) => void;
   toggle: () => void;
   pause: () => void;
@@ -82,16 +74,11 @@ export interface PlayerApi extends PlayerState {
 const PlayerContext = createContext<PlayerApi | null>(null);
 
 export interface PlayerProviderProps {
-  // The localStorage key prefix: "<prefix>rate", "<prefix>volume", "<prefix>muted",
-  // "<prefix>resume-<id>". A site that already stored values passes its old prefix.
   storagePrefix?: string;
-  // The lock screen's artist and album when a track has none (the site or show name).
   artist?: string;
   album?: string;
-  // The lock screen's picture when a track has none (the site's icons).
   artwork?: PlayerArtwork[];
   noun?: string;
-  // Seconds for the skip buttons and the lock screen's seek when the browser sends no offset.
   skipBack?: number;
   skipForward?: number;
   children: ReactNode;
@@ -123,7 +110,6 @@ export function PlayerProvider({
   const [surfaceVisible, setSurfaceVisibleState] = useState(false);
 
   const current = index >= 0 && index < queue.length ? (queue[index] ?? null) : null;
-  // What the element's event handlers read, so they are wired once and never stale.
   const live = useRef({ isPlaying, rate, current, sleep, index, queueLength: queue.length });
   // Before every other effect, so each one reads this render's values.
   useIsoLayoutEffect(() => {
@@ -195,7 +181,6 @@ export function PlayerProvider({
     return () => audio.removeEventListener("loadedmetadata", onMeta);
   }, [currentId, storage]);
 
-  // A play or pause intent.
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio || !live.current.current) return;
@@ -296,8 +281,6 @@ export function PlayerProvider({
   const setSleep = useCallback((mode: SleepMode | null) => setSleepState(mode), []);
   const setSurfaceVisible = useCallback((v: boolean) => setSurfaceVisibleState(v), []);
 
-  // Explicit dismiss, distinct from the auto-hide: the dock unmounts. Pressing play anywhere
-  // brings it back where the reader left off.
   const dismiss = useCallback(() => {
     audioRef.current?.pause();
     setIsPlaying(false);
@@ -307,7 +290,6 @@ export function PlayerProvider({
     setSurfaceVisibleState(false);
   }, []);
 
-  // A minute count pauses after that long; "end" is handled on ended.
   useEffect(() => {
     if (typeof sleep !== "number") return;
     const id = setTimeout(
@@ -320,7 +302,6 @@ export function PlayerProvider({
     return () => clearTimeout(id);
   }, [sleep]);
 
-  // The element's events, wired once.
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
@@ -378,7 +359,6 @@ export function PlayerProvider({
     };
   }, [next, storage]);
 
-  // Media Session: metadata, chapterInfo and every action handler, again for each track.
   useEffect(() => {
     const session = mediaSession();
     if (!session) return;

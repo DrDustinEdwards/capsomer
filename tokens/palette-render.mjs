@@ -141,13 +141,9 @@ ${marks("dark", "  ")}
 `;
 }
 
-// The Enarratio theme (0.3): the purple family's tokens, as the hex values Enarratio's
-// checkTheme measures, written as a plain module so an app can `import { capsomerTheme } from
-// "capsomer/enarratio-theme"` and hand it to Enarratio's stylesheet(), with no dependency of
-// Capsomer on Enarratio (and none of Enarratio on Capsomer). The same tokens feed
-// css/enarratio.css, which maps the custom properties for an app that loads Capsomer's CSS.
-// `level: "more"` is the same family under prefers-contrast: more (stronger text, muted text and
-// gridlines; the series are already 3:1 and 10 CIEDE2000 apart), Enarratio's `highContrast` option.
+// The Enarratio theme: the purple family's tokens as hex, for Enarratio's checkTheme, as a plain
+// module so Capsomer and Enarratio depend on neither. `level: "more"` is the same family under
+// prefers-contrast: more (Enarratio's `highContrast` option).
 export function enarratioTheme(family = FAMILIES.purple, level = "standard") {
   const scheme = (t) => ({
     background: t.surface,
@@ -187,16 +183,10 @@ export const capsomerMoreTheme = ${JSON.stringify(enarratioTheme(FAMILIES.purple
 `;
 }
 
-// The chart stylesheet sites import (0.56): `capsomer/enarratio.css`, one file for every chart.
-// It brings Enarratio's own base rules (from the site's installed Enarratio, so they always match
-// its markup), the token mapping (css/enarratio-tokens.css, which tokens.css also loads), and three
-// things Enarratio's stylesheet() would otherwise be asked for:
-//   - gridlines from capsomerTheme ("y"), switched by data-gridlines on the frame or any ancestor;
-//   - each series' ink (--series-ink-N) for words written in a series color (a direct label), so
-//     they read at 4.5:1 while the mark keeps the swatch color;
-//   - the per-chart color pairs Enarratio's colorStyles() would write for a `colors` override that
-//     names a Capsomer token (`colors: { Refunds: "var(--crit)" }`), so no site writes its own.
-// Generated, because the pairs are every slot against every token below.
+// The chart stylesheet sites import (`capsomer/enarratio.css`): Enarratio's base rules, the token
+// mapping (css/enarratio-tokens.css), gridlines from capsomerTheme (data-gridlines), each series'
+// ink for direct labels, and the color pairs for a `colors` override naming a Capsomer token.
+// Generated because the pairs are every slot against every token below.
 export const CHART_PAIR_TOKENS = [
   ...Array.from({ length: 8 }, (_, i) => [`series-${i + 1}`, `series-ink-${i + 1}`]),
   ["ok", "ok"],
@@ -311,9 +301,8 @@ ${pairs}
 `;
 }
 
-// The colors an email uses, for every family in both themes, as literal hexes. Email clients
-// ignore custom properties, so components/email/colors.ts carries the values (the same ones
-// as the site, from the same generator) and the email code stays free of node:fs.
+// The colors an email uses, as literal hexes: email clients ignore custom properties, and this
+// keeps the email code free of node:fs (components/email/colors.ts carries them).
 const EMAIL_KEYS = [
   "ground",
   "surface",

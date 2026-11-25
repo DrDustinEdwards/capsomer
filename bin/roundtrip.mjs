@@ -89,7 +89,6 @@ for (const file of files) {
   doc.content.forEach((/** @type {any} */ block, /** @type {number} */ at) => {
     if (block.type === "sourceBlock" || block.type === "horizontalRule") return;
     const edited = JSON.parse(JSON.stringify(doc));
-    // A word typed at the end of the block's last line of text, after whatever is there.
     /** @param {any} node @returns {boolean} */
     const addWord = (node) => {
       const kids = node.content ?? [];

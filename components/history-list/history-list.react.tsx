@@ -21,51 +21,36 @@ import { Line, RunLines } from "./history-list-lines.react.tsx";
 export type { HistoryEntry, Destination, HistoryKind } from "./history-list.ts";
 
 export interface RestoreEvent {
-  // The line restored from, and the new line a restore adds on top.
   source: HistoryEntry;
   entry: HistoryEntry;
 }
 
 export interface HistoryListProps {
-  // Newest first. The first is the current version.
   entries: HistoryEntry[];
-  // The list's name: the heading id that names it (preferred), or a label.
   labelledBy?: string;
   label?: string;
-  // Who is restoring: the new line is theirs.
   user: string;
-  // The compare view's path; `?from=<older>&to=<newer>` is added. Before the script runs the
-  // pick boxes post to it as a plain GET form (`?compare=<id>&compare=<id>`); the compare view
-  // reads either with `comparePicks`.
+  // The compare view's path; `?from=<older>&to=<newer>` is added. Before script the pick boxes post
+  // `?compare=<id>&compare=<id>` as a GET form; read either with `comparePicks`.
   compareBase?: string;
-  // The versions picked when the page is drawn (the compare view's own pair, read from its
-  // address), so a page that shows a comparison keeps the two ticked.
+  // The versions picked when the page is drawn, so a compare page keeps its two ticked.
   defaultPicked?: string[];
-  // Where a line's title goes (the version's own page).
   versionHref?: (id: string) => string;
-  // Load-into-editor mode: an earlier line's action is a "Load into editor" link to this
-  // address (works without script) in place of Restore. Nothing is added to the history; the
-  // app's save makes the version. `onLoad` loads the text in place and stops the navigation.
+  // Load-into-editor mode: an earlier line links here (works without script) instead of Restore.
+  // `onLoad` loads the text in place and stops the navigation.
   loadHref?: (id: string) => string;
   onLoad?: (entry: HistoryEntry) => void;
-  // A read-only history: an earlier line has no action, neither Restore nor Load. Entries may
-  // leave out `words`; such a line shows no size change.
+  // A read-only history: an earlier line has no action. Entries may leave out `words`.
   readOnly?: boolean;
-  // Restoring adds a new line on top: add `entry` to `entries` (and save it). The message with
-  // Undo is said by the list.
+  // Restoring adds a new line on top: add `entry` to `entries` (and save it).
   onRestore?: (e: RestoreEvent) => void | Promise<void>;
-  // Undo of that restore: remove `entry` again.
   onUndoRestore?: (e: RestoreEvent) => void | Promise<void>;
-  // A fixed "now" for a report or a test.
   now?: number;
-  // More lines exist before the last: an address (a link that works without script) and/or a
-  // handler (the app fetches the page and adds it to `entries`).
+  // More lines before the last: an address (works without script) and/or a handler that fetches them.
   olderHref?: string;
   onLoadOlder?: () => void;
   loadingOlder?: boolean;
-  // The page's main list: j and k work on it before focus is inside it.
   primary?: boolean;
-  // Shown in place of the list when there are no versions.
   empty?: ReactNode;
 }
 
@@ -101,7 +86,7 @@ export function HistoryList({
   const { say } = useMessage();
   const noEntries = entries.length === 0;
   useEffect(() => (listRef.current ? attachRowList(listRef.current) : undefined), [noEntries]);
-  // A pick that is no longer in the list (an Undo removed it) is dropped, in the same render.
+  // A pick no longer in the list (an Undo removed it) is dropped in the same render.
   const [pickedFrom, setPickedFrom] = useState(entries);
   if (entries !== pickedFrom) {
     setPickedFrom(entries);
@@ -153,7 +138,6 @@ export function HistoryList({
 
   if (entries.length === 0) return <div className="cap-hist">{empty}</div>;
 
-  // Where each line's first entry sits in `entries`.
   const starts: number[] = [];
   let index = 0;
   for (const line of lines) {
@@ -172,8 +156,7 @@ export function HistoryList({
         <p className="cap-hist-picked" role="status" data-cap-part="picked">
           {text}
         </p>
-        {/* The pick boxes belong to this form (their form attribute), so before the script
-            runs, ticking two and pressing Compare posts them as a plain GET. */}
+        {/* The pick boxes belong to this form, so before script Compare posts them as a plain GET. */}
         <form id={formId} method="get" action={compareBase || undefined} hidden />
         {!hydrated ? (
           <button

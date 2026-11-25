@@ -3,8 +3,7 @@ import { asList, parseCatalogParams } from "./catalog-address.ts";
 import { queryCatalog } from "./catalog-core.ts";
 import type { CatalogDefinition, CatalogResult, CatalogState } from "./catalog-types.ts";
 
-// The state as a downloadable table: the matching items' columns, so a CSV or JSON export is the same
-// rows the page shows (not a second query).
+// The state as a downloadable table: the matching items' columns, the same rows the page shows.
 export interface RecordOptions<T> {
   // A first "id" column (a slug), and a "url" column with each item's absolute address.
   id?: (item: T) => string;
@@ -18,8 +17,7 @@ export interface RecordOptions<T> {
   join?: string;
 }
 
-// The state as a downloadable table: the matching items' columns, so a CSV or JSON export is the same
-// rows the page shows (not a second query). `state` may be the request's query.
+// The state as a downloadable table (`state` may be the request's query).
 export function catalogRecords<T>(
   def: CatalogDefinition<T>,
   items: readonly T[],
@@ -63,8 +61,8 @@ export interface MarkdownOptions<T> {
   join?: string;
 }
 
-// The catalog's rows as a Markdown table for a page's machine-readable twin (/library.md): the
-// table's columns, the first one a link to each item, every cell escaped.
+// The catalog's rows as a Markdown table for a page's machine-readable twin: the table's columns, the
+// first a link to each item, every cell escaped.
 export function catalogMarkdown<T>(
   def: CatalogDefinition<T>,
   items: readonly T[],

@@ -1,5 +1,4 @@
-// The parts of an app's React Router glue that are plain logic, so a Worker or a test can use them
-// without React. router.react.tsx holds the bindings.
+// The plain-logic parts of an app's React Router glue, usable by a Worker or a test without React.
 
 /** The value a search parameter reads as: its default when it is absent. */
 function read(
@@ -11,13 +10,10 @@ function read(
 }
 
 /**
- * True when the only change between two addresses is in the named display parameters (a view, a
- * grouping, a size): the same path, every other parameter the same, and at least one named one
- * different. A route's `shouldRevalidate` then skips the loader, because nothing it reads changed.
- * A missing parameter reads as its default, so `?view=grid` and the bare address are the same state
- * when grid is the default. Identical addresses are false: a revalidation after an action has the same
- * address on both sides, and skipping it would hide the write. From dustinedwards.info's media
- * library (app/lib/media/view.mjs, onlyDisplayChanged).
+ * True when the only change between two addresses is in the named display parameters: same path,
+ * every other parameter the same, at least one named one different. A missing parameter reads as its
+ * default. Identical addresses are false: a revalidation after an action has the same address on both
+ * sides, and skipping it would hide the write.
  */
 export function onlyParamsChanged(
   current: URL,

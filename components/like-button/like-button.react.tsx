@@ -6,9 +6,7 @@ import { iconHeart } from "../icons/icons.ts";
 export interface LikeButtonProps {
   liked: boolean;
   count: number;
-  // Called with the new state. The page does the write and passes the answer back as `liked` and `count`.
   onChange?: (liked: boolean) => void;
-  // The thing liked, for the name ("Like Field notes"). The name stays the same pressed or not.
   label?: string;
   pending?: boolean;
   // Signed out: the button shows the count and cannot be pressed.
@@ -16,7 +14,6 @@ export interface LikeButtonProps {
   error?: ReactNode;
 }
 
-// The HTML contract in like-button.md. Pending keeps focus on the button (aria-disabled, not
 // disabled, which would drop it) and ignores presses.
 export function LikeButton({
   liked,

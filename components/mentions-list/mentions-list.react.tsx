@@ -36,18 +36,15 @@ import { useCleanId, useHydrated } from "../hooks/hooks.react.tsx";
 export type { FormComponent, IntentResult, Mention, MentionsData, SubmitIntent };
 
 export interface MentionsListProps {
-  // The loader's view data: one page of one site's mentions.
   data: MentionsData;
   // Where the forms post, and the list's own address: usually the route itself.
   action: string;
-  // The host router's form component. Without it a plain <form> is rendered.
   Form?: FormComponent;
   // The script path: posts a form and resolves with the action's result (a useFetcher wrapper).
   // With it, a decision happens in place with Undo in the message, and the keys decide.
   submit?: SubmitIntent;
   // The last result from the action, for the page that comes back after a post with no script.
   result?: IntentResult | null;
-  // A fixed "now" for the times, for a test or a server's clock.
   now?: number;
 }
 
@@ -70,11 +67,8 @@ function StatusWord({ state }: { state: ModState }) {
 
 const nameOf = (m: Mention) => `${m.author} (${m.host})`;
 
-// One page of one site's mentions, the moderation queue on the contract's states: tabs with the
-// site's counts, each row's decisions as forms, the bulk bar with each mention's outcome, Undo,
-// paging, delete and the retention sweep behind a confirm. Every action is a form post, so it all
-// works with no script; with script the keys decide (a, r, d, x, j, k) and `submit` keeps the
-// page where it is.
+// One page of one site's mentions on the moderation queue's states. Every action is a form post, so it
+// works with no script; with script the keys decide (a, r, d, x, j, k) and `submit` keeps the page in place.
 export function MentionsList({
   data,
   action,
@@ -85,7 +79,6 @@ export function MentionsList({
 }: MentionsListProps) {
   const uid = useCleanId();
   const formId = `${uid}-bulk`;
-  // False on the server and while hydrating, true once hydrated.
   const mounted = useHydrated();
 
   const { rows, query, page, offers, can, counts } = data;

@@ -51,25 +51,19 @@ export type AttentionLinkProps = RowLinkProps;
 export interface AttentionListProps {
   items: AttentionItem[];
   title?: string;
-  // How fresh the reading is, after "Worst first.": "Read 40 seconds ago".
   read?: ReactNode;
   // The list is being read again: the last good rows stay, the section is marked busy and a spinner
   // says "Reading again" in place of `read`, as a panel's `reading` does (patterns.md "Loading").
   reading?: boolean;
   headingLevel?: 2 | 3;
-  // Said beside the ok status when no problem needs attention.
   clearText?: string;
-  // Said under the notices row's count, when a notice here needs a word of its own.
   noticesDetail?: string;
   // What a folded group is called, what its rows have in common and where all of them are.
   groups?: Record<string, AttentionGroupInfo>;
-  // Problem rows shown at once before "N more warnings" (critical rows always show), and the
-  // rows a group shows before its link to the view. The Portal's 8 and 5.
+  // Problem rows shown at once before "N more warnings" (critical rows always show), and the rows a group shows.
   problemRows?: number;
   groupRows?: number;
-  // The page's main list: j and k work on it before focus is inside it. One per page.
   primary?: boolean;
-  // A router's link component; a plain <a> by default.
   renderLink?: (props: RowLinkProps) => ReactNode;
 }
 
@@ -261,7 +255,6 @@ export function AttentionList(props: AttentionListProps) {
   );
 }
 
-// A link a needs list draws: a row's title, or its main action (a primary button).
 export interface NeedLinkProps extends RowLinkProps {
   className?: string;
   "data-variant"?: string;
@@ -271,23 +264,17 @@ const plainNeedLink = ({ children, ...props }: NeedLinkProps) => <a {...props}>{
 
 export interface NeedsListProps<G extends string = string> {
   needs: Need<G>[];
-  // "all", "later" (what is set aside) or one of the app's groups.
   show: "all" | "later" | G;
-  // The list's name. Default "Needs you", or "Set aside for later".
   label?: string;
   // The person's zone, sent with Later so the server brings the row back at 8 am there (the
   // server's own guess when the script is off).
   zone: string;
-  // A router's link component; a plain <a> by default.
   renderLink?: (props: NeedLinkProps) => ReactNode;
   // Each row's form for Later and Bring back (React Router: useRouterRowForm). The form posts
   // intent ("later" or "back"), need, title and zone. Default: a plain form that posts.
   useRowForm?: () => RowForm;
-  // Undo of a Later: bring the need back (post intent "back").
   onBack?: (need: Need<G>) => void;
-  // The key that opens search ("⌘" or "Ctrl"), to name it in the keys line; left out without.
   searchKey?: string;
-  // The page's main list: j and k work on it before focus is inside it.
   primary?: boolean;
 }
 
@@ -367,19 +354,14 @@ function NeedRow<G extends string>({
   );
 }
 
-// The hour Later brings a row back, as the note says it: "8 am".
 const LATER_AT = new Intl.DateTimeFormat("en-US", { hour: "numeric", timeZone: "UTC" })
   .format(Date.UTC(2000, 0, 1, LATER_HOUR))
   .replace(/\s+/g, " ")
   .toLowerCase();
 
-// What waits on one person, Blocking first, then Waiting for you, oldest first within each, as
-// one row list (so j and k move through both), each urgency an item with its heading and its own list. Each
-// row has its one main action and Later, which sets it aside until 8 am tomorrow in the
-// person's zone; the row leaves at once, focus moves to the next row, and the message offers
-// Undo. `l` on a row sets it aside (or brings it back in the Later view): a single key that acts
-// only while focus is on a row (WCAG 2.1.4) and obeys `data-cap-single-keys="off"` on <html>.
-// From Carrel's Home (app/routes/home.tsx).
+// What waits on one person: Blocking first, then Waiting for you, oldest first, as one row list (j and k move
+// through both). `l` on a row sets it aside or brings it back: a single key that acts only while focus is on a
+// row (WCAG 2.1.4) and obeys `data-cap-single-keys="off"` on <html>.
 export function NeedsList<G extends string = string>({
   needs,
   show,

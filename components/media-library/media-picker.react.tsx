@@ -1,9 +1,5 @@
-// "Insert from library" and the image field built on it. The dialog holds MediaLibrary in picker
-// mode over a media endpoint: its links and its search load the next view into the dialog instead
-// of leaving the page. The picker's alt step starts from the file's own alt text, and the pick
-// carries the file's own caption. ImageField is a page's one chosen image (a share image, a
-// feature image): its preview, Choose or Choose another, Remove, and the alt text the host renders
-// under it.
+// "Insert from library" and the image field built on it: a dialog holding MediaLibrary in picker mode over a media endpoint,
+// whose links and search load the next view into the dialog. ImageField is a page's one chosen image with its preview and alt text.
 import {
   Component,
   lazy,
@@ -32,14 +28,12 @@ import type { FormComponent } from "../plain-form/plain-form.react.tsx";
 import type { MediaData } from "../content/content.ts";
 import { libraryOf, loadMediaView } from "./media-picker.ts";
 
-// The library is its own chunk, fetched when the dialog opens, so a page that only draws the button
-// (an editor, a settings form) does not carry it.
+// The library is its own chunk, fetched when the dialog opens, so a page that only draws the button does not carry it.
 const MediaLibrary = lazy(() =>
   import("./media-library.react.tsx").then((m) => ({ default: m.MediaLibrary })),
 );
 
-// A chunk that fails to load (offline, a deploy that replaced it) throws when the library renders;
-// the dialog says so instead of breaking.
+// A chunk that fails to load (offline, a replaced deploy) throws on render; the dialog says so instead of breaking.
 class LibraryBoundary extends Component<{ children: ReactNode }, { failed: boolean }> {
   override state = { failed: false };
   static getDerivedStateFromError() {
@@ -69,7 +63,6 @@ export interface MediaPick {
 }
 
 export interface PickerWords {
-  // The button that opens it.
   label: string;
   title: string;
 }
@@ -80,9 +73,7 @@ export const INSERT_WORDS: PickerWords = {
 };
 
 export interface MediaPickerProps {
-  // The library as JSON: GET with the library page's own query answers MediaData.
   endpoint: string;
-  // The library page's address its links point to (default: the endpoint without "/api").
   library?: string;
   onPick: (pick: MediaPick) => void;
   words?: PickerWords;
@@ -218,22 +209,15 @@ export function MediaPicker({
 
 export interface ImageFieldProps {
   label: string;
-  // The stored address (/media/<key>), or "" for none.
   value: string;
-  // Where this page loads the preview from (default: value).
   src?: string;
   alt?: string;
-  // Said in the preview's place when there is no image ("No share image: the site's default is used").
   none?: string;
-  // The picker; without it the host renders its own address input as children.
   picker?: Omit<MediaPickerProps, "onPick" | "words" | "variant"> & { words?: PickerWords };
   onPick?: (pick: MediaPick) => void;
   onRemove?: () => void;
-  // Read-only: no Choose, no Remove.
   locked?: boolean;
-  // The preview's shape (default 1200 / 630, a share card).
   ratio?: string;
-  // Under the controls: the alt text field, "Only decoration".
   children?: ReactNode;
 }
 

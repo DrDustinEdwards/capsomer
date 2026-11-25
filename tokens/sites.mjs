@@ -5,15 +5,13 @@
 // runs palette.mjs's WCAG and APCA pairs on the site's colors merged into its family, in both themes
 // and under prefers-contrast: more.
 //
-// What goes in: only what a site differs on (faces, the display face, neutrals, the on state,
-// type sizes, space and radius, the hover touches in scale.mjs's `touch` group, --enarratio-*), as literal values, never a var() chain, so the file works on <html> or on
-// any wrapper. A brand color is never a site setting: it is a family (FAMILIES in
-// palette.mjs), which the site keeps choosing with data-family, unless the site's look is its own
-// in a way no family can draw (two hues): then `ownBrand` says why, and its brand roles are
-// checked by the same pairs. A site on the defaults has no entry. The selectors repeat the family files' shapes (plain, system dark, pinned dark), so a
-// site rule ties a family rule on specificity and wins on order, and each also matches a
-// [data-family] or [data-density] wrapper inside the site, so css/enarratio-tokens.css's wrapper
-// block cannot put Capsomer's own values back there.
+// Only what a site differs on, as literal values (never a var() chain, so the file works on <html>
+// or any wrapper). A brand color is never a site setting: it is a family (FAMILIES in palette.mjs),
+// unless the site needs two hues no family has: then `ownBrand` says why and its brand roles are
+// checked by the same pairs. The selectors repeat the family files' shapes so a site rule ties a
+// family rule on specificity and wins on order, and each also matches a [data-family] or
+// [data-density] wrapper inside the site, so css/enarratio-tokens.css's wrapper block cannot put
+// Capsomer's values back there.
 import { readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { FAMILIES, failures, fitNeutrals, themes } from "./palette.mjs";

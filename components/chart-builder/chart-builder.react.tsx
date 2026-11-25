@@ -1,8 +1,5 @@
-// Chart builder: a dialog that builds a chart block from pasted or chosen CSV, a type, the columns,
-// a title, a finding and a caption. It lists what the app's chart check flags, offers a finding the
-// app drafts from the data (it goes in only when taken), shows the chart before anything is in the
-// text (drawn here in the chart frame, or rendered by the site in a sandboxed frame), and inserts
-// the block through `onInsert`. The block's syntax is the app's `write` (Prelum's by default).
+// Chart builder: a dialog that builds a chart block from CSV, a type and columns, previews it, lists what the app's chart check flags,
+// and inserts the block through `onInsert`. A drafted finding goes in only when taken.
 
 import { useCleanId } from "../hooks/hooks.react.tsx";
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
@@ -35,31 +32,19 @@ import {
 } from "./chart-builder.ts";
 
 export interface ChartCheck {
-  // What the check flags, each in words. An empty list says it flags nothing.
   findings: Array<{ message: string }>;
-  // A finding drafted from the data, offered and never put in on its own.
   suggestion?: string | null;
 }
 
 export interface ChartBuilderProps {
-  // Puts the finished block in the text, at the cursor.
   onInsert: (block: string) => void;
-  // The chart types offered, first one chosen. Default: Prelum's bar, line, area, dot.
   types?: readonly ChartType[];
-  // The block for the fields, in the site's syntax. Default: Prelum's `:::chart` directive.
   write?: (fields: ChartFields) => string;
-  // The app's chart check (Prelum's under strictCharts on the family sites), run on the block as
-  // written and, for the suggestion, on one with a stand-in finding so it can be drawn.
   check?: (block: string, drawable: string) => Promise<ChartCheck>;
-  // The chart drawn here, in the chart frame, as the fields change: Enarratio's figure as a string.
   draw?: (fields: ChartFields, width: number, fit: ChartFit) => string;
-  // The chart as the site renders it: the block, wrapped by `source`, posted to `action` as the
-  // field `name` (default "source") into a sandboxed frame.
   preview?: { action: string; name?: string; source?: (block: string) => string };
   maxBytes?: number;
-  // The fields the dialog starts with, and returns to after an insert: a chart being edited again.
   initial?: Partial<ChartFields>;
-  // The opening button's words. Default "Insert chart".
   label?: ReactNode;
   buttonVariant?: "default" | "quiet" | "secondary";
   buttonSize?: "xs" | "sm" | "default";
@@ -95,7 +80,6 @@ export function ChartBuilder({
   const start = (): ChartFields => ({ ...blank(types[0]?.value ?? "bar"), ...initial });
   const [f, setF] = useState<ChartFields>(start);
   const [fileError, setFileError] = useState("");
-  // The check's answer for a block, or why it could not answer.
   const [checked, setChecked] = useState<({ block: string; error?: string } & ChartCheck) | null>(
     null,
   );
@@ -106,9 +90,7 @@ export function ChartBuilder({
   const set = (patch: Partial<ChartFields>) => setF((cur) => ({ ...cur, ...patch }));
 
   const columns = useMemo(() => csvColumns(f.csv), [f.csv]);
-  // A new header picks the columns again, keeping a choice that is still a column. Adjusted while
-  // rendering, not in an effect (react.dev, "You might not need an effect").
-  // `null` at first, so columns given in `initial` are chosen on the first render.
+  // A new header picks the columns again, adjusted while rendering, not in an effect; `null` at first so `initial` columns are chosen on first render.
   const [seen, setSeen] = useState<readonly CsvColumn[] | null>(null);
   if (columns !== seen) {
     setSeen(columns);
@@ -117,7 +99,6 @@ export function ChartBuilder({
 
   const ready = chartReady(f);
   const block = ready ? write(f) : "";
-  // Only the drafted finding needs a chart it can draw before the finding is written.
   const drawable = ready ? write({ ...f, alt: f.alt.trim() || "Draft." }) : "";
   const final = ready && f.alt.trim() ? block : "";
 

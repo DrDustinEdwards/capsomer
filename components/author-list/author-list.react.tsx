@@ -4,13 +4,9 @@ import { foldAuthors, nameOf, type Author } from "./author-list.ts";
 export type { Author } from "./author-list.ts";
 
 export interface AuthorListProps {
-  // The names in byline order: strings, or `{ name, href }` for a name that links.
   authors: readonly Author[];
-  // Marks the site owner's own name (by the name as given). Without it no name is marked.
   isOwner?: (name: string) => boolean;
-  // Fold a list longer than this many names into a disclosure ("A, B, C and 9 more"). Leave it out to show every name.
   collapse?: number;
-  // How a name is shown, for a site that decodes entities or italicizes; the owner check still reads the name as given.
   format?: (name: string) => ReactNode;
 }
 
@@ -57,9 +53,8 @@ function Names({
 const plain = (name: string): ReactNode => name;
 const nobody = () => false;
 
-// The byline of a paper, a report or a post: every name, the owner's in strong; folded into a
-// `details` when `collapse` is given and the list is longer. A summary holds no links (a link inside
-// the summary button is a control inside a control), so linked names link in the full list only.
+// The byline: every name, the owner's in strong; folded into a `details` when `collapse` is given. A summary holds no links
+// (a link inside the summary button is a control inside a control), so linked names link in the full list only.
 export function AuthorList({
   authors,
   isOwner = nobody,
