@@ -129,7 +129,7 @@ export function updateCounts(root: HTMLElement): void {
 
 // Orders each group by the chosen sort, uploads and failures first, moving each tile whole
 // (moveNode) so focus and state stay, and puts focus back if a move dropped it.
-export function applySort(root: HTMLElement): void {
+export function sortTiles(root: HTMLElement): void {
   const by =
     root.querySelector<HTMLInputElement>("[data-cap-part='sort'] input:checked")?.value ?? "";
   if (!by) return;

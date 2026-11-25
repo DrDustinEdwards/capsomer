@@ -13,7 +13,7 @@ import { type BulkHandler } from "../bulk-bar/bulk-bar.ts";
 import { type MediaRecord } from "./media-record.ts";
 import { bands, nextTile, type Direction } from "./media-grid.ts";
 import { createBulk, type MediaOptions } from "./media-bulk.ts";
-import { applySort, applyView, boxOf, chipsGroup, tilesOf, updateCounts } from "./media-filter.ts";
+import { sortTiles, applyView, boxOf, chipsGroup, tilesOf, updateCounts } from "./media-filter.ts";
 import { createPanel } from "./media-panel.ts";
 import { buildTile, recordOf, showProgress, syncTile, writeRecord } from "./media-tile.ts";
 
@@ -218,7 +218,7 @@ export function attachMedia(root: HTMLElement, options: MediaOptions = {}): Medi
     else if (t.closest("[data-cap-part='size']")) root.dataset.size = t.value;
     else if (t.closest("[data-cap-part='layout']")) root.dataset.view = t.value;
     else if (t.closest("[data-cap-part='sort']")) {
-      applySort(root);
+      sortTiles(root);
       syncRoving();
     }
   });
@@ -299,7 +299,7 @@ export function attachMedia(root: HTMLElement, options: MediaOptions = {}): Medi
   });
 
   for (const t of tiles()) syncSelected(t);
-  applySort(root);
+  sortTiles(root);
   if (inspector?.open) {
     if (modeOf() === "sheet") inspector.close();
     else if (active) panel?.adopt(active);
@@ -330,7 +330,7 @@ export function attachMedia(root: HTMLElement, options: MediaOptions = {}): Medi
         );
       }
       grid.prepend(t);
-      applySort(root);
+      sortTiles(root);
       refresh();
       return t;
     },
@@ -344,7 +344,7 @@ export function attachMedia(root: HTMLElement, options: MediaOptions = {}): Medi
         const fresh = buildTile(recordOf(t));
         t.replaceWith(fresh);
         if (active === t) active = fresh;
-        applySort(root);
+        sortTiles(root);
         refresh();
         return;
       }

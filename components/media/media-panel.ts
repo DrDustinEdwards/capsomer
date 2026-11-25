@@ -121,7 +121,7 @@ export function createPanel(host: PanelHost) {
     fill(tile);
   };
 
-  const setTags = (tags: string[]) => {
+  const saveTags = (tags: string[]) => {
     renderTags(inspector, tags, (current ? recordOf(current) : null)?.suggestedTags ?? []);
     autosave?.schedule();
     void autosave?.flush();
@@ -132,7 +132,7 @@ export function createPanel(host: PanelHost) {
     input.value = "";
     if (add.length === 0) return;
     const have = haveTags();
-    setTags([...have, ...add.filter((t) => !have.includes(t))]);
+    saveTags([...have, ...add.filter((t) => !have.includes(t))]);
   };
 
   const firstField = () => {
@@ -238,10 +238,10 @@ export function createPanel(host: PanelHost) {
       if (chip && chip.getAttribute("aria-pressed") !== "true") chip.click();
       if (chip) chip.focus();
     } else if (btn.dataset.capTag !== undefined) {
-      setTags(haveTags().filter((x) => x !== btn.dataset.capTag));
+      saveTags(haveTags().filter((x) => x !== btn.dataset.capTag));
       ins("tag-input")?.focus();
     } else if (btn.dataset.capSuggest !== undefined) {
-      setTags([...haveTags(), btn.dataset.capSuggest]);
+      saveTags([...haveTags(), btn.dataset.capSuggest]);
       ins("tag-input")?.focus();
     } else if (btn.dataset.capCopy !== undefined) {
       void copyFrom(btn);
