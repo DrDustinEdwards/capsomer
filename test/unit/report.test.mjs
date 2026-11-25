@@ -8,7 +8,7 @@ import { test } from "node:test";
 const BIN = resolve("bin/capsomer.mjs");
 
 // `capsomer report` on a sample app: Capsomer's own classes, an app-* class, a site that renders
-// ErrorPage and Capsomer's own markup are not own copies (each was one before 0.50); a real copy is.
+// ErrorPage and Capsomer's own markup are not own copies; a real copy is.
 test("report finds an app's own copy and not Capsomer's own markup", () => {
   const app = mkdtempSync(join(tmpdir(), "capsomer-report-"));
   try {
