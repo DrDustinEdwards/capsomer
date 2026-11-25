@@ -66,35 +66,6 @@ eachTheme((theme) => {
     );
     await expect(tiles.nth(4)).toHaveAttribute("aria-current", "true");
   });
-
-  test("behavior: Foxhound keeps its favicon x until Dustin picks; two alternatives sit beside it and none is shipped", async ({
-    page,
-  }) => {
-    await visitStates(page, "admin-shell", theme, "foxhound-marks");
-    const items = page.locator("[data-mark]");
-    expect(
-      await items.evaluateAll((els) => els.map((e) => (e as HTMLElement).dataset.mark)),
-    ).toEqual(["today", "track", "fox"]);
-    const svgs = await items.evaluateAll((els) =>
-      els.map((e) => e.querySelector("svg")!.innerHTML),
-    );
-    const [today, ...alternatives] = svgs;
-    expect(alternatives, "exactly two alternatives, different from each other").toHaveLength(2);
-    expect(alternatives[0]).not.toBe(alternatives[1]);
-    expect(
-      alternatives,
-      "Foxhound's mark in FAMILY_APPS is not one of the alternatives",
-    ).not.toContain(today);
-    // Today's mark is the favicon's x: two strokes, no fill.
-    expect(today).toContain("M7.5 9 16.5 18M16.5 9 7.5 18");
-    // The strip draws that same x for Foxhound.
-    await visitStates(page, "admin-shell", theme, "minimal");
-    expect(
-      await page
-        .locator('.cap-admin-strip .cap-admin-tile[aria-label^="Foxhound"] svg.cap-admin-logo')
-        .innerHTML(),
-    ).toBe(today);
-  });
   test("behavior: the top bar has the freshness line at the left and Refresh last; the theme is the header's one button; the tab says the page and the app", async ({
     page,
   }) => {

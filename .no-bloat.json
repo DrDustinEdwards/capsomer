@@ -1,6 +1,6 @@
 {
   "baseline": {
-    "measured_at": "abd9207",
+    "measured_at": "a7747d7",
     "knip": {},
     "jscpd": {
       "clones": 36,
@@ -37,7 +37,7 @@
       "components/media-library/media-library.ts": 593,
       "components/media/media.css": 831,
       "components/media/media.react.tsx": 1032,
-      "components/media/media.spec.ts": 1227,
+      "components/media/media.spec.ts": 1211,
       "components/media/media.ts": 1031,
       "components/mentions-list/mentions-list.react.tsx": 502,
       "components/moderation-queue/moderation-queue.ts": 564,
@@ -59,7 +59,7 @@
     },
     "tests": {
       "files": 257,
-      "cases": 1674
+      "cases": 1669
     },
     "comments": {
       "lines": 14545,

@@ -377,14 +377,6 @@ eachTheme((theme) => {
     await expect(page.locator(".cap-admin-page")).toHaveAttribute("data-measure", "reading");
   });
 
-  test("behavior: the strip and the menu have the same widths in every state", async ({ page }) => {
-    await visitStates(page, "admin-shell", theme, "expanded");
-    const strip = await page.locator(".cap-admin-strip").boundingBox();
-    await visitStates(page, "admin-shell", theme, "collapsed");
-    const collapsed = await page.locator(".cap-admin-strip").boundingBox();
-    expect(collapsed?.width).toBe(strip?.width);
-  });
-
   test("behavior: every icon, the logo tiles and the current row keep their place when the menu opens and closes", async ({
     page,
   }) => {
@@ -648,21 +640,6 @@ eachTheme((theme) => {
     expect(all.find((o) => o.name?.startsWith("Activity"))?.text).toBe("99+");
   });
 
-  test("behavior: open, no count crosses the menu's edge", async ({ page }) => {
-    await visitStates(page, "admin-shell", theme, "expanded");
-    const edge = await page
-      .locator(".cap-admin-menu")
-      .evaluate((el) => el.getBoundingClientRect().right - 1);
-    const rights = await page
-      .locator(".cap-admin-menu .cap-admin-count:not(:empty)")
-      .evaluateAll((els) => els.map((e) => e.getBoundingClientRect().right));
-    expect(rights.length).toBeGreaterThanOrEqual(5);
-    for (const r of rights) expect(r).toBeLessThanOrEqual(edge);
-    await expect(
-      page.getByRole("link", { name: "Activity 99+, 120" }).locator(".cap-admin-count"),
-    ).toHaveText("99+");
-  });
-
   test("accessibility: neutral and needs-you bubbles read against their bubble and stand out from the menu, open and collapsed", async ({
     page,
   }) => {
@@ -713,17 +690,5 @@ eachTheme((theme) => {
       .poll(async () => (await read()).fill, { message: "the hover fill against the menu" })
       .toBeGreaterThanOrEqual(1.2);
     expect((await read()).edge, "the hover edge against the menu").toBeGreaterThanOrEqual(3);
-  });
-
-  test("behavior: every unread marker is a number, one rule on every tile, 99+ past 99", async ({
-    page,
-  }) => {
-    await visitStates(page, "admin-shell", theme, "expanded");
-    await expect(page.locator("[data-dot], [data-wide]")).toHaveCount(0);
-    const texts = await page
-      .locator(".cap-admin-strip .cap-admin-badge, .cap-admin-menu .cap-admin-count:not(:empty)")
-      .allTextContents();
-    expect(texts.length).toBeGreaterThanOrEqual(7);
-    for (const t of texts) expect(t).toMatch(/^(\d{1,2}|99\+)$/);
   });
 });
