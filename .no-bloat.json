@@ -14,8 +14,6 @@
     },
     "legacy": {},
     "size": {
-      "bin/capsomer.mjs": 789,
-      "components/catalog/catalog-core.ts": 811,
       "components/checklist-run/checklist-run.ts": 716,
       "components/command-menu/command-menu.ts": 734,
       "components/confirm-dialog/confirm-dialog.react.tsx": 610,
@@ -30,11 +28,7 @@
       "components/sortable-list/sortable-list.react.tsx": 827,
       "components/sortable-list/sortable-list.ts": 658,
       "components/time/time.ts": 502,
-      "site/frame-heights.css": 3109,
-      "test/sweep.spec.ts": 1261,
-      "tokens/palette-core.mjs": 1040,
-      "tokens/scale.mjs": 656,
-      "tokens/sites.mjs": 534
+      "site/frame-heights.css": 3109
     },
     "tests": {
       "files": 259,
