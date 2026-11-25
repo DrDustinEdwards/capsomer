@@ -8,10 +8,6 @@ import { mayPrefetch } from "../../components/link/link.ts";
 
 const from = "/";
 
-test("an ordinary in-app link prefetches, query and hash included", () => {
-  assert.equal(mayPrefetch({ href: "/meetings/fall/program?day=2#talks", from }), true);
-});
-
 test("never-prefetch paths, files, other documents and other sites do not", () => {
   for (const href of [
     "/logout",

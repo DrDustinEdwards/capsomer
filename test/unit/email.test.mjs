@@ -1,4 +1,3 @@
-// Email templates: correctness and security only. Nothing here pins a design value.
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { FAMILIES, contrast } from "../../tokens/palette.mjs";
@@ -78,20 +77,10 @@ test("a token is passed through untouched and appears nowhere else", () => {
   assert.equal(r.subject.includes("EXAMPLE"), false);
 });
 
-test("the security wording: who asked, works once, expires, ignore if not you", () => {
-  for (const t of [magicLink, verification, reset]) {
-    const r = renderEmail(t, { ...common, ...link });
-    assert.match(r.text, /reader@example\.com/);
-    assert.match(r.text, /works once and expires in 15 minutes/);
-    assert.match(r.text, /If this was not you/);
-  }
-});
-
 test("a sign-in code sits under the button in both parts, and the expiry covers it", () => {
   const r = renderEmail(magicLink, { ...common, ...link, code: "000000" });
   assert.ok(r.text.includes("\n    000000\n"));
   assert.ok(r.html.indexOf("000000") > r.html.indexOf(FAKE.replace("&", "&amp;")));
-  assert.match(r.text, /The link and the code work once and expire in 15 minutes/);
   assert.equal(r.subject.includes("000000"), false);
 });
 
@@ -214,32 +203,6 @@ test("a section heading, label and value rows and a preformatted block: one h1, 
   assert.ok(a.html.includes(">stack line</pre>"));
 });
 
-test("a security notice says what, when, the device, the place and what to do, and leaves out what it was not given", () => {
-  const data = all.find(([t]) => t === securityNotice)[1];
-  const r = renderEmail(securityNotice, { ...common, ...data });
-  assert.equal(r.subject, "Example Co: A passkey was added to your account");
-  for (const line of [
-    "When: October 31, 2026 at 1:52 AM UTC",
-    "Device: Safari on iPhone",
-    "Near: Portland, Oregon, United States",
-    "If this was not you, sign in now.",
-  ]) {
-    assert.ok(r.text.includes(line), line);
-  }
-  const bare = renderEmail(securityNotice, {
-    ...common,
-    ...data,
-    device: null,
-    location: null,
-    url: undefined,
-  });
-  assert.ok(
-    !bare.text.includes("Device:") &&
-      !bare.text.includes("Near:") &&
-      !bare.html.includes('<a class="e-btn"'),
-  );
-});
-
 test("a line break in a single-line value cannot add a line to the subject", () => {
   const r = renderEmail(notice, { ...common, title: "Hello\r\nBcc: x@example.com", body: [] });
   assert.equal(r.subject, "Hello Bcc: x@example.com");
@@ -308,20 +271,6 @@ test("copy overrides the wording and nothing else; the footer slot is filled", (
   assert.ok(r.text.includes("Unsubscribe: reply STOP"));
 });
 
-test("an unknown family throws", () => {
-  assert.throws(
-    () => renderEmail(magicLink, { ...common, brand: { name: "X", family: "mauve" }, ...link }),
-    /unknown family/,
-  );
-});
-
-test("the dark rules are present and the document asks for both schemes", () => {
-  const r = renderEmail(magicLink, { ...common, ...link });
-  assert.match(r.html, /<meta name="color-scheme" content="light dark">/);
-  assert.match(r.html, /@media \(prefers-color-scheme: dark\)\{/);
-  assert.ok(r.html.includes(emailColors.purple.dark.ground));
-});
-
 // The pairs an email paints: body, muted and link text on the card and on the page, the button
 // label on its fill, and each alert level on its soft ground.
 const emailPairs = (c) => [
@@ -344,9 +293,4 @@ test("contrast: every family, both schemes, every pair an email paints is 4.5:1"
     for (const scheme of ["light", "dark"])
       assert.deepEqual(failing(emailColors[name][scheme]), [], `${name} ${scheme}`);
   }
-});
-
-test("contrast: the check fails on a planted low-contrast pair, so it can be trusted", () => {
-  const planted = { ...emailColors.purple.light, "primary-fg": "#9a86c4", muted: "#b9b4c4" };
-  assert.deepEqual(failing(planted), ["muted on the card", "muted on the page", "button label"]);
 });

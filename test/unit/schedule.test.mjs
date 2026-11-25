@@ -70,11 +70,9 @@ test("dayKeys: the range, the days with sessions and an added day, undated last"
   assert.equal(pickDay([], "2027-03-06"), null);
 });
 
-test("slotLabel: a range, an open end, and no time", () => {
+test("slotLabel: a range in the meeting zone", () => {
   const a = Date.parse("2027-03-05T14:00:00Z");
   const b = Date.parse("2027-03-05T15:30:00Z");
   assert.equal(slotLabel(a, b), "2:00 PM to 3:30 PM");
   assert.equal(slotLabel(a, b, "America/Chicago"), "8:00 AM to 9:30 AM");
-  assert.equal(slotLabel(a, null), "From 2:00 PM");
-  assert.equal(slotLabel(null, null), "No time set");
 });

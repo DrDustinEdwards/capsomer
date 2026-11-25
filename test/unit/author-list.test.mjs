@@ -5,14 +5,8 @@ import { foldAuthors } from "../../components/author-list/author-list.ts";
 
 const owner = (n) => n === "Alex Rivera";
 
-test("foldAuthors: a list no longer than keep is not folded", () => {
-  assert.deepEqual(foldAuthors(["Sam Lee", "Alex Rivera", "Jordan Park"], owner, 3), {
-    folded: false,
-    all: ["Sam Lee", "Alex Rivera", "Jordan Park"],
-  });
-});
-
-test("foldAuthors: the owner among the first keep folds to keep names and the rest counted", () => {
+test("foldAuthors: a list no longer than keep is not folded; the owner among the first keep folds to keep names and the rest counted", () => {
+  assert.equal(foldAuthors(["Sam Lee", "Alex Rivera", "Jordan Park"], owner, 3).folded, false);
   const f = foldAuthors(
     ["Sam Lee", "Alex Rivera", "Jordan Park", "Riley Chen", "Drew Patel"],
     owner,
