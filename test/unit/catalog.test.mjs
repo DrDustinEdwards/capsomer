@@ -5,7 +5,6 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import {
   catalogHref,
-  catalogRecords,
   catalogRedirect,
   countText,
   defineCatalog,
@@ -13,6 +12,7 @@ import {
   parseCatalogParams,
   queryCatalog,
 } from "../../components/catalog/catalog-core.ts";
+import { catalogRecords } from "../../components/catalog/catalog-export.ts";
 
 const ITEMS = [
   {
@@ -472,8 +472,9 @@ test("group: a group must be on a sortable field that the default sort orders by
 // A range facet over spans: an item held from 2019 to now matches 2024, an undated one matches
 // nothing, an inverted range is read the right way round, and the chip says it in words.
 test("a range facet matches overlapping spans and canonicalizes its address", async () => {
-  const { catalogMarkdown, catalogDownloads, listParam } =
-    await import("../../components/catalog/catalog-core.ts");
+  const { listParam } = await import("../../components/catalog/catalog-core.ts");
+  const { catalogMarkdown, catalogDownloads } =
+    await import("../../components/catalog/catalog-export.ts");
   const jobs = [
     { id: "a", title: "Field lead", from: 2019, to: null },
     { id: "b", title: "Lab | bench", from: 2015, to: 2017 },

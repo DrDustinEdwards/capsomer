@@ -1,11 +1,11 @@
 {
   "baseline": {
-    "measured_at": "ba5c687",
+    "measured_at": "8f5ef982",
     "knip": {},
     "jscpd": {
       "clones": 36,
       "lines": 473,
-      "percentage": 0.25,
+      "percentage": 0.24,
       "unread": 24
     },
     "shared copies": {
@@ -14,12 +14,10 @@
     },
     "legacy": {},
     "size": {
-      "bin/capsomer.mjs": 792,
       "components/admin-shell/admin-shell.css": 593,
       "components/admin-shell/admin-shell.react.tsx": 746,
       "components/admin-shell/admin-shell.spec.ts": 1197,
       "components/bulk-bar/bulk-bar.ts": 522,
-      "components/catalog/catalog-core.ts": 824,
       "components/checklist-run/checklist-run.ts": 742,
       "components/combobox/combobox.react.tsx": 802,
       "components/command-menu/command-menu.ts": 792,
@@ -69,19 +67,15 @@
       "components/system-map/system-map.css": 738,
       "components/time/time.ts": 537,
       "site/frame-heights.css": 3109,
-      "site/site.css": 743,
-      "test/sweep.spec.ts": 1262,
-      "tokens/palette-core.mjs": 1095,
-      "tokens/scale.mjs": 665,
-      "tokens/sites.mjs": 543
+      "site/site.css": 743
     },
     "tests": {
       "files": 255,
       "cases": 1742
     },
     "comments": {
-      "lines": 14573,
-      "code": 153126,
+      "lines": 14588,
+      "code": 153243,
       "percentage": 8.69
     }
   }

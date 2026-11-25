@@ -6,9 +6,10 @@ import { copyChildren, trustedHtml } from "../trusted-html/trusted-html.ts";
 // is in the address is what a person shares. If the fetch fails for any reason the browser simply navigates there:
 // an error is never swallowed, and the page is never left showing a state its address does not describe.
 //
-// The core (field declarations, the address, the counts) is in catalog-core.ts and is re-exported here, so
+// The core (field declarations, the address, the counts) is in catalog-core.ts and the downloads are in catalog-export.ts; both are re-exported here, so
 // `capsomer/behavior/catalog` is the one import for a site that renders its own markup.
 export * from "./catalog-core.ts";
+export * from "./catalog-export.ts";
 
 const REGIONS = ["count", "chips", "results", "pages"] as const;
 const SEARCH_DELAY_MS = 250;

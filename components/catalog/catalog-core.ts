@@ -7,174 +7,31 @@
 // `parseCatalogParams` reads the address; `queryCatalog` applies it and returns what the page shows.
 // The result never depends on how it is drawn.
 
-export type CatalogValue = string | number | boolean | null | undefined;
-
-export interface CatalogFacet<T = unknown> {
-  // "many": values of the field combine with "or" (checkboxes). "one": a single value (radios, with "Any").
-  // "range": a span of numbers (years) chosen from two menus, From and To; an item matches when its own
-  // span overlaps the chosen one.
-  kind?: "one" | "many" | "range";
-  // A range facet: the span an item covers (a post's year as [2024, 2024], a job held 2019 to now as
-  // [2019, Infinity]), or null for an item with none, which no range matches. Default: the field's
-  // numeric values, lowest to highest.
-  span?: (item: T) => readonly [number, number] | null;
-  // A range facet's two URL parameters. Default "<key>-from" and "<key>-to".
-  params?: { from: string; to: string };
-  // General facets are listed first and start open; the rest start folded.
-  general?: boolean;
-  // The options' order: most items first (default), alphabetical, or a fixed list.
-  order?: "count" | "alpha" | readonly string[];
-  // How a value reads as an option and as a chip, when the value is not already words.
-  label?: (value: string) => string;
-  // How many options show before "Show more". Default 8.
-  limit?: number;
-}
-
-export interface CatalogColumn {
-  header?: string;
-  align?: "end";
-  // Opt in to dropping the column on a narrow region (the table's `data-drop`).
-  drop?: 1 | 2;
-  // A small note under the header ("last 24 hours").
-  note?: string;
-  // The column is left out while the rows are grouped, because the group heading already says it (a Year column
-  // under year headings). It shows again in every flat view.
-  hideWhenGrouped?: boolean;
-}
-
-// Rows under headings, in the default order only. The group field must be the one the default sort orders by, so
-// each heading's rows are together; a search or another sort shows the same rows flat.
-export interface CatalogGroup<T> {
-  // The sortable field the default sort orders by (its key, not "-key").
-  field: string;
-  // What puts an item in a group, when the field's own value is finer than a heading (a month, not a day).
-  value?: (item: T) => string;
-  // How a group's value reads as its heading. Default: the value.
-  label?: (value: string) => string;
-  // The heading for items with no value (default "Other": "Undated" for years).
-  empty?: string;
-}
-
-export interface CatalogSort<T> {
-  // How the two directions read in the sort menu. Defaults follow the field's `type`.
-  labels?: { asc: string; desc: string };
-  // Replaces comparing the field's value: for a field whose order is not alphabetical or numeric.
-  compare?: (a: T, b: T) => number;
-}
-
-export interface CatalogField<T> {
-  // The field's name, and its URL parameter when it is a facet. Not q, sort or page.
-  key: string;
-  label: string;
-  // What the field says about one item: a value, a list of values, or nothing.
-  value: (item: T) => CatalogValue | readonly CatalogValue[];
-  // The field is typed by the search box. A number is its weight in the ranking (true is 1).
-  search?: boolean | number;
-  facet?: CatalogFacet<T>;
-  column?: CatalogColumn;
-  sort?: boolean | CatalogSort<T>;
-  // Reading and ordering: text (A to Z), number (low to high) or date (oldest first, ISO strings).
-  type?: "text" | "number" | "date";
-}
-
-export interface CatalogDefinition<T> {
-  // Names the live regions and the form: unique on a page.
-  id: string;
-  // The items' name, singular and plural, for the count ("3 of 14 articles").
-  noun: readonly [string, string];
-  // The page's address, with no query: the canonical, and where every filtered address is built from.
-  basePath: string;
-  fields: readonly CatalogField<T>[];
-  itemKey: (item: T) => string;
-  // The order with nothing typed: a field key, "-" first for descending ("-updated").
-  defaultSort?: string;
-  // Rows per page; leave out for one page.
-  pageSize?: number;
-  // Headings over the rows in the default order (see CatalogGroup).
-  group?: CatalogGroup<T>;
-}
-
-export interface CatalogState {
-  q: string;
-  filters: Record<string, string[]>;
-  // "" is the default order (best match while a search is typed).
-  sort: string;
-  page: number;
-}
-
-export interface CatalogOption {
-  value: string;
-  label: string;
-  // Items that would match with this option chosen, the other filters held.
-  count: number;
-  selected: boolean;
-}
-
-export interface CatalogRange {
-  // The chosen ends, null when open.
-  from: number | null;
-  to: number | null;
-  // The URL parameters the two menus submit.
-  params: { from: string; to: string };
-  // Every value an item covers, lowest first: the menus' options.
-  values: number[];
-}
-
-export interface CatalogFacetResult {
-  key: string;
-  label: string;
-  kind: "one" | "many" | "range";
-  // A range facet's ends and choices; its options are each value with the items that cover it.
-  range?: CatalogRange;
-  general: boolean;
-  limit: number;
-  options: CatalogOption[];
-  selected: number;
-}
-
-export interface CatalogChip {
-  id: string;
-  field: string;
-  value: string;
-  // "Topic: Pricing", or the search typed in quotes.
-  label: string;
-  // The address with this one filter removed: a link that works with no script.
-  href: string;
-}
-
-export interface CatalogSortOption {
-  value: string;
-  label: string;
-  selected: boolean;
-}
-
-export interface CatalogRowGroup<T> {
-  value: string;
-  label: string;
-  rows: T[];
-}
-
-export interface CatalogResult<T> {
-  state: CatalogState;
-  total: number;
-  count: number;
-  rows: T[];
-  // The shown rows under their headings, or null when the view is flat (a search, another sort, or no group declared).
-  groups: CatalogRowGroup<T>[] | null;
-  page: number;
-  pageCount: number;
-  // The 1-based position of the first and last row shown, of `count`.
-  from: number;
-  to: number;
-  facets: CatalogFacetResult[];
-  chips: CatalogChip[];
-  clearHref: string | null;
-  sorts: CatalogSortOption[];
-  // The address for this state with changes; with none, the current address.
-  href: (change?: Partial<CatalogState>) => string;
-}
-
-export const RESERVED_PARAMS = ["q", "sort", "page"] as const;
+import type {
+  CatalogChip,
+  CatalogDefinition,
+  CatalogFacet,
+  CatalogFacetResult,
+  CatalogField,
+  CatalogGroup,
+  CatalogRange,
+  CatalogResult,
+  CatalogRowGroup,
+  CatalogSortOption,
+  CatalogState,
+} from "./catalog-types.ts";
+import { RESERVED_PARAMS, asList, catalogHref, rangeParams, readRange } from "./catalog-address.ts";
+export type * from "./catalog-types.ts";
+export {
+  RESERVED_PARAMS,
+  catalogHref,
+  catalogRedirect,
+  listParam,
+  oneOf,
+  parseCatalogParams,
+  readRange,
+  yearParam,
+} from "./catalog-address.ts";
 
 // Folds case and accents, so "Report" matches "report" and "Genève" matches "geneve".
 export function fold(text: string): string {
@@ -183,20 +40,6 @@ export function fold(text: string): string {
     .replace(/\p{M}+/gu, "")
     .toLowerCase();
 }
-
-const asList = (v: CatalogValue | readonly CatalogValue[]): string[] =>
-  (Array.isArray(v) ? v : [v])
-    .filter((x): x is string | number | boolean => x !== null && x !== undefined && x !== "")
-    .map(String);
-
-// A range facet's stored value is "from..to", either end empty when open.
-export function readRange(value: string | undefined): { from: number | null; to: number | null } {
-  const [a, b] = (value ?? "").split("..");
-  const num = (x: string | undefined) => (x && /^-?\d+$/.test(x) ? Number(x) : null);
-  return { from: num(a), to: num(b) };
-}
-const rangeParams = <T>(field: CatalogField<T>) =>
-  field.facet?.params ?? { from: `${field.key}-from`, to: `${field.key}-to` };
 
 function spanOf<T>(field: CatalogField<T>, item: T): readonly [number, number] | null {
   if (field.facet?.span) return field.facet.span(item);
@@ -264,104 +107,6 @@ export function defineCatalog<T>(def: CatalogDefinition<T>): CatalogDefinition<T
   if (!def.basePath.startsWith("/") || def.basePath.includes("?"))
     throw new Error(`catalog ${def.id}: basePath is a path with no query`);
   return def;
-}
-
-export function parseCatalogParams<T>(
-  def: CatalogDefinition<T>,
-  input: URLSearchParams | string,
-): CatalogState {
-  const params = typeof input === "string" ? new URLSearchParams(input) : input;
-  const filters: Record<string, string[]> = {};
-  for (const field of def.fields) {
-    if (!field.facet) continue;
-    if (field.facet.kind === "range") {
-      const names = rangeParams(field);
-      const num = (raw: string | null) => {
-        const t = (raw ?? "").trim();
-        return /^-?\d+$/.test(t) ? Number(t) : null;
-      };
-      let from = num(params.get(names.from));
-      let to = num(params.get(names.to));
-      // An inverted range is read the way it was meant.
-      if (from !== null && to !== null && from > to) [from, to] = [to, from];
-      if (from !== null || to !== null) filters[field.key] = [`${from ?? ""}..${to ?? ""}`];
-      continue;
-    }
-    const values = params
-      .getAll(field.key)
-      .map((v) => v.trim())
-      .filter(Boolean);
-    const unique = [...new Set(values)];
-    if (unique.length > 0)
-      filters[field.key] = field.facet.kind === "one" ? unique.slice(0, 1) : unique;
-  }
-  const rawSort = params.get("sort") ?? "";
-  const sortKey = rawSort.replace(/^-/, "");
-  const sortable = def.fields.some((f) => f.key === sortKey && f.sort);
-  const page = Number.parseInt(params.get("page") ?? "1", 10);
-  return {
-    q: (params.get("q") ?? "").trim().replace(/\s+/g, " ").slice(0, 200),
-    filters,
-    sort: sortable ? rawSort : "",
-    page: Number.isFinite(page) && page > 1 ? page : 1,
-  };
-}
-
-// The address for a state: only what differs from the default, in a fixed order, so one state has one
-// address (which is also what keeps the base page the canonical).
-export function catalogHref<T>(def: CatalogDefinition<T>, state: CatalogState): string {
-  const params = new URLSearchParams();
-  if (state.q) params.set("q", state.q);
-  for (const field of def.fields) {
-    if (field.facet?.kind === "range") {
-      const { from, to } = readRange(state.filters[field.key]?.[0]);
-      const names = rangeParams(field);
-      if (from !== null) params.set(names.from, String(from));
-      if (to !== null) params.set(names.to, String(to));
-      continue;
-    }
-    for (const value of state.filters[field.key] ?? []) params.append(field.key, value);
-  }
-  if (state.sort && state.sort !== def.defaultSort) params.set("sort", state.sort);
-  if (state.page > 1) params.set("page", String(state.page));
-  const query = params.toString();
-  return query ? `${def.basePath}?${query}` : def.basePath;
-}
-
-// The address a request should have, or null when it already has it. A browser submitting the form with no script
-// sends every control, including the ones at their defaults (`?q=billing&sort=-updated&kind=`); a server answers
-// that with a redirect to the one address the state has, so what is shared and cached is the clean one.
-// `keepUnknown` leaves parameters the catalog does not read (a campaign tag, a cache buster) out of the
-// comparison, so they are served rather than redirected away; they are dropped only when a redirect
-// happens anyway.
-export function catalogRedirect<T>(
-  def: CatalogDefinition<T>,
-  url: URL,
-  options: { keepUnknown?: boolean } = {},
-): string | null {
-  let search = url.search;
-  if (options.keepUnknown) {
-    const known = catalogParams(def);
-    const kept = new URLSearchParams();
-    for (const [k, v] of url.searchParams) if (known.has(k)) kept.append(k, v);
-    const q = kept.toString();
-    search = q ? `?${q}` : "";
-  }
-  const wanted = catalogHref(def, parseCatalogParams(def, url.searchParams));
-  return `${url.pathname}${search}` === wanted ? null : wanted;
-}
-
-// Every URL parameter the catalog reads.
-function catalogParams<T>(def: CatalogDefinition<T>): Set<string> {
-  const names = new Set<string>(RESERVED_PARAMS);
-  for (const field of def.fields) {
-    if (!field.facet) continue;
-    if (field.facet.kind === "range") {
-      const p = rangeParams(field);
-      names.add(p.from).add(p.to);
-    } else names.add(field.key);
-  }
-  return names;
 }
 
 const DIRECTION_WORDS = {
@@ -679,146 +424,4 @@ export function countText<T>(
   return result.count === result.total
     ? `${result.total} ${noun(result.total)}`
     : `${result.count} of ${result.total} ${noun(result.total)}`;
-}
-
-// The state as a downloadable table: the matching items' columns, so a CSV or JSON export is the same
-// rows the page shows (not a second query).
-export interface RecordOptions<T> {
-  // A first "id" column (a slug), and a "url" column with each item's absolute address.
-  id?: (item: T) => string;
-  url?: (item: T) => string;
-  // The keys: each column's header as a person reads it (default), or the field's key, which a
-  // JSON reader or a script expects.
-  keys?: "header" | "key";
-  // Every field, not only the table's columns (a description, a version).
-  allFields?: boolean;
-  // Between the values of a list field (default "; ").
-  join?: string;
-}
-
-// The state as a downloadable table: the matching items' columns, so a CSV or JSON export is the same
-// rows the page shows (not a second query). `state` may be the request's query.
-export function catalogRecords<T>(
-  def: CatalogDefinition<T>,
-  items: readonly T[],
-  state: CatalogState | URLSearchParams | string,
-  options: RecordOptions<T> = {},
-): Array<Record<string, string>> {
-  const parsed =
-    typeof state === "string" || state instanceof URLSearchParams
-      ? parseCatalogParams(def, state)
-      : state;
-  const everything = queryCatalog({ ...def, pageSize: undefined }, items, { ...parsed, page: 1 });
-  const join = options.join ?? "; ";
-  return everything.rows.map((item) => {
-    const record: Record<string, string> = {};
-    if (options.id) record.id = options.id(item);
-    if (options.url) record.url = options.url(item);
-    for (const field of def.fields) {
-      if (!field.column && !options.allFields) continue;
-      const key = options.keys === "key" ? field.key : (field.column?.header ?? field.label);
-      record[key] = asList(field.value(item)).join(join);
-    }
-    return record;
-  });
-}
-
-// A Markdown table cell: pipes escaped (link text: brackets and backslashes too), whitespace collapsed.
-const markdownCell = (value: unknown, link = false): string =>
-  String(value ?? "")
-    .replace(link ? /[|[\]\\]/g : /\|/g, "\\$&")
-    .replace(/\s+/g, " ")
-    .trim();
-
-export interface MarkdownOptions<T> {
-  // The site's address, before each item's link.
-  origin?: string;
-  // An item's path: the first column becomes a link to it.
-  href?: (item: T) => string;
-  // Said instead of a table when nothing matches.
-  empty?: string;
-  // Between the values of a list field (default ", ").
-  join?: string;
-}
-
-// The catalog's rows as a Markdown table for a page's machine-readable twin (/library.md): the
-// table's columns, the first one a link to each item, every cell escaped.
-export function catalogMarkdown<T>(
-  def: CatalogDefinition<T>,
-  items: readonly T[],
-  state: CatalogState | URLSearchParams | string = "",
-  options: MarkdownOptions<T> = {},
-): string {
-  const parsed =
-    typeof state === "string" || state instanceof URLSearchParams
-      ? parseCatalogParams(def, state)
-      : state;
-  const rows = queryCatalog({ ...def, pageSize: undefined }, items, { ...parsed, page: 1 }).rows;
-  const columns = def.fields.filter((f) => f.column);
-  if (rows.length === 0 || columns.length === 0) return options.empty ?? `No ${def.noun[1]} yet.`;
-  const join = options.join ?? ", ";
-  const head = columns.map((f) => markdownCell(f.column?.header ?? f.label));
-  const body = rows.map((item) =>
-    columns.map((field, i) => {
-      const raw = asList(field.value(item)).join(join);
-      if (i !== 0 || !options.href) return markdownCell(raw);
-      const to = options.href(item).replace(/[() <>]/g, (c) => `%${c.charCodeAt(0).toString(16)}`);
-      return `[${markdownCell(raw, true)}](${options.origin ?? ""}${to})`;
-    }),
-  );
-  return [
-    `| ${head.join(" | ")} |`,
-    `| ${head.map(() => "---").join(" | ")} |`,
-    ...body.map((r) => `| ${r.join(" | ")} |`),
-  ].join("\n");
-}
-
-// The addresses of this view's downloads: the CSV and JSON of what is shown (they carry the
-// filters), and the Markdown twin of the whole collection.
-export function catalogDownloads<T>(
-  def: CatalogDefinition<T>,
-  result: Pick<CatalogResult<T>, "href">,
-): { csv: string; json: string; markdown: string } {
-  const href = result.href({ page: 1 });
-  const at = href.indexOf("?");
-  const query = at === -1 ? "" : href.slice(at);
-  return {
-    csv: `${def.basePath}.csv${query}`,
-    json: `${def.basePath}.json${query}`,
-    markdown: `${def.basePath}.md`,
-  };
-}
-
-// Reading the address outside a catalog (a view's own settings, a page's options): a value from a
-// fixed list or the fallback, so a stale or hand-typed link still opens the page.
-export function oneOf<V extends string, F>(
-  value: unknown,
-  allowed: readonly V[],
-  fallback: F,
-): V | F {
-  return typeof value === "string" && (allowed as readonly string[]).includes(value)
-    ? (value as V)
-    : fallback;
-}
-
-// A list parameter, sent either way a person or a form sends it: repeated (?tag=a&tag=b) or as one
-// comma list (?tag=a,b). Trimmed, deduplicated in first-seen order, and, with `known`, only values in it.
-export function listParam(
-  params: URLSearchParams,
-  key: string,
-  known?: ReadonlySet<string>,
-): string[] {
-  const out: string[] = [];
-  for (const raw of params.getAll(key))
-    for (const part of raw.split(",")) {
-      const v = part.trim();
-      if (v && (!known || known.has(v)) && !out.includes(v)) out.push(v);
-    }
-  return out;
-}
-
-// A four-digit year, or null.
-export function yearParam(raw: string | null | undefined): number | null {
-  const t = (raw ?? "").trim();
-  return /^\d{4}$/.test(t) ? Number(t) : null;
 }
