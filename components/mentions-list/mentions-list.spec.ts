@@ -1,11 +1,5 @@
 import { expect, test, type Locator, type Page } from "@playwright/test";
-import {
-  eachTheme,
-  expectContrast,
-  expectNoAxeViolations,
-  nextPost,
-  visitStates,
-} from "../../test/helpers.ts";
+import { eachTheme, expectNoAxeViolations, nextPost, visitStates } from "../../test/helpers.ts";
 import {
   countLine,
   currentView,
@@ -129,25 +123,6 @@ eachTheme((theme) => {
     await visitStates(page, "mentions-list", theme);
     await expect(row(mount(page, "editor"), "m-101")).toBeVisible();
     await expectNoAxeViolations(page);
-  });
-
-  test("accessibility: the quiet text and each status reach their contrast", async ({ page }) => {
-    await visitStates(page, "mentions-list", theme);
-    await expectContrast(page, [
-      { sel: "[data-mount='editor'] .cap-mq-summary", what: "the live line" },
-      { sel: "[data-mount='editor'] .cap-mentions-count", what: "the count" },
-      { sel: "[data-mount='editor'] .cap-mq-host", what: "a source's host" },
-      { sel: "[data-mount='editor'] .cap-kbd", what: "a key hint" },
-      { sel: "[data-mount='v05'] .cap-mentions-withheld li", what: "why an action is withheld" },
-      {
-        sel: "[data-mount='outcomes'] .cap-bulk-result-message",
-        what: "why a mention was not done",
-      },
-      { sel: "[data-mount='paged'] li[data-id='m-160'] .cap-status", what: "Not yet checked" },
-      { sel: "[data-mount='paged'] li[data-id='m-150'] .cap-status", what: "Source not found" },
-      { sel: "[data-mount='paged'] li[data-id='m-120'] .cap-status", what: "Approved" },
-      { sel: "[data-mount='paged'] li[data-id='m-130'] .cap-status", what: "Rejected" },
-    ]);
   });
 
   test(

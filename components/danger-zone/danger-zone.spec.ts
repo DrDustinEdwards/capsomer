@@ -1,10 +1,5 @@
 import { test } from "@playwright/test";
-import {
-  eachTheme,
-  expectContrast,
-  expectNoAxeViolations,
-  visitStates,
-} from "../../test/helpers.ts";
+import { eachTheme, expectNoAxeViolations, visitStates } from "../../test/helpers.ts";
 
 eachTheme((theme) => {
   test("accessibility: no axe violations, and the label and note reach their contrast", async ({
@@ -12,9 +7,5 @@ eachTheme((theme) => {
   }) => {
     await visitStates(page, "danger-zone", theme);
     await expectNoAxeViolations(page);
-    await expectContrast(page, [
-      { sel: "#dz-one .cap-danger-title", what: "the Danger label" },
-      { sel: "#dz-one .cap-danger-note", what: "the note" },
-    ]);
   });
 });

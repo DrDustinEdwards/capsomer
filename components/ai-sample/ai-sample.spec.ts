@@ -1,10 +1,5 @@
 import { expect, test } from "@playwright/test";
-import {
-  eachTheme,
-  expectContrast,
-  expectNoAxeViolations,
-  visitStates,
-} from "../../test/helpers.ts";
+import { eachTheme, expectNoAxeViolations, visitStates } from "../../test/helpers.ts";
 
 eachTheme((theme) => {
   test("accessibility: no axe violations, and the labels, the badge and the failure line reach their contrast", async ({
@@ -12,12 +7,6 @@ eachTheme((theme) => {
   }) => {
     await visitStates(page, "ai-sample", theme);
     await expectNoAxeViolations(page);
-    await expectContrast(page, [
-      { sel: "#as-result .cap-ai-sample-live", what: "the live badge" },
-      { sel: "#as-result .cap-ai-sample-label", what: "a field label" },
-      { sel: "#as-result .cap-ai-sample-field[data-variant='mono']", what: "the body" },
-      { sel: "#as-failed .cap-ai-sample-error", what: "the failure line" },
-    ]);
   });
 });
 

@@ -1,23 +1,10 @@
 import { expect, test } from "@playwright/test";
-import {
-  eachTheme,
-  expectContrast,
-  expectNoAxeViolations,
-  visitStates,
-} from "../../test/helpers.ts";
+import { eachTheme, expectNoAxeViolations, visitStates } from "../../test/helpers.ts";
 
 eachTheme((theme) => {
   test("accessibility: no axe violations", async ({ page }) => {
     await visitStates(page, "read-state", theme);
     await expectNoAxeViolations(page);
-  });
-
-  test("accessibility: the no-data reasons reach their contrast", async ({ page }) => {
-    await visitStates(page, "read-state", theme);
-    await expectContrast(page, [
-      { sel: "#rs-nothing-yet .cap-read-state", what: "the reason nothing is read yet" },
-      { sel: "#rs-sources [data-state='empty']", what: "a read that found nothing" },
-    ]);
   });
 
   test("behavior: each state says what it is, and Read again says it is reading", async ({

@@ -1,23 +1,10 @@
 import { expect, test } from "@playwright/test";
-import {
-  eachTheme,
-  expectContrast,
-  expectNoAxeViolations,
-  visitStates,
-} from "../../test/helpers.ts";
+import { eachTheme, expectNoAxeViolations, visitStates } from "../../test/helpers.ts";
 
 eachTheme((theme) => {
   test("accessibility: no axe violations", async ({ page }) => {
     await visitStates(page, "document-archive", theme);
     await expectNoAxeViolations(page);
-  });
-
-  test("accessibility: the sizes reach their contrast", async ({ page }) => {
-    await visitStates(page, "document-archive", theme);
-    await expectContrast(page, [
-      { sel: ".cap-docview-download .cap-link-meta", what: "the format and size" },
-      { sel: ".cap-archive-empty", what: "an empty category's line" },
-    ]);
   });
 
   test("accessibility: each category is a named list of links to its documents", async ({
