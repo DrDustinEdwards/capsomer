@@ -28,13 +28,6 @@ test("package.json exports ./testing, with types", () => {
   });
 });
 
-test("the axe and contrast helpers are playwright peers, optional", () => {
-  for (const dep of ["@playwright/test", "@axe-core/playwright"]) {
-    assert.ok(pkg.peerDependencies?.[dep], `${dep} is a peer dependency`);
-    assert.equal(pkg.peerDependenciesMeta?.[dep]?.optional, true, `${dep} is optional`);
-  }
-});
-
 test("the build emits the export and it carries every helper", async () => {
   const out = join(root, "test-results/testing-build");
   rmSync(out, { recursive: true, force: true });

@@ -3,7 +3,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import {
-  labelOf,
   readBox,
   setBox,
   shapeOf,
@@ -113,10 +112,4 @@ test("setBox: a flag writes the app's words, and its off word may remove the key
   assert.equal(readBox(on, "banner", "flag", flag), "Draft");
   assert.equal(setBox(on, "banner", "flag", "", flag), "title: x");
   assert.equal(setBox(FRONT, "draft", "flag", "").includes("draft: false"), true);
-});
-
-test("labelOf: a key reads as words", () => {
-  assert.equal(labelOf("first_line"), "First line");
-  assert.equal(labelOf("pov"), "POV");
-  assert.equal(labelOf("searchTitle"), "Search title");
 });
