@@ -35,7 +35,7 @@ eachTheme((theme) => {
         "Runs job_7c21 again with the same inputs. Its last run failed at 14:02.",
       );
       await expect(page.locator("#tip-copy")).toMatchAriaSnapshot(`
-      - tooltip "Copies 366b902 to the clipboard."
+      - tooltip "366b902"
     `);
     },
   );
