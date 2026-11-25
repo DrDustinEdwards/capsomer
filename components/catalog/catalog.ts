@@ -3,8 +3,10 @@ import { copyChildren, trustedHtml } from "../trusted-html/trusted-html.ts";
 // place. Each control fetches the address a person would have navigated to and swaps the regions that
 // changed; the address is written with `history.replaceState`, so a filter change is not a history step.
 // If the fetch fails the browser simply navigates there: an error is never swallowed. The core is in
-// catalog-core.ts and re-exported here, so `capsomer/behavior/catalog` is the one import.
+// catalog-core.ts and the downloads in catalog-export.ts, both re-exported here, so `capsomer/behavior/catalog`
+// is the one import.
 export * from "./catalog-core.ts";
+export * from "./catalog-export.ts";
 
 const REGIONS = ["count", "chips", "results", "pages"] as const;
 const SEARCH_DELAY_MS = 250;

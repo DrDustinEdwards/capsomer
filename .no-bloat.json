@@ -14,13 +14,7 @@
     },
     "legacy": {},
     "size": {
-      "bin/capsomer.mjs": 789,
-      "components/catalog/catalog-core.ts": 811,
-      "site/frame-heights.css": 3109,
-      "test/sweep.spec.ts": 1261,
-      "tokens/palette-core.mjs": 1040,
-      "tokens/scale.mjs": 656,
-      "tokens/sites.mjs": 534
+      "site/frame-heights.css": 3109
     },
     "tests": {
       "files": 259,
