@@ -275,3 +275,22 @@ export function buildTile(r: MediaRecord): HTMLLIElement {
   syncTile(li);
   return li;
 }
+
+// Moves an uploading tile's progress bar and its spoken description. False when the tile has no bar
+// to move, so the caller redraws it whole.
+export function showProgress(tile: HTMLElement, progress: number): boolean {
+  const bar = tile.querySelector<HTMLProgressElement>("progress.cap-meter-bar");
+  if (!bar) return false;
+  const pct = percent(progress);
+  bar.value = pct;
+  bar.setAttribute(
+    "aria-valuetext",
+    `${pct} percent of ${tile.dataset.label ?? "the file"} uploaded`,
+  );
+  const value = tile.querySelector<HTMLElement>(".cap-meter-value");
+  if (value) value.textContent = `${pct}%`;
+  tile
+    .querySelector<HTMLElement>(".cap-media-open")
+    ?.setAttribute("aria-description", describeRecord({ ...recordOf(tile), progress: pct }));
+  return true;
+}
