@@ -1,8 +1,6 @@
-import {
-  pictureProps,
-  type ImageAttributes,
-  type PictureProps,
-} from "@dustinedwards/site-runtime/image";
+import { pictureProps, type ImageAttributes } from "@dustinedwards/site-runtime/image";
+
+type PictureProps = ReturnType<typeof pictureProps>;
 
 // One stored image as a <picture>: site-runtime's pictureProps in JSX, the same markup as its
 // pictureHtml for a post body. AVIF and WebP sources over the <img>, the placeholder and main color in
