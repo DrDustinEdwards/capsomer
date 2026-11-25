@@ -1,10 +1,8 @@
-/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+/* Layer order, repeated so this file is safe in any import order. */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
-/* A step indicator (USWDS Step indicator): where a person is in a flow of a few steps, one per
-   page. A bar per step with its name under it, then the heading "Step 2 of 4" and the step's
-   name. Done is a filled bar and a tick, the current step a filled bar and a heavier name, a step
-   to come an empty bar: never color alone, and the heading says it in words. */
+/* A step indicator (USWDS): where a person is in a flow of a few steps. Done is a filled bar and a tick, the
+current step a filled bar and a heavier name, a step to come an empty bar: never color alone. */
 @layer cap.components {
   .cap-steps {
     display: grid;
@@ -38,7 +36,6 @@
     &[aria-current="step"] {
       font-weight: var(--weight-bold);
     }
-    /* The tick: a drawn check, as the field's checkbox draws its own. */
     &[data-state="complete"]::before {
       content: "";
       flex: none;
@@ -68,12 +65,9 @@
     font-variant-numeric: var(--figures);
   }
 
-  /* Three static overviews of an ordered process, not a person's progress through it. They keep the
-     list, the order and the names; the variant changes how the steps are drawn. */
+  /* Three static overviews of an ordered process, not a person's progress through it. */
 
-  /* Stations: a rule through numbered stops, a disc where a stage has something, a ring where it
-     has nothing yet (dustinedwards.info's library pipeline). Wraps by the room it has; each row's
-     rule runs to its own last stop. */
+  /* Stations: a rule through numbered stops, a disc where a stage has something, a ring where it has nothing yet. Wraps by the room it has; each row's rule runs to its own last stop. */
   .cap-steps[data-variant="stations"] .cap-steps-list {
     grid-auto-flow: row;
     grid-template-columns: repeat(auto-fit, minmax(min(100%, 10rem), 1fr));
@@ -146,9 +140,7 @@
     font-variant-numeric: var(--figures);
   }
 
-  /* Inline: the steps as a row of chips joined by short rules, which wraps rather than scrolls
-     (Foxhound's recovery sequences). Each step carries the rule after it, so a wrapped row ends
-     on its rule instead of starting the next one with it. */
+  /* Inline: chips joined by short rules, wrapping rather than scrolling. Each step carries the rule after it, so a wrapped row ends on its rule. */
   .cap-steps[data-variant="inline"] .cap-steps-list {
     display: flex;
     flex-wrap: wrap;
@@ -174,8 +166,7 @@
     }
   }
 
-  /* Ordered: one row per step, a number, the name, then what it says beside it (a time, a state),
-     with a rule between rows (Foxhound's payment timeline and dispute states). */
+  /* Ordered: one row per step, a number, the name, then what it says beside it, with a rule between rows. */
   .cap-steps[data-variant="ordered"] .cap-steps-list {
     grid-auto-flow: row;
     gap: 0;

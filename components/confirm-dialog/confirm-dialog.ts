@@ -1,23 +1,15 @@
-// The confirm dialog: preview, then perform, for an action that cannot be undone. The shared
-// dialog (components/dialog) as an alert dialog: focus starts on Cancel; a click outside does
-// nothing (so a typed reason is never lost that way); Esc closes unless the action is running;
-// focus goes back to the control that opened it, or to a fallback when that control is gone.
-// The shared dialog does all of that. This module adds what a confirm is: the perform button,
-// the typed-word guard, the reason, and the failure that stays inside with Try again. No
-// framework; the React wrapper reuses the pure functions exported here.
+// The confirm dialog: preview, then perform, for an action that cannot be undone. An alert dialog on
+// the shared dialog (focus starts on Cancel; a click outside does nothing, so a typed reason is never lost).
 
 import { isImeEnter } from "../shortcuts/shortcuts.ts";
 import { errorText, isBusy, openDialog, setDialogBusy, wireDialog } from "../dialog/dialog.ts";
 import { uid } from "../hooks/hooks.ts";
 
-// The typed-word guard lives with the server half (confirm-server.ts), which a Worker imports without the DOM code.
+// The typed-word guard lives in confirm-server.ts, which a Worker imports without the DOM code.
 import { wordMatches } from "./confirm-server.ts";
 
-// The typed-word guard as an HTML `pattern`, for the page form with no script: every letter is
-// a class of both cases ("delete" gives [Dd][Ee][Ll][Ee][Tt][Ee]) and anything else is escaped,
-// so the browser's own validation says what wordMatches says. The browser anchors the pattern to
-// the whole value and does not trim, so the page's field allows no surrounding spaces; the
-// server must still check the word, because markup is not a guard.
+// The typed-word guard as an HTML `pattern` for the no-script form (each letter a class of both
+// cases). The browser does not trim, and markup is not a guard: the server must still check the word.
 export function wordPattern(word: string): string {
   return Array.from(word.trim())
     .map((ch) =>
@@ -28,9 +20,6 @@ export function wordPattern(word: string): string {
     .join("");
 }
 
-// The confirm dialog itself.
-
-// Gets the reason the person typed, "" when the dialog asks for none.
 type Perform = (reason: string) => Promise<void>;
 const performs = new WeakMap<HTMLDialogElement, Perform>();
 const performedFlags = new WeakSet<HTMLDialogElement>();
@@ -38,14 +27,11 @@ const performedFlags = new WeakSet<HTMLDialogElement>();
 const part = <T extends HTMLElement = HTMLElement>(dialog: HTMLDialogElement, name: string) =>
   dialog.querySelector<T>(`[data-cap-part='${name}']`);
 
-// The reason is read from the field itself, not from a copy of its value, so text the
-// browser filled in without an input event still counts.
+// Read from the field itself, so text filled in without an input event still counts.
 export function reasonOf(dialog: HTMLDialogElement): string {
   return part<HTMLTextAreaElement>(dialog, "reason")?.value.trim() ?? "";
 }
 
-// Marks the reason field as the thing in error, described by the error box beside it, or
-// clears the mark.
 function markReason(dialog: HTMLDialogElement, invalid: boolean): void {
   const field = part<HTMLTextAreaElement>(dialog, "reason");
   if (!field) return;
@@ -62,8 +48,7 @@ function markReason(dialog: HTMLDialogElement, invalid: boolean): void {
   }
 }
 
-// The perform button stays named for the action. While the guard word is not typed it is
-// aria-disabled, described by the line that says what to type.
+// The perform button keeps the action's name; while the guard word is not typed it is aria-disabled.
 function syncGuard(dialog: HTMLDialogElement): void {
   const perform = part<HTMLButtonElement>(dialog, "perform");
   if (!perform || isBusy(dialog)) return;
@@ -83,9 +68,7 @@ function syncGuard(dialog: HTMLDialogElement): void {
   }
 }
 
-// Busy: the shared dialog holds Esc, Close, Cancel and the backdrop; the perform button says
-// so too, and the fields stop taking input. aria-disabled rather than disabled, so focus stays
-// on the button that was pressed.
+// Busy: aria-disabled rather than disabled, so focus stays on the button that was pressed.
 export function setBusy(dialog: HTMLDialogElement, on: boolean): void {
   const perform = part<HTMLButtonElement>(dialog, "perform");
   const input = part<HTMLInputElement>(dialog, "typed");
@@ -105,7 +88,6 @@ export function setBusy(dialog: HTMLDialogElement, on: boolean): void {
   }
 }
 
-// Shows a failure inside the dialog, beside the action: what happened, then Try again.
 export function showError(dialog: HTMLDialogElement, message: string): void {
   const box = part(dialog, "error");
   const perform = part<HTMLButtonElement>(dialog, "perform");
@@ -123,8 +105,7 @@ export function showError(dialog: HTMLDialogElement, message: string): void {
   }
 }
 
-// The reason is empty: say so beside the field, mark the field invalid, and put focus in it.
-// Nothing was tried, so the perform button keeps its name and no "Not done" is shown.
+// An empty reason: nothing was tried, so no "Not done" is shown; mark the field and focus it.
 export function showReasonError(dialog: HTMLDialogElement): void {
   const box = part(dialog, "error");
   if (box) {
@@ -152,12 +133,10 @@ export function clearError(dialog: HTMLDialogElement): void {
 const ERROR_GLYPH = "M5 1h6l4 4v6l-4 4H5l-4-4V5zM7.2 4v5h1.6V4zM7.2 10.4V12h1.6v-1.6z";
 const glyph = () => svgGlyph(ERROR_GLYPH, 14);
 
-// Binds what the perform button does for a dialog written in markup.
 export function bindPerform(dialog: HTMLDialogElement, perform: Perform): void {
   performs.set(dialog, perform);
 }
 
-// Opens a confirm dialog, remembering the opener. Focus starts on Cancel.
 export function openConfirm(
   dialog: HTMLDialogElement,
   opener: Element | null = document.activeElement,
@@ -169,16 +148,13 @@ export function openConfirm(
   openDialog(dialog, opener, { focus: part<HTMLButtonElement>(dialog, "cancel") });
 }
 
-// True when the last close of this dialog followed a successful perform.
 export function wasPerformed(dialog: HTMLDialogElement): boolean {
   return performedFlags.has(dialog);
 }
 
 const wired = new WeakMap<HTMLDialogElement, () => void>();
 
-// Wires one dialog: the shared dialog's rules (Cancel, the backdrop that does nothing, Esc held
-// while busy, focus returned on close), then the perform button, the guard and the reason.
-// Returns a function that unwires it. Idempotent for a dialog that is already wired.
+// Wires one dialog on the shared dialog's rules, then the perform button, guard and reason. Idempotent.
 export function wire(dialog: HTMLDialogElement, fallback?: HTMLElement | null): () => void {
   const had = wired.get(dialog);
   if (had) return had;
@@ -205,7 +181,6 @@ export function wire(dialog: HTMLDialogElement, fallback?: HTMLElement | null): 
     }
     const fn = performs.get(dialog);
     if (!fn) {
-      // A submit button in a form posts as it would without JavaScript; show busy meanwhile.
       if (perform?.type === "submit" && perform.form) setBusy(dialog, true);
       return;
     }
@@ -225,7 +200,6 @@ export function wire(dialog: HTMLDialogElement, fallback?: HTMLElement | null): 
   };
   const onPerform = (e: Event) => void run(e);
   const onKey = (e: KeyboardEvent) => {
-    // Enter in the guard field performs once the word matches, and never submits a form.
     // legacy-scan:keep ime-safe-enter-submit isImeEnter (shortcuts.ts) checks isComposing and keyCode 229; the scanner cannot follow it.
     if (e.key === "Enter" && e.target === input && !isImeEnter(e)) {
       e.preventDefault();
@@ -262,24 +236,15 @@ export function wire(dialog: HTMLDialogElement, fallback?: HTMLElement | null): 
 }
 
 export interface ConfirmOptions {
-  // Names the action and the object: "Revoke deploy-agent?"
   title: string;
-  // An optional first sentence: "This cannot be undone."
   lead?: string;
-  // What will change, one line each.
   body: string[];
-  // The perform button's label, named for the action: "Revoke agent".
   action: string;
-  // For what cannot be recovered: the short word to type ("revoke").
   typeToConfirm?: string;
-  // Gets the reason when the dialog asks for one.
   perform: (reason: string) => Promise<void>;
   cancelLabel?: string;
-  // Where focus goes when the opener has gone. The page's main region by default.
   returnTo?: HTMLElement | null;
-  // Asks for a reason, required, before the action: the audit row carries it with the change.
   reason?: { label?: string; note?: string };
-  // The icon tile beside the title (shadcn's Alert Dialog media). Default: shown.
   media?: boolean;
 }
 
@@ -301,9 +266,6 @@ function svgGlyph(d: string, size: number): SVGSVGElement {
   return svg;
 }
 
-// Builds the dialog's markup, exactly the contract on the doc page: an alert dialog of the
-// shared dialog, header (a crit icon tile, the title, the lead as its description), a body
-// (what changes, the reason, the typed word), the error box, and the footer.
 export function buildConfirm(o: ConfirmOptions): HTMLDialogElement {
   const id = uid("cap-confirm");
   const dialog = document.createElement("dialog");
@@ -425,8 +387,6 @@ export function buildConfirm(o: ConfirmOptions): HTMLDialogElement {
   return dialog;
 }
 
-// Builds a confirm dialog, opens it, and resolves true once the action has been performed,
-// false when it was canceled. The dialog is removed when it closes.
 export function confirm(o: ConfirmOptions): Promise<boolean> {
   const opener = document.activeElement;
   const dialog = buildConfirm(o);
@@ -448,20 +408,17 @@ export function confirm(o: ConfirmOptions): Promise<boolean> {
   });
 }
 
-// Forms whose submit the person has just approved: the second pass of confirmSubmit lets it through.
 const approved = new WeakSet<Element>();
 
 export type ConfirmSubmitOptions = Omit<ConfirmOptions, "perform" | "body"> & { body?: string[] };
 
-// The dialog in place of window.confirm on a form. Give it to a form's onSubmit or to a submit
-// button's onClick: it holds the submit, asks, and sends the form again (with the same button) only
-// once the action is chosen. Works with a router's Form, whose own submit runs after this handler.
+// In place of window.confirm on a form: holds the submit, asks, then sends the form again (with the same
+// button) once the action is chosen.
 export function confirmSubmit(
   e: {
     preventDefault(): void;
     currentTarget: Element;
     submitter?: HTMLElement | null;
-    // A React synthetic event keeps the native one here.
     nativeEvent?: object;
   },
   o: ConfirmSubmitOptions,
@@ -484,8 +441,6 @@ export function confirmSubmit(
   });
 }
 
-// Attaches to every confirm dialog written in markup under root, and to every trigger
-// [data-cap-confirm-open="<dialog id>"]. Returns a function that detaches them all.
 export function enhance(root: ParentNode = document): () => void {
   const undo: Array<() => void> = [];
   for (const dialog of root.querySelectorAll<HTMLDialogElement>(

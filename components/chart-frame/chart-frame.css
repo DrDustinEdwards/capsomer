@@ -1,15 +1,11 @@
-/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+/* Layer order repeated so this file is safe in any import order: the first statement fixes it (css/layers.css). */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
-/* The frame every chart sits in: a thin layout around Enarratio's own figure, which brings the
-   title, the sentence that says what the chart shows, the toolbar (Sound, Range, Download), the
-   chart, its summary, the source, and its numbers as a table only screen readers and AI agents
-   read. The frame only sets them in the family's type and
-   spacing (Enarratio's colors, fonts and sizes come from css/enarratio.css), puts a legend or a
-   note after the figure, and stands in for the chart when there is no data. Enarratio's base
-   rules are unlayered, so this sets only what they leave to the page, and colors through the
-   --enarratio-* properties. The craft follows shadcn's Card and Chart: a quiet header, a muted
-   description, the chart on the surface, no chrome of its own. */
+/* The frame every chart sits in: a thin layout around Enarratio's own figure, which brings the title,
+   finding, toolbar, chart, summary, source and a table only screen readers and AI agents read. The
+   frame sets them in the family's type and spacing, puts a legend or note after the figure, and
+   stands in for the chart when there is no data. Enarratio's base rules are unlayered, so this sets
+   only what they leave to the page, and colors through the --enarratio-* properties. */
 @layer cap.components {
   .cap-chart {
     display: grid;
@@ -36,7 +32,6 @@
     font-size: var(--fs-detail);
   }
 
-  /* The sentence that says what the chart shows, with its numbers (or why there is no chart). */
   .cap-chart :is(.enarratio-finding, .cap-chart-reason) {
     margin: 0;
     color: var(--muted);
@@ -44,8 +39,6 @@
     line-height: var(--leading);
   }
 
-  /* The title and a figure at the end of its line (the subtitle: "99.4% up over 7 days"), the
-     finding under both. */
   .cap-chart[data-head="inline"] .enarratio-head {
     display: flex;
     flex-wrap: wrap;
@@ -61,23 +54,20 @@
     }
   }
 
-  /* Numbers that belong to something that is not a chart, for screen readers and AI agents: a
-     stat tile's inline sparkline (under the tile, outside the link, never inside) and a usage
-     meter's table. Not a frame, so not read as a chart. */
+  /* Numbers that belong to something that is not a chart, for screen readers and AI agents (a stat
+        tile's sparkline, a usage meter's table). Not a frame, so not read as a chart. */
   .cap-data {
     display: grid;
     gap: var(--space-2);
     min-width: 0;
   }
-  /* A later read failed: the chart is the last one drawn, and the line above it says so. */
   .cap-chart-stale {
     margin: 0 0 var(--space-3);
     color: var(--muted);
     font-size: var(--fs-detail);
   }
 
-  /* A panel whose head names the chart keeps Enarratio's title for screen readers and the table
-     only, so the name is not shown twice. */
+  /* A panel whose head names the chart keeps Enarratio's title for screen readers and the table only. */
   .cap-chart-panel .cap-panel-head + .cap-panel-body .cap-chart :is(.enarratio-title, .cap-chart-title) {
     position: absolute;
     inline-size: 1px;
@@ -87,14 +77,11 @@
     white-space: nowrap;
   }
 
-  /* A chart drawn on a server with a narrow drawing for phones that keeps the chart's shape (a map;
-     narrowRedraw's and frameHtml's keepShape): until the script swaps the narrow one in, the wide
-     drawing scales into the column at the narrow drawing's own height (--cap-narrow-height), so the
-     swap does not move the page. Any other redraw draws the narrow one at the height the wide one
-     shows at 30rem, where it keeps its width and scrolls, so it is left alone. With no script
-     nothing swaps, and the wide drawing keeps its width and scrolls. Enarratio's own
-     base rules (min-width: 30rem on the wide drawing) are not in a layer, so a layered rule loses
-     to them; these three are !important to take that back, on this one rule. */
+  /* A server-drawn chart with a narrow phone drawing that keeps the chart's shape (a map, keepShape):
+        until the script swaps it in, the wide drawing scales into the column at --cap-narrow-height, so the
+        swap does not move the page. Without script nothing swaps and the wide drawing scrolls. Enarratio's
+        base rules (min-width: 30rem on the wide drawing) are unlayered and beat a layered rule, so these
+        three are !important on this one rule. */
   @media (scripting: enabled) {
     @container (width < 30rem) {
       .cap-chart[data-keep-shape] .enarratio-frame-wide > svg {
@@ -105,12 +92,10 @@
     }
   }
 
-  /* Bars outside a chosen range (countsByYearHtml) step back; the range is said in words beside. */
   .cap-chart [data-out-of-range] {
     opacity: var(--opacity-faint);
   }
 
-  /* A sparkline in a line of text or a tile: a box of its own to fill. */
   .cap-spark {
     display: block;
     min-inline-size: 0;
@@ -123,9 +108,7 @@
     }
   }
 
-  /* A dataset previewed beside an article: heading, drawing, the sentence, the link, the source. */
   .cap-data-preview {
-    /* A card's own text size and leading, not the article's beside it. */
     font-size: var(--fs-body);
     line-height: var(--leading-relaxed);
   }

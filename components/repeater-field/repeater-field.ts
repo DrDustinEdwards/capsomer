@@ -2,15 +2,12 @@
 
 export type Row = Record<string, string>;
 
-// The posted name of one row's field: `links[2][url]`.
 export const rowFieldName = (name: string, index: number, key: string): string =>
   `${name}[${index}][${key}]`;
 
-// The rows a form posted for `name`, with the keys asked for. With script the repeater can post
-// them as one JSON array under `name` (its `json` prop); without, each field is posted on its own
-// as `name[i][key]`. Either is read here. A row whose every value is empty is dropped (a spare
-// row nobody filled), and values are trimmed. A JSON field that is not an array of objects is
-// null, so the action answers with an error rather than saving an empty list over the old one.
+// The rows a form posted for `name`, with the keys asked for: one JSON array under `name` (with script) or
+// `name[i][key]` fields. Empty rows are dropped and values trimmed. A JSON field that is not an array of
+// objects is null, so the action errors rather than saving an empty list over the old one.
 export function rowsFromForm(form: FormData, name: string, keys: readonly string[]): Row[] | null {
   const own = form.get(name);
   let rows: Row[];

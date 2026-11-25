@@ -1,8 +1,7 @@
 // The PDF viewer's behavior: the current page drawn on a canvas by PDF.js, page-through, a page
-// indicator, zoom, and the keyboard on the page. PDF.js is never bundled: the site hosts its
-// build (pdfjs-dist's build files and its wasm, iccs, standard_fonts and cmaps folders) under one
-// folder, named by data-pdfjs (default /pdfjs/), and this module imports it from there at
-// runtime, in the browser only. When loading fails the page is replaced by a link to the PDF.
+// indicator, zoom and keys. PDF.js is never bundled: the site hosts its build and wasm, iccs,
+// standard_fonts and cmaps folders under one folder (data-pdfjs, default /pdfjs/), imported at runtime
+// in the browser only. When loading fails the page is replaced by a link to the PDF.
 
 import { clamp } from "../hooks/hooks.ts";
 
@@ -32,7 +31,6 @@ interface PdfJs {
   getDocument(o: Record<string, unknown>): { promise: Promise<PdfDoc> };
 }
 
-// The next page and scale, kept inside the document and the zoom's range.
 export function clampView(
   to: { page?: number; scale?: number },
   at: { page: number; scale: number; pages: number },

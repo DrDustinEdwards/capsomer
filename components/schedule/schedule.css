@@ -1,11 +1,8 @@
-/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+/* Layer order, repeated so this file is safe in any import order. */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
-/* Schedule: a meeting's program by day, time slot and parallel track. From txasm's public
-   program (meetings.$slug.program.tsx), its builder (program-builder/) and its printed program
-   (lib/program-book.ts). The day nav is links; each slot is a list item with its time as the
-   heading; parallel tracks sit side by side where they fit and stack where they do not, with
-   no sideways scroll and no column count set from script. */
+/* Schedule: a meeting's program by day, time slot and parallel track. Tracks sit side by side where
+they fit and stack where they do not, with no sideways scroll and no column count set from script. */
 @layer cap.components {
   .cap-schedule {
     container: cap-schedule / inline-size;
@@ -48,7 +45,6 @@
     list-style: none;
   }
 
-  /* A slot: its time over its tracks; from 40rem the time takes a column of its own. */
   .cap-schedule-slot {
     display: grid;
     gap: var(--space-3);
@@ -88,8 +84,7 @@
     min-width: 0;
   }
 
-  /* Parallel tracks: as many columns as fit at 16rem each, every one as wide as the rest. A
-     track that does not fit wraps under the others, in the list's order. */
+  /* Parallel tracks: as many columns as fit at 16rem each; one that does not fit wraps under the others. */
   .cap-schedule-tracks {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
@@ -142,7 +137,6 @@
     }
   }
 
-  /* A session's talks, in order, under its facts. */
   .cap-schedule-talks {
     display: grid;
     gap: var(--space-1);
@@ -151,7 +145,6 @@
     font-size: var(--fs-body);
   }
 
-  /* The day nav: one link per day, the current one tinted, edged and heavier. */
   .cap-schedule-daybar {
     display: flex;
     flex-wrap: wrap;

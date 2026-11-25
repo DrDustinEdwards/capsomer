@@ -1,7 +1,5 @@
-// Mounts the site header specimens. Every element with data-mount="<surface>" gets that surface:
-// an amber site with a dark band (Foxhound's look) and a fox site with a translucent band (Foxing's),
-// each as a public page, a signed-in page or a user's dashboard, and your admin. The phone
-// specimens mount the same surfaces in a 390px frame. Names, numbers and accounts are samples.
+// Mounts the site header specimens: each element with data-mount="<surface>" gets that surface.
+// Names, numbers and accounts are samples.
 import { StrictMode, useEffect, type ReactNode } from "react";
 import { createRoot } from "react-dom/client";
 import { renderToStaticMarkup } from "react-dom/server";
@@ -54,7 +52,6 @@ const D = {
   home: "M4 11 12 4l8 7v9h-5v-6H9v6H4z",
 };
 
-// The page under each header: a hero for a public page, tiles and rows for a signed-in one.
 const Hero = ({ title, lead }: { title: string; lead: string }) => (
   <main className="sh-hero" id="main" tabIndex={-1}>
     <h1>{title}</h1>
@@ -91,8 +88,7 @@ const Tiles = ({
   </div>
 );
 
-// The amber site: Foxhound's look, its wordmark in the mono face with the x in the accent, on a band
-// that is dark in both themes, its section links on the right before a thin divider.
+// The amber site: a dark band in both themes, section links on the right.
 const FH_LOGO = {
   href: "#home",
   label: "Foxhound",
@@ -125,8 +121,7 @@ const fhPublic: SiteHeaderProps = {
   skipTo: "#main",
 };
 
-// A merchant's dashboard: the business as a square tile, then the product; the gear is gone and
-// its rows are in the avatar's menu, under the business's name.
+// A merchant's dashboard: the business as a square tile, then the product.
 const fhAccount: Required<AdminShellProps>["account"] = {
   name: "Sam Rivera",
   initials: "SR",
@@ -270,9 +265,7 @@ const fhAdmin: AdminShellProps = {
   band: "dark",
 };
 
-// The fox site: Foxing's look, its placeholder mark and its name in the serif, a translucent band
-// in the page's ground, its section links centered. Books and Celebrity Picks open Foxing's own
-// panels, laid out as Foxing draws them.
+// The fox site: a translucent band, centered section links, its own panels.
 const FOX_MARK = FAMILY_APPS.find((a) => a.id === "foxing")?.logo;
 const FX_LOGO = {
   href: "#home",
@@ -373,14 +366,12 @@ const fxPublic: SiteHeaderProps = {
   extras: [fxSearch, { id: "join", label: "Join free", kind: "button", href: "#join" }],
   signIn: { href: "#sign-in" },
   skipTo: "#main",
-  // The site binds single keys, so T switches the theme.
   themeKey: "t",
 };
-// Signed in: the bell joins Search, the avatar is the reader's picture, and its menu is Foxing's own panel.
+// Signed in: the bell joins Search, and the menu is the site's own panel.
 const fxAccount: HeaderAccount = {
   name: "Sam Rivera",
   initials: "SR",
-  // A picture, drawn over the initials (a sample: a fox-orange head and shoulders).
   avatar:
     "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3E%3Crect width='8' height='8' fill='%23f5c9a8'/%3E%3Ccircle cx='4' cy='3' r='1.6' fill='%23b64404'/%3E%3Cpath d='M1 8a3 3 0 0 1 6 0z' fill='%23b64404'/%3E%3C/svg%3E",
   groups: [
@@ -511,11 +502,11 @@ const FX_ROWS: Array<[string, string]> = [
   ["Journal draft: Ten books for long nights", "yesterday"],
 ];
 
-// Holds a panel or the sheet open for the picture; the spec checks the real hover, click and keys.
+// Holds a panel or the sheet open for the picture.
 function Hold({ press, children }: { press?: string; children: ReactNode }) {
   useEffect(() => {
     if (!press) return;
-    // A pointer's click (detail 1), so the picture shows the panel without a keyboard's focus ring.
+    // A pointer click (detail 1), so no keyboard focus ring shows.
     const frame = requestAnimationFrame(() =>
       document
         .querySelector<HTMLElement>(press)
@@ -526,14 +517,13 @@ function Hold({ press, children }: { press?: string; children: ReactNode }) {
   return <>{children}</>;
 }
 
-// The family letterhead: a teal site's public page and its admin, with search and the theme in the
-// same places in both.
+// The family letterhead: a public page and an admin, with search and theme in the same places.
 const HEX = (
   <svg viewBox="0 0 20 20" aria-hidden="true" focusable="false" style={{ fill: "var(--on)" }}>
     <path d="M10 1 17.8 5.5v9L10 19l-7.8-4.5v-9z" />
   </svg>
 );
-// Search answers from a short list here; a site passes its own search (site-header.md, Search).
+// Search answers from a short list here.
 const PAGES = ["Systems", "Flows", "Tools", "Numbers", "Code", "Backups", "Sessions"];
 const lhSearch = {
   action: "#search",
@@ -719,8 +709,7 @@ for (const el of Array.from(document.querySelectorAll<HTMLElement>("[data-mount]
   if (render) createRoot(el).render(<StrictMode>{render()}</StrictMode>);
 }
 
-// A page that does not hydrate: the React header rendered once to HTML, as a server would send
-// it, then wired by the behavior modules alone (hydrate={false}). Sample data throughout.
+// A page that does not hydrate: rendered once to HTML, then wired by the behavior modules alone.
 const tile = (letter: string) => (
   <span className="sh-ex-tile" aria-hidden="true">
     {letter}
@@ -824,9 +813,7 @@ const staticHeader: SiteHeaderProps = {
   },
   skipTo: "#main",
 };
-// A site with its own look on the same header (bsw's shape), set by tokens and slots only: a 64px
-// band whose bar keeps to a 72rem column, semibold links, its own class on Get a quote, no theme and
-// no account, a hairline once the page scrolls, and the phone's row under 1024px (specimen CSS).
+// A site with its own look on the same header, by tokens and slots only.
 const ownHeader: SiteHeaderProps = {
   hydrate: false,
   theme: false,

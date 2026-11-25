@@ -23,9 +23,7 @@ import {
   type Orientation,
 } from "./tabs.ts";
 
-// Renders the HTML contract in tabs.md. The chosen tab, the roving tabindex and the hidden
-// panels are React state, so the markup a server renders is the markup a client hydrates.
-// Every panel is rendered (the inactive ones `hidden`), so the page's content is in the HTML.
+// Renders the HTML contract in tabs.md. State is React's, so server markup is what hydrates; every panel is rendered (inactive `hidden`).
 // Tab values are short tokens (letters, digits, dashes): they become part of the ids.
 interface TabsContext {
   base: string;
@@ -44,17 +42,13 @@ function useTabs(): TabsContext {
 }
 
 export interface TabsProps extends Omit<ComponentProps<"div">, "onChange" | "defaultValue"> {
-  // Controlled: the chosen tab, with onValueChange. Or uncontrolled: defaultValue.
   value?: string;
   defaultValue?: string;
   onValueChange?: (value: string) => void;
   orientation?: Orientation;
-  // "automatic" (default): an arrow key chooses the tab it lands on. "manual": it only moves
-  // focus, and Enter or Space chooses (for panels that are slow to show).
+  // "automatic" (default): an arrow key chooses the tab it lands on. "manual": it only moves focus; Enter or Space chooses.
   activation?: Activation;
-  // Remembers the reader's choice on this device under this key, and follows a choice made in any
-  // other tab set with the same key (tabs.ts, readRemembered). Read after hydration, so the server's
-  // tab paints first. `rememberGuess="platform"` starts from the reader's system when nothing is kept.
+  // Remembers the choice under this key and follows other sets with it. Read after hydration, so the server's tab paints first.
   remember?: string;
   rememberGuess?: "platform";
 }
@@ -87,7 +81,6 @@ export function Tabs({
   };
   useEffect(() => {
     if (!remember) return;
-    // Only a tab this set has, and one that can be chosen.
     const apply = (v: string | null) => {
       const tab = v ? document.getElementById(`${base}-tab-${v}`) : null;
       if (!v || !tab || tab.getAttribute("aria-disabled") === "true") return false;
@@ -124,7 +117,6 @@ export function Tabs({
 }
 
 export interface TabsListProps extends ComponentProps<"div"> {
-  // The list needs a name: "Posts", "Settings sections".
   "aria-label": string;
   // "pill": a rounded tray whose mark a pointer can drag from tab to tab (tabs.ts, attachPillDrag).
   variant?: "default" | "line" | "pill";
@@ -144,7 +136,6 @@ export function TabsList({
 }: TabsListProps) {
   const c = useTabs();
   const list = useRef<HTMLDivElement>(null);
-  // The pill's drag ends in a click on the tab it settles on, so the choice is the trigger's own.
   useEffect(() => {
     const el = list.current;
     if (!el || variant !== "pill") return;
@@ -196,9 +187,7 @@ export type TabTone = "accent" | "info" | "ok" | "warn" | "crit";
 
 export interface TabsTriggerProps extends Omit<ComponentProps<"button">, "value"> {
   value: string;
-  // The pill variant's mark takes this tone while the tab is chosen (or under a drag).
   tone?: TabTone;
-  // A number beside the label. The accessible name reads "Open 12".
   count?: number;
   disabled?: boolean;
 }
@@ -276,10 +265,6 @@ export function TabsContent({
   );
 }
 
-// Tabs that are pages: a nav of links, the current one `aria-current="page"`. No tab roles,
-// no arrow keys: each link is a tab stop, as links are.
-// What a router's link component is given: a plain `<a>`'s props with `href` always set, the
-// tab's class and `aria-current` already on it. Return the router's `<Link to={props.href} {...props} />`.
 export type RenderTabLink = (props: ComponentProps<"a"> & { href: string }) => ReactNode;
 
 const NavLinks = createContext<RenderTabLink | undefined>(undefined);
@@ -289,8 +274,6 @@ export interface TabsNavProps extends ComponentProps<"nav"> {
   variant?: "default" | "line" | "pill";
   size?: "sm" | "default" | "lg";
   fill?: boolean;
-  // The link slot for every `TabLink` inside: how an app's router draws a link (a client-side
-  // navigation), so a tab link is a router link and still carries the tab's look and state.
   renderLink?: RenderTabLink;
 }
 
@@ -322,7 +305,6 @@ export interface TabLinkProps extends Omit<ComponentProps<"a">, "href"> {
   current?: boolean;
   count?: number;
   children: ReactNode;
-  // This link only: how the router draws it. Wins over the nav's `renderLink`.
   renderLink?: RenderTabLink;
 }
 
@@ -351,27 +333,18 @@ export function TabLink({
   return draw ? <>{draw(linkProps)}</> : <a {...linkProps}>{inner}</a>;
 }
 
-// Page tabs: each tab is the page's own address with ?tab=<id> (the first tab the bare address),
-// so Back, a bookmark and a reload reach it; the page's other query parameters are kept. The app
-// reads the tab from its router's search (tabParam in tabs.ts) and passes `search` and `current`;
-// `renderLink` is the router's link, as for TabsNav.
 export interface PageTab {
   id: string;
   label: ReactNode;
   count?: number;
-  // A fuller name when the label and count are not enough ("Drafts, 21 posts").
   "aria-label"?: string;
 }
 
 export interface PageTabsProps extends Omit<TabsNavProps, "children"> {
-  // The page's path, without the query: "/agents".
   path: string;
-  // The address's query as the router has it ("?q=draft" or "q=draft"): kept on every tab.
   search?: string;
   tabs: ReadonlyArray<PageTab>;
-  // The id of the tab the address names.
   current: string;
-  // The query parameter: "tab" by default.
   param?: string;
 }
 

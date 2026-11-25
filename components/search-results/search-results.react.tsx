@@ -2,13 +2,11 @@ import type { ReactNode } from "react";
 import { snippetParts } from "./search-results.ts";
 
 export interface SnippetProps {
-  // Text with each match between the markers (MARK_OPEN, MARK_CLOSE), as FTS5's snippet() writes it.
   text: string;
   open?: string;
   close?: string;
 }
 
-// The snippet with its matches marked. React escapes every run; nothing in it is markup.
 export function Snippet({ text, open, close }: SnippetProps) {
   return (
     <>
@@ -22,19 +20,13 @@ export function Snippet({ text, open, close }: SnippetProps) {
 export interface SearchResultProps {
   href: string;
   title: ReactNode;
-  // What kind of thing it is ("Post", "Guide"), a badge before the title.
   kind?: ReactNode;
-  // Where it sits ("in Getting started", a path), under the title.
   context?: ReactNode;
-  // The snippet, with its matches between the markers.
   snippet?: string;
-  // Why it matched and anything else worth a word ("Matched on the title", a year).
   why?: ReactNode;
-  // The title's heading level in the page's outline.
   level?: 2 | 3;
 }
 
-// One result: the kind, the title as a link, where it sits, the snippet and why it matched.
 export function SearchResult({
   href,
   title,
@@ -69,24 +61,16 @@ export function SearchResult({
 }
 
 export interface SearchResultsProps {
-  // The count line ("24 results"): resultsText writes it. Always rendered, empty before a
-  // search, so the live region exists before it first speaks.
   count: string;
-  // Results, a SearchResult each.
   children?: ReactNode;
-  // Filters, beside the results on a wide screen and above them on a narrow one.
   facets?: ReactNode;
-  // The sort links, above the results.
   sort?: ReactNode;
   // What shows when nothing matched: a sentence and something to try (related tags, recent items).
   empty?: ReactNode;
-  // The pages, under the results.
   pager?: ReactNode;
   label?: string;
 }
 
-// The page around the results: the count, the sort, the list or the empty state, the pages and
-// the facets.
 export function SearchResults({
   count,
   children,

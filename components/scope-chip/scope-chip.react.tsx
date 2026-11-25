@@ -2,8 +2,7 @@ import { type ReactElement, type ReactNode } from "react";
 import { useHydrated } from "../hooks/hooks.react.tsx";
 
 export type ScopeOption = { value: string; label: string };
-// Exactly the props the form gets, so a router's form (React Router's <Form>, whose method and
-// encType are unions) takes them as they are.
+// Exactly the props the form gets, so a router's form (whose method and encType are unions) takes them as they are.
 export type ScopeFormProps = {
   method: "get";
   action?: string;
@@ -14,26 +13,16 @@ export type ScopeFormProps = {
 };
 
 export interface ScopeChipProps {
-  // The scopes to choose from (each site, say).
   options: ScopeOption[];
-  // The value in force, or "" for the unscoped choice.
   value: string;
-  // The select's hidden label: what the list shows ("Show posts from").
   label: string;
-  // The unscoped choice's label ("All sites"); null when the page needs one scope.
   all?: string | null;
-  // The query parameter.
   name?: string;
-  // Other query values to carry (a status tab, a search) when the scope changes.
   keep?: Record<string, string | undefined>;
-  // Where the form goes; the current page when left out.
   action?: string;
-  // The form element, for a router's own form (React Router's <Form>), so the change is a client
-  // navigation. It is given every prop the plain form would get.
   renderForm?: (props: ScopeFormProps) => ReactElement;
 }
 
-// The HTML contract in scope-chip.md.
 export function ScopeChip({
   options,
   value,

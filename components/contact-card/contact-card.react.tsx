@@ -12,14 +12,11 @@ export interface ContactWay {
   label: ReactNode;
   href: string;
   icon?: ReactNode;
-  // An icon after the words (an arrow).
   iconEnd?: ReactNode;
 }
 
 export interface ContactLine {
-  // What the line is for ("Accounts", "Fax").
   label: ReactNode;
-  // Phone numbers as written; each becomes a tel: link.
   numbers: string[];
   // A word between the numbers ("or"). Omitted: the numbers sit side by side.
   join?: string;
@@ -28,13 +25,10 @@ export interface ContactLine {
 export interface ContactCardProps {
   title: ReactNode;
   headingLevel?: "h2" | "h3" | "h4";
-  // A sentence over the ways.
   text?: ReactNode;
-  // Links: an email, a profile, a booking page.
   ways?: ContactWay[];
   // The ways' columns in this card. Omitted: as many as fit at 12rem.
   wayColumns?: 1 | 2 | 3;
-  // Labeled phone numbers.
   lines?: ContactLine[];
   // Address lines, linked to a map when `mapHref` is given.
   address?: string[];
@@ -43,7 +37,6 @@ export interface ContactCardProps {
   children?: ReactNode;
 }
 
-// The HTML contract in contact-card.md.
 export function ContactCard({
   title,
   headingLevel: H = "h3",

@@ -1,6 +1,4 @@
-// The header's search behavior (wireSearch), in its own module so only a header with search loads
-// it: site-header.ts and the React header import it on demand. The design note is on SearchHit in
-// site-header.ts.
+// The header's search behavior, in its own module so only a header with search loads it.
 import { plural } from "@drdustinedwards/site-helpers/text";
 import { listenInto } from "../hooks/hooks.ts";
 import { isImeEnter, registerKey } from "../shortcuts/shortcuts.ts";
@@ -168,7 +166,7 @@ export function wireSearch(
     if (isOpen(panel)) close();
     else open();
   });
-  // "/" opens search from anywhere: through the registry, so typing, a modal and the single-keys switch hold it back.
+  // "/" opens search through the shortcut registry, so typing and modals hold it back.
   undo.push(registerKey({ key: "/", label: "Search", group: "General", run: open }));
   on(input, "input", () => {
     window.clearTimeout(timer);
@@ -205,7 +203,6 @@ export function wireSearch(
         : (active + (e.key === "ArrowDown" ? 1 : all.length - 1)) % all.length,
     );
   });
-  // Focus leaving the panel for anything but its icon closes it; so does a press outside both.
   dismissOutside(on, trigger, panel, close);
   // A press on a row follows its link; focus stays in the field until then.
   on(results, "pointerdown", (e: PointerEvent) => e.preventDefault());

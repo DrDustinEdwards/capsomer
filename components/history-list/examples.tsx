@@ -1,5 +1,4 @@
-// Mounts the React specimen: the same contract as the HTML above, from the wrapper, with the
-// app's part written out (it adds the new line when a restore happens, and removes it on Undo).
+// Mounts the React specimen: the same contract as the HTML, with the app's part written out.
 import { StrictMode, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { MessageProvider } from "../message/message.react.tsx";

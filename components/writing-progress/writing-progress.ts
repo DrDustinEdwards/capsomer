@@ -1,14 +1,8 @@
-// The writing progress panel's math: daily words, a goal, its streak and a deadline's pace (after
-// Dabble, Ulysses and Scrivener). A day is the local calendar day in the device's time zone, so it
-// resets at local midnight wherever the writer is; the browser passes its zone in and nothing here
-// reads the server's clock zone. Only typed words count: each save's `typed` already leaves out
-// pastes, drops, imports and AI drafts taken as the working draft (the untyped tally below is how an
-// editor keeps that count). Deletions come off the day, but not below zero unless the goal allows
-// it. A target is set by hand or worked out from the project's deadline over the writing days
-// chosen, and a streak counts the days that target was met.
-//
-// Pure functions only: the panel runs them in the browser, a server runs them to check a goal, and
-// the tests run them anywhere. Extracted from Carrel (app/lib/writing/progress.ts).
+// The writing progress panel's math: daily words, a goal, its streak and a deadline's pace. A day is the
+// local calendar day in the device's time zone; the browser passes its zone in and nothing here reads the
+// server's clock zone. Only typed words count: each save's `typed` already leaves out pastes, drops,
+// imports and AI drafts. Deletions come off the day, but not below zero unless the goal allows it.
+// Pure functions only, so the browser, a server and the tests run the same code.
 
 export type SaveEntry = { at: string; typed: number; removed: number };
 
@@ -69,7 +63,6 @@ export function dayTotals(
   return new Map([...raw].map(([day, n]) => [day, Math.max(0, n)]));
 }
 
-/** Writing days from `from` to `to`, both included. */
 export function writingDaysBetween(from: string, to: string, writingDays: number[]): number {
   let n = 0;
   for (let day = from, guard = 0; day <= to && guard < 3700; day = addDays(day, 1), guard++) {
@@ -142,7 +135,6 @@ export function streak(
   return run;
 }
 
-/** The last `n` days, newest first, each with its words and whether it was a writing day. */
 export function recentDays(
   totals: Map<string, number>,
   today: string,
@@ -167,7 +159,6 @@ export function parseWritingDays(stored: string): number[] {
   ].sort();
 }
 
-/** The most words a day a goal may ask for. */
 export const MAX_DAILY_TARGET = 100_000;
 
 /**
@@ -188,7 +179,6 @@ export function parseDailyTarget(
   return { ok: true, target: n };
 }
 
-/** A goal as a form posted it, checked: the mode, the target, at least one writing day. */
 export function goalFromForm(input: {
   mode: string;
   dailyTarget: string;
@@ -210,7 +200,6 @@ export function goalFromForm(input: {
   };
 }
 
-/** An untyped count a form posted: a whole number of words, 0 for anything else. */
 export function untypedCount(value: unknown): number {
   const n = Number(value ?? 0);
   return Number.isInteger(n) && n > 0 && n < 10_000_000 ? n : 0;
@@ -249,7 +238,6 @@ export function untypedTally() {
 
 const n = (value: number) => value.toLocaleString("en-US");
 
-/** The weekday's name of a calendar day. */
 export function weekdayName(day: string): string {
   return WEEKDAYS[weekdayOf(day)]!;
 }
@@ -272,7 +260,6 @@ export function paceLine(paced: Pace, deadline: string): string {
   }
 }
 
-/** The sentence that says what the last days' chart shows, with its numbers. Days newest first. */
 export function weekSentence(
   days: ReadonlyArray<{ day: string; words: number; writingDay: boolean }>,
   target: number | null,

@@ -1,9 +1,8 @@
-/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+/* Layer order repeated so this file is safe in any import order: the first statement fixes it (css/layers.css). */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
-/* The carousel: a native scroll-snap track with Previous and Next over its edges, markers under it
-   and a hidden status line. Built to Chrome's Modern Web Guidance carousel guide. carousel.ts wires
-   the controls; without it the track still scrolls and snaps. */
+/* A native scroll-snap track with Previous and Next over its edges, markers under it and a hidden
+   status line. carousel.ts wires the controls; without it the track still scrolls and snaps. */
 @layer cap.components {
   .cap-carousel {
     --carousel-per-view: 1;
@@ -60,12 +59,10 @@
       --carousel-per-view: 3;
     }
   }
-  /* A peek: each slide a little narrower than the track, so the next one shows at the edge. */
   .cap-carousel[data-peek] .cap-carousel-track > * {
     flex-basis: 85%;
   }
 
-  /* Vertical: a column scrolling on the block axis, as tall as the carousel sets. */
   .cap-carousel[data-axis="block"] .cap-carousel-track {
     flex-direction: column;
     block-size: var(--carousel-block, 20rem);
@@ -77,9 +74,9 @@
     }
   }
 
-  /* Looping: the last slide parks before the first while --current is 0 or 1; the first parks after
-     the last while --current is the last or second-to-last. --current has no default, so with no
-     script nothing is parked and the carousel starts on its first slide. */
+  /* Looping: the last slide parks before the first while --current is 0 or 1, and the first after the
+        last while --current is last or second-to-last. --current has no default, so with no script
+        nothing is parked. */
   @supports (order: calc(sibling-count() * 1)) {
     .cap-carousel[data-cap-loops] .cap-carousel-track {
       & > :first-child {
@@ -91,7 +88,6 @@
     }
   }
 
-  /* Previous and Next over the track's two edges; the box between them lets the track scroll. */
   .cap-carousel-controls {
     position: absolute;
     inset: 0;
@@ -140,7 +136,6 @@
       & svg {
         inline-size: 1.25rem;
         block-size: 1.25rem;
-        /* The chevron (components/icons, a 24-unit drawing), its line 2px at 20px. */
         --icon-stroke: 2.4;
       }
       /* A carousel with the controls flipped for right-to-left points its arrows the way it moves. */
@@ -156,7 +151,6 @@
     }
   }
 
-  /* The markers: one button per slide, a dot drawn inside a full-size hit area. */
   .cap-carousel-markers {
     display: flex;
     flex-wrap: wrap;

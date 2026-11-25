@@ -1,14 +1,10 @@
 import { useId, useState, type ChangeEvent, type ReactNode } from "react";
 import { NativeSelect } from "../select/select-native.react.tsx";
 
-// A star rating out of five, in halves (rating.md). `Rating` shows one: an image whose name says
-// the value ("3.5 out of 5 stars"), the stars drawn filled to that half. `RatingInput` asks for
-// one: a native select of the half-star values (the keyboard and screen reader control every
-// platform already knows), with the stars beside it showing the choice.
+// A star rating out of five, in halves. `Rating` shows one as an image named by its value; `RatingInput` is a native select of the half-star values with the stars beside it.
 
 export const RATING_MAX = 5;
 
-// Rounds to the nearest half within 0..5.
 export function toHalves(value: number): number {
   if (!Number.isFinite(value)) return 0;
   return Math.min(RATING_MAX, Math.max(0, Math.round(value * 2) / 2));
@@ -34,7 +30,6 @@ function Stars({ value }: { value: number }) {
 
 export interface RatingProps {
   value: number;
-  // Words after the stars ("(12 ratings)"), visible.
   children?: ReactNode;
   size?: "sm" | "default" | "lg";
   className?: string;
@@ -61,9 +56,7 @@ export interface RatingInputProps {
   defaultValue?: number;
   value?: number;
   onChange?: (value: number) => void;
-  // Words for "no rating" (the empty choice).
   noneLabel?: string;
-  // Allow only whole stars.
   whole?: boolean;
   id?: string;
 }

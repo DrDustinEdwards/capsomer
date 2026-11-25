@@ -1,29 +1,25 @@
 // The system map's data and the pure reading of it (system-map.ts): who uses whom, a system's
 // parts by what they do, and the flows over a system's parts.
 
-// Data. The shape of Capsid's public model (capsid/system/model.json through toPublic),
-// narrowed to what the map shows; a host maps its own data onto it.
+// Data: Capsid's public model (capsid/system/model.json through toPublic), narrowed to what
+// the map shows; a host maps its own data onto it.
 
 export type MapRing = "core" | "shared" | "used";
 
 export interface MapSystem {
   id: string;
   name: string;
-  // The name a card shows on the network, where room is short ("Site MCP"); the full name stays
-  // in the card's words and on the system's page.
+  // The short name a card shows where room is short ("Site MCP").
   short?: string;
   ring: MapRing;
   private?: boolean;
-  // What it is for (Websites, Apps): the systems people use stand in a column per group, in the
-  // order the groups first appear.
+  // What it is for (Websites, Apps): people's systems stand in a column per group, in first-seen order.
   group?: string;
   description?: string;
   domain?: string;
-  // Where a tap on the system goes: its page, which shows it at level 2.
   href?: string;
 }
 
-// A line between two systems, between a system's parts, or from a part to another system.
 export interface MapLink {
   from: string;
   to: string;
@@ -39,8 +35,6 @@ export interface MapContainer {
   description?: string;
 }
 
-// A flow: ordered steps, each riding one line the data holds toward one of its ends, with a
-// sentence and the parts it also touches.
 export interface MapFlowStep {
   from: string;
   to: string;
@@ -63,8 +57,7 @@ export interface SystemMapData {
   flows?: readonly MapFlow[];
 }
 
-// Capsid's public model as it is served, before the map's narrowing: each system carries its
-// family (what kind of thing it is), which the map turns into a group.
+// Capsid's public model as served, before narrowing; the map turns each system's family into a group.
 export interface ModelSystem {
   id: string;
   name: string;
@@ -96,8 +89,7 @@ export interface SystemModel {
   flows?: readonly ModelFlow[];
 }
 
-// The group a system people use stands in, in a stranger's words (Dustin, 2026-10-23: like goes
-// with like, and the map should explain itself). An admin MCP stands with its app.
+// The group a system people use stands in; an admin MCP stands with its app.
 const FAMILY_GROUP: Record<string, string> = {
   system: "Tools",
   writing: "Writing",
@@ -106,12 +98,7 @@ const FAMILY_GROUP: Record<string, string> = {
   site: "Websites",
 };
 
-/**
- * What the map shows from Capsid's public model, the same on every host: each system with, for
- * what people use, its group, every line, and the parts, in the model's order (which sets the
- * groups' order too), and every flow with each step on the two ends of the line it rides (a step
- * on a line the model lacks is left out). `href` is where a system's card goes.
- */
+/** What the map shows from the model, the same on every host. A step on a line the model lacks is left out. */
 export function modelMapData(model: SystemModel, href?: (id: string) => string): SystemMapData {
   const lines = new Map(model.relationships.filter((r) => r.id).map((r) => [r.id, r]));
   return {
@@ -154,7 +141,6 @@ export interface SystemMapOptions {
   id?: string;
   label?: string;
   caption?: string;
-  // The bands' headings, and the one column of what people use when none has a group.
   ringNames?: Partial<Record<MapRing, string>>;
   headingLevel?: 2 | 3 | 4;
   // Level 2: the one system shown, its users, its parts and what it uses. Without it, the network.
@@ -165,10 +151,8 @@ export interface SystemMapOptions {
   flow?: { id: string; step: number };
 }
 
-// Reading. Every line is read between the systems that own its ends, so a part's line to another
-// system's part counts as the two systems' tie.
+// Reading. A line counts between the systems that own its ends.
 
-// A line in words, read from its `from` end.
 export const VERB: Readonly<Record<string, string>> = {
   installs: "installs",
   "publishes-to": "publishes to",
@@ -184,11 +168,9 @@ export const verbOf = (kind: string): string => VERB[kind] ?? kind.replace(/-/g,
 export const STORE_KINDS: ReadonlySet<string> = new Set(["database", "bucket", "kv", "queue"]);
 export const EXTERNAL = "external";
 export type PartPlace = "runs" | "stores" | "outside";
-/** Where a part stands inside its system: what runs, what stores, and what it works with outside. */
 export const placeOf = (kind: string): PartPlace =>
   kind === EXTERNAL ? "outside" : STORE_KINDS.has(kind) ? "stores" : "runs";
 
-/** The system each system and part belongs to, by id. */
 export function ownerOf(data: SystemMapData): Map<string, string> {
   const out = new Map(data.systems.map((s) => [s.id, s.id]));
   for (const c of data.containers ?? []) if (out.has(c.system)) out.set(c.id, c.system);
@@ -197,7 +179,6 @@ export function ownerOf(data: SystemMapData): Map<string, string> {
 
 export interface Tie {
   id: string;
-  // The kinds of line, as words, in the order first met.
   verbs: string[];
 }
 
@@ -206,11 +187,7 @@ export interface Ties {
   usedBy: Tie[];
 }
 
-/**
- * Each system's ties to the others: what it uses (lines from it or its parts to another system or
- * that system's parts) and what uses it, each other system once with every verb, in the systems'
- * order.
- */
+/** Each system's ties: what it uses and what uses it, each other system once with every verb. */
 export function tiesOf(data: SystemMapData): Map<string, Ties> {
   const owner = ownerOf(data);
   const order = new Map(data.systems.map((s, i) => [s.id, i]));
@@ -244,7 +221,6 @@ export function tiesOf(data: SystemMapData): Map<string, Ties> {
 export interface ShownStep {
   text: string;
   toward: string;
-  // The parts of the system shown that the step touches: its ends and what it lights.
   lights: string[];
 }
 
@@ -255,10 +231,7 @@ export interface ShownFlow {
   steps: ShownStep[];
 }
 
-/**
- * The flows shown on one system's page: those with a step that touches one of its parts, each step
- * lighting the parts of this system it touches. A step that touches none of them is still told.
- */
+/** The flows on one system's page: those with a step touching one of its parts. A step touching none is still told. */
 export function flowsOver(data: SystemMapData, id: string): ShownFlow[] {
   const mine = new Set((data.containers ?? []).filter((c) => c.system === id).map((c) => c.id));
   return (data.flows ?? [])
@@ -275,25 +248,19 @@ export function flowsOver(data: SystemMapData, id: string): ShownFlow[] {
     .filter((f) => f.steps.some((st) => st.lights.length > 0));
 }
 
-/** "1 part", "3 parts". */
 export const count = (n: number, one: string, many = `${one}s`): string =>
   `${n} ${n === 1 ? one : many}`;
 
-/** What a step's status line says. */
 export const stepText = (n: number, total: number): string => `Step ${n} of ${total}`;
 
-// The network's layout. A layered drawing (Sugiyama, Tagawa and Toda 1981), with the layers set by
-// what each system is rather than computed: the shared packages stand in the middle lane, since
-// nearly every tie runs to or from one of them, and each block of the rest (a group of what people
-// use, and the core) stands on the left or the right, whichever leaves the fewest ties crossing
-// the middle and the two sides most even. Then the barycenter heuristic orders each lane's
-// systems, and each lane's blocks, by where their neighbors stand, which is what keeps the wires
-// from crossing.
+// The network's layout: a layered drawing (Sugiyama, Tagawa and Toda 1981) with layers set by
+// what each system is, not computed. Shared packages stand in the middle lane; each other block
+// goes left or right, wherever fewest ties cross the middle and the sides are most even. A
+// barycenter pass then orders systems and blocks by their neighbors, which keeps wires from crossing.
 
 export type Lane = "left" | "middle" | "right";
 
 export interface NetworkBlock {
-  // The group's name, or the ring's for the shared packages and the core.
   name: string;
   ring: MapRing;
   systems: MapSystem[];
@@ -306,7 +273,6 @@ export interface NetworkLane {
 
 const LANE_INDEX: Record<Lane, number> = { left: 0, middle: 1, right: 2 };
 
-/** The pairs of systems tied to each other, each pair once. */
 export function tiePairs(data: SystemMapData): [string, string][] {
   const seen = new Set<string>();
   const out: [string, string][] = [];
@@ -321,11 +287,8 @@ export function tiePairs(data: SystemMapData): [string, string][] {
   return out;
 }
 
-/**
- * The network's lanes: left, middle (the shared packages) and right, each a list of blocks in
- * the order they stand, each block's systems in order. Pure, so a server lays the map out and the
- * script only draws the wires between the cards where they landed.
- */
+/** The network's lanes: left, middle (the shared packages) and right. Pure, so a server lays the
+ * map out and the script only draws the wires. */
 export function networkLayout(data: SystemMapData, names: Record<MapRing, string>): NetworkLane[] {
   const pairs = tiePairs(data);
   const used = data.systems.filter((s) => s.ring === "used");
@@ -340,10 +303,9 @@ export function networkLayout(data: SystemMapData, names: Record<MapRing, string
   const blockOf = new Map<string, number>();
   blocks.forEach((b, i) => b.systems.forEach((s) => blockOf.set(s.id, i)));
 
-  // Each block left or right: every assignment is tried (a network has a handful of blocks). A
-  // tie that crosses the middle costs most and one inside a lane less, and an uneven pair of sides
-  // costs the square of the cards it puts out of balance, since one long side makes the whole
-  // drawing tall and its wires steep.
+  // Each block goes left or right: every assignment is tried (a network has a handful of blocks).
+  // A tie crossing the middle costs most; an uneven pair of sides costs the square of the imbalance,
+  // since one long side makes the drawing tall and its wires steep.
   let best = { cost: Infinity, sides: [] as Lane[] };
   const n = blocks.length;
   for (let mask = 0; mask < 1 << n; mask++) {
@@ -380,9 +342,8 @@ export function networkLayout(data: SystemMapData, names: Record<MapRing, string
     },
   ];
 
-  // Barycenter sweeps: a system's place is the mean place of its neighbors in the other lanes,
-  // each lane's places running 0 to 1 from top to bottom so lanes of different lengths compare.
-  // Systems keep their block; blocks move as a whole, by their systems' mean.
+  // Barycenter sweeps: a system's place is the mean of its neighbors' places in other lanes, each
+  // lane running 0 to 1 so lanes of different lengths compare. Blocks move as a whole.
   const neighbors = new Map<string, string[]>(data.systems.map((s) => [s.id, []]));
   for (const [a, b] of pairs) {
     neighbors.get(a)?.push(b);
@@ -423,5 +384,4 @@ export function networkLayout(data: SystemMapData, names: Record<MapRing, string
   return lanes;
 }
 
-/** The space-separated keys in a `data-` attribute. */
 export const ids = (v: string | undefined): string[] => (v ?? "").split(" ").filter(Boolean);

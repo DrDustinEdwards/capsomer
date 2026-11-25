@@ -5,12 +5,10 @@ import { attachRowList } from "./row-list.ts";
 import { plainLink } from "../hooks/hooks.react.tsx";
 
 export interface RowListProps {
-  // The list's name: the heading id that names it (preferred), or a label.
   labelledBy?: string;
   label?: string;
   // The page's main list: j and k work on it even before focus is inside it. One per page.
   primary?: boolean;
-  // shadcn's ItemGroup gap: separate the rows (use with variant "outline" or "muted" on the rows).
   gap?: "sm" | "xs" | "default";
   children: ReactNode;
 }
@@ -48,32 +46,22 @@ export interface RowProps {
   // opened (a checklist step, a fact): its title is plain text, and only its actions are controls.
   href?: string;
   onOpen?: () => void;
-  // A status (.cap-status: glyph, word and color), shown first.
   status?: ReactNode;
   detail?: ReactNode;
-  // The time or other trailing fact, usually a .cap-time.
   meta?: ReactNode;
-  // Real buttons, raised above the stretched link.
   actions?: ReactNode;
   tone?: "crit";
-  // shadcn's Item variants and sizes: "outline" draws the row's edge, "muted" tints it.
   variant?: "outline" | "muted";
   size?: "sm" | "xs";
-  // shadcn's ItemMedia, shown in the first column instead of a status: an icon or a picture.
   media?: ReactNode;
   mediaVariant?: "icon" | "image";
-  // A row that opens in place (a group of like rows): its button reports aria-expanded and
-  // names what it controls, and a chevron after the time turns when it is open.
+  // A row that opens in place: its button reports aria-expanded and names what it controls, and a chevron turns when open.
   expanded?: boolean;
   controls?: string;
-  // A class a composing component adds to the row (the attention list's cap-attention-child).
   className?: string;
-  // The row's own id, so a link from elsewhere (a push alert) can land on it.
   id?: string;
-  // A router's link component; a plain <a> by default.
   renderLink?: (props: RowLinkProps) => ReactNode;
-  // A reply opened in the row (an answer to a question, a note that unblocks a job): a RowReply,
-  // shown under the row's text across the row, above the stretched link.
+  // A reply opened in the row (a RowReply), shown under the row's text, above the stretched link.
   reply?: ReactNode;
 }
 
@@ -158,22 +146,16 @@ export function Row({
 }
 
 export interface RowReplyProps {
-  // What the words are for, as the box's label: "Your answer, sent to its driver".
   label: string;
-  // Sends the words; return a string to show why they were not sent ("Write what you did first").
   onSend: (text: string) => string | void | Promise<string | void>;
   onCancel: () => void;
   sendLabel?: string;
-  // Shown when Send is pressed with nothing written.
   emptyHint?: string;
-  // Shown when onSend throws or rejects; the draft stays in the box.
   failedHint?: string;
   defaultValue?: string;
   rows?: number;
 }
 
-// A reply inside a row: a labeled box that takes focus when it opens, Send and Cancel, a hint
-// that is announced when the words cannot be sent, Ctrl or Cmd+Enter to send and Esc to cancel.
 export function RowReply({
   label,
   onSend,
@@ -201,7 +183,6 @@ export function RowReply({
       const refused = await onSend(text.trim());
       if (typeof refused === "string") setHint(refused);
     } catch (error) {
-      // The draft stays in the box, so nothing typed is lost.
       setHint(failedHint);
       reportError(error);
     } finally {
@@ -259,16 +240,14 @@ export function RowReply({
   );
 }
 
-// What a row action needs from the app's router: a form that posts without leaving the page,
-// and whether its post is under way (the row hides itself until the server answers). Each row
-// calls the hook once, so each row has its own (React Router: useRouterRowForm in
-// capsomer/react/router).
+// What a row action needs from the router: a form that posts without leaving the page, and
+// whether its post is under way (the row hides itself until the server answers). Each row calls
+// the hook once.
 export interface RowForm {
   Form: FormComponent;
   pending: boolean;
 }
 
-// The default: a plain form that posts and loads the page the server answers with.
 export function usePlainRowForm(): RowForm {
   return { Form: PlainForm, pending: false };
 }

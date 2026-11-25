@@ -1,6 +1,4 @@
-// The data layer's plain parts: what a request came to (Answer), the JSON reads and posts that
-// produce it, a page-wide signed-out flag, and the live room's reconnect wait. No React here: the
-// hooks are in data.react.tsx.
+// The data layer's plain parts: Answer, the JSON reads and posts, a page-wide flag and the reconnect wait. No React.
 
 import { errorText } from "../dialog/dialog.ts";
 
@@ -15,10 +13,9 @@ export type Answer<T> =
 export type Failure = Exclude<Answer<never>, { kind: "ok" }>;
 
 /**
- * The session ended: Access answers with a redirect to its login, or the Worker answers 401, or 403
- * when `forbidden` (an action endpoint answers 403 for a CSRF or cross-site refusal, with its text,
- * so it passes false and shows that text). `redirect: "manual"` keeps a cross-origin login redirect
- * from surfacing as an opaque network error.
+ * The session ended: a redirect to the login, or 401, or 403 when `forbidden`. An action endpoint
+ * answers 403 for a CSRF refusal with its text, so it passes false. `redirect: "manual"` keeps a
+ * cross-origin login redirect from surfacing as an opaque network error.
  */
 export function sessionEnded(res: Response, forbidden = true): boolean {
   return (
@@ -42,7 +39,7 @@ async function refusalText(res: Response): Promise<string> {
   return text || `The server answered ${res.status} with no text`;
 }
 
-/** A response as an Answer: 410 is expired (a preview token that lapsed); a non-JSON success is an error. */
+/** A response as an Answer: 410 is expired; a non-JSON success is an error. */
 export async function answerOf<T>(res: Response, forbidden = true): Promise<Answer<T>> {
   if (sessionEnded(res, forbidden)) return { kind: "signed-out" };
   if (res.status === 410) return { kind: "expired", message: await refusalText(res) };
@@ -78,15 +75,10 @@ export async function getAnswer<T>(
   }
 }
 
-/** The words for a request that had no answer in time. */
 export const NO_ANSWER = (seconds: number) =>
   `no answer within ${seconds} seconds. Check whether anything changed before trying again.`;
 
-/**
- * POST JSON to a route on this origin as an Answer. A request with no answer within `timeoutMs`
- * (20 s) is aborted and says so, so a dialog never stays busy with nothing said. A 403 is the
- * server's refusal (CSRF, cross-site), not a sign-out.
- */
+/** POST JSON as an Answer. No answer within `timeoutMs` (20 s) aborts and says so. A 403 is a refusal, not a sign-out. */
 export async function postAnswer<T>(
   url: string,
   body: unknown,
@@ -122,7 +114,6 @@ export async function postAnswer<T>(
   }
 }
 
-/** Thrown by a read whose session ended, so every query stops the same way. */
 export class SignedOut extends Error {
   constructor() {
     super("signed out");
@@ -162,11 +153,7 @@ export function createFlag(initial = false): Flag {
   };
 }
 
-/**
- * How long a live room waits before reconnecting after its `attempt`th drop: exponential from
- * `base` (1 s) to `max` (30 s), with full jitter so a restart does not bring every tab back in the
- * same second (AWS Architecture Blog, "Exponential Backoff And Jitter").
- */
+/** Reconnect wait after the `attempt`th drop: exponential from `base` (1 s) to `max` (30 s) with full jitter (AWS, "Exponential Backoff And Jitter"). */
 export function reconnectDelay(
   attempt: number,
   {

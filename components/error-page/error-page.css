@@ -1,8 +1,7 @@
-/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+/* Layer order, repeated so this file is safe in any import order. */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
-/* The error page: the failed Empty (components/empty, load empty.css with this file) centered in
-   the page's main region, under the site's own header. In development, the stack under it. */
+/* The error page: the failed Empty centered in the main region, under the site's header. */
 @layer cap.components {
   .cap-error-page {
     box-sizing: border-box;
@@ -29,8 +28,7 @@
       line-height: var(--leading-tight);
     }
 
-    /* A missing page is a standalone poster, so its title is set in Jost (--poster), the free Futura,
-       in its Demibold, as NASA NHB 1430.2 section 5.4 heads Futura (Dustin, 2026-11-04). */
+    /* A missing page is a standalone poster, so its title is set in Jost (--poster), the free Futura, in Demibold. */
     &[data-status="404"] h1.cap-empty-title {
       font-family: var(--poster);
       font-size: var(--title-display);
@@ -40,8 +38,7 @@
     }
   }
 
-  /* A site's own title band (`hero`): the band runs the page's width, the sentence and the ways out
-     follow it, centered in the reading column. */
+  /* A site's own title band (`hero`) runs the page's width; the sentence and ways out stay in the reading column. */
   .cap-error-page:has(> .cap-error-page-body) {
     align-items: stretch;
     gap: var(--error-page-hero-gap, var(--gap));

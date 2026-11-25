@@ -23,14 +23,11 @@ export type { Kind };
 
 export interface RunProps {
   kind: Kind;
-  // A block (a div around paragraphs) rather than a span inside one.
   block?: boolean;
-  // Something small before the word on the label: an Avatar with aria-hidden, for example.
   badge?: ReactNode;
   children?: ReactNode;
 }
 
-// One passage and who wrote it: the rule in the margin and the label ("You", "AI", "Quoted").
 export function Run({ kind, block = false, badge, children }: RunProps) {
   const label = (
     <span className="cap-run-label">
@@ -51,7 +48,6 @@ export function Run({ kind, block = false, badge, children }: RunProps) {
   );
 }
 
-// The words under each Run, found by walking the children (text nested in elements counts).
 function collect(node: ReactNode, kind: Kind | null, out: RunInput[]): void {
   Children.forEach(node, (child) => {
     if (typeof child === "string" || typeof child === "number") {
@@ -103,18 +99,13 @@ function Meter({ summary }: { summary: Summary }) {
 }
 
 export interface AuthorshipProps {
-  // Controlled; leave both out and the component remembers the person's choice.
   shown?: boolean;
   onShownChange?: (shown: boolean) => void;
-  // Shown unless the person chose otherwise. Default true.
   defaultShown?: boolean;
-  // Keep the choice in localStorage (the uncontrolled default).
   remember?: boolean;
-  // The runs, as <Run>s inside your paragraphs.
   children: ReactNode;
 }
 
-// The switch, the summary and the marked text. The summary counts the words under each Run.
 export function Authorship({
   shown,
   onShownChange,

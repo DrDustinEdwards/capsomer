@@ -21,7 +21,6 @@ const SYSTEM_NAMES = {
   none: "this device",
 } as const;
 
-// "Chrome on Android": enough to tell two devices apart, and nothing more.
 export function deviceLabel(ua: string): string {
   const browser = /Edg\//.test(ua)
     ? "Edge"

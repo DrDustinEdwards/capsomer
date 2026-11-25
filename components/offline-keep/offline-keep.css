@@ -1,9 +1,7 @@
-/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+/* Layer order repeated so this file is safe in any import order: the first statement fixes it (css/layers.css). */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
-/* "Keep on this device": a toggle button (aria-pressed) and its status line, added by script into
-   an empty [data-cap="offline-keep"]. Extracted from dustinedwards.info's offline keep
-   (app/enhance/offline.ts, public/sw.js). */
+/* A toggle button (aria-pressed) and its status line, added by script into an empty [data-cap="offline-keep"]. */
 @layer cap.components {
   [data-cap="offline-keep"] {
     display: inline-flex;

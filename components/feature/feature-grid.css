@@ -49,7 +49,6 @@
     }
   }
 
-  /* A title with a tag at the end of its line. */
   .cap-feature-card-head {
     display: flex;
     align-items: flex-start;

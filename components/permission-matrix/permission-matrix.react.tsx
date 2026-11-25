@@ -3,10 +3,8 @@ import { holders, holdings, type PermMatrix, type PermView } from "./permission-
 
 export interface PermissionMatrixProps {
   matrix: PermMatrix;
-  // The table region's name and the agent cards' list name.
   label?: string;
   defaultView?: PermView;
-  // Controlled view, for an app that keeps it in the address.
   view?: PermView;
   onViewChange?: (view: PermView) => void;
   note?: string;

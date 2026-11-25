@@ -83,19 +83,14 @@ function Part({ part, adId }: { part: AdPart; adId: string }) {
 }
 
 export interface ErrorAdProps {
-  // The ad, with its art already scoped (scopeArt): trusted markup from the site's own repository.
   ad: Ad & { art: string };
-  // "corner": the foot of an error page; "large": a gallery that shows one ad whole.
   size?: "corner" | "large";
-  // The error-ad stylesheet's and fonts' addresses as the site's bundler emits them, so only a
-  // page that shows an ad loads them (a link here, never an import in the root error boundary).
+  // The stylesheet's and fonts' addresses from the site's bundler, so only a page that shows an ad loads them (never import in the root error boundary).
   stylesheet?: string;
   fonts?: string[];
 }
 
-// One ad, as decoration at the foot of a utility page: inline SVG, so the lettering is real text
-// in real fonts. No ground and no frame; hidden from assistive technology; put it last in main.
-// The HTML contract in error-ad.md.
+// One ad as decoration at the foot of a utility page: inline SVG, so the lettering is real text in real fonts. Hidden from assistive technology; put it last in main.
 export function ErrorAd({ ad, size = "corner", stylesheet, fonts = [] }: ErrorAdProps) {
   for (const href of fonts)
     preload(href, { as: "font", type: "font/woff2", crossOrigin: "anonymous" });

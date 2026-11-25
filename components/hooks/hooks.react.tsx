@@ -19,14 +19,11 @@ export const plainLink = ({ children, ...props }: ComponentProps<"a">) => (
 
 export { cn } from "./hooks.ts";
 
-// Every hook here reads the browser through useSyncExternalStore with a server snapshot, so the
-// server's HTML and the render that hydrates it agree (no React #418), and the browser's value
-// arrives in the next render with no effect setting state.
+// Every hook reads the browser through useSyncExternalStore with a server snapshot, so server HTML and the hydrating render agree (no React #418).
 
 const noSubscribe = () => () => {};
 
-// useLayoutEffect in the browser, useEffect on the server, where a layout effect never runs and
-// React warns about it: for a measure or a write that must land before paint.
+// useLayoutEffect in the browser, useEffect on the server where a layout effect never runs and React warns.
 export const useIsoLayoutEffect = typeof window === "undefined" ? useEffect : useLayoutEffect;
 
 /** React's useId with only letters and digits, safe in an id, a selector and an anchor (React's own has colons). */
@@ -80,11 +77,7 @@ export function useBrowserZone<T extends string | null>(fallback: T): string | T
   );
 }
 
-/**
- * A value remembered in this browser under `key` (null on the server, while hydrating, or when none
- * is kept) and its setter (null forgets it). Every reader of the key on the page, and in other tabs,
- * follows a change. Where storage is refused it is kept for this page only.
- */
+/** A value remembered in this browser under `key` (null on the server, while hydrating or when none is kept) and its setter. Followed across tabs; where storage is refused it lasts this page. */
 export function useRemembered(key: string): [string | null, (value: string | null) => void] {
   const value = useSyncExternalStore(
     subscribeStored,
@@ -95,11 +88,7 @@ export function useRemembered(key: string): [string | null, (value: string | nul
   return [value, remember];
 }
 
-/**
- * The time now, in milliseconds, ticking every `ms` (30 s) once the page is live; 0 on the server
- * and while hydrating, so a time measured against it says the same words in both renders. Pass the
- * server's own read time as `serverNow` to draw against it until the clock starts.
- */
+/** The time now in ms, ticking every `ms` (30 s); 0 on the server and while hydrating so both renders say the same words. `serverNow` draws until the clock starts. */
 export function useNow(ms = 30_000, serverNow = 0): number {
   const clock = useMemo(() => createClock(ms, serverNow), [ms, serverNow]);
   return useSyncExternalStore(clock.subscribe, clock.read, () => serverNow);
@@ -121,13 +110,7 @@ function createClock(ms: number, start: number) {
   };
 }
 
-/**
- * A result shown for `ms` after it arrives, then gone: "Saved", "Copied", a bulk action's count.
- * Returns the result while it shows (undefined after) and a function that hides it now (a close
- * button). A new result (another object) shows again. `clears` picks the results that go on their
- * own; the rest (a failure, usually) stay until hidden or replaced. The hook remembers the one it
- * hid, so a re-render does not bring it back.
- */
+/** A result shown for `ms` after it arrives, then gone. Returns it while showing and a function to hide it now. A new object shows again; `clears` picks which results go on their own. */
 export function useShownFor<T>(
   result: T | null | undefined,
   ms: number,

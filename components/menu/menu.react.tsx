@@ -7,23 +7,19 @@ export interface MenuAction {
   type?: "item";
   label: string;
   onSelect?: () => void;
-  // Destructive or one-way. Danger items are moved to the end of the menu, after a
-  // separator, and drawn in --crit (Primer's rule). The item itself should open the
-  // confirm dialog, never act at once.
+  // Destructive or one-way: moved to the end after a separator and drawn in --crit. The item should
+  // open the confirm dialog, never act at once.
   danger?: boolean;
   disabled?: boolean;
-  // Why the item is disabled, shown under it and read with it. A disabled item stays
-  // reachable by the arrow keys so its reason can be read.
+  // Why the item is disabled, shown under it and read with it. A disabled item stays reachable by
+  // arrow keys so its reason can be read.
   reason?: string;
-  // The key that runs this command elsewhere, in aria-keyshortcuts form: "R", "Shift+D",
-  // "Control+K". Shown at the item's end.
+  // The key that runs this command elsewhere, in aria-keyshortcuts form. Shown at the item's end.
   shortcut?: string;
-  // A small icon before the label.
   icon?: ReactNode;
 }
 
-// An item that is on or off, with a check at its end while it is on. The menu stays open
-// when it is pressed.
+// An item that is on or off, with a check while on. The menu stays open when it is pressed.
 export interface MenuCheckbox {
   type: "checkbox";
   label: string;
@@ -34,10 +30,8 @@ export interface MenuCheckbox {
   shortcut?: string;
 }
 
-// One choice of several, with a check at its end on the chosen one.
 export interface MenuRadioGroup {
   type: "radio-group";
-  // A muted heading over the group.
   label?: string;
   value?: string;
   defaultValue?: string;
@@ -47,14 +41,12 @@ export interface MenuRadioGroup {
   items: Array<{ value: string; label: string; disabled?: boolean }>;
 }
 
-// Items under a muted heading.
 export interface MenuGroup {
   type: "group";
   label: string;
   items: MenuAction[];
 }
 
-// An item that opens another menu to its side.
 export interface MenuSubmenu {
   type: "submenu";
   label: string;
@@ -63,7 +55,6 @@ export interface MenuSubmenu {
   icon?: ReactNode;
 }
 
-// A separator between groups of ordinary items.
 export type MenuEntry =
   | MenuAction
   | MenuCheckbox
@@ -73,17 +64,15 @@ export type MenuEntry =
   | "separator";
 
 export interface MenuProps {
-  // The trigger's visible label: what the menu acts on ("Actions", "More for capsid").
   label: ReactNode;
-  // Needed when the label is not plain text, for example an icon-only trigger.
+  // Needed when the label is not plain text, such as an icon-only trigger.
   "aria-label"?: string;
   items: MenuEntry[];
   disabled?: boolean;
   // Where the popup is portaled. Inside a modal <dialog> pass the dialog.
   container?: HTMLElement | null;
-  // For specimens and tests: open on mount.
   defaultOpen?: boolean;
-  // The trigger's down chevron; false for an icon trigger that says what it opens (the player's).
+  // The trigger's down chevron; false for an icon trigger that says what it opens.
   chevron?: boolean;
 }
 
@@ -103,8 +92,7 @@ const Check = () => (
 const isAction = (e: MenuEntry): e is MenuAction =>
   e !== "separator" && (e.type === undefined || e.type === "item");
 
-// Ordinary entries first, in their order, with no leading, trailing or doubled separator;
-// then the danger items, after one separator.
+// Ordinary entries first with no leading, trailing or doubled separator, then danger items after one separator.
 export function arrangeEntries(items: MenuEntry[]): MenuEntry[] {
   const plain: MenuEntry[] = [];
   for (const e of items) {
@@ -119,8 +107,7 @@ export function arrangeEntries(items: MenuEntry[]): MenuEntry[] {
     : [...plain, ...danger];
 }
 
-// The caps of a shortcut: "Shift+R" is two, aria-hidden (the name stays the action, and
-// aria-keyshortcuts says the keys).
+// The caps of a shortcut, aria-hidden: the name stays the action and aria-keyshortcuts says the keys.
 function Keys({ shortcut }: { shortcut: string }) {
   return (
     <span className="cap-option-keys" aria-hidden="true">
@@ -290,8 +277,7 @@ export function Menu({
   const id = useId();
   const entries = arrangeEntries(items);
   return (
-    // Not modal: a menu does not lock the page's scroll or cover it with an invisible
-    // backdrop. Esc, Tab and a click outside close it; focus returns to the trigger.
+    // Not modal: a menu does not lock scroll or cover the page. Esc, Tab and an outside click close it; focus returns to the trigger.
     <Base.Root modal={false} disabled={disabled} defaultOpen={defaultOpen}>
       <Base.Trigger className="cap-btn cap-menu-trigger" aria-label={rest["aria-label"]}>
         {label}
@@ -309,49 +295,38 @@ export function Menu({
 }
 
 export interface FormMenuItem {
-  // The button's text.
   label: string;
-  // Posted as `intent` (or `name`) with the form: what the server is asked to do. For a link
-  // item it is only the item's key.
+  // Posted as `intent` (or `name`) with the form; for a link item it is only the item's key.
   value: string;
-  // A link item: goes somewhere instead of posting ("Edit", "View on the site"). Same look, and
-  // never danger.
+  // A link item goes somewhere instead of posting; never danger.
   href?: string;
-  // Destructive or one-way: moved last, after a separator, and drawn in --crit. The server
-  // answers it with its own confirmation page, since this works with no script.
+  // Destructive or one-way: moved last after a separator, drawn in --crit. The server answers with its
+  // own confirmation page, since this works with no script.
   danger?: boolean;
-  // A disabled item stays in the menu with its reason under it in plain text (a native
-  // disabled button cannot be reached, so the reason is not hidden behind it).
+  // A disabled item stays in the menu with its reason in plain text; a native disabled button cannot be reached.
   disabled?: boolean;
   reason?: string;
-  // A link item that script turns into an action: once the page runs script a press calls
-  // this instead of following the link (Reschedule… opens a dialog), and with no script the
-  // link goes to the page that does it. Only such a link may be a danger item.
+  // A link item that script turns into an action: with script a press calls this instead of following
+  // the link; without, the link goes to the page that does it. Only such a link may be a danger item.
   onSelect?: () => void;
 }
 
 export interface FormMenuProps {
-  // The summary's visible text: what the menu acts on ("Actions for example.org").
   label: ReactNode;
   "aria-label"?: string;
-  // Where the form posts, and its method (post unless a GET filter is meant). Not needed with `form`.
+  // Where the form posts, and its method. Not needed with `form`.
   action?: string;
-  // The id of a form elsewhere on the page that the items submit (a card inside a list whose one
-  // form carries the row's fields): the menu renders no form of its own, and each item's button
-  // names that form. `hidden` is then not sent; the outer form carries its fields.
+  // The id of a form elsewhere on the page that the items submit: the menu renders no form of its
+  // own and each item's button names that form. `hidden` is then not sent.
   form?: string;
-  // The trigger's size: "sm" in a dense row or a card.
   size?: "sm";
   method?: "post" | "get";
   items: FormMenuItem[];
-  // The field the button's value goes in. `intent` unless the server expects another name.
   name?: string;
-  // Fields every item sends with it: the row's id, a return address.
   hidden?: Record<string, string>;
 }
 
-// The row-actions menu with no script: a <details> of submit buttons. Pure markup, so a server
-// renders what the browser shows; `enhance` adds Esc, arrow keys and closing on an outside press.
+// The row-actions menu with no script: a <details> of submit buttons. `enhance` adds Esc, arrow keys and outside-press close.
 export function FormMenu({
   label,
   action,
@@ -394,7 +369,7 @@ export function FormMenu({
         form={form}
         disabled={i.disabled}
         onClick={() => {
-          // A press posts; the menu closes so it is not left open over the page while it posts.
+          // A press posts; close the menu so it is not left open over the page.
           if (ref.current) ref.current.open = false;
         }}
         data-tone={i.danger ? "crit" : undefined}

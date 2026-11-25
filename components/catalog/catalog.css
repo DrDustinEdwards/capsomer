@@ -1,10 +1,9 @@
 /* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the same line). */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
-/* Catalog: search, facets with counts, removable chips, sort, a table that becomes cards, and a filter tray on a
-   phone. It is a form that submits with GET, so it works with no script; catalog.ts only swaps regions in place.
-   The layout answers to the catalog's own width (a container), not the window's, so it fits a narrow column too.
-   Built from the field, table, empty and pagination components; this file only lays them out. */
+/* Catalog: a form that submits with GET, so it works with no script; catalog.ts only swaps regions in place.
+   The layout answers to the catalog's own width (a container), not the window's, so it fits a narrow column
+   too. Built from the field, table, empty and pagination components; this file only lays them out. */
 @layer cap.components {
   .cap-catalog {
     container: cap-catalog / inline-size;
@@ -58,7 +57,6 @@
     gap: var(--space-3);
   }
 
-  /* Facets: general ones first (the markup order), each a labeled group of checks or radios with its count. */
   .cap-catalog-filters {
     display: grid;
     align-content: start;
@@ -89,7 +87,6 @@
     align-items: center;
   }
 
-  /* Active filters: each chip is a link that removes only itself, so it works with no script. */
   .cap-catalog-chips {
     display: flex;
     flex-wrap: wrap;
@@ -111,7 +108,6 @@
     font-weight: var(--weight-semibold);
   }
 
-  /* A table sort that is a link: the table's sort look, on a link. */
   .cap-catalog a.cap-table-sort {
     text-decoration: none;
   }
@@ -119,13 +115,11 @@
     opacity: var(--opacity-muted);
   }
 
-  /* The phone's tray controls are for narrow catalogs only. */
   .cap-catalog-tray-open,
   .cap-catalog-tray-head {
     display: none;
   }
 
-  /* Wide: the filters are a column beside the results. */
   @container cap-catalog (min-width: 56rem) {
     .cap-catalog-body {
       grid-template-columns: minmax(13rem, 17rem) minmax(0, 1fr);

@@ -5,22 +5,16 @@ export interface RangeSliderProps {
   label: string;
   min: number;
   max: number;
-  // The values in force (from the address, say). New values move the handles.
   low: number;
   high: number;
   step: number;
-  // The inputs' names, so a form with no script still submits both.
   names: [string, string];
-  // The handles' names for assistive technology.
   handleLabels?: [string, string];
-  // A value in words: "$120", or "$500+" at the top.
   format?: (value: number, which: "low" | "high") => string;
-  // Called a quarter second after a handle stops.
   onCommit?: (low: number, high: number) => void;
   className?: string;
 }
 
-// The HTML contract in range-slider.md.
 export function RangeSlider({
   label,
   min,
@@ -40,7 +34,6 @@ export function RangeSlider({
   const handles = useRef<Array<HTMLInputElement | null>>([]);
   const [lo, setLo] = useState(low);
   const [hi, setHi] = useState(high);
-  // New values from the page move the handles (React's "storing information from previous renders").
   const [from, setFrom] = useState({ low, high });
   if (from.low !== low || from.high !== high) {
     setFrom({ low, high });

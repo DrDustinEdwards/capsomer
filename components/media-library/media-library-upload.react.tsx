@@ -20,32 +20,20 @@ import { DropZone } from "../drop-zone/drop-zone.react.tsx";
 import { formatBytes } from "../format/format.ts";
 import type { Model } from "./media-library-model.react.tsx";
 
-// The library's upload as a dialog (Desk redesign, 2026-11-10: "the library is the page; upload is an
-// action"). The toolbar's Upload opens it. With script and `submit`, it takes several files and asks,
-// for each, what the picture shows or that it is decorative, then posts one `upload` per file (the
-// content kit takes one file a post) and says the whole as one result. With no script, the toolbar's
-// link loads `?upload=1` and the dialog is in the page (`data-cap-inline`) with the one-file form
-// the site's own refusal checks. Import from a web address sits under it either way.
+// The library's upload as a dialog. With script and `submit` it takes several files and asks for each what the picture shows or that
+// it is decorative; with no script `?upload=1` loads it in the page (`data-cap-inline`) with the one-file form. Import sits under it either way.
 
 export interface UploadDialogProps {
-  // With script: the modal is open.
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  // Hydrated, with `submit`: the dialog for several files. Otherwise the form as delivered.
   scripted: boolean;
-  // The address asks for the dialog (`upload=1`): with no script it is in the page, open.
   inPage: boolean;
-  // Where Close goes with no script: the library without `upload`.
   closeHref: string;
-  // The site's limits for an upload, or null where only import is offered.
   rules: { accept: string; hint: string; maxBytes?: number } | null;
-  // Keep it at full size, where the site shrinks uploads (one box for every file).
   resize: ReactNode;
-  // The one-file upload form, as delivered with no script.
   noScript: ReactNode;
   importForm: ReactNode;
   submit?: SubmitIntent;
-  // The uploads' result, said as one.
   onDone: (result: IntentResult) => void;
   labels?: ContentLabels;
 }
@@ -55,16 +43,12 @@ interface Chosen {
   file: File;
   alt: string;
   decorative: boolean;
-  // A picture's own preview, an object URL revoked when the file leaves the list.
   preview: string | null;
-  // What the site said when it refused this file.
   error?: string;
 }
 
 const isPicture = (f: File) => /^image\/(png|jpeg|gif|webp|avif)$/.test(f.type);
 
-// The uploads as one result: the sentence names the count, and each file has its outcome, so the
-// bulk bar's list says which one the site refused and why.
 export function uploadsResult(
   done: Array<{ name: string; result: IntentResult }>,
   plural: string,
@@ -137,7 +121,6 @@ function ScriptedUpload({
   const formId = `${uid}-files`;
   const [files, setFiles] = useState<Chosen[]>([]);
   const [busy, setBusy] = useState<{ at: number; of: number } | null>(null);
-  // The previews alive now, so each is revoked once, when its file leaves or the dialog goes.
   const previews = useRef(new Set<string>());
   useEffect(() => {
     const live = previews.current;

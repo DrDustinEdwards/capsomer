@@ -1,15 +1,12 @@
-// The command menu's host in React, light: `useCommandHost` and `LazyCommandMenu` import nothing
-// of the menu until the page is idle (requestIdleCallback, two seconds at most) or the menu is
-// asked for; then the menu is loaded with lazy(). Import them from capsomer/react/command-host so
-// every route's first load carries only this.
+// The command menu's host in React: imports nothing of the menu until the page is idle (two seconds at
+// most) or the menu is asked for. Import from capsomer/react/command-host so a route's first load stays light.
 import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { onModK, whenIdle } from "./command-host.ts";
 import type { Command } from "./command-menu.ts";
 import type { CommandMenuProps } from "./command-menu.react.tsx";
 
-// `ready` turns true when the page is idle, or at once when a shortcut, a button (`setOpen`) or
-// `runWhenReady` asks before then; render the menu only then (LazyCommandMenu does). Ctrl K or
-// Cmd K before then opens it. A command asked for before the menu is ready runs as soon as it is.
+// `ready` turns true when the page is idle or a shortcut, a button or `runWhenReady` asks first. A command
+// asked for before then runs as soon as the menu is ready.
 export function useCommandHost(commands: readonly Command[]) {
   const [ready, setReady] = useState(false);
   const [open, setOpen] = useState(false);
@@ -29,7 +26,6 @@ export function useCommandHost(commands: readonly Command[]) {
     commands.find((c) => c.id === id)?.run();
   }, [ready, commands]);
   return {
-    // Render the CommandMenu only while this is true.
     ready,
     open,
     setOpen: (next: boolean) => {
@@ -52,7 +48,6 @@ const Menu = lazy(() =>
   import("./command-menu.react.tsx").then((m) => ({ default: m.CommandMenu })),
 );
 
-// The menu, loaded with lazy() once the host is ready, open and closed by the host.
 export function LazyCommandMenu({
   host,
   ...props

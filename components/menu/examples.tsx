@@ -1,10 +1,8 @@
-// Mounts the menu specimens. Every element with data-mount="<state>" gets that state. The
-// open states sit in <template data-specimen> frames of their own.
+// Mounts the menu specimens: each element with data-mount="<state>" gets that state.
 import { StrictMode, useEffect, useRef, useState, type ReactNode } from "react";
 import { createRoot } from "react-dom/client";
 import { Menu, type MenuEntry } from "./menu.react.tsx";
 
-// A menu whose items write what was chosen beside it, so a test can read it.
 function Logged({
   entries,
   defaultOpen,
@@ -33,8 +31,7 @@ const plain = (log: (s: string) => void): MenuEntry[] => [
   { label: "Pause checks", onSelect: () => log("Pause checks") },
 ];
 
-// Every feature at once, in the order an app might write it: the danger item comes first
-// here and the menu moves it to the end.
+// Every feature at once; the danger item comes first here and the menu moves it to the end.
 const full = (log: (s: string) => void): MenuEntry[] => [
   { label: "Delete site", danger: true, onSelect: () => log("Delete site") },
   { label: "Open site", shortcut: "O", onSelect: () => log("Open site") },
@@ -71,8 +68,6 @@ const danger = (log: (s: string) => void): MenuEntry[] => [
   { label: "Delete site", danger: true, onSelect: () => log("Delete site") },
 ];
 
-// Everything the menu can hold: an icon, a heading over a group, checkbox items, a radio
-// group with its heading, a submenu, a shortcut and a danger item.
 const Dot = () => (
   <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
     <circle cx="8" cy="8" r="3" fill="currentColor" />
@@ -123,8 +118,7 @@ const rich = (log: (s: string) => void): MenuEntry[] => [
   { label: "Delete site", danger: true, onSelect: () => log("Delete site") },
 ];
 
-// Highlights the first item the way a keyboard does, for the static picture. The spec
-// checks the real keys.
+// Highlights the first item as a keyboard does, for the static picture.
 function Highlighted() {
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -153,7 +147,7 @@ const SPECIMENS: Record<string, () => ReactNode> = {
   comfortable: () => <Logged entries={plain} defaultOpen />,
 };
 
-// The popup is portaled to the body, so the comfortable specimen sets the density there.
+// The popup is portaled to the body, so the density is set there.
 if (new URLSearchParams(location.search).get("only") === "comfortable")
   document.documentElement.dataset.density = "comfortable";
 

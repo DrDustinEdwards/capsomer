@@ -1,4 +1,4 @@
-/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+/* Layer order repeated so this file is safe in any import order: the first statement fixes it (css/layers.css). */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
 /* Pagination: move between pages of a long list, with a "Showing 21 to 40 of 312" line.
@@ -94,7 +94,6 @@
       cursor: default;
     }
 
-    /* Previous and Next carry the action, so they have an edge as an outline button does. */
     &:is([data-kind="prev"], [data-kind="next"]) {
       padding-inline: var(--pad-x);
       border-color: var(--line-strong);
@@ -150,7 +149,6 @@
     }
   }
 
-  /* The skipped pages: a gap, said in words to a reader. */
   .cap-page-gap {
     display: inline-flex;
     align-items: center;
@@ -160,7 +158,6 @@
     color: var(--muted);
   }
 
-  /* "Page 3 of 16": shown in place of the numbers when the container is narrow. */
   .cap-pagination-where {
     display: none;
     padding-inline: var(--space-3);
@@ -169,7 +166,6 @@
     text-align: center;
   }
 
-  /* A narrow container: the numbers give way to "Page 3 of 16" between Previous and Next. */
   @container (max-width: 34rem) {
     .cap-pagination-status {
       inline-size: 100%;

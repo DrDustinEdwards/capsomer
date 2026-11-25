@@ -1,9 +1,7 @@
-// The bulk action bar: what a selection can be done to, said where the selection is. It counts
-// the selected items ("3 selected", a live status), offers the actions, and clears. A
+// The bulk action bar: counts the selection (a live status), offers actions, and clears. A
 // reversible action runs at once and offers Undo through the message region (`z` runs it); a
-// destructive one previews every item in the shared confirm dialog and runs only when the
-// person says so, with focus on Cancel. No framework; the React wrapper calls the same
-// functions.
+// destructive one previews every item in the confirm dialog, focus on Cancel. The React wrapper
+// calls the same functions.
 
 import { confirm } from "../confirm-dialog/confirm-dialog.ts";
 import { fail, say } from "../message/message.ts";
@@ -12,44 +10,38 @@ import { statusEl } from "../status/status.ts";
 const READY = "data-cap-ready";
 const SELECT = "input[type='checkbox'][data-cap-select]";
 
-// Pure helpers.
-
 export interface BulkItem {
-  // What the app calls it (the checkbox's value).
   id: string;
-  // What the person calls it: a filename, a post title. Listed in the preview.
+  // What the person calls it; listed in the preview.
   label: string;
 }
 
-// "3 selected".
 export function countText(n: number): string {
   return `${n} selected`;
 }
 
-// Fills {n} and {s} in a template: "Bin {n} item{s}" gives "Bin 12 items" and "Bin 1 item".
+// Fills {n} and {s} in a template: "Bin {n} item{s}" gives "Bin 12 items".
 export function fillCount(template: string, n: number): string {
   return template.replace(/\{n\}/g, String(n)).replace(/\{s\}/g, n === 1 ? "" : "s");
 }
 
-// Every item of a destructive action, one line each, for the confirm dialog's list. The title
-// carries the count; the list is not shortened, because a preview that hides items is not one.
+// Every item of a destructive action, one line each. Never shortened: a preview that hides items is not one.
 export function previewItems(items: readonly BulkItem[]): string[] {
   return items.map((i) => i.label);
 }
 
-// One item's outcome after an action that acted on several, for the bar's outcome list. A site
-// can refuse one item and do the rest, so each says its own result.
+// One item's outcome after an action on several; a site can refuse one and do the rest.
 export interface BulkOutcome {
   id: string;
   label: string;
   ok: boolean;
-  // Why it was not done, or a note on what was: "Changed since you opened it."
+  // Why it was not done, or a note on what was.
   message?: string;
-  // Where it is still used, when that is why it was refused: one line each.
+  // Where it is still used, when that is why it was refused.
   usedBy?: readonly string[];
 }
 
-// The outcomes to list, refusals first: what needs the person comes before what is done.
+// Refusals first: what needs the person comes before what is done.
 export function orderOutcomes(outcomes: readonly BulkOutcome[]): BulkOutcome[] {
   return [...outcomes.filter((o) => !o.ok), ...outcomes.filter((o) => o.ok)];
 }
@@ -63,9 +55,8 @@ export function outcomeSummary(outcomes: readonly BulkOutcome[]): string {
   return `${done} done, ${not} not done.`;
 }
 
-// The selection model a React list keeps (a server-rendered list keeps it in its checkboxes). The
-// one idea: the selection that counts is always the stored ids that are still in view, in the
-// rows' order, so a filter that hides a row can never leave it counted, gated or submitted.
+// The selection model a React list keeps. The selection that counts is always the stored ids still
+// in view, in row order, so a filter that hides a row never leaves it counted or submitted.
 export function visibleSelection(
   selected: ReadonlySet<string>,
   rows: ReadonlyArray<{ id: string }>,
@@ -81,7 +72,7 @@ export function allVisibleSelected(
   return rows.length > 0 && rows.every((r) => selected.has(r.id));
 }
 
-// Select all: the selection becomes exactly the rows in view (replaced, not merged); all already: clears.
+// Select all replaces the selection with the rows in view; if all are selected, clears.
 export function toggleAllVisible(
   selected: ReadonlySet<string>,
   rows: ReadonlyArray<{ id: string }>,
@@ -96,23 +87,20 @@ export function toggleOne(selected: ReadonlySet<string>, id: string): Set<string
   return next;
 }
 
-// After an action: exactly the items that were not done stay selected, so the next press retries
-// those and nothing else.
+// After an action only the items not done stay selected, so the next press retries them.
 export function failedIds(outcomes: readonly BulkOutcome[]): Set<string> {
   return new Set(outcomes.filter((o) => !o.ok).map((o) => o.id));
 }
 
 export interface BulkActionSpec {
-  // The action's name: "bin", "archive".
   action: string;
   items: readonly BulkItem[];
-  // A value from beside the button, such as a tag to add.
   value?: string;
-  // Runs the action. Reject with an Error whose message says what happened.
+  // Reject with an Error whose message says what happened.
   run: (items: readonly BulkItem[], value?: string) => void | Promise<void>;
-  // Reverses it, for a reversible action: the message offers Undo.
+  // Reverses a reversible action; the message offers Undo.
   undo?: (items: readonly BulkItem[], value?: string) => void | Promise<void>;
-  // A destructive action previews first: the dialog's title, lead and button, as templates with {n}.
+  // A destructive action previews first: the dialog's title, lead and button, templates with {n}.
   destructive?: boolean;
   confirmTitle?: string;
   confirmLead?: string;
@@ -124,9 +112,7 @@ export interface BulkActionSpec {
   returnTo?: HTMLElement | null;
 }
 
-// Runs one bulk action the way the family does it. Resolves true when it ran, false when it was
-// canceled or failed. Reversible: at once, then a message with Undo. Destructive: a confirm
-// dialog lists every item, "Bin 12 items" performs, focus starts on Cancel.
+// Runs one bulk action. Resolves true when it ran, false when canceled or failed.
 export async function performBulk(spec: BulkActionSpec): Promise<boolean> {
   const n = spec.items.length;
   if (n === 0) return false;
@@ -165,8 +151,6 @@ export async function performBulk(spec: BulkActionSpec): Promise<boolean> {
   return true;
 }
 
-// The DOM.
-
 export interface BulkHandler {
   run: BulkActionSpec["run"];
   undo?: BulkActionSpec["undo"];
@@ -176,7 +160,7 @@ export interface BulkHandler {
 
 const handlers = new WeakMap<HTMLElement, Record<string, BulkHandler>>();
 
-// Says what each action of a bar does. The keys are the buttons' data-cap-bulk-action values.
+// What each action of a bar does, keyed by the buttons' data-cap-bulk-action values.
 export function bindBulk(bar: HTMLElement, actions: Record<string, BulkHandler>): void {
   handlers.set(bar, actions);
 }
@@ -202,8 +186,8 @@ export function labelOf(box: HTMLInputElement): string {
   return text || box.value;
 }
 
-// The items now selected, in document order. An item that is out of sight (a filter hid it) is
-// not acted on, so an action never reaches what the person cannot see.
+// The selected items in document order. An item hidden by a filter is not acted on, so an action
+// never reaches what the person cannot see.
 export function selectedItems(bar: HTMLElement): BulkItem[] {
   const list = listOf(bar);
   if (!list) return [];
@@ -217,7 +201,7 @@ export function selectedItems(bar: HTMLElement): BulkItem[] {
     .map((b) => ({ id: b.value, label: labelOf(b) }));
 }
 
-// The selectable items the person can see now (a search or a filter may hide some).
+// The selectable items in view.
 export function itemsInView(list: ParentNode): HTMLInputElement[] {
   return boxesOf(list).filter(
     (b) => !b.disabled && visible(b.closest<HTMLElement>("[data-label], li, tr, label") ?? b),
@@ -228,7 +212,7 @@ function fire(box: HTMLInputElement): void {
   box.dispatchEvent(new Event("change", { bubbles: true }));
 }
 
-// Selects (or clears) every item in view. Real checkboxes change, so a form posts them.
+// Selects or clears every item in view; real checkboxes change, so a form posts them.
 export function setAllInView(list: ParentNode, on: boolean): void {
   for (const box of on ? itemsInView(list) : boxesOf(list)) {
     if (box.checked === on) continue;
@@ -240,8 +224,7 @@ export function setAllInView(list: ParentNode, on: boolean): void {
 const part = <T extends HTMLElement = HTMLElement>(bar: HTMLElement, name: string) =>
   bar.querySelector<T>(`[data-cap-part='${name}']`);
 
-// True while the bar lists outcomes: it stays in view with nothing selected, so the results of
-// the action just run can be read.
+// True while the bar lists outcomes: it stays in view with nothing selected so they can be read.
 function hasOutcomes(bar: HTMLElement): boolean {
   const list = part(bar, "results");
   return !!list && !list.hidden;
@@ -249,8 +232,7 @@ function hasOutcomes(bar: HTMLElement): boolean {
 
 let resultsSeq = 0;
 
-// Writes the outcome list into the bar (the markup on the doc page), replacing any before it, and
-// shows the bar. An empty list removes it.
+// Writes the outcome list into the bar, replacing any before it. An empty list removes it.
 export function showOutcomes(bar: HTMLElement, outcomes: readonly BulkOutcome[]): void {
   part(bar, "results")?.remove();
   if (outcomes.length > 0) {
@@ -302,15 +284,12 @@ export function showOutcomes(bar: HTMLElement, outcomes: readonly BulkOutcome[])
     bar.append(box);
   }
   refresh(bar);
-  // A bar with no list is not counted by refresh; outcomes alone put it in view.
   if (outcomes.length > 0) bar.hidden = false;
 }
 const lastTouched = new WeakMap<HTMLElement, HTMLInputElement>();
 
-// Redraws the bar from the list: the count, hidden when there is none, the select-all label
-// and the header checkbox's state. The count is written a frame after the bar appears, so a
-// screen reader announces it (a status region that is shown and filled in one step is often
-// missed).
+// Redraws the bar from the list. The count is written a frame after the bar appears so a screen
+// reader announces it; a status region shown and filled in one step is often missed.
 export function refresh(bar: HTMLElement): number {
   const list = listOf(bar);
   if (!list)
@@ -358,8 +337,6 @@ export function refresh(bar: HTMLElement): number {
   return n;
 }
 
-// Where focus goes when the bar goes away: the bar's data-cap-return selector, the item last
-// touched, or the first item.
 function returnTarget(bar: HTMLElement): HTMLElement | null {
   const list = listOf(bar);
   const named = bar.dataset.capReturn
@@ -368,8 +345,8 @@ function returnTarget(bar: HTMLElement): HTMLElement | null {
   return named ?? lastTouched.get(bar) ?? (list ? boxesOf(list)[0] : null) ?? null;
 }
 
-// Clears the selection. When focus was in the bar (which hides), it goes back to the list: the
-// bar's data-cap-return selector, the item last touched, or the first item.
+// Clears the selection. If focus was in the bar (which hides), it goes back to the list: the bar's
+// data-cap-return selector, the item last touched, or the first item.
 export function clearSelection(bar: HTMLElement): void {
   const list = listOf(bar);
   if (!list) return;
@@ -388,7 +365,6 @@ function valueFor(button: HTMLElement): string | undefined {
   return el?.value.trim() ?? "";
 }
 
-// Presses one action button: the preview or the immediate run, as the button says.
 export async function invoke(bar: HTMLElement, button: HTMLElement): Promise<boolean> {
   const items = selectedItems(bar);
   const action = button.dataset.capBulkAction ?? "";
@@ -435,7 +411,6 @@ export function attachBulkBar(bar: HTMLElement): () => void {
       refresh(bar);
     };
     list.addEventListener("change", onChange);
-    // Items added, removed or hidden (a filter, an upload, a bin) change what can be selected.
     const watch = new MutationObserver(() => refresh(bar));
     watch.observe(list, {
       childList: true,
@@ -488,9 +463,8 @@ export function attachBulkBar(bar: HTMLElement): () => void {
       refresh(bar);
       return;
     }
-    // Form mode: a submit button is the browser's own. It posts the form with the button's name
-    // and value and the server answers (a destructive intent with its own confirmation page), so
-    // nothing here runs, previews or offers Undo. It only refuses a press with nothing ticked.
+    // Form mode: a submit button is the browser's own and the server answers, so nothing here runs
+    // or previews. It only refuses a press with nothing ticked.
     if (button instanceof HTMLButtonElement && button.type === "submit") {
       if (list && selectedItems(bar).length === 0) {
         e.preventDefault();
@@ -502,7 +476,7 @@ export function attachBulkBar(bar: HTMLElement): () => void {
   };
   bar.addEventListener("click", onClick);
   undo.push(() => bar.removeEventListener("click", onClick));
-  // A server-rendered outcome list carries its Dismiss hidden, since it needs script.
+  // A server-rendered outcome list carries Dismiss hidden, since it needs script.
   const dismiss = part(bar, "dismiss-results");
   if (dismiss) dismiss.hidden = false;
   if (list) refresh(bar);
@@ -512,8 +486,7 @@ export function attachBulkBar(bar: HTMLElement): () => void {
   };
 }
 
-// Attaches to every [data-cap="bulk-bar"] under root not yet attached. Returns a function that
-// detaches them all.
+// Attaches to every [data-cap="bulk-bar"] under root not yet attached; returns a detach function.
 export function enhance(root: ParentNode = document): () => void {
   const undo = Array.from(
     root.querySelectorAll<HTMLElement>("[data-cap='bulk-bar']:not([data-cap-ready])"),

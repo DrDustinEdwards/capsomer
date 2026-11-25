@@ -1,18 +1,11 @@
-/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+/* Layer order repeated so this file is safe in any import order: the first statement fixes it (css/layers.css). */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
-/* A list of rows, each opening a detail. The row's title is its one link or button,
-   stretched over the whole row, so the row is one tab stop with a real role. Extracted from
-   the Capsid Portal (dashboard/src/styles.css: .att-row, .qrow, .frow), which drew three
-   copies of this row; here they are one. The row's spacing, tones, hover, selection and
-   critical edge are the Portal's values; the stretched-link markup, the subgrid columns and
-   the container query are Capsomer's own (v0.1.1 provenance in row-list.md). Rebuilt in 0.2
-   to the craft of shadcn's Item (rounded row, outline and muted variants, sizes, media,
-   a 100 ms color transition, a gap between rows in a group). */
+/* A list of rows, each opening a detail. The row's title is its one link or button, stretched over the
+   whole row, so the row is one tab stop with a real role. */
 @layer cap.components {
-  /* The list is the size container (the phone layout follows the space the list has) and
-     the column grid: every row is a subgrid of it, so status, title, time and actions line
-     up from row to row whatever their content. */
+  /* The list is the size container (the phone layout follows its space) and the column grid: every row
+        is a subgrid, so status, title, time and actions line up from row to row. */
   .cap-rows {
     container: cap-rows / inline-size;
     display: grid;
@@ -22,7 +15,6 @@
     padding: 0;
     list-style: none;
 
-    /* shadcn's ItemGroup: rows as separate cards get a gap between them. */
     &[data-gap] {
       row-gap: var(--gap);
     }
@@ -46,7 +38,6 @@
     border-radius: var(--radius-l);
     color: var(--text);
 
-    /* shadcn's Item variants: outline draws the row's own edge, muted tints it. */
     &[data-variant="outline"] {
       border-color: var(--line);
     }
@@ -57,7 +48,6 @@
       padding-block: var(--space-2);
       padding-inline: var(--pad-x);
     }
-    /* The sizes step down visibly: sm is tighter, xs is tighter and set a size smaller. */
     &[data-size="xs"] {
       min-height: var(--target);
       padding-block: var(--space-1);
@@ -76,14 +66,12 @@
     &[data-force="hover"] {
       background: var(--raised);
     }
-    /* A row that is read, not opened (a checklist step, a fact): no hover, nothing to press. */
     &[data-static]:hover {
       background: transparent;
     }
 
-    /* The focused row: the selection tint and an inset ring in --ring, 3:1 against --sel
-       in both themes. The link itself draws no ring of its own. An outline, so it follows
-       the row's radius and survives forced colors. */
+    /* The focused row: the selection tint and an inset ring in --ring, 3:1 against --sel in both themes.
+            An outline, so it follows the row's radius and survives forced colors. */
     &:has(.cap-row-title :focus-visible),
     &[data-force="focus"] {
       background: var(--sel);
@@ -91,15 +79,12 @@
       outline-offset: calc(var(--focus-width) * -1);
     }
 
-    /* Critical rows only: a red left edge, beside the status word and its glyph. An inset
-       shadow, so it is flush with the row's edge and clipped to its rounded corners. */
+    /* Critical rows: a red left edge as an inset shadow, flush and clipped to the rounded corners. */
     &[data-tone="crit"] {
       box-shadow: inset var(--line-w-bar) 0 0 var(--crit);
     }
   }
 
-  /* The status (glyph, word, color) or, in shadcn's ItemMedia, an icon or a picture: the
-     row's first column. */
   :is(.cap-row-status, .cap-row-media) {
     grid-column: 1;
     grid-row: 1 / span 2;
@@ -162,7 +147,6 @@
       -webkit-line-clamp: 2;
       line-clamp: 2;
 
-      /* The stretched hit area: the whole row opens the detail. */
       &::after {
         content: "";
         position: absolute;
@@ -171,7 +155,6 @@
     }
   }
 
-  /* A static row's title opens nothing: no stretched hit area. */
   .cap-row-text::after {
     content: none;
   }
@@ -204,8 +187,7 @@
     white-space: nowrap;
   }
 
-  /* Row actions are real buttons, raised above the stretched link so they take their own
-     clicks. */
+  /* Row actions are real buttons, raised above the stretched link so they take their own clicks. */
   .cap-row-actions {
     grid-column: 4;
     grid-row: 1 / span 2;
@@ -216,17 +198,15 @@
     gap: var(--space-2);
   }
 
-  /* A link inside the detail or the time, and a control in the media column (a row's
-     checkbox), also sit above the stretched link, so they take their own clicks. */
+  /* A link in the detail or time, and a control in the media column, also sit above the stretched link. */
   .cap-row :is(.cap-row-detail, .cap-row-meta) :is(a, button),
   .cap-row-media :is(a, button, label, input) {
     position: relative;
     z-index: 1;
   }
 
-  /* A row whose title is a disclosure button (a group that opens in place): a chevron
-     after the time says it opens, and turns when it is open. The Portal's .chev, same
-     geometry. Decorative; aria-expanded on the button is the state. */
+  /* A disclosure row: a chevron after the time says it opens and turns when open. Decorative;
+        aria-expanded on the button is the state. */
   .cap-row-chevron {
     display: inline-block;
     flex: none;
@@ -247,11 +227,9 @@
     transform: rotate(45deg);
   }
 
-  /* A phone, or any narrow column: the actions go underneath and a status moves above the
-     title. An icon or a picture stays beside the title, as in a wide column, so a list has one
-     layout at every width, and every row's text starts in the one column (the rows stay a
-     subgrid of the list). The title and the detail wrap instead of being cut: on a phone there is
-     no hover and no wider view to read the rest in (the Portal lets titles wrap at phone width). */
+  /* A phone or narrow column: the actions go underneath and a status moves above the title. An icon or
+        picture stays beside the title so a list has one layout at every width and every row's text starts in
+        the one column. The title and detail wrap instead of being cut: a phone has no hover to read the rest. */
   @container cap-rows (max-width: 30rem) {
     .cap-rows {
       grid-template-columns: auto minmax(0, 1fr) auto;
@@ -263,8 +241,6 @@
       -webkit-line-clamp: none;
       line-clamp: none;
     }
-    /* A picture or an icon sits at the top, so it stays beside the title however many lines the
-       title and the detail take. */
     .cap-row-media {
       align-self: start;
     }
@@ -276,8 +252,6 @@
       grid-row: 1;
       justify-self: start;
     }
-    /* A row with a status: the status above, then the title and detail across the first two
-       columns (no media column to line up with), the time beside them, the actions under them. */
     .cap-row:has(> .cap-row-status) {
       & > :is(.cap-row-title, .cap-row-detail) {
         grid-column: 1 / 3;
@@ -317,14 +291,13 @@
   /* Forced colors remove tints: the critical edge is drawn in CanvasText, and the focus
      ring (an outline) stays. */
   @media (forced-colors: active) {
-    /* Forced colors drop shadows: the edge is a border there. */
     .cap-row[data-tone="crit"] {
       border-inline-start: var(--line-w-bar) solid CanvasText;
     }
   }
 
-  /* A long list renders only the rows near the screen: the first 30 are always drawn, later ones wait until scrolled
-     near, holding a row's height (Modern Web Guidance, defer-rendering-heavy-content). */
+  /* A long list renders only the rows near the screen: the first 30 are always drawn, later ones wait
+        until scrolled near, holding a row's height. */
   .cap-row:nth-child(n + 31) {
     content-visibility: auto;
     contain-intrinsic-size: auto none auto 4rem;
@@ -332,7 +305,6 @@
     overflow-clip-margin: 0.375rem;
   }
 
-  /* A reply opened in the row: under its text, across the row, above the stretched link. */
   .cap-row-reply {
     grid-column: 2 / -1;
     grid-row: 3;

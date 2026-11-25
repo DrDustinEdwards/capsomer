@@ -30,13 +30,8 @@ import { markup } from "../trusted-html/trusted-html.ts";
 export type { Message, SayOptions };
 
 export interface MessageApi {
-  // Says a message in the page's region. Does not move focus. A plain result replaces the
-  // plain result before it; a warning, a failure and a failed Undo stay until dismissed.
   say: (text: string, opts?: SayOptions) => void;
-  // Says that something did not happen and has no control beside it to say so (a failed
-  // copy, a failed refresh). Stays until dismissed.
   fail: (text: string) => void;
-  // Clears every message, lasting ones too.
   dismiss: () => void;
 }
 
@@ -57,10 +52,7 @@ const MessageContext = createContext<Ctx | null>(null);
 
 export interface MessageProviderProps {
   children: ReactNode;
-  // Renders the region after the children. Pass false and place <MessageRegion /> where
-  // the page's results should show.
   region?: boolean;
-  // `z` runs the current Undo. False when the app's single-key shortcuts are switched off.
   undoKey?: boolean;
 }
 
@@ -72,7 +64,6 @@ export function MessageProvider({ children, region = true, undoKey = true }: Mes
   const origin = useRef<Element | null>(null);
   const regionRef = useRef<HTMLDivElement | null>(null);
   const timers = useRef(new Map<number, number>());
-  // Where focus goes after the render that removes the button that had it.
   const settle = useRef<Settle | null>(null);
 
   const commit: (next: Message[], s?: Settle) => void = useCallback(
@@ -131,12 +122,10 @@ export function MessageProvider({ children, region = true, undoKey = true }: Mes
       try {
         await run();
       } catch (err) {
-        // The message stays too, so it can say why.
         if (live.current.some((x) => x.id === m.id)) commit(undoFailed(live.current, m.id, err));
         return;
       }
       const to = resolveFocus(m.returnFocus);
-      // The Undo may have said something itself, which replaced this message.
       if (!live.current.some((x) => x.id === m.id)) return;
       commit(
         undoDone(live.current, m, () => nextId.current++),
@@ -146,9 +135,7 @@ export function MessageProvider({ children, region = true, undoKey = true }: Mes
     [commit],
   );
 
-  // After a render that removed the focused button, focus goes where the caller said, else
-  // to that message's Dismiss, else back to the control that caused the message, else the
-  // main region.
+  // After a render that removed the focused button, focus goes where the caller said, else the message's Dismiss, else the cause, else main.
   useEffect(() => {
     const s = settle.current;
     if (!s) return;
@@ -168,7 +155,6 @@ export function MessageProvider({ children, region = true, undoKey = true }: Mes
     (back ?? document.querySelector<HTMLElement>("main"))?.focus();
   }, [messages]);
 
-  // `z` runs the current Undo.
   const hasUndo = !!currentUndo(messages);
   useEffect(() => {
     if (!undoKey || !hasUndo) return;
@@ -199,9 +185,7 @@ export function useMessage(): MessageApi {
   return api;
 }
 
-// The same API, or null when no <MessageProvider> is above: for a component that says its
-// results in the page's region when there is one and works without it (a form that posts).
-// One object while the provider's callbacks hold, so an effect that depends on it does not re-run each render.
+// The same API, or null when no <MessageProvider> is above. One object while the provider's callbacks hold, so effects depending on it do not re-run.
 export function useOptionalMessage(): MessageApi | null {
   const ctx = useContext(MessageContext);
   const { say, fail, dismiss } = ctx ?? {};
@@ -211,8 +195,7 @@ export function useOptionalMessage(): MessageApi | null {
   );
 }
 
-// The region itself. One per page. It has no data-cap attribute, so the plain behavior
-// module never attaches to a region React owns.
+// One region per page; it has no data-cap attribute, so the plain behavior module never attaches to a region React owns.
 export function MessageRegion() {
   const ctx = useContext(MessageContext);
   if (!ctx) throw new Error("MessageRegion needs a <MessageProvider> above it.");

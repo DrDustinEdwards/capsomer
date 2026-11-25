@@ -1,11 +1,6 @@
 // The catalog's core: one declaration of a collection's fields, and the pure functions that turn the
 // address's query string and the items into the page's state. No DOM and no framework, so a server
-// renders the same result a browser would, the filter works with no script, and every site that uses
-// the catalog gets the same counts, chips and addresses.
-//
-// A collection declares each field once (is it searched, is it a facet, is it a column, can it sort).
-// `parseCatalogParams` reads the address; `queryCatalog` applies it and returns what the page shows.
-// The result never depends on how it is drawn.
+// renders what a browser would and the filter works with no script.
 
 export type CatalogValue = string | number | boolean | null | undefined;
 
@@ -14,9 +9,8 @@ export interface CatalogFacet<T = unknown> {
   // "range": a span of numbers (years) chosen from two menus, From and To; an item matches when its own
   // span overlaps the chosen one.
   kind?: "one" | "many" | "range";
-  // A range facet: the span an item covers (a post's year as [2024, 2024], a job held 2019 to now as
-  // [2019, Infinity]), or null for an item with none, which no range matches. Default: the field's
-  // numeric values, lowest to highest.
+  // A range facet: the span an item covers (e.g. [2019, Infinity]), or null for an item with none, which
+  // no range matches. Default: the field's numeric values, lowest to highest.
   span?: (item: T) => readonly [number, number] | null;
   // A range facet's two URL parameters. Default "<key>-from" and "<key>-to".
   params?: { from: string; to: string };
@@ -176,7 +170,6 @@ export interface CatalogResult<T> {
 
 export const RESERVED_PARAMS = ["q", "sort", "page"] as const;
 
-// Folds case and accents, so "Report" matches "report" and "Genève" matches "geneve".
 export function fold(text: string): string {
   return text
     .normalize("NFD")
@@ -216,8 +209,7 @@ function inRange<T>(field: CatalogField<T>, item: T, value: string): boolean {
   return true;
 }
 
-// Checks a declaration once, at definition time, so a mistake is a thrown error where it is made and not a
-// filter that quietly does nothing.
+// Checks a declaration once, at definition time, so a mistake throws where it is made.
 export function defineCatalog<T>(def: CatalogDefinition<T>): CatalogDefinition<T> {
   const keys = new Set<string>();
   for (const field of def.fields) {
@@ -328,12 +320,10 @@ export function catalogHref<T>(def: CatalogDefinition<T>, state: CatalogState): 
   return query ? `${def.basePath}?${query}` : def.basePath;
 }
 
-// The address a request should have, or null when it already has it. A browser submitting the form with no script
-// sends every control, including the ones at their defaults (`?q=billing&sort=-updated&kind=`); a server answers
-// that with a redirect to the one address the state has, so what is shared and cached is the clean one.
-// `keepUnknown` leaves parameters the catalog does not read (a campaign tag, a cache buster) out of the
-// comparison, so they are served rather than redirected away; they are dropped only when a redirect
-// happens anyway.
+// The address a request should have, or null when it already has it. A form submitted with no script
+// sends every control, including defaults; the server redirects to the one clean address so what is
+// shared and cached is the clean one. `keepUnknown` leaves parameters the catalog does not read out of
+// the comparison, so they are served rather than redirected away.
 export function catalogRedirect<T>(
   def: CatalogDefinition<T>,
   url: URL,
@@ -351,7 +341,6 @@ export function catalogRedirect<T>(
   return `${url.pathname}${search}` === wanted ? null : wanted;
 }
 
-// Every URL parameter the catalog reads.
 function catalogParams<T>(def: CatalogDefinition<T>): Set<string> {
   const names = new Set<string>(RESERVED_PARAMS);
   for (const field of def.fields) {
@@ -681,8 +670,7 @@ export function countText<T>(
     : `${result.count} of ${result.total} ${noun(result.total)}`;
 }
 
-// The state as a downloadable table: the matching items' columns, so a CSV or JSON export is the same
-// rows the page shows (not a second query).
+// The state as a downloadable table: the matching items' columns, the same rows the page shows.
 export interface RecordOptions<T> {
   // A first "id" column (a slug), and a "url" column with each item's absolute address.
   id?: (item: T) => string;
@@ -696,8 +684,7 @@ export interface RecordOptions<T> {
   join?: string;
 }
 
-// The state as a downloadable table: the matching items' columns, so a CSV or JSON export is the same
-// rows the page shows (not a second query). `state` may be the request's query.
+// The state as a downloadable table (`state` may be the request's query).
 export function catalogRecords<T>(
   def: CatalogDefinition<T>,
   items: readonly T[],
@@ -741,8 +728,8 @@ export interface MarkdownOptions<T> {
   join?: string;
 }
 
-// The catalog's rows as a Markdown table for a page's machine-readable twin (/library.md): the
-// table's columns, the first one a link to each item, every cell escaped.
+// The catalog's rows as a Markdown table for a page's machine-readable twin: the table's columns, the
+// first a link to each item, every cell escaped.
 export function catalogMarkdown<T>(
   def: CatalogDefinition<T>,
   items: readonly T[],
@@ -801,8 +788,8 @@ export function oneOf<V extends string, F>(
     : fallback;
 }
 
-// A list parameter, sent either way a person or a form sends it: repeated (?tag=a&tag=b) or as one
-// comma list (?tag=a,b). Trimmed, deduplicated in first-seen order, and, with `known`, only values in it.
+// A list parameter, repeated (?tag=a&tag=b) or comma-separated (?tag=a,b). Trimmed, deduplicated in
+// first-seen order, and, with `known`, only values in it.
 export function listParam(
   params: URLSearchParams,
   key: string,

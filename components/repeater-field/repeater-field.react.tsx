@@ -8,33 +8,24 @@ import { rowFieldName } from "./repeater-field.ts";
 const FOCUSABLE = "input:not([type='hidden']), select, textarea, button, [tabindex]";
 
 export interface RepeaterRowApi<T> {
-  // The row's index and its label ("Link 2"), for the labels of its fields.
   index: number;
   label: string;
-  // Change some of the row's values.
   set: (patch: Partial<T>) => void;
-  // The posted name of one of its fields (`links[2][url]`), for a form that posts without script.
   name: (key: string) => string;
 }
 
 export interface RepeaterFieldProps<T> {
-  // The group's name, as its legend ("Links").
   legend: ReactNode;
   help?: ReactNode;
   error?: ReactNode;
   rows: T[];
   onChange: (rows: T[]) => void;
-  // A new, empty row.
   newRow: () => T;
-  // The row's name ("Link 2"), from its place: its group's name, and in each button's name.
   rowLabel: (index: number, row: T) => string;
-  // The row's fields: labeled controls, named with api.name(key) when the form posts.
   children: (row: T, api: RepeaterRowApi<T>) => ReactNode;
-  // The add button's words. Default "Add another".
   addLabel?: string;
   min?: number;
   max?: number;
-  // Move up and Move down on each row.
   reorder?: boolean;
   // The field name the rows post under. With `json`, script posts them as one JSON array in a
   // hidden input of this name; rowsFromForm reads either form.
@@ -45,10 +36,8 @@ export interface RepeaterFieldProps<T> {
   spare?: number;
 }
 
-// A list of rows of fields a person adds to, removes from and reorders: links, authors,
-// materials. Each row is a group named by its place; the buttons name the row they act on;
-// focus goes to the new row, the row after a removed one, or follows a moved row; and each
-// change is said in the status region when the app has a MessageProvider.
+// A list of rows of fields a person adds to, removes and reorders. Each row is a group named by its place; focus
+// goes to the new row, the row after a removed one, or follows a moved row; changes are said in the status region.
 export function RepeaterField<T>({
   legend,
   help,
@@ -71,7 +60,6 @@ export function RepeaterField<T>({
   const message = useOptionalMessage();
   const list = useRef<HTMLOListElement>(null);
   const add = useRef<HTMLButtonElement>(null);
-  // Stable keys that follow each row as it moves or goes (the sortable list's useRows).
   const keyed = useRows(rows, onChange);
   const keys = keyed.items.map((r) => r.id);
   // After a change, where focus goes: a row's first control, a row's button, or Add.

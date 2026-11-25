@@ -1,7 +1,5 @@
-// The author list's one piece of logic: which names a folded list shows. Pure, so the React
-// wrapper, a server renderer and the unit test share it.
+// The author list's one piece of logic: which names a folded list shows. Pure, shared by the React wrapper and a server renderer.
 
-/** An author: a name, or a name with a link (a profile, an ORCID record). */
 export type Author = string | { name: string; href?: string };
 
 export type Fold<A> =
@@ -10,12 +8,7 @@ export type Fold<A> =
 
 export const nameOf = (a: Author): string => (typeof a === "string" ? a : a.name);
 
-/**
- * Folds a long list to its first `keep` names and "and N more". Author order varies, so when the
- * owner falls outside the first `keep`, the fold shows one name fewer, then the owner after an
- * ellipsis: the owner is always in view. `keep` under 1 is taken as 1; a list no longer than
- * `keep` is not folded.
- */
+/** Folds a long list to its first `keep` names and "and N more", keeping the owner in view (one name fewer, then the owner after an ellipsis). `keep` under 1 is 1. */
 export function foldAuthors<A extends Author>(
   authors: readonly A[],
   isOwner: (name: string) => boolean = () => false,

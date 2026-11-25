@@ -16,26 +16,18 @@ export interface ButtonProps
   extends
     Omit<ButtonHTMLAttributes<HTMLButtonElement>, "disabled" | "style">,
     Pick<ButtonLook, "variant" | "size"> {
-  // In flight: the label stays (so the width and the name stay) and a spinner covers it.
-  // Clicks are ignored until it settles.
+  // In flight: the label stays (so width and name stay) under a spinner; clicks are ignored until it settles.
   pending?: boolean;
-  // Said once to a screen reader when `pending` turns on ("Connecting to Stripe"), from a polite
-  // live region beside the button that is always in the page, so the change is heard.
+  // Said once to a screen reader when `pending` turns on, from an always-present polite live region.
   pendingLabel?: string;
-  // A long label wraps onto more lines (a narrow column, a phone).
   wrap?: boolean;
-  // Fills its row.
   block?: boolean;
-  // Disabled, with the reason written beside the button. The button stays focusable and
-  // the reason is its description; clicks are ignored.
+  // The reason is written beside the button as its description; the button stays focusable.
   disabledReason?: ReactNode;
-  // An icon button: `children` is the icon and `label` its accessible name.
   iconOnly?: boolean;
   label?: string;
-  // A label that changes in place (Save, Saving…, Saved) eases the width and crossfades the
-  // words. The label is wrapped in `.cap-btn-label`.
+  // A label that changes in place eases the width and crossfades; wrap it in `.cap-btn-label`.
   morph?: boolean;
-  // The button element, for an app that moves focus to it (React 19 passes it through).
   ref?: Ref<HTMLButtonElement>;
   children?: ReactNode;
 }
@@ -63,8 +55,6 @@ export function Button(props: ButtonProps) {
   const describedBy =
     [rest["aria-describedby"], disabled ? reasonId : null].filter(Boolean).join(" ") || undefined;
 
-  // The morph: after React writes a new label, animate from the last width and a copy of the
-  // last label (button.ts).
   const labelRef = useRef<HTMLSpanElement>(null);
   const last = useRef<{ text: string; width: number; copy: HTMLElement } | null>(null);
   useLayoutEffect(() => {
@@ -130,7 +120,6 @@ export function Button(props: ButtonProps) {
   );
 }
 
-// Buttons sharing one edge. `orientation` is horizontal unless set.
 export function ButtonGroup(props: {
   label?: string;
   orientation?: "horizontal" | "vertical";
@@ -150,7 +139,6 @@ export function ButtonGroup(props: {
   );
 }
 
-// Static text that sits in a group beside the buttons.
 export function ButtonGroupText(props: { children?: ReactNode }) {
   return <span className="cap-btn-group-text">{props.children}</span>;
 }

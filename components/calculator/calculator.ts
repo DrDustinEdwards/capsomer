@@ -1,8 +1,7 @@
 // The calculator: a labeled form drawn from a field list, and a result region drawn from a plain
 // view tree, so a server component and this module build the same markup from one description and
-// neither parses HTML. The site owns the arithmetic: it passes a `run` function that turns the
-// field values into a CalculatorResult. Extracted from dustinedwards.info (app/components/phage-tool.tsx,
-// app/lib/phage-tools.mjs resultView and textParts, app/enhance/tools.ts).
+// neither parses HTML. The site owns the arithmetic: it passes a `run` that turns the field values
+// into a CalculatorResult.
 
 /** The tags a view node may use. Anything else is refused, so a tree can never carry a script. */
 export const VIEW_TAGS = [
@@ -36,13 +35,11 @@ export interface CalculatorSource {
 export interface CalculatorField {
   name: string;
   label: string;
-  // Shown after the label in parentheses ("pfu/ml", "µl").
   unit?: string;
   // The field's opening value, when the address gives none.
   value: string;
   // Help under the field; 10^n in it is set as a power.
   hint?: string;
-  // Where the opening value comes from, linked after the hint.
   source?: CalculatorSource;
   // The source link's lead-in. Default: "Default:".
   sourceLead?: string;
@@ -52,9 +49,7 @@ export interface CalculatorField {
 
 export interface CalculatorSection {
   heading: string;
-  // The one line the status region announces for this section, if any.
   result?: string;
-  // The worked steps, in order.
   steps: string[];
   notes?: string[];
 }
@@ -70,7 +65,6 @@ export interface TextPart {
   sup?: true;
 }
 
-/** A line with each `10^n` split out as a power: "1 x 10^-3" is "1 x 10" and a superscript "−3". */
 export function textParts(line: string): TextPart[] {
   const parts: TextPart[] = [];
   let last = 0;
@@ -84,17 +78,14 @@ export function textParts(line: string): TextPart[] {
   return parts.filter((part) => part.text !== "");
 }
 
-/** A line as view nodes, its powers as `sup`. */
 export function lineNodes(line: string): Array<ViewNode | string> {
   return textParts(line).map((part) =>
     part.sup ? { tag: "sup", children: [part.text] } : part.text,
   );
 }
 
-/**
- * What a result looks like, as plain nodes. `summary` is the one line per section the status region
- * announces; `detail` is the worked steps under it. An error is the summary alone.
- */
+/** `summary` is the one line per section the status region announces; `detail` is the worked steps.
+ * An error is the summary alone. */
 export function resultView(result: CalculatorResult): {
   summary: Array<ViewNode | string>;
   detail: ViewNode[];
@@ -135,14 +126,12 @@ export function resultView(result: CalculatorResult): {
   return { summary, detail };
 }
 
-/** Throws on a tag outside VIEW_TAGS: a bug in the site's tree, never something to draw. */
 export function checkTag(tag: string): ViewTag {
   if (!(VIEW_TAGS as readonly string[]).includes(tag))
     throw new Error(`calculator: a view node may not be <${tag}>.`);
   return tag as ViewTag;
 }
 
-/** A view node as DOM: elements and text nodes, no markup string. */
 export function buildNode(node: ViewNode | string, doc: Document = document): Node {
   if (typeof node === "string") return doc.createTextNode(node);
   const el = doc.createElement(checkTag(node.tag));
@@ -151,7 +140,6 @@ export function buildNode(node: ViewNode | string, doc: Document = document): No
   return el;
 }
 
-/** The form's values for the given fields, as strings, cut at 40 characters as the address is. */
 export function formValues(form: HTMLFormElement, fields: string[]): Record<string, string> {
   const data = new FormData(form);
   const values: Record<string, string> = {};
@@ -159,10 +147,8 @@ export function formValues(form: HTMLFormElement, fields: string[]): Record<stri
   return values;
 }
 
-/**
- * The values for `fields`: the address's where it has them, each field's opening value where not.
- * Cut at 40 characters, so a long query string cannot make a long page.
- */
+/** The address's values where it has them, each field's opening value where not; cut at 40
+ * characters so a long query string cannot make a long page. */
 export function initialValues(
   fields: CalculatorField[],
   params?: URLSearchParams,
@@ -175,11 +161,8 @@ export function initialValues(
   return values;
 }
 
-/**
- * Wires one calculator: recomputes on every input with `run`, writes the result into its status
- * and detail regions, and (unless it is `data-embedded`) writes the values to the address, so a
- * copied URL shows the same calculation. Enter or Calculate recomputes in place.
- */
+/** Recomputes on every input with `run`, writes the result into its regions, and (unless
+ * `data-embedded`) writes the values to the address so a copied URL shows the same calculation. */
 export function attach(root: HTMLElement, run: CalculatorRun): () => void {
   const form = root.querySelector<HTMLFormElement>("form.cap-calculator-form");
   const status = root.querySelector<HTMLElement>(".cap-calculator-status");
@@ -211,12 +194,10 @@ export function attach(root: HTMLElement, run: CalculatorRun): () => void {
   };
 }
 
-/**
- * Attaches to every [data-cap="calculator"] under root not yet attached, each with the `run` its
+/** Attaches to every [data-cap="calculator"] under root not yet attached, each with the `run` its
  * `data-calculator` names in `runs`. A calculator with no run is an error, not a silent dead form.
  * The root is Element | Document | DocumentFragment, not ParentNode: under
- * @cloudflare/workers-types an HTMLFormElement does not type as a ParentNode.
- */
+ * @cloudflare/workers-types an HTMLFormElement does not type as a ParentNode. */
 export function enhance(
   root: Element | Document | DocumentFragment = document,
   runs: Record<string, CalculatorRun> = {},

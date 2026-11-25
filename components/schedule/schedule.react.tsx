@@ -20,24 +20,17 @@ export interface ScheduleLinkProps {
 }
 
 export interface ScheduleDayNavProps {
-  // The day keys to offer, from dayKeys().
   days: readonly string[];
-  // The day shown now: aria-current="page".
   current: string | null;
-  // The address of a day: "?day=2027-03-06", or "#day-2027-03-06" on a page that shows every day.
   hrefFor: (key: string) => string;
   label?: string;
-  // The word for NO_DATE.
   noDate?: string;
-  // Say each day's year: "Saturday, March 6, 2027", for a meeting that is not this year's.
   year?: boolean;
-  // Controls beside the days (an "Add a day" date field).
   children?: ReactNode;
   renderLink?: (props: ScheduleLinkProps) => ReactNode;
 }
 
-// The days as links: a nav landmark, the current day marked. Links, not tabs: each day has
-// its own address, so the browser's Back and a shared link land on the same day.
+// The days as links, not tabs: each day has its own address, so Back and a shared link land on the same day.
 export function ScheduleDayNav({
   days,
   current,
@@ -76,31 +69,20 @@ export function ScheduleDayNav({
 }
 
 export interface ScheduleProps<T> {
-  // From groupByDay(): one day (a builder's selected day) or all of them (a public program).
   days: readonly ScheduleDay<T>[];
-  // The IANA zone the times are in, the meeting's own ("America/Chicago"). Default UTC.
   zone?: string;
-  // Draws one item: its title, people, room and items. `level` is the heading level for its
-  // title, one under the slot's.
+  // Draws one item; `level` is the heading level for its title, one under the slot's.
   renderItem: (item: T, level: Level | 5) => ReactNode;
   keyOf: (item: T) => string;
-  // The track's name shown above a parallel item: its room or track ("Room 2.104"). Unnamed
-  // tracks are called "Track 1", "Track 2".
+  // The track's name shown above a parallel item; unnamed tracks are "Track 1", "Track 2".
   trackOf?: (item: T) => string | null | undefined;
-  // The level of each day's heading; the slot's is one under. Default 2.
   level?: 2 | 3;
-  // Show each day's heading (off for a builder that names the day above already).
   dayHeadings?: boolean;
-  // Say once which zone the times are in. Default on.
   zoneNote?: boolean;
-  // The day key's id prefix, for a day nav's in-page links: "day-" gives id="day-2027-03-06".
   idPrefix?: string;
   noDate?: string;
-  // Say each day's year in its heading: "Saturday, March 6, 2027".
   year?: boolean;
-  // What a day with nothing on it says.
   empty?: ReactNode;
-  // Something after a slot's tracks (a builder's "Add to this slot" form).
   slotFooter?: (slot: ScheduleSlot<T>) => ReactNode;
 }
 
@@ -120,9 +102,8 @@ function SlotTime({ slot, zone }: { slot: ScheduleSlot<unknown>; zone: string })
   );
 }
 
-// The HTML contract in schedule.md: each day a section with its heading, each slot an item of
-// an ordered list with its time as the heading, parallel tracks a list of named tracks. It
-// reads in time order with or without styles, and the tracks sit side by side only where they fit.
+// Each day is a section with its heading, each slot a list item with its time as the heading, and
+// parallel tracks a list of named tracks: it reads in time order with or without styles.
 export function Schedule<T>({
   days,
   zone = "UTC",
@@ -216,15 +197,11 @@ export function Schedule<T>({
 
 export interface ScheduleSessionProps {
   title: ReactNode;
-  // The heading level renderItem was given.
   level: Level | 5;
-  // Quiet lines under the title: the room, who moderates.
   meta?: ReactNode;
-  // What the session holds: its talks, as a list.
   children?: ReactNode;
 }
 
-// One session in a slot: a card with its title as a heading, its quiet facts and its contents.
 export function ScheduleSession({ title, level, meta, children }: ScheduleSessionProps) {
   const H = `h${level}` as "h3" | "h4" | "h5";
   return (

@@ -3,9 +3,7 @@ import { AwayLink } from "../link/link.react.tsx";
 
 export interface SubscribeLink {
   href: string;
-  // The destination's name; a site may add its own away cue after it.
   label: ReactNode;
-  // The app's mark, decorative (aria-hidden): an <svg>.
   icon?: ReactNode;
   // Another site (a podcast app): rel="external" and the link system's away mark.
   away?: boolean;
@@ -13,17 +11,14 @@ export interface SubscribeLink {
 
 export interface SubscribeLinksProps {
   title?: ReactNode;
-  // The heading's id, which names the section.
   headingId?: string;
   level?: "h2" | "h3";
   links: SubscribeLink[];
-  // The page with every way to follow ("More ways to listen"), last.
   more?: { href: string; label: ReactNode };
   // Draw a link with the app's router link (the "more" page is the site's own).
   renderLink?: (props: { href: string; className: string; children: ReactNode }) => ReactNode;
 }
 
-// The HTML contract in subscribe-links.md. Nothing renders without a link.
 export function SubscribeLinks({
   title = "Listen and subscribe",
   headingId,

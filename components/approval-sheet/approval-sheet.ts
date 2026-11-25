@@ -1,18 +1,13 @@
-// The approval sheet: several waiting gates approved together in one modal dialog. The sheet
-// is the shared dialog (../dialog/dialog.ts does the opening, focus, Cancel, Esc while busy
-// and the return of focus); this module adds the Approve count that follows the checkboxes,
-// the pending and error states and the approval event. No framework; the React wrapper uses
-// the same pure functions.
+// The approval sheet: several waiting gates approved together in one modal dialog (the shared
+// dialog does the opening and focus); this adds the Approve count, pending and error states, and the event.
 
 import { plural } from "@drdustinedwards/site-helpers/text";
 import { isBusy, openDialog, setDialogBusy, wireDialog } from "../dialog/dialog.ts";
 
-// "Approve 2 gates", "Approve 1 gate"; while in flight, "Approving 2 gates".
 export function approveLabel(n: number, pending = false): string {
   return `${pending ? "Approving" : "Approve"} ${plural(n, "gate")}`;
 }
 
-// The sheet's title: "2 gates are waiting", "1 gate is waiting".
 export function titleText(n: number): string {
   return n === 1 ? "1 gate is waiting" : `${n} gates are waiting`;
 }
@@ -25,7 +20,6 @@ export interface GateChoice {
 const part = <T extends Element = HTMLElement>(dialog: Element, name: string) =>
   dialog.querySelector<T>(`[data-cap-part='${name}']`);
 
-// The gates checked in a sheet, each with its comment (trimmed; empty when none).
 export function selection(dialog: Element): GateChoice[] {
   return [...dialog.querySelectorAll<HTMLInputElement>("input[data-cap-part='include']")]
     .filter((i) => i.checked)
@@ -46,8 +40,6 @@ export function isPending(dialog: Element): boolean {
   );
 }
 
-// Brings the Approve button's label, its disabled-with-reason state and the reason in
-// line with the checkboxes.
 export function update(dialog: Element): void {
   const n = selection(dialog).length;
   const approve = part(dialog, "approve");
@@ -66,8 +58,7 @@ export function update(dialog: Element): void {
   if (none) none.hidden = n !== 0;
 }
 
-// While a request is in flight: Approve shows its spinner and "Approving", Cancel and the
-// gates are held, and Esc and the backdrop do nothing (the dialog is busy).
+// While a request is in flight Approve spins and Esc and the backdrop do nothing.
 export function setPending(dialog: Element, on: boolean): void {
   const approve = part(dialog, "approve");
   if (dialog instanceof HTMLDialogElement) setDialogBusy(dialog, on);
@@ -91,7 +82,6 @@ export function setPending(dialog: Element, on: boolean): void {
   update(dialog);
 }
 
-// Shows what went wrong, beside the buttons, as an alert; null clears it.
 export function setError(dialog: Element, message: string | null): void {
   const box = part(dialog, "error");
   const text = part(dialog, "error-text");
@@ -110,8 +100,6 @@ export interface ApproveDetail {
 
 const attached = new WeakMap<HTMLDialogElement, () => void>();
 
-// Wires one sheet: the shared dialog's rules, then the count, the submit and the approval
-// event. Idempotent. Returns a function that detaches it.
 function attach(dialog: HTMLDialogElement): () => void {
   const had = attached.get(dialog);
   if (had) return had;
@@ -139,23 +127,19 @@ function attach(dialog: HTMLDialogElement): () => void {
   return detach;
 }
 
-// Opens the sheet as a modal dialog. Focus starts on Cancel (its autofocus, and the
-// destructive rule); `opener` gets focus back when the sheet closes.
+// Focus starts on Cancel (the destructive rule); `opener` gets it back on close.
 export function open(dialog: HTMLDialogElement, opener?: HTMLElement | null): void {
   attach(dialog);
   update(dialog);
   openDialog(dialog, opener ?? document.activeElement);
 }
 
-// Closes the sheet unless a request is in flight.
 export function close(dialog: HTMLDialogElement): void {
   if (!isPending(dialog)) dialog.close();
 }
 
-// Attaches to every <dialog data-cap="approval-sheet"> under root, and to any button with
-// data-cap-opens="<the dialog's id>". Approving dispatches a bubbling "cap-approve" event on
-// the dialog with { gates }; the app calls setPending(dialog, true), then closes the sheet
-// or calls setError(dialog, "...") and setPending(dialog, false).
+// Approving dispatches a bubbling "cap-approve" event ({ gates }) on the dialog; the app then calls
+// setPending, and closes the sheet or calls setError.
 export function enhance(root: ParentNode = document): () => void {
   const undo: Array<() => void> = [];
   for (const dialog of root.querySelectorAll<HTMLDialogElement>(

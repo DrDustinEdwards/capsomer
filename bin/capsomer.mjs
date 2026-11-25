@@ -4,9 +4,9 @@
 // checks the app's CSS against the tokens.
 //
 //   capsomer report [--out capsomer-report.json] [--a11y <playwright json>] [--app <name>]
-//   capsomer token-check [paths...] [--fix] [--strict] warns on raw values (--strict fails on one) (rulings.md, rule 1); --fix writes the exact tokens.
+//   capsomer token-check [paths...] [--fix] [--strict] warns on raw values (--strict fails on one); --fix writes the exact tokens.
 //                                          Exits 1 on a declaration the browser drops (invalidValues), a bug, not a warning
-//   capsomer size [--dist <dir>]           reports and warns, always exits 0 (decision 12)
+//   capsomer size [--dist <dir>]           reports and warns, always exits 0
 //   capsomer states                        writes components/<name>/states.html from examples.html (capsomer repo only)
 //   capsomer site-data                     the site's data files (capsomer repo only)
 //   capsomer docs                          fails a component doc file that leaves the docs site's pattern (bin/docs.mjs; capsomer repo only)
@@ -66,7 +66,6 @@ function components(root) {
     .filter((d) => d.isDirectory() && existsSync(join(dir, d.name, `${d.name}.md`)))
     .map((d) => {
       const css = join(dir, d.name, `${d.name}.css`);
-      // The component's root class is the first cap- class its CSS styles.
       const rootClass = existsSync(css)
         ? (inlineCss(css).match(/\.(cap-[\w-]+)/)?.[1] ?? null)
         : null;
@@ -401,7 +400,6 @@ async function siteData() {
   const dataDir = join(PKG, "site", "data");
   mkdirSync(dataDir, { recursive: true });
   const pal = await import(pathToFileURL(join(PKG, "tokens", "palette.mjs")).href);
-  // Every family's seed and its 12 steps in light and dark, for the Colors page (site/content.ts).
   const scales = Object.fromEntries(
     Object.entries(pal.FAMILIES).map(([n, f]) => [
       n,
@@ -416,7 +414,6 @@ async function siteData() {
     ? `${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}`
     : null;
 
-  // The test run, summarized per component, for --results-out (ci.yml keeps it with the run).
   const src = join(PKG, "test-results", "results.json");
   const results = {
     available: false,

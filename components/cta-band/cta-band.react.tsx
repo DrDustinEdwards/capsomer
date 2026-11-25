@@ -1,14 +1,11 @@
 import { useId, type ReactNode } from "react";
 
-// The closing call to action of a page (cta-band.md): a heading, one sentence and the actions, in
-// a band set apart from the page. Named by its heading, so it is a region a screen reader lists.
+// The closing call to action of a page, named by its heading so it is a region a screen reader lists.
 
 export interface CtaBandProps {
   title: ReactNode;
   children?: ReactNode;
-  // Buttons or button links; the first is the primary.
   actions: ReactNode;
-  // A quieter band: no fill, a rule above.
   quiet?: boolean;
   headingLevel?: "h2" | "h3";
   className?: string;

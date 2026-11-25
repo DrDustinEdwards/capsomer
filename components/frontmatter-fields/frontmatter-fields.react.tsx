@@ -9,7 +9,6 @@ import { clamp } from "../hooks/hooks.ts";
 import { setBox, typeFront, type FieldSpec, type TypedField } from "./frontmatter-fields.ts";
 
 export interface FrontmatterFieldsProps {
-  // The whole file: frontmatter fences, frontmatter and body.
   source: string;
   // The whole file again, with the change made. Left out, every box is read-only.
   onChange?: (next: string) => void;
@@ -26,7 +25,6 @@ export interface FrontmatterFieldsProps {
   rawSummary?: ReactNode;
   // Shown in place of the fields when the file has no frontmatter.
   empty?: ReactNode;
-  // After the boxes: the app's own controls for this item.
   children?: ReactNode;
 }
 

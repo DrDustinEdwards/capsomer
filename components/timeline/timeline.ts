@@ -2,7 +2,6 @@
 // timeline scrolls into view (200px early). With no script, and with reduced motion, it is drawn
 // full. The fill is a transform, so nothing is measured and a resize needs no work.
 
-// One timeline: fills its line once it nears the view. Returns a function that undoes it.
 export function attach(el: HTMLElement): () => void {
   if (el.hasAttribute("data-cap-ready")) return () => {};
   el.dataset.capReady = "";

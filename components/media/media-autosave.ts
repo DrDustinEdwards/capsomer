@@ -1,8 +1,5 @@
-// The media inspector's autosave.
-
-// Autosave, pure. It waits until typing stops, saves, and says where it is. A change that
-// arrives while a save runs is saved after it. Nothing here touches the fields, so what was
-// typed is never lost: a failure only changes the state.
+// The media inspector's autosave, pure: it waits until typing stops, saves, and says where it is. A change
+// arriving mid-save is saved after it. Nothing here touches the fields, so typed text is never lost.
 
 export type SaveState = "idle" | "dirty" | "saving" | "saved" | "failed";
 
@@ -15,23 +12,17 @@ export const SAVE_TEXT: Record<SaveState, string> = {
 };
 
 export interface AutosaveOptions {
-  // Milliseconds of quiet before a save: 800.
   delay?: number;
-  // Reads the fields and sends them. Called synchronously when a save starts, so what it reads is
-  // what the person had typed at that moment. Reject with an Error that says why.
+  // Reads the fields and sends them; called synchronously when a save starts. Reject with an Error that says why.
   save: () => Promise<void>;
   onState?: (state: SaveState, error?: string) => void;
 }
 
 export interface Autosave {
-  // A change was made: save when typing stops.
   schedule(): void;
-  // Save now, if there is anything unsaved (a field lost focus).
   flush(): Promise<void>;
-  // Try again after a failure.
   retry(): Promise<void>;
   state(): SaveState;
-  // Forget the timer (the inspector moved to another file).
   cancel(): void;
 }
 

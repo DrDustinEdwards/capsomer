@@ -1,14 +1,6 @@
-// The popover and the tooltip, on the Popover API. One module, two behaviors picked by the
-// popup's role:
-//   - a click popover (role="dialog", popover="auto"): the trigger toggles it, light dismiss
-//     and Esc close it, focus moves in on open and returns to the trigger on close;
-//   - a tooltip (role="tooltip", popover="manual"): shown on hover after a delay (at once when
-//     another tip is open or just closed) and on keyboard focus, hidden on Esc, blur and
-//     leave, and hoverable (WCAG 1.4.13: dismissible, hoverable, persistent).
-// Placement is CSS anchor positioning where the browser has it (popover.css), checked against
-// the viewport after opening; where it is missing, or the popup would leave the window, `place`
-// computes it from getBoundingClientRect with a flip and a shift. Every dynamic value goes
-// through the CSSOM (apps keep style-src 'self').
+// The popover and the tooltip, on the Popover API; the popup's role picks the behavior.
+// A tooltip is hoverable and dismissible (WCAG 1.4.13). Placement is CSS anchor positioning where
+// available, else `place` (flip and shift). Dynamic values go through the CSSOM (style-src 'self').
 
 import { clamp, listenInto } from "../hooks/hooks.ts";
 
@@ -18,12 +10,10 @@ export type Align = "start" | "center" | "end";
 export interface PlaceOptions {
   side?: Side;
   align?: Align;
-  // Gap between trigger and popup in px (the arrow's own space is added). Default 4.
   offset?: number;
 }
 
 export interface Placement {
-  // The side the popup really ended up on, after any flip.
   side: "top" | "bottom" | "left" | "right";
   align: Align;
   x: number;
@@ -32,7 +22,6 @@ export interface Placement {
 
 export const SHOW_DELAY_MS = 300;
 export const HIDE_GRACE_MS = 150;
-// A tooltip opens at once when another is open or closed less than this long ago.
 export const GROUP_MS = 400;
 const EDGE = 8;
 const ARROW = 4;
@@ -76,10 +65,7 @@ function setArrow(popup: HTMLElement, side: Placement["side"], along: number): v
   popup.style.setProperty(prop, `${Math.round(clamp(along, ARROW_INSET, size - ARROW_INSET))}px`);
 }
 
-// The fallback placement. The popup must already be showing (it is measured). Writes
-// --cap-popover-x / --cap-popover-y (and the arrow's --cap-arrow-x / --cap-arrow-y) on the
-// popup, sets data-placed to the side it landed on, and returns where it went.
-// Anything with a box: an element, or a virtual anchor such as a text selection's range.
+// The fallback placement; the popup must already be showing (it is measured).
 export interface VirtualAnchor {
   getBoundingClientRect(): DOMRect;
 }
@@ -114,7 +100,6 @@ export function place(
   let y: number;
   if (side === "top" || side === "bottom") {
     y = side === "bottom" ? r.bottom + gap : r.top - gap - h;
-    // "start" is the leading edge of the trigger in the reading direction.
     const lead = align === "start" ? !rtl : align === "end" ? rtl : null;
     x = lead === null ? r.left + (r.width - w) / 2 : lead ? r.left : r.right - w;
     x = clamp(x, EDGE, vw - w - EDGE);
@@ -136,8 +121,7 @@ export function place(
   return { side, align, x, y };
 }
 
-// After CSS anchor positioning has placed the popup: read which side it is on (the CSS may
-// have flipped it), point the arrow at the trigger, and say whether it is inside the window.
+// After anchor positioning: read which side the popup is on (the CSS may have flipped it) and point the arrow.
 function settle(anchor: Element, popup: HTMLElement): boolean {
   const a = anchor.getBoundingClientRect();
   const p = popup.getBoundingClientRect();
@@ -174,7 +158,6 @@ interface Instance {
   popup: HTMLElement;
   show: () => void;
   hide: () => void;
-  // Esc: close, and (for a tooltip) stay closed until the pointer leaves or focus moves on.
   dismiss: () => void;
 }
 
@@ -185,11 +168,9 @@ const openManual = new Set<Instance>();
 
 function onGlobalKey(e: KeyboardEvent): void {
   if (e.key !== "Escape") return;
-  // Esc closes the topmost thing this module opened, and only that: a dialog around it
-  // stays open. A tooltip goes first (it is the most recent, smallest layer).
-  // A popup removed from the page is hidden without a toggle event (the Popover API's "hide
-  // popover" runs with events off), so a tip whose row disappeared would stay recorded as open
-  // and swallow the next Esc meant for a dialog. Forget any that are no longer open.
+  // Esc closes only the topmost thing this module opened (a tooltip first), not a dialog around it.
+  // A popup removed from the page hides without a toggle event, so forget tips no longer open or
+  // they would swallow the next Esc meant for a dialog.
   if (openTip && !isOpen(openTip.popup)) openTip = null;
   for (const inst of openManual) if (!isOpen(inst.popup)) openManual.delete(inst);
   const target = openTip ?? [...openManual].pop();
@@ -214,7 +195,6 @@ function focusables(root: HTMLElement): HTMLElement[] {
   );
 }
 
-// Moves focus into a click popover: [autofocus], else the first focusable, else the popup.
 function focusInto(popup: HTMLElement): void {
   const target = popup.querySelector<HTMLElement>("[autofocus]") ?? focusables(popup)[0];
   if (target) target.focus({ preventScroll: true });
@@ -224,8 +204,6 @@ function focusInto(popup: HTMLElement): void {
   }
 }
 
-// Wires a trigger to its popup. The popup's role picks the behavior. Returns a function that
-// unwires it.
 export function attach(trigger: HTMLElement, popup: HTMLElement): () => void {
   if (instances.has(popup)) return () => undefined;
   const tooltip =
@@ -236,8 +214,7 @@ export function attach(trigger: HTMLElement, popup: HTMLElement): () => void {
   const undo: Array<() => void> = [];
   const on = listenInto(undo);
 
-  // Anchor positioning needs names; the engine can be forced to the JS fallback with
-  // data-engine="js" (used by the tests and by apps that must match old browsers exactly).
+  // Anchor positioning needs names; data-engine="js" forces the fallback.
   const css = supportsAnchor() && popup.dataset.engine !== "js";
   if (css) {
     const name = `--cap-anchor-${++anchors}`;
@@ -266,7 +243,6 @@ export function attach(trigger: HTMLElement, popup: HTMLElement): () => void {
     f.call(window, "scroll", reposition, true);
     f.call(window, "resize", reposition);
   };
-  // Runs once the popup is showing: choose the engine, place, and follow scrolling.
   const placeNow = () => {
     if (css) {
       delete popup.dataset.placedBy;
@@ -286,7 +262,6 @@ export function attach(trigger: HTMLElement, popup: HTMLElement): () => void {
 
     let showTimer: number | undefined;
     let hideTimer: number | undefined;
-    // After Esc or a press the tip stays hidden until the pointer leaves or focus moves on.
     let held = false;
     const hide = () => {
       window.clearTimeout(showTimer);
@@ -296,7 +271,6 @@ export function attach(trigger: HTMLElement, popup: HTMLElement): () => void {
     const show = () => {
       window.clearTimeout(showTimer);
       window.clearTimeout(hideTimer);
-      // A trigger whose own menu is open needs no tip over that menu.
       if (held || !popup.isConnected || trigger.getAttribute("aria-expanded") === "true") return;
       if (openTip && openTip !== me) openTip.hide();
       if (!isOpen(popup)) {
@@ -352,7 +326,6 @@ export function attach(trigger: HTMLElement, popup: HTMLElement): () => void {
       held = false;
       later();
     });
-    // A press on the trigger is an action, not a hover: hide the tip.
     on(trigger, "pointerdown", () => {
       held = true;
       hide();
@@ -413,14 +386,12 @@ export function attach(trigger: HTMLElement, popup: HTMLElement): () => void {
       } else {
         watch(false);
         openManual.delete(me);
-        // Focus goes back to the trigger when it was inside the popup (or lost to the page),
-        // never taken from a control the person moved on to.
+        // Focus goes back to the trigger only when it was inside the popup or lost, never taken from a control moved on to.
         const active = document.activeElement;
         if (!active || active === document.body || popup.contains(active))
           trigger.focus({ preventScroll: true });
       }
     });
-    // Moving focus out of the popup (Tab past its last control) closes it, without stealing focus.
     on(popup, "focusout", (e: FocusEvent) => {
       const to = e.relatedTarget as Node | null;
       if (
@@ -435,7 +406,6 @@ export function attach(trigger: HTMLElement, popup: HTMLElement): () => void {
       if ((e.target as Element).closest("[data-popover-close]")) hide();
     });
     if (manual) {
-      // Outside press for a manual popover; popover="auto" has it natively.
       on(document, "pointerdown", (e: PointerEvent) => {
         const t = e.target as Node;
         if (isOpen(popup) && !popup.contains(t) && !trigger.contains(t)) hide();
@@ -450,10 +420,8 @@ export function attach(trigger: HTMLElement, popup: HTMLElement): () => void {
   };
 }
 
-// Opens a popup at a virtual anchor (a text selection, a point in a canvas): shown, placed by
-// script beside the anchor's box, kept beside it as the page scrolls or resizes. Esc and a press
-// outside close it (a popover="auto" popup's own light dismiss), and focus goes back to
-// `returnFocus` (the editor the selection is in). Returns a function that closes it.
+// Opens a popup at a virtual anchor (a selection, a point), placed by script and kept beside it;
+// focus goes back to `returnFocus`. Returns a function that closes it.
 export function openAt(
   popup: HTMLElement,
   anchor: VirtualAnchor,
@@ -484,7 +452,6 @@ export function openAt(
   };
 }
 
-// Opens a popup (placing it) whether or not it was attached.
 export function open(popup: HTMLElement): void {
   const inst = instances.get(popup);
   if (inst) inst.show();
@@ -502,8 +469,6 @@ export function toggle(popup: HTMLElement): void {
   else open(popup);
 }
 
-// The trigger of a [data-cap="popover"] root: [data-popover-trigger], else the first
-// child that is not the popup.
 function triggerOf(root: HTMLElement, popup: HTMLElement): HTMLElement | null {
   return (
     root.querySelector<HTMLElement>("[data-popover-trigger]") ??
@@ -512,8 +477,6 @@ function triggerOf(root: HTMLElement, popup: HTMLElement): HTMLElement | null {
   );
 }
 
-// Attaches every [data-cap="popover"] under root not yet attached. Returns a function that
-// detaches them.
 export function enhance(root: ParentNode = document): () => void {
   const undo: Array<() => void> = [];
   for (const el of root.querySelectorAll<HTMLElement>(

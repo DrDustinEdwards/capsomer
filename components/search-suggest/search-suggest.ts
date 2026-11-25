@@ -1,20 +1,14 @@
-// Search suggestions: a site's search field (field.css's .cap-search, a GET form with role="search")
-// that suggests destinations as a person types. Searching still runs the form, with no script too;
-// a suggestion is a page to go to (a book, a post). The field becomes a WAI-ARIA combobox whose focus
-// stays in the box while the arrows move through a listbox (listbox.ts in input mode), the APG's
-// "list autocomplete" pattern. Built from Foxing's search box (components/search-box.tsx and
-// islands/search-box.ts), which drew it twice, once for React and once for a page that does not
-// hydrate; this one module serves both.
+// Search suggestions: a site's search field (a GET form with role="search") that suggests destinations as a
+// person types. The form still searches with no script. The field becomes a WAI-ARIA combobox whose focus
+// stays in the box while the arrows move through a listbox (APG "list autocomplete"); one module serves both
+// React and non-hydrating pages.
 
 import { uid } from "../hooks/hooks.ts";
 import { createListbox, type Listbox } from "../listbox/listbox.ts";
 
 export interface Suggestion {
-  // The words the option shows: a book's title.
   label: string;
-  // A short muted note after it: the author.
   hint?: string;
-  // Where picking it goes.
   href: string;
 }
 
@@ -32,7 +26,6 @@ export interface SuggestOptions {
   // characters (2).
   delay?: number;
   min?: number;
-  // What the status region says for a count: "5 suggestions".
   announce?: (count: number) => string;
 }
 
@@ -43,7 +36,6 @@ export function suggestionsText(count: number): string {
   return count === 0 ? "" : count === 1 ? "1 suggestion" : `${count} suggestions`;
 }
 
-/** Draws one suggestion as an option: its label, then its hint at the end. */
 export function suggestionOption(s: Suggestion, id: string): HTMLElement {
   const option = document.createElement("div");
   option.id = id;
@@ -67,10 +59,6 @@ export function suggestionOption(s: Suggestion, id: string): HTMLElement {
   return option;
 }
 
-/**
- * Wires one `.cap-search-suggest` around a search field. The list is the root's own
- * `[role="listbox"]`, or one made at its end. Returns a function that detaches.
- */
 export function attachSuggest(root: HTMLElement, opts: SuggestOptions): () => void {
   const input = root.querySelector<HTMLInputElement>("input[type='search']");
   if (!input) return () => {};
@@ -255,7 +243,6 @@ export function attachSuggest(root: HTMLElement, opts: SuggestOptions): () => vo
   };
 }
 
-/** Attaches to every `[data-cap="search-suggest"]` under `root` not yet ready. */
 export function enhance(opts: SuggestOptions, root: ParentNode = document): () => void {
   const undo: Array<() => void> = [];
   for (const el of root.querySelectorAll<HTMLElement>(

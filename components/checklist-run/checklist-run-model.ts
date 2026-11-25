@@ -1,20 +1,12 @@
-// The pure half of a checklist run: what a run is, how its timers count, and what the saved
-// record says. A run is a person working through one checklist once (a lab procedure, a recipe,
-// a release list): which steps are done, a note on each, the timers they started, the scale they
-// chose. It lives in the browser (localStorage), is downloadable and printable, and never reaches
-// a server: nothing here touches the DOM, a clock or storage, so a test runs the same functions.
-// The browser module (checklist-run.ts) passes `now` in. Extracted from dustinedwards.info's run
-// mode (app/kb/procedures/run.mjs).
-//
-// A timer's remaining time is computed from the moment it ends, not counted down, so a phone that
-// sleeps or a page that reloads mid-incubation still knows how long is left.
+// The pure half of a checklist run: steps done, a note on each, timers and the scale chosen. A run lives in the browser
+// (localStorage) and never reaches a server. Nothing here touches the DOM, a clock or storage; the browser module passes `now`.
+// A timer's remaining time is computed from when it ends, not counted down, so a sleeping phone or a reload still knows.
 
 import { parseVersioned } from "../state-hooks/state-hooks.ts";
 import { DAY, HOUR, MIN, SEC, timecode } from "../time/time.ts";
 
 export const RUN_VERSION = 1;
 
-// Milliseconds in each unit a timer can use.
 const UNIT_MS: Readonly<Record<string, number>> = Object.freeze({
   second: SEC,
   seconds: SEC,
@@ -60,7 +52,6 @@ export interface Run {
   steps: Record<string, StepState>;
   timers: Record<string, TimerState>;
 }
-// A step as the record names it: `key` is unique in the checklist, `number` the one the page prints.
 export interface StepInfo {
   key?: string;
   number: number | string;
@@ -77,7 +68,6 @@ export function timerMs(timer: StepTimer): number | null {
   return Math.round(amount * unit);
 }
 
-// The key a step's nth timer is stored under.
 export const timerKey = (step: number | string, index: number): string => `${step}.${index}`;
 
 export function newRun(
@@ -126,7 +116,6 @@ export const finishRun = (run: Run, now: number): Run => ({
   finishedAt: run.finishedAt ?? now,
 });
 
-// Starts a timer, or resumes a paused one from where it stopped.
 export function startTimer(run: Run, key: string, ms: number, now: number): Run {
   const current = run.timers[key];
   const remainingMs = current && current.state === "paused" ? current.remainingMs : ms;
@@ -161,7 +150,6 @@ export function resetTimer(run: Run, key: string): Run {
   return { ...run, timers: rest };
 }
 
-// Milliseconds left on a timer, or null when it has not been started.
 export function timerRemaining(run: Run, key: string, now: number): number | null {
   const t = run.timers[key];
   if (!t) return null;
@@ -170,7 +158,6 @@ export function timerRemaining(run: Run, key: string, now: number): number | nul
   return Math.max(0, (t.endsAt ?? now) - now);
 }
 
-// Marks every running timer whose time has come as done, and returns which rang so the page alerts once.
 export function tickTimers(run: Run, now: number): { run: Run; rang: string[] } {
   const rang: string[] = [];
   const timers: Record<string, TimerState> = { ...run.timers };
@@ -183,10 +170,8 @@ export function tickTimers(run: Run, now: number): { run: Run; rang: string[] } 
   return rang.length === 0 ? { run, rang } : { run: { ...run, timers }, rang };
 }
 
-// "2:05", "1:30:00": a countdown as a person reads it at the bench, rounding up so 0:00 means done.
 export const clock = (ms: number): string => timecode(Math.ceil(Math.max(0, ms) / SEC) * SEC);
 
-// How far along a run is, over the steps the checklist has (not the steps the run mentions).
 export function runProgress(
   run: Run,
   steps: Array<number | string>,
@@ -202,7 +187,6 @@ export function shownStep(run: Run, keys: string[], chosen: string | null): stri
   return keys.find((key) => !run.steps[key]?.done) ?? keys[keys.length - 1] ?? null;
 }
 
-// The step before or after `key`, or null at either end.
 export function stepBeside(keys: string[], key: string, by: -1 | 1): string | null {
   const at = keys.indexOf(key);
   return at === -1 ? null : (keys[at + by] ?? null);
@@ -228,9 +212,7 @@ export interface RunRecord {
   }>;
 }
 
-// The saved record as a plain object: what a JSON download is. Only what the person entered or
-// did, with the checklist's own identity so the record says which version it followed. `name`
-// says what kind of record it is (a site's own, such as "example.com run").
+// The saved record as a plain object (the JSON download), with the checklist's identity so it says which version it followed.
 export function runRecord(run: Run, steps: StepInfo[], name = "checklist run"): RunRecord {
   return {
     record: name,
@@ -254,8 +236,7 @@ export function runRecord(run: Run, steps: StepInfo[], name = "checklist run"): 
   };
 }
 
-// The same record as plain Markdown, for a notebook or an email: a heading, the run's facts, and
-// each step as a checked or unchecked line with its note under it. `label` names what was run.
+// The same record as Markdown for a notebook or an email. `label` names what was run.
 export function runMarkdown(run: Run, steps: StepInfo[], label = "Checklist"): string {
   const lines = [`# Run: ${run.title}`, ""];
   lines.push(`${label}: ${run.path}${run.version ? `, version ${run.version}` : ""}`);
@@ -279,8 +260,7 @@ export function runMarkdown(run: Run, steps: StepInfo[], label = "Checklist"): s
   return `${lines.join("\n")}\n`;
 }
 
-// Parses a stored run, or returns null: a value from another format, or one that is not a run, is
-// ignored, never trusted. Only the shapes this module writes are accepted.
+// Parses a stored run, or returns null: values from another format are ignored, never trusted.
 export function parseRun(raw: unknown): Run | null {
   return parseVersioned(typeof raw === "string" ? raw : null, RUN_VERSION, runOf);
 }

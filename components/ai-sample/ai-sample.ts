@@ -5,16 +5,13 @@
 export interface AiSampleField {
   label: string;
   value: string;
-  // The body of an email: monospaced, keeps its line breaks.
   mono?: boolean;
 }
 
 export type AiSampleResult = { fields: AiSampleField[]; note?: string } | { error: true };
 
 export interface AiSampleOptions {
-  // Runs the model on the form's inputs. A result without fields, or a throw, is a failed generation.
   generate: (data: FormData) => Promise<AiSampleResult>;
-  // The failure line.
   failed?: string;
 }
 
@@ -29,8 +26,6 @@ function node<K extends keyof HTMLElementTagNameMap>(
   return el;
 }
 
-// Draws a sample, the failure line, or nothing, into the live region. Exported for a page that runs its own
-// request; `enhance()` uses it.
 export function drawSample(
   out: HTMLElement,
   result: AiSampleResult | null,
@@ -53,8 +48,6 @@ export function drawSample(
   out.append(box);
 }
 
-// Wires every `[data-cap="ai-sample"]`: a form holding the inputs, a `[data-ai-sample-generate]` button whose
-// `data-busy-label` is said while the call runs, and a `.cap-ai-sample-out` live region.
 export function enhance(root: ParentNode = document, options: AiSampleOptions): () => void {
   const undo: Array<() => void> = [];
   for (const form of root.querySelectorAll<HTMLFormElement>(

@@ -1,8 +1,6 @@
-// The approval queue's data and its pure helpers (approval-queue.react.tsx draws the markup). It is
-// the moderation queue's markup (.cap-mq, its rows and its open row) for things your own side
-// drafted and a person approves one by one: a social post, a reply, a generated summary. Each item
-// carries its text, which can be edited before the decision, what a check held it for, and the
-// decisions the app offers for it. Nothing here knows what an item is: the site passes the words.
+// The approval queue's data and pure helpers (approval-queue.react.tsx draws the markup): the moderation
+// queue's markup for things your own side drafted and a person approves one by one. Nothing here knows
+// what an item is: the site passes the words.
 
 import type { Tone } from "../status/status.react.tsx";
 
@@ -41,15 +39,12 @@ export interface ApprovalItem {
   fields?: Record<string, string>;
 }
 
-// The keys a queue answers by default, when an action names none: a approves, r rejects.
 export const DEFAULT_KEYS: Readonly<Record<string, string>> = { approve: "a", reject: "r" };
 
-// The key an action answers, or undefined.
 export function keyOf(action: ApprovalAction): string | undefined {
   return action.key ?? DEFAULT_KEYS[action.intent];
 }
 
-// The action a key runs on an item, or null where the item offers none for it.
 export function actionForKey(
   item: Pick<ApprovalItem, "actions">,
   key: string,

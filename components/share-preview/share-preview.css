@@ -1,4 +1,4 @@
-/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+/* Layer order repeated so this file is safe in any import order: the first statement fixes it (css/layers.css). */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
 /* How a page appears where it is shared: as a search result (`.cap-serp`) and as a social card
@@ -21,7 +21,6 @@
     }
   }
 
-  /* A search result: the address, the title as a link would read, the description. */
   .cap-serp {
     display: grid;
     gap: var(--space-1);

@@ -2,31 +2,25 @@ import type { ReactNode } from "react";
 import { Empty } from "../empty/empty.react.tsx";
 import { buttonAttrs } from "../button/button-look.ts";
 
-// The page a React Router root ErrorBoundary renders: the failed Empty, in plain words for 404, 410
-// and everything else, with the site's own header kept so the skip link and landmarks stay. Eight
-// sites each wrote this in root.tsx; dustinedwards.info's ErrorPage and Foxhound's ErrorView are
-// the two it is drawn from. No react-router import: a route error is read by its shape, so the
-// package keeps no router dependency.
+// The page a React Router root ErrorBoundary renders: the failed Empty in plain words for 404, 410
+// and everything else, with the site's own header kept so the skip link and landmarks stay. A route
+// error is read by its shape, so the package keeps no router dependency.
 
 export interface ErrorWords {
-  // The HTTP status the page stands for: the route error's own, else 500.
   status: number;
   title: string;
-  // The line under the title: what went wrong. A 410 has none; its title says it.
+  // What went wrong, under the title. A 410 has none; its title says it.
   text?: string;
 }
 
-// A route error response (a thrown Response, data() or a 404 no route matched) has a numeric
-// status and a string statusText; that is all isRouteErrorResponse itself checks besides the
-// router's private flag.
+// A route error response has a numeric status and a string statusText; that is all isRouteErrorResponse checks besides a private flag.
 function statusOf(error: unknown): number | null {
   if (typeof error !== "object" || error === null) return null;
   const { status, statusText } = error as { status?: unknown; statusText?: unknown };
   return typeof status === "number" && typeof statusText === "string" ? status : null;
 }
 
-// The statusText site-runtime's databaseDown(error) gives the 503 a loader throws when D1 is down
-// or reset for a moment (DATABASE_DOWN_STATUS_TEXT in @dustinedwards/site-runtime/health).
+// The statusText site-runtime's databaseDown() gives the 503 thrown when D1 is down.
 const DATABASE_DOWN = /database/i;
 
 /** What the page says for an error: its status, a title and, when it failed, one plain sentence. */
@@ -82,52 +76,35 @@ export function errorTitle(error: unknown, siteName: string): string {
 }
 
 export interface ErrorPageProps {
-  // The ErrorBoundary's error (Route.ErrorBoundaryProps["error"]).
   error: unknown;
-  // The home page's address, for the way out.
   home: string;
-  // The site's header, so its skip link and banner landmark stay on the error page. It must read no
-  // loader data: on the error path there is none. Without one, the page draws its own skip link.
+  // The site's header, so its skip link and banner landmark stay. It must read no loader data: on the
+  // error path there is none. Without one, the page draws its own skip link.
   siteHeader?: ReactNode;
-  // The site's footer (the contentinfo landmark), under the same condition.
   siteFooter?: ReactNode;
-  // Under the message, inside main: a search form, the site's most read pages.
   children?: ReactNode;
-  // Development only: the thrown error's message and stack are shown. Pass import.meta.env.DEV; off
-  // by default, so production never shows a stack.
+  // Development only: show the thrown error's message and stack. Off by default so production never shows a stack.
   dev?: boolean;
-  // The main region's id, the skip link's target. Default "main".
   mainId?: string;
-  // A class for main beside cap-error-page, for the site's own page frame.
   className?: string;
-  // The site's own words, in place of errorWords' for this error: a site whose copy is edited
-  // content (julieedwards.info's 404 is Carrel copy in D1) passes it here. A 410 shows its title
-  // alone, so it takes no text.
+  // The site's own words in place of errorWords' for this error. A 410 shows its title alone, so it takes no text.
   title?: string;
   text?: string;
-  // The home link's words. Default "Go to the home page".
   homeLabel?: string;
-  // An icon after the home link's words, for a site whose buttons that go somewhere carry one (bsw's
-  // arrow): an svg with data-icon="end" and aria-hidden="true", so the button pulls its padding in
-  // and the link's name stays its words.
+  // An icon after the home link's words: an svg with data-icon="end" and aria-hidden="true", so the
+  // button pulls its padding in and the link's name stays its words.
   homeIcon?: ReactNode;
-  // Render the region as a div when the site's Layout already wraps every page in its main, so the
-  // page keeps one main. Default "main".
+  // Render as a div when the site's Layout already wraps every page in its main, so the page keeps one main.
   as?: "main" | "div";
-  // More ways out, after the home link: "Go to dashboard", "View demo".
   actions?: ReactNode;
-  // A 410 is a page taken down on purpose: nothing went wrong, so it is no alert and offers no
-  // retry. `gone` names its one way out ("Read the blog", "/blog") in place of the home link.
+  // A 410 is a page taken down on purpose: no alert, no retry. `gone` names its one way out in place of the home link.
   gone?: { href: string; label: string };
-  // The site's own title band in place of the message's heading (a site that keeps a client's
-  // brand lays its error page out as an interior page): it gets the words and draws the h1; the
-  // sentence and the ways out follow it in the page's column.
+  // The site's own title band in place of the heading: it gets the words and draws the h1.
   hero?: (words: ErrorWords) => ReactNode;
 }
 
-// The actions are plain button-styled links (ButtonLink with an href draws the same), so this page,
-// in every app's root bundle, takes neither ButtonLink nor the router; after an error a full load is
-// what the visitor wants anyway.
+// The actions are plain button-styled links so this page, in every app's root bundle, takes neither
+// ButtonLink nor the router; after an error a full load is what the visitor wants.
 const primary = buttonAttrs({ variant: "primary" }, undefined);
 const plain = buttonAttrs({}, undefined);
 
@@ -165,7 +142,7 @@ export function ErrorPage({
   ) : (
     <>
       {server ? (
-        // An empty href is this address: a reload that works before the page hydrates, and with no script.
+        // An empty href is this address: a reload that works before hydration and with no script.
         // oxlint-disable-next-line jsx-a11y/anchor-is-valid -- an empty href reloads this address, with no script too
         <a {...primary} href="">
           Try again
@@ -226,17 +203,13 @@ export function ErrorPage({
 }
 
 export interface SignedOutPageProps {
-  // The app's name: "Capsid Portal".
   app: string;
-  // Where signing in starts again: the app's own address.
   signIn: string;
-  // The person signed out here (true), or the session ended on its own (false).
   byChoice: boolean;
   mainId?: string;
 }
 
-// The page an app shows once its session is gone: a polite status, one heading and one way back.
-// It is not an error (nothing failed), so it is a status, not an alert.
+// The page an app shows once its session is gone. Nothing failed, so it is a status, not an alert.
 export function SignedOutPage({ app, signIn, byChoice, mainId = "main" }: SignedOutPageProps) {
   return (
     <main id={mainId} tabIndex={-1} className="cap-error-page" data-status="signed-out">

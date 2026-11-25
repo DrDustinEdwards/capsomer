@@ -105,7 +105,6 @@ export function Dialog(props: DialogProps) {
     [ref],
   );
 
-  // Wired once the markup is on the page; the markup itself is complete without it.
   useEffect(() => {
     const d = own.current;
     return d ? wireDialog(d) : undefined;
@@ -123,7 +122,6 @@ export function Dialog(props: DialogProps) {
     else if (!open && d.open) closeDialog(d);
   }, [open, history, returnTo, initialFocus]);
 
-  // Close and Cancel say they are refusing while busy.
   useEffect(() => {
     if (own.current) setDialogBusy(own.current, !!busy);
   }, [busy]);
@@ -199,7 +197,6 @@ export function DialogDescription({ className, ...rest }: HTMLAttributes<HTMLPar
   );
 }
 
-// An icon tile beside the title, as Alert Dialog's media.
 export function DialogMedia({
   className,
   tone,
@@ -215,7 +212,6 @@ export function DialogMedia({
   );
 }
 
-// The part that scrolls when the content is taller than the screen.
 export function DialogBody({
   className,
   flush,

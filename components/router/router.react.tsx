@@ -1,8 +1,6 @@
-// The React Router bindings every Capsomer React part needs, in one place, so no site writes its own
-// glue: the router's Form for a part that takes `renderForm`, the confirm dialog with the router's
-// navigation, a fetcher form for a row action that hides its row while it is sent, and a
-// `shouldRevalidate` that skips the loader when only a display parameter changed. The router's Link
-// for `renderLink` is `routerRenderLink` in capsomer/react/link.
+// The React Router bindings every Capsomer React part needs, so no site writes its own glue: the
+// router's Form for `renderForm`, the confirm dialog with the router's navigation, a fetcher form for
+// a row action, and a `shouldRevalidate` that skips the loader when only a display parameter changed.
 
 import type { ReactElement } from "react";
 import type { RowForm } from "../row-list/row-list.react.tsx";

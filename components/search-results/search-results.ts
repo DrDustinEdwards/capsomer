@@ -9,7 +9,6 @@ export const MARK_CLOSE = "\u0003";
 
 export interface SnippetPart {
   text: string;
-  // A matched word or phrase.
   match: boolean;
 }
 
@@ -42,7 +41,6 @@ export function snippetParts(
   return parts;
 }
 
-// The snippet as HTML: every run escaped, each match in a <mark>. For a page built without React.
 export function snippetHtml(snippet: string, open?: string, close?: string): string {
   return snippetParts(snippet, open, close)
     .map((p) => (p.match ? `<mark>${esc(p.text)}</mark>` : esc(p.text)))
@@ -79,8 +77,7 @@ export function markQuery(text: string, query: string): string {
   return out + original.slice(at);
 }
 
-// The count line: "No results", "1 result", "24 results", "100+ results" when the search stopped
-// counting. Said in a live region that exists before the first search, so it is heard.
+// The count line, said in a live region that exists before the first search, so it is heard.
 export function resultsText(
   count: number,
   options: { more?: boolean; noun?: readonly [string, string] } = {},

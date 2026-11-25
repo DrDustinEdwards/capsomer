@@ -1,12 +1,10 @@
-/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+/* Layer order repeated so this file is safe in any import order: the first statement fixes it (css/layers.css). */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
 /* A card: one piece of content or one choice, its regions (media, header, content, footer) as direct
-   children in source order, placed by element selector with no wrapper classes. Built to Chrome's
-   Modern Web Guidance card guide: <a><div> for one destination, a stretched heading link
-   (.cap-card-link) when the card also holds its own actions, <label> around a radio or checkbox for a
-   choice. The look reads the panel's card tokens (--card-shadow, --card-lift, --card-edge), so a
-   site's cards and panels agree. */
+   children in source order, placed by element selector. <a><div> for one destination, a stretched
+   heading link (.cap-card-link) when the card holds its own actions, <label> around a radio or checkbox
+   for a choice. The look reads the panel's card tokens (--card-shadow, --card-lift, --card-edge). */
 @layer cap.components {
   .cap-card {
     container: cap-card / inline-size;
@@ -22,7 +20,6 @@
     border-radius: var(--radius-l);
     box-shadow: var(--card-shadow);
 
-    /* Media first runs to the card's edges and keeps its own ratio unless the card sets one. */
     & > :is(img, picture, video, svg, .cap-card-media):first-child {
       display: block;
       inline-size: calc(100% + 2 * var(--pad-card));
@@ -36,7 +33,6 @@
       display: block;
       inline-size: 100%;
     }
-    /* A fixed ratio (data-ratio="16/9", "4/3", "1", "2/3" for a book cover) crops with cover. */
     &[data-ratio] > :is(img, video):first-child,
     &[data-ratio] > picture:first-child > img {
       aspect-ratio: var(--card-ratio, 16 / 9);
@@ -92,8 +88,6 @@
       }
     }
 
-    /* Wide enough, a card with media puts it in a side column beside the rest; a card without
-       media never reserves one. */
     @container cap-card (inline-size >= 34rem) {
       &[data-layout="side"]:has(> :is(img, picture, video, svg, .cap-card-media):first-child) {
         grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
@@ -114,9 +108,8 @@
     }
   }
 
-  /* A lead: one icon or one action (a podcast's play button) in a column of its own at the card's
-     start, beside the header; the other regions keep to the second column. It takes the first row
-     only, so a lead shorter than the header leaves no gap under it. */
+  /* A lead: one icon or action in a column of its own beside the header. It takes the first row only,
+        so a lead shorter than the header leaves no gap under it. */
   .cap-card:has(> .cap-card-lead) {
     grid-template-columns: auto minmax(0, 1fr);
     column-gap: var(--space-4);
@@ -133,8 +126,6 @@
     }
   }
 
-  /* A grid of cards whose regions line up across a row: each card spans four shared rows (media,
-     header, content, footer) through subgrid. */
   .cap-card-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--card-min, 16rem)), 1fr));
@@ -159,8 +150,8 @@
     }
   }
 
-  /* One destination: the link wraps the card (a div, so the link keeps its accessible name). Its edge firms under the pointer and a site may
-     lift it, as a linked panel does; the focus ring is the link's own, drawn round the card. */
+  /* One destination: the link wraps the card (a div, so the link keeps its accessible name). The focus
+        ring is the link's own, drawn round the card. */
   a:has(> .cap-card) {
     display: grid;
     border-radius: var(--radius-l);
@@ -183,8 +174,6 @@
     }
   }
 
-  /* A card with its own actions: only the heading link (.cap-card-link) is the destination, and its
-     hit area stretches over the card; the other controls sit above it. */
   .cap-card:has(a.cap-card-link) {
     position: relative;
 
@@ -218,8 +207,7 @@
     }
   }
 
-  /* A choice: <label class="cap-card"> with a radio or checkbox as a direct child. Selection changes
-     only the edge's color and an outline, never the box, so nothing moves. */
+  /* A choice: selection changes only the edge's color and an outline, never the box, so nothing moves. */
   label.cap-card {
     cursor: pointer;
     grid-template-columns: auto minmax(0, 1fr);
@@ -249,7 +237,6 @@
       outline: var(--focus-width) solid var(--ring);
       outline-offset: var(--focus-offset);
     }
-    /* Disabled as a field's control is: a dashed edge, the sunken ground and muted words. */
     &:has(> :disabled) {
       cursor: not-allowed;
       border-style: dashed;

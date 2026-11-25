@@ -1,4 +1,4 @@
-/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+/* Layer order repeated so this file is safe in any import order: the first statement fixes it (css/layers.css). */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
 /* A checklist run (checklist-run.ts): the checklist a person works a page by. Everything here is
@@ -29,7 +29,6 @@
     margin: 0;
     font-weight: var(--weight-heading);
   }
-  /* The roll blocks take their own line, under the words that say the same. */
   .cap-run-roll {
     flex-basis: 100%;
     order: 1;
@@ -58,7 +57,6 @@
     text-decoration: line-through;
     text-decoration-thickness: var(--line-w);
   }
-  /* A critical step is marked before it is read: its edge turns. */
   [data-run="on"] li:has([data-run-flag="critical"]):not(.cap-run-step-done) {
     border-inline-start-color: var(--crit);
   }
@@ -155,7 +153,6 @@
     & .cap-run-tools {
       font-size: var(--fs-body);
     }
-    /* A cue card: the strip names the step, so the list's number goes. */
     &.cap-cue {
       list-style: none;
       margin-inline-start: calc(-1 * calc(var(--space-6) + var(--space-2)));

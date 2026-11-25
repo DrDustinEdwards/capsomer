@@ -19,8 +19,6 @@ import {
   type Shortcut,
 } from "./shortcuts.ts";
 
-// Registers a shortcut while the component is mounted. The latest `run` is always the one
-// called, so passing a new function each render does not re-register.
 export function useShortcut(
   key: string | string[],
   run: (e: KeyboardEvent) => void,
@@ -50,7 +48,6 @@ export function useShortcut(
   }, [keyId, opts.label, opts.about, opts.group]);
 }
 
-// A shortcut's key caps, "or" between alternatives (the command menu shows them too).
 export function Keys({ spec }: { spec: string | string[] }) {
   const specs = Array.isArray(spec) ? spec : [spec];
   return (
@@ -70,7 +67,6 @@ export function Keys({ spec }: { spec: string | string[] }) {
   );
 }
 
-// One key cap. An arrow is drawn as its symbol, named for a screen reader and in a tooltip.
 function Cap({ cap }: { cap: string }) {
   const name = capName(cap);
   if (!name) return <kbd>{cap}</kbd>;
@@ -87,8 +83,6 @@ export interface ShortcutSheetProps {
   onOpenChange: (open: boolean) => void;
 }
 
-// The "?" sheet: every registered shortcut by group, and the switch for single keys. While
-// mounted it is the sheet "?" opens.
 export function ShortcutSheet({ open, onOpenChange }: ShortcutSheetProps) {
   const id = useId();
   const dlg = useRef<HTMLDialogElement | null>(null);
@@ -113,7 +107,6 @@ export function ShortcutSheet({ open, onOpenChange }: ShortcutSheetProps) {
     if (open) setGroups(grouped());
   }, [open]);
 
-  // Focus starts on Close: the dialog's own Close button, found once the markup is there.
   const setRef = useCallback((el: HTMLDialogElement | null) => {
     dlg.current = el;
     closeButton.current = el?.querySelector<HTMLElement>("[data-cap-part='close']") ?? null;

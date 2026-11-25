@@ -1,15 +1,14 @@
-/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+/* Layer order repeated so this file is safe in any import order: the first statement fixes it (css/layers.css). */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
-/* Picture: what a stored image shows while it loads, and the pause control an animated one needs.
-   The same markup comes from site-runtime's pictureProps (a JSX page) and Prelum's renderer (a post),
-   so these rules are not held to the prose context. Colors, sizes and radii are tokens only. */
+/* What a stored image shows while it loads, and the pause control an animated one needs. The same
+   markup comes from site-runtime's pictureProps and Prelum's renderer, so these rules are not held to
+   the prose context. */
 @layer cap.components {
   /* The stored placeholder (site-api's placeholder and color, made at upload): a tiny picture and the
      main color in the img's own style attribute, under the image until its pixels paint over them.
      The tiny picture is drawn at the box's size, which the browser smooths into a blur. A file with
      transparency should carry no placeholder: it would show through. */
-  /* The <picture> around a stored image leaves the box to its <img> (React Picture, pictureHtml). */
   :where(picture.cap-picture) {
     display: contents;
   }
@@ -20,12 +19,10 @@
     background-size: cover;
   }
 
-  /* An animated image (a GIF, served as animated WebP) and its still: WCAG 2.2.2 asks for a way to
-     stop anything that moves for more than five seconds. The toggle is a checkbox, so it works with
-     no script; while it is checked, or when the reader asks the system for less motion, the still
-     shows instead. The still is lazy, so it costs nothing until it is shown. Which one shows is
-     !important because an important declaration in a layer beats a host's unlayered img rules
-     (img { display: block } in nearly every reset), which would otherwise show both. */
+  /* An animated image and its still: WCAG 2.2.2 asks for a way to stop anything moving over five seconds.
+        The toggle is a checkbox, so it works with no script; while checked, or under reduced motion, the
+        still shows. Which one shows is !important because an important declaration in a layer beats a
+        host's unlayered img rules (img { display: block }), which would otherwise show both. */
   :where(.cap-motion) {
     position: relative;
     display: block;

@@ -1,22 +1,15 @@
 // The design tokens, generated from one seed color per family. `node tokens/palette.mjs`
-// writes tokens/color.css; `--check` regenerates it in memory, refuses any difference from
-// the committed file, and checks every text and control pair against WCAG 2.2 (4.5:1 for
-// text, 3:1 for a control's boundary) and against its APCA floor (LEVELS in palette-core.mjs),
-// in both themes, at the standard contrast and under prefers-contrast: more. `npm run check` runs the check, so CI
-// refuses a hand-edited hex and a pair that fell below the bar.
+// writes tokens/color.css; `--check` regenerates it in memory, refuses any difference from the
+// committed file, and checks every text and control pair against WCAG 2.2 (4.5:1 for text, 3:1 for
+// a control's boundary) and its APCA floor (LEVELS in palette-core.mjs), in both themes, at the
+// standard contrast and under prefers-contrast: more. `npm run check` runs it.
 //
-// The family scale (rulings.md, rule 14, locked 2026-10-01): every brand color is a
-// 12-step OKLCH scale with the same lightness roles, the Radix Colors step roles (1 and 2
-// backgrounds, 3 to 5 element backgrounds, 6 to 8 borders, 9 the solid accent, 10 its hover,
-// 11 low-contrast text, 12 high-contrast text). Step 9 is the seed exactly, in both themes,
-// except a seed too light for 3:1 on the light surfaces (amber), darkened in light (lightStep9),
-// and a seed too dark for 3:1 on the dark surfaces, lightened in dark (darkStep9; no family yet).
-// Step 11 in the light theme may be a fixed anchor: the purple family keeps #4F2D7F there.
-// Every other step takes the seed's hue at a fixed lightness and a fixed share of the
-// seed's chroma, so two families with the same seed lightness and chroma (purple #8c5fd2
-// and Foxing's #cc4f0c, both L 0.586, C 0.172) differ only in hue. Neutrals carry a small
-// chroma at the seed's hue; status hues are fixed and tuned by bisection against the
-// hardest surface each sits on. The OKLab conversion follows Bjorn Ottosson's reference.
+// Every family is a 12-step OKLCH scale with the same lightness roles (the Radix Colors step
+// roles). Step 9 is the seed exactly, except where 3:1 forces it (lightStep9, darkStep9); step 11
+// in light may be a fixed anchor. Every other step takes the seed's hue at a fixed lightness and a
+// fixed share of its chroma, so families with the same seed lightness and chroma differ only in
+// hue. Status hues are fixed and tuned by bisection against the hardest surface each sits on. The
+// OKLab conversion follows Bjorn Ottosson's reference.
 //
 //   node tokens/palette.mjs                       color.css (purple), family-<name>.css for every other family,
 //                                                 family-marks.css, enarratio-theme.mjs, css/enarratio.css, components/email/colors.ts
@@ -24,11 +17,9 @@
 //   node tokens/palette.mjs --seed=#RRGGBB [--anchor=#RRGGBB] --out=f
 //   node tokens/palette.mjs --report              every pair, every family, both themes
 //
-// tokens/color.css is the purple family on :root (the default). tokens/family-<name>.css, one per entry
-// in FAMILIES (palette-core.mjs), carries the same tokens scoped to [data-family="<name>"], so one element (the root, or a wrapper) can switch family for its
-// subtree. Both themes follow the same pattern as color.css (prefers-color-scheme, then
-// [data-theme]). Everything inside a family block is a literal value, never a var() chain,
-// so a family on a wrapper does not inherit the root family's already-resolved values.
+// tokens/color.css is the purple family on :root. tokens/family-<name>.css carries the same tokens
+// scoped to [data-family="<name>"]. Everything inside a family block is a literal value, never a
+// var() chain, so a family on a wrapper does not inherit the root family's resolved values.
 import { readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import {

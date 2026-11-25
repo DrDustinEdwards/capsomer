@@ -23,14 +23,10 @@ export interface MarkdownEditorProps extends Pick<
   | "wordsPerMinute"
   | "onSave"
 > {
-  // The visible label above the editor.
   label: ReactNode;
-  // The surface's accessible name; defaults to the label's text plus ", markdown".
   ariaLabel?: string;
-  // The field's name in a form: the markdown is posted in a hidden textarea of this name.
   name?: string;
   id?: string;
-  // Controlled: the text. Without it the editor keeps its own, starting at defaultValue.
   value?: string;
   defaultValue?: string;
   onChange?: (value: string) => void;
@@ -38,21 +34,15 @@ export interface MarkdownEditorProps extends Pick<
   readOnly?: boolean;
   disabled?: boolean;
   required?: boolean;
-  // A hint, not a stop: the footer counts characters against it and says when the text is over.
   maxLength?: number;
-  // Help, between the label and the editor, read as its description.
   help?: ReactNode;
-  // What is wrong and what to do; shown below the editor, and marks it invalid.
   error?: ReactNode;
-  // Called once with the handle when CodeMirror has loaded.
   onReady?: (handle: MarkdownEditorHandle) => void;
 }
 
-// Renders the HTML contract in markdown-editor.md: a label and a real textarea holding the
-// markdown, which is all a server render (and a reader without script) gets. After mount it
-// loads the behavior module and CodeMirror with import(), so they are their own chunks and
-// never reach a bundle that renders no editor, and upgrades the textarea in place. A server
-// build (Vite sets import.meta.env.SSR) leaves the behavior chunk out: effects never run there.
+// A label and a real textarea holding the markdown, which is all a server render (and a reader without
+// script) gets. After mount it loads the behavior module and CodeMirror with import() as their own
+// chunks and upgrades the textarea in place.
 const loadBehavior = () =>
   (import.meta as { env?: { SSR?: boolean } }).env?.SSR
     ? Promise.reject(new Error("markdown-editor: the editor mounts only in a browser"))
@@ -83,7 +73,6 @@ export function MarkdownEditor(props: MarkdownEditorProps) {
 
   const rootRef = useRef<HTMLDivElement>(null);
   const handleRef = useRef<MarkdownEditorHandle | null>(null);
-  // What the latest render said, read by the callbacks the editor was mounted with.
   const latest = useRef(props);
   useLayoutEffect(() => {
     latest.current = props;
@@ -99,7 +88,6 @@ export function MarkdownEditor(props: MarkdownEditorProps) {
     nonce: latest.current.nonce,
     wordsPerMinute: latest.current.wordsPerMinute,
     scaffolds: latest.current.scaffolds,
-    // Always a function, so a later render's targets are used without rebuilding the editor.
     linkTargets: async (query) => {
       const t = latest.current.linkTargets;
       if (typeof t === "function") return t(query);
@@ -146,7 +134,6 @@ export function MarkdownEditor(props: MarkdownEditorProps) {
       mounted?.destroy();
       handleRef.current = null;
     };
-    // Mounted once; later renders reach the editor through `latest` and the effects below.
   }, []);
 
   // A controlled value: set only when it differs, or each keystroke would round-trip and reset the cursor.
@@ -161,7 +148,6 @@ export function MarkdownEditor(props: MarkdownEditorProps) {
     }
   }, [value]);
 
-  // The toolbar and the slash menu are rebuilt only when what they list changes, not each render.
   useEffect(() => {
     const o = options();
     handleRef.current?.update({

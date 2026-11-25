@@ -1,4 +1,4 @@
-/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+/* Layer order repeated so this file is safe in any import order: the first statement fixes it (css/layers.css). */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
 /* A panel: a bordered surface with a header on the raised tone and a padded body.
@@ -15,10 +15,8 @@
     /* A list's hover tint stays inside the rounded corners. Rings inside a panel are
        drawn inset (row-list, table) so nothing focusable is clipped. */
     overflow: clip;
-    /* A site's resting shadow (--card-shadow, none by default). */
     box-shadow: var(--card-shadow);
 
-    /* shadcn's Card size="sm", and its comfortable (vega) shadow. */
     &[data-size="sm"] {
       --pad-card: var(--space-4);
     }
@@ -27,7 +25,6 @@
       box-shadow: var(--shadow-xs);
     }
 
-    /* A picture first in the panel runs to its edges. */
     & > img:first-child {
       display: block;
       inline-size: 100%;
@@ -54,7 +51,6 @@
     }
   }
 
-  /* The header sits on the raised tone instead of a rule under it. */
   .cap-panel-head {
     display: flex;
     flex-wrap: wrap;
@@ -72,7 +68,6 @@
     }
   }
 
-  /* shadcn's CardAction: a control for the whole panel, at the header's right. */
   .cap-panel-action {
     display: flex;
     align-items: center;
@@ -86,14 +81,12 @@
     margin-inline-start: 0;
   }
 
-  /* How many the panel holds, beside its heading. */
   .cap-panel-count {
     font-size: var(--fs-detail);
     font-variant-numeric: var(--figures);
     color: var(--dim);
   }
 
-  /* Where the panel's data comes from and how fresh it is, pushed to the end of the line. */
   .cap-panel-src {
     margin-inline-start: auto;
     font-size: var(--fs-label);
@@ -124,7 +117,6 @@
     gap: var(--gap);
     padding: var(--gap) var(--pad-card);
 
-    /* A panel holding a list or a table: the rows run to the panel's edges. */
     &[data-flush] {
       display: block;
       padding: 0;
@@ -143,7 +135,6 @@
     }
   }
 
-  /* shadcn's CardFooter: a tinted band under a rule, for the panel's actions or a link. */
   .cap-panel-foot {
     display: flex;
     flex-wrap: wrap;

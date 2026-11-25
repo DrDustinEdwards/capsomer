@@ -65,8 +65,6 @@ function Live() {
   );
 }
 
-// The extras: mounted when the page is idle, the menu's pages as Go to commands, recents, a
-// search result's snippet with the typed words marked, and Ask as the way past the commands.
 const NAV = [
   { id: "overview", label: "Overview", href: "#overview" },
   { id: "media", label: "Media", href: "#media", group: "Content" },
@@ -110,7 +108,6 @@ function Extras() {
   );
 }
 
-// The answer under the list, as the answer-dom specimen's without React.
 function Answer() {
   const [open, setOpen] = useState(true);
   return (

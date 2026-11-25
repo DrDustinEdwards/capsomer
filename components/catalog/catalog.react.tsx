@@ -39,9 +39,8 @@ const plain = <T,>(field: CatalogField<T>, item: T): string => {
   return list.map(String).join(", ");
 };
 
-// The whole catalog, from the HTML contract in catalog.md. It is a form that submits with GET to the page's own
-// address, so every control works with no script; the enhancement (catalog.ts) only swaps the regions in place.
-// Everything here is drawn from `result`, which a server computes, so the page is the same either way.
+// The whole catalog, from the HTML contract in catalog.md: a form that submits with GET to the page's own
+// address, so every control works with no script; catalog.ts only swaps the regions in place.
 export function Catalog<T>({
   definition: def,
   result,

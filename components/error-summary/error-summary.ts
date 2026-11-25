@@ -1,8 +1,6 @@
-// The error summary (GOV.UK Error summary): after a failed submit, a titled list of links to
-// every field in error, at the top of the form. It takes focus, and the page title starts
-// "Error: " until the form is sent. Field's submit check (field.ts) writes it; a page the
-// server rendered with errors writes the same markup with `autofocus`, and enhance() wires its
-// links. No framework; the React wrapper uses the same functions.
+// The error summary (GOV.UK Error summary): after a failed submit, a titled list of links to every field in
+// error at the top of the form. It takes focus, and the page title starts "Error: " until the form is sent.
+// A page the server rendered with errors writes the same markup with `autofocus`; enhance() wires its links.
 
 import { hashId } from "../hooks/hooks.ts";
 
@@ -14,7 +12,6 @@ export interface SummaryItem {
 const PREFIX = "Error: ";
 let serial = 0;
 
-// Puts "Error: " at the start of the page title, or takes it off.
 export function setTitleError(on: boolean): void {
   const has = document.title.startsWith(PREFIX);
   if (on && !has) document.title = PREFIX + document.title;
@@ -66,7 +63,6 @@ export function wireSummary(summary: HTMLElement): () => void {
   };
 }
 
-// The form's own .cap-error-summary, or a new one made as its first child.
 export function summaryFor(form: HTMLFormElement): HTMLElement {
   const own = form.querySelector<HTMLElement>(".cap-error-summary");
   if (own) {
@@ -92,8 +88,6 @@ export function summaryFor(form: HTMLFormElement): HTMLElement {
   return summary;
 }
 
-// Lists the fields in error, each a link with the message beside its field, and moves focus
-// to the summary.
 export function showSummary(summary: HTMLElement, items: SummaryItem[]): void {
   const list = summary.querySelector(".cap-error-summary-list");
   list?.replaceChildren(
@@ -116,7 +110,6 @@ export function hideSummary(summary: HTMLElement): void {
   summary.querySelector(".cap-error-summary-list")?.replaceChildren();
 }
 
-// Wires every [data-cap="error-summary"] under root not yet wired (one the server rendered).
 export function enhance(root: ParentNode = document): () => void {
   const undo = [
     ...root.querySelectorAll<HTMLElement>("[data-cap='error-summary']:not([data-cap-ready])"),

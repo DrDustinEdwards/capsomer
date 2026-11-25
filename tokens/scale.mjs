@@ -1,21 +1,16 @@
-// Every token that is not a color: space, radius, type, control size, motion, layers,
-// focus, the reading context, and the two contexts' aliases. `node tokens/scale.mjs` writes
-// tokens/scale.css, tokens/themes.css and tokens/tokens.json; `--check` regenerates them in
-// memory and refuses any difference from the committed files.
+// Every token that is not a color: space, radius, type, control size, motion, layers, focus, the
+// reading context and the two contexts' aliases. `node tokens/scale.mjs` writes tokens/scale.css,
+// tokens/themes.css and tokens/tokens.json; `--check` refuses any difference from the committed files.
 //
-// The values and their reasons are in capsomer/research/design.md, section 1.5, as approved
-// on 2026-09-30. Each is a default: change it here, run `npm run tokens`, and record why.
+// Each value is a default: change it here, run `npm run tokens`, and record why.
 //
-// Density (release 0.2): the sizes a person feels (control height, padding, text size, gap,
-// row height) come in two sets. Compact is the default: the Capsid Portal's values, raised one
-// step on 2026-10-25 (14 px text, 34 px controls, 40 px rows, 20 px
-// cards); comfortable starts from shadcn's vega spacing (36 px controls, 14 px text, px-3).
-// `[data-density="comfortable"]` on the root or on any wrapper changes them for its subtree.
-// Every density token is written as a literal in both blocks, never as a var() chain, so a
-// wrapper does not inherit a value already resolved at the root.
+// Density: the sizes a person feels come in two sets. Compact is the default;
+// `[data-density="comfortable"]` on the root or any wrapper changes them for its subtree. Every
+// density token is a literal in both blocks, never a var() chain, so a wrapper does not inherit a
+// value already resolved at the root.
 //
-// Font sizes are in rem (16px each at the browser's default), so a person's own default text
-// size reaches every size (WCAG 1.4.4); spaces and controls stay in px.
+// Font sizes are in rem so a person's own default text size reaches every size (WCAG 1.4.4);
+// spaces and controls stay in px.
 import { readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { ELEVATION_ORDER, FAMILIES, moreLines, themes } from "./palette.mjs";
@@ -23,8 +18,8 @@ import { UI_STACK } from "./palette-core.mjs";
 
 const here = (p) => fileURLToPath(new URL(p, import.meta.url));
 
-// [name, value, what it is for]. Names are short on purpose (decision 2): an app renames
-// its own colliding tokens when it adopts.
+// [name, value, what it is for]. Names are short on purpose: an app renames its own colliding
+// tokens when it adopts.
 export const SCALE = {
   space: [
     ["space-1", "2px", "hairline gaps: an icon beside its count"],
@@ -195,8 +190,7 @@ export const SCALE = {
       "a release or a thumb settling: a damped spring, 95% at 30% of the time, 4% past; transform only, with --dur-slow",
     ],
   ],
-  // The plain scales the semantic type tokens above draw from. A component names the step it means (a label is
-  // --weight-medium), so a site that changes one changes it everywhere; Inter is a variable font, so every step exists.
+  // The plain scales the semantic type tokens draw from; Inter is a variable font, so every step exists.
   weight: [
     ["weight-light", "300", "Inter Light: a title at 24px and up (--weight-title)"],
     ["weight-regular", "400", "running text"],
@@ -224,8 +218,8 @@ export const SCALE = {
     ["leading-loose", "1.7", "a mono list or a small caption that needs air between its lines"],
     ["leading-airy", "1.75", "a short lead paragraph set apart from the text around it"],
   ],
-  // A line box as a length: it inherits as a length, so a child at another size keeps the same line (a ratio would
-  // scale with it). Product sites ported from Tailwind pair a size with one of these.
+  // A line box as a length: it inherits as a length, so a child at another size keeps the same
+  // line (a ratio would scale with it).
   "line-box": [
     ["line-box-4", "1rem", "a 16px line: 12px text"],
     ["line-box-5", "1.25rem", "a 20px line: 14px text"],
@@ -374,9 +368,8 @@ export const SCALE = {
       "the family arrow's shape, a clip path (css/base.css): a token so a page without base.css, such as the Portal, still draws the header's arrows",
     ],
   ],
-  // How a text link looks (css/base.css), so a site that wants its own links sets these in its SITES entry
-  // instead of writing CSS over the base. The defaults are the network's look: semibold, no line, a soft
-  // tint under the pointer. A site can use weight "inherit", decoration "underline", tints "transparent".
+  // How a text link looks (css/base.css); a site sets these in its SITES entry instead of
+  // overriding the base.
   link: [
     ["link-weight", "600", "a text link's weight; \"inherit\" draws it at the text's own weight"],
     [
@@ -433,10 +426,9 @@ export const SCALE = {
   ],
 };
 
-// Breakpoints: [name, width, what changes there]. A media query cannot read a custom property, so these are not CSS
-// tokens: they are the widths a page-level @media should use (tokens.json carries them for tools; older queries still
-// use their own widths, 768px, 52rem and the like, and move to these when their layout is next touched), and a
-// component that answers to its own width uses a container query instead. Write them in rem, min-width, mobile first.
+// Breakpoints: [name, width, what changes there]. A media query cannot read a custom property, so
+// these are not CSS tokens: write page-level @media in rem, min-width, mobile first. A component
+// that answers to its own width uses a container query.
 export const BREAKPOINTS = [
   ["bp-sm", "40rem", "a phone ends: one column becomes two, a tray becomes a sidebar"],
   ["bp-md", "48rem", "a tablet: the site header shows its links, a rail appears"],
@@ -489,8 +481,8 @@ const COARSE = [
   ["row-h", "44px"],
 ];
 
-// The reading context (design 1.4): one attribute on a region switches from dense app UI to
-// a reading page. It overrides density on the same element.
+// The reading context: one attribute on a region switches from dense app UI to a reading page.
+// It overrides density on the same element.
 export const PROSE = [
   ["text-size", "var(--fs-prose)"],
   ["leading", "1.6"],
@@ -556,8 +548,7 @@ export function renderThemes() {
   return `${HEADER(`both themes pinned to an element, from the seed ${t.seed}`)}${block("light")}\n${block("dark")}\n@media (prefers-contrast: more) {\n${more("light")}\n${more("dark")}\n}\n`;
 }
 
-// The same values in the Design Tokens Community Group format (2025.10), for tools that
-// read it. The CSS is the contract; nothing in Capsomer reads this file (decision 15).
+// The same values in the Design Tokens Community Group format, for tools. Nothing in Capsomer reads this file.
 export function renderJson() {
   const t = themes(FAMILIES.purple);
   const out = {

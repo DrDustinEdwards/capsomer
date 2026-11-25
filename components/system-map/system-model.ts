@@ -1,8 +1,6 @@
-// Capsid's public system model: the one schema every reader checks it against (the explorer's
-// build, every site's /systems pages, the refresh script), the cross-checks the shape cannot say,
-// and the model in Markdown for a page's machine-readable twin. Capsid writes the model from its
-// own source schema (src/system-model.ts); this is what it publishes. Server and build only: it
-// needs zod, which the map's page bundle does not.
+// Capsid's public system model: the one schema every reader checks against, the cross-checks the
+// shape cannot say, and the model in Markdown. Server and build only: it needs zod, which the
+// map's page bundle does not.
 import { z } from "zod";
 import { VERB } from "./system-map-data.ts";
 
@@ -49,7 +47,6 @@ const OpenSystem = z.strictObject({
   domain: Text(253).optional(),
   repos: z.array(z.url().max(512)).optional(),
 });
-// A private system is everything a public one is but its repo link.
 const PrivateSystem = OpenSystem.omit({ repos: true }).extend({ private: z.literal(true) });
 
 export const PublicModelSchema = z.strictObject({
@@ -75,7 +72,7 @@ export const PublicModelSchema = z.strictObject({
       title: Text(280).optional(),
     }),
   ),
-  // Walks the explorer animates. Optional, so a model written before flows existed still parses.
+  // Optional, so a model written before flows existed still parses.
   flows: z
     .array(
       z.strictObject({
@@ -175,18 +172,14 @@ export function parsePublicModel(raw: unknown): ModelResult {
   return problems.length ? { ok: false, problems } : { ok: true, model };
 }
 
-// Two models say the same thing when only the day they were read differs.
 export function sameModel(a: PublicModel, b: PublicModel): boolean {
   const { as_of: _a, ...left } = a;
   const { as_of: _b, ...right } = b;
   return JSON.stringify(left) === JSON.stringify(right);
 }
 
-// The Capsid explorer, where every system has its own page.
 export const EXPLORER_ORIGIN = "https://capsid.dustinedwards.info";
 
-// A system's page in the explorer (or the explorer itself with no id): "/s/<id>/", and its
-// "containers" or "code" page with `sub`.
 export function explorerHref(
   id?: string,
   options: { origin?: string; sub?: "containers" | "code" } = {},
@@ -196,12 +189,10 @@ export function explorerHref(
   return `${origin}/s/${encodeURIComponent(id)}/${options.sub ? `${options.sub}/` : ""}`;
 }
 
-// The address as a person reads it in a link's text: "capsid.dustinedwards.info/s/carrel".
 export function explorerLabel(id: string, origin = EXPLORER_ORIGIN): string {
   return `${new URL(origin).host}/s/${id}`;
 }
 
-// A line read from its `to` end: "is written to by".
 export const VERB_INWARD: Readonly<Record<string, string>> = {
   installs: "is installed by",
   "publishes-to": "is published to by",
@@ -214,13 +205,11 @@ export const VERB_INWARD: Readonly<Record<string, string>> = {
 };
 
 export interface Connection {
-  // Capitalized and read from this system's side: "Writes to", "Is read by".
   verb: string;
   other: string;
   name: string;
 }
 
-// The lines between this system and other systems (not their parts), in the model's order.
 export function connectionsOf(model: PublicModel, id: string): Connection[] {
   const names = new Map(model.systems.map((s) => [s.id, s.name]));
   const out: Connection[] = [];
@@ -239,14 +228,11 @@ export function connectionsOf(model: PublicModel, id: string): Connection[] {
   return out;
 }
 
-// A system's own parts (not the outside things it works with), and the outside things.
 export const partsOf = (model: PublicModel, id: string): PublicContainer[] =>
   model.containers.filter((c) => c.system === id && c.kind !== "external");
 export const outsideOf = (model: PublicModel, id: string): PublicContainer[] =>
   model.containers.filter((c) => c.system === id && c.kind === "external");
 
-// The lines inside one system, as sentences: "Worker writes to Database". A line between two
-// outside things is left out.
 export function wiresOf(model: PublicModel, id: string): string[] {
   const own = new Map(model.containers.filter((c) => c.system === id).map((c) => [c.id, c]));
   return model.relationships.flatMap((r) => {
@@ -258,11 +244,8 @@ export function wiresOf(model: PublicModel, id: string): string[] {
 }
 
 export interface ModelMarkdownOptions {
-  // The site's own address, before every path.
   origin: string;
-  // A system's page on the site ("/systems/<id>").
   pageHref: (id: string) => string;
-  // The page's heading and its first sentence (the site's words).
   title?: string;
   intro?: string;
   // Headings for the rings, in order (default "Core", "Shared", "Used").
@@ -275,8 +258,7 @@ export interface ModelMarkdownOptions {
 const containerLine = (c: PublicContainer) =>
   `${c.name} (${c.technology})${c.description ? `: ${c.description}` : ""}`;
 
-// One system as a Markdown section: what it is, its addresses, its parts, how they connect and
-// the systems it ties to. Null for an id the model does not have (the page answers 404).
+// One system as a Markdown section. Null for an id the model does not have (the page answers 404).
 export function systemMarkdown(
   model: PublicModel,
   id: string,
@@ -320,7 +302,6 @@ export function systemMarkdown(
   return lines.join("\n");
 }
 
-// The whole model as Markdown: the title, the intro, then each ring's systems in model order.
 export function modelMarkdown(model: PublicModel, o: ModelMarkdownOptions): string {
   const rings = { core: "Core", shared: "Shared", used: "Used", ...o.rings };
   const out = [`# ${o.title ?? "Systems"}`, ""];

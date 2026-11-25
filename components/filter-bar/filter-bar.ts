@@ -1,11 +1,8 @@
-// The filter bar's behavior (filter-bar.md): address-state helpers a loader and a link both use,
-// and, for a bar that applies as you type, a debounced submit that waits out an IME composition.
-// No framework.
+// The filter bar's behavior: address-state helpers a loader and a link both use, and a debounced submit for a bar that applies as you type.
 
 export type Params = Record<string, string | number | null | undefined>;
 
-// `path` with `params` as its query, leaving out empty values and any value equal to its default
-// (`defaults`), so the address stays short and one view has one address.
+// `path` with `params` as its query, leaving out empty and default values so one view has one address.
 export function withParams(path: string, params: Params, defaults: Params = {}): string {
   const q = new URLSearchParams();
   for (const [key, raw] of Object.entries(params)) {
@@ -18,14 +15,12 @@ export function withParams(path: string, params: Params, defaults: Params = {}):
   return s ? `${path}?${s}` : path;
 }
 
-// The address with only `keep` left (a sort and a page size survive Clear; the filters go).
 export function clearedHref(path: string, params: Params, keep: readonly string[] = []): string {
   const kept: Params = {};
   for (const key of keep) kept[key] = params[key];
   return withParams(path, kept);
 }
 
-// True when any of `keys` has a value in `params` that differs from its default.
 export function isFiltered(
   params: Params,
   keys: readonly string[],
@@ -44,9 +39,7 @@ export function isFiltered(
 
 export const SEARCH_DELAY_MS = 300;
 
-// Submits `form` after typing stops in a text field, at once when a select, a checkbox or a
-// radio changes. While an IME is composing ("ni hao" before it becomes 你好) nothing is sent; the
-// end of the composition counts as typing. Returns the function that detaches.
+// Submits after typing stops, at once for a select, checkbox or radio. Nothing is sent during an IME composition; its end counts as typing.
 export function liveSubmit(form: HTMLFormElement, delay = SEARCH_DELAY_MS): () => void {
   let timer: ReturnType<typeof setTimeout> | undefined;
   let composing = false;
@@ -99,7 +92,6 @@ export function liveSubmit(form: HTMLFormElement, delay = SEARCH_DELAY_MS): () =
   };
 }
 
-// Attaches liveSubmit to every form[data-cap="filter-bar"][data-live] under root.
 export function enhance(root: ParentNode = document): () => void {
   const undo: Array<() => void> = [];
   for (const form of Array.from(

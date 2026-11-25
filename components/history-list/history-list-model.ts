@@ -1,50 +1,38 @@
-// The history list's data and its pure helpers (history-list.ts).
-
 import { plural, wordCount } from "@drdustinedwards/site-helpers/text";
 import { dayKey } from "@dustinedwards/site-runtime/time";
 import { formatDate, parse } from "../time/time.ts";
-
-// The data.
 
 export type HistoryKind = "edit" | "autosave" | "named" | "publish" | "restore";
 
 export interface Destination {
   name: string;
-  // Words, not colors alone: Live, Failed, Queued.
   status: "live" | "failed" | "queued";
 }
 
 export interface HistoryEntry {
   id: string;
   kind: HistoryKind;
-  // Who made the change, by name. `ai` sets the avatar's initials in the mono face.
+  // Who made the change; `ai` sets the avatar's initials in the mono face.
   who: string;
   ai?: boolean;
-  // When, as an ISO timestamp (a zoneless one is UTC, as in the time component).
+  // ISO timestamp; a zoneless one is UTC.
   at: string;
-  // The post's length in words after this change. The line's signed size change is the
-  // difference from the next older line. Leave it out where there is no word count (a site
-  // revision): the line then shows no size change.
+  // The post's length in words after this change; the size change is the difference from the next
+  // older line. Leave it out where there is no word count.
   words?: number;
-  // The signed change, when the caller knows it better than the difference (the oldest line,
-  // whose predecessor is not loaded).
+  // The signed change, when the caller knows it better (the oldest line, whose predecessor is not loaded).
   delta?: number;
-  // One line; the whole text stays in the link's name.
   summary: string;
-  // A named version's name.
   name?: string;
   destinations?: Destination[];
-  // A restore: the line it restored from.
   restoredFrom?: { id: string; at: string };
 }
 
 export interface Run {
   type: "run";
   entries: HistoryEntry[];
-  // The oldest and newest times in the run.
   from: string;
   to: string;
-  // Undefined when a line in the run has no word count.
   delta?: number;
   who: string[];
 }
@@ -54,10 +42,6 @@ export interface Single {
 }
 export type Line = Run | Single;
 
-// Pure helpers.
-
-// The signed change in length, in words: `after` minus `before`. Each is the text or its
-// word count.
 export function wordDelta(before: string | number, after: string | number): number {
   const n = (v: string | number) => (typeof v === "number" ? v : wordCount(v));
   return n(after) - n(before);
@@ -69,18 +53,16 @@ export function deltaSign(n: number): Sign {
   return n > 0 ? "plus" : n < 0 ? "minus" : "zero";
 }
 
-// "+142 words", "−30 words" (a real minus sign, which a screen reader says as "minus"),
-// "+1 word", "no change in length". The sign is text; a drawn mark repeats it.
+// "+142 words", "−30 words" (a real minus sign, which a screen reader says as "minus"). The sign
+// is text; a drawn mark repeats it.
 export function deltaText(n: number): string {
   if (n === 0) return "no change in length";
   const abs = Math.abs(n);
   return `${n > 0 ? "+" : "\u2212"}${plural(abs, "word")}`;
 }
 
-// The change each entry made, newest first: its length less the next older entry's. An
-// entry that carries its own `delta`, or the oldest one (whose predecessor is not loaded),
-// uses that, else the whole length. Undefined when the entry or the one it is measured
-// against has no word count: that line shows no size change.
+// The change each entry made, newest first: its length less the next older entry's. An entry's
+// own `delta`, or the oldest entry's, wins. Undefined when either word count is missing.
 export function deltaOf(entries: readonly HistoryEntry[], index: number): number | undefined {
   const e = entries[index];
   if (!e) return 0;
@@ -91,7 +73,6 @@ export function deltaOf(entries: readonly HistoryEntry[], index: number): number
   return older.words === undefined ? undefined : e.words - older.words;
 }
 
-// The sum of the changes, undefined as soon as one has none.
 function sumDeltas(parts: (number | undefined)[]): number | undefined {
   let total = 0;
   for (const p of parts) {
@@ -101,10 +82,9 @@ function sumDeltas(parts: (number | undefined)[]): number | undefined {
   return total;
 }
 
-// Groups runs of consecutive autosaves into one line each; every other entry stays a line
-// of its own. Newest first, as the list is shown. The newest entry is the current version
-// and always stays a line. A run needs `minRun` autosaves (two by default): one autosave on
-// its own is just a line.
+// Groups runs of consecutive autosaves into one line each; every other entry stays its own line.
+// Newest first. The newest entry is the current version and always stays a line. A run needs
+// `minRun` autosaves (default two).
 export function condense(entries: readonly HistoryEntry[], minRun = 2): Line[] {
   const out: Line[] = [];
   let i = 0;
@@ -136,9 +116,8 @@ export function condense(entries: readonly HistoryEntry[], minRun = 2): Line[] {
   return out;
 }
 
-// "Oct 2, 2:40 PM UTC", with the year when it is not the reference year ("Oct 2, 2025, ...").
-// American English, month first and the 12-hour clock. Always UTC, so the page delivered by a
-// server and the page a browser draws agree.
+// "Oct 2, 2:40 PM UTC", with the year when it is not the reference year. Always UTC, so server
+// and browser agree.
 export function stamp(iso: string, now: number = Date.now()): string {
   const t = parse(iso);
   if (!Number.isFinite(t)) return "an unreadable time";
@@ -146,12 +125,10 @@ export function stamp(iso: string, now: number = Date.now()): string {
   return formatDate(t, { style: "medium", time: true, zoneName: true, year }) as string;
 }
 
-// "Oct 2": the day alone, for a sentence ("Restored version from Oct 2").
 export function dayOf(iso: string, now: number = Date.now()): string {
   return stamp(iso, now).replace(/, \d{1,2}:\d\d [AP]M UTC$/, "");
 }
 
-// "2:02 PM to 2:40 PM UTC" for a run inside one UTC day; with days when it spans more than one.
 export function rangeText(fromIso: string, toIso: string, now: number = Date.now()): string {
   const a = parse(fromIso);
   const b = parse(toIso);
@@ -160,26 +137,22 @@ export function rangeText(fromIso: string, toIso: string, now: number = Date.now
   return `${stamp(fromIso, now)} to ${stamp(toIso, now)}`;
 }
 
-// "12 autosaves", "2 autosaves".
 export function runTitle(run: Pick<Run, "entries">): string {
   return `${run.entries.length} autosaves`;
 }
 
 export interface Picks {
   picked: string[];
-  // True when a third pick was refused: two are picked already.
   blocked: boolean;
 }
 
-// Toggles one id in the picks. At most two: a third is refused (not swapped in), so the
-// person chooses which to untick. Unpicking always works.
+// Toggles one id in the picks. At most two: a third is refused, not swapped in.
 export function pickTwo(picked: readonly string[], id: string): Picks {
   if (picked.includes(id)) return { picked: picked.filter((p) => p !== id), blocked: false };
   if (picked.length >= 2) return { picked: [...picked], blocked: true };
   return { picked: [...picked, id], blocked: false };
 }
 
-// The pair in time order, older first, whichever was picked first. Ties keep the pick order.
 export function orderPair(
   picked: readonly string[],
   at: (id: string) => number,
@@ -189,7 +162,6 @@ export function orderPair(
   return at(b) < at(a) ? [b, a] : [a, b];
 }
 
-// The compare view's address: `?from=<older>&to=<newer>`, after `base` (a path, or "").
 export function compareHref(base: string, older: string, newer: string): string {
   return `${base}?from=${encodeURIComponent(older)}&to=${encodeURIComponent(newer)}`;
 }
@@ -203,7 +175,6 @@ export function pickedText(count: number, older?: string, newer?: string): strin
   return `2 versions picked. Older: ${older}. Newer: ${newer}. The older is always first, whichever you picked first.`;
 }
 
-// The line a restore adds on top: the restored text, as a new version.
 export function restoredEntry(
   source: HistoryEntry,
   current: HistoryEntry,
@@ -237,9 +208,8 @@ export function destinationWord(s: Destination["status"]): string {
   return s === "live" ? "Live" : s === "failed" ? "Failed" : "Queued";
 }
 
-// The pair a compare view shows, read from its address: `?from=&to=` (what the compare link
-// writes) or two `compare` values (what the pick boxes post as a plain GET form before the
-// script runs), put in time order, older first. Null when the address does not name two.
+// The pair a compare view shows, from `?from=&to=` or two `compare` values (a plain GET form
+// before script runs), older first. Null when the address does not name two.
 export function comparePicks(
   params: URLSearchParams,
   at: (id: string) => number,
@@ -261,8 +231,7 @@ const VERBS: Record<string, string> = {
 };
 
 // A revision's commit message as a line's summary: its first line, without the file's own path
-// or an id (which every line would repeat), and a bare verb ("Save") as what happened ("Saved").
-// From Carrel's revision picker (revisionLabel).
+// or an id, and a bare verb ("Save") as what happened ("Saved").
 export function messageSummary(message: string, path?: string): string {
   let m = message.split("\n")[0] ?? "";
   if (path) m = m.split(path).join(" ");
@@ -275,9 +244,7 @@ export function messageSummary(message: string, path?: string): string {
 }
 
 export interface ChangeTextOptions {
-  // Field names as a person reads them; any other name has its underscores read as spaces.
   labels?: Readonly<Record<string, string>>;
-  // Fields never named (the row's id, a timestamp the write itself sets). Default ["id"].
   skip?: readonly string[];
 }
 
@@ -299,11 +266,8 @@ function valueText(v: unknown): string {
   return typeof v === "object" ? JSON.stringify(v) : String(v);
 }
 
-// One audit row's change in words, field by field: "amount: 5 to 3; status: in stock to empty".
-// A row with no before is "Added", with no after "Removed", and the same on both sides "No
-// change". Takes the rows as objects or as their JSON (an audit log's before and after columns).
-// From dustinedwards.info's lab inventory (workspace.inventory.lot.tsx, changeText), which also
-// called a removal "Changed" and missed a field the after row dropped.
+// One audit row's change in words, field by field. A row with no before is "Added", with no after
+// "Removed". Takes rows as objects or as their JSON.
 export function changeText(
   before: string | Row | null | undefined,
   after: string | Row | null | undefined,

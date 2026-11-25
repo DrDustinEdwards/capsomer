@@ -1,20 +1,12 @@
-// Tracked changes on prosemirror-suggest-changes (MIT, Handle with Care Collective):
-// in suggesting mode a person's typing becomes an insertion mark and their deletions a deletion mark,
-// and each change is accepted or rejected on its own, as in Word and Google Docs.
-//
-// What this adds to the library:
-// - Who. Every mark says who made it (`by`, a person's id), in which revision round, and when. The
-//   library joins a new change onto a mark it touches, which is right for one writer and wrong for
-//   several, so `stamp` gives back each touched run its earlier owner and gives the writer's own runs
-//   ids of their own (`${clientID}:n`): one id is always one person's change.
-// - Blocks over Yjs. A block suggested in or out carries its mark on the block, which Yjs does not
-//   keep. `blockMarkMirror` copies it into the block's `smark` attribute and back, so it reaches
-//   everyone in the room and the server.
-// - Settling. A save writes the text as if every pending suggestion were rejected (`settle`), so a
-//   suggestion reaches a site or the repository only once someone accepts it.
-//
-// No DOM here except in the plugin's decorations, which only a browser draws: the room's server runs
-// `settle` and `suggestions` too.
+// Tracked changes on prosemirror-suggest-changes (MIT): in suggesting mode typing becomes an insertion mark
+// and deletions a deletion mark, each accepted or rejected on its own. What this adds to the library:
+// - Who. Every mark says who made it (`by`), in which revision round, and when. The library joins a new
+//   change onto a mark it touches, which is wrong for several writers, so `stamp` gives back each touched
+//   run its earlier owner and gives the writer's own runs ids of their own (`${clientID}:n`).
+// - Blocks over Yjs. A block's mark lives on the block, which Yjs does not keep; `blockMarkMirror` copies
+//   it into the block's `smark` attribute and back.
+// - Settling. A save writes the text as if every pending suggestion were rejected (`settle`).
+// No DOM here except the plugin's decorations: the room's server runs `settle` and `suggestions` too.
 
 import {
   isSuggestChangesEnabled,
@@ -90,10 +82,9 @@ export function settle(schema: Schema, json: JsonDoc): JsonDoc {
 }
 
 /**
- * What each person has suggested, by person id: each change in document order as its kind, its id and its text (a
- * block's type for a whole block). The room's server compares these before and after a suggester's update, so a
- * change to anyone else's suggestions, even one that keeps its length, is refused. Runs of one change that another
- * person's typing split are joined again, so typing beside or inside someone's suggestion leaves theirs the same.
+ * What each person has suggested, by person id: each change in document order as its kind, id and text.
+ * The room's server compares these before and after a suggester's update, so a change to anyone else's
+ * suggestions is refused. Runs of one change that another person's typing split are joined again.
  */
 export function suggestions(schema: Schema, json: JsonDoc): Map<string, string[][]> {
   const byPerson = new Map<string, string[][]>();
@@ -151,7 +142,6 @@ export type Suggester = {
   round: () => string | null;
 };
 
-/** An id that is this writer's alone. */
 function idMaker(s: Suggester) {
   let n = 0;
   return () => `${s.clientId}:${Date.now().toString(36)}${(n++).toString(36)}`;
@@ -247,7 +237,6 @@ export type Suggestion = {
   to: number;
 };
 
-/** Every pending change in the document, in reading order. */
 export function listSuggestions(doc: PmNode): Suggestion[] {
   const out = new Map<string, Suggestion>();
   doc.descendants((node, pos) => {

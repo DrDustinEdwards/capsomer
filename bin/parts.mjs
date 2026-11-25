@@ -1,7 +1,7 @@
-// parts.json: every component's parts, variants, state hooks and CSS variables, read from its stylesheet (Capsomer
-// names a part with a class, `cap-<name>-<part>`, a variant with a data attribute and a state with ARIA or the
-// platform, so the stylesheet already says it all; no data-slot). `npm run build` writes dist/parts.json, exported as
-// `capsomer/parts.json`; the docs site's anatomy and data-attribute tables read the same function at build.
+// parts.json: every component's parts, variants, state hooks and CSS variables, read from its
+// stylesheet. Capsomer names a part with a class (`cap-<name>-<part>`), a variant with a data
+// attribute and a state with ARIA or the platform, so there is no data-slot. `npm run build` writes
+// dist/parts.json (`capsomer/parts.json`); the docs site reads the same function at build.
 import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { inlineCss } from "./build.mjs";

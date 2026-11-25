@@ -1,8 +1,7 @@
-/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+/* Layer order, repeated so this file is safe in any import order. */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
-/* A page's closing call to action (cta-band.md): centered words and actions in a tinted band with
-   the accent's edge, or a quiet band under a rule. The site's look is its tokens. */
+/* A page's closing call to action: centered words and actions in a tinted band with the accent's edge, or a quiet band under a rule. */
 @layer cap.components {
   .cap-cta-band {
     display: grid;
@@ -22,7 +21,6 @@
       background: none;
     }
   }
-  /* Unset, each falls back to what the heading has without it (revert-layer). */
   .cap-cta-band-title {
     margin: 0;
     font-family: var(--cta-band-title-face, revert-layer);
