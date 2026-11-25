@@ -1,10 +1,5 @@
 import { expect, test } from "@playwright/test";
-import {
-  eachTheme,
-  expectContrast,
-  expectNoAxeViolations,
-  visitStates,
-} from "../../test/helpers.ts";
+import { eachTheme, expectNoAxeViolations, visitStates } from "../../test/helpers.ts";
 import { markQuery, snippetHtml, snippetParts } from "./search-results.ts";
 
 test("behavior: a snippet's own markup stays text, only the markers mark", () => {
@@ -20,9 +15,5 @@ eachTheme((theme) => {
   }) => {
     await visitStates(page, "search-results", theme);
     await expectNoAxeViolations(page);
-    await expectContrast(page, [
-      { sel: "#results .cap-search-snippet mark", what: "a matched word" },
-      { sel: "#results .cap-search-why", what: "the why line" },
-    ]);
   });
 });

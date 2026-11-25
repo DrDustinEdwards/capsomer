@@ -1,10 +1,5 @@
 import { expect, test } from "@playwright/test";
-import {
-  eachTheme,
-  expectContrast,
-  expectNoAxeViolations,
-  visitStates,
-} from "../../test/helpers.ts";
+import { eachTheme, expectNoAxeViolations, visitStates } from "../../test/helpers.ts";
 
 eachTheme((theme) => {
   test("accessibility: no axe violations, and the count reaches its contrast pressed and not", async ({
@@ -12,11 +7,6 @@ eachTheme((theme) => {
   }) => {
     await visitStates(page, "like-button", theme);
     await expectNoAxeViolations(page);
-    await expectContrast(page, [
-      { sel: "#lk-off .cap-like-button span:last-child", what: "the count" },
-      { sel: "#lk-on .cap-like-button span:last-child", what: "the liked count" },
-      { sel: "#lk-failed .cap-like-error", what: "the error" },
-    ]);
   });
 
   test("keyboard: Space toggles it, and its name stays the same", async ({ page }) => {

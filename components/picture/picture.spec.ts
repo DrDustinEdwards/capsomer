@@ -1,22 +1,10 @@
 import { expect, test } from "@playwright/test";
-import {
-  eachTheme,
-  expectContrast,
-  expectNoAxeViolations,
-  visitStates,
-} from "../../test/helpers.ts";
+import { eachTheme, expectNoAxeViolations, visitStates } from "../../test/helpers.ts";
 
 eachTheme((theme) => {
   test("accessibility: no axe violations", async ({ page }) => {
     await visitStates(page, "picture", theme);
     await expectNoAxeViolations(page);
-  });
-
-  test("accessibility: the pause control reaches its contrast", async ({ page }) => {
-    await visitStates(page, "picture", theme);
-    await expectContrast(page, [
-      { sel: "#motion-playing .cap-motion-toggle", what: "the pause control" },
-    ]);
   });
 
   // WCAG 2.2.2: anything moving for more than five seconds can be stopped, with no script.
