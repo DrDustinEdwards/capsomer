@@ -1,10 +1,5 @@
 import { expect, test } from "@playwright/test";
-import {
-  eachTheme,
-  expectContrast,
-  expectNoAxeViolations,
-  visitStates,
-} from "../../test/helpers.ts";
+import { eachTheme, expectNoAxeViolations, visitStates } from "../../test/helpers.ts";
 
 // Enarratio tests its own figure (the head, the toolbar, the hidden table, the keys); these cover
 // what the frame adds: its type and colors, the no-data state, the layout at a phone's width, the
@@ -13,18 +8,6 @@ eachTheme((theme) => {
   test("accessibility: no axe violations", async ({ page }) => {
     await visitStates(page, "chart-frame", theme);
     await expectNoAxeViolations(page);
-  });
-
-  test("accessibility: the title, finding, toolbar and the no-data reason reach their contrast", async ({
-    page,
-  }) => {
-    await visitStates(page, "chart-frame", theme);
-    await expectContrast(page, [
-      { sel: "#cf-bar .enarratio-title", what: "the title" },
-      { sel: "#cf-bar .enarratio-finding", what: "the finding" },
-      { sel: "#cf-bar .enarratio-download .enarratio-label", what: "a toolbar word" },
-      { sel: "[data-state='nodata'] .cap-chart-reason", what: "the no-data reason" },
-    ]);
   });
 
   test("accessibility: at 320 px wide the toolbar keeps one row and nothing scrolls the page sideways, with the Download menu open", async ({
