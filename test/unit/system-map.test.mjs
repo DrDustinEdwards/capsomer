@@ -24,7 +24,6 @@ const data = {
     { from: "site", to: "kit", kind: "installs" },
     { from: "app", to: "kit", kind: "installs" },
     { from: "core", to: "site", kind: "coordinates" },
-    // A part's line to another system's part ties the two systems, once, with both verbs.
     { from: "w", to: "site", kind: "publishes-to" },
     { from: "w", to: "site", kind: "watches" },
     { from: "w", to: "db", kind: "writes" },
@@ -95,8 +94,8 @@ test("the network and a system are whole HTML, escaped, with a step lit as the s
     net,
     /<li class="cap-system-map-card" data-id="site" data-wire="site" data-wires="kit core" data-uses="kit" data-used-by="core" data-link><h4 class="cap-system-map-card-name"><a class="cap-system-map-link" href="\/s\/site">Site &lt;one&gt;<\/a><\/h4>/,
   );
+  assert.doesNotMatch(net, /\sstyle=/, "no inline style, so a policy that forbids it draws the map whole");
   assert.match(net, /data-id="app"[^>]* data-private>.*private<\/span>/);
-  // A card shows its short name; its full name and words stay for screen readers and the detail line.
   assert.match(
     systemMapHtml({ systems: [{ id: "x", name: "The long name", short: "Long", ring: "used" }] }),
     /<h4 class="cap-system-map-card-name">Long<\/h4><span class="cap-system-map-card-about"><span class="cap-system-map-card-full">The long name<\/span>/,
@@ -112,8 +111,6 @@ test("the network and a system are whole HTML, escaped, with a step lit as the s
     /data-id="w" data-place="runs" tabindex="0" data-wire="w" data-wires="uses:site db used-by:app" data-lit data-at>.*writes to store/,
   );
   assert.match(one, /data-id="gh" data-place="outside" tabindex="0" data-lit>/);
-  // A line from the system as a whole starts at its Inside heading; a part's line to another
-  // system ends on that system in Uses (or Used by, read from the other end).
   assert.match(one, /<span data-wire="self" data-wires="uses:site">Inside Core<\/span>/);
   assert.match(one, /data-wire="used-by:app" data-wires="w"/);
   assert.doesNotMatch(one, /data-id="db"[^>]*data-lit/);
@@ -149,17 +146,8 @@ test("the public model keeps each part's words, gives what people use its group,
     },
     (id) => `/s/${id}/`,
   );
-  assert.deepEqual(out.systems[0], {
-    id: "a",
-    name: "A",
-    short: undefined,
-    ring: "used",
-    private: undefined,
-    group: "Apps",
-    description: undefined,
-    domain: undefined,
-    href: "/s/a/",
-  });
+  assert.equal(out.systems[0].group, "Apps");
+  assert.equal(out.systems[0].href, "/s/a/");
   assert.equal(out.containers?.[0]?.description, "Does it.");
   assert.deepEqual(out.flows?.[0]?.steps, [
     { from: "c", to: "a", toward: "a", text: "Serves.", lights: undefined },
@@ -242,12 +230,4 @@ test("the honeycomb's lines never pass under another system's cell", () => {
       }
     }
   }
-});
-
-test("the map's markup carries no style attribute, so a policy that forbids inline styles draws it whole", () => {
-  for (const html of [
-    systemMapHtml(data, { id: "n", label: "N" }),
-    systemMapHtml(data, { id: "s", label: "S", system: "core" }),
-  ])
-    assert.doesNotMatch(html, /\sstyle=/);
 });

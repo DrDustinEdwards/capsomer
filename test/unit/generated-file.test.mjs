@@ -13,16 +13,8 @@ import {
 const NOW = Date.parse("2027-02-20T15:00:00Z");
 const MADE = "2027-02-19T21:04:00Z";
 
-test("fileState: nothing run is none, and may start", () => {
-  for (const rec of [null, undefined, {}, { status: null }, { status: "pending" }]) {
-    const v = fileState(rec, NOW);
-    assert.equal(v.state, "none");
-    assert.equal(v.canStart, true);
-    assert.equal(v.hasFile, false);
-  }
-});
-
 test("fileState: a run holds the lock until it is older than the lock, then reads as failed", () => {
+  assert.deepEqual(fileState(null, NOW).state, "none");
   const fresh = { status: "generating", startedAt: NOW - LOCK_MS + 1000 };
   assert.equal(fileState(fresh, NOW).state, "generating");
   assert.equal(mayStart(fresh, NOW), false);

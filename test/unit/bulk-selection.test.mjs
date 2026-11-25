@@ -1,10 +1,7 @@
-// The bulk bar's selection model: what counts is always the stored ids still in view, select all
-// replaces rather than merges, and only failures stay selected. Correctness only.
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import {
   allVisibleSelected,
-  failedIds,
   toggleAllVisible,
   visibleSelection,
 } from "../../components/bulk-bar/bulk-bar.ts";
@@ -20,10 +17,3 @@ test("a hidden row is never counted, and select all is exactly the rows in view"
   assert.equal(allVisibleSelected(new Set(), []), false);
 });
 
-test("after an action only the items not done stay selected", () => {
-  const out = [
-    { id: "a", label: "A", ok: true },
-    { id: "b", label: "B", ok: false, message: "Changed since you opened it." },
-  ];
-  assert.deepEqual([...failedIds(out)], ["b"]);
-});

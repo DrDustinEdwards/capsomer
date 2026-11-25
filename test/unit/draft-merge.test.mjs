@@ -50,7 +50,6 @@ test("starts each block on the side that changed it, and the person's where both
   assert.ok(out.includes("Two, site."));
   assert.ok(out.includes("Three, mine."));
   assert.ok(!out.includes("Three, site."));
-  // Both keeps the two, the person's first.
   const both = merged(
     plan,
     startPicks(plan).map((p, i) => (i === 3 ? "both" : p)),
