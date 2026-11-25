@@ -7,10 +7,8 @@ import { isThemeChoice, THEME_COOKIE, themeCookie, type ThemeChoice } from "./th
 const isJson = (request: Request): boolean =>
   mediaType(request.headers.get("content-type")) === "application/json";
 
-// The page a theme post goes back to: the Referer, only when it is this site's own. The Referer is the sender's to
-// write, so anything else is "/" and the route is no open redirect. A path that starts "//" is refused too:
-// `Location: //evil.example` is protocol-relative and resolves against another host (dustinedwards.info's
-// return-to.mjs, where this was first written).
+// The page a theme post goes back to: the Referer, only when it is this site's own, else "/", so the route is no
+// open redirect. A path starting "//" is refused too: `Location: //evil.example` is protocol-relative.
 export function themeReturnTo(request: Request): string {
   const referer = request.headers.get("referer");
   if (!referer) return "/";
@@ -23,7 +21,6 @@ export function themeReturnTo(request: Request): string {
   }
 }
 
-// A theme body is one short field; anything longer is not one.
 const THEME_BODY_MAX = 1024;
 
 // The choice a theme request carries: `theme=light|dark` from a form (the no-script ThemeForm), or `{ "theme": ... }`

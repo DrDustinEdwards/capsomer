@@ -3,9 +3,7 @@ import { markup } from "../trusted-html/trusted-html.ts";
 
 export interface ProsePageHeadProps {
   title: ReactNode;
-  // Something under the title in the band (a date, a button).
   headExtra?: ReactNode;
-  // The id of the h1, for a link to the top.
   titleId?: string;
 }
 
@@ -16,7 +14,6 @@ export interface ProsePageProps extends ProsePageHeadProps {
   html?: string;
 }
 
-// The title band alone, for a page whose body is not a prose column (an error page).
 export function ProsePageHead({ title, headExtra, titleId }: ProsePageHeadProps) {
   return (
     <header className="cap-prose-page-head">
@@ -28,7 +25,6 @@ export function ProsePageHead({ title, headExtra, titleId }: ProsePageHeadProps)
   );
 }
 
-// The HTML contract in prose-page.md: the title band, then one reading column in the prose context.
 export function ProsePage({ children, html, ...head }: ProsePageProps) {
   return (
     <>

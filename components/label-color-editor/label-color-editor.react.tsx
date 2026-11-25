@@ -15,10 +15,8 @@ import {
 
 export interface LabelColorEditorProps {
   labels: readonly ColorLabel[];
-  // Empty rows under the list to add to it, never past `max`. Default 2.
   spare?: number;
   max?: number;
-  // The field names, numbered: "Label 1", "Color 1".
   nameLabel?: (n: number) => string;
   colorLabel?: (n: number) => string;
 }

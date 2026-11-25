@@ -1,18 +1,9 @@
-// The "On this page" bar: links to a long view's sections, sticky at the top, with the
-// current section marked aria-current="location". Only for a view with three or more
-// sections that is taller than two screens; otherwise the module hides the bar, unless it has
-// data-always. The rule is measured again whenever the window or the content changes size,
-// so a view that fills in after it loads (a panel arriving with its data) gets its bar when it
-// earns one, and loses it when it stops. Following a link moves focus to the section and
-// replaces the address's hash. No framework; the React wrapper uses the same functions.
-//
-// The measuring and the "bar's own height does not count" rule are the Portal's
-// (dashboard/src/ui/anchors.tsx), which learned that mounting the bar could otherwise tip the
-// rule it was mounted by.
+// The "On this page" bar: links to a long view's sections, current one aria-current="location". Shown only for three or more
+// sections taller than two screens (or data-always), measured again as the window or content resizes. The bar's own height does
+// not count toward the rule, or mounting it could tip the rule it was mounted by (learned in the Portal's anchors.tsx).
 
 import { hashId, reducedMotion } from "../hooks/hooks.ts";
 
-// The nearest ancestor that scrolls, or null for the window.
 export function scrollParent(el: Element | null | undefined): HTMLElement | null {
   for (
     let n = el?.parentElement ?? null;
@@ -25,10 +16,7 @@ export function scrollParent(el: Element | null | undefined): HTMLElement | null
   return null;
 }
 
-// What the bar links to: the blocks of the page marked data-section with an id (a panel: its
-// data-section is the link's name), or, when there are none, its h2 headings that have one.
-// A block inside another block is not an entry: the bar names the outer sections only (the
-// Portal's Health holds whole panels inside its sections).
+// Blocks marked data-section with an id, else h2 headings with one. Only outer sections: a block inside another is not an entry.
 export function sectionsIn(scope: ParentNode): HTMLElement[] {
   const blocks = Array.from(scope.querySelectorAll<HTMLElement>("[data-section][id]")).filter(
     (b) => !b.parentElement?.closest("[data-section][id]"),
@@ -40,8 +28,6 @@ export function sectionLabel(section: HTMLElement): string {
   return section.dataset.section ?? section.textContent?.trim() ?? section.id;
 }
 
-// The rule: three or more sections, and a view taller than two screens. The bar's own height
-// does not count (`barHeight`), or showing it could tip the rule it was shown by.
 export function meetsRule(
   headings: Element[],
   scroller: HTMLElement | null,
@@ -54,8 +40,7 @@ export function meetsRule(
   return total > 2 * screen;
 }
 
-// The current section: the last heading above a line 35% down the view, or the last
-// heading once the view is scrolled to its end.
+// The last heading above a line 35% down the view, or the last heading once scrolled to the end.
 export function currentSection(
   headings: HTMLElement[],
   scroller: HTMLElement | null,
@@ -75,8 +60,6 @@ export function currentSection(
   return cur;
 }
 
-// Calls onChange with the current section's id whenever it changes. Returns a function
-// that stops watching.
 export function watchSections(
   headings: HTMLElement[],
   onChange: (id: string | null) => void,
@@ -90,7 +73,6 @@ export function watchSections(
       onChange(id);
     }
   };
-  // A heading crossing the 35% line is what changes the answer.
   const io = new IntersectionObserver(update, {
     root: scroller,
     rootMargin: "0px 0px -65% 0px",
@@ -107,8 +89,7 @@ export function watchSections(
   };
 }
 
-// Scrolls a section to the top, under the bar, moves focus to it, and replaces the address's
-// hash (a click on an in-page link is not a place to go Back to). `push: true` adds an entry.
+// Scrolls a section under the bar, focuses it, replaces the hash (an in-page click is not a place to go Back to); `push: true` adds an entry.
 export function goToSection(heading: HTMLElement, opts: { push?: boolean } = {}): void {
   if (!heading.hasAttribute("tabindex")) heading.tabIndex = -1;
   heading.scrollIntoView({ block: "start", behavior: reducedMotion() ? "auto" : "smooth" });
@@ -119,8 +100,7 @@ export function goToSection(heading: HTMLElement, opts: { push?: boolean } = {})
   }
 }
 
-// Tells the page how tall the bar is, so a section scrolled to sits below it. A vertical bar sits
-// beside the sections, not over them, so it takes no room at their top.
+// Tells the page how tall the bar is. A vertical bar sits beside the sections, so it takes no room at their top.
 export function measureBar(nav: HTMLElement, scroller: HTMLElement | null): void {
   const vertical = nav.dataset.orientation === "vertical";
   (scroller ?? document.documentElement).style.setProperty(
@@ -129,7 +109,6 @@ export function measureBar(nav: HTMLElement, scroller: HTMLElement | null): void
   );
 }
 
-// Marks the sections the bar links to, so each stops below the bar when scrolled to.
 export function markSections(headings: HTMLElement[]): void {
   for (const h of headings) {
     if (!h.hasAttribute("tabindex")) h.tabIndex = -1;
@@ -137,9 +116,7 @@ export function markSections(headings: HTMLElement[]): void {
   }
 }
 
-// Attaches to every [data-cap="anchor-bar"] under root. A bar with an empty list is filled
-// from the sections in its scope (data-cap-scope, or its main) and kept in step with them.
-// Returns a function that detaches them.
+// Attaches to every [data-cap="anchor-bar"] under root; an empty list is filled from the sections in its scope and kept in step.
 export function enhance(root: ParentNode = document): () => void {
   const undo: Array<() => void> = [];
   for (const nav of root.querySelectorAll<HTMLElement>(
@@ -160,7 +137,6 @@ export function enhance(root: ParentNode = document): () => void {
     }
     const ul = list;
 
-    // An empty list is rebuilt from the sections whenever they change. True when it changed.
     let filled = "";
     const fill = (): boolean => {
       const sections = sectionsIn(scope);

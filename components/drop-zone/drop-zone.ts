@@ -1,9 +1,6 @@
-// The drop zone: choose files by browsing or by dropping them, check them against the rules
-// (type, size, count) and say, in words, which were taken and which were not and why. The
-// real <input type="file"> is the control, so click, Enter and Space open the picker with no
-// script; this module adds drop (on the zone, or anywhere on the page), paste, and the checks.
-// A dragenter depth counter keeps the page-wide target steady, and a drop off the zone never
-// navigates away. Every file is checked and each refusal named. No framework; the React wrapper uses the same pure functions.
+// The drop zone: choose files by browsing or dropping, check them against the rules (type, size, count) and
+// say which were taken and why others were not. The real <input type="file"> is the control, so the picker
+// opens with no script; this adds drop (on the zone or the page), paste and the checks.
 import { formatBytes } from "../format/format.ts";
 
 import { plural } from "@drdustinedwards/site-helpers/text";
@@ -12,8 +9,6 @@ import { glyphEl } from "../status/status.ts";
 
 const READY = "data-cap-ready";
 
-// The rules, pure. They take anything shaped like a File, so they run anywhere.
-
 export interface FileLike {
   name: string;
   type: string;
@@ -21,11 +16,8 @@ export interface FileLike {
 }
 
 export interface DropRules {
-  // The same list the input's accept attribute takes: ".pdf", "image/*", "image/png".
   accept?: string;
-  // The largest file, in bytes. Absent or 0: no limit.
   maxBytes?: number;
-  // The most files taken at once. Absent: no limit.
   maxFiles?: number;
 }
 
@@ -34,7 +26,6 @@ export type RejectReason = "type" | "size" | "count";
 export interface Rejection<F extends FileLike = File> {
   file: F;
   reason: RejectReason;
-  // A whole sentence naming the file and the reason.
   message: string;
 }
 
@@ -43,7 +34,6 @@ export interface Validation<F extends FileLike = File> {
   rejected: Array<Rejection<F>>;
 }
 
-// "image/*, .pdf" gives ["image/*", ".pdf"], lower-cased.
 export function parseAccept(accept: string | null | undefined): string[] {
   return (accept ?? "")
     .split(",")
@@ -83,7 +73,6 @@ const KIND_NAMES: Record<string, string> = {
   "text/csv": "CSV",
 };
 
-// The accept list as a person would say it: "images and PDF", "JPEG, PNG and WebP".
 export function acceptLabel(accept: string | null | undefined): string {
   const names: string[] = [];
   for (const rule of parseAccept(accept)) {
@@ -123,25 +112,21 @@ export function validateFiles<F extends FileLike>(
   return { accepted, rejected };
 }
 
-// The words for what was taken: "photo.jpg is ready to upload", "3 files are ready to upload".
 export function acceptedText(files: readonly FileLike[]): string {
   if (files.length === 0) return "";
   if (files.length === 1) return `${files[0]?.name ?? "The file"} is ready to upload.`;
   return `${files.length} files are ready to upload.`;
 }
 
-// "1 file was not added", "3 files were not added".
 export function rejectedLead(count: number): string {
   return count === 1 ? "1 file was not added" : `${count} files were not added`;
 }
 
-// True while the pointer carries files (and not a dragged link or a selection of text).
 export function dragHasFiles(e: Pick<DragEvent, "dataTransfer">): boolean {
   const types = e.dataTransfer?.types;
   return !!types && Array.from(types).includes("Files");
 }
 
-// Puts files into the input, so a form posts them. Returns false where the browser cannot.
 export function setInputFiles(input: HTMLInputElement, files: readonly File[]): boolean {
   try {
     const transfer = new DataTransfer();
@@ -153,8 +138,6 @@ export function setInputFiles(input: HTMLInputElement, files: readonly File[]): 
   }
 }
 
-// The DOM.
-
 export interface DropDetail {
   accepted: File[];
   rejected: Array<Rejection>;
@@ -163,8 +146,6 @@ export interface DropDetail {
 const part = <T extends HTMLElement = HTMLElement>(zone: HTMLElement, name: string) =>
   zone.querySelector<T>(`[data-cap-part='${name}']`);
 
-// The rules a zone states: accept from its input, limits from its data attributes. A zone
-// that takes one file (no multiple attribute) takes at most one.
 export function rulesOf(zone: HTMLElement): DropRules {
   const input = part<HTMLInputElement>(zone, "input");
   const maxBytes = Number(zone.dataset.maxBytes);
@@ -262,7 +243,6 @@ function isEditable(target: EventTarget | null): boolean {
   );
 }
 
-// Attaches one zone. Returns a function that detaches it.
 export function attachDropZone(zone: HTMLElement): () => void {
   if (zone.hasAttribute(READY)) return () => {};
   zone.setAttribute(READY, "");
@@ -340,8 +320,6 @@ export function attachDropZone(zone: HTMLElement): () => void {
   };
 }
 
-// Attaches to every [data-cap="drop-zone"] under root not yet attached. Returns a function
-// that detaches them all.
 export function enhance(root: ParentNode = document): () => void {
   const undo = Array.from(
     root.querySelectorAll<HTMLElement>("[data-cap='drop-zone']:not([data-cap-ready])"),

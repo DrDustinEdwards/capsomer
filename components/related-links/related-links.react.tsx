@@ -4,32 +4,27 @@ import { Link } from "../link/link.react.tsx";
 import { Time } from "../time/time.react.tsx";
 
 export interface RelatedItem {
-  // A path on this site ("/writing/getting-started") or an http(s) address elsewhere. A mention's
-  // source is always treated as elsewhere. An address that is neither renders as text.
+  // A path on this site or an http(s) address elsewhere. A mention's source is always treated as elsewhere. Anything else renders as text.
   href: string | null;
   title: string;
-  // Mentions: the sender's words, as text.
   excerpt?: string | null;
-  // Mentions: when it was approved.
   date?: string | number | Date | null;
 }
 
 export type RelatedKind = "internal" | "external" | "mentions";
 
 export interface RelatedLinksProps {
-  // "Further reading", "Linked from", "Mentions".
   title: string;
-  // internal: pages on this site, in a nav. external: pages the author chose, in a section.
-  // In both a site path is a router link and an address elsewhere has rel="noopener noreferrer".
-  // mentions: a stranger's links, rel="nofollow ugc noopener noreferrer", with excerpt and date.
+  // internal: site pages, in a nav. external: pages the author chose, in a section. In both a site path is
+  // a router link and an address elsewhere has rel="noopener noreferrer". mentions: a stranger's links,
+  // rel="nofollow ugc noopener noreferrer".
   kind: RelatedKind;
   items: readonly RelatedItem[];
 }
 
 const REL = { external: "noopener noreferrer", mentions: "nofollow ugc noopener noreferrer" };
 
-// The HTML contract in related-links.md. Every string is a React child, never markup, since a
-// mention's words are a stranger's. Renders nothing for an empty list.
+// Every string is a React child, never markup, since a mention's words are a stranger's. Renders nothing for an empty list.
 export function RelatedLinks({ title, kind, items }: RelatedLinksProps) {
   const headingId = useId();
   if (items.length === 0) return null;
@@ -41,8 +36,8 @@ export function RelatedLinks({ title, kind, items }: RelatedLinksProps) {
       </h2>
       <ul className="cap-related-list">
         {items.map((item, i) => {
-          // A stranger's address passes only as an absolute http(s) URL; a site path passes the
-          // same check a redirect's Location does, so "/\t/host" (a browser reads "//host") is refused.
+          // A stranger's address passes only as an absolute http(s) URL; a site path passes the same check a
+          // redirect's Location does, so "/\t/host" (read by a browser as "//host") is refused.
           const href = item.href ?? "";
           const local = kind !== "mentions" && isSameOriginPath(href);
           const linked = local || isHttpUrl(href);

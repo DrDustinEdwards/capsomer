@@ -13,11 +13,9 @@ export {
 } from "./listbox.ts";
 export type { ListboxMode, Selection } from "./listbox.ts";
 
-// The listbox's HTML contract, rendered from props. The state that changes (which option is
-// active, which is chosen, what is filtered out) is the caller's React state, passed down as
-// `active` and `selected`; use the pure functions above for the filtering and the stepping.
-// For an input that holds focus, give it aria-activedescendant={the active option's id}.
-// Nothing here sets a `style` prop, so it renders on the server under style-src 'self'.
+// The listbox's HTML contract, rendered from props. Which option is active, chosen or filtered out is the
+// caller's React state. For an input that holds focus, give it aria-activedescendant. Nothing here sets a
+// `style` prop, so it renders on the server under style-src 'self'.
 
 export interface ListboxProps extends Omit<HTMLAttributes<HTMLDivElement>, "role"> {
   // Name it: aria-label or aria-labelledby.

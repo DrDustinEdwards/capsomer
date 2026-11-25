@@ -18,7 +18,6 @@ export function el<K extends keyof HTMLElementTagNameMap>(
   return e;
 }
 
-// A flag read back from its row, so the DOM stays the one source of truth.
 export function readFlag(li: HTMLElement): Flag {
   const quote = li.querySelector(".cap-flag-quote-text")?.textContent ?? "";
   const after = li.querySelector(".cap-flag-after-text")?.textContent;
@@ -78,9 +77,7 @@ export interface Ctx {
   ownerName: string;
 }
 
-// Rebuilds the parts of one row that depend on its state and anchor, from its data attributes:
-// the critical edge, the title (a link only while the passage is there), the resolution on the
-// right, the actions, the suggestion's footer, and the line that says who closed it and when.
+// Rebuilds the parts of one row that depend on its state and anchor, from its data attributes.
 export function renderFlag(li: HTMLElement, ctx: Ctx): void {
   const flag = readFlag(li);
   const status = anchorStatus(flag);
@@ -88,7 +85,6 @@ export function renderFlag(li: HTMLElement, ctx: Ctx): void {
   if (flag.kind === "blocking" && flag.state === "open") li.dataset.tone = "crit";
   else delete li.dataset.tone;
 
-  // Title: the link while the passage is found; plain words and "Anchor lost" otherwise.
   const title = li.querySelector<HTMLElement>(".cap-row-title");
   if (title && flag.anchor) {
     const describedby =
@@ -108,7 +104,6 @@ export function renderFlag(li: HTMLElement, ctx: Ctx): void {
     }
   }
 
-  // The state on the right.
   const meta = li.querySelector<HTMLElement>(".cap-row-meta");
   if (meta) {
     if (flag.state === "resolved") {
@@ -117,7 +112,6 @@ export function renderFlag(li: HTMLElement, ctx: Ctx): void {
     } else meta.replaceChildren();
   }
 
-  // The actions.
   const actions = li.querySelector<HTMLElement>(".cap-row-actions");
   if (actions) {
     actions.replaceChildren(
@@ -130,7 +124,6 @@ export function renderFlag(li: HTMLElement, ctx: Ctx): void {
     );
   }
 
-  // The quote's note and the suggestion's footer.
   const quoteNote = part(li, "anchor-note");
   if (quoteNote) {
     quoteNote.replaceChildren();
@@ -146,7 +139,6 @@ export function renderFlag(li: HTMLElement, ctx: Ctx): void {
     if (foot) {
       foot.replaceChildren();
       if (applied || flag.state === "resolved") {
-        // The flag's state says it: nothing to add under the suggestion.
       } else if (status !== "found")
         foot.append(
           el(
@@ -177,7 +169,6 @@ export function renderFlag(li: HTMLElement, ctx: Ctx): void {
     }
   }
 
-  // Who closed it, and when.
   const body = li.querySelector<HTMLElement>(".cap-flag-body");
   body?.querySelector(".cap-flag-resolution")?.remove();
   if (body && flag.state === "resolved") {

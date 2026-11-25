@@ -1,6 +1,4 @@
-// Renders each JSON-LD block as a server sends it (renderToStaticMarkup, put in the page through the
-// capsomer policy), hydrates it as the browser does, shows it as parsed, and keeps the server's HTML in
-// window.jsonLd so the spec can read what a server sends. Any hydration error goes to window.jsonLd.errors.
+// Renders each JSON-LD block as a server sends it, hydrates it, and keeps the server's HTML in window.jsonLd for the spec; hydration errors go to window.jsonLd.errors.
 import { hydrateRoot } from "react-dom/client";
 import { renderToStaticMarkup } from "react-dom/server";
 import { setStaticHtml } from "../trusted-html/trusted-html.ts";

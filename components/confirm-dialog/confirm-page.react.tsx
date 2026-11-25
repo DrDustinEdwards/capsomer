@@ -13,7 +13,6 @@ export const MEDIA_GLYPH = (
   />
 );
 
-// What ConfirmPage gives its form, plain or a router's.
 export interface ConfirmFormProps {
   className: string;
   "data-cap": string;
@@ -25,45 +24,33 @@ export interface ConfirmFormProps {
 }
 
 export interface ConfirmPageProps {
-  // Where the form posts, and the fields it carries with it (the intent, the ids, a return address).
-  // Left out, it posts to the page it is on.
+  // Where the form posts and the fields it carries; left out, it posts to the current page.
   action?: string;
   method?: "post" | "get";
   // A list value is one hidden field per item, under one name (the ticked `ids`).
   hidden?: Record<string, string | readonly string[]>;
-  // Names the action and the object: "Delete example.com?"
   title: string;
   lead?: ReactNode;
-  // What will change, one line each, from the server's own preview.
   body?: string[];
-  // The perform button's label, named for the action: "Delete site".
   action_label?: string;
   // Where Cancel goes: a link, so it works with no script.
   cancelHref: string;
   cancelLabel?: string;
-  // For what cannot be recovered: the short word to type. Checked by the browser (required and
-  // pattern) and again by the server.
+  // For what cannot be recovered: the word to type, checked by the browser and again by the server.
   typeToConfirm?: string;
-  // Asks for a reason, required, that the audit row carries. Posted as `reason`.
   reason?: { label?: string; note?: string };
-  // What the server found wrong the last time (the typed word did not match, no reason): shown in
-  // the alert box beside the buttons, so the page works with no script.
+  // What the server found wrong last time, shown in the alert box so the page works with no script.
   error?: ReactNode;
-  // The icon tile beside the title. Default: shown.
   media?: boolean;
   // `h1` when the confirmation is the whole page, `h2` when it sits under one.
   headingLevel?: "h1" | "h2";
-  // More fields for the form, beside `hidden`: a list a server renders as its own inputs.
   children?: ReactNode;
-  // Cancel without leaving the page: the link still goes to cancelHref with no script.
   onCancel?: () => void;
-  // The form element, for a router's own form (React Router's <Form>), so the post is a client
-  // navigation. It is given every prop the plain form would get.
+  // The form element for a router's own form, so the post is a client navigation.
   renderForm?: (props: ConfirmFormProps) => ReactElement;
 }
 
-// The confirmation as a form in the page, for a server that answers a destructive request with
-// its own page and works with no script. Pure markup, so a server render and the browser agree.
+// The confirmation as a form in the page, for a server that answers a destructive request with its own page; works with no script.
 export function ConfirmPage({
   action,
   method = "post",
@@ -205,11 +192,8 @@ export function ConfirmPage({
 
 export type ConfirmModalProps = Omit<ConfirmPageProps, "headingLevel">;
 
-// The confirm page as a modal, for a server that answers a destructive request by drawing
-// the confirmation over the page it came from. It is in the page until script runs (data-inline),
-// so a reader with no script still gets the second step; then it opens as a modal. Esc leaves the
-// way Cancel does, and focus goes back to the control that opened it, or to that control's menu
-// button when the control was in a menu that has closed, or to the page's main region.
+// The confirm page as a modal over the page it came from. It is in the page until script runs (data-inline),
+// so a reader with no script still gets the second step. Focus returns to the opener, else its closed menu button, else main.
 export function ConfirmModal(props: ConfirmModalProps) {
   const ref = useRef<HTMLDialogElement>(null);
   const [ready, setReady] = useState(false);
@@ -222,7 +206,6 @@ export function ConfirmModal(props: ConfirmModalProps) {
     const origin = active instanceof HTMLElement && active !== document.body ? active : null;
     const d = ref.current;
     if (d && !d.open) d.showModal();
-    // The typed word or the reason when there is one, else Cancel, as an alert dialog's.
     d?.querySelector<HTMLElement>(
       ".cap-confirm-typed input, .cap-confirm-reason textarea, .cap-dialog-footer .cap-btn",
     )?.focus();

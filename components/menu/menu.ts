@@ -1,15 +1,12 @@
-// The form menu's behavior: a <details> of submit buttons (and links) that already works with no script.
-// With script it also closes on Esc (focus back on the summary), closes on a press or focus
-// outside it, and moves between the buttons with the arrow keys; ArrowDown on the summary opens
-// it and lands on the first button. The Base UI menu needs none of this; it is React only.
+// The form menu's behavior: a <details> of submit buttons and links that works with no script. With
+// script it closes on Esc (focus back on the summary) and on a press or focus outside, and arrow
+// keys move between buttons; ArrowDown on the summary opens it. The Base UI menu is React only.
 
 import { enhanceEach } from "../hooks/hooks.ts";
 
-// The items the arrow keys move through: the submit buttons that are not disabled, and link items.
 const buttonsOf = (d: HTMLElement) =>
   Array.from(d.querySelectorAll<HTMLElement>(".cap-menu > :is(button:not(:disabled), a[href])"));
 
-// Moves to the next or previous button, wrapping; `from` is the focused one, or -1.
 export function stepIndex(count: number, from: number, dir: 1 | -1): number {
   if (count === 0) return -1;
   if (from < 0) return dir === 1 ? 0 : count - 1;

@@ -21,7 +21,6 @@ export type { BulkOutcome };
 export interface BulkBarAction {
   id: string;
   label: ReactNode;
-  // A one-way action previews every item in the confirm dialog before it runs.
   destructive?: boolean;
   // Templates with {n} and {s}: "Bin {n} item{s}?", "This cannot be undone.", "Bin {n} item{s}".
   confirmTitle?: string;
@@ -30,13 +29,12 @@ export interface BulkBarAction {
   // What the message region says afterwards, and after Undo.
   said?: string;
   undone?: string;
-  // Form mode (the bar has `form`): the action is a submit button of that form, named `intent`
-  // with the action's id as the value. `run` is not used, the server answers.
+  // Form mode: a submit button of the bar's form, named `intent` with the action's id as value.
+  // `run` is unused; the server answers.
   submit?: boolean;
   run?: (items: readonly BulkItem[]) => void | Promise<void>;
-  // The app's own flow does the whole action (a server preview and its own confirm and
-  // message): the bar hands it the selection and says nothing itself. `run`, the confirm
-  // fields, `said` and `undo` are not used, and the selection stays until the app clears it.
+  // The app's own flow does the whole action: the bar hands it the selection and says nothing.
+  // `run`, the confirm fields, `said` and `undo` are unused; the selection stays until the app clears it.
   handOff?: (items: readonly BulkItem[]) => void;
   // Reverses a reversible action: the region offers Undo.
   undo?: (items: readonly BulkItem[]) => void | Promise<void>;
@@ -44,15 +42,15 @@ export interface BulkBarAction {
 }
 
 export interface BulkBarProps {
-  // The selection. The bar is `hidden` (still rendered) while it is empty.
+  // The bar is `hidden` (still rendered) while the selection is empty.
   items: readonly BulkItem[];
   actions: readonly BulkBarAction[];
-  // Called after an action ran and by Clear selection: the app empties its selection.
+  // Called after an action ran and by Clear selection.
   onClear: () => void;
-  // "Select all 24 in view": shown while fewer than `total` are selected.
+  // Shown while fewer than `total` are selected.
   total?: number;
   onSelectAll?: () => void;
-  // Quiet text after the count, such as the size: "2.4 MB".
+  // Quiet text after the count, such as a size.
   detail?: ReactNode;
   position?: "bottom" | "top";
   // Where focus goes when the bar goes away.
@@ -60,18 +58,14 @@ export interface BulkBarProps {
   // Extra controls before the actions (a tag field).
   children?: ReactNode;
   label?: string;
-  // Form mode: the id of the form the selection belongs to (the checkboxes sit in it or name it
-  // with their own `form`). Actions with `submit` post it. The bar is in the delivered page
-  // without script and hides itself only after the page has loaded and nothing is ticked.
+  // Form mode: the id of the form the selection belongs to. The bar is in the delivered page without
+  // script and hides itself only after load with nothing ticked.
   form?: string;
-  // Form mode: the count's words before script runs, when nothing can be counted ("Tick the
-  // drafts to act on").
+  // Form mode: the count's words before script runs.
   prompt?: string;
-  // The outcome of the action just run, one per item, refusals first. While there are any the
-  // bar stays in view with nothing selected, so they can be read; a server renders them after a
-  // form post, with no script.
+  // The just-run action's outcomes, refusals first; the bar stays in view while any exist.
   outcomes?: readonly BulkOutcome[];
-  // Dismiss results: the app empties `outcomes`. Shown only once the page has loaded.
+  // Dismiss results; shown only once the page has loaded.
   onDismissOutcomes?: () => void;
 }
 
@@ -91,13 +85,11 @@ export function BulkBar({
   outcomes = [],
   onDismissOutcomes,
 }: BulkBarProps) {
-  // False on the server and while hydrating, true once hydrated.
   const mounted = useHydrated();
   const resultsId = `${useCleanId()}-results`;
   const showing = outcomes.length > 0;
   const n = items.length;
-  // A status region that is shown and filled in one step is often missed: the count is written
-  // a frame after the bar appears.
+  // A status region shown and filled in one step is often missed, so the count is written a frame later.
   const [shown, setShown] = useState(n);
   useEffect(() => {
     if (n === 0) {
@@ -266,17 +258,13 @@ export function BulkBar({
 }
 
 export interface BulkSelection {
-  // The selected ids still in view, in the rows' order: the only set that is counted or sent.
   ids: string[];
   has: (id: string) => boolean;
   toggle: (id: string) => void;
-  // The header checkbox: all in view, else none.
   toggleAll: () => void;
   allSelected: boolean;
-  // Some but not all in view: the header checkbox is mixed.
   someSelected: boolean;
   clear: () => void;
-  // After an action, keep exactly the items that were not done.
   keepFailed: (outcomes: readonly BulkOutcome[]) => void;
 }
 

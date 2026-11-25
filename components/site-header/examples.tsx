@@ -1,7 +1,5 @@
-// Mounts the site header specimens. Every element with data-mount="<surface>" gets that surface:
-// an amber site with a dark band (Foxhound's look) and a fox site with a translucent band (Foxing's),
-// each as a public page, a signed-in page or a user's dashboard, and your admin. The phone
-// specimens mount the same surfaces in a 390px frame. Names, numbers and accounts are samples.
+// Mounts the site header specimens: each element with data-mount="<surface>" gets that surface.
+// Names, numbers and accounts are samples.
 import { StrictMode, useEffect, type ReactNode } from "react";
 import { createRoot } from "react-dom/client";
 import { renderToStaticMarkup } from "react-dom/server";
@@ -27,11 +25,11 @@ import {
 } from "./examples-sites.tsx";
 import { fxAdmin, fxPublic, fxReader, fxTabs } from "./examples-foxing.tsx";
 
-// Holds a panel or the sheet open for the picture; the spec checks the real hover, click and keys.
+// Holds a panel or the sheet open for the picture.
 function Hold({ press, children }: { press?: string; children: ReactNode }) {
   useEffect(() => {
     if (!press) return;
-    // A pointer's click (detail 1), so the picture shows the panel without a keyboard's focus ring.
+    // A pointer click (detail 1), so no keyboard focus ring shows.
     const frame = requestAnimationFrame(() =>
       document
         .querySelector<HTMLElement>(press)
@@ -42,14 +40,13 @@ function Hold({ press, children }: { press?: string; children: ReactNode }) {
   return <>{children}</>;
 }
 
-// The family letterhead: a teal site's public page and its admin, with search and the theme in the
-// same places in both.
+// The family letterhead: a public page and an admin, with search and theme in the same places.
 const HEX = (
   <svg viewBox="0 0 20 20" aria-hidden="true" focusable="false" style={{ fill: "var(--on)" }}>
     <path d="M10 1 17.8 5.5v9L10 19l-7.8-4.5v-9z" />
   </svg>
 );
-// Search answers from a short list here; a site passes its own search (site-header.md, Search).
+// Search answers from a short list here.
 const PAGES = ["Systems", "Flows", "Tools", "Numbers", "Code", "Backups", "Sessions"];
 const lhSearch = {
   action: "#search",
@@ -235,8 +232,7 @@ for (const el of Array.from(document.querySelectorAll<HTMLElement>("[data-mount]
   if (render) createRoot(el).render(<StrictMode>{render()}</StrictMode>);
 }
 
-// A page that does not hydrate: the React header rendered once to HTML, as a server would send
-// it, then wired by the behavior modules alone (hydrate={false}). Sample data throughout.
+// A page that does not hydrate: rendered once to HTML, then wired by the behavior modules alone.
 const tile = (letter: string) => (
   <span className="sh-ex-tile" aria-hidden="true">
     {letter}
@@ -340,9 +336,7 @@ const staticHeader: SiteHeaderProps = {
   },
   skipTo: "#main",
 };
-// A site with its own look on the same header (bsw's shape), set by tokens and slots only: a 64px
-// band whose bar keeps to a 72rem column, semibold links, its own class on Get a quote, no theme and
-// no account, a hairline once the page scrolls, and the phone's row under 1024px (specimen CSS).
+// A site with its own look on the same header, by tokens and slots only.
 const ownHeader: SiteHeaderProps = {
   hydrate: false,
   theme: false,

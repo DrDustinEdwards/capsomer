@@ -1,14 +1,10 @@
-/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+/* Layer order repeated so this file is safe in any import order: the first statement fixes it (css/layers.css). */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
-/* The shared listbox: the look every list a person picks from has. The command menu, the
-   select popup, and the popups Base UI draws for the combobox and the menu all use these
-   classes, so the look keys off the platform's own state (role, aria-selected, aria-disabled)
-   and off Base UI's data-highlighted, never off the listbox controller. Rebuilt after
-   shadcn's command, select, combobox and dropdown-menu items (nova): a compact row, a
-   rounded item, a muted group label, a check at the end for the chosen value, a shortcut
-   at the end. The 3 px accent edge on the current option is Capsomer's own: the tint alone
-   would be only a faint cue. */
+/* The shared listbox: the look every list a person picks from has (command menu, select popup, Base UI's
+   combobox and menu popups). It keys off the platform's own state (role, aria-selected, aria-disabled) and
+   Base UI's data-highlighted, never off the listbox controller. The 3 px accent edge on the current
+   option is Capsomer's own: the tint alone would be only a faint cue. */
 @layer cap.components {
   .cap-listbox {
     box-sizing: border-box;

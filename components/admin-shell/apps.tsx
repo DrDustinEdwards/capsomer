@@ -1,13 +1,6 @@
-// The family's admin apps, configured once here and nowhere else: every app's strip lists these,
-// in this order, with each product's own mark. An app names itself (`app="carrel"`) and passes
-// its badges; it never writes its own list. Marks are drawn in currentColor so they take the
-// tile's color, the accent on a neutral tile and the pill's text on the current one. Each is the
-// product's own icon (its favicon or brand file) redrawn in one color: the Portal's hexagon
-// (capsid dashboard/src/ui/icons.tsx BrandMark), Carrel's open book (carrel app/components/frame.tsx),
-// dustinedwards.info's microscope (public/dustin-edwards-logo.svg), germomics' broadcasting
-// microphone (public/brand/germomics-icon-currentcolor.svg), Foxing's placeholder fox, and Capsomer's hexagon (its site's
-// brand mark). Foxhound's own favicon is an x, which reads as close or delete; it stays as
-// Foxhound's mark until Dustin picks one of the two alternatives on the states page (examples.tsx).
+// The family's admin apps, configured once: every app's strip lists these in this order. An app names
+// itself (`app="carrel"`) and passes its badges. Marks are each product's own icon redrawn in
+// currentColor so they take the tile's color.
 import type { ReactNode } from "react";
 
 export type FamilyAppId =
@@ -22,14 +15,11 @@ export type FamilyAppId =
 export interface FamilyApp {
   id: FamilyAppId;
   label: string;
-  // Where the app's admin opens.
   href: string;
   logo: ReactNode;
-  // In the letterhead: the site's name and the app's ("Capsid", "Portal"), under the agency's
-  // (the headquarters' admin, "Dustin Edwards", has no agency over it).
+  // In the letterhead: the site's name and the app's, under the agency's (none for the headquarters' admin).
   names?: readonly [site: string, app: string];
-  // A commercial app that stands apart from the Dustin Edwards network: its letterhead has no
-  // agency over its name (Foxhound).
+  // A commercial app apart from the Dustin Edwards network: no agency over its name (Foxhound).
   standalone?: boolean;
 }
 
@@ -81,8 +71,7 @@ const GERMOMICS = mark(
   />,
 );
 
-// Foxhound's favicon is a lowercase x on a dark rounded square; the tile is the square here. It
-// stays until Dustin picks one of the alternatives on the states page (examples.tsx). No choice is shipped.
+// Foxhound's favicon is a lowercase x on a dark rounded square; the tile is the square here.
 const FOXHOUND = mark(
   "0 0 24 24",
   <path
@@ -94,9 +83,7 @@ const FOXHOUND = mark(
   />,
 );
 
-// Foxing's mark: a placeholder fox's head in one color, from the header design's mockup, until
-// Dustin picks Foxing's drawn mark (docs/design/design-site-header.md, answer 8: candidates go to
-// him first, and it must read apart from Foxhound's). It replaces the fox emoji.
+// Foxing's mark: a placeholder fox's head in one color.
 const FOXING = mark(
   "0 0 24 24",
   <path
@@ -114,7 +101,6 @@ const CAPSOMER = mark(
   />,
 );
 
-// The order every strip shows, whichever app it is in.
 export const FAMILY_APPS: readonly FamilyApp[] = [
   {
     id: "portal",
@@ -123,7 +109,6 @@ export const FAMILY_APPS: readonly FamilyApp[] = [
     logo: PORTAL,
     names: ["Capsid", "Portal"],
   },
-  // Carrel's signed-in app is Desk; carrel.dustinedwards.info is its public site.
   {
     id: "carrel",
     label: "Carrel Desk",
@@ -139,7 +124,6 @@ export const FAMILY_APPS: readonly FamilyApp[] = [
     names: ["Dustin Edwards", "Admin"],
   },
   { id: "germomics", label: "germomics", href: "https://germomics.com/admin", logo: GERMOMICS },
-  // The x from its favicon stays until Dustin picks one of the states page's alternatives.
   {
     id: "foxhound",
     label: "Foxhound",
@@ -148,8 +132,6 @@ export const FAMILY_APPS: readonly FamilyApp[] = [
     names: ["Foxhound", "Admin"],
     standalone: true,
   },
-  // Foxing's mark is a
-  // placeholder until Dustin picks one.
   { id: "foxing", label: "Foxing", href: "https://foxing.app/admin", logo: FOXING },
   {
     id: "capsomer",
@@ -160,9 +142,7 @@ export const FAMILY_APPS: readonly FamilyApp[] = [
   },
 ];
 
-// The one account every admin area is signed in as, and its avatar.
 export const OWNER = { name: "Dustin Edwards", initials: "DE" } as const;
 
-// The first page of every admin area has this name (menu entry, page heading and tab title):
-// it says what the page is (a summary of the app) and holds whether or not anything needs you.
+// The first page of every admin area has this name (menu entry, heading and tab title).
 export const FIRST_PAGE = "Overview";

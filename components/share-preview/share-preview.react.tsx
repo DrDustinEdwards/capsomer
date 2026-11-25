@@ -3,22 +3,19 @@ import { Meter } from "../meter/meter.react.tsx";
 import { SERP_LIMITS, serpReading, serpTextWidth, type SerpPart } from "./share-preview.ts";
 
 export interface SerpPreviewProps {
-  // The address as a search result writes it: "example.com › blog › post".
   url: string;
   title: ReactNode;
   description: ReactNode;
-  // Said under the result, for example that the title will be cut.
   note?: ReactNode;
   label?: string;
 }
 
 export interface OgCardPreviewProps {
-  // An img (alt text set by the app) or an svg. Drawn in a box at the card's 1200 x 630 shape.
+  // An img (alt text set by the app) or an svg, drawn in a box at the card's 1200 x 630 shape.
   image: ReactNode;
   host: string;
   title: ReactNode;
   description?: ReactNode;
-  // Said under the card, for example that the site mark stands in for a missing cover.
   note?: ReactNode;
   label?: string;
 }
@@ -63,16 +60,11 @@ export function OgCardPreview({
 }
 
 export interface SerpWidthMeterProps {
-  // The meter's name: "Search title width".
   label: ReactNode;
-  // The text as the result will show it.
   text: string;
-  // Which part of a result it is: its font and limit. Default "title".
   part?: SerpPart;
-  // The width past which it is cut, in pixels. Default Prelum's for the part.
   limit?: number;
-  // A width of the app's own (a canvas measure in the real font): null while measuring.
-  // Default Prelum's serpWidth, which needs no browser, so a server render shows the number.
+  // A width of the app's own (a canvas measure); default is Prelum's serpWidth, which needs no browser.
   measure?: (text: string) => number | null;
   size?: "sm" | "md" | "lg";
 }

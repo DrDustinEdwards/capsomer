@@ -5,47 +5,33 @@ import { uid } from "../hooks/hooks.ts";
 import { type Command, markQuery, groupCommands } from "./command-menu-model.ts";
 
 export interface MenuOptions {
-  // The input's accessible name (a visually hidden label).
   label?: string;
-  // Shown in the empty input; "Search commands" by default.
   placeholder?: string;
-  // Live results as the person types, as the React menu's `search`: see AttachOptions.
   search?: AttachOptions["search"];
   searchDelay?: number;
-  // Recents and Ask, as the React menu's: see AttachOptions.
   recentKey?: string;
   ask?: AttachOptions["ask"];
-  // An answer under the list, as attach's: buildMenu reads only its label.
   answer?: AttachOptions["answer"];
 }
 
-// What an answer under the list hands back: cancel stops it (the query changed, the menu
-// closed) and empties nothing itself; the menu empties the region.
+// What an answer under the list hands back: cancel stops it; the menu empties the region.
 export interface AnswerRun {
   cancel(): void;
 }
 
 export interface AttachOptions {
-  // Results from an async source as the person types (books, people, records). Called with the
-  // trimmed query and an AbortSignal, `searchDelay` ms (180) after the last key, never for an
-  // empty query; the signal aborts when the query changes or the menu closes. Its commands come
-  // after the matching commands, in their own groups and order, unfiltered; their ids must not
-  // repeat a command's. The last results stay until new ones arrive; a failed search keeps them.
+  // Results from an async source as the person types. Called with the trimmed query and an
+  // AbortSignal after `searchDelay` ms, never for an empty query. Results follow the matching
+  // commands, unfiltered; their ids must not repeat a command's. A failed search keeps the last results.
   search?: (query: string, signal: AbortSignal) => Promise<Command[]>;
   searchDelay?: number;
-  // Remember the commands run, per site, under this localStorage key, and list the last five as
-  // "Recent" while nothing is typed. In markup: data-recent-key on the dialog.
+  // Remember the commands run under this localStorage key and list the last five as "Recent".
   recentKey?: string;
-  // With words typed, a last option "Ask about “…”" hands them on (an assistant, a site
-  // search). In markup: data-ask (its words, "Ask about" when empty) and data-ask-href.
+  // With words typed, a last option "Ask about “…”" hands them on (data-ask, data-ask-href in markup).
   ask?: { label?: string; run: (query: string) => void };
-  // An answer under the list, in the menu itself (an AI answer about the typed words): a quiet
-  // button with `label` ("Answer this" when empty), shown while words are typed and the answer
-  // is offered. Pressing it calls `run` with the words and the region to fill (it may load its
-  // code first and return a promise); focus moves into the region and the button hides. Typing
-  // again or closing cancels it and empties the region. A deliberate second action, never on
-  // each key, since an answer costs a model call. `offer: false` keeps the button hidden for each
-  // new query until the app calls `offerAnswer(true)` (when its search says answers are on).
+  // An answer under the list: a button that, when pressed, calls `run` with the words and the region
+  // to fill. A deliberate action, never per key, since an answer costs a model call. `offer: false`
+  // hides the button until the app calls `offerAnswer(true)`.
   answer?: {
     label?: string;
     offer?: boolean;
@@ -55,11 +41,8 @@ export interface AttachOptions {
 
 export const ANSWER_LABEL = "Answer this";
 
-// Starts an answer for the words typed, filling `region`, for the menu without React and the
-// React menu alike. A failed load gives the words the status says (the button stays, so the
-// person can try again). When `wanted()` is false once the code has loaded (the words changed or
-// the menu closed), the answer is for nothing shown: it is canceled, the region emptied, and
-// null returned.
+// Starts an answer for the typed words, filling `region`. Returns null (and empties the region)
+// when `wanted()` is false once the code has loaded.
 export async function startAnswer(
   answer: NonNullable<AttachOptions["answer"]>,
   query: string,
@@ -88,7 +71,6 @@ export function focusAnswer(region: HTMLElement): void {
   (region.querySelector<HTMLElement>("[tabindex='-1']") ?? region).focus();
 }
 
-// Fills a snippet with its text, the typed words in <mark>; built from nodes, never from HTML.
 export function markSnippet(el: HTMLElement, query: string): void {
   const parts = markQuery(el.textContent ?? "", query);
   el.replaceChildren(
@@ -104,7 +86,6 @@ export function markSnippet(el: HTMLElement, query: string): void {
 const SEARCH_ICON =
   "M7 2.5a4.5 4.5 0 1 0 2.7 8.1l3 3 1.1-1.1-3-3A4.5 4.5 0 0 0 7 2.5zm0 1.5a3 3 0 1 1 0 6 3 3 0 0 1 0-6z";
 
-// Builds the dialog's markup, exactly the contract on the doc page.
 export function buildMenu(commands: Command[], opts: MenuOptions = {}): HTMLDialogElement {
   const id = uid("cap-cmd");
   const d = document.createElement("dialog");
@@ -175,7 +156,6 @@ export function buildMenu(commands: Command[], opts: MenuOptions = {}): HTMLDial
       text.className = "cap-option-label";
       text.textContent = c.label;
       if (c.snippet) {
-        // The filter reads the label alone, as the React menu's does.
         o.dataset.label = c.label;
         const snip = document.createElement("span");
         snip.className = "cap-cmd-snippet";
@@ -234,7 +214,6 @@ export function buildMenu(commands: Command[], opts: MenuOptions = {}): HTMLDial
   return d;
 }
 
-// The answer area under the list: its button, a status for a failed load, and the region.
 function buildAnswerBox(label = ANSWER_LABEL): HTMLElement {
   const box = document.createElement("div");
   box.className = "cap-cmd-answer";

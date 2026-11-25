@@ -1,16 +1,6 @@
-// A checklist run's browser half: a page that is complete as served (a procedure, a recipe, a
-// release list) gains, for a person who starts a run, a checklist over the steps it already has:
-// a Done check, a note and the stored timers on each step, the critical steps kept marked, the
-// scale changed in place, and a record that downloads or prints. The run lives in this browser
-// only (localStorage), and says so when it cannot even do that.
-//
-// One step at a time (the cook view) is a presentation of the same run: only the step being worked
-// shows, as a cue card (manual.css .cap-cue) in large type, and Previous and Next move through the
-// steps. The screen is kept on while a run is open. The choice is remembered in this browser.
-//
-// The server stays the one place amounts are computed: a new scale is fetched as the page at that
-// scale and every [data-run-swap] region is swapped in, matched by its name and its place, so
-// nothing here knows a unit conversion. If that fetch fails the browser navigates to the scaled page.
+// A checklist run's browser half: a served page gains a Done check, note and timers per step, a scale change in place, and a
+// record that downloads or prints. The run lives in this browser only (localStorage). The server stays the one place amounts are
+// computed: a new scale is fetched as that page and every [data-run-swap] region swapped in; if the fetch fails the browser navigates.
 
 import { confirm } from "../confirm-dialog/confirm-dialog.ts";
 import { readStored, uid, writeStored } from "../hooks/hooks.ts";
@@ -42,22 +32,15 @@ import {
 } from "./checklist-run-tools.ts";
 
 export interface RunOptions {
-  // What is being run, in the controls' words: "Run this procedure". Default "checklist"; also data-run-noun.
   noun?: string;
   // The localStorage key the run is kept under. Default `cap.run:<path>`. A site that already has
   // runs saved keeps its own key so they survive.
   storageKey?: string;
-  // The steps (each carries data-step, its printed number, and data-timers, a JSON StepTimer list).
   steps?: string;
-  // A step's words, after which its tools go.
   stepText?: string;
-  // Where the start button goes (else the end of the root).
   startSlot?: string;
-  // The scale form (a GET form whose fields are the page's query); changed in place during a run.
   scaleForm?: string;
-  // What the Markdown record calls the checklist ("Protocol: /path"). Default "Checklist".
   markdownLabel?: string;
-  // The JSON download. Default runRecord(run, steps, recordName).
   recordName?: string;
   toRecord?: (run: Run, steps: StepInfo[], origin: string) => unknown;
 }
@@ -72,8 +55,7 @@ const DEFAULTS = {
   recordName: "checklist run",
 };
 
-// Makes `root` (with data-run-path, data-run-version and data-run-title) runnable. Returns a
-// function that ends the run view and takes every added control away; the stored run stays.
+// Makes `root` (data-run-path, data-run-version, data-run-title) runnable. Returns a function that ends the run view; the stored run stays.
 export function start(root: HTMLElement, options: RunOptions = {}): () => void {
   const o = { ...DEFAULTS, ...options };
   const checklist = {
@@ -133,9 +115,7 @@ export function start(root: HTMLElement, options: RunOptions = {}): () => void {
   function forget() {
     try {
       localStorage.removeItem(KEY);
-    } catch {
-      // Nothing was saved, so nothing to remove.
-    }
+    } catch {}
     run = null;
     end();
   }
@@ -158,7 +138,6 @@ export function start(root: HTMLElement, options: RunOptions = {}): () => void {
     { type: "button", class: "cap-btn cap-run-start", "data-variant": "primary" },
     `Run this ${o.noun}`,
   );
-  // Ids of their own, so two runs on one page do not share them.
   const summaryHeadingId = uid("cap-run-summary-h");
   const summaryNoteId = uid("cap-run-summary-note");
   const summary = el("section", {
@@ -354,7 +333,6 @@ export function start(root: HTMLElement, options: RunOptions = {}): () => void {
   const onScale = (e: SubmitEvent) => {
     if (!run || !scaleField || !scaleForm) return;
     e.preventDefault();
-    // Every field of the form, as its GET would send them.
     const url = new URL(scaleForm.action, location.href);
     for (const [name, value] of new FormData(scaleForm))
       if (typeof value === "string" && value !== "") url.searchParams.set(name, value);
@@ -462,7 +440,6 @@ export function start(root: HTMLElement, options: RunOptions = {}): () => void {
   };
 }
 
-// Starts every [data-cap="checklist-run"] in `scope`, its noun from data-run-noun.
 export function enhance(scope: ParentNode = document, options: RunOptions = {}): () => void {
   const off: Array<() => void> = [];
   for (const root of scope.querySelectorAll<HTMLElement>(

@@ -1,12 +1,8 @@
-/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+/* Layer order, repeated so this file is safe in any import order. */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
-/* Related links: what sits under a post and points elsewhere. Further reading, the posts that
-   link here, the mentions other sites sent. One look for all three: a hairline over the block,
-   a quiet label, and the links as ruled rows in the page's face; a mention adds the sender's
-   words and the date. Extracted from dustinedwards.info (app/components/post-backlinks.tsx,
-   post-mentions.tsx, routes/blog.$slug.tsx further reading; styles/post-shell.css and
-   post-enhancements.css) and Foxhound (routes/blog/post.tsx, Further reading). */
+/* Related links under a post: further reading, posts that link here, mentions other sites sent. One
+look for all three: a hairline, a quiet label, and ruled rows in the page's face. */
 @layer cap.components {
   .cap-related {
     max-inline-size: 44rem;
@@ -32,7 +28,6 @@
       gap: var(--space-2);
       padding-block: var(--space-3-5);
       border-block-end: var(--line-w) solid var(--line);
-      /* The face is the page's: the reading face under a post. */
       font-size: var(--fs-page);
       line-height: var(--leading-compact);
     }

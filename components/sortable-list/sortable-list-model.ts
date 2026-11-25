@@ -4,12 +4,10 @@ import { clamp } from "../hooks/hooks.ts";
 
 export interface SortMove {
   id: string;
-  // Zero-based positions, before and after.
   from: number;
   to: number;
 }
 
-// The order with `id` moved to position `to` (clamped to the list).
 export function moveId(order: readonly string[], id: string, to: number): string[] {
   const from = order.indexOf(id);
   if (from < 0) return [...order];
@@ -51,10 +49,8 @@ export function indexAtPoint(
 // buttons on a head line over its content (a form row, a step with its own fields).
 export type Layout = "rows" | "cards" | "stack";
 
-// A set of lists whose items can move between them: list id to the item ids in order.
 export type Lists = Record<string, string[]>;
 
-// Where an id is: its list and its zero-based place in it, or null.
 export function locate(lists: Lists, id: string): { list: string; index: number } | null {
   for (const [list, ids] of Object.entries(lists)) {
     const index = ids.indexOf(id);
@@ -63,8 +59,6 @@ export function locate(lists: Lists, id: string): { list: string; index: number 
   return null;
 }
 
-// The lists with `id` taken out of wherever it is and put in `toList` at `to` (clamped). Neither
-// the input nor an unknown id's lists are changed.
 export function moveBetween(lists: Lists, id: string, toList: string, to: number): Lists {
   if (!locate(lists, id) || !(toList in lists)) return lists;
   const out: Lists = {};
@@ -96,7 +90,6 @@ export function keyMove(
   return at;
 }
 
-// What a polite live region says. Positions are one-based here, as people count.
 export const sortText = {
   help: "To move an item with the keyboard, press Space or Enter on its handle, move it with the arrow keys, and press Space or Enter to drop it. Escape puts it back.",
   lift: (label: string, pos: number, count: number) =>
@@ -118,11 +111,8 @@ export const sortText = {
   added: (label: string, count: number) => `Added ${label}. ${count} in the list.`,
 };
 
-// What a host may say in its own words: any of the sentences above.
 export type SortMessages = typeof sortText;
 
-// The position a key moves a lifted item to, or null for a key that does not move it.
-// In cards every arrow is "previous" or "next" in reading order.
 export function keyTarget(key: string, index: number, count: number): number | null {
   if (key === "ArrowUp" || key === "ArrowLeft") return Math.max(0, index - 1);
   if (key === "ArrowDown" || key === "ArrowRight") return Math.min(count - 1, index + 1);

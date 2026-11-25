@@ -50,8 +50,6 @@
     line-height: var(--leading);
   }
 
-  /* The picture of the feature: a bordered surface with no padding of its own, so the preview
-     inside sets its own. */
   .cap-feature-media {
     min-inline-size: 0;
     overflow: hidden;
@@ -80,7 +78,6 @@
     box-shadow: var(--card-shadow);
   }
 
-  /* Beside: text on one side, the picture on the other, from 48rem of the stack's width. */
   @container (min-width: 48rem) {
     .cap-feature[data-layout="beside"] {
       grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);

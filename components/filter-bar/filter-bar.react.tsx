@@ -10,10 +10,7 @@ import { liveSubmit, SEARCH_DELAY_MS } from "./filter-bar.ts";
 
 export { clearedHref, isFiltered, withParams, type Params } from "./filter-bar.ts";
 
-// A list's filters in the address (filter-bar.md): a GET form named as a search landmark, its
-// fields, Apply and Clear, and the count of what is shown in a polite live region. With no script
-// Apply sends the form; `live` applies as you type (after a pause, never mid-composition) and on
-// each change of a select or a box, and hides Apply.
+// A list's filters in the address: a GET form named as a search landmark. With no script Apply sends it; `live` applies as you type and hides Apply.
 
 // Only the props FilterBar passes, so React Router's Form (whose method and encType are unions)
 // fits without a cast.
@@ -31,15 +28,11 @@ type FormLike = ComponentType<{
 }>;
 
 export interface FilterBarProps {
-  // The landmark's name: "Filter payments".
   label: string;
-  // The fields: Capsomer field, select, segmented, range, chips.
   children: ReactNode;
   // The count line ("Showing 12 of 40 payments", countText from capsomer/content) or null.
   count?: ReactNode;
-  // The address with the filters cleared, or null when nothing is filtered (Clear is hidden).
   clearHref?: string | null;
-  // The form to render: React Router's Form keeps a client navigation; a plain form otherwise.
   Form?: FormLike | "form";
   action?: string;
   live?: boolean;
@@ -48,7 +41,6 @@ export interface FilterBarProps {
   // "primary" when Apply is the view's main action (a search page); the default button otherwise.
   applyVariant?: "default" | "primary";
   clearLabel?: string;
-  // The link Clear renders, for a router link (capsomer/react/link Link); a plain a otherwise.
   renderLink?: (props: { href: string; className: string; children: ReactNode }) => ReactNode;
   // For an app whose router is not React Router (a wouter SPA): handle the submit yourself, read
   // the fields with `new FormData(e.currentTarget)` and navigate. Call e.preventDefault().

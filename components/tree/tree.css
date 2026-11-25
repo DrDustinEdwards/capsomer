@@ -1,11 +1,7 @@
-/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+/* Layer order repeated so this file is safe in any import order: the first statement fixes it (css/layers.css). */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
-/* The tree: nested rows that open and close, after the WAI-ARIA tree pattern. Each row is
-   one line (a long label wraps): a chevron for a branch, an icon, the label and a muted note at the end (a
-   status, a word count). Depth indents the row's content, not the row, so the tint of the
-   chosen row and the drop line run the full width, as in a file tree. Delivered with no
-   script, every level shows and nothing hides; the chevrons come with the script. */
+/* The tree: nested rows that open and close, after the WAI-ARIA tree pattern. */
 @layer cap.components {
   .cap-tree {
     --tree-indent: calc(var(--space-5) + var(--space-1));
@@ -76,7 +72,6 @@
       cursor: pointer;
     }
 
-    /* A leaf keeps the chevron's room, so labels at one depth line up. */
     &:not(:has(> .cap-tree-toggle))::before {
       content: "";
       flex: none;
@@ -143,7 +138,6 @@
     }
   }
 
-  /* Moving rows takes the text selection out of the way. */
   .cap-tree[data-movable] .cap-tree-row {
     user-select: none;
   }
@@ -163,7 +157,6 @@
 
     & svg {
       display: block;
-      /* The chevron (components/icons, a 24-unit drawing) at 16px, its line 1.8px. */
       --icon-size: var(--space-5);
       --icon-stroke: 2.7;
     }

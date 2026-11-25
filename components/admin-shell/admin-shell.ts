@@ -1,27 +1,19 @@
-// The admin shell's behavior: collapse the menu (the strip stays), remember the choice, attach
-// each control's name tip (Capsomer's tooltip: Esc hides it, WCAG 1.4.13) and jump between apps
-// with G and 1 to 9. The header above it (its panels, the account menu and the phone's sheet) is
-// the site header's own behavior, which enhance() attaches too. No framework; the React wrapper
-// uses the same functions. The menu's links and the page are in the HTML without any of this.
+// The admin shell's behavior: collapse the menu (remembered), attach each control's name tip, and
+// jump between apps with G and 1 to 9. The header's behavior is the site header's, attached by enhance().
 import { readStored, reducedMotion, writeStored } from "../hooks/hooks.ts";
 import { DEFAULT_PREF } from "../shell/shell.ts";
 import { isTyping, singleKeysOff } from "../shortcuts/shortcuts.ts";
 import { enhance as enhanceHeader } from "../site-header/site-header.ts";
 import { attach as attachTip, hideTip } from "../tooltip/tooltip.ts";
 
-// A count is a glance, not a figure: past 99 it says 99+ (the site header's rule, one for the
-// family); the accessible name keeps the real count.
+// A count is a glance: past 99 it says 99+ (the site header's rule); the accessible name keeps the real count.
 export { badgeText } from "../site-header/site-header.ts";
 
 export const ADMIN_PREF = DEFAULT_PREF;
 
-// Page transitions (the View Transitions API), an option on the shell: `data-transition="page"`
-// names the content area, the strip and the menu for the browser, so the content cross-fades
-// between pages while the strip and menu stay put (admin-shell.css has the animation, from the
-// --dur-* tokens). An app calls this around the update that shows the next page (in React, wrap
-// the state change in flushSync). It runs `update` straight away, with no animation and no
-// error, when the browser has no document.startViewTransition, when a person asked for reduced
-// motion, or when the shell has not opted in. Resolves when the update has been shown.
+// Page transitions (View Transitions API), opt-in with `data-transition="page"`: the content cross-fades
+// while the strip and menu stay put. Runs `update` straight away, with no animation, when the browser
+// lacks startViewTransition, reduced motion is asked for, or the shell has not opted in.
 type Transitioner = {
   startViewTransition?: (update: () => void | Promise<void>) => { finished: Promise<void> };
 };
@@ -70,10 +62,8 @@ export function toggleMenu(shell: HTMLElement): void {
   setMenu(shell, shell.dataset.menu !== "collapsed");
 }
 
-// G then a number jumps to the app in that place (the sequence GitHub and Linear use; Ctrl and a
-// digit belong to the browser's tabs). `armed` holds the time G was pressed. Returns the app's
-// address, or null: the key is not part of a jump, the number has no app, that app is already
-// open, the person is typing in a field, or single-key shortcuts are off (the shortcuts switch).
+// G then a number jumps to that app (Ctrl and a digit belong to the browser's tabs). Returns the app's
+// address, or null when the key is not part of a jump or single-key shortcuts are off.
 export const JUMP_WINDOW_MS = 1200;
 export function jumpTarget(
   armed: { at: number },
@@ -90,9 +80,8 @@ export function jumpTarget(
   return app && !app.current ? app.href : null;
 }
 
-// The menu's collapse key (`[` by default): the shell binds it, so every app behaves the same. Never
-// with a modifier, while a person types (a field, a contenteditable, a code editor), during IME
-// composition, after another handler took the key, or while single-key shortcuts are off.
+// The menu's collapse key (`[` by default); never with a modifier, while typing, during IME composition,
+// after another handler took it, or while single-key shortcuts are off.
 export function isCollapseKey(
   e: Pick<
     KeyboardEvent,
@@ -105,9 +94,8 @@ export function isCollapseKey(
   return !isTyping(e.target);
 }
 
-// Which entry is the page you are on, from the address: the entry whose `href` (or one of its
-// `match` prefixes or patterns) is the path itself or a folder above it, the longest winning, so
-// "/admin/media/new" marks Media and "/admin" marks only the Overview. "/" matches only itself.
+// The entry for the current address: its `href` or a `match` is the path or a folder above it, the
+// longest winning. "/" matches only itself.
 export interface MatchEntry {
   id: string;
   href: string;
@@ -137,12 +125,9 @@ export function currentEntryId(
   return best?.id;
 }
 
-// Cloudflare Access's own sign-out address: a site behind Access signs out by sending the browser
-// there (a fetch cannot follow it into a navigation).
+// Cloudflare Access's sign-out address: a fetch cannot follow it into a navigation, so the browser goes there.
 export const ACCESS_LOGOUT = "/cdn-cgi/access/logout";
 
-// Attaches to every [data-cap="admin-shell"] under root that is not attached yet. Returns a
-// function that detaches them all.
 export function enhance(root: ParentNode = document): () => void {
   const undo: Array<() => void> = [];
   for (const shell of root.querySelectorAll<HTMLElement>(
@@ -152,8 +137,7 @@ export function enhance(root: ParentNode = document): () => void {
     const pref = readStored(shell.dataset.capPref ?? ADMIN_PREF);
     if (pref) setMenu(shell, pref === "collapsed", false);
 
-    // Each control's name tip, a child of its control. A menu link's tip repeats its name, so it
-    // adds no description; it shows only while the menu is collapsed (admin-shell.css).
+    // Each control's name tip; a menu link's tip adds no description and shows only while the menu is collapsed.
     const detachTips = [...shell.querySelectorAll<HTMLElement>(".cap-admin-tip")].map((tip) => {
       const trigger = tip.parentElement;
       if (!trigger) return () => undefined;

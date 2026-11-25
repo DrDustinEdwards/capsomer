@@ -2,7 +2,6 @@
 // own so a page that draws a button-styled link (the error page, in every app's root bundle) takes
 // it without Button, ButtonLink or the router.
 
-// Variant, size, an icon alone, wrapping and filling the row.
 export interface ButtonLook {
   variant?: "default" | "primary" | "secondary" | "danger" | "quiet" | "link";
   size?: "xs" | "sm" | "default" | "lg";

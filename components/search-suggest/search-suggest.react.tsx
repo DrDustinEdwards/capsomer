@@ -13,19 +13,11 @@ export type SearchSuggestProps = Omit<
   "value" | "onChange" | "action"
 > &
   Pick<SuggestOptions, "suggest" | "go" | "search" | "delay" | "min"> & {
-    // Where the search runs with no script, and the form's GET target: "/search".
     action: string;
-    // The text the box opens with (the query a results page shows). Suggestions start only once
-    // the person types.
     defaultValue?: string;
-    // A class of the site's own on the root, for its tokens (a taller box).
     rootClassName?: string;
   };
 
-// A site's search box that suggests pages as a person types: Capsomer's search field (a GET form
-// with role="search", so it searches with no script) wired by the behavior module, the one copy of
-// the combobox's keys. React draws the field and an empty list; the module fills the list, which
-// React never renders into.
 export function SearchSuggest({
   suggest,
   go,

@@ -37,19 +37,13 @@ const heading = (level: number, cls: string, inner: string, id?: string) =>
 const head = (id: string, label: string, caption?: string) =>
   `<figcaption class="cap-system-map-head"><span class="cap-system-map-title" id="${e(id)}-title">${e(label)}</span>${caption ? `<p class="cap-system-map-caption">${e(caption)}</p>` : ""}</figcaption>`;
 
-/** A system's name, as a link to its page when it has one. */
-// The class keeps the link out of the heading link's arrow cue (css/utilities.css), whose ::after
-// would take the card's stretched hit area.
+// The class keeps the link out of the heading link's arrow cue (css/utilities.css), whose ::after would take the card's stretched hit area.
 const nameLink = (s: MapSystem) =>
   s.href ? `<a class="cap-system-map-link" href="${e(s.href)}">${e(s.name)}</a>` : e(s.name);
 
-/**
- * One system as a card on the network, small enough that the whole network fits on one screen:
- * its short name (the link, stretched over the card) and, in words a screen reader reads but the
- * card does not show, its full name, what it is for, its address, and how many parts it has and
- * systems it uses and is used by. Pointing at the card, or focusing it, shows those words in the
- * map's detail line. `data-uses` and `data-used-by` carry the ties the script lights.
- */
+/** One system as a card on the network: its short name (the link, stretched over the card) and, in
+ * words a screen reader reads but the card does not show, its full name, purpose, address and
+ * counts. `data-uses` and `data-used-by` carry the ties the script lights. */
 function card(s: MapSystem, ties: Ties, parts: number, level: number): string {
   const facts = [
     count(parts, "part"),
@@ -70,13 +64,9 @@ function card(s: MapSystem, ties: Ties, parts: number, level: number): string {
   return `<li class="cap-system-map-card" data-id="${e(s.id)}" data-wire="${e(s.id)}" data-wires="${e(all)}" data-uses="${e(ids(ties.uses))}" data-used-by="${e(ids(ties.usedBy))}"${s.private ? " data-private" : ""}${s.href ? " data-link" : ""}>${heading(level, "cap-system-map-card-name", nameLink(shown))}${about}<span class="cap-system-map-card-tie" aria-hidden="true"></span></li>`;
 }
 
-/**
- * Level 1, the network, as a layered drawing (networkLayout): three lanes side by side, the shared
- * packages in the middle and each block of the rest on the side that leaves the fewest crossings,
- * every block's systems ordered so their ties cross least. The cards are the markup; the script
- * draws a wire for each tie between the cards where they landed, and lights a card's wires when it
- * is pointed at or focused. A tap opens the system.
- */
+/** Level 1, the network, as a layered drawing (networkLayout): shared packages in the middle lane,
+ * each other block on the side with fewest crossings. The cards are the markup; the script draws
+ * a wire for each tie between the cards where they landed. */
 function networkHtml(data: SystemMapData, options: SystemMapOptions): string {
   const id = options.id ?? "system-map";
   const label = options.label ?? "System map";
@@ -126,7 +116,6 @@ function networkHtml(data: SystemMapData, options: SystemMapOptions): string {
   ].join("");
 }
 
-/** One system in a column of users or uses: its name, linked, and its verbs as text. */
 const tieItem = (s: MapSystem, verbs: string[], key: string, wires: Wires) =>
   `<li class="cap-system-map-tie" data-id="${e(s.id)}"${wireAttrs(key, wires)}${s.private ? " data-private" : ""}><span class="cap-system-map-tie-name">${nameLink(s)}</span> <span class="cap-system-map-tie-verbs">${e(verbs.join(", "))}</span></li>`;
 
@@ -163,11 +152,8 @@ function wiresOf(data: SystemMapData, sid: string): Wires {
   return out;
 }
 
-/**
- * Level 2, one system: who uses it, its parts (what runs, what stores and what it works with
- * outside, each part with its own lines in words), what it uses, and the flows over its parts as
- * ordered steps, which work as a plain list with no script.
- */
+/** Level 2, one system: who uses it, its parts, what it uses, and the flows over its parts as
+ * ordered steps, which work as a plain list with no script. */
 function systemHtml(data: SystemMapData, options: SystemMapOptions, sid: string): string {
   const s = data.systems.find((x) => x.id === sid);
   if (!s) throw new Error(`system-map: no system ${sid}`);
@@ -184,7 +170,6 @@ function systemHtml(data: SystemMapData, options: SystemMapOptions, sid: string)
   const owner = ownerOf(data);
   const mine = containers.filter((c) => c.system === sid);
   const wires = wiresOf(data, sid);
-  // A step drawn lit, as the script would leave it.
   const shownFlows = flowsOver(data, sid);
   const lit = options.flow
     ? shownFlows.find((f) => f.id === options.flow!.id)?.steps[options.flow.step - 1]
@@ -242,11 +227,8 @@ function systemHtml(data: SystemMapData, options: SystemMapOptions, sid: string)
   ].join("");
 }
 
-/**
- * The map as HTML, every text escaped: the network (level 1), or with `system` one system (level
- * 2). Delivered with no script it is whole: every card is a link, every tie and line is words, and
- * every flow is an ordered list.
- */
+/** The map as HTML, every text escaped. With no script it is whole: every card is a link, every
+ * tie and line is words, and every flow is an ordered list. */
 export function systemMapHtml(data: SystemMapData, options: SystemMapOptions = {}): string {
   return options.system ? systemHtml(data, options, options.system) : networkHtml(data, options);
 }

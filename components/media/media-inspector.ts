@@ -58,8 +58,6 @@ export function renderSave(inspector: ParentNode | null, state: SaveState, error
   if (retry) retry.hidden = state !== "failed";
 }
 
-// Writes a record into the inspector's fields and lists. Idempotent: the server's own markup
-// for the first file is what this would write.
 export function fillInspector(
   inspector: ParentNode,
   r: MediaRecord,

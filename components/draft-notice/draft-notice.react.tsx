@@ -1,11 +1,8 @@
 import type { ReactNode } from "react";
 
 export interface DraftNoticeProps {
-  // Draws nothing when false, so a page writes `<DraftNotice show={draft} />` in place of a conditional.
   show?: boolean;
-  // The word in the box.
   label?: string;
-  // The sentence after it: who can see the page.
   children?: ReactNode;
 }
 

@@ -1,11 +1,7 @@
-// The publish gate: one region beside the publish button that says whether this can go out, and if
-// not, exactly why. Failing checks come first, required apart from advisory, each row naming its
-// cause and linking to it; the passing ones fold into a disclosure; one row per destination site
-// carries its own state and its own button. Pure helpers first (they decide the states and the
-// words), then the page: the DOM is the one source of truth, every row is rendered from its data
-// attributes, so what the server delivered and what this module redraws are the same markup. No
-// framework; the React wrapper reuses the pure functions.
-// The transitions and their intents are publish-transition.ts, the gate's DOM-free half.
+// The publish gate: one region beside the publish button that says whether this can go out, and if not, why.
+// Failing checks first (required apart from advisory), each naming its cause; passing ones fold away; one row
+// per destination carries its own state and button. Every row renders from data attributes, so the server's
+// markup and this module's redraw are the same. Transitions and intents are in publish-transition.ts.
 
 import { confirm } from "../confirm-dialog/confirm-dialog.ts";
 import { fail, say } from "../message/message.ts";
@@ -70,8 +66,6 @@ export type {
 export { FIRST_PUBLICATION_NOTE };
 export { TONE, readCheck, readSite, stateStatus } from "./publish-gate-rows.ts";
 
-// The page.
-
 const READY = "data-cap-ready";
 
 export interface GateHooks {
@@ -83,7 +77,6 @@ export interface GateHooks {
 
 export interface GateHandle {
   refresh(): void;
-  // Sets one check's result: the row, the groups, the counts, the destinations and the summary follow.
   setCheck(id: string, patch: { ok: boolean; cause?: string }): void;
   setHold(siteId: string, hold: GateHold | null): void;
   setPublished(siteId: string, published: GatePublished | null): void;
@@ -120,7 +113,6 @@ export function attachPublishGate(region: HTMLElement, hooks: GateHooks = {}): G
   const refresh = () => {
     const checks = checkRows();
     const sites = siteRows();
-    // Rows into the group their state says.
     const order = new Map(checks.map((li, i) => [li, Number(li.dataset.order ?? i)]));
     for (const li of checks) {
       if (!li.dataset.order) li.dataset.order = String(order.get(li));
@@ -162,7 +154,6 @@ export function attachPublishGate(region: HTMLElement, hooks: GateHooks = {}): G
     const clear = part(region, "clear");
     if (clear) clear.hidden = counts.requiredFailing + counts.advisoryFailing > 0;
 
-    // Destinations.
     const model = sites.map(readSite);
     for (const [i, li] of sites.entries()) {
       const site = model[i] as GateSite;
@@ -194,7 +185,6 @@ export function attachPublishGate(region: HTMLElement, hooks: GateHooks = {}): G
       renderActions(containers(site.id), site, state, busy.has(site.id), summaryId);
     }
 
-    // The region.
     const reading = describeGate(model, data);
     region.dataset.state = reading.state;
     if (summary) {
@@ -407,9 +397,8 @@ export function attachPublishGate(region: HTMLElement, hooks: GateHooks = {}): G
   };
 }
 
-// Attaches to every [data-cap="publish-gate"] under root not attached yet. Hooks say what publish
-// and unpublish do; without them a publish button inside a form posts the form, and a first
-// publication is previewed first. Returns a function that detaches them all.
+// Attaches to every [data-cap="publish-gate"] under root. Hooks say what publish and unpublish do; without them
+// a publish button inside a form posts the form, and a first publication is previewed first.
 export function enhance(root: ParentNode = document, hooks?: GateHooks): () => void {
   const handles: GateHandle[] = [];
   for (const el of root.querySelectorAll<HTMLElement>(

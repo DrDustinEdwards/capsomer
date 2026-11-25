@@ -3,15 +3,11 @@ import { drawHexes, pauseOffscreen, type HexOptions } from "./ambient.ts";
 
 export interface AmbientProps extends HexOptions {
   variant: "hex-field" | "blobs" | "equalizer";
-  // The equalizer only: left out under 48rem (`data-hide="phone"`).
   hideOnPhone?: boolean;
 }
 
 const SPANS = { blobs: 4, equalizer: 28, "hex-field": 0 } as const;
 
-// The HTML contract in ambient.md, `data-cap="ambient"` included, so a page that is server-rendered
-// and never hydrated still has a layer its `enhance()` finds. Always aria-hidden: it carries no
-// information.
 export function Ambient({ variant, count, phoneCount, random, hideOnPhone }: AmbientProps) {
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {

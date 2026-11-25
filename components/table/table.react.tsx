@@ -8,10 +8,8 @@ import { compareValues, type SortDirection } from "./table.ts";
 type Reflow = boolean | "medium" | "wide";
 
 export interface TableProps {
-  // Names the region and the table. Hidden from sight with `captionHidden`, still read out.
   caption: ReactNode;
   captionHidden?: boolean;
-  // The caption under the table in muted type (shadcn caption-bottom).
   captionBottom?: boolean;
   // Name the region from a heading outside it instead of the caption (a panel's h2).
   labelledBy?: string;
@@ -22,7 +20,6 @@ export interface TableProps {
   density?: "compact" | "comfortable";
   className?: string;
   tableClassName?: string;
-  // thead, tbody and tfoot.
   children?: ReactNode;
 }
 
@@ -71,15 +68,11 @@ export function Table(props: TableProps) {
 }
 
 export interface Column<T> {
-  // A stable key for the column.
   key: string;
-  // The header's words; also each cell's data-label when the table reflows to cards.
   header: ReactNode;
   // A plain-text label for the reflow cards and the sort, when `header` is not a string.
   label?: string;
-  // The cell. The first column is the row's header cell (th scope="row").
   cell: (row: T) => ReactNode;
-  // Right-aligned tabular figures.
   num?: boolean;
   // Sortable: the value a row sorts by (a number, a timestamp, text).
   sortBy?: (row: T) => string | number;
@@ -93,13 +86,9 @@ export interface DataTableProps<T> extends Omit<TableProps, "children"> {
   columns: readonly Column<T>[];
   rows: readonly T[];
   rowKey: (row: T) => string;
-  // One brief sentence when there are no rows.
   empty: ReactNode;
-  // The column the rows arrive sorted by, if any.
   sorted?: { key: string; direction: SortDirection };
-  // A selected row (data-state="selected").
   selected?: (row: T) => boolean;
-  // A totals row.
   foot?: ReactNode;
 }
 

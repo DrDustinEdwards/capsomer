@@ -1,10 +1,8 @@
-/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+/* Layer order, repeated so this file is safe in any import order. */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
-/* Series nav: where a post sits in its series. A ruled box with a heavy top rule, the
-   "Part 2 of 3" line in the mono label, every part (this one in muted type and not a link), and
-   the parts either side as the manual's signs (manual.css .cap-signs). Extracted from
-   dustinedwards.info (app/components/post-series-nav.tsx, styles/post-enhancements.css). */
+/* Series nav: where a post sits in its series. A ruled box with a heavy top rule, the "Part 2 of 3" line, every part
+(this one muted and not a link), and the parts either side as signs. */
 @layer cap.components {
   .cap-series {
     margin-block: var(--space-6);

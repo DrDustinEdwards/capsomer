@@ -8,7 +8,6 @@ export type As<T extends ElementType, Own> = Own & { as?: T } & Omit<
   >;
 
 interface TitleOwn {
-  // The look, 1 the largest to 6; 4 when omitted. The heading level is `as` (h2 when omitted).
   size?: 1 | 2 | 3 | 4 | 5 | 6;
   className?: string;
 }
@@ -25,7 +24,6 @@ interface TextOwn {
 export type TitleProps<T extends ElementType = "h2"> = As<T, TitleOwn>;
 export type TextProps<T extends ElementType = "p"> = As<T, TextOwn>;
 
-// The HTML contract in text.md.
 export function Title<T extends ElementType = "h2">({
   size,
   as,

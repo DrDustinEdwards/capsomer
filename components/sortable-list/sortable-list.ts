@@ -1,8 +1,6 @@
-// The sortable list: rows or cards a person puts in order, by dragging a handle, by the
-// keyboard (pick up, move, drop) or by the Move up and Move down buttons, which are also the
-// one-pointer way that WCAG 2.5.7 asks for and, as submit buttons, the way with no script.
-// The list owns no storage: every finished move is a `cap:sortable-change` event with the
-// new order, and the host saves it. No framework; the React wrapper uses the same functions.
+// The sortable list: items put in order by dragging a handle, by keyboard, or by Move up/down buttons (the
+// one-pointer way WCAG 2.5.7 asks for, and a form post with no script). The list owns no storage: each
+// finished move is a `cap:sortable-change` event and the host saves it.
 
 import {
   type SortMove,
@@ -32,7 +30,6 @@ const boxOf = (el: Element): Box => {
   return { top: r.top, left: r.left, width: r.width, height: r.height };
 };
 
-// The polite live region for a list: `[data-cap-part="announce"]` beside it, made when missing.
 export function announcer(el: HTMLElement): { region: HTMLElement; made: boolean } {
   const near = el.parentElement?.querySelector<HTMLElement>(":scope > [data-cap-part='announce']");
   if (near) return { region: near, made: false };
@@ -53,14 +50,10 @@ export function announcer(el: HTMLElement): { region: HTMLElement; made: boolean
 // its id) and its words by `aria-label`.
 
 export interface SortChangeDetail extends SortMove {
-  // The item ids of the list the item is now in.
   order: string[];
-  // How it moved: "keyboard", "pointer", "button" or "select" (the move-to select).
   by: "keyboard" | "pointer" | "button" | "select";
-  // The list the item is now in, and the one it left; the same for a move within a list.
   list: string;
   fromList: string;
-  // Every list of the group, id to item ids.
   lists: Lists;
 }
 
@@ -73,7 +66,6 @@ export interface SortRemoveDetail {
 export interface SortableList {
   readonly el: HTMLElement;
   order(): string[];
-  // Moves an item as a finished move: emits cap:sortable-change and announces it.
   move(id: string, to: number): void;
   detach(): void;
 }
@@ -94,8 +86,6 @@ const labelOf = (item: HTMLElement) =>
 const listId = (list: HTMLElement) => list.dataset.list ?? list.id;
 const listWords = (list: HTMLElement) => list.getAttribute("aria-label") ?? listId(list);
 
-// The lists an item may move between: the ones that share this list's `data-group`, in document
-// order; the list alone with none.
 export function groupOf(el: HTMLElement): HTMLElement[] {
   const g = el.dataset.group;
   if (!g) return [el];
@@ -152,8 +142,6 @@ function syncSteps(list: HTMLElement): void {
   });
 }
 
-// What is up by keyboard, in the whole document: one item at a time, whichever list of its group it
-// has moved into since.
 let lifted: { item: HTMLElement; from: number; fromList: HTMLElement } | null = null;
 
 export function createSortableList(el: HTMLElement): SortableList {
@@ -171,11 +159,9 @@ export function createSortableList(el: HTMLElement): SortableList {
     region.textContent = "";
     requestAnimationFrame(() => (region.textContent = text));
   };
-  // The live region exists before it speaks.
   regionOf(el);
   const order = () => itemsOf(el).map(idOf);
   const posOf = (item: HTMLElement) => itemsOf(item.parentElement as HTMLElement).indexOf(item);
-  // The list an item is in now: its parent, when that is a list of this one's group.
   const listOf = (item: HTMLElement) => item.parentElement as HTMLElement;
 
   const emit = (
@@ -207,13 +193,11 @@ export function createSortableList(el: HTMLElement): SortableList {
     syncMoveTo(item);
   };
 
-  // The move-to select shows the list the item is in.
   const syncMoveTo = (item: HTMLElement) => {
     const select = item.querySelector<HTMLSelectElement>("[data-cap-part='move-to']");
     if (select) select.value = listId(listOf(item));
   };
 
-  // Words for where an item landed: its position, and its list when it changed.
   const landed = (item: HTMLElement, fromList: HTMLElement, said: "over" | "step" | "moveTo") => {
     const list = listOf(item);
     const count = itemsOf(list).length;
@@ -322,7 +306,6 @@ export function createSortableList(el: HTMLElement): SortableList {
     syncSteps(target_);
     say(target_, landed(item, el, "over"));
   };
-  // Leaving the lists while an item is up puts it back.
   const onFocusOut = (e: FocusEvent) => {
     const to = e.relatedTarget as Node | null;
     if (lifted && to && !groupOf(el).some((l) => l.contains(to))) cancel();
@@ -359,8 +342,6 @@ export function createSortableList(el: HTMLElement): SortableList {
     say(to, landed(item, el, "moveTo"));
     emit(item, from, el, "select");
   };
-  // Remove: the host hears cap:sortable-remove and may refuse it; otherwise the item goes, the
-  // list says so, and focus moves to the next item's handle, or the one before it.
   const remove = (item: HTMLElement) => {
     const list = listOf(item);
     const index = posOf(item);
@@ -401,7 +382,6 @@ export function createSortableList(el: HTMLElement): SortableList {
         for (const l of group) l.setAttribute("data-sorting", "");
       },
       onMove(x, y) {
-        // The list under the pointer, else the one the item is in.
         const over =
           group.find((l) => {
             const r =

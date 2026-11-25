@@ -65,7 +65,7 @@ export function renderLogo(logo: HeaderLogo, letterhead: boolean, renderLink: Re
         {letterhead ? (
           <span className="cap-site-header-names" aria-hidden="true">
             {logo.agency ? <span className="cap-site-header-agency">{logo.agency}</span> : null}
-            {/* A space, so the visible text reads "Dustin Edwards Capsid" as the name does (WCAG 2.5.3). */}
+            {/* A space, so the visible text matches the accessible name (WCAG 2.5.3). */}
             {logo.agency ? " " : null}
             <span className="cap-site-header-name">
               {logo.label}
@@ -109,7 +109,7 @@ export function accountPanelOf(
             <hr />
             <ul className="cap-site-header-panel-list">
               <li>
-                {/* A plain link: Sign out leaves the app, so it is a full load, never the router's. */}
+                {/* Plain link: Sign out leaves the app, so it is a full load, never the router's. */}
                 {headerItem(signOut, "Sign out", plainLink, {
                   disabled: account.signOutDisabled,
                 })}
@@ -149,7 +149,6 @@ export function renderTrail(trail: NonNullable<SiteHeaderProps["trail"]>, render
   );
 }
 
-// Sign out as a row: a link, a form post (no script needed), or a button.
 export function signOutRow(account: HeaderAccount): RowItem | undefined {
   if (account.signOutHref) return { label: "Sign out", href: account.signOutHref };
   if (account.signOutAction)

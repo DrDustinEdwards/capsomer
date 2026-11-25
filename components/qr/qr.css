@@ -1,9 +1,8 @@
-/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+/* Layer order repeated so this file is safe in any import order: the first statement fixes it (css/layers.css). */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
-/* The QR code: black modules on white with a quiet zone in every theme, at a size a phone reads
-   from a printed sheet, with what it is for and its address under it. From dustinedwards.info
-   (app/styles/procedure.css, .procedure-sheet-qr). */
+/* Black modules on white with a quiet zone in every theme, at a size a phone reads from a printed sheet,
+   with what it is for and its address under it. */
 @layer cap.components {
   .cap-qr {
     display: inline-grid;

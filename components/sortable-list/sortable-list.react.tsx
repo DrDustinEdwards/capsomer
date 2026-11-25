@@ -46,18 +46,10 @@ export {
 } from "./sortable-list.ts";
 export type { Layout, Lists, SortMessages, SortMove } from "./sortable-list.ts";
 
-// The sortable list's HTML contract, rendered from props. The items are the caller's: a
-// finished move calls `onReorder` with the new order, and the list shows the caller's
-// `items` again on the next render, so a host that does not save the order sees it go back.
-// While an item is up (keyboard) or under the pointer, the list holds a draft order of its
-// own. With `name`, every item carries a hidden `name` input with its id, and Move up and
-// Move down are submit buttons (`up=<id>`, `down=<id>`), so a server-rendered list inside a
-// form reorders with no script. Nothing here sets a `style` prop.
-//
-// One engine drives both exports: SortableList is one list, SortableBoard several lists whose
-// items move between them. Besides moving, a list can add and remove items (repeatable rows),
-// say what it says in a host's own words, take Alt and an arrow anywhere in an item, and show
-// an item as a card with its own head line.
+// The sortable list's HTML contract, rendered from props. The caller owns the items: a finished move calls
+// `onReorder`, and the list shows `items` again on the next render. With `name`, Move up and Move down are
+// submit buttons (`up=<id>`, `down=<id>`), so a server-rendered list in a form reorders with no script.
+// SortableList is one list; SortableBoard is several whose items move between them.
 
 // How long an Add waits for the host's new row before giving up on moving focus into it: a host
 // that refused must not have focus pulled into a row it adds later.
@@ -147,7 +139,6 @@ function Core<T>({
   });
 
   const laneWords = (list: string) => laneOf.get(list)?.label ?? list;
-  // Words for where an item landed: its place, and its list when that changed.
   const landed = (next: Lists, id: string, fromList: string, kind: "over" | "step") => {
     const at = locate(next, id);
     if (!at) return "";
@@ -235,7 +226,6 @@ function Core<T>({
     finish(next, id, from);
   };
 
-  // The move-to select: the end of the chosen list.
   const toLane = (id: string, list: string, el: HTMLElement) => {
     const from = locate(ids, id);
     if (!from || from.list === list) return;
@@ -328,7 +318,6 @@ function Core<T>({
       else map.current.delete(key);
     };
 
-  // Leaving the list while an item is up puts it back.
   const onBlur = (e: FocusEvent<HTMLElement>) => {
     const to = e.relatedTarget as Node | null;
     if (lifted && to && !e.currentTarget.contains(to)) cancel();
@@ -440,7 +429,6 @@ function Core<T>({
   );
 }
 
-// One list in order.
 export function SortableList<T>({
   items,
   onReorder,
@@ -466,9 +454,7 @@ export function SortableList<T>({
   );
 }
 
-// Several lists whose items move between them: a book's sections, a board's columns. Each list is
-// a section with the host's head (`renderLaneHead`) over its ordered list; an item is dragged
-// into another list, moved there by the arrow keys at the end of its list, or by its select.
+// Several lists whose items move between them: dragged, moved by the arrow keys at a list's end, or by the select.
 export function SortableBoard<T>({
   lanes,
   onMove,

@@ -1,14 +1,10 @@
-/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+/* Layer order repeated so this file is safe in any import order: the first statement fixes it (css/layers.css). */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
-/* Select. Two forms of one control, matching shadcn/ui's NativeSelect and Select:
-   - `select.cap-select` is the native select drawn like a field, with a chevron (NativeSelect).
-     It is the HTML contract: the options are in the page and it works with no script.
-   - With data-cap="select" on its wrapper, select.ts hides it and draws a button
-     (.cap-select-trigger, role="combobox") and a popup (.cap-select-popup: the shared popover
-     surface around the shared listbox) in its place (Select). The native select keeps the value
-     and submits with the form.
-   `select.cap-input` (0.1's class) is drawn the same as `select.cap-select`. */
+/* Select, two forms of one control. `select.cap-select` is the native select drawn like a field, with a
+   chevron; the options are in the page and it works with no script. With data-cap="select" on its wrapper,
+   select.ts hides it and draws a button (role="combobox") and a popup in its place; the native select keeps
+   the value and submits with the form. `select.cap-input` is drawn the same as `select.cap-select`. */
 @layer cap.components {
   .cap-select-wrap {
     position: relative;

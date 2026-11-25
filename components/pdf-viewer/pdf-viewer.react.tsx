@@ -2,15 +2,11 @@ import { useEffect, useRef } from "react";
 import { DEFAULT_SCALE, start } from "./pdf-viewer.ts";
 
 export interface PdfViewerProps {
-  // The PDF's address.
   src: string;
-  // The document's title, in the viewer's name.
   title?: string;
-  // The folder the site serves PDF.js from.
   pdfjs?: string;
 }
 
-// The HTML contract in pdf-viewer.md, rendered in its loading state; the behavior starts once.
 export function PdfViewer({ src, title, pdfjs = "/pdfjs/" }: PdfViewerProps) {
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => (ref.current ? start(ref.current) : undefined), [src]);

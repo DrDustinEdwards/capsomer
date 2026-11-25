@@ -37,7 +37,6 @@ export const D = {
   home: "M4 11 12 4l8 7v9h-5v-6H9v6H4z",
 };
 
-// The page under each header: a hero for a public page, tiles and rows for a signed-in one.
 export const Hero = ({ title, lead }: { title: string; lead: string }) => (
   <main className="sh-hero" id="main" tabIndex={-1}>
     <h1>{title}</h1>
@@ -74,8 +73,7 @@ export const Tiles = ({
   </div>
 );
 
-// The amber site: Foxhound's look, its wordmark in the mono face with the x in the accent, on a band
-// that is dark in both themes, its section links on the right before a thin divider.
+// The amber site: a dark band in both themes, section links on the right.
 const FH_LOGO = {
   href: "#home",
   label: "Foxhound",
@@ -108,8 +106,7 @@ export const fhPublic: SiteHeaderProps = {
   skipTo: "#main",
 };
 
-// A merchant's dashboard: the business as a square tile, then the product; the gear is gone and
-// its rows are in the avatar's menu, under the business's name.
+// A merchant's dashboard: the business as a square tile, then the product.
 const fhAccount: Required<AdminShellProps>["account"] = {
   name: "Sam Rivera",
   initials: "SR",

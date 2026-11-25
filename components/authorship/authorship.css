@@ -1,14 +1,10 @@
-/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+/* Layer order, repeated so this file is safe in any import order. */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
-/* Who wrote each passage, marked in the margin. Three kinds, each with a rule of its own
-   pattern and a word: you (a solid rule), AI (dashed), quoted (dotted). A pattern, a color
-   and the word "You", "AI" or "Quoted" say it together, so color is never alone. One switch,
-   "Show authorship", shows or hides every rule, label and the summary; hidden, what is left
-   is the plain prose with no extra words read. The summary is the meter's row (label, line,
-   bar, note) with a bar of three patterned segments, and it states the words and the
-   percentages in text. A run is a span inside a paragraph, or a block (a div around
-   paragraphs); on a wide container the label sits in the margin, on a narrow one above. */
+/* Who wrote each passage, marked in the margin. Three kinds, each with its own rule pattern and a
+word (you solid, AI dashed, quoted dotted), so color is never alone. One switch shows or hides every
+rule, label and the summary; hidden, the plain prose is left. On a wide container the label sits
+in the margin, on a narrow one above. */
 @layer cap.components {
   .cap-authorship {
     container: cap-authorship / inline-size;
@@ -45,7 +41,6 @@
     flex: 1 1 20rem;
   }
 
-  /* The text the runs sit in: prose. */
   .cap-authorship-text {
     font-family: var(--prose);
     font-size: var(--fs-prose);
@@ -60,8 +55,7 @@
     }
   }
 
-  /* A run. Color and pattern per kind; the rule is the identifying mark, so it reaches 3:1
-     on the page. */
+  /* The rule is the identifying mark, so it reaches 3:1 on the page. */
   .cap-run {
     --cap-run-color: var(--accent);
     --cap-run-pattern: solid;
@@ -80,7 +74,6 @@
     }
   }
 
-  /* A block run: a paragraph or several, with its label above (narrow) or in the margin (wide). */
   .cap-run:is(div, p, blockquote, section, li) {
     position: relative;
     display: block;
@@ -122,7 +115,6 @@
     margin-block-end: var(--space-1);
   }
 
-  /* Wide: the labels move into a margin the text leaves for them. */
   @container cap-authorship (min-width: 36rem) {
     .cap-authorship-text {
       padding-inline-start: var(--cap-auth-gutter);
@@ -135,8 +127,7 @@
     }
   }
 
-  /* The summary's bar: three segments in the meter's track, each its own pattern, so the
-     shares read without color. Widths come from --cap-share, set through the CSSOM. */
+  /* Three segments in the meter's track, each its own pattern, so shares read without color. Widths come from --cap-share, set through the CSSOM. */
   .cap-authorship-summary .cap-meter-bar {
     display: flex;
     gap: var(--space-1);

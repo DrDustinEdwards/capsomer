@@ -1,7 +1,6 @@
-// Show and hide. A <details class="cap-disclosure"> needs no JavaScript. This module runs
-// the group rows (.cap-group): a button with aria-expanded and aria-controls that shows or
-// hides the rows it groups. Two levels at most, and a critical item is never inside a
-// collapsed group. No framework; the React wrapper uses the same rules.
+// Show and hide. A <details class="cap-disclosure"> needs no JavaScript; this module runs the group rows
+// (.cap-group): a button with aria-expanded and aria-controls. Two levels at most, and a critical item is
+// never inside a collapsed group.
 
 // Shows or hides what one button controls (a group's rows, a step's email, the warnings past the
 // cap) and keeps the button's state true. A button with data-open-label says that while open
@@ -23,7 +22,6 @@ export function toggleGroup(button: HTMLElement): void {
   setGroup(button, button.getAttribute("aria-expanded") !== "true");
 }
 
-// How deep a group sits: 1 for a group at the top, 2 for one inside another.
 export function groupDepth(group: Element): number {
   let depth = 0;
   for (let n: Element | null = group; n; n = n.parentElement?.closest(".cap-group") ?? null)
@@ -31,9 +29,7 @@ export function groupDepth(group: Element): number {
   return depth;
 }
 
-// Attaches to every expand toggle ([data-cap="expand"], a button with aria-expanded and
-// aria-controls) under root: a press shows or hides the region it names (a step's email, a table
-// row's detail row). Returns a function that detaches them.
+// Attaches to every expand toggle ([data-cap="expand"]) under root. Returns a function that detaches them.
 export function enhanceExpand(root: ParentNode = document): () => void {
   const undo: Array<() => void> = [];
   for (const button of root.querySelectorAll<HTMLElement>(
@@ -51,9 +47,8 @@ export function enhanceExpand(root: ParentNode = document): () => void {
   return () => undo.forEach((f) => f());
 }
 
-// Attaches to every [data-cap="disclosure"] group under root. A collapsed group that holds
-// a critical item ([data-tone="crit"]) is opened, because critical items are never hidden.
-// Returns a function that detaches them.
+// Attaches to every [data-cap="disclosure"] group under root. A collapsed group that holds a critical
+// item is opened, because critical items are never hidden. Returns a function that detaches them.
 export function enhance(root: ParentNode = document): () => void {
   const undo: Array<() => void> = [];
   undo.push(enhanceExpand(root));

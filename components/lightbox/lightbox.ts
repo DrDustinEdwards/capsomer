@@ -1,22 +1,17 @@
-// The image viewer: a picture in a page opens full size in the shared dialog (components/dialog),
-// and shrinks back into the picture it came from. A container marks itself `data-cap="lightbox"`;
-// inside it, a link to the full image (`a.image-link`, wrapping an <img>) and a diagram image
-// (`img.diagram-image`, which has no link) open the viewer. The click is delegated to the
-// container, so pictures added later (a rendered post) work with no second call.
-//
-// The viewer is a modal <dialog> built here and removed on close: the platform supplies the top
-// layer, the inert page and Esc; the dialog block supplies focus placement, the backdrop click,
-// Tab wrapping and focus return. The grow from the picture to the viewer is a same-document
-// View Transition, skipped under reduced motion and where the API is missing.
+// The image viewer: a picture opens full size in the shared dialog (components/dialog) and shrinks
+// back into the picture it came from. A container marks itself `data-cap="lightbox"`; a link to the
+// full image (`a.image-link`) or a diagram image (`img.diagram-image`) inside it opens the viewer.
+// The click is delegated, so pictures added later work with no second call. The modal <dialog> is
+// built here and removed on close; the grow is a same-document View Transition, skipped under
+// reduced motion and where the API is missing.
 import { reducedMotion } from "../hooks/hooks.ts";
 import { closeDialog, openDialog, wireDialog } from "../dialog/dialog.ts";
 
 const GROW_NAME = "cap-lightbox-figure";
 
-// The figure grows into the viewer and shrinks back. It carries no transition type, so a site's
-// page-to-page fade does not restyle it. A skipped transition rejects `ready` with an
-// InvalidStateError (the tab went hidden, or another transition started); the change still ran,
-// so only the animation is dropped. Anything else is rethrown.
+// The figure carries no transition type, so a site's page-to-page fade does not restyle it. A
+// skipped transition rejects `ready` with an InvalidStateError (tab hidden, or another transition
+// started); the change still ran, so only the animation is dropped. Anything else is rethrown.
 export function grow(from: HTMLElement | undefined, to: HTMLElement, change: () => void): void {
   if (!from || !("startViewTransition" in document) || reducedMotion()) {
     change();
@@ -32,7 +27,6 @@ export function grow(from: HTMLElement | undefined, to: HTMLElement, change: () 
     if (error instanceof DOMException && error.name === "InvalidStateError") return;
     throw error;
   });
-  // Cleared once the morph ends, so no later transition picks up a stale pair.
   void transition.finished.finally(() => {
     to.style.viewTransitionName = "";
   });
@@ -65,10 +59,8 @@ function closeButton(): HTMLButtonElement {
   return close;
 }
 
-// Opens the viewer. `src` is passed in, not read from `currentSrc` (whichever srcset rung the
-// browser downloaded): a resized copy would be shown as full size. `label` names the dialog; an
-// empty alt means decorative, so the dialog then gets a generic name. `source` is the picture to
-// grow from and shrink back to; `opener` is where focus returns.
+// `src` is passed in, not read from `currentSrc` (the srcset rung downloaded): a resized copy would
+// be shown as full size. An empty alt means decorative, so the dialog gets a generic name.
 export function openViewer(options: {
   src: string;
   alt: string;
@@ -113,7 +105,6 @@ export function openViewer(options: {
   return dialog;
 }
 
-// Closes a viewer, shrinking its image back into `source` when there is one.
 export function closeViewer(dialog: HTMLDialogElement, source?: HTMLElement): void {
   const full = dialog.querySelector("img");
   grow(full ?? undefined, source ?? full ?? dialog, () => closeDialog(dialog));
@@ -148,7 +139,6 @@ function open(target: HTMLElement, root: HTMLElement): boolean {
   return false;
 }
 
-// Wires every [data-cap="lightbox"] under root. Returns a function that detaches them all.
 export function enhance(root: ParentNode = document): () => void {
   const undo: Array<() => void> = [];
   for (const el of root.querySelectorAll<HTMLElement>(

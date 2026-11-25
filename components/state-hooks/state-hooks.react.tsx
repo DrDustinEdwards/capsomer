@@ -5,26 +5,18 @@ import { selectionOf, sinceOf } from "./state-hooks.ts";
 export { newId, parseVersioned, selectionOf, versionedStore } from "./state-hooks.ts";
 export type { VersionedStore } from "./state-hooks.ts";
 
-// useMedia, useBrowserZone, useHydrated and useRemembered are capsomer/react/hooks; the hooks that
-// read the address or loader data are capsomer/react/route-hooks. No router and no DOM here.
+// useMedia, useBrowserZone, useHydrated and useRemembered are in capsomer/react/hooks; route hooks are in capsomer/react/route-hooks. No router, no DOM.
 
 export interface Selection {
-  /** The selected keys among those shown, in their order. */
   ticked: string[];
   has: (key: string) => boolean;
   toggle: (key: string) => void;
-  /** Selects every shown key, or none. */
   setAll: (on: boolean) => void;
-  /** Every shown key is selected. */
   all: boolean;
-  /** Some, not all: the select-all box is indeterminate. */
   some: boolean;
 }
 
-/**
- * The ticked rows of a list for a bulk bar, kept to the rows still shown: a row that leaves the
- * list (decided, filtered out) leaves the selection with it.
- */
+/** The ticked rows of a list for a bulk bar, kept to the rows still shown. */
 export function useSelection(keys: readonly string[]): Selection {
   const [selected, setSelected] = useState<ReadonlySet<string>>(() => new Set());
   const { ticked, all, some } = selectionOf(selected, keys);
@@ -44,19 +36,13 @@ export function useSelection(keys: readonly string[]): Selection {
   };
 }
 
-/** A ref for a select-all checkbox: indeterminate while some, not all, are selected. */
 export function indeterminate(some: boolean): (el: HTMLInputElement | null) => void {
   return (el) => {
     if (el) el.indeterminate = some;
   };
 }
 
-/**
- * When this browser last opened the page, as an ISO time: `fallbackMs` (24 h) before `now` on the
- * server and while hydrating, then the time this browser stored on its last visit. The visit is
- * stored once, so the next one reports from now. A per-viewer convenience: with storage refused it
- * keeps reporting the fallback window.
- */
+/** When this browser last opened the page, as an ISO time: `fallbackMs` (24 h) before `now` on the server and while hydrating, then the stored last visit. Stored once, so the next visit reports from now. */
 export function useSinceLastVisit(key: string, now: number, fallbackMs = 86_400_000): string {
   const [since, setSince] = useState(() => sinceOf(null, now, fallbackMs));
   useEffect(() => {

@@ -1,6 +1,5 @@
-// capsomer/build: the one way a site without a CSS bundler (a static build script, a specimen, an explorer) turns
-// Capsomer's stylesheets and behavior modules into the files it serves. Node only. Carrel's www, Prelum's specimen and
-// Capsid's explorer each had their own inlineCss, font copy and script bundler; this is that code once.
+// capsomer/build: how a site without a CSS bundler turns Capsomer's stylesheets and behavior
+// modules into the files it serves. Node only.
 import { cpSync, readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { dirname, join, resolve } from "node:path";

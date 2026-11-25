@@ -1,10 +1,9 @@
-// Generates components/<name>/states.html from site/states-template.html, the component's
-// doc-page frontmatter (its title) and its examples.html (and examples.tsx, if any). A
-// component whose specimens are drawn by Enarratio has examples.build.ts: its default export
-// maps names to markup, rendered when the pages are built, and each <!-- build:name --> in
-// examples.html is replaced by it, so the specimens are the package's live output, never pasted.
-// Imported by bin/capsomer.mjs (`capsomer states`) and by site/vite.config.ts, so the pages
-// exist before Vite discovers its inputs. The generated pages are gitignored.
+// Generates components/<name>/states.html from site/states-template.html, the component's doc-page
+// frontmatter title and its examples.html (and examples.tsx, if any). A component whose specimens
+// are drawn by Enarratio has examples.build.ts: its default export maps names to markup, and each
+// <!-- build:name --> in examples.html is replaced by it, so the specimens are live output, never
+// pasted. Imported by bin/capsomer.mjs and site/vite.config.ts so the pages exist before Vite
+// discovers its inputs. The generated pages are gitignored.
 import { existsSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";

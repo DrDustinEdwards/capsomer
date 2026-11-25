@@ -15,25 +15,17 @@ const glyphFor: Record<NoticeTone, GlyphName> = {
 };
 
 export interface BannerProps {
-  // A banner with no tone is a warning.
   tone?: NoticeTone;
-  // An optional short title above the words: "Signed out".
   title?: ReactNode;
-  // What happened and what is on screen now: "Could not refresh. Showing data from 4
-  // minutes ago."
   children?: ReactNode;
-  // Block content under the words (a list, a second paragraph). It sits in a div, so a list is not inside a
-  // paragraph; `children` stays the inline words in a p.
+  // Block content under the words, in a div so a list is not inside a paragraph; `children` stays the inline words in a p.
   body?: ReactNode;
-  // The next step, usually a Try again button.
   actions?: ReactNode;
-  // Shown as a Dismiss button when given. Focus inside the banner moves to the page's main region first, as the
-  // HTML behavior's dismissBanner does, so it is never left on nothing when the banner goes. A banner about data that is still stale
-  // usually has none: it goes when the data is fresh again.
+  // Shown as a Dismiss button when given. Focus inside moves to the page's main region first, so it is never left on nothing.
   onDismiss?: () => void;
 }
 
-// A critical banner interrupts (role="alert"); every other one is polite (role="status").
+// A critical banner interrupts (role="alert"); every other is polite (role="status").
 export function Banner({ tone = "warn", title, children, body, actions, onDismiss }: BannerProps) {
   const root = useRef<HTMLDivElement>(null);
   const dismiss = () => {
@@ -72,18 +64,13 @@ export function Banner({ tone = "warn", title, children, body, actions, onDismis
 }
 
 export interface AlertProps {
-  // An alert with no tone is critical.
   tone?: NoticeTone;
-  // An optional short title: "Could not save the schedule".
   title?: ReactNode;
-  // Plain words, and what to do next: "Check the cron line and save again."
   children: ReactNode;
   action?: ReactNode;
-  // So the source can point at it with aria-describedby.
   id?: string;
 }
 
-// An alert interrupts (role="alert"): it is added when the failure happens.
 export function Alert({ tone = "crit", title, children, action, id }: AlertProps) {
   return (
     <div className="cap-alert" data-tone={tone} role="alert" id={id}>

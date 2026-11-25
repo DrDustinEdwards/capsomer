@@ -1,10 +1,7 @@
-// The command menu's host without React, light: it imports nothing of the menu until the page
-// is idle (requestIdleCallback, two seconds at most), or until Ctrl K, Cmd K, a
-// [data-cap-command-open] button or `open` asks for it, and then loads command-menu.ts and builds
-// the menu. Import it from capsomer/behavior/command-host so the first load carries only this.
+// The command menu's host without React: imports nothing of the menu until the page is idle (two seconds
+// at most) or Ctrl K, Cmd K, a [data-cap-command-open] button or `open` asks. Import from capsomer/behavior/command-host.
 import type { Command, CommandMenu, MenuOptions } from "./command-menu.ts";
 
-// Calls `fn` once the page is idle, `timeout` ms at most; returns a cancel.
 export function whenIdle(fn: () => void, timeout = 2000): () => void {
   if (typeof requestIdleCallback === "function") {
     const id = requestIdleCallback(fn, { timeout });
@@ -14,8 +11,7 @@ export function whenIdle(fn: () => void, timeout = 2000): () => void {
   return () => clearTimeout(t);
 }
 
-// Ctrl K or Cmd K before the menu is there, by a plain listener: the shortcut registry (and the
-// dialog it brings) loads with the menu, which binds the keys itself. Returns an unbind.
+// Ctrl K or Cmd K before the menu exists: the shortcut registry loads with the menu. Returns an unbind.
 export function onModK(run: () => void): () => void {
   const onKey = (e: KeyboardEvent) => {
     if ((e.ctrlKey || e.metaKey) && !e.altKey && e.key.toLowerCase() === "k") {
@@ -28,12 +24,9 @@ export function onModK(run: () => void): () => void {
 }
 
 export interface CommandHost {
-  // The menu, once built.
   readonly menu: CommandMenu | null;
-  // Loads and builds the menu now (once); resolves to it.
   load: () => Promise<CommandMenu>;
   open: (query?: string, opener?: Element | null) => Promise<void>;
-  // Runs the command with this id now, and starts loading the menu.
   runWhenReady: (id: string) => void;
   detach: () => void;
 }
@@ -61,8 +54,7 @@ export function createCommandHost(
         loading = null;
         throw error;
       }));
-  // A warm-up nobody waits on (idle time, a command that runs without the menu): a failure
-  // surfaces where the menu is asked for, as `open` rejecting.
+  // A warm-up nobody waits on: a failure surfaces where the menu is asked for, as `open` rejecting.
   const warm = () => void load().catch(() => {});
   const open = async (query = "", opener: Element | null = document.activeElement) => {
     (await load()).open(query, opener);

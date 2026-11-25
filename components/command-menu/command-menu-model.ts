@@ -7,23 +7,16 @@ export interface Command {
   id: string;
   label: string;
   group: string;
-  // Other words that find it: "home" finds Overview.
   keywords?: string[];
-  // The registry's spec: "g o", "r", "Mod+k". Shown in <kbd>; registering it is the app's job.
   shortcut?: string | string[];
-  // A short note beside the label, in words, for what the command will do or ask: "asks a
-  // reason", "preview first", an item's state. Read by a screen reader after the label.
+  // A short note read by a screen reader after the label ("asks a reason", "preview first").
   hint?: string;
-  // A line under the label from a search result's text: the words around the match, with the
-  // typed words marked.
   snippet?: string;
-  // On a Recent entry, the id of the command it repeats (what is remembered).
   of?: string;
   run: () => void;
 }
 
-// Commands that go to each page of an app's menu ("Go to Media"), found by their group too, so
-// the menu and the command menu never list different pages. `go` is the router's navigate.
+// Commands for each page of an app's menu, so the menu and the command menu list the same pages.
 export function navCommands(
   nav: ReadonlyArray<{ id: string; label: string; href: string; group?: string }>,
   go: (href: string) => void,
@@ -38,8 +31,6 @@ export function navCommands(
   }));
 }
 
-// A text's pieces with the typed words marked, for a snippet: every case-insensitive match of
-// a word of the query, longest words first, never overlapping.
 export function markQuery(text: string, query: string): Array<{ text: string; mark: boolean }> {
   const words = [
     ...new Set(
@@ -74,8 +65,7 @@ export function markQuery(text: string, query: string): Array<{ text: string; ma
   return out;
 }
 
-// The commands a person ran last, newest first, kept per site in localStorage under `key`
-// (ids only; a command no longer offered drops out). Shown, as "Recent", while nothing is typed.
+// The commands last run, newest first, in localStorage under `key` (ids only); shown as "Recent" while nothing is typed.
 export const RECENT_MAX = 5;
 export function readRecent(key: string): string[] {
   try {
@@ -91,15 +81,12 @@ export function rememberRecent(key: string, id: string): string[] {
   return next;
 }
 
-// Every way to stop something lives in one group, so typing "stop" lists them all. A stop
-// command opens the control it stands for (a switch's reason field, the confirm dialog) and
-// never performs anything itself. List a stop only while there is something to stop. There is
-// no "stop everything" command.
+// Every way to stop something is in one group, so typing "stop" lists them all. A stop command
+// only opens the control it stands for and never performs anything itself.
 export const STOP_GROUP = "Stop";
 export const STOP_HINTS = { reason: "asks a reason", preview: "preview first" } as const;
 
-// A stop command: group Stop, found by "stop" and "pause", its hint saying what opening it
-// will ask for. `run` must only open the control.
+// `run` must only open the control.
 export function stopCommand(o: {
   id: string;
   label: string;
@@ -117,7 +104,6 @@ export function stopCommand(o: {
   };
 }
 
-// Commands by group, in the order each group first appears.
 export function groupCommands<T extends { group: string }>(
   commands: T[],
 ): Array<{ group: string; items: T[] }> {
@@ -128,5 +114,4 @@ export function emptyText(query: string): string {
   return `No commands match “${query.trim()}”`;
 }
 
-// What the empty status says while a live search (the React menu's `search`) has not answered.
 export const SEARCHING = "Searching…";

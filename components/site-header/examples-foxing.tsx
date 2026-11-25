@@ -12,9 +12,7 @@ import {
   type SiteHeaderProps,
 } from "./site-header.react.tsx";
 
-// The fox site: Foxing's look, its placeholder mark and its name in the serif, a translucent band
-// in the page's ground, its section links centered. Books and Celebrity Picks open Foxing's own
-// panels, laid out as Foxing draws them.
+// The fox site: a translucent band, centered section links, its own panels.
 const FOX_MARK = FAMILY_APPS.find((a) => a.id === "foxing")?.logo;
 const FX_LOGO = {
   href: "#home",
@@ -115,14 +113,12 @@ export const fxPublic: SiteHeaderProps = {
   extras: [fxSearch, { id: "join", label: "Join free", kind: "button", href: "#join" }],
   signIn: { href: "#sign-in" },
   skipTo: "#main",
-  // The site binds single keys, so T switches the theme.
   themeKey: "t",
 };
-// Signed in: the bell joins Search, the avatar is the reader's picture, and its menu is Foxing's own panel.
+// Signed in: the bell joins Search, and the menu is the site's own panel.
 const fxAccount: HeaderAccount = {
   name: "Sam Rivera",
   initials: "SR",
-  // A picture, drawn over the initials (a sample: a fox-orange head and shoulders).
   avatar:
     "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3E%3Crect width='8' height='8' fill='%23f5c9a8'/%3E%3Ccircle cx='4' cy='3' r='1.6' fill='%23b64404'/%3E%3Cpath d='M1 8a3 3 0 0 1 6 0z' fill='%23b64404'/%3E%3C/svg%3E",
   groups: [

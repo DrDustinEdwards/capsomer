@@ -163,7 +163,7 @@ eachTheme((theme) => {
 });
 
 // The device's "increase contrast" setting turns on the generated stronger set, in the theme the
-// person chose with the switch as well as in the system's (the dark mode plan, 2026-10-29).
+// person chose with the switch as well as in the system's.
 for (const theme of ["light", "dark"] as const) {
   test(`behavior: prefers-contrast: more applies the stronger ${theme} set, with ${theme} chosen in the switch`, async ({
     page,

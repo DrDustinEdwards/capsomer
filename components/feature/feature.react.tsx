@@ -3,20 +3,17 @@ import type { ReactNode } from "react";
 export interface FeatureBlockProps {
   title: ReactNode;
   body?: ReactNode;
-  // The picture of the feature working: a preview panel, a screenshot.
   media?: ReactNode;
   // A tall preview scrolls in a window; this names that window for a screen reader.
   scrollLabel?: string;
   // "stacked": the text centered over the picture. "beside": text and picture side by side when wide.
   layout?: "stacked" | "beside";
-  // Text aligned to the start instead of centered (stacked only).
   alignStart?: boolean;
   lifted?: boolean;
   headingLevel?: "h2" | "h3" | "h4";
   id?: string;
 }
 
-// The HTML contract in feature.md.
 export function FeatureBlock({
   title,
   body,
@@ -68,7 +65,6 @@ export interface FeatureCardItem {
   icon?: ReactNode;
   title: ReactNode;
   text?: ReactNode;
-  // A tag at the end of the title's line: a pill naming its product or plan.
   tag?: ReactNode;
   id?: string;
   // The site's own data attributes on the card (a filter's hooks, say). Only data-* names.

@@ -1,14 +1,13 @@
-// A banner's Dismiss button. The rest of a banner is CSS; its Try again is the app's own.
+// A banner's Dismiss button. The rest of a banner is CSS.
 
-// Hides a banner and puts focus somewhere sensible if it was inside: the page's main
-// region, made focusable for the purpose, so focus is never left on nothing.
+// Hides a banner and, if focus was inside, moves it to the page's main region (made focusable), so focus is never left on nothing.
 export function dismissBanner(banner: HTMLElement): void {
   const hadFocus = banner.contains(document.activeElement);
   banner.hidden = true;
   if (hadFocus) focusMain(banner);
 }
 
-// The focus move itself, shared with the React Banner, whose Dismiss removes the banner instead of hiding it.
+// The focus move, shared with the React Banner, whose Dismiss removes the banner instead.
 export function focusMain(banner: Element): void {
   const main = banner.closest("main") ?? document.querySelector("main");
   if (!main) return;
@@ -16,8 +15,6 @@ export function focusMain(banner: Element): void {
   (main as HTMLElement).focus();
 }
 
-// Attaches to every [data-cap="banner"] under root not yet attached. Returns a function
-// that detaches.
 export function enhance(root: ParentNode = document): () => void {
   const undo: Array<() => void> = [];
   for (const banner of root.querySelectorAll<HTMLElement>(

@@ -7,14 +7,10 @@ export type { AiSampleField, AiSampleResult } from "./ai-sample.ts";
 
 export interface AiSampleProps {
   title: ReactNode;
-  // "Calls real AI". Omit for no live badge.
   live?: ReactNode;
-  // The inputs: a segmented control, radios, a select. Their names are the form's fields.
   children: ReactNode;
   button: ReactNode;
-  // Said to a screen reader while the call runs; the button keeps its words under a spinner.
   busyLabel?: string;
-  // The line under the button: what the call is run on.
   hint?: ReactNode;
   busy?: boolean;
   result?: AiSampleResult | null;
@@ -23,9 +19,7 @@ export interface AiSampleProps {
   onChange?: () => void;
 }
 
-// The HTML contract in ai-sample.md, its `data-cap` hooks included, so a server-rendered page that
-// never hydrates still has a form its `enhance()` wires. The page keeps the state (its fetcher);
-// this draws it.
+// The HTML contract in ai-sample.md, `data-cap` hooks included, so a server-rendered page that never hydrates still has a form `enhance()` wires.
 export function AiSample({
   title,
   live,

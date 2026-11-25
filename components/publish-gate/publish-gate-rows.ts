@@ -23,7 +23,6 @@ export function h<K extends keyof HTMLElementTagNameMap>(
   return e;
 }
 
-// A state's tone, which is also its glyph.
 export const TONE: Record<GateState, "crit" | "info" | "ok"> = {
   blocked: "crit",
   held: "info",
@@ -35,7 +34,6 @@ export function stateStatus(s: GateState): HTMLSpanElement {
   return statusEl(TONE[s], WORD[s], TONE[s]);
 }
 
-// A check, read from its row.
 export function readCheck(li: HTMLElement): GateCheck {
   const c: GateCheck = {
     id: li.dataset.check ?? li.id,
@@ -60,7 +58,6 @@ export function readSite(li: HTMLElement): GateSite {
   return s;
 }
 
-// A check's row, from its data: status, title and link, detail, the site it concerns.
 export function renderCheck(li: HTMLElement, sites: HTMLElement[]): void {
   const c = readCheck(li);
   const st = checkState(c);
@@ -102,7 +99,6 @@ export function renderCheck(li: HTMLElement, sites: HTMLElement[]): void {
   }
 }
 
-// One destination's buttons, in each container that holds them.
 export function renderActions(
   boxes: HTMLElement[],
   site: GateSite,

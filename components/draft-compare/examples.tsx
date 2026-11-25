@@ -1,5 +1,3 @@
-// Mounts the React specimen: the compare with its view held in the app's own state, and the
-// view named beside it so a test can read what the app was told.
 import { StrictMode, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { DraftCompare, DraftMerge } from "./draft-compare.react.tsx";
@@ -44,8 +42,6 @@ for (const el of document.querySelectorAll<HTMLElement>("[data-mount='react']"))
   );
 }
 
-// The merge mode: a person's unsaved text against a newer saved copy, over the version both
-// started from. The merged text is shown once applied, so a test can read what the app got.
 const base = [
   "---",
   'title: "Spring update"',

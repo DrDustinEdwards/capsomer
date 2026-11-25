@@ -1,5 +1,5 @@
 // The accessibility statement at /accessibility/, written into site/accessibility.html at build (site/vite.config.ts) from
-// Prelum's accessibilityStatement, the one statement every public site serves (devkit-a11y item S6). Only the facts are
+// Prelum's accessibilityStatement, the one statement every public site serves. Only the facts are
 // this site's: it is built from Capsomer and draws Capsomer's links, problems go to dustinedwards.info's contact page (the
 // site has none of its own), and the limitations are the open findings of devkit-a11y's run of 2026-11-21.
 import { accessibilityStatement } from "@drdustinedwards/site-helpers/accessibility";

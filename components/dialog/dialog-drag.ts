@@ -1,15 +1,10 @@
-// Drag to dismiss a sheet, in its own module: wireDialog (dialog.ts) loads it when a sheet first
-// takes focus, so a page whose sheets stay shut never downloads it.
+// Drag to dismiss a sheet, loaded by wireDialog when a sheet first takes focus so a page whose sheets stay shut never downloads it.
 import { reducedMotion } from "../hooks/hooks.ts";
 import { isLocked } from "./dialog.ts";
 
-// Drag to dismiss a sheet (Vaul). The header of a bottom, right or left sheet is its handle:
-// it follows the pointer toward the sheet's edge, and on release the sheet closes, as Close
-// would, when it went past a third of its size or was flung (faster than 0.5 px a ms);
-// otherwise it springs back. Not while the dialog is locked or busy, nor under reduced motion;
-// Esc, Close and focus return are unchanged.
+// The header of a bottom, right or left sheet is its handle: on release it closes past a third of its size or when flung
+// (over 0.5 px a ms), else springs back. Not while locked or busy, nor under reduced motion.
 
-// Whether a released drag dismisses: past a third of the sheet, or flung toward its edge.
 function dragDismisses(moved: number, size: number, velocity: number): boolean {
   return moved > size / 3 || (moved > 16 && velocity > 0.5);
 }

@@ -1,12 +1,6 @@
-// The moderation queue's behavior and its pure helpers. Mentions from strangers wait in a list;
-// a and r approve or reject the row under focus at once (act first), a message says what
-// happened and offers Undo where the site can reverse it (z undoes it), d deletes after a
-// confirm, x selects, j and k move. The states are the site-api contract's own: Waiting
-// (pending), Approved, Rejected, Not yet checked (unverified) and Source not found (failed).
-//
-// The page is delivered with every row in the HTML, each with its state in words; this
-// module adds only what a person's action creates. No framework; MentionsList, the React
-// component on the contract's data, uses the same helpers.
+// The moderation queue's behavior: a and r approve or reject the row under focus at once, with Undo (z) where the site can
+// reverse it; d deletes after a confirm; x selects; j and k move. The page arrives with every row in the HTML; this adds what a
+// person's action creates. The states are the site-api contract's own.
 import { plural } from "@drdustinedwards/site-helpers/text";
 import { confirm } from "../confirm-dialog/confirm-dialog.ts";
 import { toggleGroup } from "../disclosure/disclosure.ts";
@@ -88,8 +82,6 @@ export type {
   UndoStack,
 } from "./moderation-queue-model.ts";
 
-// The behavior.
-
 const READY = "data-cap-ready";
 
 export interface DecidedDetail {
@@ -118,8 +110,6 @@ function applyState(
   paintRow(root, row);
 }
 
-// What Undo does for one decision: reverses it, and when earlier decisions are still
-// undoable offers the next one, so z walks back through them.
 function undoThen(ctx: Ctx, entry: UndoEntry): () => void {
   return () => {
     undoEntry(ctx, entry);
@@ -145,9 +135,7 @@ function undoEntry(ctx: Ctx, entry: UndoEntry): void {
     back.push(row);
   }
   refresh(root);
-  // Focus goes to the first mention that came back, when it is in view (the one that was
-  // undone, as the message component returns focus to the control it undid). Undo's own
-  // button is gone by now.
+  // Focus goes to the first mention that came back, since Undo's own button is gone by now.
   const first = back.find(visible);
   if (first) titleOf(first)?.focus();
   root.dispatchEvent(
@@ -155,9 +143,7 @@ function undoEntry(ctx: Ctx, entry: UndoEntry): void {
   );
 }
 
-// Decides these rows at once: each moves to its new state, the counts and the live line
-// follow, focus moves to the next row, and the message says so, with Undo where the site can
-// put each one back. A row the table does not allow is left alone. Returns the ids that moved.
+// Decides these rows at once and returns the ids that moved. A row the table does not allow is left alone.
 export function decideRows(
   root: HTMLElement,
   rows: HTMLLIElement[],
@@ -170,8 +156,7 @@ export function decideRows(
   const from: UndoEntry["from"] = {};
   const to: Record<string, ModState> = {};
   const decidedAt = new Date(nowFor(root).now).toISOString();
-  // Focus is on one of these rows, or on the bulk bar's button that was just pressed (which is
-  // rebuilt): either way it moves to the next row.
+  // Focus is on one of these rows or on the (rebuilt) bulk button just pressed; either way it moves to the next row.
   const hadFocus =
     rows.some((r) => r.contains(document.activeElement)) ||
     !!root.querySelector("[data-cap='bulk-bar']")?.contains(document.activeElement);
@@ -259,8 +244,7 @@ async function sweepExpired(root: HTMLElement): Promise<void> {
   });
 }
 
-// Runs one action for these rows. A decision leaves the rows it does not apply to (a mention not
-// yet checked, or whose source was not found) and says so.
+// A decision leaves the rows it does not apply to and says so.
 export async function run(
   root: HTMLElement,
   rows: HTMLLIElement[],
@@ -285,8 +269,7 @@ export function setView(root: HTMLElement, view: ModView): void {
   refresh(root);
 }
 
-// The keys of the sheet: listed there, never run from the registry (the queue runs them,
-// because they act on the row that has focus, and only inside the queue).
+// Listed in the sheet, never run from the registry: they act on the row that has focus, inside the queue only.
 export const QUEUE_SHORTCUTS = [
   { key: "j", label: "Next row" },
   { key: "k", label: "Previous row" },
@@ -296,10 +279,8 @@ export const QUEUE_SHORTCUTS = [
   { key: "x", label: "Select the row" },
 ] as const;
 
-// Attaches to every [data-cap="moderation-queue"] under root not yet attached. Returns a
-// function that detaches them.
-// The root is Element | Document | DocumentFragment, not ParentNode: under @cloudflare/workers-types
-// an HTMLFormElement does not type as a ParentNode, so a site could not pass its form.
+// Attaches to every [data-cap="moderation-queue"] under root and returns a detach function. The root is Element | Document |
+// DocumentFragment, not ParentNode: under @cloudflare/workers-types an HTMLFormElement is not a ParentNode.
 export function enhance(root: Element | Document | DocumentFragment = document): () => void {
   const undo: Array<() => void> = [];
   for (const el of root.querySelectorAll<HTMLElement>("[data-cap='moderation-queue']")) {
@@ -377,7 +358,7 @@ export function enhance(root: Element | Document | DocumentFragment = document):
       if (!action || rows.every((r) => !decide(mentionOf(r).state, action, resetOn(el)))) return;
       void run(el, rows, action);
     };
-    // Single keys off: the hints and the announced keys go quiet, because pressing them does nothing.
+    // Single keys off: pressing them does nothing, so the hints and announced keys go quiet.
     const syncKeys = () => {
       const off = singleKeysOff();
       for (const b of el.querySelectorAll<HTMLElement>("[aria-keyshortcuts], [data-keys]")) {

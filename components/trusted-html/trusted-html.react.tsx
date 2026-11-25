@@ -1,7 +1,6 @@
 import type { HTMLAttributes, ReactNode } from "react";
 import { markup } from "./trusted-html.ts";
 
-/** The elements stored HTML is rendered into: a block, an inline run (a title), or a heading or cell that holds it. */
 export type RichTextTag =
   | "div"
   | "span"
@@ -33,8 +32,7 @@ export interface RichTextProps extends Omit<
 
 /**
  * Stored, already sanitized HTML as an element's children, through the `capsomer` Trusted Types policy.
- * React sets it with `innerHTML` in the browser; `markup()` hands it TrustedHTML, and the same object
- * for the same string, so a re-render does not set it again. No `style` is rendered (style-src 'self').
+ * `markup()` hands React the same TrustedHTML object for the same string, so a re-render does not set it again.
  */
 export function RichText({
   html,

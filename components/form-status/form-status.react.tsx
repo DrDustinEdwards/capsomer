@@ -1,16 +1,11 @@
 import { useEffect, useMemo, useRef, type ReactNode } from "react";
 import { Glyph } from "../status/status.react.tsx";
 
-// The result of a form's post, said where the form is (form-status.md). The paragraph is in the
-// page from the start (empty and visually hidden), so the first result is heard; when a new result
-// arrives focus moves to it, so a keyboard and a screen reader land on what happened before the
-// form. A failure is said in a role="alert" paragraph in the critical tone, a success in a
-// role="status" one in ok.
+// The result of a form's post, said where the form is. The paragraph is in the page from the start (empty, visually hidden) so the first result is heard; a new result takes focus.
 
 export type ActionStatus = { ok: true; message: ReactNode } | { ok: false; message: ReactNode };
 
-// Reads the usual shapes of a route action's answer: `{ ok: "Saved." }`, `{ error: "..." }`,
-// `{ ok: true, message }` or `{ ok: false, error | message }`. Anything else is no status.
+// Reads a route action's usual answers (`{ ok }`, `{ error }`, `{ ok, message }`, `{ ok: false, error | message }`); anything else is no status.
 export function actionStatus(data: unknown): ActionStatus | null {
   if (!data || typeof data !== "object") return null;
   const d = data as Record<string, unknown>;
@@ -22,21 +17,16 @@ export function actionStatus(data: unknown): ActionStatus | null {
   return null;
 }
 
-// When a new result takes focus: every one (true, the default, so a person who posted with the
-// keyboard lands on what happened, where the button may be gone or disabled), "errors" for a
-// failure only, or false to leave focus in place (autosave) and let the live region speak.
+// When a new result takes focus: every one (default), "errors" only, or false to leave focus (autosave) and let the live region speak.
 export type FormStatusFocus = boolean | "errors";
 
 export interface FormStatusProps {
-  // The status to say, or null for none. A new object is a new result and takes focus.
   status: ActionStatus | null;
   focus?: FormStatusFocus;
   className?: string;
 }
 
-// Two regions, always in the page: an alert for a failure and a status for a success. A live
-// node never changes its role, which some screen readers miss; the one with nothing to say is
-// empty and visually hidden.
+// Two regions always in the page, an alert and a status: a live node never changes its role, which some screen readers miss.
 export function FormStatus({ status, focus = true, className }: FormStatusProps) {
   const failRef = useRef<HTMLParagraphElement>(null);
   const okRef = useRef<HTMLParagraphElement>(null);
@@ -72,8 +62,7 @@ export function FormStatus({ status, focus = true, className }: FormStatusProps)
   );
 }
 
-// The status of the action's answer, read with `actionStatus`, kept stable while the answer is
-// the same object so focus moves once per post: `<FormStatus status={useActionStatus(actionData)} />`.
+// The status of the action's answer, kept stable while the answer is the same object so focus moves once per post.
 export function useActionStatus(data: unknown): ActionStatus | null {
   return useMemo(() => actionStatus(data), [data]);
 }

@@ -12,7 +12,6 @@ export {
   type PageEnvelope,
 } from "./pagination.ts";
 
-// What a page link needs, for an app's router link: `renderLink={({ href, ...p }) => <Link to={href} {...p} />}`.
 export interface PageLinkProps {
   href: string;
   className: string;
@@ -32,24 +31,17 @@ const plainPageLink = ({ href, children, ...rest }: PageLinkProps) => (
 export interface PaginationProps {
   page: number;
   pageCount: number;
-  // Links (server-rendered): the address of a page. Without it the pager is buttons and
-  // onPageChange says which page was chosen.
+  // Links (server-rendered): the address of a page. Without it the pager is buttons and onPageChange says which.
   hrefFor?: (page: number) => string;
   onPageChange?: (page: number) => void;
-  // With both, the "Showing 21 to 40 of 312 posts" line is shown.
   total?: number;
   perPage?: number;
-  // What the items are, in the plural: "posts".
   noun?: string;
-  // Newer and Older for a newest-first list.
   prevLabel?: string;
   nextLabel?: string;
   label?: string;
-  // The links form through the app's router link, so a page change is a client navigation.
   renderLink?: (props: PageLinkProps) => ReactNode;
-  // "steps": Previous and Next with "Page 3 of 16" between at every width, no numbers (a journal
-  // read newest first). With a total that moves, pass pageCount 0 and `hasNext`, and it reads
-  // "Page 3".
+  // "steps": Previous and Next with "Page 3 of 16" between, no numbers. With a moving total pass pageCount 0 and `hasNext`.
   form?: "numbers" | "steps";
   hasNext?: boolean;
 }
@@ -70,7 +62,6 @@ export function Pagination({
   form = "numbers",
   hasNext,
 }: PaginationProps): ReactElement | null {
-  // A total that moves: the count is not known, only whether there is a next page.
   const open = hasNext !== undefined && form === "steps" && !(known > 0);
   const pageCount = open ? (hasNext ? page + 1 : page) : known;
   if (pageCount <= 1) return null;

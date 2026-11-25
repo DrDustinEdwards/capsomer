@@ -6,9 +6,7 @@ import { barChart } from "enarratio/plot";
 import { frameHtml, noDataHtml } from "./chart-frame.ts";
 
 export interface CountSeries {
-  // The name a person reads: "Articles", "Talks".
   label: string;
-  // One count per year, in the order of `years`.
   values: readonly number[];
 }
 
@@ -17,28 +15,21 @@ export interface CountsByYearOptions {
   title: string;
   years: readonly number[];
   series: readonly CountSeries[];
-  // The sentence that says what the chart shows, with its numbers (describeSeries writes one).
   alt: string;
   // A range to keep at full strength: the bars outside it fade. One year is left to Enarratio's own
   // filter, so the two never stack.
   selected?: readonly [number, number] | null;
-  // A link for a year's bars ("?from=2024&to=2024").
   hrefForYear?: (year: number) => string;
-  // The y axis's words (default "Count").
   yLabel?: string;
-  // What the frame says when there is nothing to draw.
   emptyText?: string;
-  // Where the counts come from, in the figure's source line.
   source?: string;
   width?: number;
   height?: number;
 }
 
-// Counts by year as stacked bars. The x ticks thin out with the width (every year where there is
-// room, every other on a laptop, every fifth on a phone). Nothing to count is the frame's no-data
-// state with a reason, never an empty chart.
+// Counts by year as stacked bars. The x ticks thin out with the width. Nothing to count is the
+// frame's no-data state with a reason, never an empty chart.
 export function countsByYearHtml(o: CountsByYearOptions): string {
-  // One row per year and series, its count as the bar's length (not one row per counted unit).
   const rows = o.series.flatMap((s) =>
     o.years.flatMap((year, i) => {
       const count = Math.max(0, Math.round(s.values[i] ?? 0));
@@ -71,7 +62,6 @@ export function countsByYearHtml(o: CountsByYearOptions): string {
   return frameHtml(fadeOutside(markup, o.selected ?? null));
 }
 
-// Marks the bars outside a range wider than one year (chart-frame.css fades them).
 function fadeOutside(markup: string, selected: readonly [number, number] | null): string {
   if (!selected || selected[0] === selected[1]) return markup;
   return markup.replace(/data-enarratio-x="(\d{4})"/g, (match, year: string) =>
@@ -82,19 +72,14 @@ function fadeOutside(markup: string, selected: readonly [number, number] | null)
 }
 
 export interface SparkOptions {
-  // The x values (years, days), in order.
   x: readonly (string | number)[];
   values: readonly number[];
-  // What the numbers are, for the table's column and caption: "Articles".
   name: string;
-  // The sentence the line stands for (role="img"): describeSeries writes one.
   alt: string;
-  // The x column's heading (default "Year").
   xLabel?: string;
 }
 
-// A line inside a sentence or a tile: no frame, its numbers in a table for screen readers and AI
-// agents (components/README.md, inline primitives). `.cap-spark` gives the line a box to fill.
+// A line inside a sentence or a tile: no frame, its numbers in a table for screen readers and AI agents.
 export function sparkHtml(o: SparkOptions): string {
   const svg = sparkline({ values: [...o.values], alt: o.alt, area: true, inline: true });
   const table = {

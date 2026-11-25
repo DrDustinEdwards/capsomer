@@ -4,7 +4,6 @@ import { foldedLevels } from "./breadcrumb.ts";
 
 export interface BreadcrumbItem {
   label: string;
-  // Every level but the last is a link. The last is the current page, as text.
   href?: string;
 }
 
@@ -34,8 +33,7 @@ const Dots = () => (
   </svg>
 );
 
-// The HTML contract in breadcrumb.md. A long trail renders its folded item at once, popover
-// included, so the server's HTML already has the links.
+// The HTML contract in breadcrumb.md. A long trail renders its folded item at once, so the server's HTML has the links.
 export function Breadcrumb({
   items,
   maxItems,

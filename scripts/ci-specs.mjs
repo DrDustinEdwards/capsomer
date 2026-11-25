@@ -1,17 +1,15 @@
 #!/usr/bin/env node
 // Which browser tests a pull request runs (ci.yml). Prints, and appends to $GITHUB_OUTPUT:
-//   mode=full   run every spec (something shared changed, or a component's CSS reaches past its own classes)
-//   mode=some   run `specs` (space-separated paths for `playwright test`) with CAPSOMER_SWEEP=`sweep`
-//               (the components test/sweep.spec.ts covers)
+//   mode=full   every spec (something shared changed, or a component's CSS reaches past its own classes)
+//   mode=some   `specs` (paths for `playwright test`) with CAPSOMER_SWEEP=`sweep`
 //   mode=none   no browser test reads anything that changed
-// The changed files are `git diff --name-only <base> HEAD`; the base defaults to HEAD^1, which on
-// a pull_request event is the base branch side of the merge commit Actions checks out
-// (checkout with fetch-depth: 2). Given paths as arguments, it uses those instead:
-//   node scripts/ci-specs.mjs components/button/button.css
-// A component runs its own specs and sweep entries and those of every component that writes one
-// of its classes or imports its files, and of whatever imports those in turn.
-// Pushes to main run everything. A change to package.json's version alone (the release PR) runs none: the release PR
-// carries main's code, which main's own run already tested.
+// The changed files are `git diff --name-only <base> HEAD`; the base defaults to HEAD^1, the base
+// branch side of a pull_request merge commit (checkout needs fetch-depth: 2). Paths given as
+// arguments replace it: node scripts/ci-specs.mjs components/button/button.css
+// A component runs its own specs and sweep entries and those of every component that writes one of
+// its classes or imports its files, and of whatever imports those in turn.
+// Pushes to main run everything. A change to package.json's version alone (the release PR) runs
+// none: main's own run already tested that code.
 import { execFileSync } from "node:child_process";
 import { appendFileSync, existsSync, readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";

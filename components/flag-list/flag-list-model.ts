@@ -2,22 +2,17 @@
 
 export type FlagKind = "blocking" | "advisory";
 export type FlagState = "open" | "resolved";
-// How a resolved flag was closed: fixed, dismissed as not a problem, or by applying its suggestion.
 export type Resolution = "resolved" | "dismissed" | "applied";
 export type AnchorStatus = "found" | "lost" | "none";
 
 export interface FlagAnchor {
-  // The id of the passage in the page (the link is href="#id").
   id: string;
-  // The quoted words, exactly as they were when the flag was raised. The last known text
-  // when the anchor is lost.
+  // The quoted words as they were when raised (the last known text when the anchor is lost).
   quote: string;
   // A few words either side, to tell one occurrence of the quote from another.
   before?: string;
   after?: string;
-  // Used when no current text is given: the server already knows the passage has gone.
   lost?: boolean;
-  // The link's words. Default "Go to passage".
   label?: string;
 }
 
@@ -30,22 +25,16 @@ export interface FlagSuggestion {
 export interface Flag {
   id: string;
   kind: FlagKind;
-  // What rule fired, in words: "Every factual claim needs a source."
   cause: string;
-  // What is wrong, in a sentence. The flag's title.
   message: string;
-  // Who or what raised it.
   raisedBy?: string;
   anchor?: FlagAnchor;
   suggestion?: FlagSuggestion;
   state: FlagState;
   resolution?: Resolution;
   resolvedBy?: string;
-  // An ISO timestamp.
   resolvedAt?: string;
 }
-
-// Pure helpers.
 
 const byState = (a: Flag, b: Flag) =>
   Number(a.state === "resolved") - Number(b.state === "resolved");
@@ -62,7 +51,6 @@ export function groupFlags(flags: readonly Flag[]): { blocking: Flag[]; advisory
 }
 
 export interface FlagCounts {
-  // Open flags by kind.
   blocking: number;
   advisory: number;
   open: number;
@@ -82,14 +70,12 @@ export function countFlags(flags: readonly Flag[]): FlagCounts {
   };
 }
 
-// "2 blocking, 3 advisory, 4 resolved". With nothing open it says so.
 export function summaryLine(c: FlagCounts): string {
   if (c.total === 0) return "No flags";
   if (c.open === 0) return `No open flags, ${c.resolved} resolved`;
   return `${c.blocking} blocking, ${c.advisory} advisory, ${c.resolved} resolved`;
 }
 
-// Every place the quote occurs in the text, as start offsets.
 function occurrences(text: string, quote: string): number[] {
   const at: number[] = [];
   if (!quote) return at;
@@ -97,7 +83,6 @@ function occurrences(text: string, quote: string): number[] {
   return at;
 }
 
-// The occurrence the flag means: the one whose neighbors match the recorded context, else the first.
 function pick(text: string, a: FlagAnchor, hits: number[]): number {
   if (hits.length > 1 && (a.before || a.after)) {
     const fit = hits.find(
@@ -111,8 +96,7 @@ function pick(text: string, a: FlagAnchor, hits: number[]): number {
   return hits[0] ?? -1;
 }
 
-// Whether the quoted passage is still in the text. "none": the flag is not anchored to text.
-// Without a text, the flag's own `lost` mark is believed.
+// Whether the quoted passage is still in the text; without a text, the flag's own `lost` mark is believed.
 export function anchorStatus(flag: Pick<Flag, "anchor">, text?: string): AnchorStatus {
   const a = flag.anchor;
   if (!a || !a.quote) return "none";
@@ -120,8 +104,7 @@ export function anchorStatus(flag: Pick<Flag, "anchor">, text?: string): AnchorS
   return text.includes(a.quote) ? "found" : "lost";
 }
 
-// The text with the suggestion put in place of the quoted passage; null when the flag has no
-// suggestion or its anchor has gone. Pure: it never touches the page.
+// The text with the suggestion put in place of the quote; null when there is none or the anchor is gone.
 export function applySuggestion(
   text: string,
   flag: Pick<Flag, "anchor" | "suggestion">,
@@ -133,8 +116,7 @@ export function applySuggestion(
   return text.slice(0, i) + flag.suggestion.replacement + text.slice(i + a.quote.length);
 }
 
-// The inverse, for Undo: puts the quote back where the replacement now is. null when the
-// replacement is not there any more (the draft was edited since).
+// The inverse, for Undo; null when the replacement is gone (the draft was edited since).
 export function revertSuggestion(
   text: string,
   flag: Pick<Flag, "anchor" | "suggestion">,
@@ -147,7 +129,6 @@ export function revertSuggestion(
   return text.slice(0, i) + a.quote + text.slice(i + s.replacement.length);
 }
 
-// The flags whose suggestion can be applied now: open, with a suggestion, and the passage still there.
 export function appliable(flags: readonly Flag[], text?: string): Flag[] {
   return flags.filter(
     (f) => f.state === "open" && f.suggestion && anchorStatus(f, text) === "found",

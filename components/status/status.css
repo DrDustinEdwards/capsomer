@@ -1,16 +1,13 @@
-/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+/* Layer order repeated so this file is safe in any import order: the first statement fixes it (css/layers.css). */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
-/* Status: a word with a glyph, colored by its tone, and the same word as a badge. The
-   glyph's shape differs per tone (octagon critical, triangle warning, square notice, filled
-   circle ok, an empty circle with a bar no data, an arc running), so shape and word carry the meaning and
-   color only repeats it.
+/* Status: a word with a glyph, colored by its tone, and the same word as a badge. The glyph's shape
+   differs per tone (octagon critical, triangle warning, square notice, filled circle ok, empty circle
+   with a bar no data, arc running), so shape and word carry the meaning and color only repeats it.
 
-   The badge (.cap-pill, also written .cap-badge) is shadcn's Badge: a 20 px pill, 12 px
-   text, one pixel edge, six variants (default, secondary, outline, destructive, ghost, link).
-   With a data-tone and no variant it is a status badge: the word and glyph on the tone's
-   tint. A variant and a tone together keep the tone's color (outline, ghost) or the
-   variant's own fill (default, secondary, destructive, link). */
+   The badge (.cap-pill, also .cap-badge) is a 20 px pill with 12 px text, one pixel edge and six
+   variants. With a data-tone and no variant it is a status badge; a variant and a tone together keep
+   the tone's color (outline, ghost) or the variant's own fill (default, secondary, destructive, link). */
 @layer cap.components {
   .cap-status {
     display: inline-flex;
@@ -22,7 +19,6 @@
     white-space: nowrap;
     color: var(--muted);
 
-    /* A phrase that wraps in its own column (a hold reason): the glyph stays by the first line. */
     &[data-wrap] {
       align-items: flex-start;
       white-space: normal;
@@ -33,16 +29,13 @@
     }
   }
 
-  /* The glyph: drawn in currentColor, with any mark inside it cut out (evenodd), so it
-     reads on any background the word sits on. It follows the text size. */
+  /* Drawn in currentColor with any mark inside cut out (evenodd), so it reads on any background. */
   .cap-status-glyph {
     flex: none;
     inline-size: 1.15em;
     block-size: 1.15em;
   }
 
-  /* A status's color, and a glyph's on its own with no word (a status icon beside a name). Muted
-     is the quiet gray for a state that is neither good nor bad (queued, unknown). */
   :is(.cap-status, .cap-status-glyph) {
     &[data-tone="crit"] {
       color: var(--crit);
@@ -64,13 +57,11 @@
     }
   }
 
-  /* No data says why, after the word, in plain muted text. */
   .cap-status-reason {
     font-size: var(--fs-detail);
     color: var(--muted);
   }
 
-  /* The badge. --_bg, --_fg and --_line are the three things a variant or a tone changes. */
   .cap-pill,
   .cap-badge {
     --_bg: var(--nodata-soft);
@@ -110,12 +101,10 @@
       inline-size: 1em;
       block-size: 1em;
     }
-    /* A badge with no glyph (a count, a label) is even on both sides. */
     &:not(:has(> svg, > .cap-pill-dot)) {
       padding-inline: var(--space-3);
     }
 
-    /* The status tones: the word and glyph on the tone's own tint. */
     &[data-tone="crit"] {
       --_bg: var(--crit-soft);
       --_fg: var(--crit);
@@ -139,7 +128,6 @@
       --_fg: var(--muted);
     }
 
-    /* The variants, after the tones so a variant's fill wins. */
     &[data-variant="default"] {
       --_bg: var(--primary);
       --_fg: var(--primary-fg);
@@ -152,8 +140,8 @@
       --_bg: var(--crit-soft);
       --_fg: var(--crit);
     }
-    /* Outline and ghost keep a tone's color for the word and drop its tint. The edge is a
-       control edge once the badge is a link or a button, so it is the strong line. */
+    /* Outline and ghost keep a tone's color and drop its tint. The edge is the strong control line once
+            the badge is a link or a button. */
     &[data-variant="outline"] {
       --_bg: transparent;
       --_line: var(--line-strong);
@@ -171,8 +159,6 @@
       --_bg: transparent;
       --_fg: var(--accent-text);
     }
-    /* The family's accent tint, with no glyph: a category that is not a state. A data-family on
-       the badge gives it another family's accent (a site's second hue, kept in tokens). */
     &[data-variant="accent"] {
       --_bg: var(--accent-soft);
       --_fg: var(--accent-text);
@@ -245,8 +231,8 @@
     }
   }
 
-  /* A label's own color, as a dot before the word: --series-1 to --series-8 from data-series. The
-     word carries the meaning; in forced colors the dot takes the text color. */
+  /* A label's own color as a dot before the word: --series-1 to --series-8 from data-series. In forced
+     colors the dot takes the text color. */
   .cap-pill-dot {
     flex: none;
     inline-size: 0.7em;
@@ -278,8 +264,6 @@
     }
   }
 
-  /* Hover and focus change color only where the platform says so; no motion is needed
-     beyond a short color change. */
   @media (prefers-reduced-motion: no-preference) {
     .cap-pill,
     .cap-badge {

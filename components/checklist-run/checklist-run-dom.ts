@@ -74,9 +74,7 @@ export function screenLock(onDenied: () => void): {
     async release() {
       try {
         await lock?.release();
-      } catch {
-        // Already released by the browser.
-      }
+      } catch {}
       lock = null;
     },
   };

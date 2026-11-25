@@ -4,9 +4,7 @@ import { Field, NumberField } from "../field/field.react.tsx";
 import { Select, type SelectOption } from "../select/select.react.tsx";
 
 export interface ScaleControlProps {
-  // The page that answers the GET: usually the page the control sits on.
   action: string;
-  // The quantity's label ("Servings", "Tubes") and its query name ("servings", "n").
   label: string;
   name: string;
   value: number;
@@ -14,17 +12,12 @@ export interface ScaleControlProps {
   max?: number;
   // "any" for a quantity that need not be whole (1.5 servings); the steppers still step by 1.
   step?: number | "any";
-  // The unit or system select, when there is one: its label, query name, options and value.
   units?: { label: string; name: string; options: SelectOption[]; value: string };
-  // The button's word: "Show", "Scale". Default: "Scale".
   submitLabel?: string;
-  // Names the form, when the page has more than one ("Scale this recipe").
   formLabel?: string;
   children?: ReactNode;
 }
 
-// The HTML contract in scale-control.md. The quantity is React state for its steppers; the values
-// reach the page through the form's GET, so the state lives in the address.
 export function ScaleControl(props: ScaleControlProps) {
   const {
     action,

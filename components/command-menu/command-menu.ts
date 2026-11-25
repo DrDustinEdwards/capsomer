@@ -1,9 +1,5 @@
-// The command menu: the shared dialog (components/dialog) as a palette near the top, holding a
-// combobox input and the shared listbox (components/listbox) in its "input" mode: the input
-// keeps focus and names the active option (aria-activedescendant). Typing filters, arrows move
-// the active option, Enter runs it, Esc closes. Ctrl K, Cmd K and "/" open it, through the
-// shortcut registry. Every command shows its shortcut. No framework; the React wrapper uses
-// the same pure functions.
+// The command menu: the shared dialog as a palette over a combobox input and the shared listbox
+// in "input" mode (focus stays in the input; aria-activedescendant names the active option).
 import { closeDialog, openDialog, wireDialog } from "../dialog/dialog.ts";
 import { createListbox, type Listbox } from "../listbox/listbox.ts";
 import { register } from "../shortcuts/shortcuts.ts";
@@ -49,17 +45,13 @@ export type { Command } from "./command-menu-model.ts";
 export interface Attached {
   open: (query?: string, opener?: Element | null) => void;
   close: () => void;
-  // Makes the option at this index among those shown the active one.
   setActive: (index: number) => void;
-  // Offers the answer under the list for the words typed now, or withdraws it (opts.answer).
   offerAnswer: (on: boolean) => void;
   detach: () => void;
 }
 
-// Wires one menu dialog: the shared dialog's rules (Esc, the backdrop, focus handed back), the
-// shared listbox over the commands (filtering, the active option, Enter, a click), and Ctrl K to
-// close. `run` is called with the chosen option after the dialog has closed, and with its command
-// when the option is a live result (`opts.search`).
+// Wires one menu dialog on the shared dialog and listbox. `run` is called with the chosen option
+// after the dialog has closed.
 export function attach(
   dialog: HTMLDialogElement,
   run: (option: HTMLElement, found?: Command) => void,
@@ -72,7 +64,6 @@ export function attach(
   if (!input || !list)
     return { open() {}, close() {}, setActive() {}, offerAnswer() {}, detach: unwireBase };
   list.dataset.controlled = "";
-  // A menu written for 0.1 named keywords, group and the active option another way.
   for (const o of list.querySelectorAll<HTMLElement>("[role='option']")) {
     if (o.dataset.capKeywords && !o.dataset.keywords) o.dataset.keywords = o.dataset.capKeywords;
     if (o.dataset.capGroup && !o.dataset.group) o.dataset.group = o.dataset.capGroup;
@@ -82,7 +73,6 @@ export function attach(
     } else if (o.getAttribute("aria-selected") === "false") o.removeAttribute("aria-selected");
   }
 
-  // A live search not yet answered: the list is busy, and an empty one says Searching.
   let busy = false;
   const lb: Listbox = createListbox(list, {
     input,
@@ -111,8 +101,7 @@ export function attach(
     run(o, live.get(cmd));
   };
 
-  // Recent (while nothing is typed: copies of the last commands run, first) and Ask (while words
-  // are typed: one option, last). Rebuilt on every key, before the listbox's filter runs again.
+  // Recent (nothing typed) and Ask (words typed), rebuilt on every key before the listbox filters.
   const extras = () => {
     for (const g of list.querySelectorAll("[data-recent], [data-ask-group]")) g.remove();
     const typed = input.value.trim();
@@ -167,8 +156,7 @@ export function attach(
     lb.filter(input.value);
   };
 
-  // The live results: groups built as buildMenu builds them, marked data-live, after the menu's
-  // own. Each keeps the query as its keyword, so the menu's filter shows it whatever its words.
+  // Live results keep the query as their keyword, so the filter shows them whatever their words.
   const live = new Map<string, Command>();
   let timer: ReturnType<typeof setTimeout> | undefined;
   let pending: AbortController | null = null;
@@ -229,7 +217,6 @@ export function attach(
     setBusy(false);
   };
 
-  // The answer under the list (opts.answer).
   const answer = opts.answer;
   const answerBox = dialog.querySelector<HTMLElement>("[data-cap-part='answer']");
   const answerButton = answerBox?.querySelector<HTMLButtonElement>("button");
@@ -286,7 +273,6 @@ export function attach(
   }
   const onSelect = (e: Event) => choose((e as CustomEvent<{ option: HTMLElement }>).detail.option);
   const onKey = (e: KeyboardEvent) => {
-    // The key that opened it closes it.
     if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
       e.preventDefault();
       dialog.close();
@@ -294,7 +280,6 @@ export function attach(
   };
   list.addEventListener("cap:option-select", onSelect);
   input.addEventListener("keydown", onKey);
-  // A menu written with a query or an active option in its markup keeps them.
   const preset = lb.active();
   lb.filter(input.value);
   if (preset && !preset.hidden) lb.setActive(preset, { scroll: false });
@@ -334,11 +319,9 @@ export function attach(
   };
 }
 
-// The menu that openCommandMenu() opens: the last one created or enhanced.
 let current: Attached | null = null;
 let unregisterKeys: (() => void) | null = null;
 
-// A menu taken down is no longer the one Ctrl K opens.
 function release(a: Attached): void {
   a.detach();
   if (current === a) current = null;
@@ -362,8 +345,6 @@ export interface CommandMenu extends Attached {
   dialog: HTMLDialogElement;
 }
 
-// Builds a menu from a list of commands, adds it to the page, and binds Ctrl K, Cmd K and
-// "/" to open it.
 export function createCommandMenu(commands: Command[], opts: MenuOptions = {}): CommandMenu {
   const dialog = buildMenu(commands, opts);
   document.body.append(dialog);
@@ -387,11 +368,8 @@ export function createCommandMenu(commands: Command[], opts: MenuOptions = {}): 
   };
 }
 
-// Wires a menu written in markup: choosing an option follows its data-href, or dispatches a
-// "cap-command" event (detail: { id }) on the dialog. With data-recent-key it lists recents;
-// with data-ask, Ask follows data-ask-href with the words in `q`, or dispatches "cap-command"
-// with { id: "ask", query }. Also wires every [data-cap-command-open] button under root, and
-// binds the keys.
+// Wires a menu written in markup: a choice follows its data-href or dispatches "cap-command" ({ id })
+// on the dialog; data-recent-key and data-ask enable Recent and Ask.
 export function enhance(root: ParentNode = document): () => void {
   const undo: Array<() => void> = [];
   for (const dialog of root.querySelectorAll<HTMLDialogElement>(

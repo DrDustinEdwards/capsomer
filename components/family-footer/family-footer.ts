@@ -1,22 +1,14 @@
 import { escapeHtml } from "@dustinedwards/site-runtime/html";
 
-/*
- * The one footer every dustinedwards.info site closes with, as NASA's agency and
- * its centers: under a thin stripe in the page's own color, the site's own part (its name, links and
- * stamp) and the strip of the family's sites with this one lit; then the double stripe, the name as the
- * letterhead's logotype, the profiles, the workspace logins and the site links of dustinedwards.info,
- * and the copyright line. Every site draws the same bytes but its own part.
- */
+/** The one footer every dustinedwards.info site closes with: the site's own part, then the strip of family sites,
+ * the double stripe, the logotype, profiles, logins and links, and the copyright line. */
 
-/** The family's home: every path below is on it. */
 export const FAMILY_ORIGIN = "https://dustinedwards.info";
 
 export interface FamilyLink {
   to: string;
   label: string;
-  /** Another site: never prefixed with the family's origin. */
   external?: boolean;
-  /** The owner's own profiles, marked rel="me". */
   me?: boolean;
   /** A prose page that can be a draft: listed only while its path is published. */
   page?: boolean;
@@ -106,7 +98,6 @@ const SITE_LINKS_ALL: FamilyLink[] = [
   { to: "/colophon", label: "Colophon" },
 ];
 
-/** The policies and statements a reader looks for under one heading, as GOV.UK's footer groups them: Legal, not Site. */
 const LEGAL_LINKS_ALL: FamilyLink[] = [
   { to: "/privacy", label: "Privacy" },
   { to: "/terms", label: "Terms" },
@@ -122,12 +113,10 @@ export function siteLinks(published?: readonly string[]): FamilyLink[] {
   return listed(SITE_LINKS_ALL, published);
 }
 
-/** The Legal group: Privacy, Terms and Accessibility (only while its page is published). */
 export function legalLinks(published?: readonly string[]): FamilyLink[] {
   return listed(LEGAL_LINKS_ALL, published);
 }
 
-/** Every link the footer draws, in page order. */
 export function familyLinks(published?: readonly string[]): FamilyLink[] {
   return [
     ...SOCIAL_LINKS,
@@ -143,7 +132,6 @@ export interface FamilySite {
   id: string;
   name: string;
   href: string;
-  /** What the site is, in a word or two. */
   role: string;
   /** Its color family: --family-<family> (tokens/family-marks.css) draws its mark. */
   family: "purple" | "teal" | "magenta" | "cerulean" | "olive" | "rose";
@@ -236,7 +224,6 @@ export interface FamilyFooterOptions {
    * "Developing an Accessibility Statement"). Left out, the link is the family's.
    */
   statement?: string;
-  /** The copyright's last year; this year when left out. */
   year?: number;
 }
 
@@ -252,14 +239,10 @@ const line = (cls: string, body: string, stroke = 1.5) =>
   );
 
 const ICONS: Record<WorkspaceLink["icon"], string> = {
-  // Desk: a desk lamp, the study-carrel light.
   lamp: '<path d="M5 21h8"/><path d="M9 21v-2l-3-7 5-5"/><path d="M11 7l2.5-2.5 6 6L17 13z"/><path d="M17 13l-1.5 2"/>',
-  // Admin: a gear, eight teeth.
   gear: '<path d="M18.85 9.78L21.28 9.96L21.28 14.04L18.85 14.22L18.42 15.27L20 17.12L17.12 20L15.27 18.42L14.22 18.85L14.04 21.28L9.96 21.28L9.78 18.85L8.73 18.42L6.88 20L4 17.12L5.58 15.27L5.15 14.22L2.72 14.04L2.72 9.96L5.15 9.78L5.58 8.73L4 6.88L6.88 4L8.73 5.58L9.78 5.15L9.96 2.72L14.04 2.72L14.22 5.15L15.27 5.58L17.12 4L20 6.88L18.42 8.73z"/><circle cx="12" cy="12" r="3"/>',
-  // Portal: an icosahedron in outline, the shape of a phage capsid.
   capsid:
     '<path d="M12 2.5l8.2 4.75v9.5L12 21.5l-8.2-4.75v-9.5z"/><path d="M12 2.5L7.5 9.5h9zM7.5 9.5L3.8 16.75M16.5 9.5l3.7 7.25M7.5 9.5L12 16.5l4.5-7M12 16.5v5M12 16.5l-8.2.25M12 16.5l8.2.25"/>',
-  // Lab: a conical flask, the bench.
   flask:
     '<path d="M9 3h6"/><path d="M10 3v6.5L4.6 18.6A1.6 1.6 0 0 0 6 21h12a1.6 1.6 0 0 0 1.4-2.4L14 9.5V3"/><path d="M7.2 15h9.6"/>',
 };

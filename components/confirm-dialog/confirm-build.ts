@@ -2,24 +2,15 @@
 import { uid } from "../hooks/hooks.ts";
 
 export interface ConfirmOptions {
-  // Names the action and the object: "Revoke deploy-agent?"
   title: string;
-  // An optional first sentence: "This cannot be undone."
   lead?: string;
-  // What will change, one line each.
   body: string[];
-  // The perform button's label, named for the action: "Revoke agent".
   action: string;
-  // For what cannot be recovered: the short word to type ("revoke").
   typeToConfirm?: string;
-  // Gets the reason when the dialog asks for one.
   perform: (reason: string) => Promise<void>;
   cancelLabel?: string;
-  // Where focus goes when the opener has gone. The page's main region by default.
   returnTo?: HTMLElement | null;
-  // Asks for a reason, required, before the action: the audit row carries it with the change.
   reason?: { label?: string; note?: string };
-  // The icon tile beside the title (shadcn's Alert Dialog media). Default: shown.
   media?: boolean;
 }
 
@@ -41,9 +32,6 @@ export function svgGlyph(d: string, size: number): SVGSVGElement {
   return svg;
 }
 
-// Builds the dialog's markup, exactly the contract on the doc page: an alert dialog of the
-// shared dialog, header (a crit icon tile, the title, the lead as its description), a body
-// (what changes, the reason, the typed word), the error box, and the footer.
 export function buildConfirm(o: ConfirmOptions): HTMLDialogElement {
   const id = uid("cap-confirm");
   const dialog = document.createElement("dialog");

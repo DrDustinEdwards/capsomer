@@ -4,20 +4,15 @@ import { attach, viewBox, type Segment } from "./annotated-figure.ts";
 export type { Point, Segment } from "./annotated-figure.ts";
 
 export interface Callout {
-  // Pairs the callout with its key entry ("1", "iv").
   id: string;
-  // The target's accessible name ("Callout 1, the inbox").
   name: string;
-  // The words at the end of the leader ("1 · Inbox"); drawn, and hidden from screen readers.
   label: string;
-  // What the callout points at, drawn in the drawing's own units.
   target: ReactNode;
   leader: Segment[];
   text: { x: number; y: number; anchor: "start" | "end" };
 }
 
 export interface AnnotatedDrawingProps {
-  // Keys the title and description ids; unique on the page.
   id: string;
   // "wide" or "narrow" when the figure has one drawing for each; the container's width picks one.
   layout?: "wide" | "narrow";
@@ -25,10 +20,8 @@ export interface AnnotatedDrawingProps {
   title: string;
   // The whole drawing in words, with every callout: what a reader who cannot see it is told.
   description: string;
-  // Drawn first, under every callout.
   art?: ReactNode;
   callouts: Callout[];
-  // Drawn last: a scale bar, a north arrow.
   after?: ReactNode;
 }
 
@@ -82,12 +75,9 @@ export function AnnotatedDrawing(props: AnnotatedDrawingProps) {
 }
 
 export interface AnnotatedFigureProps {
-  // The figure's id, which a key outside it names in `for`.
   id: string;
-  // Draw each leader in once the figure is in view (not under reduced motion).
   draw?: boolean;
   caption?: ReactNode;
-  // One AnnotatedDrawing, or a "wide" and a "narrow" one; an AnnotatedKey inside it, if it belongs there.
   children: ReactNode;
 }
 
@@ -121,7 +111,6 @@ export function AnnotatedFigure({ id, draw = false, caption, children }: Annotat
 
 export interface KeyEntry {
   id: string;
-  // The number as the drawing shows it ("1", "iv").
   number: string;
   name: string;
   note?: ReactNode;
@@ -132,13 +121,11 @@ export interface KeyEntry {
 }
 
 export interface AnnotatedKeyProps {
-  // The figure it belongs to, when it sits outside it.
   for?: string;
   label: string;
   entries: KeyEntry[];
 }
 
-// The key: one ruled box per callout, its number, its drawing, its name and a note.
 export function AnnotatedKey({ for: figure, label, entries }: AnnotatedKeyProps) {
   return (
     <section className="cap-annotated-key" aria-label={label} data-for={figure}>

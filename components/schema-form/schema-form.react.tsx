@@ -5,11 +5,9 @@ import { toDateTimeLocal } from "../field/field.ts";
 import { moneyInputValue } from "@dustinedwards/site-runtime/money";
 import { specId, type FieldSpec, type SpecError } from "./schema-form.ts";
 
-// What a renderer for one kind is given.
 export interface SpecInputProps {
   spec: FieldSpec;
   id: string;
-  // The value, when the form is controlled (React state); undefined in a form that posts.
   value: unknown;
   // Controlled: called with the new value (undefined for an emptied field). Left out, the field
   // is a plain named control with `value` as its starting value, and the form posts it.
@@ -23,9 +21,6 @@ const str = (v: unknown) => (v === undefined || v === null ? "" : String(v));
 const list = (v: unknown) => (Array.isArray(v) ? v.map(String) : []);
 const orEmpty = <T,>(v: T, empty: boolean) => (empty ? undefined : v);
 
-// One field drawn from its spec, by kind: every kind schema-form.ts reads, in Capsomer's field
-// parts, and the app's own kinds through `renderers` (which may also replace a built-in one).
-// The help, the error and Required come from the spec, so the summary and the field agree.
 export function FieldFromSpec({
   spec,
   value,
@@ -38,7 +33,6 @@ export function FieldFromSpec({
   value?: unknown;
   onChange?: (value: unknown) => void;
   error?: ReactNode;
-  // The control's id is specId(key, idPrefix): "field-title" by default.
   idPrefix?: string;
   renderers?: SpecRenderers;
 }) {
@@ -47,7 +41,6 @@ export function FieldFromSpec({
   if (own) return <>{own({ spec, id, value, onChange, error })}</>;
   const controlled = onChange !== undefined;
   const words = { label: spec.label, help: spec.help, error, required: spec.required };
-  // The value and the change handler a text-like control takes, controlled or posting.
   const text = (to: (typed: string) => unknown = (t) => orEmpty(t, t === "")) =>
     controlled
       ? {
@@ -253,8 +246,6 @@ export function FieldFromSpec({
   }
 }
 
-// Fields from their specs in the form's grid: two columns where there is room, a wide field
-// (spec.wide, and every textarea, list and choice of many) across both.
 export function SchemaFields({
   specs,
   values = {},
@@ -265,7 +256,6 @@ export function SchemaFields({
 }: {
   specs: readonly FieldSpec[];
   values?: Record<string, unknown>;
-  // Controlled: the key and its new value. Left out, the fields post by name.
   onChange?: (key: string, value: unknown) => void;
   errors?: readonly SpecError[];
   idPrefix?: string;
@@ -297,18 +287,14 @@ export function SchemaFields({
   );
 }
 
-// A JSON value posted in one hidden field, for an editor whose state is React's (a list of
-// categories, hosts): the action reads it with parseJsonField, which never falls back to empty.
+// A JSON value in one hidden field for an editor whose state is React's; the action reads it with parseJsonField, which never falls back to empty.
 export function JsonField({ name, value }: { name: string; value: unknown }) {
   return <input type="hidden" name={name} value={JSON.stringify(value)} />;
 }
 
 export type FormComponent = ComponentType<FormHTMLAttributes<HTMLFormElement>>;
 
-// A settings form: the error summary, the fields from their specs, and Save with its status
-// line. A post with no script reaches the action, which reads it with readSpecs and answers
-// the same values and errors. `form` is the app's form element (React Router's Form); default
-// a plain <form>.
+// A settings form: error summary, fields and Save. A post with no script reaches the action, which reads it with readSpecs.
 export function SettingsForm({
   specs,
   values,
@@ -328,7 +314,6 @@ export function SettingsForm({
   specs: readonly FieldSpec[];
   values?: Record<string, unknown>;
   errors?: readonly SpecError[];
-  // The result of the last save, said in the status region ("Settings saved.").
   status?: ReactNode;
   pending?: boolean;
   submitLabel?: string;
@@ -336,7 +321,6 @@ export function SettingsForm({
   form?: FormComponent | "form";
   idPrefix?: string;
   renderers?: SpecRenderers;
-  // Hidden inputs (an intent) and anything else that posts with the fields.
   children?: ReactNode;
 }) {
   return (

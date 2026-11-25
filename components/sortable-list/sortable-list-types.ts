@@ -12,9 +12,7 @@ export interface SortState {
 
 export interface CoreProps<T> {
   getId: (item: T) => string;
-  // The words a person knows the item by: "Move {label}", "Picked up {label}".
   getLabel: (item: T) => string;
-  // The item's own content, beside the handle and the buttons. No drag handle of its own.
   renderItem: (item: T, state: SortState) => ReactNode;
   // A line between the handle and the buttons, in the item's head: "Step 3", an item's title. In
   // the "cards" and "stack" layouts the head sits over the content.
@@ -29,7 +27,6 @@ export interface CoreProps<T> {
   altKeys?: boolean;
   // Shows the order with no handle and no buttons: a published book, a locked list.
   readOnly?: boolean;
-  // A move or save is under way: every control is disabled.
   busy?: boolean;
   // Remove: a button after Move down. `onRemove` hears it; the list says so and puts focus on the
   // next item. Not offered at `min` items or fewer.
@@ -37,9 +34,7 @@ export interface CoreProps<T> {
   min?: number;
   // Said in place of an empty list: "No hosts yet."
   empty?: ReactNode;
-  // The first number of the ordered list (`start` of the `ol`).
   start?: number;
-  // The form field name for the order; turns the buttons into submit buttons.
   name?: string;
   className?: string;
   // How Move up and Move down are drawn: "quiet" icon buttons (the default), "bordered" icon
@@ -48,7 +43,6 @@ export interface CoreProps<T> {
   // The grip; on by default. Off, the item has no drag handle and moves by its buttons (and Alt
   // and an arrow, with altKeys).
   grip?: boolean;
-  // A class of the site's own on an item, for a state it draws (an excluded entry).
   itemClassName?: (item: T, state: SortState) => string | undefined;
   // The site's own controls in the item's buttons, after the steps and the move-to select and
   // before Remove (a checkbox, say).
@@ -91,12 +85,10 @@ export interface SortableBoardProps<T> extends CoreProps<T> {
   lanes: readonly SortLane<T>[];
   // Every list's new order, and what moved. The host saves it.
   onMove: (lists: Lists, move: BoardMove) => void;
-  // The heading or heading and note above a list's items. Wrapped in the list's section.
   renderLaneHead?: (lane: SortLane<T>) => ReactNode;
   // A select in each item to move it to another list: the one-pointer way across lists
   // (WCAG 2.5.7). On by default.
   moveTo?: boolean;
-  // A class of the site's own on a list's section (.cap-sortable-lane), for its look.
   laneClassName?: string | ((lane: SortLane<T>) => string | undefined);
   "aria-label"?: string;
 }

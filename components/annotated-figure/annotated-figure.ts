@@ -1,8 +1,5 @@
-// The annotated figure: a drawing with numbered callouts on leader lines, and a key that pairs each
-// number with its name. Under a mouse, a callout and its key entry light together; a tap pins one
-// until the next tap. Each leader can draw itself in once the figure is in view. Extracted from
-// dustinedwards.info (app/components/plate-i.tsx, plate-i-geometry.ts and app/enhance/plate.ts); the
-// drawing's own shapes and coordinates stay with the site.
+// The annotated figure: a drawing with numbered callouts on leader lines and a key pairing each number with
+// its name. A callout and its key entry light together; a tap pins one. Leaders can draw in once in view.
 
 import { reducedMotion } from "../hooks/hooks.ts";
 
@@ -14,10 +11,8 @@ export interface CalloutPlace {
   label: { x: number; y: number; anchor: "start" | "end" };
 }
 
-/** A number at one decimal: coordinates in the markup stay short and stable. */
 export const round1 = (n: number): number => +n.toFixed(1);
 
-/** `p` moved so that `from` lands on `to`, scaled by `k` about it. */
 export function scalePoint(p: Point, k: number, from: Point = [0, 0], to: Point = [0, 0]): Point {
   return [round1((p[0] - from[0]) * k + to[0]), round1((p[1] - from[1]) * k + to[1])];
 }
@@ -62,12 +57,10 @@ export function sideCallout(opts: {
   };
 }
 
-/** A view box as the attribute wants it. */
 export function viewBox(v: { x: number; y: number; w: number; h: number }): string {
   return `${v.x} ${v.y} ${v.w} ${v.h}`;
 }
 
-/** The pin after a tap on `id`: the same callout again unpins it. */
 export function nextPin(pinned: string | null, id: string): string | null {
   return pinned === id ? null : id;
 }
@@ -173,8 +166,6 @@ export function attach(figure: HTMLElement): () => void {
   };
 }
 
-// Attaches to every [data-cap="annotated-figure"] under root not yet attached. Returns a function
-// that detaches.
 // The root is Element | Document | DocumentFragment, not ParentNode: under @cloudflare/workers-types
 // an HTMLFormElement does not type as a ParentNode, so a site could not pass its form.
 export function enhance(root: Element | Document | DocumentFragment = document): () => void {

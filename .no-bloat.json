@@ -1,11 +1,11 @@
 {
   "baseline": {
-    "measured_at": "a7747d7",
+    "measured_at": "71ef0401",
     "knip": {},
     "jscpd": {
       "clones": 36,
       "lines": 473,
-      "percentage": 0.24,
+      "percentage": 0.23,
       "unread": 24
     },
     "shared copies": {
@@ -14,22 +14,22 @@
     },
     "legacy": {},
     "size": {
-      "bin/capsomer.mjs": 792,
-      "components/catalog/catalog-core.ts": 824,
+      "bin/capsomer.mjs": 789,
+      "components/catalog/catalog-core.ts": 811,
       "site/frame-heights.css": 3109,
-      "test/sweep.spec.ts": 1262,
-      "tokens/palette-core.mjs": 1095,
-      "tokens/scale.mjs": 665,
-      "tokens/sites.mjs": 543
+      "test/sweep.spec.ts": 1261,
+      "tokens/palette-core.mjs": 1040,
+      "tokens/scale.mjs": 656,
+      "tokens/sites.mjs": 534
     },
     "tests": {
       "files": 259,
       "cases": 1669
     },
     "comments": {
-      "lines": 14545,
-      "code": 152759,
-      "percentage": 8.69
+      "lines": 10277,
+      "code": 153387,
+      "percentage": 6.28
     }
   }
 }

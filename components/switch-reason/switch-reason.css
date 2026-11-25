@@ -1,11 +1,8 @@
-/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+/* Layer order, repeated so this file is safe in any import order. */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
-/* The automation switch: a switch that does not move when flipped. It opens a one-line
-   reason beside it, and moves only when the reason is applied. The layout is the Portal's
-   .autoctl and .reason (#216): the switch, then the label, the field and the buttons in one
-   row that wraps on a narrow space. The switch is .cap-switch (switch.css); the field's
-   error is .cap-field-error (field.css). */
+/* The automation switch: it does not move when flipped; it opens a one-line reason beside it and
+moves only when the reason is applied. The switch, label, field and buttons sit in one wrapping row. */
 @layer cap.components {
   .cap-switch-reason {
     display: flex;
@@ -15,8 +12,7 @@
     min-width: 0;
   }
 
-  /* What the switch is doing, beside it while no reason is being asked for: "Paused: looking
-     at a regression". It goes while the reason is open, so the two never crowd the row. */
+  /* Beside the switch while no reason is being asked for; it goes while the reason is open, so the row is not crowded. */
   .cap-switch-reason-note {
     color: var(--muted);
     font-size: var(--fs-detail);
@@ -36,8 +32,7 @@
     padding: 0;
     border: 0;
 
-    /* The field's wrapper takes no box of its own, so its label, input and error sit in this
-       row. The error goes under the row, whole width. */
+    /* The field's wrapper takes no box of its own, so its label, input and error sit in this row. */
     & > .cap-field {
       display: contents;
     }
@@ -51,13 +46,11 @@
     & .cap-field-error {
       order: 2;
       flex-basis: 100%;
-      /* A refusal from the server keeps its line breaks. */
       white-space: pre-wrap;
       overflow-wrap: anywhere;
     }
   }
 
-  /* "Turning seat start on. Reason:" is the field's label. */
   .cap-switch-reason-label {
     color: var(--muted);
     font-size: var(--fs-detail);

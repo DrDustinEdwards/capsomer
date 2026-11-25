@@ -1,22 +1,19 @@
-// The chart pieces of the palette (0.3): eight series colors and a five-step sequential
-// ramp, for Enarratio's charts and anything else that draws categories or quantities.
-// Imported by tokens/palette.mjs, which writes them into the color files and the Enarratio
-// theme, and which checks them with the rest of the palette.
+// The chart pieces of the palette: eight series colors and a five-step sequential ramp, for
+// Enarratio's charts. tokens/palette.mjs writes them into the color files and the Enarratio theme
+// and checks them.
 //
-// The series: purple, fox and teal first (step 9 of each family, exactly as shipped: #8c5fd2,
-// #cc4f0c, #008489), then five companions of the same weight, found by a search over hue,
-// chroma and lightness (offline, last on 2026-10-31 when the gate rose from 8 to 10; the result
-// is the parameters below, so the hexes are computed here, never typed). What it held fixed:
-//   - each color is at least 3:1 against the surface, the ground and the raised surface, in
-//     both themes (WCAG 2.2 non-text contrast), at about the lightness of the three seeds;
-//   - every pair differs by at least SERIES_MIN_DE (CIEDE2000, chart-checks.mjs) with typical vision and under
-//     simulated protanopia, deuteranopia and tritanopia (Machado et al. 2009, the model
-//     Enarratio's own checkTheme uses);
-//   - no companion sits within STATUS_MIN_DE of ok, warning, critical or info, so a series is
-//     never read as a status;
-//   - each slot keeps its hue from light to dark, with lightness set per theme.
-// Order, so a chart with few series uses the most distinct ones first: purple, fox, teal,
-// then sage, indigo, pine, orchid, rust.
+// The series: purple, fox and teal first (step 9 of each family), then five companions found by an
+// offline search over hue, chroma and lightness; the parameters below are the result, so the hexes
+// are computed, never typed. The search held fixed:
+//   - each color 3:1 against the surface, ground and raised surface in both themes, at about the
+//     seeds' lightness;
+//   - every pair at least SERIES_MIN_DE apart (CIEDE2000, chart-checks.mjs) with typical vision and
+//     under simulated protanopia, deuteranopia and tritanopia (Machado et al. 2009, as Enarratio's
+//     checkTheme);
+//   - no companion within STATUS_MIN_DE of ok, warning, critical or info, so a series never reads
+//     as a status;
+//   - each slot keeps its hue from light to dark.
+// The order puts the most distinct first: purple, fox, teal, then sage, indigo, pine, orchid, rust.
 import { contrast, oklch } from "./palette-core.mjs";
 
 export const SERIES_SEEDS = ["purple", "fox", "teal"];
@@ -30,11 +27,9 @@ export const COMPANIONS = [
   { name: "rust", h: 35, c: 0.129, light: 0.495, dark: 0.708 },
 ];
 
-// The sequential ramp: one hue (the family's), five steps from least to most. In light the
-// most is the darkest; in dark the most is the lightest, so each step stands further from
-// the surface than the one before (Enarratio's check). Since 0.56 the least step is already
-// 3:1 against the surface (WCAG 2.2 non-text contrast), so a heat-strip or heatmap cell is
-// found without an outline; the ramp spans the rest of the lightness range from there.
+// The sequential ramp: one hue (the family's), five steps from least to most. In dark the most is
+// the lightest, so each step stands further from the surface than the last. The least step is
+// already 3:1 against the surface, so a heatmap cell is found without an outline.
 // [lightness, share of the seed chroma].
 const RAMP = {
   light: [
@@ -61,10 +56,9 @@ export function companionColors(scheme) {
   return COMPANIONS.map((c) => oklch(c[scheme], c.c, c.h));
 }
 
-// The label color that reads best on a mark: the theme's text or surface color when either
-// reaches 4.5:1 on the fill, else black or white. The same rule as Enarratio's labelColor, kept
-// here so the palette generator needs no chart package. The theme test runs Enarratio's
-// checkTheme over the result.
+// The label color that reads best on a mark: the theme's text or surface color when either reaches
+// 4.5:1 on the fill, else black or white. Same rule as Enarratio's labelColor, kept here so the
+// generator needs no chart package.
 export function labelOn(fill, text, surface) {
   const best = (a, b) => (contrast(fill, a) >= contrast(fill, b) ? a : b);
   const themed = best(text, surface);

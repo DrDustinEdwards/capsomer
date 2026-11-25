@@ -178,7 +178,6 @@ export function stepRecordsOf(
   });
 }
 
-// The run's roll blocks (manual.css .cap-roll), one a step: done, lit, or faint. Drawn only.
 export function roll(host: RunHost, items: HTMLElement[], lit: HTMLElement | undefined) {
   const blocks = el("ol", { class: "cap-roll cap-run-roll", "aria-hidden": "true" });
   for (const li of items) {

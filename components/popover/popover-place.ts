@@ -8,12 +8,10 @@ export type Align = "start" | "center" | "end";
 export interface PlaceOptions {
   side?: Side;
   align?: Align;
-  // Gap between trigger and popup in px (the arrow's own space is added). Default 4.
   offset?: number;
 }
 
 export interface Placement {
-  // The side the popup really ended up on, after any flip.
   side: "top" | "bottom" | "left" | "right";
   align: Align;
   x: number;
@@ -62,10 +60,7 @@ function setArrow(popup: HTMLElement, side: Placement["side"], along: number): v
   popup.style.setProperty(prop, `${Math.round(clamp(along, ARROW_INSET, size - ARROW_INSET))}px`);
 }
 
-// The fallback placement. The popup must already be showing (it is measured). Writes
-// --cap-popover-x / --cap-popover-y (and the arrow's --cap-arrow-x / --cap-arrow-y) on the
-// popup, sets data-placed to the side it landed on, and returns where it went.
-// Anything with a box: an element, or a virtual anchor such as a text selection's range.
+// The fallback placement; the popup must already be showing (it is measured).
 export interface VirtualAnchor {
   getBoundingClientRect(): DOMRect;
 }
@@ -100,7 +95,6 @@ export function place(
   let y: number;
   if (side === "top" || side === "bottom") {
     y = side === "bottom" ? r.bottom + gap : r.top - gap - h;
-    // "start" is the leading edge of the trigger in the reading direction.
     const lead = align === "start" ? !rtl : align === "end" ? rtl : null;
     x = lead === null ? r.left + (r.width - w) / 2 : lead ? r.left : r.right - w;
     x = clamp(x, EDGE, vw - w - EDGE);
@@ -122,8 +116,7 @@ export function place(
   return { side, align, x, y };
 }
 
-// After CSS anchor positioning has placed the popup: read which side it is on (the CSS may
-// have flipped it), point the arrow at the trigger, and say whether it is inside the window.
+// After anchor positioning: read which side the popup is on (the CSS may have flipped it) and point the arrow.
 export function settle(anchor: Element, popup: HTMLElement): boolean {
   const a = anchor.getBoundingClientRect();
   const p = popup.getBoundingClientRect();

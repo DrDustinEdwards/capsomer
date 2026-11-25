@@ -1,14 +1,10 @@
-/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+/* Layer order, repeated so this file is safe in any import order. */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
-/* Who can do what: agents against permissions. A table where there is room, one card per
-   agent listing only what it holds where there is not (a container query), and an
-   inverse view listing who holds each permission. Drawn from the Capsid Portal's agents
-   page (dashboard/src/views/Agents.tsx) and the approved mockup's "Who can do what".
-   In 0.2 a held permission is drawn as shadcn's Checkbox in its checked state (a filled
-   box with a tick), a permission not held as the empty box; the matrix only reads, so
-   they are not controls. The cards are shadcn's Item (outline variant) in an item group,
-   and the table is table's. */
+/* Who can do what: agents against permissions. A table where there is room, one card per agent where
+there is not (a container query), and an inverse view of who holds each permission. A held
+permission is a filled box with a tick, one not held an empty box; the matrix only reads, so they
+are not controls. */
 @layer cap.components {
   .cap-perms {
     container: cap-perms / inline-size;
@@ -17,7 +13,6 @@
     min-width: 0;
   }
 
-  /* The view switch, and a short note beside it. */
   .cap-perms-bar {
     display: flex;
     flex-wrap: wrap;
@@ -31,7 +26,6 @@
     color: var(--muted);
   }
 
-  /* Wide: the table. The row header is an identifier, so it reads as one. */
   .cap-perms-agent {
     text-align: start;
     text-transform: none;
@@ -46,8 +40,7 @@
     text-align: center;
   }
 
-  /* A checked box or an empty one: shape first (filled with a tick, or empty), color
-     second, the word for a screen reader. Sized as a Checkbox, 16 px with a 4 px corner. */
+  /* Shape first (filled with a tick, or empty), color second, the word for a screen reader. */
   .cap-perms-check {
     display: inline-grid;
     place-items: center;
@@ -69,7 +62,6 @@
     background: var(--primary);
   }
 
-  /* Narrow, and the By permission view: a list of cards. */
   .cap-perms-narrow {
     display: none;
   }

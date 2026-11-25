@@ -29,25 +29,16 @@ const ERROR_GLYPH = (
 
 export interface ConfirmDialogProps {
   open: boolean;
-  // Names the action and the object: "Revoke deploy-agent?"
   title: string;
-  // An optional first sentence: "This cannot be undone."
   lead?: ReactNode;
-  // What will change, one line each.
   body: string[];
-  // The perform button's label, named for the action: "Revoke agent".
   action: string;
-  // For what cannot be recovered: the short word to type ("revoke").
   typeToConfirm?: string;
-  // Asks for a reason, required, before the action. perform receives it.
   reason?: { label?: string; note?: string };
   perform: (reason: string) => Promise<void>;
-  // Called once per close, with true when the action was performed.
   onClose: (performed: boolean) => void;
   cancelLabel?: string;
-  // Where focus goes when the opener has gone; the page's main region by default.
   returnTo?: HTMLElement | null;
-  // The icon tile beside the title. Default: shown.
   media?: boolean;
 }
 
@@ -82,7 +73,6 @@ export function ConfirmDialog(props: ConfirmDialogProps) {
   const [reason, setReason] = useState("");
   const matched = wordMatches(typed, typeToConfirm);
 
-  // A fresh dialog each time it opens.
   useEffect(() => {
     if (open) performed.current = false;
   }, [open]);
@@ -102,8 +92,7 @@ export function ConfirmDialog(props: ConfirmDialogProps) {
       typedRef.current?.focus();
       return;
     }
-    // Read from the field as well as from state, so a value the browser filled in without
-    // an input event still counts.
+    // Read from the field too, so a value filled in without an input event still counts.
     const why = (reasonRef.current?.value ?? reason).trim();
     if (reasonOpt && !why) {
       setError({
@@ -189,7 +178,6 @@ export function ConfirmDialog(props: ConfirmDialogProps) {
                 value={reason}
                 onChange={(e) => setReason(e.target.value)}
                 onKeyDown={(e) => {
-                  // Ctrl or Cmd with Enter performs; a plain Enter is a new line.
                   if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) {
                     e.preventDefault();
                     void run();
@@ -270,17 +258,14 @@ export function ConfirmDialog(props: ConfirmDialogProps) {
   );
 }
 
-/** What the dialog is asking about and the control that opened it, or null when closed. */
 export interface ConfirmAsk<T> {
   subject: T;
   opener: HTMLElement | null;
 }
 
 /**
- * The state a page keeps for its confirm dialogs: what is being asked about and the control that
- * asked, so focus goes back to it. `ask(subject, event.currentTarget)` opens; spread `props` into
- * the ConfirmDialog whose `open` is your own test of `subject`. Carrel's editor, book file and
- * project flags pages use it.
+ * The state a page keeps for its confirm dialogs, so focus goes back to the control that asked.
+ * `ask(subject, event.currentTarget)` opens; spread `props` into the ConfirmDialog.
  */
 export function useConfirmAction<T>(): {
   subject: T | null;
@@ -299,23 +284,17 @@ export function useConfirmAction<T>(): {
   };
 }
 
-/** A failed step: the server's words, and whether the preview it rested on has expired. */
 export interface StepError {
   text: string;
   expired: boolean;
-  /** The failure is about a field (a reason, a typed word), shown beside it. */
   field?: boolean;
 }
 
-/** What a step's request came to: `capsomer/react/data`'s Answer. */
 type StepAnswer<T> = Answer<T>;
 
 /**
- * Preview, then perform: the preview writes nothing and answers what will change (and a token);
- * perform carries it out. Every press ends in something the person can see: the preview, the
- * result, a refusal in the server's words, or why it could not be sent. A perform refused because
- * its preview expired drops the preview, so the next press previews again. Answers that arrive
- * after the dialog has gone are ignored.
+ * Preview, then perform: the preview writes nothing; perform carries it out. A perform refused because its
+ * preview expired drops the preview, so the next press previews again. Answers after the dialog has gone are ignored.
  */
 export function useTwoStep<I, P, R>({
   preview,

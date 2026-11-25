@@ -1,8 +1,6 @@
-// The keyboard shortcut registry and the "?" sheet that lists it (the shared dialog,
-// components/dialog). One document keydown listener for the whole app. Single-key shortcuts (a letter, "?", a sequence like "g o")
-// can be switched off and the choice is remembered (WCAG 2.1.4); shortcuts with Ctrl, Cmd
-// or Alt always work. The choice lives on <html> as data-cap-single-keys, the one switch every
-// component's own single keys read. No framework; the React wrapper uses the same registry.
+// The keyboard shortcut registry and the "?" sheet that lists it, with one document keydown listener.
+// Single-key shortcuts can be switched off and the choice is remembered (WCAG 2.1.4); Ctrl, Cmd and Alt
+// shortcuts always work. The choice lives on <html> as data-cap-single-keys, which every component reads.
 import { readStored, writeStored } from "../hooks/hooks.ts";
 
 export interface Shortcut {
@@ -10,8 +8,6 @@ export interface Shortcut {
   // Mac), "Ctrl+Enter", "Alt+n". An array gives one command several keys.
   key: string | string[];
   label: string;
-  // One line under the label in the sheet, saying what the command is for: what a view is
-  // for lives here, not in an intro sentence under every heading.
   about?: string;
   group: string;
   run: (e: KeyboardEvent) => void;
@@ -20,7 +16,6 @@ export interface Shortcut {
 }
 
 export const SINGLE_KEYS_PREF = "cap-single-keys";
-// The line under the switch, shared by the built sheet and the React one.
 export const SINGLE_KEYS_NOTE =
   "Turn these off if they clash with a screen reader. Shortcuts with Ctrl or ⌘ keep working.";
 export const SEQUENCE_MS = 1200;
@@ -71,8 +66,6 @@ function parseStep(step: string): Combo {
 const specsOf = (s: Shortcut): string[] => (Array.isArray(s.key) ? s.key : [s.key]);
 const stepsOf = (spec: string): string[] => spec.trim().split(/\s+/);
 
-// A single-key shortcut is one a person can press by accident while typing or speaking:
-// no Ctrl, Cmd or Alt in any step.
 export function isSingleKey(spec: string): boolean {
   return stepsOf(spec).every((step) => {
     const c = parseStep(step);
@@ -102,8 +95,6 @@ export function singleKeysOff(): boolean {
   return !singleKeysOn();
 }
 
-// Turns single-key shortcuts on or off, here and in every component. Remembered in this browser
-// unless remember is false (a specimen, a test).
 export function setSingleKeys(on: boolean, opts: { remember?: boolean } = {}): void {
   if (opts.remember !== false) writeStored(SINGLE_KEYS_PREF, on ? "on" : "off");
   pending = null;
@@ -112,7 +103,6 @@ export function setSingleKeys(on: boolean, opts: { remember?: boolean } = {}): v
   document.dispatchEvent(new CustomEvent("cap-single-keys", { detail: { on } }));
 }
 
-// The remembered choice reaches <html> as soon as any component that has single keys loads.
 if (
   typeof document !== "undefined" &&
   !document.documentElement.dataset.capSingleKeys &&
@@ -180,7 +170,6 @@ function onKeyDown(e: KeyboardEvent): void {
   const before = pending;
   pending = null;
 
-  // The second key of a sequence.
   if (before && singles && now - before.at <= SEQUENCE_MS) {
     for (const s of entries) {
       for (const spec of specsOf(s)) {
@@ -195,7 +184,6 @@ function onKeyDown(e: KeyboardEvent): void {
       }
     }
   }
-  // A one-step shortcut.
   for (const s of entries) {
     for (const spec of specsOf(s)) {
       const steps = stepsOf(spec);
@@ -218,7 +206,6 @@ function onKeyDown(e: KeyboardEvent): void {
   }
 }
 
-// The one keydown listener, without the "?" sheet.
 function listen(): void {
   if (listening || typeof document === "undefined") return;
   listening = true;
@@ -238,10 +225,8 @@ export function start(): void {
   });
 }
 
-// The registered shortcut with Ctrl, Cmd or Alt that this key event matches, if any, and
-// whether its `when` allows it now. For a surface open over the page (the sheet) that lets
-// such a key through: the Portal's Ctrl K pressed in the help sheet closes the sheet and
-// opens the command menu. Keys that match nothing (Ctrl C) are left alone.
+// The Ctrl, Cmd or Alt shortcut this key matches, if any, and whether its `when` allows it. Lets a surface
+// open over the page (the sheet) pass such keys through: Ctrl K in the help sheet opens the command menu.
 export function modifiedShortcutFor(e: KeyboardEvent): Shortcut | undefined {
   for (const s of entries) {
     if (s.when && !s.when()) continue;
@@ -252,7 +237,6 @@ export function modifiedShortcutFor(e: KeyboardEvent): Shortcut | undefined {
   return undefined;
 }
 
-// Removes the listener and every shortcut.
 export function stop(): void {
   if (typeof document !== "undefined") document.removeEventListener("keydown", onKeyDown);
   listening = false;
@@ -261,17 +245,13 @@ export function stop(): void {
   pending = null;
 }
 
-// Adds a shortcut. Returns a function that removes it.
 export function register(s: Shortcut): () => void {
   start();
   return registerKey(s);
 }
 
-// Adds a shortcut without offering the "?" sheet, for a key a page has whether or not it lists
-// its shortcuts (the site header's theme key). It is listed when something else on the page
-// offers the sheet. The sheet is not part of a bundle that reaches the registry only through
-// this: a classic /site.js inlines the sheet's lazy import, so a page with no other shortcut
-// would carry it to list one key.
+// Adds a shortcut without offering the "?" sheet. Keeps the sheet out of bundles that reach the registry only
+// through this: a classic /site.js inlines the sheet's lazy import.
 export function registerKey(s: Shortcut): () => void {
   listen();
   entries.push(s);
@@ -286,7 +266,6 @@ export function list(): Shortcut[] {
   return entries.slice();
 }
 
-// The registry by group, in the order each group first appears.
 export function grouped(): Array<{ group: string; items: Shortcut[] }> {
   const out: Array<{ group: string; items: Shortcut[] }> = [];
   for (const s of list()) {
@@ -364,15 +343,10 @@ export function keysFragment(key: string | string[]): DocumentFragment {
   return frag;
 }
 
-// The sheet.
-
-// Lets an app (the React wrapper) open its own sheet when "?" is pressed.
 export function setSheetOpener(fn: (() => void) | null): void {
   sheetOpener = fn ?? (() => openBuiltIn());
 }
 
-// Wires a sheet written in markup and every [data-cap-keys-open] button under root, and
-// starts the registry. Returns a function that detaches them.
 export function enhance(root: ParentNode = document): () => void {
   start();
   const undo: Array<() => void> = [];

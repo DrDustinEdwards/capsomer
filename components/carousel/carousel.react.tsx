@@ -6,9 +6,8 @@ import { attach, partsOf } from "./carousel.ts";
 // runs there.
 const SERVER = (import.meta as { env?: { SSR?: boolean } }).env?.SSR;
 
-// The carousel's HTML contract (carousel.md), wired by carousel.ts once mounted. Each child is one
-// slide. The server renders the first slide in view, every slide's label and every marker, so the
-// track scrolls and snaps before hydration.
+// The HTML contract is carousel.md. Each child is one slide. The server renders the first slide in view,
+// every slide's label and every marker, so the track scrolls and snaps before hydration.
 export function Carousel({
   label,
   slideLabel = (n, total) => `${n} of ${total}`,

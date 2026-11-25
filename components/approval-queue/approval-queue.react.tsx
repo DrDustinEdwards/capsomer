@@ -20,7 +20,6 @@ export type { ApprovalAction, ApprovalItem, FormComponent };
 
 export interface ApprovalQueueProps {
   items: ApprovalItem[];
-  // The queue's heading: "Waiting on you".
   label: string;
   // The heading is visible by default; a panel that already names the queue hides it.
   hideLabel?: boolean;
@@ -36,17 +35,14 @@ export interface ApprovalQueueProps {
   findingsLabel?: string;
   // What an empty queue says.
   empty?: { title: ReactNode };
-  // A fixed "now" for the times, for a test or a server's clock.
   now?: number;
 }
 
 const variantOf = (a: ApprovalAction) =>
   a.variant === "primary" || a.variant === "danger" ? a.variant : "default";
 
-// Things your own side drafted, waiting for a person: each item's text (editable before the
-// decision), what a check held it for, and its decisions as one form, so it all works with no
-// script. With script: j and k move between items, a and r run an item's approve and reject, and a
-// one-way decision asks first in the confirm dialog.
+// Things your own side drafted, waiting for a person, as one form per item so it works with no script. With
+// script: j and k move between items, a and r approve and reject, and a one-way decision asks first.
 export function ApprovalQueue({
   items,
   label,

@@ -1,4 +1,4 @@
-/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+/* Layer order repeated so this file is safe in any import order: the first statement fixes it (css/layers.css). */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
 /* The site header's family letterhead (data-variant="letterhead"), a part of site-header.css. A site that
@@ -19,7 +19,6 @@
      links row, which swipes, instead of the sheet. */
   .cap-site-header[data-variant="letterhead"] {
     --header-stripe: var(--space-3);
-    /* Roomier than the 56px one-row header: a 64px top row and a 48px second row. */
     --header-row: 4rem;
     --header-row-2: 3rem;
     --header-bg: var(--text);
@@ -56,7 +55,6 @@
         block-size: 32px;
         object-fit: contain;
       }
-      /* A mark drawn without its own fill takes the site's color. */
       & > svg:not([fill]) {
         fill: var(--on);
       }
@@ -105,7 +103,6 @@
       padding-inline: var(--header-side);
       overflow-x: auto;
       scrollbar-width: none;
-      /* No hairline between the rows: the band is one sign. */
       border-block-start: 0;
       font-size: var(--fs-lead);
       font-weight: var(--weight-medium);
@@ -126,7 +123,6 @@
     & .cap-site-header-search-button {
       order: 1;
     }
-    /* The no-script theme form (themeAction) is the tools' item in place of its button. */
     & :is(.cap-site-header-theme, .cap-theme-form) {
       order: 2;
     }
@@ -192,7 +188,6 @@
         box-shadow: 0 0 0 100vmax var(--ground);
         clip-path: inset(-100vmax -100vmax 0);
       }
-      /* The skip link keeps to the page's top corner, above the margin. */
       & > .cap-site-header-skip {
         inset-block-start: calc(var(--space-3) - var(--space-3) - var(--space-3));
       }
@@ -381,7 +376,6 @@
         color: var(--header-fg);
       }
     }
-    /* View site leaves the admin: the family arrow, turned out (css/base.css). */
     & > .cap-site-header-view {
       display: inline-flex;
       align-items: center;

@@ -1,5 +1,4 @@
-// The pure half of the series nav: which part a page is, and the parts either side of it. Shared
-// by the React wrapper and any app that renders the contract by hand.
+// The pure half of the series nav: which part a page is, and the parts either side of it.
 
 export interface SeriesPart {
   href: string;
@@ -7,14 +6,12 @@ export interface SeriesPart {
 }
 
 export interface SeriesPlace<T = SeriesPart> {
-  // 0-based; -1 when the current page is not one of the parts.
   index: number;
   previous: T | undefined;
   next: T | undefined;
 }
 
-// Where `current` sits among `parts`, in their order: a part's href, or the key `keyOf` reads (a
-// document's slug). A key not in the list has no neighbors, never someone else's.
+// Where `current` sits among `parts`: a part's href, or the key `keyOf` reads. A key not in the list has no neighbors, never someone else's.
 export function seriesPlace(parts: readonly SeriesPart[], current: string): SeriesPlace;
 export function seriesPlace<T>(
   parts: readonly T[],

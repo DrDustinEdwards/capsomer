@@ -1,6 +1,5 @@
-// Times in words. Relative in rows ("5 minutes ago", never "5m"), exact in the viewer's
-// zone with UTC beside it. The pure functions take the zone so they can be checked anywhere; in a page
-// the zone is the viewer's.
+// Times in words: relative in rows, exact in the viewer's zone with UTC beside it. The pure functions
+// take the zone so they can be checked anywhere.
 
 import { fromDateTimeLocal, toDateTimeLocal } from "../field/field.ts";
 import { dayKey } from "@dustinedwards/site-runtime/time";
@@ -8,7 +7,6 @@ import { DAY, HOUR, MIN, SEC, two } from "./time-duration.ts";
 export { SEC, MIN, HOUR, DAY, two, timecode, duration, span, until } from "./time-duration.ts";
 export type { DurationStyle, DurationOptions } from "./time-duration.ts";
 
-// How often enhance() and the React wrapper redraw relative times.
 export const REFRESH_MS = 30 * SEC;
 
 // A server timestamp with no zone (D1's datetime('now'), "YYYY-MM-DD HH:MM:SS", or the
@@ -21,9 +19,7 @@ export function parse(iso: string): number {
   return Date.parse(ZONELESS.test(s) ? `${s.replace(" ", "T")}Z` : s);
 }
 
-// "in 3 hours", "5 minutes ago", and with numeric: "auto", "yesterday" and "tomorrow", "today", "last
-// month": the words come from the platform's Intl.RelativeTimeFormat, not from strings kept here
-// (MDN: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/RelativeTimeFormat).
+// The words come from Intl.RelativeTimeFormat, not from strings kept here.
 const RTF = new Intl.RelativeTimeFormat("en-US", { numeric: "auto" });
 
 // A time as a number of milliseconds: a number, a Date, or a server timestamp (a zoneless one is
@@ -48,8 +44,7 @@ export function calendarDays(t: number, now: number, zone?: string): number {
   return Math.round((at(now) - at(t)) / DAY);
 }
 
-// "September 12", or "September 12, 2025" when the year is not this one: American English,
-// the family's.
+// "September 12", or with the year when it is not this one.
 export function day(t: number, now: number = Date.now(), zone?: string): string {
   const year = (x: number) =>
     new Intl.DateTimeFormat("en-US", { timeZone: zone, year: "numeric" }).format(x);
@@ -62,16 +57,12 @@ export function day(t: number, now: number = Date.now(), zone?: string): string 
 }
 
 export interface RelativeOptions {
-  // "auto": minutes and hours, then calendar days. "day": calendar days only, then months
-  // ("today", "yesterday", "3 days ago", "2 months ago"), for a row that says which day, not how
-  // long ago to the minute.
+  // "auto": minutes and hours, then calendar days. "day": calendar days only, then months.
   granularity?: "auto" | "day";
 }
 
-// Relative, spelled out: "just now", "less than a minute ago", "5 minutes ago",
-// "3 hours ago", "yesterday", "4 days ago", "September 12"; and ahead, "in 3 hours",
-// "tomorrow". Minutes and hours are whole and round down, so "1 hour ago" means at least
-// an hour. The unit words are Intl.RelativeTimeFormat's.
+// Relative, spelled out ("5 minutes ago", "yesterday", "in 3 hours"). Minutes and hours round down,
+// so "1 hour ago" means at least an hour.
 export function relative(
   t: number,
   now: number = Date.now(),
@@ -97,12 +88,9 @@ export function relative(
   return day(t, now, zone);
 }
 
-// The Portal's compact UTC form, for logs and ids: "2026-09-30 13:02Z".
 export function utc(t: number): string {
   return `${new Date(t).toISOString().replace("T", " ").slice(0, 16)}Z`;
 }
-
-// Dates with no "ago": a long date, a medium one, a month and day, with or without the time.
 
 export type DateStyle = "long" | "medium" | "monthDay" | "monthYear" | "weekday" | "time";
 
@@ -133,10 +121,8 @@ function cachedFormat(key: string, make: () => Intl.DateTimeFormat): Intl.DateTi
   return f;
 }
 
-// A date, American English (the family's), from a number, a Date or a timestamp string. Null for a
-// value that is not a time ("Invalid Date" is never shown; the caller says what goes in its place).
-// Intl.DateTimeFormat does the words: dateStyle and timeStyle (MDN:
-// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat).
+// A date, American English, from a number, a Date or a timestamp string. Null for a value that is
+// not a time, so the caller says what goes in its place.
 export function formatDate(
   at: number | Date | string | null | undefined,
   options: FormatDateOptions = {},
@@ -238,14 +224,11 @@ function isUtc(zone?: string): boolean {
   return z === "UTC" || z === "Etc/UTC" || z === "Etc/GMT" || z === "GMT";
 }
 
-// What a time that cannot be read says, in place of a blank or "NaN" (the Portal's
-// exactTime does the same): a row never shows nothing where a time belongs.
+// What a time that cannot be read says, so a row never shows nothing where a time belongs.
 export const UNREADABLE = "an unreadable time";
 
-// Exact, in the viewer's zone with UTC beside it, in two parts so the UTC part can be kept
-// whole on a line (the Portal's `.when .faint { white-space: nowrap }`): the local time, and
-// "(1:02 PM UTC)". UTC's date is added when it differs from the local one; a viewer in UTC sees
-// one time and no second part.
+// Exact, in two parts so the UTC part can be kept whole on a line: the local time, then "(1:02 PM UTC)".
+// UTC's date is added when it differs; a viewer in UTC sees one time.
 export function exactParts(t: number, zone?: string): { local: string; utc: string | null } {
   if (!Number.isFinite(t)) return { local: UNREADABLE, utc: null };
   const u = parts(t, "UTC");
@@ -260,7 +243,6 @@ export function exactParts(t: number, zone?: string): { local: string; utc: stri
   };
 }
 
-// "November 3, 2026, 8:00 AM CST (2:00 PM UTC)".
 export function exact(t: number, zone?: string): string {
   const p = exactParts(t, zone);
   return p.utc ? `${p.local} ${p.utc}` : p.local;
@@ -270,7 +252,6 @@ export function exact(t: number, zone?: string): string {
 // of day, in UTC ("September 12, 2026"), for a publication date or a deadline.
 export type TimeFormat = "relative" | "exact" | "date";
 
-// The text a <time class="cap-time"> shows.
 export function text(
   t: number,
   format: TimeFormat,
@@ -282,21 +263,16 @@ export function text(
   return format === "exact" ? exact(t, zone) : relative(t, now, zone);
 }
 
-// The page's "now" for relative times when the browser's clock and the server's disagree:
-// the browser's clock moved onto the server's by the skew measured when the data arrived,
-// and never earlier than the newest time a server read reported. Otherwise a row written
-// after the page's last tick, or on a server whose clock runs ahead of the browser's, reads
-// "in less than a minute" for something that has just happened. From the Portal's
-// lib/format.ts (portalNow). Pass it as a React `now`, or give setClock a function that
-// returns it.
+// The page's "now" for relative times when the browser's clock and the server's disagree: the browser's
+// clock moved by the skew measured when the data arrived, never earlier than the newest server time
+// read. Pass it as a React `now`, or give setClock a function that returns it.
 export function serverNow(clientNow: number, skew: number, newestServerRead: number): number {
   return Math.max(clientNow + skew, newestServerRead);
 }
 
 let clock: () => number = () => Date.now();
 
-// Replaces the clock the plain behavior module reads (the default is Date.now), and
-// redraws. setClock(null) puts it back.
+// Replaces the clock the plain behavior module reads (default Date.now), and redraws. null restores it.
 export function setClock(fn: (() => number) | null): void {
   clock = fn ?? (() => Date.now());
   for (const el of live) if (el.isConnected) draw(el);
@@ -309,7 +285,6 @@ export function nowFor(el: Element): { now: number; frozen: boolean } {
   return fixed ? { now: parse(fixed), frozen: true } : { now: clock(), frozen: false };
 }
 
-// Writes an exact time as its local part, then its UTC part in a span of its own.
 function drawExact(el: HTMLElement, t: number): void {
   const p = exactParts(t);
   const whole = p.utc ? `${p.local} ${p.utc}` : p.local;
@@ -347,9 +322,8 @@ function tick(): void {
   }
 }
 
-// Attaches to every [data-cap="time"] under root not yet attached: writes its text, and
-// keeps relative times fresh every 30 seconds with one shared timer. Returns a function
-// that detaches.
+// Attaches to every [data-cap="time"] under root not yet attached and keeps relative times fresh with
+// one shared timer. Returns a function that detaches.
 export function enhance(root: ParentNode = document): () => void {
   const mine: HTMLElement[] = [];
   for (const el of root.querySelectorAll<HTMLElement>("[data-cap='time']:not([data-cap-ready])")) {
@@ -373,9 +347,8 @@ export function enhance(root: ParentNode = document): () => void {
   };
 }
 
-// A zone name the browser's Intl knows, else "UTC": a zone from a form or from Cloudflare's
-// request.cf.timezone can be missing or unknown, and Intl throws on an unknown one. From Carrel
-// (lib/writing/progress.ts).
+// A zone name the browser's Intl knows, else "UTC": a zone from a form or request.cf.timezone can be
+// missing or unknown, and Intl throws on an unknown one.
 export function knownZone(zone: string | null | undefined): string {
   if (!zone) return "UTC";
   try {
@@ -386,13 +359,11 @@ export function knownZone(zone: string | null | undefined): string {
   }
 }
 
-// The hour of the morning a thing set aside with Later comes back.
 export const LATER_HOUR = 8;
 
-// When Later brings something back: `hour` (8 am) on the next calendar day in the person's
-// zone (UTC when the zone is unknown), as an ISO instant. The wall-clock time is found by
-// correcting a first guess by the zone's offset, twice, so a change to or from summer time
-// overnight still lands on 8 am. From Carrel's Home (lib/desk.server.ts, laterUntil).
+// When Later brings something back: `hour` on the next calendar day in the zone (UTC when unknown), as
+// an ISO instant. The wall-clock time is corrected by the zone's offset twice, so a change to or from
+// summer time overnight still lands on the hour.
 export function laterUntil(
   now: Date | number,
   zone: string | null | undefined,

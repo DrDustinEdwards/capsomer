@@ -10,7 +10,6 @@ export const DAY = 24 * HOUR;
 export const whole = (n: number | null | undefined) =>
   Number.isFinite(n) ? Math.max(0, Math.floor(n as number)) : 0;
 
-/** A number as two digits, "07". */
 export const two = (n: number): string => String(n).padStart(2, "0");
 
 // A duration as a player's timecode writes it: "4:05", "1:02:03". With hours: "always", the form
@@ -53,10 +52,8 @@ const UNIT_WORDS = {
 } as const;
 type Unit = keyof typeof UNIT_WORDS;
 
-// Where Intl.DurationFormat exists (Chrome 129, Firefox 136, Safari 18.4; MDN:
-// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DurationFormat)
-// it writes the words; elsewhere the same English is written here, so a server and a browser that
-// differ in support still print the same text.
+// Intl.DurationFormat where it exists (Chrome 129, Firefox 136, Safari 18.4); elsewhere the same English
+// is written here, so a server and a browser that differ in support print the same text.
 function durationWords(parts: Partial<Record<Unit, number>>, style: DurationStyle): string {
   const units = (Object.keys(UNIT_WORDS) as Unit[]).filter((u) => (parts[u] ?? 0) > 0);
   // Nothing at all reads as "0 seconds". DurationFormat leaves out zero units unless told to show one.
@@ -95,14 +92,12 @@ function split(ms: number, largest: "hours" | "days"): Partial<Record<Unit, numb
   return out;
 }
 
-// A duration in words, for a screen reader or a sentence: "3 minutes, 12 seconds", "1 hour, 2
-// minutes, 3 seconds", "0 seconds". Units that are zero are left out.
+// A duration in words, for a screen reader or a sentence. Zero units are left out.
 export function duration(ms: number | null | undefined, options: DurationOptions = {}): string {
   return durationWords(split(whole(ms), options.largest ?? "hours"), options.style ?? "long");
 }
 
-// A rough duration to the largest unit, rounded down, for "waiting 3 hours" and "oldest 2 days":
-// "less than a minute", "5 minutes", "3 hours", "2 days". The spelled-out form of a compact "3.2h".
+// A rough duration to the largest unit, rounded down, for "waiting 3 hours" and "oldest 2 days".
 export function span(ms: number | null | undefined): string {
   const a = whole(ms);
   if (a < MIN) return "less than a minute";
@@ -111,9 +106,8 @@ export function span(ms: number | null | undefined): string {
   return duration(Math.floor(a / DAY) * DAY, { largest: "days" });
 }
 
-// How soon something scheduled fires, spelled out: "due now" once the moment has passed, then "in 5
-// minutes", "in 3 hours, 20 minutes" (the hour form carries the minutes, since "in 3 hours" hides up
-// to 59 of them), and "in 2 days" (a day or more drops the hours, which would be noise).
+// How soon something scheduled fires: "due now" once passed, then "in 5 minutes", "in 3 hours, 20
+// minutes" (hours carry the minutes, since "in 3 hours" hides up to 59), "in 2 days".
 export function until(t: number, now: number = Date.now()): string {
   const d = t - now;
   if (!Number.isFinite(d)) return "";

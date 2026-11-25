@@ -1,5 +1,3 @@
-// Mounts the React specimens. The check and the drafted finding stand in for the app's (on the
-// family sites, Prelum's chart check under strictCharts); the drawing is Enarratio's lite charts.
 import { StrictMode, useEffect, useRef, useState, type JSX } from "react";
 import { createRoot } from "react-dom/client";
 import { areaChart } from "enarratio/lite/area";
@@ -58,8 +56,6 @@ function Full() {
   );
 }
 
-// Opens itself, filled in, to show the open state without a pointer; the frame is finished once
-// the check has answered.
 function Filled() {
   const host = useRef<HTMLDivElement>(null);
   useEffect(() => {

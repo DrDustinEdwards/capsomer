@@ -25,7 +25,6 @@ const currentView = (root: HTMLElement): ModView =>
   (VIEWS as readonly string[]).includes(root.dataset.view ?? "")
     ? (root.dataset.view as ModView)
     : "pending";
-// The site offers Back to waiting (site-api v0.6, decision "reset").
 export const resetOn = (root: HTMLElement) => root.hasAttribute("data-cap-reset");
 export const deleteOn = (root: HTMLElement) => !root.hasAttribute("data-cap-no-delete");
 
@@ -43,7 +42,6 @@ export function mentionOf(
   };
 }
 
-// Paints one row for its state: the status, the buttons that apply.
 export function paintRow(root: HTMLElement, row: HTMLLIElement): void {
   const m = mentionOf(row);
   row.querySelector<HTMLElement>(".cap-row-status")?.replaceChildren(statusEl(m.state));
@@ -56,7 +54,6 @@ export function paintRow(root: HTMLElement, row: HTMLLIElement): void {
   }
 }
 
-// Which rows are in view, the counts, the live line, the empty state, the bulk bar.
 export function refresh(root: HTMLElement): void {
   const view = currentView(root);
   const rows = rowsOf(root);
@@ -97,8 +94,6 @@ export function selectedRows(root: HTMLElement): HTMLLIElement[] {
   );
 }
 
-// The selection: each row's mark, the select-all box, the bulk bar (count, and the buttons
-// that apply to this view).
 export function syncSelection(root: HTMLElement): HTMLLIElement[] {
   const rows = rowsOf(root).filter(visible);
   const picked = selectedRows(root);
@@ -136,7 +131,6 @@ export function syncSelection(root: HTMLElement): HTMLLIElement[] {
   return picked;
 }
 
-// The sweep: what the site says will expire, counted from the rows it marked.
 export function expiringRows(root: HTMLElement): HTMLLIElement[] {
   return rowsOf(root).filter((r) => r.hasAttribute("data-expiring"));
 }
@@ -150,8 +144,6 @@ function syncRetention(root: HTMLElement): void {
   else button.removeAttribute("aria-disabled");
 }
 
-// The row to focus once `acted` rows have left the view: the next one down, else the one
-// above, else null (the empty state takes focus).
 export function focusTargetAfter(root: HTMLElement, acted: HTMLElement[]): HTMLElement | null {
   const rows = rowsOf(root).filter(visible);
   const last = rows.reduce((at, r, i) => (acted.includes(r) ? i : at), -1);

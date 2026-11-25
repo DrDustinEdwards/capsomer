@@ -1,4 +1,4 @@
-// The site header's props and the small parts its panels and sheet are built from (site-header.react.tsx).
+// The site header's props and the small parts its panels and sheet are built from.
 
 import { createContext, Fragment, type ReactNode, useContext, useEffect, useRef } from "react";
 import type { LinkProps } from "../shell/shell.react.tsx";
@@ -27,13 +27,12 @@ export type {
   SiteHeaderProps,
 } from "./site-header-types.ts";
 
-// Whether React wires the header in the browser (SiteHeader's `hydrate`). Where it does not, the
-// parts leave every listener to the behavior module, so nothing is wired twice.
+// Whether React wires the header in the browser (`hydrate`). If not, the behavior module owns every
+// listener, so nothing is wired twice.
 export const HeaderHydrates = createContext(true);
 
-// One row of a panel or the sheet, as what it does: a link (`href`), a form that posts
-// (`action`), or a button (`onClick`). `onClose` closes the sheet first; a panel closes itself on
-// any row (data-panel-close).
+// One row of a panel or the sheet: a link (`href`), a posting form (`action`) or a button
+// (`onClick`). `onClose` closes the sheet first; a panel closes itself on any row.
 export function headerItem(
   item: { href?: string; current?: boolean; label: string } & HeaderDoes,
   children: ReactNode,
@@ -107,14 +106,12 @@ export const PERSON_ICON = svg(
   </>,
 );
 
-// "Inbox, 4 need you": a count is in the name, with what it counts. Past 99 the badge reads 99+,
-// so the name starts with what is seen and keeps the real count: "Inbox 99+, 120 need you". The
-// visible label and count must be words of the name in that order (WCAG 2.5.3; axe-core 4.14's
-// label-content-name-mismatch reads aria-hidden text too).
+// "Inbox, 4 need you". Past 99 the badge reads 99+, so the name starts with what is seen and keeps
+// the real count ("Inbox 99+, 120 need you"). The visible label and count must be words of the name
+// in that order (WCAG 2.5.3; axe's label-content-name-mismatch reads aria-hidden text too).
 export const countName = (label: string, count?: number, note?: string): string =>
   count ? `${label}${count > 99 ? " 99+" : ""}, ${count}${note ? ` ${note}` : ""}` : label;
 
-// A tip's key caps ("G 2"), after its words.
 export function TipKeys({ keys }: { keys?: string }) {
   return keys ? (
     <span className="cap-keys">
@@ -125,9 +122,7 @@ export function TipKeys({ keys }: { keys?: string }) {
   ) : null;
 }
 
-// An icon control's name, shown on hover and keyboard focus: Capsomer's one tooltip, a child of
-// its control, below the header's controls. It repeats the control's name, so it adds no
-// description; a press hides it.
+// An icon control's name tip, a child of its control. It repeats the name, so it adds no description.
 export function HeaderTip({ text, keys }: { text: string; keys?: string }) {
   const tip = useRef<HTMLSpanElement>(null);
   const hydrates = useContext(HeaderHydrates);
@@ -162,9 +157,8 @@ export function HeaderTip({ text, keys }: { text: string; keys?: string }) {
   );
 }
 
-// A disclosure button and its panel, wired by the behavior module (the open state is the
-// platform's popover state, not React's). `popovertarget` opens the panel before any script runs,
-// or where none does; with script the behavior takes the click (it cancels the native toggle).
+// A disclosure button and its panel, wired by the behavior module; the open state is the popover's,
+// not React's. `popovertarget` opens it with no script; with script the behavior cancels the native toggle.
 export function Disclosure({
   id,
   className,
@@ -319,7 +313,6 @@ function SheetList({
   );
 }
 
-// A labeled group of rows in the sheet, for a site's own rows (your admin's apps, its menu).
 export function SheetGroup({
   label,
   links,

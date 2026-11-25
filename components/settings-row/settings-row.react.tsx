@@ -14,7 +14,6 @@ export function SettingsRow({
   children,
 }: {
   label: ReactNode;
-  // Why its control cannot be changed here; shown under the name and describing the control.
   disabledReason?: ReactNode;
   children: (ids: { labelId: string; reasonId?: string }) => ReactNode;
 }) {
@@ -45,7 +44,6 @@ export interface SwitchRowProps {
   defaultChecked?: boolean;
   onCheckedChange?: (checked: boolean) => void;
   busy?: boolean;
-  // The id of the form the switch belongs to, when it sits outside it (its `form` attribute).
   form?: string;
   // Send the switch's form as soon as it is flipped: the setting takes effect at once, as a
   // switch should. Without script a Save button for that form stands in.
@@ -56,7 +54,6 @@ export interface SwitchRowProps {
   disabledReason?: ReactNode;
 }
 
-// A settings row whose control is a switch, named by the row's label.
 export function SwitchRow({
   name,
   label,
@@ -103,8 +100,6 @@ export function SwitchRow({
   );
 }
 
-// A settings page: the page head (title and trail) and, on a phone, where the
-// settings menu is hidden, a link back to the settings index above it.
 export function SettingsLayout({
   title,
   crumbs,
@@ -116,7 +111,6 @@ export function SettingsLayout({
   title: ReactNode;
   crumbs?: BreadcrumbItem[];
   renderLink?: BreadcrumbProps["renderLink"];
-  // The settings index; null for none.
   back?: { href: string; label: string } | null;
   actions?: ReactNode;
   children?: ReactNode;

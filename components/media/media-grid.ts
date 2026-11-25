@@ -1,9 +1,5 @@
 // The media grid's two-dimensional arrow keys.
 
-// The grid's arrow keys, from the rendered boxes: the
-// browser decides the column count, and a second layout engine would disagree with it at the
-// widths nobody tested.
-
 export interface TileBox {
   id: string;
   top: number;
@@ -31,10 +27,8 @@ export function bands(boxes: Iterable<TileBox>): Band[] {
   return out;
 }
 
-// The tile an arrow key moves to, or null to stay put. With nothing active, or an active id no
-// longer on the page, the first tile. Left and right wrap across rows in reading order; up and
-// down take the nearest tile by center in the next row, and stop at the edges. First and last
-// are Home and End; prev and next step in reading order (the inspector's Alt+arrows).
+// The tile an arrow key moves to, or null to stay put. Left and right wrap across rows in reading order; up and
+// down take the nearest tile by center in the next row and stop at the edges.
 export function nextTile(rows: Band[], active: string, dir: Direction): string | null {
   const flat = rows.flatMap((b) => b.items.map((i) => i.id));
   const first = flat[0];

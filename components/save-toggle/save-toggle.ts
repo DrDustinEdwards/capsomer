@@ -1,11 +1,9 @@
-// Save for later: a set of ids kept in this browser (localStorage, as a JSON array under one key),
-// no account and no server. The button is a toggle (aria-pressed). Reads and writes go through
-// capsomer/behavior/hooks' storage: where the store is blocked the list lasts the page, and every
-// button for the same id, here and in other tabs, stays in step.
+// Save for later: a set of ids kept in this browser (localStorage, a JSON array under one key), no
+// account and no server. Where the store is blocked the list lasts the page, and every button for
+// the same id, here and in other tabs, stays in step.
 
 import { readStored, subscribeStored, writeStored } from "../hooks/hooks.ts";
 
-// The stored list, or "[]" when nothing is stored.
 export function savedRaw(key: string): string {
   return readStored(key) || "[]";
 }
@@ -23,7 +21,6 @@ export function isSaved(raw: string, id: string): boolean {
   return savedIds(raw).includes(id);
 }
 
-// Adds or removes `id`, and tells every listener. Returns whether it is now saved.
 export function toggleSaved(key: string, id: string): boolean {
   const list = savedIds(savedRaw(key));
   const next = list.includes(id) ? list.filter((s) => s !== id) : [...list, id];
@@ -31,18 +28,15 @@ export function toggleSaved(key: string, id: string): boolean {
   return next.includes(id);
 }
 
-// For useSyncExternalStore: this tab's changes, and other tabs' through `storage`.
 export function subscribeSaved(onChange: () => void): () => void {
   return subscribeStored(onChange);
 }
 
-// The button's state: aria-pressed, which fills the bookmark. Its label stays the same (APG
-// button: a toggle's name does not change with its state).
+// aria-pressed fills the bookmark. The label stays the same: a toggle's name does not change with its state (APG).
 export function paint(button: HTMLElement, saved: boolean): void {
   button.setAttribute("aria-pressed", String(saved));
 }
 
-// A page with no React: every button.cap-save[data-cap="save-toggle"] with data-key and data-id.
 export function enhance(root: ParentNode = document): () => void {
   const off: Array<() => void> = [];
   for (const button of root.querySelectorAll<HTMLButtonElement>(

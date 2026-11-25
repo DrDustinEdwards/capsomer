@@ -1,12 +1,8 @@
 // The system map: a network of systems as cards, and one system with its users, its parts and
-// what it uses (capsid/rulings/system-explorer-2026-10-10.md, answer 9: one component for
-// dustinedwards.info /systems and the Capsid explorer; the card design replaced the capsid drawing
-// on 2026-11-03).
-//
-// `systemMapHtml` renders the whole contract as a string, so a server or a static build delivers
-// it, complete with no script. `enhance` adds what needs a script: on the network, hovering over or
-// focusing a card lights what it uses and what uses it and dims the rest; on a system, Back and
-// Next step a flow, lighting the parts each step touches. No framework, no storage.
+// what it uses. `systemMapHtml` renders the whole contract as a string, so a server or static
+// build delivers it complete with no script. `enhance` adds what needs a script: on the network,
+// hovering or focusing a card lights its ties and dims the rest; on a system, Back and Next step a
+// flow. No framework, no storage.
 
 import { enhance as enhanceTabs, select } from "../tabs/tabs.ts";
 import { ids, stepText } from "./system-map-data.ts";
@@ -54,20 +50,15 @@ export type { HexCell, HexLayout } from "./system-map-hex.ts";
 const READY = "data-cap-ready";
 
 export interface SystemMapController {
-  // The system whose ties are lit on the network, or null to clear.
   light(id: string | null): void;
-  // A flow at a step, counted from 1, on a system's page.
   playFlow(id: string, step?: number): void;
   step(n: number): void;
   stopFlow(): void;
   destroy(): void;
 }
 
-/**
- * The network: a card under the pointer or with focus lights its ties. Each lit card says how it
- * is tied in a word line (the tint is never the only sign), the card itself gets a heavier edge,
- * and every other card dims.
- */
+/** A card under the pointer or with focus lights its ties. Each lit card says how it is tied in
+ * words (the tint is never the only sign), and every other card dims. */
 function network(root: HTMLElement, signal: AbortSignal) {
   const graph = root.querySelector<HTMLElement>(".cap-system-map-graph");
   const lines = graph
@@ -90,7 +81,6 @@ function network(root: HTMLElement, signal: AbortSignal) {
       detail.textContent = rest;
       return;
     }
-    // Which way each tie runs, in words: the lines' moving dashes show it too.
     const list = (v: string | undefined) => ids(v).map(shortName).join(", ");
     const ways = [
       c.dataset.uses ? `Uses ${list(c.dataset.uses)}.` : "",
@@ -107,7 +97,6 @@ function network(root: HTMLElement, signal: AbortSignal) {
     );
   };
   const byId = new Map(cards.map((c) => [c.dataset.id!, c]));
-  // The hexagons: each system's cell, and the comb's lines, lit with the cards.
   const comb = root.querySelector<SVGElement>(".cap-system-map-comb");
   const cells = new Map(
     [...root.querySelectorAll<SVGElement>(".cap-system-map-cell[data-id]")].map((c) => [
@@ -238,11 +227,8 @@ function network(root: HTMLElement, signal: AbortSignal) {
   return { light, clear: () => light(null) };
 }
 
-/**
- * A system's flows: Back and Next step the flow, the step's parts are lit (`data-lit`, the part it
- * moves toward also `data-at`), the rest dim, and the step is `aria-current="step"`. The status
- * line says where it is. Escape stops.
- */
+/** A system's flows: Back and Next step the flow, the step's parts are lit (`data-lit`, the part it
+ * moves toward also `data-at`), the rest dim, and the step is `aria-current="step"`. Escape stops. */
 function flows(root: HTMLElement, signal: AbortSignal, lines: Wires | null) {
   const sections = new Map(
     [...root.querySelectorAll<HTMLElement>(".cap-system-map-flow[data-flow]")].map((s) => [
@@ -341,17 +327,13 @@ function flows(root: HTMLElement, signal: AbortSignal, lines: Wires | null) {
       { signal },
     );
   }
-  // A page delivered at a step (systemMapHtml's `flow`) starts there.
   const given = root.dataset.flow;
   draw(given && sections.has(given) ? given : null, Number(root.dataset.step) || 0);
   return { playFlow, step, stopFlow };
 }
 
-/**
- * A system's wires: its users, its parts (what runs, what stores, what is outside) and what it
- * uses stand in five lanes side by side where there is room. Pointing at a tie or a part, or
- * focusing a tie, lights its wires.
- */
+/** A system's wires: its users, parts and what it uses stand in five lanes side by side where
+ * there is room. Pointing at or focusing a tie or part lights its wires. */
 function systemWires(root: HTMLElement, signal: AbortSignal): Wires | null {
   const host = root.querySelector<HTMLElement>(".cap-system-map-columns");
   if (!host) return null;
@@ -362,7 +344,7 @@ function systemWires(root: HTMLElement, signal: AbortSignal): Wires | null {
       ),
     ].sort((x, y) => x.getBoundingClientRect().left - y.getBoundingClientRect().left);
   const lines = wires(host, lanes, signal);
-  // The detail line: what a part held is for and its lines in words, which its small box keeps for
+  // The detail line: what a part is for and its lines in words, which its small box keeps for
   // screen readers alone.
   const detail = root.querySelector<HTMLElement>("[data-cap-part='detail']");
   const rest = "Point at a part, or tab to it, to see what it does and light its wires.";
@@ -385,7 +367,6 @@ function systemWires(root: HTMLElement, signal: AbortSignal): Wires | null {
       else detail.textContent = rest;
     }
     if (key) lines.light((a, b) => a === key || b === key);
-    // Letting go returns to the flow's step, when one is shown.
     else {
       const lit = new Set(
         [...root.querySelectorAll<HTMLElement>(".cap-system-map-part[data-lit]")].map(
@@ -421,7 +402,6 @@ function systemWires(root: HTMLElement, signal: AbortSignal): Wires | null {
   return lines;
 }
 
-/** The map's behavior on one root; `enhance` calls it for every map on the page. */
 export function controller(root: HTMLElement): SystemMapController {
   const ac = new AbortController();
   root.setAttribute(READY, "");
@@ -442,7 +422,6 @@ export function controller(root: HTMLElement): SystemMapController {
   };
 }
 
-/** Enhances every system map under `root` not yet enhanced; returns a function that detaches them. */
 export function enhance(root: ParentNode = document): () => void {
   const made = [
     ...root.querySelectorAll<HTMLElement>(`[data-cap="system-map"]:not([${READY}])`),

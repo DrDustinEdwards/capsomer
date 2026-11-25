@@ -38,9 +38,8 @@ export interface Reading {
   ratio: number;
 }
 
-// Contrast as the browser paints it: the color of the element (its text, or its border)
-// against the first opaque background behind it, compositing translucent layers. From the
-// Capsid Portal's contrast spec, where it caught a selected row at 1.06:1. A selector ending in
+// Contrast as the browser paints it: the color of the element (its text, or its border) against
+// the first opaque background behind it, compositing translucent layers. A selector ending in
 // ::before or ::after reads that pseudo-element (a sliding highlight's edge), on its element.
 export function paintedContrast(
   page: PageLike,

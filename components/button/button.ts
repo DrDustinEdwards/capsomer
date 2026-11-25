@@ -1,15 +1,12 @@
-// A label that changes in place (Save, Saving…, Saved): the button's width eases to the new
-// label's while the old words blur out and the new ones blur in (uiarc's morphing label). Opt
-// in: the words sit in `.cap-btn-label`, and the page changes them through morphLabel. Under
-// reduced motion, or with no `.cap-btn-label`, the label just changes. The leaving words are a
-// copy hidden from assistive technology, so the button's name is only ever the new label.
+// A label that changes in place (Save, Saving…, Saved): the width eases to the new label's while the
+// old words blur out and the new blur in. Opt in with `.cap-btn-label`; under reduced motion, or
+// without it, the label just changes. The leaving words are a copy hidden from assistive
+// technology, so the button's name is only ever the new label.
 
 import { reducedMotion } from "../hooks/hooks.ts";
 
-// Animates a label that has already changed, from the button's width before the change and a
-// copy of the old label. The React wrapper calls it after React has written the new label.
-// Widths are layout widths (offsetWidth), so a pressed button's scale does not count. Returns
-// the new label's width.
+// Animates a label that has already changed, from the button's width before the change (layout
+// width, so a pressed scale does not count). Returns the new label's width.
 export function morphFrom(button: HTMLElement, from: number, old: HTMLElement): number {
   const label = button.querySelector<HTMLElement>(":scope > .cap-btn-label:not([data-leaving])");
   for (const a of button.getAnimations?.() ?? []) if (a.id === "cap-morph") a.cancel();
@@ -41,8 +38,6 @@ export function morphFrom(button: HTMLElement, from: number, old: HTMLElement): 
   return to;
 }
 
-// Changes a button's label with the morph: `change` writes the new label (into
-// `.cap-btn-label`), e.g. morphLabel(save, () => (label.textContent = "Saving…")).
 export function morphLabel(button: HTMLElement, change: () => void): void {
   const label = button.querySelector<HTMLElement>(":scope > .cap-btn-label:not([data-leaving])");
   const from = button.offsetWidth;

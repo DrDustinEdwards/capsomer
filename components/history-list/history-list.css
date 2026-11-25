@@ -1,14 +1,9 @@
-/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+/* Layer order, repeated so this file is safe in any import order. */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
-/* The history list: one line per change, built on the row list (.cap-rows, .cap-row), so a
-   line is one title link with j and k between lines. This file adds the columns a history
-   line needs (a pick box, who, the title and its kind line, the signed size change, when,
-   the action), the group line that holds a run of autosaves, and the bar that says which
-   two versions are picked. Extracted from the site admin's revision list (history-entry,
-   history-meta, history-actions in admin-history.css), rebuilt as lines in a subgrid. The
-   shadcn Item rows and Checkbox are the craft target (rounded row, hover tint, 16 px
-   checkbox); the columns are Capsomer's own. */
+/* The history list: one line per change, built on the row list, with columns for pick, who, title,
+size change, when and action, the group line for autosave runs, and the bar that says which two
+versions are picked. */
 @layer cap.components {
   .cap-hist {
     display: grid;
@@ -16,8 +11,7 @@
     min-width: 0;
   }
 
-  /* Which two are picked, and the Compare link. It stays in view while a long list scrolls,
-     so a second pick far down the list can be compared without scrolling back. */
+  /* Stays in view while a long list scrolls, so a far pick can be compared without scrolling back. */
   .cap-hist-bar {
     position: sticky;
     inset-block-start: 0;
@@ -43,9 +37,7 @@
     cursor: not-allowed;
   }
 
-  /* The columns: pick, who, the title and its kind line, size change, when, action. Every
-     line is a subgrid of them, so the columns line up from line to line. The extra class
-     raises the rules over row-list's, whatever order an app imports the files in. */
+  /* Every line is a subgrid of these columns. The extra class raises the rules over row-list's in any import order. */
   .cap-rows.cap-hist-list {
     grid-template-columns: auto auto minmax(0, 1fr) auto auto auto;
     column-gap: var(--space-4);
@@ -89,8 +81,7 @@
     grid-column: 6;
     grid-row: 1 / span 2;
     justify-content: flex-end;
-    /* Room for the widest of Restore and the Current word, so the column does not shift when
-       a restore moves "Current" to the new top line. */
+    /* Room for the widest of Restore and Current, so the column does not shift when a restore moves "Current". */
     min-width: 5.5rem;
   }
 
@@ -109,9 +100,8 @@
     white-space: nowrap;
   }
 
-  /* The signed size change. The sign is text ("+142 words", a real minus sign for a cut), and
-     a drawn plus, minus or equals mark repeats it, so the direction is never color alone.
-     No tone: a shorter text is not a failure, and 3:1 on the mark is met by the muted tone. */
+  /* The sign is text (a real minus sign for a cut) and a drawn mark repeats it, so direction is never
+  color alone. No tone: a shorter text is not a failure. */
   .cap-hist-delta {
     display: inline-flex;
     align-items: center;
@@ -128,8 +118,7 @@
     }
   }
 
-  /* When: the relative time, and under it the exact UTC time, so two lines of one day can be
-     told apart and a time read aloud is not ambiguous. */
+  /* The relative time, and under it the exact UTC time, so two lines of one day can be told apart. */
   .cap-hist-when {
     display: grid;
     justify-items: end;
@@ -142,7 +131,6 @@
     font-variant-numeric: var(--figures);
   }
 
-  /* A publish line's destinations, each with its status in words and a shape. */
   .cap-hist-dest {
     display: inline-flex;
     align-items: center;
@@ -155,8 +143,6 @@
     font-weight: var(--weight-semibold);
   }
 
-  /* The lines an open group holds: a subgrid of the same columns, on the raised tone, so each
-     line's title sits under the group's. */
   .cap-hist-region {
     grid-column: 1 / -1;
     display: grid;
@@ -186,11 +172,8 @@
     padding-block: var(--space-3);
   }
 
-  /* A narrow list: the title and its line take the width, the size change and the time sit
-     at the end, and the action goes underneath. */
   @container cap-rows (max-width: 44rem) {
-    /* The lines stop being subgrids of the list's six columns and lay out three of their own:
-       a container query cannot restyle the container it asks, so each line takes its own. */
+    /* A container query cannot restyle the container it asks, so each line lays out three columns of its own. */
     .cap-hist-list .cap-hist-row {
       grid-template-columns: auto minmax(0, 1fr) auto;
     }

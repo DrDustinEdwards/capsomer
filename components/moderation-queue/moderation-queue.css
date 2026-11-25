@@ -1,13 +1,7 @@
-/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+/* Layer order repeated so this file is safe in any import order: the first statement fixes it (css/layers.css). */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
-/* The moderation queue: mentions and comments from strangers, waiting for a decision. Built
-   on the row list (.cap-rows, .cap-row): each mention is a row whose title opens it in place.
-   This file adds the columns the queue needs (a select box, the status, the sender, the
-   time, the decisions), the selected row, the open row, the filter line, the bulk bar's
-   fallback layout and the retention line. Extracted from the site admin's mentions page
-   (app/routes/admin.mentions.tsx and its mention-* rules); the shadcn Item rows, Checkbox
-   and Kbd are the craft target, and the columns are Capsomer's own. */
+/* The moderation queue: mentions and comments from strangers, waiting for a decision. */
 @layer cap.components {
   .cap-mq {
     display: grid;
@@ -15,7 +9,6 @@
     min-width: 0;
   }
 
-  /* The filter, the live count, and the key hint, on one line. */
   .cap-mq-head {
     display: flex;
     flex-wrap: wrap;
@@ -41,12 +34,10 @@
     display: none;
   }
 
-  /* The tools above the list: select all and the bulk bar. */
   .cap-mq-tools {
     display: grid;
     gap: var(--space-3);
 
-    /* Select all lines up with the boxes in the rows below. */
     & > .cap-check {
       padding-inline-start: var(--pad-x);
     }
@@ -87,7 +78,6 @@
     white-space: nowrap;
   }
 
-  /* The columns: select, status, the sender and the excerpt, the time, the decisions. */
   .cap-rows.cap-mq-list {
     grid-template-columns: auto auto minmax(0, 1fr) auto auto;
     column-gap: var(--space-4);
@@ -160,7 +150,6 @@
     font-weight: var(--weight-regular);
   }
 
-  /* The open row: what only a click shows. */
   .cap-mq-list .cap-mq-more {
     grid-column: 3 / -1;
     display: grid;
@@ -241,7 +230,6 @@
     display: none;
   }
 
-  /* Retention: how long what is not wanted is kept, and the sweep. */
   .cap-mq-retention {
     display: flex;
     flex-wrap: wrap;
@@ -258,7 +246,6 @@
     max-width: 60ch;
   }
 
-  /* The key hints say nothing when single keys are off: the buttons still work. */
   :root[data-cap-single-keys="off"] .cap-mq .cap-kbd {
     display: none;
   }

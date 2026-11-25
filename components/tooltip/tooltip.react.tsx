@@ -7,15 +7,12 @@ export interface TriggerProps {
 }
 
 export interface TooltipProps {
-  // Extra detail only. The trigger has its own visible label or accessible name.
   tip: ReactNode;
   // Renders the trigger, a focusable element, with these props spread on it:
   // {(t) => <button type="button" className="cap-btn" {...t}>Retry job</button>}
   children: (trigger: TriggerProps) => ReactNode;
-  // Where the tip sits: above the trigger by default, as shadcn's Tooltip.
   side?: "top" | "bottom" | "left" | "right" | "inline-start" | "inline-end";
   align?: "start" | "center" | "end";
-  // The small arrow pointing at the trigger. On by default.
   arrow?: boolean;
   // The tip's element. "span" keeps it valid inside phrasing content such as a <p>; the tip
   // is then phrasing content too (no block children).

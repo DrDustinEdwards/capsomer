@@ -8,7 +8,7 @@ import {
   settled,
 } from "../../test/helpers.ts";
 
-// Floor for the CSS rules a site-header specimen page holds: 3,581 measured 2026-11-11, with the 5% under it.
+// Floor for the CSS rules a site-header specimen page holds: 3,581 measured (a floor 5% under it).
 const FLOOR = 3400;
 const PHONE = { width: 390, height: 760 };
 

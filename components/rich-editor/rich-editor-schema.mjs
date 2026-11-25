@@ -1,17 +1,12 @@
 // @ts-check
-// The formatted editor's schema: Tiptap's MIT StarterKit for prose, with what
-// Markdown underneath needs. Every top-level block carries `md`, its origin (the bytes it was read
-// from and the bytes before it), never rendered and never copied onto the half of a split block. A
-// source block and a source atom hold Markdown the editor does not format, exactly as written.
-// No DOM here: the browser adds the node views (rich-editor-source-views.ts), and a room's server
-// builds the same schema.
-//
-// Tracked changes are three marks, insertion, deletion and modification, with the
-// shapes prosemirror-suggest-changes works on (MIT, Handle with Care Collective), plus who made the
-// change (`by`, a person's id), its revision round and when. A whole block suggested in or out carries
-// the mark on the block; Yjs does not carry marks on blocks, so the same mark also rides in the
-// block's `smark` attribute (collab-editor-suggest.ts keeps the two in step). A save writes the text
-// with every pending suggestion left out, so nothing suggested reaches a site or the repository.
+// The formatted editor's schema: Tiptap's StarterKit for prose, with what Markdown underneath needs. Every
+// top-level block carries `md`, its origin bytes, never rendered and never copied onto the half of a split
+// block. Source blocks and atoms hold Markdown the editor does not format, as written. No DOM here: the
+// browser adds the node views, and a room's server builds the same schema.
+// Tracked changes are three marks (insertion, deletion, modification) in the shapes
+// prosemirror-suggest-changes uses, plus who made them, the round and when. Yjs does not carry marks on
+// blocks, so a block's mark also rides in its `smark` attribute (collab-editor-suggest.ts keeps them in
+// step). A save writes the text with every pending suggestion left out.
 
 import { Extension, getSchema, Mark, Node } from "@tiptap/core";
 import { ListItem } from "@tiptap/extension-list";
@@ -31,7 +26,6 @@ const MdOrigin = Extension.create({
   },
 });
 
-/** The block types a whole-block suggestion can sit on: every block the editor has. */
 export const SUGGESTION_BLOCKS = [...BLOCK_TYPES, "listItem"];
 const SUGGESTION_MARKS = "insertion modification deletion";
 
@@ -177,7 +171,6 @@ export function baseExtensions(options = {}) {
   ];
 }
 
-/** The schema alone, for checking and normalizing JSON without an editor. */
 export function editorSchema() {
   return getSchema(baseExtensions());
 }

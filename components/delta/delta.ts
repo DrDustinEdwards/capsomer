@@ -1,5 +1,4 @@
-// A figure against its last value: unchanged under a threshold, else up or down by a whole
-// percent, good or bad by which way is better. No framework; the React wrapper uses it.
+// A figure against its last value: unchanged under a threshold, else up or down by a whole percent.
 
 export type Delta =
   | { kind: "none" }
@@ -7,16 +6,13 @@ export type Delta =
   | { kind: "moved"; pct: number; direction: "up" | "down"; tone: "good" | "bad" };
 
 export interface CompareOptions {
-  // Which way is better: revenue up (true), failures down (false).
   higherIsBetter: boolean;
-  // A move under this many percent is "no change". Default 5.
   unchangedBelowPct?: number;
 }
 
 export const UNCHANGED_BELOW_PCT = 5;
 
-// Null on either side is "none": a figure that was not read has no change to draw. A move from
-// zero is measured against the new figure, so it is 100%, never infinite.
+// Null on either side is "none". A move from zero is measured against the new figure, so it is 100%, never infinite.
 export function compareFigures(
   current: number | null | undefined,
   previous: number | null | undefined,
@@ -39,7 +35,6 @@ export function compareFigures(
   return { kind: "moved", pct, direction, tone: better ? "good" : "bad" };
 }
 
-// The words a screen reader and a plain-text copy say: "up 12%", "no change".
 export function deltaText(d: Delta): string {
   if (d.kind === "unchanged") return "no change";
   if (d.kind === "none") return "";

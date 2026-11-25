@@ -1,6 +1,4 @@
-// Editor workspace in React: the layout switch and its remembered choice, the two panes, the
-// sandboxed preview, the preview's refresh once typing pauses, Ctrl or Cmd+S, and the chrome that
-// steps back while someone types (editor-workspace.ts).
+// Editor workspace in React (editor-workspace.ts): layout switch, panes, sandboxed preview, Ctrl or Cmd+S, typing chrome.
 
 import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
 import { Segmented } from "../segmented/segmented.react.tsx";
@@ -55,12 +53,10 @@ export function usePausedStamp(value: unknown, delay = 2000, initial = ""): stri
 export interface LayoutSwitchProps {
   value: Layout;
   onChange: (next: Layout) => void;
-  // Names the group for a screen reader; visually hidden. Default "Layout".
   legend?: string;
   labels?: Partial<Record<Layout, string>>;
 }
 
-// Write, Split, Preview: the Segmented control, small, its legend hidden.
 export function LayoutSwitch({
   value,
   onChange,
@@ -87,17 +83,12 @@ export function LayoutSwitch({
 
 export interface EditorWorkspaceProps {
   layout: Layout;
-  // The writing surface; not rendered in Preview.
   write: ReactNode;
-  // The preview, usually a PreviewPane; not rendered in Write.
   preview: ReactNode;
-  // The write pane's name. Default "Write".
   writeLabel?: string;
-  // The write pane's id, for a skip link. Default "write".
   writeId?: string;
 }
 
-// The two panes: one column, or side by side in Split once the workspace is 48rem wide.
 export function EditorWorkspace({
   layout,
   write,
@@ -125,11 +116,8 @@ export function EditorWorkspace({
 }
 
 export interface PreviewPaneProps {
-  // The site's render of the text: a preview route the app serves.
   src: string;
-  // The frame's title: what it shows, "Preview of Spring update as example.com renders it".
   title: string;
-  // The pane's name. Default "Preview".
   label?: string;
   // A form may post into the frame by this name.
   name?: string;

@@ -1,9 +1,6 @@
-// The tree's rows, keys and moves, pure (tree.ts).
-
 import { clamp } from "../hooks/hooks.ts";
 
-// Pure functions, over plain nodes. A node with `children` (even an empty list) is a
-// branch and can hold others; a node without is a leaf.
+// A node with `children` (even empty) is a branch; without, a leaf.
 
 export interface TreeNodeLike {
   id: string;
@@ -25,7 +22,6 @@ export interface VisibleRow {
   label: string;
 }
 
-// The rows a person can reach, in order: every top node, and the children of each open branch.
 export function visibleRows(
   nodes: readonly TreeNodeLike[],
   expanded: ReadonlySet<string>,
@@ -53,7 +49,6 @@ export function visibleRows(
   return out;
 }
 
-// Every branch's id, for "open everything".
 export function branchIds(nodes: readonly TreeNodeLike[]): string[] {
   const out: string[] = [];
   const walk = (list: readonly TreeNodeLike[]) => {
@@ -67,8 +62,6 @@ export function branchIds(nodes: readonly TreeNodeLike[]): string[] {
   return out;
 }
 
-// What a key does to the tree, as data: the row to focus, a branch to open or close, the
-// branches to open at once (`*`), a row to choose, or a move.
 export interface TreeKeyResult {
   focus?: string;
   expand?: string[];
@@ -84,11 +77,8 @@ export interface KeyMods {
   shiftKey?: boolean;
 }
 
-// The tree pattern's keys, from the WAI-ARIA Authoring Practices: Down and Up move between
-// visible rows; Right opens a closed branch or goes to its first child; Left closes an open
-// branch or goes to the parent; Home and End go to the first and last row; `*` opens every
-// sibling branch; Enter and Space choose. With `movable`, Alt with an arrow moves the row.
-// Letters (typeahead) are the caller's, with the listbox's `nextTypeahead`.
+// WAI-ARIA Authoring Practices tree keys; `*` opens every sibling branch; with `movable`, Alt with an arrow moves the row.
+// Typeahead is the caller's, with the listbox's `nextTypeahead`.
 export function treeKey(
   rows: readonly VisibleRow[],
   current: string | null,
@@ -142,14 +132,12 @@ export function treeKey(
 
 export type MoveDir = "up" | "down" | "in" | "out";
 
-// Where a node sits: its parent (null at the top) and its zero-based position there.
 export interface TreePlace {
   parent: string | null;
   index: number;
 }
 
-// A move: `from` is the place before it, `to` the place in the tree once the node has left
-// `from`, so applying it is "take out, then put in at `to`".
+// `from` is the place before the move, `to` the place once the node has left `from`: "take out, then put in at `to`".
 export interface TreeMove {
   id: string;
   from: TreePlace;
@@ -185,16 +173,12 @@ export function findPlace(
   return null;
 }
 
-// Whether `id` is `ancestor` or sits anywhere under it.
 export function isWithin(nodes: readonly TreeNodeLike[], id: string, ancestor: string): boolean {
   if (id === ancestor) return true;
   const a = findNode(nodes, ancestor);
   return !!a?.children && !!findNode(a.children, id);
 }
 
-// A keyboard move: up and down among its siblings; in, to the end of the branch just above
-// it; out, to just after its parent. Null where it cannot go (the first row up, a row with
-// no branch above it in).
 export function planMove(
   nodes: readonly TreeNodeLike[],
   id: string,
@@ -221,8 +205,7 @@ export function planMove(
 
 export type DropZone = "before" | "after" | "inside";
 
-// A drop of `id` on `target`: before it, after it, or inside it (at the end; a branch only).
-// Null for a drop on itself or anywhere under itself, and for one that changes nothing.
+// Null for a drop on itself or under itself, and for one that changes nothing.
 export function dropMove(
   nodes: readonly TreeNodeLike[],
   id: string,
@@ -238,7 +221,6 @@ export function dropMove(
     if (!kids) return null;
     to = { parent: target, index: kids.filter((k) => k.id !== id).length };
   } else {
-    // The target's position once `id` has left its old place.
     const shift = from.parent === at.parent && from.index < at.index ? 1 : 0;
     to = { parent: at.parent, index: at.index - shift + (zone === "after" ? 1 : 0) };
   }
@@ -246,15 +228,12 @@ export function dropMove(
   return { id, from, to };
 }
 
-// Where on a row a drop at height `y` lands: the top quarter before it, the bottom quarter
-// after it, the middle inside it when it is a branch (otherwise the nearer half).
 export function zoneAt(y: number, top: number, height: number, branch: boolean): DropZone {
   const f = height > 0 ? (y - top) / height : 0.5;
   if (branch) return f < 0.25 ? "before" : f > 0.75 ? "after" : "inside";
   return f < 0.5 ? "before" : "after";
 }
 
-// The nodes with the move made. Immutable: new arrays along the changed paths only.
 export function applyMove<T extends TreeNodeLike>(nodes: readonly T[], move: TreeMove): T[] {
   const node = findNode(nodes, move.id);
   if (!node) return [...nodes];
@@ -277,12 +256,10 @@ export function applyMove<T extends TreeNodeLike>(nodes: readonly T[], move: Tre
   return insert(without(nodes), null);
 }
 
-// The move that puts it back (for Undo).
 export function reverseMove(move: TreeMove): TreeMove {
   return { id: move.id, from: move.to, to: move.from };
 }
 
-// What the live region says after a move, from the tree as it is after it.
 export function movedText(nodes: readonly TreeNodeLike[], move: TreeMove): string {
   const label = (id: string) => findNode(nodes, id)?.label ?? id;
   const count = childrenOf(nodes, move.to.parent)?.length ?? 0;

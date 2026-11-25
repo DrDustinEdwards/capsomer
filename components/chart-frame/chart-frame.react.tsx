@@ -5,11 +5,9 @@ import { Status } from "../status/status.react.tsx";
 import { Panel } from "../panel/panel.react.tsx";
 import { markup } from "../trusted-html/trusted-html.ts";
 
-// The width a chart is drawn at on the server and before the first measurement: Enarratio's own
-// default drawing width.
 export const DEFAULT_WIDTH = 640;
-// Redraws at the frame's whole-pixel width, so the chart fills its column (steps of 40 px left up
-// to 39 px empty beside it); never under MIN_WIDTH. A resize redraws at most once a frame.
+// Redraws at the frame's whole-pixel width so the chart fills its column; never under MIN_WIDTH.
+// A resize redraws at most once a frame.
 const MIN_WIDTH = 240;
 
 export function drawWidth(measured: number, min = MIN_WIDTH): number {
@@ -24,31 +22,23 @@ const rootRem = () =>
     : Number.parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
 
 export interface ChartFrameProps {
-  // Draws Enarratio's figure at a width, as a string: `(width, fit) => barChart({ ...options, width,
-  // ...fit })` from enarratio/lite. The server and the first client render draw at `width` with an
-  // empty `fit`, so hydration matches; then the frame redraws at its own measured width, and `fit`
-  // holds the height the first drawing showed at that width, so the page does not move when the
-  // redraw swaps in. A draw that leaves `fit` out keeps its own height. A throw is shown in the
-  // chart's place, in Enarratio's own words, not the page's.
+  // Draws Enarratio's figure at a width, as a string: `(width, fit) => barChart({ ...options, width, ...fit })`.
+  // The server and first client render use an empty `fit` so hydration matches; the frame then
+  // redraws at its measured width and `fit` holds the first drawing's height, so the page does not
+  // move. A throw is shown in the chart's place, in Enarratio's own words.
   draw?: (width: number, fit: ChartFit) => string;
-  // Or a figure already drawn (a primitive's figure), placed as it comes and never redrawn.
+  // Or a figure already drawn (a primitive's), placed as it comes and never redrawn.
   chart?: string;
   width?: number;
   minWidth?: number;
-  // No data: the title and the reason, in the chart's place, with no chart and no table.
   noData?: { title: string; reason: string };
-  // The title on one line with the subtitle at its end.
   inline?: boolean;
-  // Enarratio's enhancement layer (hover details, keyboard reading, legend filters, a sortable
-  // table), loaded and run on the figure after each draw: on by default, `false` to leave the
-  // figure as drawn, or enarratio/enhance's options.
+  // Enarratio's enhancement layer (hover, keyboard reading, legend filters, sortable table), run on
+  // the figure after each draw: on by default, `false` to leave it as drawn, or enarratio/enhance's options.
   enhance?: boolean | EnhanceOptions;
-  // Which gridlines show; capsomer/enarratio.css draws "y" by default.
   gridlines?: Gridlines;
-  // After each draw, with the frame's element; may return a cleanup.
   onDraw?: (el: HTMLElement) => void | (() => void);
   className?: string;
-  // After the figure: a legend of the slots.
   children?: ReactNode;
 }
 
@@ -75,8 +65,8 @@ export function ChartFrame({
 }: ChartFrameProps) {
   const ref = useRef<HTMLDivElement>(null);
   const [drawn, setDrawn] = useState(width);
-  // The drawing at `width` (the server's), which each redraw takes its height from (shownHeight),
-  // and the draw it came from: drawn again when the page passes a new draw, not on a resize.
+  // The drawing at `width` (the server's), from which each redraw takes its height (shownHeight);
+  // drawn again when the page passes a new draw, not on a resize.
   const first = useMemo(() => {
     if (!draw) return { html: "", error: "" };
     try {
@@ -199,15 +189,11 @@ export interface ChartPanelProps extends Omit<ChartFrameProps, "noData" | "class
   more?: ReactNode;
   src?: ReactNode;
   id?: string;
-  // Nothing to draw, and why: the frame's no-data state under the panel's title.
   empty?: { reason: string } | null;
-  // A later read failed and the chart still shows the last one: says so above it.
   stale?: string | null;
   className?: string;
 }
 
-// A chart in a panel: the dashboard's card. One place for the heading, the empty state and a
-// read that failed after the chart was drawn, so every dashboard says them the same way.
 export function ChartPanel({
   title,
   level,
@@ -249,19 +235,15 @@ export function ChartPanel({
 export interface DataPreviewProps {
   id?: string;
   heading: ReactNode;
-  // The drawing, already drawn (an inline sparkline from enarratio). Hidden from assistive
-  // technology: `summary` says what it shows, so it must stay visible and true to the numbers.
+  // The drawing, already drawn (an inline sparkline), hidden from assistive technology: `summary`
+  // says what it shows, so it must stay visible and true to the numbers.
   chart: string;
   summary: ReactNode;
-  // Where the whole dataset lives on the site.
   link: { href: string; label: ReactNode };
-  // Where the numbers come from.
   source?: { href: string; label: ReactNode };
   level?: 2 | 3 | 4;
 }
 
-// A card that previews a dataset beside an article: a heading, a small drawing, the sentence that
-// says what it shows, a link to the full data and the source.
 export function DataPreview({
   id,
   heading,

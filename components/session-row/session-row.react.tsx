@@ -5,7 +5,6 @@ export type { SessionState } from "./session-row.ts";
 
 export interface SessionAnswer {
   id: string;
-  // Names the action: "Approve push", "Decline", "Keep 0007".
   label: string;
   variant?: "primary" | "danger";
 }
@@ -19,30 +18,22 @@ export interface Session {
   id: string;
   agent: string;
   state: SessionState;
-  // When the session began waiting, failed, started or was last seen, in milliseconds.
   since: number;
-  // The age in words, as the row shows it: "waiting 3 minutes", "started 18 minutes ago".
   age: ReactNode;
-  // A plain "now doing" line.
   now?: ReactNode;
-  // Repeated steps collapsed with a count: { label: "read file", count: 12 }.
   steps?: SessionStep[];
-  // A sampled stream: { shown: 1, of: 10 }.
   sampled?: { shown: number; of: number };
   ask?: {
     question: string;
-    // The exact command or question, shown mono and sunken.
     command: string;
     answers: SessionAnswer[];
     note?: ReactNode;
-    // The answer in flight, if any.
     busy?: string;
   };
 }
 
 export interface SessionListProps {
   sessions: Session[];
-  // The list's name, usually the panel heading's text.
   label?: string;
   labelledBy?: string;
   onAnswer?: (session: string, answer: string) => void;
@@ -191,8 +182,6 @@ function Row({ s, onAnswer }: { s: Session; onAnswer?: SessionListProps["onAnswe
   );
 }
 
-// The list, ordered waiting on you first. Put it in a .cap-panel whose source line states
-// the freshness: "Waiting on you first. Updates every 15 seconds".
 export function SessionList({ sessions, label, labelledBy, onAnswer }: SessionListProps) {
   return (
     <ul

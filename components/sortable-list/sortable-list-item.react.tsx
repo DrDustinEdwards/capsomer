@@ -72,7 +72,6 @@ const Arrow = ({ up }: { up: boolean }) => (
   </svg>
 );
 
-// The move-to select of an item in a board: the one-pointer way across lists.
 function MoveTo<T>({
   id,
   words,

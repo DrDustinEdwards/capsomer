@@ -2,10 +2,7 @@ import { Fragment, type ReactNode } from "react";
 import { patchDots, type PatchOptions } from "./manual.ts";
 import { Link } from "../link/link.react.tsx";
 
-/**
- * The project's round patch (manual.ts patchSvg's contract) as React, so a page draws it without injecting markup.
- * Decorative: the page says the same in words beside it.
- */
+/** The project's round patch (manual.ts patchSvg) as React; decorative. */
 export function Patch({ id, name, foot, count, unit }: PatchOptions) {
   const p = `cap-patch-${id}`;
   return (
@@ -41,19 +38,12 @@ export function Patch({ id, name, foot, count, unit }: PatchOptions) {
 }
 
 export interface RunningHeadProps {
-  /** The section's number (the site's own, for the section Prelum's sectionOf picks). */
   no: string;
-  /** The section's trail, joined with a middle dot. */
   trail: readonly string[];
-  /** The right side: the deepest route's folio (manual.ts folioOf), else the site's name. */
   folio: string;
 }
 
-/**
- * The running head under the mast: the section's number and trail, the folio at the right, across the wide track of
- * a tracks page. Hidden from screen readers: it sits outside every landmark and says only what the h1 and the
- * breadcrumb say.
- */
+/** The running head under the mast. Hidden from screen readers: it sits outside every landmark and says only what the h1 and breadcrumb say. */
 export function RunningHead({ no, trail, folio }: RunningHeadProps) {
   return (
     <div className="cap-page cap-tracks cap-running-head-tracks" aria-hidden="true">
@@ -68,15 +58,12 @@ export function RunningHead({ no, trail, folio }: RunningHeadProps) {
   );
 }
 
-// One way on: where it goes, its title on the sign, and the words a screen reader hears before
-// the title ("Next part").
 export interface SignTarget {
   href: string;
   title: string;
   label: string;
   // Next's look on a first step that is not "next" (`data-variant="forward"`), as signsHtml's way.
   forward?: boolean;
-  // rel values beside the way (external, nofollow).
   rel?: string;
 }
 
@@ -85,7 +72,6 @@ type Ways = SignTarget | readonly SignTarget[] | null | undefined;
 const list = (ways: Ways): readonly SignTarget[] =>
   Array.isArray(ways) ? ways : ways ? [ways as SignTarget] : [];
 
-// What a sign's link is given, for an app that draws its own links (no React Router).
 export interface SignLinkProps {
   href: string;
   className: string;
@@ -101,18 +87,14 @@ const routerSign = ({ href, children, ...rest }: SignLinkProps) => (
 );
 
 export interface SignsProps {
-  // The nav's name ("Parts of Field notes", "More in Guides").
   label: string;
-  // The ways back (left arrow) and the ways on (right arrow and the family color on top).
   prev?: Ways;
   next?: Ways;
   className?: string;
-  // Draws each link. Default React Router's Link, with Capsomer's prefetch.
   renderLink?: (props: SignLinkProps) => ReactNode;
 }
 
-// The manual's signs (`nav.cap-signs` of `a.cap-sign`, manual.md): a sign shows only the title,
-// and its kind is read, not shown, since the arrow says it. Renders nothing with no way on.
+// The manual's signs (`nav.cap-signs`): a sign shows only the title, since the arrow says the kind. Renders nothing with no way on.
 export function Signs({ label, prev, next, className, renderLink = routerSign }: SignsProps) {
   const back = list(prev);
   const on = list(next);
