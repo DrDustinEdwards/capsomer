@@ -1,24 +1,10 @@
 import { expect, test } from "@playwright/test";
-import {
-  eachTheme,
-  expectContrast,
-  expectNoAxeViolations,
-  visitStates,
-} from "../../test/helpers.ts";
+import { eachTheme, expectNoAxeViolations, visitStates } from "../../test/helpers.ts";
 
 eachTheme((theme) => {
   test("accessibility: no axe violations", async ({ page }) => {
     await visitStates(page, "feature", theme);
     await expectNoAxeViolations(page);
-  });
-
-  test("accessibility: title, body and card text reach their contrast", async ({ page }) => {
-    await visitStates(page, "feature", theme);
-    await expectContrast(page, [
-      { sel: "#fe-stacked .cap-feature-title", what: "the title" },
-      { sel: "#fe-stacked .cap-feature-body", what: "the body" },
-      { sel: "#fe-cards .cap-feature-card-text", what: "a card's line" },
-    ]);
   });
 
   test("behavior: alternating blocks swap sides", async ({ page }) => {

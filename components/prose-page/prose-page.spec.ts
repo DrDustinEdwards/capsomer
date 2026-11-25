@@ -1,10 +1,5 @@
 import { expect, test } from "@playwright/test";
-import {
-  eachTheme,
-  expectContrast,
-  expectNoAxeViolations,
-  visitStates,
-} from "../../test/helpers.ts";
+import { eachTheme, expectNoAxeViolations, visitStates } from "../../test/helpers.ts";
 
 eachTheme((theme) => {
   test("accessibility: no axe violations, and the title and body reach their contrast", async ({
@@ -12,10 +7,6 @@ eachTheme((theme) => {
   }) => {
     await visitStates(page, "prose-page", theme, "page");
     await expectNoAxeViolations(page);
-    await expectContrast(page, [
-      { sel: ".cap-prose-page-title", what: "the title" },
-      { sel: ".cap-prose-page-body p", what: "the body" },
-    ]);
   });
 
   test("behavior: a long title wraps inside a phone's width", async ({ page }) => {

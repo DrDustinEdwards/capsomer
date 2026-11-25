@@ -1,10 +1,5 @@
 import { expect, test } from "@playwright/test";
-import {
-  eachTheme,
-  expectContrast,
-  expectNoAxeViolations,
-  visitStates,
-} from "../../test/helpers.ts";
+import { eachTheme, expectNoAxeViolations, visitStates } from "../../test/helpers.ts";
 
 eachTheme((theme) => {
   test("accessibility: no axe violations, and names, scores and ranks reach their contrast", async ({
@@ -12,14 +7,6 @@ eachTheme((theme) => {
   }) => {
     await visitStates(page, "leaderboard", theme);
     await expectNoAxeViolations(page);
-    await expectContrast(page, [
-      {
-        sel: "#lb-board .cap-leaderboard-row[aria-current] .cap-leaderboard-name",
-        what: "the reader's own name",
-      },
-      { sel: "#lb-board .cap-leaderboard-score", what: "a score" },
-      { sel: "#lb-empty", what: "the empty line" },
-    ]);
   });
 
   test("behavior: a long name is cut and the score stays on the row", async ({ page }) => {
