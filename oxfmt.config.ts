@@ -28,5 +28,6 @@ export default defineConfig({
     "DEFAULTS.md",
     // The components' hand-written example markup: the browser specs assert on the delivered HTML byte for byte.
     "components/*/examples.html",
+    "components/*/examples-*.html",
   ],
 });

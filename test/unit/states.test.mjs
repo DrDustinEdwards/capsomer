@@ -11,7 +11,7 @@ import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { test } from "node:test";
 import { fileURLToPath } from "node:url";
-import { expandUses, generateStates, renderStates } from "../../bin/states.mjs";
+import { expandUses, generateStates, readExamples, renderStates } from "../../bin/states.mjs";
 
 const ROOT = resolve(fileURLToPath(new URL("../..", import.meta.url)));
 const template = readFileSync(join(ROOT, "site", "states-template.html"), "utf8");
@@ -117,9 +117,7 @@ test("every component's examples.html makes a valid page: one h1, one main, a he
   );
   assert.ok(names.length > 0);
   for (const d of names) {
-    const examples = expandUses(
-      readFileSync(join(ROOT, "components", d.name, "examples.html"), "utf8"),
-    );
+    const examples = expandUses(readExamples(join(ROOT, "components", d.name)));
     assert.ok(
       !/<(?:html|head|body)\b/i.test(outsideTemplates(examples)),
       `${d.name}: examples.html is inner markup only`,

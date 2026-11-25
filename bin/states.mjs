@@ -97,13 +97,24 @@ export function expandUses(html) {
   return out;
 }
 
-// A component's examples.html with every def/use expanded and every <!-- build:name --> filled from its examples.build.ts.
+// A component's examples as written: examples.html, then examples-*.html in name order when a long page is split at
+// its specimens. The parts are one file to everything after this (a def in the first is usable in the rest).
+/** @param {string} base @returns {string} */
+export function readExamples(base) {
+  const parts = existsSync(base)
+    ? readdirSync(base)
+        .filter((f) => /^examples-[\w-]+\.html$/.test(f))
+        .sort()
+    : [];
+  return ["examples.html", ...parts]
+    .filter((f) => existsSync(join(base, f)))
+    .map((f) => readFileSync(join(base, f), "utf8"))
+    .join("");
+}
+
+// A component's examples with every def/use expanded and every <!-- build:name --> filled from its examples.build.ts.
 async function loadExamples(base) {
-  const html = expandUses(
-    existsSync(join(base, "examples.html"))
-      ? readFileSync(join(base, "examples.html"), "utf8")
-      : "",
-  );
+  const html = expandUses(readExamples(base));
   const build = join(base, "examples.build.ts");
   if (!existsSync(build)) return html;
   const parts = await importBuild(build);

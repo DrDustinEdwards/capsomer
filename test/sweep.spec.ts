@@ -3,6 +3,7 @@ import { expect, test, type Page } from "@playwright/test";
 import { Fragment, createElement as h, type ReactElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { inlineCss } from "../bin/build.mjs";
+import { readExamples } from "../bin/states.mjs";
 import { THEMES, expectNoAxeViolations, settled, visitStates } from "./helpers.ts";
 // The wrappers as the package ships them (npm run build): Playwright rewrites the JSX of a .tsx
 // file a spec imports, so the source cannot be rendered here (catalog.spec.ts says the same).
@@ -126,7 +127,7 @@ const NAMES = readdirSync("components", { withFileTypes: true })
   .map((d) => d.name)
   .filter((name) => !ONLY.length || ONLY.includes(name));
 function spots(name: string): Spot[] {
-  const html = readFileSync(`components/${name}/examples.html`, "utf8");
+  const html = readExamples(`components/${name}`);
   return [
     { name },
     ...[...html.matchAll(/<template\b[^>]*\bdata-specimen="([^"]+)"/g)].map((m) => ({
@@ -1192,10 +1193,7 @@ for (const name of NAMES) {
         const own = [...new Set([...css.matchAll(/\.(cap-[\w-]+)/g)].map((m) => m[1] as string))];
         const md = readFileSync(`components/${name}/${name}.md`, "utf8");
         const contract = [
-          readFileSync(`components/${name}/examples.html`, "utf8").replace(
-            /<template\b[^>]*>|<\/template>/g,
-            "",
-          ),
+          readExamples(`components/${name}`).replace(/<template\b[^>]*>|<\/template>/g, ""),
           ...[...md.matchAll(/```html\n([\s\S]*?)```/g)].map((m) => m[1] as string),
         ];
         const rendered: (Shape & { at: string })[] = [];

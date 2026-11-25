@@ -4,6 +4,7 @@
     "components/*/*.ts",
     "components/*/*.react.tsx",
     "components/*/examples.html",
+    "components/*/examples-*.html",
     "components/*/examples.tsx",
     "components/*/specimen/*.ts",
     "components/*/specimen/runtime/*.mjs",
