@@ -1,0 +1,481 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* The running head over a page: its section's number and name on the left in bold, the folio or
+   date on the right, over a hairline (the manual's index, page i). The sign variant sets it as
+   one of the manual's building signs (6.1): a dark panel of light type, the family's color in a
+   strip along its top, the number on a plate of its own. The signs take --sign and --on-sign, so
+   in dark they stay dark panels with an edge instead of turning into white slabs. */
+@layer cap.components {
+  .cap-running-head {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--space-2) var(--space-6);
+    padding-block-end: var(--space-3);
+    border-block-end: var(--line-w) solid var(--text);
+    font: var(--weight-regular) var(--fs-lead) / var(--leading-snug) var(--ui);
+  }
+
+  .cap-running-head-name {
+    display: flex;
+    align-items: baseline;
+    gap: 0.6em;
+    font-weight: var(--weight-bold);
+  }
+
+  .cap-running-head-no {
+    min-inline-size: 2.5ch;
+  }
+
+  /* The trail after the number reads lighter than it; under the mast on a tracks page (RunningHead). */
+  .cap-running-head-trail {
+    font-weight: var(--weight-regular);
+  }
+  .cap-running-head-tracks {
+    margin-block-start: var(--space-6);
+  }
+
+  /* A page title with its patch beside it (PageHead's patch): the title takes the room, the patch its own size,
+     smaller where the head itself is narrow (a phone, a side column). */
+  .cap-patched {
+    container-type: inline-size;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: var(--space-6);
+    > :first-child {
+      margin: 0;
+    }
+    @container (max-width: 40rem) {
+      .cap-patch {
+    /* Lettering set along the patch's drawn ring: sizes and tracking in the drawing's own units, not type steps. */
+    --cap-patch-tracking: 1.4px;
+    --cap-patch-foot-size: 0.5625rem;
+    --cap-patch-foot-tracking: 2px;
+    --cap-patch-unit-size: 7px;
+    --cap-patch-unit-tracking: 1px;
+        inline-size: 72px;
+        block-size: 72px;
+      }
+    }
+  }
+
+  .cap-running-head[data-variant="sign"] {
+    padding: var(--space-3) var(--space-5) var(--space-4);
+    border: var(--line-w) solid var(--sign-edge);
+    border-block-start: calc(var(--line-w-band) + var(--line-w-heavy)) solid var(--on);
+    background: var(--sign);
+    color: var(--on-sign);
+    font-size: clamp(var(--title-4), 2.4vw, calc(var(--title-3) + var(--space-2)));
+
+    .cap-running-head-name {
+      letter-spacing: var(--tracking-snug);
+    }
+
+    .cap-running-head-no {
+      min-inline-size: 1.5em;
+      padding-inline: 0.2em;
+      background: var(--ground);
+      color: var(--text);
+      text-align: center;
+    }
+
+    .cap-running-head-folio {
+      font-size: var(--fs-lead);
+    }
+  }
+
+  @media (forced-colors: active) {
+    .cap-running-head[data-variant="sign"] {
+      border: var(--line-w) solid CanvasText;
+    }
+  }
+}
+
+/* A numbered part of a page, set as the NASA Graphics Standards Manual sets its pages (1975,
+   5.1): the number and title on the left over a rule across the whole width, what the part says
+   beside it, and its figures and lists full width below. */
+@layer cap.components {
+  .cap-part {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    column-gap: var(--space-7);
+    margin-block-start: var(--space-9);
+    padding-block-start: var(--space-4);
+    border-block-start: var(--line-w) solid var(--text);
+    container-type: inline-size;
+
+    > * {
+      grid-column: 1 / -1;
+      min-inline-size: 0;
+    }
+  }
+
+  .cap-part-title {
+    display: flex;
+    gap: var(--space-4);
+    margin: 0;
+    font-family: var(--display);
+    font-size: clamp(var(--title-4), 1.8vw, calc(var(--title-3) + var(--space-1)));
+    font-weight: var(--weight-heading);
+    letter-spacing: var(--tracking-snug);
+    line-height: var(--leading-tight);
+    text-wrap: balance;
+  }
+
+  .cap-part-no {
+    flex: none;
+    min-inline-size: 2.5ch;
+    font-size: var(--fs-lead);
+    font-weight: var(--weight-regular);
+    letter-spacing: 0;
+    line-height: var(--leading-loose);
+  }
+
+  .cap-part-lead {
+    margin: var(--space-3) 0 0;
+    max-inline-size: 62ch;
+    line-height: var(--leading-snug);
+    font-size: var(--title-4);
+  }
+
+  /* Two columns once the page is wide enough: the title on the left third. */
+  @media (min-width: 52rem) {
+    .cap-part {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+    }
+
+    .cap-part > .cap-part-title {
+      grid-column: 1;
+    }
+
+    .cap-part > .cap-part-title + .cap-part-lead {
+      grid-column: 2;
+      margin-block-start: 0;
+    }
+  }
+}
+
+/* Facts as a form's ruled boxes: a small label in the mono over each value, the boxes sharing
+   their rules (the manual's forms, 4.1; the Apollo flight plan's title block, MSC Form 29). Used
+   for a page's title block, a post's report documentation and a row of readings. The tones
+   variant steps the boxes from light to dark through one ink, as the manual sets type on stepped
+   grays (7.2). */
+@layer cap.components {
+  .cap-form-boxes {
+    --cols: 4;
+    display: grid;
+    grid-template-columns: repeat(var(--cols), minmax(0, 1fr));
+    margin: 0;
+    border-block-start: var(--line-w) solid var(--text);
+    border-inline-start: var(--line-w) solid var(--text);
+    font-family: var(--ui);
+    container-type: inline-size;
+  }
+
+  /* A ruled grid that fills its row: as many boxes per line as fit at --box-min (10rem) each, the rules shared, for
+     facts of any count (a post's particulars, a procedure's title block, an index of browse groups). */
+  .cap-form-boxes[data-variant="grid"] {
+    grid-template-columns: repeat(auto-fit, minmax(min(var(--box-min, 10rem), 100%), 1fr));
+  }
+
+  .cap-form-boxes-box {
+    min-inline-size: 0;
+    padding: var(--space-2-5) var(--space-4) var(--space-3);
+    border-inline-end: var(--line-w) solid var(--text);
+    border-block-end: var(--line-w) solid var(--text);
+
+    > dt {
+      color: var(--muted);
+      font: var(--weight-medium) var(--fs-label) / var(--leading-compact) var(--mono);
+      letter-spacing: var(--tracking-caps);
+      text-transform: uppercase;
+    }
+
+    > dd {
+      margin: var(--space-1) 0 0;
+      overflow-wrap: anywhere;
+    }
+
+    &[data-span="2"] {
+      grid-column: span 2;
+    }
+
+    &[data-span="all"] {
+      grid-column: 1 / -1;
+    }
+
+    &[data-weight="bold"] > dd {
+      font-weight: var(--weight-bold);
+    }
+  }
+
+  /* A reading: the figure large and bold under its label. The figures of a row share one line at
+     the boxes' foot, so a label that wraps to two lines never pushes its figure below the rest. */
+  .cap-form-boxes:is([data-variant="readings"], [data-variant="tones"], [data-variant="panel"]) .cap-form-boxes-box {
+    display: flex;
+    flex-direction: column;
+
+    > dd {
+      margin-block-start: auto;
+      padding-block-start: var(--space-3);
+    }
+  }
+
+  .cap-form-boxes[data-variant="readings"] .cap-form-boxes-box > dd,
+  .cap-form-boxes[data-variant="tones"] .cap-form-boxes-box > dd {
+    font-size: clamp(var(--title-3), 3vw, var(--title-1));
+    font-weight: var(--weight-bold);
+    font-variant-numeric: var(--figures);
+    line-height: var(--leading-none);
+  }
+
+  .cap-form-boxes[data-variant="tones"] .cap-form-boxes-box {
+    /* The label takes the value's color: the muted gray does not hold 4.5:1 on the gray steps. */
+    > dt {
+      color: var(--text);
+    }
+
+    &:nth-child(4n + 1) {
+      background: color-mix(in srgb, var(--text) 6%, var(--ground));
+    }
+
+    &:nth-child(4n + 2) {
+      background: color-mix(in srgb, var(--text) 22%, var(--ground));
+    }
+
+    &:nth-child(4n + 3) {
+      background: color-mix(in srgb, var(--text) 62%, var(--ground));
+    }
+
+    &:nth-child(4n + 4) {
+      background: var(--text);
+    }
+
+    &:is(:nth-child(4n + 3), :nth-child(4n + 4)) > :is(dt, dd) {
+      color: var(--ground);
+    }
+  }
+
+  /* Readings as an instrument panel (the Apollo DSKY, study section 7b): the dark
+     sign in both themes, legends in drafting capitals as the DSKY's engraved Gorton markings, and each
+     value lit in seven segments (--readout) in the family's light color, the current-page sign's
+     (--on-sign-here), with a soft glow: the site's own hue, not the DSKY's green (Dustin, 2026-11-04).
+     DSEG7 draws digits, minus, colon and period only: a value with letters keeps the UI face. */
+  .cap-form-boxes[data-variant="panel"] {
+    border-color: var(--sign-edge);
+    background: var(--sign);
+
+    .cap-form-boxes-box {
+      border-color: color-mix(in srgb, var(--on-sign) 14%, var(--sign));
+
+      > dt {
+        color: var(--on-sign);
+        font: var(--weight-regular) var(--fs-small) / var(--leading-compact) var(--drafting);
+        letter-spacing: var(--tracking-sign);
+      }
+
+      > dd {
+        color: var(--on-sign-here);
+        font: var(--weight-regular) clamp(var(--title-3), 3vw, var(--title-1)) / var(--leading-none) var(--readout);
+        text-shadow: 0 0 0.35em color-mix(in srgb, var(--on-sign-here) 55%, transparent);
+      }
+    }
+  }
+
+  @media (forced-colors: active) {
+    .cap-form-boxes[data-variant="panel"] .cap-form-boxes-box > dd {
+      text-shadow: none;
+    }
+  }
+
+  @container (max-width: 36rem) {
+    .cap-form-boxes-box[data-span="2"] {
+      grid-column: 1 / -1;
+    }
+  }
+
+  @media (max-width: 40rem) {
+    .cap-form-boxes {
+      --cols: 2;
+    }
+  }
+}
+
+/* A contents list set as the manual's index (page i): number and name in bold, a dotted leader,
+   the page or the count at the right. */
+@layer cap.components {
+  .cap-leader-index {
+    margin: 0;
+    padding: 0;
+    border-block-start: var(--line-w) solid var(--text);
+    list-style: none;
+    font-family: var(--ui);
+  }
+
+  /* The row wraps: when a name and its fact cannot sit side by side at their longest words (a phone, a long
+     path as the fact), the fact drops to its own line at the end instead of pushing the row past the screen. */
+  .cap-leader-index-link {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--space-1) var(--space-4);
+    min-block-size: var(--target);
+    padding-block: var(--space-3);
+    border-block-end: var(--line-w) solid var(--line);
+    color: var(--text);
+    text-decoration: none;
+
+    &:hover .cap-leader-index-name,
+    &:focus-visible .cap-leader-index-name {
+      color: var(--accent-text);
+    }
+
+    &[aria-current] .cap-leader-index-name {
+      color: var(--accent-text);
+    }
+  }
+
+  .cap-leader-index-no {
+    flex: none;
+    min-inline-size: 3ch;
+    font-variant-numeric: var(--figures);
+  }
+
+  /* A long name or fact wraps at word boundaries and keeps the width of its longest word, so the dotted leader gives way
+     first; only a word wider than the row itself breaks. `anywhere` would let the flex item shrink below its words. */
+  .cap-leader-index-name {
+    min-inline-size: min(min-content, 100%);
+    font-weight: var(--weight-bold);
+    overflow-wrap: break-word;
+  }
+
+  .cap-leader-index-dots {
+    flex: 1 1 2rem;
+    min-inline-size: 1rem;
+    border-block-end: var(--line-w-thick) dotted var(--muted);
+  }
+
+  .cap-leader-index-fact {
+    flex: 0 1 auto;
+    margin-inline-start: auto;
+    min-inline-size: min(min-content, 100%);
+    overflow-wrap: break-word;
+    font-variant-numeric: var(--figures);
+    text-align: end;
+  }
+}
+
+/* A list of procedures as an Apollo checklist card: a ruled box, a dark strip naming the card,
+   and per step a box to tick, its number, its name, a dotted leader to what kind of step it is,
+   and a line under it. The box to tick is drawn, not a control: the card is a list of links.
+   */
+@layer cap.components {
+  .cap-checklist {
+    border: var(--line-w-thick) solid var(--text);
+    background: var(--ground);
+    font-family: var(--ui);
+  }
+
+  .cap-checklist-strip {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-4);
+    margin: 0;
+    padding: var(--space-3) var(--space-5);
+    background: var(--sign);
+    color: var(--on-sign);
+    font: var(--weight-bold) var(--mono-size) / var(--leading-compact) var(--mono);
+    letter-spacing: var(--tracking-sign);
+    text-transform: uppercase;
+  }
+
+  .cap-checklist-items {
+    margin: 0;
+    padding: var(--space-2) var(--space-5) var(--space-3);
+    list-style: none;
+    counter-reset: cap-step;
+  }
+
+  .cap-checklist-item {
+    display: grid;
+    grid-template-columns: 1.25rem 2rem minmax(0, 1fr);
+    align-items: baseline;
+    gap: var(--space-2) var(--space-4);
+    padding-block: var(--space-4);
+    border-block-end: var(--line-w) solid var(--line);
+    counter-increment: cap-step;
+
+    &:last-child {
+      border-block-end: 0;
+    }
+
+    &::before {
+      content: "";
+      inline-size: 14px;
+      block-size: 14px;
+      border: var(--line-w-mid) solid var(--text);
+      transform: translateY(2px);
+    }
+
+    &::after {
+      content: counter(cap-step, decimal-leading-zero) / "";
+      grid-column: 2;
+      grid-row: 1;
+      color: var(--muted);
+      font: var(--weight-medium) var(--mono-size) var(--mono);
+    }
+  }
+
+  .cap-checklist-line {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--space-2) var(--space-4);
+    grid-column: 3;
+    grid-row: 1;
+    min-inline-size: 0;
+
+    > a {
+      display: inline-block;
+      min-block-size: 24px;
+      color: var(--text);
+      font-weight: var(--weight-bold);
+      text-decoration: none;
+
+      &:hover,
+      &:focus-visible {
+        color: var(--accent-text);
+      }
+    }
+  }
+
+  .cap-checklist-dots {
+    flex: 1 1 2rem;
+    min-inline-size: 1rem;
+    border-block-end: var(--line-w-thick) dotted var(--muted);
+  }
+
+  .cap-checklist-kind {
+    font: var(--weight-medium) var(--fs-label) var(--mono);
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .cap-checklist-note {
+    grid-column: 3;
+    margin: 0;
+    color: var(--muted);
+    font-size: var(--fs-body);
+    line-height: var(--leading-compact);
+  }
+
+  @media (max-width: 40rem) {
+    .cap-checklist-dots {
+      display: none;
+    }
+  }
+}
