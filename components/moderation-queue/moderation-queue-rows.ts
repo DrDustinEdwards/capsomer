@@ -19,7 +19,8 @@ import {
 export const rowsOf = (root: HTMLElement) =>
   Array.from(root.querySelectorAll<HTMLLIElement>(".cap-mq-row"));
 export const listOf = (root: HTMLElement) => root.querySelector<HTMLElement>(".cap-mq-list");
-export const rowTitleButton = (row: Element) => row.querySelector<HTMLElement>(".cap-row-title button");
+export const rowTitleButton = (row: Element) =>
+  row.querySelector<HTMLElement>(".cap-row-title button");
 export const visible = (row: HTMLElement) => !row.hidden;
 const currentView = (root: HTMLElement): ModView =>
   (VIEWS as readonly string[]).includes(root.dataset.view ?? "")
