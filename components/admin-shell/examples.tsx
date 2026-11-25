@@ -143,8 +143,7 @@ const key = (name: string) => `cap-admin-specimen-${name}`;
 const remember = (name: string, value: string) => {
   try {
     localStorage.setItem(key(name), value);
-  } catch {
-  }
+  } catch {}
 };
 
 function Shell({

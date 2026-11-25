@@ -39,7 +39,6 @@ export { buildTile, recordOf, syncTile, writeRecord } from "./media-tile.ts";
 
 const READY = "data-cap-ready";
 
-
 export interface MediaOptions {
   // Sends the inspector's fields; default is a POST of the inspector's form to its action.
   save?: (key: string, fields: MediaFields) => Promise<void>;

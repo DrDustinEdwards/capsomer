@@ -1,6 +1,5 @@
 // The media grid's two-dimensional arrow keys.
 
-
 export interface TileBox {
   id: string;
   top: number;

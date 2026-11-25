@@ -43,7 +43,6 @@ function checkBox(): HTMLElement[] {
 export const part = <T extends HTMLElement = HTMLElement>(root: ParentNode, name: string) =>
   root.querySelector<T>(`[data-cap-part='${name}']`);
 
-
 export function recordOf(tile: HTMLElement): MediaRecord {
   const d = tile.dataset;
   let used: UsedIn[] = [];

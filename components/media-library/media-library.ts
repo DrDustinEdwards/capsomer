@@ -16,7 +16,6 @@ import { formatBytes } from "../format/format.ts";
 import { altStateOf, type MediaRecord, type UsedIn } from "../media/media-record.ts";
 import { formatDate } from "../time/time.ts";
 
-
 const QUERY_ORDER: ReadonlyArray<keyof MediaQuery> = [
   "q",
   "tag",
@@ -98,7 +97,6 @@ export function withMedia(q: MediaQuery, change: Partial<MediaQuery>): MediaQuer
   return next;
 }
 
-
 // The content kit's names (site-api runMediaIntent), so a host passes the form straight on.
 export type MediaIntent = "tag-add" | "tag-remove" | "trash" | "restore" | "delete";
 
@@ -178,7 +176,6 @@ export function inspectorOffers(data: Pick<MediaData, "offers" | "can">): {
   };
 }
 
-
 export function countLine(
   data: Pick<MediaData, "rows" | "page" | "query">,
   labels?: ContentLabels,
@@ -234,7 +231,6 @@ export function uploadRules(
 export function pickable(rows: readonly MediaRecord[]): MediaRecord[] {
   return rows.filter((r) => r.kind === "image" && r.state === "ready");
 }
-
 
 export const LENS_WORDS: Record<string, { label: string; hint?: string }> = {
   unattached: {
@@ -322,7 +318,6 @@ export function readMediaView(
     ...(search.get("upload") === "1" ? { upload: true } : {}),
   };
 }
-
 
 // A site-api MediaItem typed by shape, so Capsomer needs no site-api import.
 export interface KitMediaRow {
@@ -456,7 +451,6 @@ export function mediaDataOfKit(
     ...(detail && detail.suggestions !== undefined ? { suggestions: detail.suggestions } : {}),
   };
 }
-
 
 // Whether a changed file belongs in this view. A search or lens is the site's to answer, so a file that was on the page stays.
 function inView(r: MediaRecord, q: MediaQuery): boolean {

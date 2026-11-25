@@ -1,4 +1,3 @@
-
 import { type KeyboardEvent, type ReactNode, useCallback, useId, useRef } from "react";
 import { singleKeysOff } from "../shortcuts/shortcuts.ts";
 import { percent } from "../meter/meter.ts";
@@ -13,7 +12,6 @@ import {
   tileId,
 } from "./media.ts";
 import { formatBytes } from "../format/format.ts";
-
 
 export interface MediaTileProps {
   item: MediaRecord;
@@ -232,7 +230,6 @@ function ProgressBar({ labelId, pct, name }: { labelId: string; pct: number; nam
     />
   );
 }
-
 
 export interface MediaGroup {
   label: string;

@@ -1,4 +1,3 @@
-
 // Bulk tags: add or remove one tag across a selection. An item already in the wanted state is skipped, and one
 // item's failure is recorded without stopping the rest.
 export async function applyBulkTag<T>({

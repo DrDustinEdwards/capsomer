@@ -31,7 +31,6 @@ export function setBusy(label: Element, busy: boolean): void {
   else input.removeAttribute("aria-busy");
 }
 
-
 export function enhance(root: ParentNode = document): () => void {
   const undo: Array<() => void> = [];
   for (const label of root.querySelectorAll<HTMLElement>(

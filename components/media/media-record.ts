@@ -2,7 +2,6 @@
 import { escapeHtml } from "@dustinedwards/site-runtime/html";
 import { formatBytes } from "../format/format.ts";
 
-
 export type AltState = "missing" | "decorative" | "set";
 export type TileState = "ready" | "uploading" | "failed" | "binned";
 

@@ -14,8 +14,7 @@ self.addEventListener("push", (event) => {
   };
   try {
     alert = { ...alert, ...event.data.json() };
-  } catch {
-  }
+  } catch {}
   event.waitUntil(
     self.registration.showNotification(alert.title, {
       body: alert.body,
@@ -34,8 +33,7 @@ self.addEventListener("notificationclick", (event) => {
   try {
     const asked = typeof raw === "string" ? new URL(raw, scope).href : scope;
     if (asked.startsWith(scope)) url = asked;
-  } catch {
-  }
+  } catch {}
   event.waitUntil(
     self.clients.matchAll({ type: "window", includeUncontrolled: true }).then((windows) => {
       // A tab already open on the site moves to the item, so the tap never lands on a page that

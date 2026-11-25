@@ -4,7 +4,6 @@
 
 import { clamp } from "../hooks/hooks.ts";
 
-
 export interface SortMove {
   id: string;
   from: number;

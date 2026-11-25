@@ -20,7 +20,6 @@ export function wordPattern(word: string): string {
     .join("");
 }
 
-
 type Perform = (reason: string) => Promise<void>;
 const performs = new WeakMap<HTMLDialogElement, Perform>();
 const performedFlags = new WeakSet<HTMLDialogElement>();

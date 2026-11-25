@@ -151,8 +151,7 @@ export function start(root: HTMLElement, options: RunOptions = {}): () => void {
   function forget() {
     try {
       localStorage.removeItem(KEY);
-    } catch {
-    }
+    } catch {}
     run = null;
     end();
   }
@@ -487,8 +486,7 @@ export function start(root: HTMLElement, options: RunOptions = {}): () => void {
   async function letSleep() {
     try {
       await wakeLock?.release();
-    } catch {
-    }
+    } catch {}
     wakeLock = null;
   }
 
