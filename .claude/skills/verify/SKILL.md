@@ -44,20 +44,10 @@ const browser = await chromium.launch(
   process.env.PW_CHROMIUM ? { executablePath: process.env.PW_CHROMIUM } : {},
 );
 const page = await browser.newPage();
-const errors = [];
-page.on("console", (m) => m.type() === "error" && errors.push(m.text()));
-page.on("pageerror", (e) => errors.push(String(e)));
-const log = [];
-async function step(name, fn) {
-  try {
-    await fn();
-    log.push(`ok   ${name}`);
-  } catch (e) {
-    log.push(`FAIL ${name}: ${e.message.split("\n")[0]}`);
-    await page.screenshot({ path: "fail.png", fullPage: true });
-    throw e;
-  }
-}
+// errors, log and step(): the helpers in devkit docs/verify.md
+const expectVisible = async (loc, want) => {
+  await loc.waitFor({ state: want ? "visible" : "hidden", timeout: 3000 });
+};
 try {
   await step("open the specimen", async () => {
     const r = await page.goto(process.argv[2]);
@@ -92,10 +82,6 @@ the component animates. A component that must work with scripts off: run it agai
 
 A change to a token or a shared CSS file moves many components: drive the three or four
 that use it most, and look at the showcase home (`/`) in light and dark.
-
-In a cloud session the repo's Playwright build may not match the Chromium the container
-ships, and launch fails with "Executable doesn't exist". Then set
-`PW_CHROMIUM=/opt/pw-browsers/chromium`. Do not run `playwright install`.
 
 ## 3. Run the specs that cover the component
 
@@ -137,20 +123,15 @@ REPO=$PWD OUT=<scratchpad> PW_CHROMIUM=/opt/pw-browsers/chromium \
 If the changed component has no spec yet, add one the way `components/README.md`, The
 spec, describes. Also run `npm run check` before the commit.
 
-## Rules
+## Rules and report
 
-A failed step is a finding about the change: fix the code, rebuild with
-`npm run site`, and rerun the same script; no sleeps, no looser selectors. Stop the
-preview server by its process id, never `pkill` by name.
+Follow the Rules and the report in [devkit's docs/verify.md](https://github.com/DrDustinEdwards/devkit/blob/main/docs/verify.md). For this repo:
 
-## The report
-
-Put this in the reply and the pull request body:
-
-- First line: verified, partly verified (and what was not), or failed.
-- Each step's ok or FAIL line, the console errors line, the end-state screenshot
-  attached, and the spec run's summary line with the spec files it covered.
-- Not verified: the deployed site's headers and CSP (`vite preview` does not apply
-  `_headers`), Cloudflare's own serving, browsers other than Chromium, a real touch
-  device, a consuming app's use of the change. The live check after the deploy
-  (`DEPLOY.md`) is the same component's page on https://capsomer.dustinedwards.info.
+- Rebuild with `npm run site` after a fix before running the script again.
+- `states.html`, `site-dist/`, `site/gen/` and `test-results/` are gitignored; leave them so.
+- Anything local cannot show, named as not verified: the deployed site's headers and
+  CSP (`site-runtime-headers` writes `_headers`; `vite preview` does not apply them),
+  Cloudflare's own serving, real browsers other than Chromium (Safari, Firefox), a real
+  touch device, and a consuming app's use of the change. The showcase deploys on merge
+  to `main` (`DEPLOY.md`); the live check is https://capsomer.dustinedwards.info, the
+  same component's page, after that deploy.
