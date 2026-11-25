@@ -19,6 +19,8 @@ import { join } from "node:path";
 // Paths no browser test reads. Anything not named here or under components/<name>/ runs everything.
 const UNTESTED = [
   /^(docs|design|no-bloat|worker|\.claude|\.changeset)\//,
+  // The other workflows and the repo's GitHub settings: only ci.yml decides which browser tests run and how.
+  /^\.github\/(?!workflows\/ci\.yml$)/,
   /^scripts\/.*\.py$/,
   // The root Markdown files: the site reads none of them (each component's page is read from its own folder).
   /^[^/]+\.md$/,

@@ -155,6 +155,8 @@
     "./ambient-equalizer.css": "./components/ambient/ambient-equalizer.css",
     "./check.css": "./components/field/check.css",
     "./group.css": "./components/disclosure/group.css",
+    "./admin-shell-strip.css": "./components/admin-shell/admin-shell-strip.css",
+    "./shell-rail.css": "./components/shell/shell-rail.css",
     "./*.css": "./components/*/*.css",
     "./behavior/chart-enhance": {
       "types": "./dist/components/chart-frame/chart-enhance.d.ts",

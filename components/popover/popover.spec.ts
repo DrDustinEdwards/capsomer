@@ -111,6 +111,9 @@ eachTheme((theme) => {
     await visitStates(page, "popover", theme);
     const trigger = page.getByRole("button", { name: "Dimensions" });
     await trigger.click();
+    // Clicked while the popup is still animating in, Playwright's scroll-into-view moves the page, and the anchored popup
+    // moves with it, from under the pointer (the click then never lands on Done).
+    await settled(page);
     await page.getByRole("button", { name: "Done" }).click();
     await expect(page.locator("#pop-dims")).toBeHidden();
     await expect(trigger).toBeFocused();
