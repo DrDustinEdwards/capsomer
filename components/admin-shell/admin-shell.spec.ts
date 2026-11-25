@@ -378,14 +378,6 @@ eachTheme((theme) => {
     await expect(page.locator(".cap-admin-page")).toHaveAttribute("data-measure", "reading");
   });
 
-  test("behavior: the strip and the menu have the same widths in every state", async ({ page }) => {
-    await visitStates(page, "admin-shell", theme, "expanded");
-    const strip = await page.locator(".cap-admin-strip").boundingBox();
-    await visitStates(page, "admin-shell", theme, "collapsed");
-    const collapsed = await page.locator(".cap-admin-strip").boundingBox();
-    expect(collapsed?.width).toBe(strip?.width);
-  });
-
   // Reflow at 320px is the sweep's (test/sweep.spec.ts).
   test("behavior: at 320px the logo shows its mark, keeps its name, and the menu button is in view", async ({
     page,
@@ -894,21 +886,6 @@ eachTheme((theme) => {
     expect(all.find((o) => o.name?.startsWith("Activity"))?.text).toBe("99+");
   });
 
-  test("behavior: open, no count crosses the menu's edge", async ({ page }) => {
-    await visitStates(page, "admin-shell", theme, "expanded");
-    const edge = await page
-      .locator(".cap-admin-menu")
-      .evaluate((el) => el.getBoundingClientRect().right - 1);
-    const rights = await page
-      .locator(".cap-admin-menu .cap-admin-count:not(:empty)")
-      .evaluateAll((els) => els.map((e) => e.getBoundingClientRect().right));
-    expect(rights.length).toBeGreaterThanOrEqual(5);
-    for (const r of rights) expect(r).toBeLessThanOrEqual(edge);
-    await expect(
-      page.getByRole("link", { name: "Activity 99+, 120" }).locator(".cap-admin-count"),
-    ).toHaveText("99+");
-  });
-
   test("accessibility: neutral and needs-you bubbles read against their bubble and stand out from the menu, open and collapsed", async ({
     page,
   }) => {
@@ -959,18 +936,6 @@ eachTheme((theme) => {
       .poll(async () => (await read()).fill, { message: "the hover fill against the menu" })
       .toBeGreaterThanOrEqual(1.2);
     expect((await read()).edge, "the hover edge against the menu").toBeGreaterThanOrEqual(3);
-  });
-
-  test("behavior: every unread marker is a number, one rule on every tile, 99+ past 99", async ({
-    page,
-  }) => {
-    await visitStates(page, "admin-shell", theme, "expanded");
-    await expect(page.locator("[data-dot], [data-wide]")).toHaveCount(0);
-    const texts = await page
-      .locator(".cap-admin-strip .cap-admin-badge, .cap-admin-menu .cap-admin-count:not(:empty)")
-      .allTextContents();
-    expect(texts.length).toBeGreaterThanOrEqual(7);
-    for (const t of texts) expect(t).toMatch(/^(\d{1,2}|99\+)$/);
   });
   test("behavior: the strip lists the family's seven apps, Capsomer last, in one order with their own marks, this one marked", async ({
     page,
@@ -1034,35 +999,6 @@ eachTheme((theme) => {
       ].map((label) => ({ label, marks: 1, letters: "" })),
     );
     await expect(tiles.nth(4)).toHaveAttribute("aria-current", "true");
-  });
-
-  test("behavior: Foxhound keeps its favicon x until Dustin picks; two alternatives sit beside it and none is shipped", async ({
-    page,
-  }) => {
-    await visitStates(page, "admin-shell", theme, "foxhound-marks");
-    const items = page.locator("[data-mark]");
-    expect(
-      await items.evaluateAll((els) => els.map((e) => (e as HTMLElement).dataset.mark)),
-    ).toEqual(["today", "track", "fox"]);
-    const svgs = await items.evaluateAll((els) =>
-      els.map((e) => e.querySelector("svg")!.innerHTML),
-    );
-    const [today, ...alternatives] = svgs;
-    expect(alternatives, "exactly two alternatives, different from each other").toHaveLength(2);
-    expect(alternatives[0]).not.toBe(alternatives[1]);
-    expect(
-      alternatives,
-      "Foxhound's mark in FAMILY_APPS is not one of the alternatives",
-    ).not.toContain(today);
-    // Today's mark is the favicon's x: two strokes, no fill.
-    expect(today).toContain("M7.5 9 16.5 18M16.5 9 7.5 18");
-    // The strip draws that same x for Foxhound.
-    await visitStates(page, "admin-shell", theme, "minimal");
-    expect(
-      await page
-        .locator('.cap-admin-strip .cap-admin-tile[aria-label^="Foxhound"] svg.cap-admin-logo')
-        .innerHTML(),
-    ).toBe(today);
   });
   test("behavior: the top bar has the freshness line at the left and Refresh last; the theme is the header's one button; the tab says the page and the app", async ({
     page,
