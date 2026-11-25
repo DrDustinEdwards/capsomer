@@ -1,0 +1,266 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+@layer cap.components {
+  /* The transport and the settings wrap onto a second line in a narrow column (WCAG 1.4.10). */
+  :where(.cap-player-surface-row) {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2);
+    margin-block-start: var(--space-2);
+  }
+  :where(.cap-player-surface-settings) {
+    margin-inline-start: auto;
+  }
+
+  /* Settings in a popover or the sheet. */
+  :where(.cap-player-options) {
+    display: grid;
+    gap: var(--space-3);
+  }
+  :where(.cap-player-choices) {
+    display: grid;
+    gap: var(--space-2);
+    min-inline-size: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    &[data-layout="grid"] {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      & > .cap-player-legend {
+        grid-column: 1 / -1;
+      }
+    }
+  }
+  :where(.cap-player-legend) {
+    margin: 0 0 var(--space-2);
+    padding: 0;
+    color: var(--muted);
+    font-size: var(--fs-label);
+    letter-spacing: var(--tracking-widest);
+    text-transform: uppercase;
+  }
+  :where(.cap-player-fine) {
+    display: block;
+  }
+  :where(.cap-player-volume-row) {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    & .cap-player-fine {
+      inline-size: 8rem;
+    }
+  }
+
+  /* Chapters: in the sheet and as a list on a track's page. The one playing has an accent edge,
+     the accent color and weight, never color alone. */
+  :where(.cap-player-chapters) {
+    display: grid;
+    /* One shrinkable column: an auto track grows to its widest title's nowrap text and the page scrolls sideways. */
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-1);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  :where(.cap-player-chapter) {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    box-sizing: border-box;
+    inline-size: 100%;
+    min-block-size: max(var(--target), var(--control));
+    padding: var(--space-2) var(--space-3);
+    border: 0;
+    border-inline-start: var(--line-w-bar) solid transparent;
+    border-radius: var(--radius-m);
+    background: transparent;
+    color: var(--text);
+    font: inherit;
+    font-size: var(--fs-body);
+    text-align: start;
+    cursor: pointer;
+    &:hover {
+      background: var(--sunken);
+    }
+    &[aria-current="true"] {
+      border-inline-start-color: var(--accent);
+      color: var(--accent-text);
+      font-weight: var(--weight-semibold);
+    }
+  }
+  :where(.cap-player-chapter-title) {
+    min-inline-size: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  :where(.cap-player-at) {
+    flex: none;
+    color: var(--accent-text);
+    font-size: var(--fs-detail);
+  }
+  :where(.cap-player-list-heading) {
+    margin: 0 0 var(--space-4);
+    font-family: var(--cap-player-face, var(--ui));
+    font-size: var(--fs-h3);
+    font-weight: var(--weight-semibold);
+  }
+
+  /* Key moments: a grid of time and label. */
+  :where(.cap-player-moments, .cap-player-hosts) {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 16rem), 1fr));
+    gap: var(--space-3);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  :where(.cap-player-moment) {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    box-sizing: border-box;
+    inline-size: 100%;
+    min-block-size: max(var(--target), var(--control));
+    padding: var(--space-4);
+    border: var(--line-w) solid var(--line);
+    border-radius: var(--radius-l);
+    background: var(--raised);
+    color: var(--text);
+    font: inherit;
+    font-size: var(--fs-body);
+    text-align: start;
+    cursor: pointer;
+    &:hover {
+      border-color: var(--accent);
+    }
+    &[aria-current="true"] {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+      font-weight: var(--weight-semibold);
+    }
+  }
+  :where(.cap-player-said) {
+    min-block-size: 1lh;
+    margin: var(--space-3) 0 0;
+    color: var(--muted);
+    font-size: var(--fs-detail);
+  }
+
+  /* Hosts: a picture, the name and the role. */
+  :where(.cap-player-hosts) {
+    gap: var(--space-5);
+  }
+  :where(.cap-player-host) {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    padding: var(--space-5);
+    border: var(--line-w) solid var(--line);
+    border-radius: var(--radius-l);
+    background: var(--raised);
+  }
+  :where(.cap-player-host-text) {
+    display: grid;
+    min-inline-size: 0;
+  }
+  :where(.cap-player-host-name) {
+    color: var(--text);
+    font-family: var(--cap-player-face, var(--ui));
+    font-weight: var(--weight-medium);
+  }
+  :where(a.cap-player-host-name:hover) {
+    color: var(--accent-text);
+  }
+  :where(.cap-player-host .cap-player-meta) {
+    color: var(--muted);
+    letter-spacing: normal;
+    text-transform: none;
+  }
+
+  /* The waveform on a surface: the played part fills in the primary, its leading edge brightest,
+     the chapter playing tinted in the accent; the time under the pointer floats above. */
+  :where(.cap-player-wave) {
+    display: grid;
+    gap: var(--space-2);
+  }
+  :where(.cap-player-wave-box) {
+    position: relative;
+    block-size: 4rem;
+    border-radius: var(--radius-l);
+    cursor: pointer;
+  }
+  :where(.cap-player-wave-bars) {
+    display: block;
+    inline-size: 100%;
+    block-size: 100%;
+    border-radius: var(--radius-l);
+  }
+  :where(.cap-player-wave-bar) {
+    fill: color-mix(in oklab, var(--muted) 30%, transparent);
+    &[data-state="played"] {
+      fill: color-mix(in oklab, var(--primary) 70%, transparent);
+    }
+    &[data-state="region"] {
+      fill: color-mix(in oklab, var(--accent) 80%, transparent);
+    }
+    &[data-state="leading"] {
+      fill: var(--primary);
+    }
+  }
+  :where(.cap-player-wave-region) {
+    fill: color-mix(in oklab, var(--accent) 12%, transparent);
+  }
+  :where(.cap-player-wave-tip) {
+    position: absolute;
+    inset-block-end: calc(100% + var(--space-2));
+    inset-inline-start: var(--cap-player-at, 0%);
+    z-index: 1;
+    padding: var(--space-1) var(--space-3);
+    border-radius: var(--radius-s);
+    background: var(--text);
+    color: var(--ground);
+    font-size: var(--fs-label);
+    white-space: nowrap;
+    translate: -50% 0;
+    pointer-events: none;
+  }
+  :where(.cap-player-wave-note) {
+    margin: 0;
+    color: var(--muted);
+    font-size: var(--fs-label);
+    letter-spacing: var(--tracking-widest);
+    text-transform: uppercase;
+  }
+  /* The editor's still waveform, bars from the bottom, chapters marked. */
+  :where(.cap-player-wave-preview) {
+    display: block;
+    box-sizing: border-box;
+    inline-size: 100%;
+    block-size: 3.5rem;
+    padding-inline: var(--space-2);
+    border: var(--line-w) solid var(--line);
+    border-radius: var(--radius-l);
+    background: var(--surface);
+    & .cap-player-wave-bar {
+      fill: color-mix(in oklab, var(--primary) 55%, transparent);
+    }
+  }
+  :where(.cap-player-wave-marker) {
+    stroke: var(--accent);
+    stroke-width: 1px;
+    vector-effect: non-scaling-stroke;
+  }
+  :where(.cap-player-wave-empty) {
+    display: grid;
+    place-items: center;
+    block-size: 3.5rem;
+    border: var(--line-w) dashed var(--line-strong);
+    border-radius: var(--radius-l);
+    background: var(--surface);
+    color: var(--muted);
+    font-size: var(--fs-detail);
+  }
+}
