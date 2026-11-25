@@ -71,14 +71,14 @@ export function renderStates({ template, title, examples, hasTsx, css = "" }) {
 }
 
 // Markup an examples.html repeats is written once: <!-- def:name -->...<!-- /def --> is removed from the
-// page, and <!-- use:name key=value ... --> pastes it, each ${key} in it replaced (an unset one is empty).
+// page, and <!-- use:name key=value key="a value" ... --> pastes it, each ${key} in it replaced (an unset one is empty).
 export function expandUses(html) {
   const defs = {};
   const rest = html.replace(
     /<!-- def:([\w-]+) -->([\s\S]*?)<!-- \/def -->\n?/g,
     (_, k, body) => ((defs[k] = body), ""),
   );
-  const use = /<!-- use:([\w-]+)((?: [\w-]+=\S+)*) -->/g;
+  const use = /<!-- use:([\w-]+)((?: [\w-]+=(?:"[^"]*"|\S+))*) -->/g;
   let out = rest;
   // A def may use another, so paste until none is left.
   for (let passes = 0; use.test(out); passes++) {
@@ -87,7 +87,7 @@ export function expandUses(html) {
     out = out.replace(use, (_, k, args) => {
       if (!(k in defs)) throw new Error(`examples.html has no <!-- def:${k} -->`);
       const vals = Object.fromEntries(
-        [...args.matchAll(/([\w-]+)=(\S+)/g)].map((m) => [m[1], m[2]]),
+        [...args.matchAll(/([\w-]+)=(?:"([^"]*)"|(\S+))/g)].map((m) => [m[1], m[2] ?? m[3]]),
       );
       return defs[k].replace(/\$\{([\w-]+)\}/g, (_, v) => vals[v] ?? "");
     });

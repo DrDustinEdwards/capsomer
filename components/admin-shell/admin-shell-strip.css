@@ -1,0 +1,204 @@
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+/* The admin shell's root, header and app strip, imported first by admin-shell.css so its rules stay first. */
+
+@layer cap.components {
+  .cap-admin {
+    --admin-strip: var(--rail-w-collapsed);
+    /* Open, the menu is as much wider than the shared rail as the collapsed column is wider than
+       the strip (232px), so the row inset that keeps icons in place leaves its labels room. */
+    --admin-menu-open: calc(var(--rail-w) + var(--space-6));
+    --admin-top: var(--header-h);
+    --admin-menu: var(--admin-menu-open);
+    --admin-tile: 36px;
+    --admin-pill: var(--accent-12);
+    --admin-pill-fg: var(--ground);
+    /* The strip is a shade apart from the menu in both themes (darker in light, lighter in dark),
+       so the two rails never read as one, collapsed or not. */
+    --admin-strip-bg: color-mix(in srgb, var(--ground), var(--text) 7%);
+    /* Collapsed, the menu is an icon column wider than the strip: room beside each icon for its
+       count, up to "99+", without crossing into the content (80px). */
+    --admin-menu-collapsed: calc(var(--rail-w-collapsed) + var(--space-6));
+    /* One inset for a menu row in both states: the 16px icon sits at the same x open and
+       collapsed, centered in the collapsed column ((80 - 2 * 8 - 16) / 2 = 24). */
+    --admin-row-pad: calc((var(--admin-menu-collapsed) - 2 * var(--space-3) - var(--space-5)) / 2);
+    /* Hover: a fill a clear step off the ground in both themes, and an edge at 3:1. */
+    --admin-hover: color-mix(in srgb, var(--ground), var(--text) 10%);
+    --admin-hover-edge: var(--line-strong);
+    display: grid;
+    grid-template-columns: var(--admin-strip) var(--admin-menu) minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    min-height: 100dvh;
+    background: var(--ground);
+    color: var(--text);
+
+    &[data-menu="collapsed"] {
+      --admin-menu: var(--admin-menu-collapsed);
+    }
+    /* A user's dashboard: no strip, and a menu as wide open as the strip and menu together
+       (288px), so the page starts at the same x as in your admin. Collapsed it is the same icon
+       column. */
+    &[data-variant="user"] {
+      --admin-strip: 0px;
+      --admin-menu-open: calc(var(--rail-w) + var(--space-6) + var(--rail-w-collapsed));
+    }
+  }
+
+  .cap-admin > .cap-site-header {
+    grid-column: 1 / -1;
+    grid-row: 1;
+  }
+  /* Under the letterhead the strip and menu start below its stripe and both rows. */
+  .cap-admin:has(> .cap-site-header[data-variant="letterhead"]) {
+    --admin-top: calc(var(--space-3) + 4rem);
+  }
+  .cap-admin:has(> .cap-site-header[data-variant="letterhead"] > .cap-site-header-trail) {
+    --admin-top: calc(var(--space-3) + 4rem + 3rem);
+
+    @media (min-width: 768px) {
+      --admin-top: calc(var(--space-5) + var(--space-3) + 4rem + 3rem);
+    }
+    /* From 1080px the trail shares the band's one row (site-header.css). */
+    @media (min-width: 1080px) {
+      --admin-top: calc(var(--space-5) + var(--space-3) + 4rem);
+    }
+  }
+  .cap-admin-strip {
+    grid-column: 1;
+    grid-row: 2;
+  }
+  .cap-admin-menu {
+    grid-column: 2;
+    grid-row: 2;
+  }
+  .cap-admin-main {
+    grid-column: 3;
+    grid-row: 2;
+  }
+  .cap-admin > .cap-site-tabs {
+    grid-column: 1 / -1;
+    grid-row: 3;
+  }
+
+  /* The strip: the family's apps and their badges, nothing else (its search and inbox are the
+     header's, its help is in the account menu). Fixed height under the header and sticky, so it
+     never moves while the page scrolls. It stacks above the menu, and the menu above the page, so
+     a name shown beside a tile is painted over every panel to its right. */
+  .cap-admin-strip {
+    position: sticky;
+    top: var(--admin-top);
+    align-self: start;
+    z-index: calc(var(--z-sticky) + 2);
+    height: calc(100dvh - var(--admin-top));
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-4);
+    padding: var(--space-4) 0;
+    background: var(--admin-strip-bg);
+    border-inline-end: var(--line-w) solid var(--line);
+  }
+  .cap-admin-strip-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-3);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .cap-admin-strip-group > li {
+    display: flex;
+  }
+
+  /* One icon-button size for the strip: the collapse control, the tools, the app tiles. */
+  .cap-admin-btn,
+  .cap-admin-tile {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: var(--admin-tile);
+    height: var(--admin-tile);
+    padding: 0;
+    border: 0;
+    border-radius: var(--radius-l);
+    background: none;
+    color: var(--muted);
+    font: inherit;
+    text-decoration: none;
+    cursor: pointer;
+    outline-offset: var(--focus-offset);
+
+    &:hover,
+    &[data-force="hover"] {
+      background: var(--admin-hover);
+      box-shadow: inset 0 0 0 var(--line-w) var(--admin-hover-edge);
+      color: var(--text);
+    }
+    &:active,
+    &[data-force="pressed"] {
+      background: var(--admin-hover);
+    }
+  }
+  .cap-admin-icon {
+    width: 18px;
+    height: 18px;
+    flex: none;
+    fill: none;
+    stroke: currentColor;
+    /* Set on the icon itself, so a site's --icon-stroke and icons.css (which settings-row imports
+       after this file) both draw the admin icons at 1.6. */
+    --icon-stroke: 1.6;
+    stroke-width: var(--icon-stroke);
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  /* An app: a neutral tile holding the product's mark. The current app is the dark filled one. */
+  .cap-admin-tile {
+    background: var(--surface);
+    border: var(--line-w) solid var(--line);
+    color: var(--accent-text);
+    font-weight: var(--weight-bold);
+    font-size: var(--fs-body);
+
+    &[data-mono] {
+      color: var(--text);
+    }
+    &[aria-current="true"] {
+      background: var(--admin-pill);
+      border-color: var(--admin-pill);
+      color: var(--admin-pill-fg);
+    }
+    & :is(.cap-admin-icon, .cap-admin-logo) {
+      width: 20px;
+      height: 20px;
+    }
+  }
+  .cap-admin-logo {
+    flex: none;
+  }
+
+  /* Every count and badge is a Capsomer count (count.css), open and collapsed, in the strip, the
+     menu and the sheet: one size, one shape, one type, and the same number everywhere (99+ past
+     99). A plain count is a neutral gray bubble; violet needs you; red and amber are status colors
+     and keep their meaning. A badge sits on another app's tile or on Inbox, never on the app you
+     are in. On an icon every bubble is in one place relative to its glyph: its left edge 2px past
+     the glyph's right edge, its middle on the glyph's top edge, so it never covers the glyph.
+     Each host says where its glyph is (--_gx, its left; --_gw, its size). */
+  .cap-admin-badge,
+  .cap-admin-count {
+    --_bubble: var(--space-5);
+  }
+  .cap-admin-badge {
+    --_gx: calc(50% - 10px);
+    --_gw: 20px;
+    position: absolute;
+    top: calc(50% - var(--_gw) / 2 - var(--_bubble) / 2);
+    inset-inline-start: calc(var(--_gx) + var(--_gw) + var(--space-1));
+    box-shadow: 0 0 0 var(--line-w-thick) var(--admin-strip-bg);
+  }
+  .cap-admin-btn > .cap-admin-badge {
+    --_gx: calc(50% - 9px);
+    --_gw: 18px;
+  }
+}

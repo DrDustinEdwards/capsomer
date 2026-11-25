@@ -1,6 +1,6 @@
 {
   "baseline": {
-    "measured_at": "9b08a2c6",
+    "measured_at": "a2e520b0",
     "knip": {},
     "jscpd": {
       "clones": 36,
@@ -15,9 +15,6 @@
     "legacy": {},
     "size": {
       "bin/capsomer.mjs": 789,
-      "components/admin-shell/admin-shell.css": 593,
-      "components/admin-shell/admin-shell.react.tsx": 691,
-      "components/admin-shell/admin-shell.spec.ts": 1133,
       "components/catalog/catalog-core.ts": 811,
       "components/checklist-run/checklist-run.ts": 718,
       "components/combobox/combobox.react.tsx": 767,
@@ -29,7 +26,6 @@
       "components/field/field.ts": 562,
       "components/flag-list/flag-list.react.tsx": 571,
       "components/flag-list/flag-list.ts": 621,
-      "components/history-list/history-list.react.tsx": 543,
       "components/listbox/listbox.ts": 648,
       "components/markdown-editor/markdown-editor.spec.ts": 1225,
       "components/markdown-editor/markdown-editor.ts": 1024,
@@ -42,13 +38,9 @@
       "components/media/media.spec.ts": 1211,
       "components/media/media.ts": 1005,
       "components/moderation-queue/moderation-queue.ts": 537,
-      "components/people-roles/people-roles.react.tsx": 807,
-      "components/posts-list/examples.tsx": 730,
-      "components/posts-list/posts-list.react.tsx": 1119,
       "components/publish-gate/publish-gate.ts": 555,
       "components/rich-editor/rich-editor-markdown.mjs": 627,
       "components/rich-editor/rich-editor.react.tsx": 934,
-      "components/shell/shell.css": 543,
       "components/site-header/examples.tsx": 868,
       "components/site-header/site-header-parts.react.tsx": 502,
       "components/site-header/site-header.react.tsx": 692,
@@ -62,13 +54,13 @@
       "tokens/sites.mjs": 534
     },
     "tests": {
-      "files": 255,
+      "files": 257,
       "cases": 1669
     },
     "comments": {
-      "lines": 9642,
-      "code": 152285,
-      "percentage": 5.95
+      "lines": 9801,
+      "code": 152482,
+      "percentage": 6.04
     }
   }
 }

@@ -1,0 +1,197 @@
+// The specimens' sample posts and the list data built from them (examples.tsx mounts them).
+import type { ContentCan, PostOffers, PostRow, PostsData } from "../content/content.ts";
+
+export const NOW = Date.parse("2026-10-10T12:00:00Z");
+export const ALL: ContentCan = {
+  edit: true,
+  publish: true,
+  deleteContent: true,
+  deleteMedia: true,
+  decideMentions: true,
+};
+
+export const ROWS: PostRow[] = [
+  {
+    id: "spring-release",
+    title: "Notes on the spring release",
+    kind: "post",
+    status: "published",
+    path: "/blog/spring-release",
+    href: "/editor/spring-release",
+    liveHref: "https://example.com/blog/spring-release",
+    publishAt: null,
+    publishedAt: "2026-10-02T09:00:00Z",
+    updatedAt: "2026-10-09T16:20:00Z",
+    tags: ["release"],
+  },
+  {
+    id: "uptime-strip",
+    title: "Why the uptime strip counts gaps",
+    kind: "post",
+    status: "scheduled",
+    path: null,
+    href: "/editor/uptime-strip",
+    liveHref: null,
+    publishAt: "2026-10-13T08:00:00Z",
+    publishedAt: null,
+    updatedAt: "2026-10-10T08:05:00Z",
+    tags: ["capsid"],
+  },
+  {
+    id: "mention-queue",
+    title: "What a mention queue is for",
+    kind: "post",
+    status: "draft",
+    path: null,
+    href: "/editor/mention-queue",
+    liveHref: null,
+    publishAt: null,
+    publishedAt: null,
+    updatedAt: "2026-10-08T21:40:00Z",
+    notes: [{ text: "2 AI drafts waiting", tone: "info" }],
+    tags: [],
+  },
+  {
+    id: "read-only-agent",
+    title: "Notes on a read-only agent",
+    kind: "post",
+    status: "published",
+    path: "/blog/read-only-agent",
+    href: "/editor/read-only-agent",
+    liveHref: "https://example.com/blog/read-only-agent",
+    publishAt: null,
+    publishedAt: "2026-09-21T10:00:00Z",
+    updatedAt: "2026-09-22T08:00:00Z",
+    scheduledUpdate: { publishAt: "2026-10-12T15:00:00Z", href: "/posts/read-only-agent/update" },
+    tags: ["agents", "capsid"],
+  },
+  {
+    id: "spring-survey",
+    title: "Field notes: the spring survey",
+    kind: "post",
+    status: "draft",
+    path: null,
+    href: "/editor/spring-survey",
+    liveHref: null,
+    publishAt: null,
+    publishedAt: null,
+    updatedAt: "2026-10-01T12:00:00Z",
+    notes: [{ text: "New draft" }, { text: "Held by a flag", tone: "warn" }],
+  },
+  {
+    id: "about",
+    title: "About",
+    kind: "page",
+    status: "published",
+    path: "/about",
+    href: "/editor/about",
+    liveHref: "https://example.com/about",
+    publishAt: null,
+    publishedAt: "2026-06-01T09:00:00Z",
+    updatedAt: "2026-09-02T11:00:00Z",
+    tags: [],
+  },
+];
+
+// A site with site-api v0.17.0's ideas: a Trash, rename, preview links, the author and date
+// filters, and rows that carry their authors and excerpt.
+export const IDEAS: PostOffers = {
+  delete: true,
+  schedule: true,
+  tags: true,
+  duplicate: true,
+  trash: true,
+  rename: true,
+  previewLinks: true,
+  filters: ["kind", "tag", "author", "published", "trashed"],
+  authors: ["Alex Rivera", "Sam Lee"],
+};
+const CREDITS: Record<string, Pick<PostRow, "authors" | "excerpt">> = {
+  "spring-release": {
+    authors: ["Alex Rivera"],
+    excerpt:
+      "What shipped in the spring release, what was cut, and the one migration that needs a hand.",
+  },
+  "uptime-strip": {
+    authors: ["Alex Rivera", "Sam Lee"],
+    excerpt:
+      "A gap is not a zero: the strip draws a missing check as its own state, with the reason.",
+  },
+  "mention-queue": { authors: ["Sam Lee"] },
+  "read-only-agent": {
+    authors: ["Alex Rivera"],
+    excerpt:
+      "An agent that reads the knowledge base and the repositories and writes nothing but its own notes is safe to leave running overnight, which is most of what makes it useful.",
+  },
+};
+export const IDEA_ROWS: PostRow[] = [
+  ...ROWS.slice(0, 4).map((r) => ({
+    ...r,
+    ...CREDITS[r.id],
+    scheduledUpdate: undefined,
+    trashedAt: null,
+  })),
+  {
+    id: "old-survey-notes",
+    title: "Old notes on the survey",
+    kind: "post",
+    status: "draft",
+    path: null,
+    href: "/editor/old-survey-notes",
+    liveHref: null,
+    publishAt: null,
+    publishedAt: null,
+    updatedAt: "2026-08-14T10:00:00Z",
+    authors: ["Alex Rivera"],
+    trashedAt: "2026-10-08T09:00:00Z",
+  },
+  {
+    id: "docs-launch",
+    title: "The docs site is open",
+    kind: "post",
+    status: "draft",
+    path: "/blog/docs-launch",
+    href: "/editor/docs-launch",
+    liveHref: null,
+    publishAt: null,
+    publishedAt: "2026-05-02T09:00:00Z",
+    updatedAt: "2026-09-30T15:00:00Z",
+    authors: ["Sam Lee", "Alex Rivera"],
+    excerpt: "The new home for every guide we write, and what it will never do to your prose.",
+    trashedAt: "2026-09-20T12:00:00Z",
+  },
+];
+
+const WORDS: Record<string, string> = {
+  "spring-release": "1,240",
+  "uptime-strip": "860",
+  "mention-queue": "1,530",
+  "read-only-agent": "2,110",
+  "spring-survey": "3,020",
+  about: "410",
+};
+
+export function dataOf(rows: PostRow[], over: Partial<PostsData> = {}): PostsData {
+  const count = (s: PostRow["status"]) => rows.filter((r) => r.status === s).length;
+  return {
+    site: { name: "example.com" },
+    query: {},
+    rows,
+    page: { nextCursor: null },
+    counts: {
+      all: rows.length,
+      draft: count("draft"),
+      scheduled: count("scheduled"),
+      published: count("published"),
+    },
+    kinds: ["post", "page"],
+    offers: { delete: true, schedule: true, tags: true, duplicate: true },
+    can: ALL,
+    newHref: "/editor/new",
+    extra: {
+      columns: [{ id: "words", label: "Words", cells: WORDS }],
+      toolbar: [{ intent: "ask-reindex", label: "Rebuild the Ask index" }],
+    },
+    ...over,
+  };
+}

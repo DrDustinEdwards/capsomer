@@ -1,10 +1,4 @@
-import { useEffect, useId, useRef, useState, type FormEvent, type ReactNode } from "react";
-import { Button } from "../button/button.react.tsx";
-import { useOptionalMessage } from "../message/message.react.tsx";
-import { Select } from "../select/select.react.tsx";
-import { Pill } from "../status/status.react.tsx";
-import { Table } from "../table/table.react.tsx";
-import { Time } from "../time/time.react.tsx";
+import { useEffect, useId, useRef, useState, type FormEvent } from "react";
 import { enhance as enhanceFields } from "../field/field.ts";
 import { FormMenu } from "../menu/menu.react.tsx";
 import { Glyph, type Tone } from "../status/status.react.tsx";
@@ -15,15 +9,11 @@ import {
   cloudflareText,
   confirmRemove,
   dayText,
-  endHelp,
   endsSoon,
   rowActions,
   syncText,
   tallyText,
   timeText,
-  personName,
-  roleFailedText,
-  roleSavedText,
   type HistoryEntry,
   type PersonRow,
   type RoleGridPerson,
@@ -31,22 +21,30 @@ import {
   type RoleScope,
   type TitleOption,
 } from "./people-roles.ts";
-import { useCleanId, useHydrated } from "../hooks/hooks.react.tsx";
+import { useCleanId } from "../hooks/hooks.react.tsx";
+import { AddForm, Hidden } from "./people-add.react.tsx";
 
 export type { HistoryEntry, PersonRow, RoleGridPerson, RoleOption, RoleScope, TitleOption };
+export { RoleGrid, type RoleGridProps } from "./role-grid.react.tsx";
 
 export interface PeopleData {
+  // The app's name as the heading reads it: "Lab members".
   heading: string;
+  // One line under the heading: "You manage Lab workers."
   lead?: string;
   people: PersonRow[];
+  // The titles the viewer may give, below their own layer and within their permissions.
   titles: TitleOption[];
   // People whose review is open, with the date their access ends. Empty or absent: no review.
   review?: {
     endDate: string;
     people: Array<Pick<PersonRow, "email" | "name" | "title" | "renewTo">>;
   };
+  // One person's history, when the address asks for it (`?person=`).
   history?: { email: string; name: string; entries: HistoryEntry[] };
+  // The person whose title is being changed (`?change=`).
   changing?: string;
+  // The answer to the last post.
   result?: { ok: boolean; text: string };
 }
 
@@ -54,11 +52,15 @@ export interface PeopleRolesProps {
   data: PeopleData;
   // Where every form posts. Each carries `intent`: add, change_title, renew, remove, retry, review.
   action: string;
+  // Today, for "ends in 5 days". Defaults to now.
   now?: number;
+  // Builds the address that opens a person's history or change-title row. Defaults to `?person=` and `?change=`.
   hrefFor?: (kind: "person" | "change", email: string) => string;
+  // Where Close goes, from a history or a change-title row. Defaults to "?".
   closeHref?: string;
   // Runs a post in place instead of a page load. The page shows `data.result` when it comes back.
   onIntent?: (intent: string, fields: FormData) => void | Promise<void>;
+  // The `h` level of the heading. The cards and the history use the next one down.
   headingLevel?: 2 | 3;
 }
 
@@ -73,16 +75,6 @@ function defaultHref(kind: "person" | "change", email: string): string {
   return `?${kind}=${encodeURIComponent(email)}`;
 }
 
-function Hidden({ fields }: { fields: Record<string, string> }) {
-  return (
-    <>
-      {Object.entries(fields).map(([k, v]) => (
-        <input key={k} type="hidden" name={k} value={v} />
-      ))}
-    </>
-  );
-}
-
 export function PeopleRoles({
   data,
   action,
@@ -92,6 +84,7 @@ export function PeopleRoles({
   onIntent,
   headingLevel = 2,
 }: PeopleRolesProps) {
+  // The time the page was drawn, when the page does not pass one.
   const [drawnAt] = useState(() => Date.now());
   const now = nowProp ?? drawnAt;
   const id = useCleanId();
@@ -99,12 +92,14 @@ export function PeopleRoles({
   const Sub = `h${headingLevel + 1}` as "h3" | "h4";
   const live = data.people.filter((p) => p.status === "active").length;
   const root = useRef<HTMLElement>(null);
+  // The add and change-title forms check their fields beside each field.
   useEffect(
     () => (root.current ? enhanceFields(root.current) : undefined),
     [data.changing, data.titles.length],
   );
 
-  // Every form posts through here: Remove asks first, and with `onIntent` the app runs the post in place.
+  // Every form in the page posts through here: Remove asks first, and with `onIntent` the
+  // app runs the post in place instead of the browser loading a page.
   const onSubmitCapture = (e: FormEvent<HTMLElement>) => {
     const form = e.target as HTMLFormElement;
     const submitter = (e.nativeEvent as SubmitEvent).submitter as HTMLButtonElement | null;
@@ -476,332 +471,5 @@ function History({
         <p className="cap-people-lead">No changes recorded yet.</p>
       )}
     </section>
-  );
-}
-
-function AddForm({
-  id,
-  Sub,
-  titles,
-  action,
-}: {
-  id: string;
-  Sub: "h3" | "h4";
-  titles: TitleOption[];
-  action: string;
-}) {
-  const [title, setTitle] = useState(titles[0]?.value ?? "");
-  const chosen = titles.find((t) => t.value === title) ?? titles[0];
-  const [end, setEnd] = useState(chosen?.defaultEnd ?? "");
-  useEffect(() => {
-    if (!chosen?.defaultEnd) return;
-    // oxlint-disable-next-line react/set-state-in-effect -- a new title clamps the end date someone typed to its default
-    setEnd((v) => (!v || v > (chosen.defaultEnd as string) ? (chosen.defaultEnd as string) : v));
-  }, [chosen?.defaultEnd]);
-  const expires = !!chosen?.defaultEnd;
-  return (
-    <form
-      className="cap-people-card cap-people-add"
-      data-cap="field"
-      method="post"
-      action={action}
-      aria-labelledby={`${id}-add`}
-    >
-      <Hidden fields={{ intent: "add" }} />
-      <Sub id={`${id}-add`}>Add a person</Sub>
-      <div className="cap-fields cap-people-add-fields">
-        <Field id={`${id}-email`} label="Email">
-          <input
-            className="cap-input"
-            id={`${id}-email`}
-            name="email"
-            type="email"
-            required
-            autoComplete="off"
-            spellCheck={false}
-            aria-describedby={`${id}-email-e ${id}-email-h`}
-            data-error-value-missing="Type their email."
-            data-error-type-mismatch="Type a full email, such as name@example.edu."
-          />
-        </Field>
-        <Field id={`${id}-name`} label="Name">
-          <input
-            className="cap-input"
-            id={`${id}-name`}
-            name="name"
-            required
-            autoComplete="off"
-            aria-describedby={`${id}-name-e`}
-            data-error-value-missing="Type their name."
-          />
-        </Field>
-        <Field id={`${id}-title`} label="Title">
-          <div className="cap-select-wrap" data-cap="select" data-native="">
-            <select
-              className="cap-select"
-              id={`${id}-title`}
-              name="title"
-              required
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-            >
-              {titles.map((t) => (
-                <option key={t.value} value={t.value} data-end={t.defaultEnd ?? ""}>
-                  {t.label}
-                </option>
-              ))}
-            </select>
-          </div>
-        </Field>
-        <Field
-          id={`${id}-end`}
-          label="Access ends"
-          help={endHelp(chosen?.defaultEnd ?? null)}
-          helpPart="end-help"
-          hidden={!expires}
-        >
-          <input
-            className="cap-input"
-            id={`${id}-end`}
-            name="end_date"
-            type="date"
-            required={expires}
-            disabled={!expires}
-            max={chosen?.defaultEnd ?? undefined}
-            value={end}
-            onChange={(e) => setEnd(e.target.value)}
-            aria-describedby={`${id}-end-e ${id}-end-h`}
-            data-error-value-missing="Choose the date their access ends."
-            data-error-range-overflow="Choose a date no later than the end of the term."
-          />
-        </Field>
-      </div>
-      <div className="cap-people-add-foot">
-        <button type="submit" className="cap-btn" data-variant="primary">
-          Add person
-        </button>
-        <p className="cap-people-tally">
-          They can sign in once Cloudflare confirms, usually within a minute.
-        </p>
-      </div>
-    </form>
-  );
-}
-
-function Field({
-  id,
-  label,
-  help,
-  helpPart,
-  hidden,
-  children,
-}: {
-  id: string;
-  label: string;
-  help?: string;
-  helpPart?: string;
-  hidden?: boolean;
-  children: ReactNode;
-}) {
-  return (
-    <div className="cap-field" hidden={hidden}>
-      <label className="cap-field-label" htmlFor={id}>
-        {label}{" "}
-        <span className="cap-field-required" aria-hidden="true">
-          Required
-        </span>
-      </label>
-      {help ? (
-        <p className="cap-field-help" id={`${id}-h`} data-cap-part={helpPart}>
-          {help}
-        </p>
-      ) : null}
-      {children}
-      <p className="cap-field-error" id={`${id}-e`} hidden></p>
-    </div>
-  );
-}
-
-export interface RoleGridProps {
-  people: RoleGridPerson[];
-  scopes: RoleScope[];
-  caption: string;
-  personHeading?: string;
-  // The roles this person may have on this scope (a reviewer is offered no Editor). "" is no access, always first.
-  options: (person: RoleGridPerson, scope: RoleScope) => RoleOption[];
-  // With script a cell saves as it changes and the grid says "Saved: ..."; without it each row's
-  // Save posts every scope's role at once (intent "roles", person, and role-<scope id>).
-  onRoleChange?: (person: RoleGridPerson, scope: RoleScope, role: string) => void | Promise<void>;
-  // With script it is called and Disable offers Undo; without it the row's form posts intent "disable" or "enable".
-  onAccess?: (person: RoleGridPerson, intent: "disable" | "enable") => void | Promise<void>;
-  action?: string;
-  noAccess?: string;
-}
-
-function GridRow({
-  person,
-  scopes,
-  options,
-  onRoleChange,
-  onAccess,
-  action,
-  noAccess,
-  hydrated,
-}: Omit<RoleGridProps, "people" | "caption" | "personHeading"> & {
-  person: RoleGridPerson;
-  hydrated: boolean;
-  noAccess: string;
-}) {
-  const message = useOptionalMessage();
-  const formId = `cap-roles-${useId()}`;
-  const name = personName(person);
-  const disabled = Boolean(person.disabledAt);
-  // The role each select last saved, so a refused save puts the select back.
-  const saved = useRef<Record<string, string>>({});
-  const access = async (e: FormEvent<HTMLFormElement>) => {
-    if (!onAccess) return;
-    e.preventDefault();
-    const intent = disabled ? "enable" : "disable";
-    try {
-      await onAccess(person, intent);
-    } catch (error) {
-      message?.say(`${name} could not be ${intent === "disable" ? "disabled" : "enabled"}.`, {
-        failure: true,
-      });
-      reportError(error);
-      return;
-    }
-    if (intent === "disable")
-      message?.say(`${name} is disabled. They are refused on their next request.`, {
-        undo: () => onAccess(person, "enable"),
-        undone: `${name} is enabled again.`,
-      });
-    else message?.say(`${name} is enabled again.`);
-  };
-  return (
-    <tr>
-      <th scope="row">
-        <span className="cap-role-person">{name}</span>
-        {person.name ? <span className="cap-role-email">{person.email}</span> : null}
-        <span className="cap-role-pills">
-          {(person.badges ?? []).map((b) => (
-            <Pill key={b} variant="outline">
-              {b}
-            </Pill>
-          ))}
-          {person.disabledAt ? (
-            <Pill variant="secondary">
-              Disabled <Time at={person.disabledAt} format="date" />
-            </Pill>
-          ) : null}
-        </span>
-        {person.everyScope ? null : (
-          <span className="cap-role-actions">
-            {hydrated && onRoleChange ? null : (
-              <Button type="submit" form={formId} size="sm">
-                Save<span className="cap-sr-only"> roles for {name}</span>
-              </Button>
-            )}
-            <form method="post" action={action} onSubmit={(e) => void access(e)}>
-              <input type="hidden" name="person" value={person.id} />
-              <Button type="submit" name="intent" value={disabled ? "enable" : "disable"} size="sm">
-                {disabled ? "Enable" : "Disable"}
-                <span className="cap-sr-only"> {name}</span>
-              </Button>
-            </form>
-          </span>
-        )}
-        {person.everyScope ? null : (
-          <form id={formId} method="post" action={action} hidden>
-            <input type="hidden" name="intent" value="roles" />
-            <input type="hidden" name="person" value={person.id} />
-          </form>
-        )}
-      </th>
-      {person.everyScope ? (
-        <td colSpan={scopes.length} className="cap-muted">
-          {person.everyScope}
-        </td>
-      ) : (
-        scopes.map((scope) => {
-          const choices = [{ value: "", label: noAccess }, ...options(person, scope)];
-          return (
-            <td key={scope.id}>
-              <Select
-                form={formId}
-                name={`role-${scope.id}`}
-                size="sm"
-                aria-label={`${name} on ${scope.name}`}
-                defaultValue={person.roles[scope.id] ?? ""}
-                onChange={(event) => {
-                  // Without a handler the row's Save posts the change; nothing is saved yet.
-                  if (!onRoleChange) return;
-                  const select = event.currentTarget;
-                  const value = select.value;
-                  const before = saved.current[scope.id] ?? person.roles[scope.id] ?? "";
-                  const label = choices.find((c) => c.value === value)?.label ?? value;
-                  Promise.resolve(onRoleChange(person, scope, value)).then(
-                    () => {
-                      saved.current[scope.id] = value;
-                      message?.say(roleSavedText(name, scope.name, label));
-                    },
-                    (error: unknown) => {
-                      select.value = before;
-                      message?.say(roleFailedText(name, scope.name), { failure: true });
-                      reportError(error);
-                    },
-                  );
-                }}
-                options={choices}
-              />
-            </td>
-          );
-        })
-      )}
-    </tr>
-  );
-}
-
-// People as rows, scopes as columns, a role select in each cell that saves on change. The person
-// stays in view while the scopes scroll sideways.
-export function RoleGrid({
-  people,
-  scopes,
-  caption,
-  personHeading = "Person",
-  noAccess = "No access",
-  ...rest
-}: RoleGridProps) {
-  const hydrated = useHydrated();
-  return (
-    <Table
-      caption={caption}
-      captionHidden
-      className="cap-role-grid-wrap"
-      tableClassName="cap-role-grid"
-    >
-      <thead>
-        <tr>
-          <th scope="col">{personHeading}</th>
-          {scopes.map((s) => (
-            <th scope="col" key={s.id}>
-              {s.name}
-            </th>
-          ))}
-        </tr>
-      </thead>
-      <tbody>
-        {people.map((p) => (
-          <GridRow
-            key={p.id}
-            person={p}
-            scopes={scopes}
-            hydrated={hydrated}
-            noAccess={noAccess}
-            {...rest}
-          />
-        ))}
-      </tbody>
-    </Table>
   );
 }
