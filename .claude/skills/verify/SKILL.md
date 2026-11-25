@@ -5,15 +5,12 @@ description: Use before committing or opening a pull request that changes a Caps
 
 # Verify a Capsomer change
 
-Tests prove what someone thought to test. This skill proves the change itself: open the
-component's states page, use it as a person would, and look at the result. Do it before
-every commit that touches `components/`, `css/`, `tokens/` or `site/`, and before the
-pull request.
+Do it before every commit that touches `components/`, `css/`, `tokens/` or `site/`,
+and before the pull request.
 
 ## 1. Build and serve what the browser tests use
 
-From the repo root, on the repo's Node (`engines` is 24.14.1 or later; a cloud session
-puts a newer one on PATH, check `node -v`):
+From the repo root, on the repo's Node (`engines` is 24.14.1 or later; check `node -v`):
 
 ```sh
 npm ci
@@ -21,36 +18,23 @@ npm run site
 npx vite preview --config site/vite.config.ts --port 4319 --strictPort   # run in the background
 ```
 
-`npm run site` writes every component's `states.html` (from its `examples.html`; never
-edit or commit those), then builds the showcase into `site-dist/`. `vite preview` serves
-`site-dist/` at `http://localhost:4319/`, the port and server `playwright.config.ts`
-uses. Rebuild with `npm run site` after every change to a component's CSS, TS or
-`examples.html`; the preview serves the last build, not your edits. Wait until
-`curl -s -o /dev/null -w '%{http_code}' http://localhost:4319/` prints 200.
+`npm run site` writes every component's `states.html` (from its `examples.html`) and
+builds the showcase into `site-dist/`; `vite preview` serves it at
+`http://localhost:4319/`. Rebuild with `npm run site` after every change to a
+component's CSS, TS or `examples.html`; the preview serves the last build. Wait until
+`curl -s -o /dev/null -w '%{http_code}' http://localhost:4319/` prints 200. If 4319 is
+busy, use another port and check `/build.json` exists.
 
-Where things are served:
-
-- Component states page: `/components/<name>/states.html?theme=light` (or `dark`). This
-  is what every spec drives. `?theme=dark` sets the theme before paint.
-- A page-level specimen alone (a `<template data-specimen="id">` in `examples.html`):
-  add `&only=<id>`, e.g. `/components/dialog/states.html?theme=light&only=live`.
-- The showcase pages: `/components/<name>/` (doc page), `/primitives/<name>/`, `/`.
-- `node bin/capsomer.mjs states` only regenerates the states pages. Run it alone for a
-  quick look at `examples.html` edits through `npx vite` (port 5173), but that dev server
-  is for quick looks only; the proof is the built site.
-
-If port 4319 is taken (another session, another repo), do not trust it: pick another
-port for `--port` and for the URL you drive, and check the page you got is Capsomer's
-(`<h1>` is the component's `title`, and `/build.json` exists).
+A component's states page is `/components/<name>/states.html?theme=light` (or `dark`);
+add `&only=<id>` for one `<template data-specimen="id">` specimen. This is what every
+spec drives.
 
 ## 2. Drive the changed component
 
 Write a short script in the session's scratchpad, never in the repo. Name each step the
 way a person would say it, act through roles and labels, and assert what the person
-should see afterward. Collect console errors and page errors, and keep a screenshot of
-the end state. The example opens and closes a dialog with the keyboard; replace the
-middle with the changed component's flow (the doc page's keyboard table in
-`components/<name>/<name>.md` lists the keys to try).
+should see afterward. The doc page's keyboard table in `components/<name>/<name>.md`
+lists the keys to try.
 
 ```js
 // <scratchpad>/drive.mjs: REPO=<repo> node drive.mjs "http://localhost:4319/components/dialog/states.html?theme=light&only=live"
@@ -60,53 +44,24 @@ const browser = await chromium.launch(
   process.env.PW_CHROMIUM ? { executablePath: process.env.PW_CHROMIUM } : {},
 );
 const page = await browser.newPage();
-const errors = [];
-page.on("console", (m) => m.type() === "error" && errors.push(m.text()));
-page.on("pageerror", (e) => errors.push(String(e)));
-const log = [];
-async function step(name, fn) {
-  try {
-    await fn();
-    log.push(`ok   ${name}`);
-  } catch (e) {
-    log.push(`FAIL ${name}: ${e.message.split("\n")[0]}`);
-    await page.screenshot({ path: "fail.png", fullPage: true });
-    throw e;
-  }
-}
+// errors, log and step(): the helpers in devkit docs/verify.md
 const expectVisible = async (loc, want) => {
   await loc.waitFor({ state: want ? "visible" : "hidden", timeout: 3000 });
 };
 try {
-  await step("open the Sites specimen", async () => {
+  await step("open the specimen", async () => {
     const r = await page.goto(process.argv[2]);
     if (!r.ok()) throw new Error(`status ${r.status()}`);
-    await page.getByRole("heading", { level: 1, name: "Sites" }).waitFor();
   });
-  const rename = page.getByRole("button", { name: "Rename…" });
   const dialog = page.getByRole("dialog", { name: "Rename the site" });
   await step("Enter on Rename opens the dialog", async () => {
-    await rename.focus();
+    await page.getByRole("button", { name: "Rename…" }).focus();
     await page.keyboard.press("Enter");
-    await expectVisible(dialog, true);
+    await dialog.waitFor({ state: "visible", timeout: 3000 });
   });
-  await step("focus moves inside the dialog", async () => {
-    const inside = await dialog.evaluate((d) => d.contains(document.activeElement));
-    if (!inside) throw new Error("focus stayed outside");
-  });
-  await step("Escape closes it and hands focus back", async () => {
+  await step("Escape closes it", async () => {
     await page.keyboard.press("Escape");
-    await expectVisible(dialog, false);
-    if (!(await rename.evaluate((b) => b === document.activeElement)))
-      throw new Error("focus did not return to Rename…");
-  });
-  await step("at 390 px wide in dark mode it still opens", async () => {
-    await page.setViewportSize({ width: 390, height: 800 });
-    await page.emulateMedia({ colorScheme: "dark", reducedMotion: "reduce" });
-    await page.getByRole("button", { name: "Rename…" }).click();
-    await expectVisible(dialog, true);
-    const box = await dialog.boundingBox();
-    if (!box || box.x < 0 || box.x + box.width > 390) throw new Error("dialog overflows 390 px");
+    await dialog.waitFor({ state: "hidden", timeout: 3000 });
   });
   await page.screenshot({ path: "after.png", fullPage: true });
 } finally {
@@ -116,53 +71,33 @@ try {
 }
 ```
 
-```sh
-cd <scratchpad> && REPO=<repo> PW_CHROMIUM=/opt/pw-browsers/chromium node drive.mjs \
-  "http://localhost:4319/components/dialog/states.html?theme=light&only=live"
-```
+Run it from the scratchpad, so `fail.png` and `after.png` land there:
+`cd <scratchpad> && REPO=<repo> PW_CHROMIUM=/opt/pw-browsers/chromium node drive.mjs "<url>"`.
 
-Run it from the scratchpad, so `fail.png` and `after.png` land there and not in the repo.
-Drive the whole flow,
-not just the page load: every key in the keyboard table, a pointer click, the open and
-closed and error states the doc page lists, then the same at 390 px wide, with
-`page.emulateMedia({ colorScheme: "dark" })` (or `?theme=dark` in the URL), and with
-`reducedMotion: "reduce"` when the component animates (a transition must be gone, and the
-final state the same). A component that must work with scripts off: run it again with
+Drive the whole flow (every key in the keyboard table, a pointer click, the states the
+doc page lists); repeat the end state at 390 px and with
+`page.emulateMedia({ colorScheme: "dark" })`, and with `reducedMotion: "reduce"` when
+the component animates. A component that must work with scripts off: run it again with
 `browser.newContext({ javaScriptEnabled: false })`.
 
 A change to a token or a shared CSS file moves many components: drive the three or four
 that use it most, and look at the showcase home (`/`) in light and dark.
 
-In a cloud session the repo's Playwright build (1.63.0) may not match the Chromium the
-container ships, and launch fails with "Executable doesn't exist". Then set
-`PW_CHROMIUM=/opt/pw-browsers/chromium`, as above. Do not run `playwright install`.
-
 ## 3. Run the specs that cover the component
 
-The suite is about 1,700 tests. Never run it whole; CI does. Run only the spec of the
-component you changed, plus the specs of components that build on it (`dialog` is under
-the confirm dialog, detail panel, command menu, shortcuts, approval sheet and the shell
-More sheet; `listbox` under the command menu, select and combobox; `popover` under the
-tooltip, select, combobox and menu; `meter` under the usage meter and permission matrix;
-`components/README.md`, Shared building blocks).
-
-Each component's spec is `components/<name>/<name>.spec.ts`. `site/site.spec.ts` covers
-the showcase pages and `test/sweep.spec.ts` is the cross-component sweep (hundreds of
-tests: leave it to CI). Stop the step 1 server first, because the config starts its own
-on the same port, and it rebuilds the states pages but not `site-dist`, so run
-`npm run site` first.
-
-On a machine with Playwright's browsers installed:
+Never run the whole suite (about 1,700 tests); CI does. Run the spec of the component
+you changed, `components/<name>/<name>.spec.ts`, plus the specs of components built on
+it (`components/README.md`, Shared building blocks). `site/site.spec.ts` covers the
+showcase pages; `test/sweep.spec.ts` is CI's. Stop the step 1 server first, because the
+config starts its own on the same port, and run `npm run site` first.
 
 ```sh
 npx playwright test components/dialog/dialog.spec.ts
 npx playwright test components/dialog -g "keyboard"   # only the tests named keyboard:
 ```
 
-Test names start `keyboard:`, `accessibility:` or `behavior:`; the config skips the
-dark-theme behavior and keyboard tests. In a cloud session, run it through a wrapper
-config in the scratchpad that launches the container's Chromium and starts the web
-server from the repo:
+In a cloud session, run it through a wrapper config in the scratchpad that launches the
+container's Chromium and starts the web server from the repo:
 
 ```js
 // <scratchpad>/cloud.config.mjs
@@ -185,34 +120,15 @@ REPO=$PWD OUT=<scratchpad> PW_CHROMIUM=/opt/pw-browsers/chromium \
   npx playwright test -c <scratchpad>/cloud.config.mjs components/dialog/dialog.spec.ts
 ```
 
-Without the wrapper the config's JSON reporter writes `test-results/results.json` in the
-repo (gitignored); the wrapper keeps everything in the scratchpad. If the changed
-component has no spec yet, add one the way `components/README.md`, The spec, describes.
+If the changed component has no spec yet, add one the way `components/README.md`, The
+spec, describes. Also run `npm run check` before the commit.
 
-Also run `npm run check` (tokens, contrast report, unit tests, typecheck) before the
-commit; it is quick and CI runs it.
+## Rules and report
 
-## Rules
+Follow the Rules and the report in [devkit's docs/verify.md](https://github.com/DrDustinEdwards/devkit/blob/main/docs/verify.md). For this repo:
 
-- A failed step is a finding about the change. Fix the code, rebuild with `npm run site`,
-  then run the same script again. Never add a sleep, a retry or a looser selector to
-  make it pass.
-- If a step fails sometimes, find out why before going on; a flaky check teaches the
-  next thread to re-run instead of fix.
-- Never edit an existing spec to make it agree with new behavior unless the change is
-  meant to alter that behavior, and say so in the pull request.
-- Leave nothing behind: stop the preview server by its process id (never `pkill` by name: other sessions run their own), and keep the scripts and screenshots in
-  the scratchpad. Nothing from this skill is committed. `states.html`, `site-dist/`,
-  `site/gen/` and `test-results/` are gitignored; leave them so.
-
-## The report
-
-Put this in the reply and the pull request body:
-
-- First line: verified, partly verified (and what was not), or failed.
-- Each step's ok or FAIL line, verbatim, and the console errors line.
-- The end-state screenshot, attached (Dustin cannot open a scratchpad path).
-- The spec run's summary line, and which spec files it covered.
+- Rebuild with `npm run site` after a fix before running the script again.
+- `states.html`, `site-dist/`, `site/gen/` and `test-results/` are gitignored; leave them so.
 - Anything local cannot show, named as not verified: the deployed site's headers and
   CSP (`site-runtime-headers` writes `_headers`; `vite preview` does not apply them),
   Cloudflare's own serving, real browsers other than Chromium (Safari, Firefox), a real
