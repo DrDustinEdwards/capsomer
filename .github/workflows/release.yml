@@ -2,7 +2,7 @@ name: release
 
 # The release job is devkit's release.yml (tag, release, attested tarball); this file is its caller.
 #
-# A release is the merge of its version bump (CLAUDE.md, "Releases and deploys"). When package.json's
+# A release is the merge of its version bump. When package.json's
 # version on main has no v<version> tag yet, this builds the package, tags a release commit made on
 # top of that commit, publishes a GitHub release with the version's CHANGELOG section, and starts the
 # consumer bumps. Nobody pushes a tag by hand.

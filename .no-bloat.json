@@ -1,6 +1,6 @@
 {
   "baseline": {
-    "measured_at": "abd9207",
+    "measured_at": "a7747d7",
     "knip": {},
     "jscpd": {
       "clones": 36,
@@ -17,7 +17,7 @@
       "bin/capsomer.mjs": 792,
       "components/admin-shell/admin-shell.css": 593,
       "components/admin-shell/admin-shell.react.tsx": 746,
-      "components/admin-shell/admin-shell.spec.ts": 1197,
+      "components/admin-shell/admin-shell.spec.ts": 1133,
       "components/bulk-bar/bulk-bar.ts": 522,
       "components/catalog/catalog-core.ts": 824,
       "components/checklist-run/checklist-run.ts": 742,
@@ -34,7 +34,7 @@
       "components/media-library/media-library.ts": 593,
       "components/media/media.css": 831,
       "components/media/media.react.tsx": 1032,
-      "components/media/media.spec.ts": 1227,
+      "components/media/media.spec.ts": 1211,
       "components/media/media.ts": 1031,
       "components/mentions-list/mentions-list.react.tsx": 502,
       "components/moderation-queue/moderation-queue.ts": 564,
@@ -58,7 +58,7 @@
     },
     "tests": {
       "files": 256,
-      "cases": 1674
+      "cases": 1669
     },
     "comments": {
       "lines": 14545,
