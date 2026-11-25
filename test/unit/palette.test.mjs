@@ -63,4 +63,3 @@ test("family: a seed too light for white (amber) keeps it in dark, darkens it in
   assert.equal(t.light.tokens["primary-line"], t.light.tokens.accent);
   assert.equal(t.light.tokens["primary-fg"], t.dark.tokens["primary-fg"]);
 });
-

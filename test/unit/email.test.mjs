@@ -294,4 +294,3 @@ test("contrast: every family, both schemes, every pair an email paints is 4.5:1"
       assert.deepEqual(failing(emailColors[name][scheme]), [], `${name} ${scheme}`);
   }
 });
-

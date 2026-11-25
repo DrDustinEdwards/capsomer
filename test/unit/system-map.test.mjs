@@ -94,7 +94,11 @@ test("the network and a system are whole HTML, escaped, with a step lit as the s
     net,
     /<li class="cap-system-map-card" data-id="site" data-wire="site" data-wires="kit core" data-uses="kit" data-used-by="core" data-link><h4 class="cap-system-map-card-name"><a class="cap-system-map-link" href="\/s\/site">Site &lt;one&gt;<\/a><\/h4>/,
   );
-  assert.doesNotMatch(net, /\sstyle=/, "no inline style, so a policy that forbids it draws the map whole");
+  assert.doesNotMatch(
+    net,
+    /\sstyle=/,
+    "no inline style, so a policy that forbids it draws the map whole",
+  );
   assert.match(net, /data-id="app"[^>]* data-private>.*private<\/span>/);
   assert.match(
     systemMapHtml({ systems: [{ id: "x", name: "The long name", short: "Long", ring: "used" }] }),

@@ -16,4 +16,3 @@ test("a hidden row is never counted, and select all is exactly the rows in view"
   assert.deepEqual([...toggleAllVisible(new Set(["a", "b", "c"]), rows)], []);
   assert.equal(allVisibleSelected(new Set(), []), false);
 });
-

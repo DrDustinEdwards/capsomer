@@ -38,4 +38,3 @@ test("a model whose lines and counts hold is read; a line to nothing and a bad i
   assert.equal(r.ok, false);
   assert.ok(r.problems.some((p) => p.startsWith("systems.0.id")));
 });
-
