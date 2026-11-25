@@ -130,7 +130,7 @@ export const OFFERS: MediaData["offers"] = {
 // A file's own bytes, as a host serves them on its own origin for the crop editor: a PNG drawn here,
 // since the tiles' pictures are SVG, which a canvas does not crop.
 const pngs = new Map<string, string>();
-export function bytesOf(key: string): string {
+export function exampleBytesHref(key: string): string {
   const made = pngs.get(key);
   if (made) return made;
   const c = document.createElement("canvas");

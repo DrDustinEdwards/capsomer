@@ -19,7 +19,7 @@ import {
 export const rowsOf = (root: HTMLElement) =>
   Array.from(root.querySelectorAll<HTMLLIElement>(".cap-mq-row"));
 export const listOf = (root: HTMLElement) => root.querySelector<HTMLElement>(".cap-mq-list");
-export const titleOf = (row: Element) => row.querySelector<HTMLElement>(".cap-row-title button");
+export const rowTitleButton = (row: Element) => row.querySelector<HTMLElement>(".cap-row-title button");
 export const visible = (row: HTMLElement) => !row.hidden;
 const currentView = (root: HTMLElement): ModView =>
   (VIEWS as readonly string[]).includes(root.dataset.view ?? "")
@@ -154,7 +154,7 @@ export function focusTargetAfter(root: HTMLElement, acted: HTMLElement[]): HTMLE
     .reverse()
     .find((r) => !acted.includes(r));
   const row = after ?? before;
-  return row ? titleOf(row) : null;
+  return row ? rowTitleButton(row) : null;
 }
 
 export function focusAfter(root: HTMLElement, target: HTMLElement | null): void {

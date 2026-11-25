@@ -17,7 +17,7 @@ import {
   FILES,
   GROUPED,
   OFFERS,
-  bytesOf,
+  exampleBytesHref,
   load,
   IDEA_OFFERS,
   IDEAS,
@@ -41,7 +41,7 @@ function Editor() {
             (f) => f.state !== "binned" && f.name.toLowerCase().includes(text.toLowerCase()),
           )
         }
-        bytesHref={bytesOf}
+        bytesHref={exampleBytesHref}
       />
     </div>
   );
@@ -59,7 +59,7 @@ function KeepsSize() {
         action="/media"
         Form={Form}
         submit={submit}
-        bytesHref={bytesOf}
+        bytesHref={exampleBytesHref}
         shortcuts={false}
       />
     </div>
