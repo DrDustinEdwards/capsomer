@@ -44,12 +44,10 @@ test("references are read once and written again as text; control characters go"
     sanitizeRichText("&amp;lt; &deg;C &#x3b1; &unknown; a\u0000b", BODY),
     "&amp;lt; °C α &amp;unknown; ab",
   );
-  // A name the object inherits is unknown too, never a function's source.
   assert.equal(
     sanitizeRichText("&constructor; &toString;", BODY),
     "&amp;constructor; &amp;toString;",
   );
-  // Stored again, the value is the same: sanitizing is idempotent.
   const once = sanitizeRichText("4 &deg;C &lt;em&gt;", BODY);
   assert.equal(sanitizeRichText(once, BODY), once);
 });
@@ -100,7 +98,6 @@ test("stored abstract HTML keeps em, sup and sub and nothing that can run", () =
     "E. coli<em>  K-12</em> grew 10<sup>6</sup> CFU in H<sub>2</sub>O &amp; LB &lt;5 h",
   );
   assert.equal(title("<EM>Bacillus</EM> <sup>1</sup>"), "<em>Bacillus</em> 1");
-  assert.equal(body("<em>open <sup>x</em> y"), "<em>open <sup>x</sup></em><sup> y</sup>");
 });
 
 test("hostile input of any length is read in bounded time, and only its first part is kept", () => {

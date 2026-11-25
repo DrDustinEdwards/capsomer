@@ -6,7 +6,7 @@ parts: [css, behavior, react]
 tool: own JavaScript
 states: [a binder with branches, links and a chosen row, closed branches, an empty branch, as delivered with no script, several chosen, a row not available, under the pointer, keyboard focus, being dragged, a drop before, inside and after, in React with moves the page saves]
 added: 0.7.0
-source: carrel/research/design-writing-tools.md (4.1, the binder) and carrel/rulings/writing-tools-2026-10-10.md (point 7)
+source: carrel/research/design-writing-tools.md (4.1, the binder)
 replaces:
   - 'role="tree"'
   - 'role="treeitem"'

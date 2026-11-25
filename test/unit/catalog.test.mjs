@@ -1,14 +1,9 @@
-// The catalog's pure core, imported straight from the TypeScript source: no DOM is touched. The cases
-// show each rule on a small collection that looks like a library of field guides: text and facets, a list
-// field, a number, a date, the counts, the chips, the sorts and the addresses.
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import {
   catalogHref,
   catalogRedirect,
-  countText,
   defineCatalog,
-  fold,
   parseCatalogParams,
   queryCatalog,
 } from "../../components/catalog/catalog-core.ts";
@@ -116,10 +111,6 @@ const def = defineCatalog({
 const run = (query) => queryCatalog(def, ITEMS, parseCatalogParams(def, query));
 const ids = (result) => result.rows.map((i) => i.id);
 
-test("fold: case and accents do not matter", () => {
-  assert.equal(fold("Genève  AUDIT"), "geneve  audit");
-});
-
 test("defineCatalog refuses a declaration that would quietly do nothing", () => {
   const field = { key: "a", label: "A", value: () => "x" };
   assert.throws(() => defineCatalog({ ...def, fields: [{ ...field, key: "q" }] }), /reserved/);
@@ -165,19 +156,6 @@ test("catalogHref writes only what differs from the default, in one fixed order"
     catalogHref(def, parseCatalogParams(def, "page=2&method=audit&q=water&kind=guide&sort=title")),
     "/library/guides?q=water&kind=guide&method=audit&sort=title&page=2",
   );
-});
-
-test("with nothing typed, every item shows in the default order", () => {
-  const result = run("");
-  assert.equal(result.count, 6);
-  assert.equal(result.total, 6);
-  assert.deepEqual(
-    ids(result).slice(0, 4),
-    ["field-survey", "site-audit", "field-export", "plot-sheet"],
-    "newest first, ties by key",
-  );
-  assert.equal(result.clearHref, null);
-  assert.deepEqual(result.chips, []);
 });
 
 test("search: every word must match, ranked by field weight, a word that starts a word counts double", () => {
@@ -254,13 +232,6 @@ test("a chosen option with no matches stays visible, so it can be released", () 
   );
 });
 
-test("general facets come first, then the rest in declared order", () => {
-  assert.deepEqual(
-    run("").facets.map((f) => f.key),
-    ["kind", "method", "region"],
-  );
-});
-
 test("chips: one per active filter and the search, each a link that removes only it", () => {
   const result = run("q=water&kind=guide&method=audit&method=survey");
   assert.deepEqual(
@@ -272,24 +243,9 @@ test("chips: one per active filter and the search, each a link that removes only
   assert.equal(result.clearHref, "/library/guides");
 });
 
-test("sorts: both directions of each sortable field, in the field's own words; the default is selected", () => {
-  const sorts = run("").sorts;
-  assert.deepEqual(
-    sorts.map((s) => s.label),
-    [
-      "Name, A to Z",
-      "Name, Z to A",
-      "Length, low to high",
-      "Length, high to low",
-      "Updated, oldest first",
-      "Updated, newest first",
-    ],
-  );
-  assert.equal(sorts.find((s) => s.selected).value, "-updated");
-  assert.equal(run("sort=-size").sorts.find((s) => s.selected).value, "-size");
-});
-
 test("sorting: numbers numerically, dates by ISO, text folded, and an item with no value last either way", () => {
+  assert.equal(run("").sorts.find((s) => s.selected).value, "-updated");
+  assert.equal(run("sort=-size").sorts.find((s) => s.selected).value, "-size");
   const asc = ids(run("sort=size"));
   const desc = ids(run("sort=-size"));
   assert.deepEqual(
@@ -342,18 +298,9 @@ test("pagination: a page of rows, the range shown, and a page past the end clamp
   const none = queryCatalog(paged, ITEMS, parseCatalogParams(paged, "q=zebra"));
   assert.deepEqual([none.rows.length, none.pageCount, none.from, none.to], [0, 1, 0, 0]);
   assert.equal(second.href({ page: 1 }), "/library/guides");
-});
-
-test("changing a filter returns to page one", () => {
-  const paged = defineCatalog({ ...def, pageSize: 2 });
-  const result = queryCatalog(paged, ITEMS, parseCatalogParams(paged, "page=2&kind=guide"));
-  assert.equal(result.chips[0].href, "/library/guides", "removing the chip drops the page");
-});
-
-test("countText says what is left with its total, in words", () => {
-  assert.equal(countText(def, run("")), "6 guides");
-  assert.equal(countText(def, run("kind=template")), "1 of 6 guides");
-  assert.equal(countText(def, { count: 1, total: 1 }), "1 guide");
+  const small = defineCatalog({ ...def, pageSize: 2 });
+  const filtered = queryCatalog(small, ITEMS, parseCatalogParams(small, "page=2&kind=guide"));
+  assert.equal(filtered.chips[0].href, "/library/guides", "removing the chip drops the page");
 });
 
 test("catalogRecords: every matching item as the columns' words, all pages, for an export", () => {

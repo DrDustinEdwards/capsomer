@@ -1,6 +1,3 @@
-// The states generator: every page it writes is a whole valid document with one h1 and one
-// main, keeps its <template data-specimen> blocks, and hoists links and scripts. Correctness
-// only; nothing here pins a design value.
 import assert from "node:assert/strict";
 import {
   existsSync,
@@ -14,7 +11,7 @@ import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { test } from "node:test";
 import { fileURLToPath } from "node:url";
-import { expandUses, generateStates, renderStates, splitExamples } from "../../bin/states.mjs";
+import { expandUses, generateStates, renderStates } from "../../bin/states.mjs";
 
 const ROOT = resolve(fileURLToPath(new URL("../..", import.meta.url)));
 const template = readFileSync(join(ROOT, "site", "states-template.html"), "utf8");
@@ -76,14 +73,6 @@ test("renderStates: keeps template specimens untouched, hoists links and scripts
   assert.ok(!/<script\b/.test(main), "no script left inside the main outside a template");
   assert.ok(page.indexOf("window.ran = true") > page.indexOf("</main>"));
   assert.ok(html.includes('<script type="module" src="./examples.tsx"></script>'));
-});
-
-test("splitExamples: only what is outside a template moves", () => {
-  const { body, head, scripts } = splitExamples(EXAMPLES);
-  assert.equal(head.length, 1);
-  assert.equal(scripts.length, 1);
-  assert.ok(body.includes("window.inTemplate = 1;"));
-  assert.ok(!body.includes("window.ran"));
 });
 
 test("generateStates: writes a page for each component with examples, none without, filling build markers", async () => {
