@@ -19,44 +19,31 @@ import {
 import { ContentBulkBar, useIntents } from "../content/content.react.tsx";
 import { PlainForm, type FormComponent } from "../plain-form/plain-form.react.tsx";
 import { Empty } from "../empty/empty.react.tsx";
-import { FormMenu } from "../menu/menu.react.tsx";
-import { Pill, Status } from "../status/status.react.tsx";
 import { TabLink, TabsNav } from "../tabs/tabs.react.tsx";
-import { Time } from "../time/time.react.tsx";
-import {
-  Dialog,
-  DialogBody,
-  DialogClose,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "../dialog/dialog.react.tsx";
-import { DraftCompare, DraftPatch } from "../draft-compare/draft-compare.react.tsx";
-import { PageHead } from "../page-head/page-head.react.tsx";
-import { copyText } from "../copy/copy.ts";
 import {
   NO_FILTERS,
-  SORTS,
   STATUS_TABS,
-  authorLine,
   contentStatus,
   countLine,
   emptyWords,
-  filtered,
-  inDays,
   postActions,
   postsHref,
-  rowActions,
-  rowStatus,
   trashLine,
   withFilter,
   type RowAction,
 } from "./posts-list.ts";
-import type { ConfirmRequest } from "../content/content.ts";
-import { useBrowserZone, useCleanId, useHydrated } from "../hooks/hooks.react.tsx";
-import { fromDateTimeLocal, toDateTimeLocal } from "../field/field.ts";
-import { toMs } from "../time/time.ts";
+import { useCleanId, useHydrated } from "../hooks/hooks.react.tsx";
+import { PostsFind } from "./posts-list-find.react.tsx";
+import { PostsTable } from "./posts-list-table.react.tsx";
+import {
+  PreviewLinkBox,
+  RenameDialog,
+  RescheduleDialog,
+  cancelRequest,
+  type Moving,
+  type Renaming,
+} from "./posts-list-dialogs.react.tsx";
+export { PostScheduledUpdate, type PostScheduledUpdateProps } from "./posts-list-update.react.tsx";
 
 export { contentStatus };
 export type { ContentLabels, IntentResult, PostRow, PostsData, ScheduledUpdateView, SubmitIntent };
@@ -80,322 +67,6 @@ export interface PostsListProps {
   // A fixed "now" for the times and "in 3 days", for a test or a server's clock.
   now?: number;
 }
-
-function HeadCheck({
-  checked,
-  mixed,
-  label,
-  onChange,
-}: {
-  checked: boolean;
-  mixed: boolean;
-  label: string;
-  onChange: (on: boolean) => void;
-}) {
-  const ref = useRef<HTMLInputElement>(null);
-  useEffect(() => {
-    if (ref.current) ref.current.indeterminate = mixed;
-  }, [mixed]);
-  return (
-    <label className="cap-check">
-      <input
-        type="checkbox"
-        ref={ref}
-        checked={checked}
-        onChange={(e) => onChange(e.target.checked)}
-      />
-      <span className="cap-sr-only">{label}</span>
-    </label>
-  );
-}
-
-// The new time for a reschedule, in the person's own zone; the UTC time it means is posted as
-// publishAt. As delivered (the update page with no script) it is a text field in UTC that starts
-// at the time it moves from, since a form with no script cannot add the zone the site needs.
-function RescheduleField({ id, at }: { id: string; at: string }) {
-  const [local, setLocal] = useState<string | null>(null);
-  const zone = useBrowserZone(null);
-  // oxlint-disable-next-line react/set-state-in-effect -- the person's own zone is known only in the browser, after hydration
-  useEffect(() => setLocal(zone ? toDateTimeLocal(new Date(toMs(at)), zone) : null), [at, zone]);
-  if (local === null) {
-    return (
-      <div className="cap-field">
-        <label className="cap-field-label" htmlFor={id}>
-          New time, UTC
-        </label>
-        <input
-          className="cap-input"
-          id={id}
-          name="publishAt"
-          defaultValue={at.replace(/\.\d{3}Z$/, "Z")}
-          autoComplete="off"
-          spellCheck={false}
-          aria-describedby={`${id}-help`}
-        />
-        <p className="cap-field-description" id={`${id}-help`}>
-          As 2030-01-01T15:00:00Z
-        </p>
-      </div>
-    );
-  }
-  return (
-    <div className="cap-field">
-      <label className="cap-field-label" htmlFor={id}>
-        New time
-      </label>
-      <input
-        className="cap-input"
-        type="datetime-local"
-        id={id}
-        value={local}
-        onChange={(e) => setLocal(e.target.value)}
-        aria-describedby={`${id}-help`}
-        required
-      />
-      <input
-        type="hidden"
-        name="publishAt"
-        value={
-          fromDateTimeLocal(local, zone ?? undefined)
-            ?.toISOString()
-            .replace(/\.\d{3}Z$/, "Z") ?? ""
-        }
-      />
-      <p className="cap-field-description" id={`${id}-help`}>
-        In your time zone, {zone}.
-      </p>
-    </div>
-  );
-}
-
-// What Reschedule… is moving: one post, its name and the time it goes out now.
-interface Moving {
-  id: string;
-  name: string;
-  at: string;
-  version?: string;
-}
-
-// The small dialog Reschedule… opens: the time field and Reschedule. Its form posts inside the
-// list (or the update page), so the script path runs it like any other intent.
-function RescheduleDialog({
-  moving,
-  action,
-  Form,
-  onClose,
-}: {
-  moving: Moving | null;
-  action: string;
-  Form: FormComponent;
-  onClose: () => void;
-}) {
-  const uid = useCleanId();
-  return (
-    <Dialog
-      open={!!moving}
-      onOpenChange={(open) => (open ? undefined : onClose())}
-      size="sm"
-      described
-    >
-      {moving ? (
-        <>
-          <DialogHeader>
-            <DialogTitle>Reschedule {moving.name}</DialogTitle>
-            <DialogDescription>
-              It goes out <Time at={moving.at} format="exact" />.
-            </DialogDescription>
-          </DialogHeader>
-          <Form
-            method="post"
-            action={action}
-            className="cap-posts-reschedule"
-            onSubmit={() => onClose()}
-          >
-            <input type="hidden" name="intent" value="reschedule" />
-            <input type="hidden" name="ids" value={moving.id} />
-            {moving.version ? <input type="hidden" name="versions" value={moving.version} /> : null}
-            <DialogBody>
-              <RescheduleField id={`${uid}-at`} at={moving.at} key={moving.id + moving.at} />
-            </DialogBody>
-            <DialogFooter>
-              <DialogClose part="cancel">Close</DialogClose>
-              <button type="submit" className="cap-btn" data-variant="primary">
-                Reschedule
-              </button>
-            </DialogFooter>
-          </Form>
-        </>
-      ) : null}
-    </Dialog>
-  );
-}
-
-// What Rename… is moving: one post, its name, its id and the address it has now (null for a post
-// never published).
-interface Renaming {
-  id: string;
-  name: string;
-  path: string | null;
-  version?: string;
-}
-
-// A slug as the contract's ContentId takes it ("notes-on-the-survey"). The kit checks it again.
-const SLUG = "[A-Za-z0-9][A-Za-z0-9._\\-]{0,199}";
-
-// The small dialog Rename… opens (site-api v0.17.0): the new slug, starting at the old one, and
-// what happens to the old address. It posts `rename` with `newId` inside the list, as Reschedule does.
-function RenameDialog({
-  renaming,
-  action,
-  Form,
-  onClose,
-}: {
-  renaming: Renaming | null;
-  action: string;
-  Form: FormComponent;
-  onClose: () => void;
-}) {
-  const uid = useCleanId();
-  return (
-    <Dialog
-      open={!!renaming}
-      onOpenChange={(open) => (open ? undefined : onClose())}
-      size="sm"
-      described={!!renaming?.path}
-    >
-      {renaming ? (
-        <>
-          <DialogHeader>
-            <DialogTitle>Rename {renaming.name}</DialogTitle>
-            {renaming.path ? (
-              <DialogDescription>
-                Its address is {renaming.path} now. The old address will redirect to the new one, so
-                links to it keep working.
-              </DialogDescription>
-            ) : null}
-          </DialogHeader>
-          <Form
-            method="post"
-            action={action}
-            className="cap-posts-rename"
-            onSubmit={() => onClose()}
-          >
-            <input type="hidden" name="intent" value="rename" />
-            <input type="hidden" name="ids" value={renaming.id} />
-            {renaming.version ? (
-              <input type="hidden" name="versions" value={renaming.version} />
-            ) : null}
-            <DialogBody>
-              <div className="cap-field">
-                <label className="cap-field-label" htmlFor={`${uid}-slug`}>
-                  New slug
-                </label>
-                <input
-                  className="cap-input"
-                  id={`${uid}-slug`}
-                  name="newId"
-                  defaultValue={renaming.id}
-                  pattern={SLUG}
-                  maxLength={200}
-                  required
-                  autoComplete="off"
-                  spellCheck={false}
-                  aria-describedby={`${uid}-slug-help`}
-                />
-                <p className="cap-field-description" id={`${uid}-slug-help`}>
-                  Letters, digits, dots, dashes and underscores, starting with a letter or a digit.
-                </p>
-              </div>
-            </DialogBody>
-            <DialogFooter>
-              <DialogClose part="cancel">Close</DialogClose>
-              <button type="submit" className="cap-btn" data-variant="primary">
-                Rename
-              </button>
-            </DialogFooter>
-          </Form>
-        </>
-      ) : null}
-    </Dialog>
-  );
-}
-
-// The preview link the last post made (`preview-link`, site-api v0.17.0): its address in a field
-// that selects whole, Copy with script, and when it stops working in the reader's own zone. A status
-// region, so the new link and a copy are said where the person is looking.
-function PreviewLinkBox({
-  link,
-  name,
-  noun,
-  scripted,
-}: {
-  link: { url: string; expiresAt: string } | undefined;
-  name?: string;
-  noun: string;
-  scripted: boolean;
-}) {
-  const uid = useCleanId();
-  const [copied, setCopied] = useState("");
-  const [copiedFor, setCopiedFor] = useState(link?.url);
-  if (link?.url !== copiedFor) {
-    setCopiedFor(link?.url);
-    setCopied("");
-  }
-  return (
-    <div className="cap-posts-preview" role="status" aria-label="Preview link">
-      {link ? (
-        <>
-          <label className="cap-field-label" htmlFor={`${uid}-url`}>
-            {name ? `Preview link for ${name}` : "Preview link"}
-          </label>
-          <div className="cap-posts-preview-row">
-            <input
-              className="cap-input"
-              id={`${uid}-url`}
-              value={link.url}
-              readOnly
-              onFocus={(e) => e.currentTarget.select()}
-              aria-describedby={`${uid}-until`}
-            />
-            {scripted ? (
-              <button
-                type="button"
-                className="cap-btn"
-                onClick={() =>
-                  void copyText(link.url).then((ok) =>
-                    setCopied(ok ? "Copied." : "Could not copy. Select the address and copy it."),
-                  )
-                }
-              >
-                Copy
-              </button>
-            ) : null}
-          </div>
-          <p className="cap-field-description" id={`${uid}-until`}>
-            Anyone with the link can read the {noun} until{" "}
-            <Time at={link.expiresAt} format="exact" />. {copied}
-          </p>
-        </>
-      ) : null}
-    </div>
-  );
-}
-
-// Asks before canceling an update: it has no Undo.
-const cancelRequest = (
-  id: string,
-  name: string,
-  noun: string,
-  version?: string,
-): ConfirmRequest => ({
-  intent: "cancel-schedule",
-  title: `Cancel the scheduled update to ${name}?`,
-  lead: `The live ${noun} stays as it is and the update's changes are dropped. This cannot be undone.`,
-  action: "Cancel the update",
-  cancelLabel: "Keep the update",
-  items: [name],
-  fields: version ? { ids: [id], versions: [version] } : { ids: [id] },
-});
 
 // One page of one site's posts: status tabs with counts, search and filters, the table with its
 // row menus, the bulk bar with each item's outcome, Undo, and the confirmation for what cannot be
@@ -430,7 +101,6 @@ export function PostsList({
   const selectable = bulk.length > 0;
   const names = useMemo(() => new Map(rows.map((r) => [r.id, r.title || "Untitled"])), [rows]);
   const tags = useMemo(() => Array.from(new Set(rows.flatMap((r) => r.tags ?? []))).sort(), [rows]);
-  const withMenus = rows.some((r) => rowActions(r, data).length > 0);
 
   const [selected, setSelected] = useState<string[]>([]);
   // A new page or filter keeps only what is still in view, in the same render.
@@ -532,7 +202,6 @@ export function PostsList({
   const linkedId = linked ? intents.latest?.outcomes?.[0]?.id : undefined;
   const count = (s: string | undefined) =>
     data.counts?.[(s ?? "all") as keyof NonNullable<PostsData["counts"]>];
-  const extraColumns = data.extra?.columns ?? [];
 
   return (
     // oxlint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- delegates the events of the controls inside it
@@ -566,151 +235,18 @@ export function PostsList({
         ) : null}
       </TabsNav>
 
-      <Form
-        method="get"
-        action={action.split("?")[0]}
-        className="cap-field-row"
-        role="search"
-        aria-label={`Find ${plural}`}
-      >
-        {query.status && !query.trashed ? (
-          <input type="hidden" name="status" value={query.status} />
-        ) : null}
-        {query.trashed ? <input type="hidden" name="trashed" value="1" /> : null}
-        <div className="cap-field cap-field-wide">
-          <label className="cap-field-label" htmlFor={`${uid}-q`}>
-            Search
-          </label>
-          <input
-            className="cap-input"
-            type="search"
-            id={`${uid}-q`}
-            name="q"
-            defaultValue={query.q ?? ""}
-          />
-        </div>
-        {data.kinds.length > 1 ? (
-          <div className="cap-field">
-            <label className="cap-field-label" htmlFor={`${uid}-kind`}>
-              Kind
-            </label>
-            <div className="cap-select-wrap" data-native="">
-              <select
-                className="cap-select"
-                id={`${uid}-kind`}
-                name="kind"
-                defaultValue={query.kind ?? ""}
-              >
-                <option value="">Any kind</option>
-                {data.kinds.map((k) => (
-                  <option key={k} value={k}>
-                    {k}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-        ) : null}
-        {tags.length > 0 || query.tag ? (
-          <div className="cap-field">
-            <label className="cap-field-label" htmlFor={`${uid}-tag`}>
-              Tag
-            </label>
-            <div className="cap-select-wrap" data-native="">
-              <select
-                className="cap-select"
-                id={`${uid}-tag`}
-                name="tag"
-                defaultValue={query.tag ?? ""}
-              >
-                <option value="">Any tag</option>
-                {Array.from(new Set([...tags, ...(query.tag ? [query.tag] : [])])).map((t) => (
-                  <option key={t} value={t}>
-                    {t}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-        ) : null}
-        {authors.length ? (
-          <div className="cap-field">
-            <label className="cap-field-label" htmlFor={`${uid}-author`}>
-              Author
-            </label>
-            <div className="cap-select-wrap" data-native="">
-              <select
-                className="cap-select"
-                id={`${uid}-author`}
-                name="author"
-                defaultValue={query.author ?? ""}
-              >
-                <option value="">Any author</option>
-                {authors.map((a) => (
-                  <option key={a} value={a}>
-                    {a}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-        ) : null}
-        {dates ? (
-          <>
-            <div className="cap-field">
-              <label className="cap-field-label" htmlFor={`${uid}-from`}>
-                Published from
-              </label>
-              <input
-                className="cap-input"
-                type="date"
-                id={`${uid}-from`}
-                name="from"
-                defaultValue={query.from ?? ""}
-              />
-            </div>
-            <div className="cap-field">
-              <label className="cap-field-label" htmlFor={`${uid}-to`}>
-                Published to
-              </label>
-              <input
-                className="cap-input"
-                type="date"
-                id={`${uid}-to`}
-                name="to"
-                defaultValue={query.to ?? ""}
-              />
-            </div>
-          </>
-        ) : null}
-        <div className="cap-field">
-          <label className="cap-field-label" htmlFor={`${uid}-sort`}>
-            Sort by
-          </label>
-          <div className="cap-select-wrap" data-native="">
-            <select
-              className="cap-select"
-              id={`${uid}-sort`}
-              name="sort"
-              defaultValue={query.sort ?? "updated"}
-            >
-              {SORTS.map((s) => (
-                <option key={s.value} value={s.value}>
-                  {s.label}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-        <button type="submit" className="cap-btn">
-          Show
-        </button>
-        {filtered(query) ? (
-          <a className="cap-btn" data-variant="quiet" href={href(withFilter(query, NO_FILTERS))}>
-            Clear filters
-          </a>
-        ) : null}
-      </Form>
+      <PostsFind
+        uid={uid}
+        query={query}
+        kinds={data.kinds}
+        tags={tags}
+        authors={authors}
+        dates={dates}
+        action={action}
+        Form={Form}
+        plural={plural}
+        href={href}
+      />
 
       <div className="cap-posts-bar">
         {empty ? <span /> : <p className="cap-posts-count">{countLine(data, labels)}</p>}
@@ -793,143 +329,25 @@ export function PostsList({
           }
         />
       ) : (
-        // oxlint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- delegates the events of the controls inside it
-        <div
-          className="cap-table-wrap cap-posts-wrap"
-          data-reflow=""
-          role="region"
-          aria-labelledby={`${uid}-cap`}
-          tabIndex={0}
+        <PostsTable
+          uid={uid}
+          data={data}
+          action={action}
+          title={title}
+          noun={noun}
+          plural={plural}
+          formId={formId}
+          inTrash={inTrash}
+          selectable={selectable}
+          mounted={mounted}
+          selected={selected}
+          setOne={setOne}
+          setAll={setAll}
           onKeyDown={onTableKey}
-        >
-          <table className="cap-table cap-posts-table">
-            <caption id={`${uid}-cap`} className="cap-sr-only">
-              {inTrash ? `${title} in Trash` : title} on {data.site.name}
-            </caption>
-            <thead>
-              <tr>
-                {selectable ? (
-                  <th scope="col" className="cap-posts-check">
-                    {mounted ? (
-                      <HeadCheck
-                        checked={selected.length > 0 && selected.length === rows.length}
-                        mixed={selected.length > 0 && selected.length < rows.length}
-                        label={`Select all ${rows.length} ${rows.length === 1 ? noun : plural}`}
-                        onChange={setAll}
-                      />
-                    ) : (
-                      <span className="cap-sr-only">Select</span>
-                    )}
-                  </th>
-                ) : null}
-                <th scope="col">Title</th>
-                <th scope="col">Status</th>
-                <th scope="col">Updated</th>
-                {extraColumns.map((c) => (
-                  <th key={c.id} scope="col">
-                    {c.label}
-                  </th>
-                ))}
-                {withMenus ? (
-                  <th scope="col">
-                    <span className="cap-sr-only">Actions</span>
-                  </th>
-                ) : null}
-              </tr>
-            </thead>
-            <tbody>
-              {rows.map((row) => {
-                const st = rowStatus(row, clock);
-                const name = row.title || "Untitled";
-                const items = rowActions(row, data);
-                return (
-                  <tr
-                    key={row.id}
-                    data-status={row.status}
-                    data-selected={selected.includes(row.id) ? "" : undefined}
-                  >
-                    {selectable ? (
-                      <td className="cap-posts-check">
-                        <label className="cap-check">
-                          <input
-                            type="checkbox"
-                            name="ids"
-                            value={row.id}
-                            form={formId}
-                            checked={selected.includes(row.id)}
-                            onChange={(e) => setOne(row.id, e.target.checked)}
-                          />
-                          <span className="cap-sr-only">Select {name}</span>
-                        </label>
-                      </td>
-                    ) : null}
-                    <th scope="row" className="cap-posts-title">
-                      <a className="cap-table-open" href={row.href}>
-                        {name}
-                      </a>
-                      <span className="cap-posts-meta">
-                        <span className="cap-posts-path">{row.path ?? "Not on the site yet"}</span>
-                        {data.kinds.length > 1 ? (
-                          <span className="cap-posts-kind">{row.kind}</span>
-                        ) : null}
-                        {row.authors?.length ? (
-                          <span className="cap-posts-authors">{authorLine(row.authors)}</span>
-                        ) : null}
-                      </span>
-                      {row.excerpt ? (
-                        <span className="cap-posts-excerpt">{row.excerpt}</span>
-                      ) : null}
-                      {row.notes?.length ? (
-                        <span className="cap-posts-notes">
-                          {row.notes.map((n) =>
-                            n.tone ? (
-                              <Pill key={n.text} tone={n.tone}>
-                                {n.text}
-                              </Pill>
-                            ) : (
-                              <Pill key={n.text} variant="secondary">
-                                {n.text}
-                              </Pill>
-                            ),
-                          )}
-                        </span>
-                      ) : null}
-                    </th>
-                    <td className="cap-posts-status" data-label="Status">
-                      <Status tone={st.tone}>{st.word}</Status>
-                      {st.note ? <span className="cap-posts-when"> · {st.note}</span> : null}
-                    </td>
-                    <td className="cap-posts-updated" data-label="Updated">
-                      {row.updatedAt ? (
-                        <Time at={row.updatedAt} now={now} />
-                      ) : (
-                        <span className="cap-posts-none">No date</span>
-                      )}
-                    </td>
-                    {extraColumns.map((c) => (
-                      <td key={c.id} className="cap-posts-extra-cell" data-label={c.label}>
-                        {c.cells[row.id] ?? ""}
-                      </td>
-                    ))}
-                    {withMenus ? (
-                      <td className="cap-posts-actions">
-                        {items.length ? (
-                          <FormMenu
-                            label="Actions"
-                            aria-label={`Actions for ${name}`}
-                            action={action}
-                            hidden={{ ids: row.id }}
-                            items={menuItems(row, items)}
-                          />
-                        ) : null}
-                      </td>
-                    ) : null}
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
+          clock={clock}
+          now={now}
+          menuItems={menuItems}
+        />
       )}
 
       {query.cursor || page.nextCursor ? (
@@ -958,187 +376,6 @@ export function PostsList({
         action={action}
         Form={Form}
         onClose={() => setRenaming(null)}
-      />
-      {intents.confirmDialog}
-    </section>
-  );
-}
-
-export interface PostScheduledUpdateProps {
-  // site-api's loadScheduledUpdate(source, id): the update's source, the live one, the patch and
-  // the times.
-  data: ScheduledUpdateView;
-  // Where Reschedule and Cancel post: the posts list's action, which runs the kit's intents.
-  action: string;
-  Form?: FormComponent;
-  submit?: SubmitIntent;
-  result?: IntentResult | null;
-  // When the live version went out (the row's publishedAt), for the live side's heading.
-  liveSince?: string | null;
-  // The trail above the title: the posts list, then this post.
-  crumbs?: Array<{ label: string; href?: string }>;
-  // The title's level: the page's h1 by default.
-  headingLevel?: "h1" | "h2" | "h3";
-  labels?: ContentLabels;
-  now?: number;
-}
-
-// The page of the update waiting on a live post: a page head with the post's title and its
-// actions, then the update beside the live post (with when it goes live) in the draft compare,
-// with the unified patch under it. Reschedule… opens the dialog and Cancel the update asks
-// first, posting the posts list's own intents; with no script both are plain forms under the
-// head.
-export function PostScheduledUpdate({
-  data,
-  action,
-  Form = PlainForm,
-  submit,
-  result = null,
-  liveSince,
-  crumbs,
-  headingLevel,
-  labels,
-  now,
-}: PostScheduledUpdateProps) {
-  const uid = useCleanId();
-  const { noun } = nounsOf(labels, "post");
-  const name = data.title || "Untitled";
-  const names = useMemo(() => new Map([[data.id, name]]), [data.id, name]);
-  const intents = useIntents({ action, Form, submit, result, names, cancelHref: action });
-  // False on the server and while hydrating, true once hydrated.
-  const mounted = useHydrated();
-  const [moving, setMoving] = useState<Moving | null>(null);
-  // The time the list was drawn, when the page does not pass one.
-  const [drawnAt] = useState(() => Date.now());
-  const clock = now ?? drawnAt;
-  const scripted = mounted && !!submit;
-  const Side = headingLevel === "h3" ? "h4" : headingLevel === "h2" ? "h3" : "h2";
-  const may = data.can.publish;
-  const actions = (
-    <>
-      {may && scripted ? (
-        <button
-          type="button"
-          className="cap-btn"
-          data-variant="primary"
-          onClick={() =>
-            setMoving({ id: data.id, name, at: data.publishAt, version: data.live.version })
-          }
-        >
-          Reschedule…
-        </button>
-      ) : null}
-      {data.can.edit ? (
-        <a className="cap-btn" href={data.editorHref}>
-          Edit the update
-        </a>
-      ) : null}
-      {data.live.href ? (
-        <a className="cap-btn" href={data.live.href}>
-          View the live {noun}
-        </a>
-      ) : null}
-      {may && scripted ? (
-        <button
-          type="button"
-          className="cap-btn"
-          data-variant="danger"
-          data-cap-part="cancel-update"
-          onClick={() => intents.ask(cancelRequest(data.id, name, noun, data.live.version))}
-        >
-          Cancel the update
-        </button>
-      ) : null}
-    </>
-  );
-  return (
-    <section
-      className="cap-posts-update-view"
-      data-cap="posts-list"
-      aria-labelledby={`${uid}-h`}
-      ref={intents.setRoot}
-      // oxlint-disable-next-line react/refs -- intents holds the root ref for its handlers; rendering reads none of it
-      onSubmit={intents.onSubmit}
-    >
-      <PageHead
-        crumbs={crumbs}
-        headingLevel={headingLevel}
-        title={<span id={`${uid}-h`}>{name}</span>}
-        actions={actions}
-      />
-
-      {intents.resultBox}
-
-      {may && !scripted ? (
-        <Form method="post" action={action} className="cap-field-row">
-          <input type="hidden" name="ids" value={data.id} />
-          <input type="hidden" name="versions" value={data.live.version} />
-          <RescheduleField id={`${uid}-at`} at={data.publishAt} />
-          <button
-            type="submit"
-            className="cap-btn"
-            data-variant="primary"
-            name="intent"
-            value="reschedule"
-          >
-            Reschedule
-          </button>
-          <button
-            type="submit"
-            className="cap-btn"
-            data-variant="danger"
-            name="intent"
-            value="cancel-schedule"
-          >
-            Cancel the update
-          </button>
-        </Form>
-      ) : null}
-      {!may ? (
-        <ul className="cap-posts-withheld">
-          <li>Rescheduling or canceling it needs a publisher's role.</li>
-        </ul>
-      ) : null}
-
-      <div className="cap-posts-update-sides">
-        <Side className="cap-posts-update-side">
-          Live {noun}
-          {liveSince ? (
-            <span className="cap-posts-update-side-when">
-              {" "}
-              · on the site since <Time at={liveSince} format="exact" />
-            </span>
-          ) : null}
-        </Side>
-        <Side className="cap-posts-update-side">
-          Scheduled update
-          <span className="cap-posts-update-side-when">
-            {" "}
-            · goes live <Time at={data.publishAt} format="exact" />, {inDays(data.publishAt, clock)}
-          </span>
-        </Side>
-      </div>
-      <DraftCompare
-        before={{ title: `Live ${noun}`, text: data.live.source }}
-        after={{ title: "Scheduled update", text: data.source }}
-        labels={{ before: "Live", after: "Scheduled" }}
-        id={`${uid}-cmp`}
-        heads={false}
-      />
-      <details className="cap-disclosure cap-posts-update-patch">
-        <summary>The change as a patch</summary>
-        <DraftPatch
-          patch={data.patch}
-          title={`The scheduled update to ${name}`}
-          id={`${uid}-patch`}
-        />
-      </details>
-
-      <RescheduleDialog
-        moving={moving}
-        action={action}
-        Form={Form}
-        onClose={() => setMoving(null)}
       />
       {intents.confirmDialog}
     </section>
