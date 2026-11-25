@@ -15,8 +15,10 @@ import {
   DialogHeader,
   DialogTitle,
 } from "../dialog/dialog.react.tsx";
+import { Disclosure } from "../disclosure/disclosure.react.tsx";
 import { DropZone } from "../drop-zone/drop-zone.react.tsx";
 import { formatBytes } from "../format/format.ts";
+import type { Model } from "./media-library-model.react.tsx";
 
 // The library's upload as a dialog (Desk redesign, 2026-11-10: "the library is the page; upload is an
 // action"). The toolbar's Upload opens it. With script and `submit`, it takes several files and asks,
@@ -330,5 +332,158 @@ function ScriptedUpload({
         ) : null}
       </DialogFooter>
     </Dialog>
+  );
+}
+
+// Upload or Import as decorative sends no alt text: the site refuses a file that is both, and a person who
+// typed some and then chose decorative has answered. With no script the site's own refusal says so.
+function dropAltIfDecorative(e: FormEvent<HTMLFormElement>) {
+  const submitter = (e.nativeEvent as SubmitEvent).submitter;
+  const alt = e.currentTarget.elements.namedItem("alt");
+  if (
+    submitter instanceof HTMLButtonElement &&
+    submitter.name === "decorative" &&
+    alt instanceof HTMLInputElement
+  )
+    alt.value = "";
+}
+
+// Where the site shrinks large pictures at upload, a box keeps this one at its own size.
+export function KeepSize({
+  uid,
+  id,
+  resize,
+}: {
+  uid: string;
+  id: string;
+  resize: Model["offers"]["resize"];
+}) {
+  if (!resize) return null;
+  return (
+    <div className="cap-field">
+      <label className="cap-check">
+        <input
+          type="checkbox"
+          name="resize"
+          value="no"
+          aria-describedby={`${uid}-${id}-size-help`}
+        />{" "}
+        Keep it at full size
+      </label>
+      <p className="cap-field-help" id={`${uid}-${id}-size-help`}>
+        This site shrinks a picture whose longer edge is over {resize.maxEdge} pixels.
+      </p>
+    </div>
+  );
+}
+
+// Upload, one file with its alt text: inline in the picker, and in the library the upload dialog's
+// form as delivered with no script (?upload=1).
+export function UploadForm({ m }: { m: Model }) {
+  const { Form, action, labels, offers, rules, uid } = m;
+  if (!rules) return null;
+  return (
+    <Form
+      method="post"
+      action={action}
+      encType="multipart/form-data"
+      className="cap-media-lib-upload"
+      aria-label={`Upload a ${nounsOf(labels, "file").noun}`}
+      onSubmit={dropAltIfDecorative}
+    >
+      <input type="hidden" name="intent" value="upload" />
+      <DropZone
+        name="file"
+        accept={rules.accept}
+        maxBytes={offers.upload?.maxBytes}
+        hint={rules.hint}
+      />
+      <div className="cap-field">
+        <label className="cap-field-label" htmlFor={`${uid}-upalt`}>
+          Alt text
+        </label>
+        <input
+          className="cap-input"
+          id={`${uid}-upalt`}
+          name="alt"
+          type="text"
+          autoComplete="off"
+          required
+          aria-describedby={`${uid}-upalt-help`}
+        />
+        <p className="cap-field-help" id={`${uid}-upalt-help`}>
+          What the picture shows, or upload it as decorative.
+        </p>
+      </div>
+      <KeepSize uid={uid} id="up" resize={offers.resize} />
+      <div className="cap-media-lib-upload-actions">
+        <button type="submit" className="cap-btn" data-variant="primary">
+          Upload
+        </button>
+        <button type="submit" className="cap-btn" name="decorative" value="on" formNoValidate>
+          Upload as decorative
+        </button>
+      </div>
+    </Form>
+  );
+}
+
+// Import from a web address, folded away under the upload.
+export function ImportForm({ m }: { m: Model }) {
+  const { Form, action, labels, offers, rules, uid } = m;
+  return (
+    <Disclosure summary="Import from a web address">
+      <Form
+        method="post"
+        action={action}
+        className="cap-media-lib-upload"
+        aria-label={`Import a ${nounsOf(labels, "file").noun} from the web`}
+        onSubmit={dropAltIfDecorative}
+      >
+        <input type="hidden" name="intent" value="import" />
+        <div className="cap-field">
+          <label className="cap-field-label" htmlFor={`${uid}-import`}>
+            Web address
+          </label>
+          <input
+            className="cap-input"
+            id={`${uid}-import`}
+            name="url"
+            type="url"
+            inputMode="url"
+            autoComplete="off"
+            required
+            placeholder="https://"
+            aria-describedby={`${uid}-import-help`}
+          />
+          <p className="cap-field-help" id={`${uid}-import-help`}>
+            An https address only. {rules ? rules.hint : ""}
+          </p>
+        </div>
+        <div className="cap-field">
+          <label className="cap-field-label" htmlFor={`${uid}-imalt`}>
+            Alt text
+          </label>
+          <input
+            className="cap-input"
+            id={`${uid}-imalt`}
+            name="alt"
+            type="text"
+            autoComplete="off"
+            required
+            aria-describedby={`${uid}-upalt-help`}
+          />
+        </div>
+        <KeepSize uid={uid} id="im" resize={offers.resize} />
+        <div className="cap-media-lib-upload-actions">
+          <button type="submit" className="cap-btn">
+            Import
+          </button>
+          <button type="submit" className="cap-btn" name="decorative" value="on" formNoValidate>
+            Import as decorative
+          </button>
+        </div>
+      </Form>
+    </Disclosure>
   );
 }
