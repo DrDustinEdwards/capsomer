@@ -15,9 +15,6 @@
     "legacy": {},
     "size": {
       "bin/capsomer.mjs": 792,
-      "components/admin-shell/admin-shell.css": 593,
-      "components/admin-shell/admin-shell.react.tsx": 746,
-      "components/admin-shell/admin-shell.spec.ts": 1133,
       "components/bulk-bar/bulk-bar.ts": 522,
       "components/catalog/catalog-core.ts": 824,
       "components/checklist-run/checklist-run.ts": 742,
@@ -31,7 +28,6 @@
       "components/field/field.ts": 601,
       "components/flag-list/flag-list.react.tsx": 571,
       "components/flag-list/flag-list.ts": 646,
-      "components/history-list/history-list.react.tsx": 560,
       "components/listbox/listbox.ts": 650,
       "components/markdown-editor/markdown-editor.spec.ts": 1225,
       "components/markdown-editor/markdown-editor.ts": 1043,
@@ -45,14 +41,10 @@
       "components/media/media.ts": 1031,
       "components/mentions-list/mentions-list.react.tsx": 502,
       "components/moderation-queue/moderation-queue.ts": 564,
-      "components/people-roles/people-roles.react.tsx": 828,
       "components/popover/popover.ts": 533,
-      "components/posts-list/examples.tsx": 742,
-      "components/posts-list/posts-list.react.tsx": 1146,
       "components/publish-gate/publish-gate.ts": 570,
       "components/rich-editor/rich-editor-markdown.mjs": 638,
       "components/rich-editor/rich-editor.react.tsx": 955,
-      "components/shell/shell.css": 577,
       "components/site-header/examples.tsx": 881,
       "components/site-header/site-header-parts.react.tsx": 544,
       "components/site-header/site-header.react.tsx": 708,
@@ -66,7 +58,7 @@
       "tokens/sites.mjs": 543
     },
     "tests": {
-      "files": 255,
+      "files": 257,
       "cases": 1669
     },
     "comments": {
