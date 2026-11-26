@@ -36,8 +36,8 @@
     --dim: #bbb6af;
     --line: #2a2b28;
     --line-strong: #7b7e75;
-    --accent-visited: var(--accent-text);
     --card-shadow: 0 1px 0 0 rgb(255 255 255 / 6%) inset, 0 1px 3px 0 rgb(0 0 0 / 40%), 0 1px 2px 0 rgb(0 0 0 / 30%);
+    --accent-visited: #f0b429;
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) [data-cap-site="foxhound"][data-cap-site],
@@ -53,8 +53,8 @@
       --dim: #bbb6af;
       --line: #2a2b28;
       --line-strong: #7b7e75;
-      --accent-visited: var(--accent-text);
       --card-shadow: 0 1px 0 0 rgb(255 255 255 / 6%) inset, 0 1px 3px 0 rgb(0 0 0 / 40%), 0 1px 2px 0 rgb(0 0 0 / 30%);
+      --accent-visited: #f0b429;
     }
   }
   :root[data-theme="dark"] [data-cap-site="foxhound"][data-cap-site],
@@ -74,8 +74,8 @@
     --dim: #bbb6af;
     --line: #2a2b28;
     --line-strong: #7b7e75;
-    --accent-visited: var(--accent-text);
     --card-shadow: 0 1px 0 0 rgb(255 255 255 / 6%) inset, 0 1px 3px 0 rgb(0 0 0 / 40%), 0 1px 2px 0 rgb(0 0 0 / 30%);
+    --accent-visited: #f0b429;
   }
   :root[data-theme="light"] [data-cap-site="foxhound"][data-cap-site],
   :root[data-theme="light"] [data-cap-site="foxhound"][data-cap-site] :is([data-family], [data-density]),
@@ -94,8 +94,8 @@
     --dim: #595c56;
     --line: #cccbc3;
     --line-strong: #8a8a7e;
-    --accent-visited: var(--accent-text);
     --card-shadow: 0 1px 3px 0 rgb(0 0 0 / 8%), 0 1px 2px 0 rgb(0 0 0 / 5%);
+    --accent-visited: #845802;
   }
   @media (prefers-contrast: more) {
     [data-cap-site="foxhound"][data-cap-site],
@@ -104,6 +104,7 @@
       --dim: #d5d0c8;
       --line-strong: #999d93;
       --line: #595b57;
+      --accent-visited: #fee5b5;
     }
     @media (prefers-color-scheme: dark) {
       :root:not([data-theme="light"]) [data-cap-site="foxhound"][data-cap-site],
@@ -114,6 +115,7 @@
         --dim: #d5d0c8;
         --line-strong: #999d93;
         --line: #595b57;
+        --accent-visited: #fee5b5;
       }
     }
     :root[data-theme="dark"] [data-cap-site="foxhound"][data-cap-site],
@@ -128,6 +130,7 @@
       --dim: #d5d0c8;
       --line-strong: #999d93;
       --line: #595b57;
+      --accent-visited: #fee5b5;
     }
     :root[data-theme="light"] [data-cap-site="foxhound"][data-cap-site],
     :root[data-theme="light"] [data-cap-site="foxhound"][data-cap-site] :is([data-family], [data-density]),
@@ -138,6 +141,7 @@
     [data-cap-theme="light"][data-cap-site="foxhound"][data-cap-site],
     [data-cap-theme="light"][data-cap-site="foxhound"][data-cap-site] :is([data-family], [data-density]) {
       --dim: #525550;
+      --accent-visited: #523501;
     }
   }
   @media (pointer: coarse) {

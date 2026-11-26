@@ -49,6 +49,9 @@ export const SITES = {
     on: "<html> on every page but the admin, where Foxhound's unlayered :root keeps the neutrals it shares a name with, and each .fh-cap wrapper, which takes them all",
     note: "Foxhound's own neutrals, DM faces and Recova's sizes under the amber family's accents, dark by default",
     defaultTheme: "dark",
+    // A followed link stays amber like an unfollowed one: the amber family's pink visited color read
+    // as a stray accent (Dustin, 2026-11-25). The generator writes the family's link color as the visited color.
+    visitedAsLink: true,
     // Recova's measures: 13px secondary text, 14px controls and cells, 38px controls, 44px rows, 20px
     // card padding, 11px labels; headings in DM Sans.
     all: {
@@ -96,8 +99,6 @@ export const SITES = {
       dim: "#bbb6af",
       line: "#2a2b28",
       "line-strong": "#7b7e75",
-      // A followed link stays amber: the amber family's pink visited color read as a stray accent.
-      "accent-visited": "var(--accent-text)",
       // Recova's card-elevated: a lit top edge over a drop shadow in dark, the drop shadow alone in light.
       "card-shadow":
         "0 1px 0 0 rgb(255 255 255 / 6%) inset, 0 1px 3px 0 rgb(0 0 0 / 40%), 0 1px 2px 0 rgb(0 0 0 / 30%)",
@@ -112,7 +113,6 @@ export const SITES = {
       dim: "#595c56",
       line: "#cccbc3",
       "line-strong": "#8a8a7e",
-      "accent-visited": "var(--accent-text)",
       "card-shadow": "0 1px 3px 0 rgb(0 0 0 / 8%), 0 1px 2px 0 rgb(0 0 0 / 5%)",
     },
   },
