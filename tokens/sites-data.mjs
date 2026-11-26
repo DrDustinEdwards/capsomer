@@ -96,6 +96,8 @@ export const SITES = {
       dim: "#bbb6af",
       line: "#2a2b28",
       "line-strong": "#7b7e75",
+      // A followed link stays amber: the amber family's pink visited color read as a stray accent.
+      "accent-visited": "var(--accent-text)",
       // Recova's card-elevated: a lit top edge over a drop shadow in dark, the drop shadow alone in light.
       "card-shadow":
         "0 1px 0 0 rgb(255 255 255 / 6%) inset, 0 1px 3px 0 rgb(0 0 0 / 40%), 0 1px 2px 0 rgb(0 0 0 / 30%)",
@@ -110,6 +112,7 @@ export const SITES = {
       dim: "#595c56",
       line: "#cccbc3",
       "line-strong": "#8a8a7e",
+      "accent-visited": "var(--accent-text)",
       "card-shadow": "0 1px 3px 0 rgb(0 0 0 / 8%), 0 1px 2px 0 rgb(0 0 0 / 5%)",
     },
   },

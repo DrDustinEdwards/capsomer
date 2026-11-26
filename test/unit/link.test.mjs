@@ -74,3 +74,12 @@ test("linkable: http(s) and site paths link; javascript:, data: and protocol-rel
   ])
     assert.equal(linkable(bad), false);
 });
+
+test("Foxhound's followed links stay amber in both themes: its site rules set the visited color to the link color", () => {
+  const css = readFileSync(new URL("../../tokens/site-foxhound.css", import.meta.url), "utf8");
+  const sets = css.match(/--accent-visited: var\(--accent-text\);/g) ?? [];
+  assert.ok(
+    sets.length >= 3,
+    "the dark and light rules each set it, as the amber family's own per-theme pink would outrank the base rule",
+  );
+});
