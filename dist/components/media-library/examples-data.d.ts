@@ -1,0 +1,15 @@
+import type { ContentCan, MediaData, MediaQuery } from "../content/content.ts";
+import type { MediaRecord } from "../media/media.ts";
+export declare const NONE: ContentCan;
+export declare const thumb: (fill: string) => string;
+export declare const file: (key: string, fill: string | null, over: Partial<MediaRecord>) => MediaRecord;
+export declare const USES: Record<string, MediaRecord["used"]>;
+export declare const FILES: MediaRecord[];
+export declare const GROUPED: MediaRecord[];
+export declare const OFFERS: MediaData["offers"];
+export declare function exampleBytesHref(key: string): string;
+export declare const lies: (f: Pick<MediaRecord, "width" | "height">) => MediaRecord["orientation"];
+export declare function load(files: MediaRecord[], query: MediaQuery, over?: Partial<MediaData>): MediaData;
+export declare const IDEA_OFFERS: MediaData["offers"];
+export declare const IDEAS: MediaRecord[];
+export declare const loadIdeas: (files: MediaRecord[], query: MediaQuery) => MediaData;

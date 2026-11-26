@@ -1,0 +1,23 @@
+import { type ComponentProps, type KeyboardEvent } from "react";
+import { type PostRow, type PostsData } from "../content/content.ts";
+import { FormMenu } from "../menu/menu.react.tsx";
+import { type RowAction } from "./posts-list.ts";
+export declare function PostsTable({ uid, data, action, title, noun, plural, formId, inTrash, selectable, mounted, selected, setOne, setAll, onKeyDown, clock, now, menuItems, }: {
+    uid: string;
+    data: PostsData;
+    action: string;
+    title: string;
+    noun: string;
+    plural: string;
+    formId: string;
+    inTrash: boolean;
+    selectable: boolean;
+    mounted: boolean;
+    selected: string[];
+    setOne: (id: string, on: boolean) => void;
+    setAll: (on: boolean) => void;
+    onKeyDown: (e: KeyboardEvent<HTMLElement>) => void;
+    clock: number;
+    now?: number;
+    menuItems: (row: PostRow, list: RowAction[]) => ComponentProps<typeof FormMenu>["items"];
+}): import("react").JSX.Element;

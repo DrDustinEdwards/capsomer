@@ -1,0 +1,10 @@
+import { type LinkProps } from "../shell/shell.react.tsx";
+import { type HeaderExtra, type HeaderLogo, type HeaderSwitcher } from "../site-header/site-header.react.tsx";
+import { FAMILY_APPS, FIRST_PAGE, OWNER, type FamilyAppId } from "./apps.tsx";
+import type { AdminShellProps } from "./admin-shell-types.ts";
+export type { LinkProps, FamilyAppId, HeaderExtra, HeaderLogo, HeaderSwitcher };
+export type { AdminAccount, AdminAccountLink, AdminApp, AdminBadge, AdminCrumb, AdminEntry, AdminShellProps, } from "./admin-shell-types.ts";
+export { ACCESS_LOGOUT, currentEntryId, startPageTransition } from "./admin-shell.ts";
+export { AdminErrorView, type AdminErrorViewProps } from "./admin-error.react.tsx";
+export { FAMILY_APPS, FIRST_PAGE, OWNER };
+export declare function AdminShell(props: AdminShellProps): import("react").JSX.Element;

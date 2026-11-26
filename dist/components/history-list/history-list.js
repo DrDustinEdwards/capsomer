@@ -1,0 +1,272 @@
+// The history list's behavior: autosaves fold into one line, any two lines can be picked to
+// compare, and a restore makes a NEW version on top with Undo, so nothing is overwritten. The page
+// is delivered with every line in the HTML; this adds what only a person's action creates.
+import { toggleGroup } from "../disclosure/disclosure.js";
+import { ensureRegion, say } from "../message/message.js";
+import { attachRowList } from "../row-list/row-list.js";
+import { enhance as enhanceTime, nowFor, parse } from "../time/time.js";
+import { PICK_BLOCKED, PICK_NONE, compareHref, condense, deltaOf, orderPair, pickedText, restoredEntry, restoredMessage, stamp, } from "./history-list-model.js";
+import { actionFor, buildRow, buildRun } from "./history-list-rows.js";
+import { statusEl } from "../status/status.js";
+export { wordDelta, deltaSign, deltaText, deltaOf, condense, stamp, dayOf, rangeText, runTitle, pickTwo, orderPair, compareHref, comparePicks, messageSummary, changeText, PICK_NONE, PICK_BLOCKED, pickedText, restoredEntry, restoredMessage, destinationWord, } from "./history-list-model.js";
+export { SIGN_GLYPH, destinationGlyph, destinationTone, buildRow, buildRun, } from "./history-list-rows.js";
+const READY = "data-cap-ready";
+const rowsOf = (root) => root.querySelector(":scope > .cap-hist-list");
+const lineRows = (root) => Array.from(root.querySelectorAll(".cap-hist-row[data-id]"));
+const rowById = (root, id) => lineRows(root).find((r) => r.dataset.id === id) ?? null;
+function entryOf(row) {
+    return {
+        id: row.dataset.id ?? "",
+        kind: (row.dataset.kind ?? "edit"),
+        who: row.dataset.who ?? "",
+        at: row.dataset.at ?? "",
+        ...(row.dataset.words !== undefined ? { words: Number(row.dataset.words) } : {}),
+        summary: row.querySelector(".cap-row-title a")?.textContent ?? "",
+    };
+}
+function setCurrent(root, row, current) {
+    const entry = entryOf(row);
+    const actions = row.querySelector(".cap-row-actions");
+    if (!actions)
+        return;
+    const now = nowFor(root).now;
+    if (current) {
+        row.dataset.current = "";
+        actions.replaceChildren(statusEl("ok", "Current"));
+    }
+    else {
+        delete row.dataset.current;
+        actions.replaceChildren(...[
+            actionFor(entry, now, {
+                prefix: "",
+                loadHref: root.dataset.loadHref,
+                readOnly: root.dataset.readonly !== undefined,
+            }),
+        ].filter((a) => a !== null));
+    }
+}
+function currentRow(root) {
+    return root.querySelector(".cap-hist-row[data-current]");
+}
+// Restores a version: adds a new line on top, makes it current, says so with Undo. Fires
+// `cap:history-restored` (and `cap:history-unrestored` on Undo) on the root so the app can save or
+// undo on its server. Returns the new line, or null when the id is unknown.
+export function restoreVersion(root, id) {
+    const list = rowsOf(root);
+    const sourceRow = rowById(root, id);
+    const previous = currentRow(root);
+    if (!list || !sourceRow || !previous || sourceRow === previous)
+        return null;
+    const now = nowFor(root).now;
+    const prefix = root.id || "cap-hist";
+    const source = entryOf(sourceRow);
+    const entry = restoredEntry(source, entryOf(previous), root.dataset.user || "You", `${id}-restored-${list.querySelectorAll("[data-kind='restore']").length + 1}`, new Date(now).toISOString(), now);
+    const row = buildRow(entry, entry.delta, {
+        prefix,
+        current: true,
+        now,
+        versionHref: root.dataset.versionHref,
+        loadHref: root.dataset.loadHref,
+        readOnly: root.dataset.readonly !== undefined,
+    });
+    setCurrent(root, previous, false);
+    list.prepend(row);
+    enhanceTime(row);
+    root.dispatchEvent(new CustomEvent("cap:history-restored", {
+        bubbles: true,
+        detail: { source, entry },
+    }));
+    ensureRegion(root);
+    const opener = sourceRow.querySelector("[data-cap-part='restore']");
+    say(restoredMessage(source, now), {
+        undo: () => {
+            row.remove();
+            setCurrent(root, previous, true);
+            syncPicks(root);
+            root.dispatchEvent(new CustomEvent("cap:history-unrestored", {
+                bubbles: true,
+                detail: { source, entry },
+            }));
+        },
+        undone: "Restore undone.",
+        returnFocus: () => opener?.isConnected
+            ? opener
+            : (previous.querySelector(".cap-row-title a") ?? null),
+    });
+    return row;
+}
+// Adds older lines at the foot. `more: false` removes Load older. A page should start on a line
+// that is not an autosave, or a run is split in two at the join.
+export function appendEntries(root, entries, opts = {}) {
+    const list = rowsOf(root);
+    if (!list)
+        return;
+    const now = nowFor(root).now;
+    const prefix = root.id || "cap-hist";
+    const lines = condense(entries.map((e) => e));
+    let index = 0;
+    for (const line of lines) {
+        if (line.type === "entry") {
+            list.append(buildRow(line.entry, deltaOf(entries, index), {
+                prefix,
+                now,
+                versionHref: root.dataset.versionHref,
+                loadHref: root.dataset.loadHref,
+                readOnly: root.dataset.readonly !== undefined,
+            }));
+            index += 1;
+        }
+        else {
+            const deltas = line.entries.map((_e, k) => deltaOf(entries, index + k));
+            list.append(...buildRun(line, deltas, {
+                prefix,
+                now,
+                versionHref: root.dataset.versionHref,
+                loadHref: root.dataset.loadHref,
+                readOnly: root.dataset.readonly !== undefined,
+            }));
+            index += line.entries.length;
+        }
+    }
+    enhanceTime(list);
+    const more = root.querySelector("[data-cap-part='older']");
+    if (more) {
+        more.removeAttribute("aria-busy");
+        const last = entries[entries.length - 1];
+        if (opts.more === false || !last)
+            more.remove();
+        else
+            more.href = `?before=${encodeURIComponent(last.id)}`;
+    }
+    syncPicks(root);
+}
+// Reads the picks, applies the "at most two" rule, and says what is picked. `blocked` says a third
+// pick was just refused.
+export function syncPicks(root, blocked = false) {
+    const boxes = Array.from(root.querySelectorAll("[data-cap-part='pick']"));
+    const picked = boxes.filter((b) => b.checked).map((b) => b.value);
+    const at = (id) => parse(rowById(root, id)?.dataset.at ?? "");
+    const pair = orderPair(picked, at);
+    for (const b of boxes) {
+        if (!b.checked && picked.length >= 2)
+            b.setAttribute("aria-disabled", "true");
+        else
+            b.removeAttribute("aria-disabled");
+    }
+    const now = nowFor(root).now;
+    const status = root.querySelector("[data-cap-part='picked']");
+    if (status) {
+        const text = pair
+            ? pickedText(2, stamp(rowById(root, pair[0])?.dataset.at ?? "", now), stamp(rowById(root, pair[1])?.dataset.at ?? "", now))
+            : pickedText(picked.length);
+        status.textContent = blocked ? PICK_BLOCKED : text;
+    }
+    const link = root.querySelector("[data-cap-part='compare']");
+    if (link) {
+        if (pair) {
+            link.href = compareHref(root.dataset.compareHref ?? "", pair[0], pair[1]);
+            link.removeAttribute("aria-disabled");
+            link.removeAttribute("role");
+            link.removeAttribute("tabindex");
+        }
+        else {
+            link.removeAttribute("href");
+            link.setAttribute("aria-disabled", "true");
+            link.setAttribute("role", "link");
+            link.setAttribute("tabindex", "0");
+        }
+    }
+    root.dataset.picked = String(picked.length);
+    return picked;
+}
+// Attaches to every [data-cap="history-list"] under root not yet attached; returns a detach function.
+export function enhance(root = document) {
+    const undo = [];
+    for (const el of root.querySelectorAll("[data-cap='history-list']")) {
+        if (el.hasAttribute(READY))
+            continue;
+        el.setAttribute(READY, "");
+        const list = rowsOf(el);
+        if (list)
+            undo.push(attachRowList(list));
+        // Before script, Compare is a submit button of a GET form; this link replaces it.
+        for (const b of el.querySelectorAll("[data-cap-part='compare-submit']"))
+            b.hidden = true;
+        for (const a of el.querySelectorAll("a[data-cap-part='compare'][hidden]"))
+            a.hidden = false;
+        enhanceTime(el);
+        const onClick = (e) => {
+            const t = e.target;
+            const group = t.closest("button[aria-expanded][aria-controls]");
+            if (group && el.contains(group))
+                return toggleGroup(group);
+            const box = t.closest("[data-cap-part='pick']");
+            if (box && box.getAttribute("aria-disabled") === "true") {
+                e.preventDefault();
+                syncPicks(el, true);
+                return;
+            }
+            const restore = t.closest("[data-cap-part='restore']");
+            if (restore)
+                return void restoreVersion(el, restore.dataset.version ?? "");
+            const load = t.closest("[data-cap-part='load']");
+            if (load) {
+                // The app may load the text itself: cancel the event. Without a listener the link is followed.
+                const row = load.closest(".cap-hist-row");
+                if (row &&
+                    !el.dispatchEvent(new CustomEvent("cap:history-load", {
+                        bubbles: true,
+                        cancelable: true,
+                        detail: { entry: entryOf(row) },
+                    })))
+                    e.preventDefault();
+                return;
+            }
+            const compare = t.closest("[data-cap-part='compare']");
+            if (compare && compare.getAttribute("aria-disabled") === "true") {
+                e.preventDefault();
+                const status = el.querySelector("[data-cap-part='picked']");
+                if (status)
+                    status.textContent = PICK_NONE;
+                return;
+            }
+            const older = t.closest("[data-cap-part='older']");
+            if (older) {
+                // The app may fetch the page itself: cancel the event. Without a listener the link is followed.
+                const last = lineRows(el).at(-1)?.dataset.id ?? "";
+                const handled = !el.dispatchEvent(new CustomEvent("cap:history-older", {
+                    bubbles: true,
+                    cancelable: true,
+                    detail: { before: last },
+                }));
+                if (handled) {
+                    e.preventDefault();
+                    older.setAttribute("aria-busy", "true");
+                }
+            }
+        };
+        const onChange = (e) => {
+            if (e.target.matches("[data-cap-part='pick']"))
+                syncPicks(el);
+        };
+        // A space on the aria-disabled compare link is a press, as on a button.
+        const onKey = (e) => {
+            const t = e.target;
+            if (e.key === " " && t.matches("[data-cap-part='compare']")) {
+                e.preventDefault();
+                t.click();
+            }
+        };
+        el.addEventListener("click", onClick);
+        el.addEventListener("change", onChange);
+        el.addEventListener("keydown", onKey);
+        syncPicks(el);
+        undo.push(() => {
+            el.removeEventListener("click", onClick);
+            el.removeEventListener("change", onChange);
+            el.removeEventListener("keydown", onKey);
+            el.removeAttribute(READY);
+        });
+    }
+    return () => undo.forEach((f) => f());
+}

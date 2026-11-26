@@ -1,0 +1,15 @@
+import { type Mention } from "./moderation-queue-model.ts";
+export declare const rowsOf: (root: HTMLElement) => HTMLLIElement[];
+export declare const listOf: (root: HTMLElement) => HTMLElement | null;
+export declare const rowTitleButton: (row: Element) => HTMLElement | null;
+export declare const visible: (row: HTMLElement) => boolean;
+export declare const resetOn: (root: HTMLElement) => boolean;
+export declare const deleteOn: (root: HTMLElement) => boolean;
+export declare function mentionOf(row: HTMLElement): Pick<Mention, "id" | "state" | "at" | "decidedAt" | "author" | "host" | "expiring">;
+export declare function paintRow(root: HTMLElement, row: HTMLLIElement): void;
+export declare function refresh(root: HTMLElement): void;
+export declare function selectedRows(root: HTMLElement): HTMLLIElement[];
+export declare function syncSelection(root: HTMLElement): HTMLLIElement[];
+export declare function expiringRows(root: HTMLElement): HTMLLIElement[];
+export declare function focusTargetAfter(root: HTMLElement, acted: HTMLElement[]): HTMLElement | null;
+export declare function focusAfter(root: HTMLElement, target: HTMLElement | null): void;

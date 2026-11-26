@@ -1,0 +1,23 @@
+import type { ReactNode, RefObject } from "react";
+import { headerItem, type HeaderAccount, type HeaderExtra, type HeaderLink, type HeaderSection, type HeaderSwitcher, type SheetPart, type SiteHeaderProps } from "./site-header-parts.react.tsx";
+type RenderLink = NonNullable<SiteHeaderProps["renderLink"]>;
+export declare function HeaderSheet({ id, open, closeSheet, titleRef, title, start, end, switchers, sections, sectionLinks, linksLabel, cta, account, signIn, signOut, signOutLabel, renderLink, }: {
+    id: string;
+    open: boolean;
+    closeSheet: () => void;
+    titleRef: RefObject<HTMLHeadingElement | null>;
+    title: string;
+    start?: SheetPart;
+    end?: SheetPart;
+    switchers: HeaderSwitcher[];
+    sections: HeaderSection[];
+    sectionLinks: HeaderLink[];
+    linksLabel: string | undefined;
+    cta: HeaderExtra | undefined;
+    account: HeaderAccount | undefined;
+    signIn: SiteHeaderProps["signIn"];
+    signOut: Parameters<typeof headerItem>[0] | undefined;
+    signOutLabel: string;
+    renderLink: RenderLink;
+}): ReactNode;
+export {};

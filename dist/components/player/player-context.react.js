@@ -1,0 +1,378 @@
+import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+// The persistent audio player's state: one <audio> element in a provider mounted once above the router's outlet,
+// so playback survives client-side navigation. Also the queue, remembered rate, volume and resume position,
+// the sleep timer, and the Media Session surface.
+import { clamp } from "../hooks/hooks.js";
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, } from "react";
+import { useIsoLayoutEffect } from "../hooks/hooks.react.js";
+import { RESTART_SECONDS, RESUME_SAVE_SECONDS, STARTED_ATTRIBUTE, clampRate, clampVolume, clearPositionState, mediaSession, playerStorage, setPositionState, setSessionHandlers, trackMetadata, } from "./player.js";
+const PlayerContext = createContext(null);
+export function PlayerProvider({ storagePrefix = "cap-player-", artist, album, artwork, noun = "track", skipBack = 15, skipForward = 30, children, }) {
+    const storage = useMemo(() => playerStorage(storagePrefix), [storagePrefix]);
+    const audioRef = useRef(null);
+    const [queue, setQueueState] = useState([]);
+    const [index, setIndex] = useState(-1);
+    const [isPlaying, setIsPlaying] = useState(false);
+    const [currentTime, setCurrentTime] = useState(0);
+    const [duration, setDuration] = useState(0);
+    const [rate, setRateState] = useState(1);
+    const [volume, setVolumeState] = useState(1);
+    const [muted, setMuted] = useState(false);
+    const [buffering, setBuffering] = useState(false);
+    const [errored, setErrored] = useState(false);
+    const [sleep, setSleepState] = useState(null);
+    const [surfaceVisible, setSurfaceVisibleState] = useState(false);
+    const current = index >= 0 && index < queue.length ? (queue[index] ?? null) : null;
+    const live = useRef({ isPlaying, rate, current, sleep, index, queueLength: queue.length });
+    // Before every other effect, so each one reads this render's values.
+    useIsoLayoutEffect(() => {
+        live.current = { isPlaying, rate, current, sleep, index, queueLength: queue.length };
+    });
+    const lastSave = useRef(0);
+    const pendingSeek = useRef(null);
+    // The remembered rate, volume and mute, read after mount so the server and first render agree.
+    useEffect(() => {
+        const r = storage.rate();
+        const v = storage.volume();
+        const m = storage.muted();
+        // oxlint-disable-next-line react/set-state-in-effect -- remembered values are read after mount, so the server and the first client render agree
+        if (r !== null)
+            setRateState(r);
+        if (v !== null)
+            setVolumeState(v);
+        if (m !== null)
+            setMuted(m);
+    }, [storage]);
+    useEffect(() => {
+        const audio = audioRef.current;
+        if (!audio)
+            return;
+        audio.volume = volume;
+        audio.muted = muted;
+    }, [volume, muted]);
+    // A new track: load it, resume or take a pending seek once its metadata is in, honor play.
+    const currentId = current?.id;
+    useEffect(() => {
+        const audio = audioRef.current;
+        const track = live.current.current;
+        if (!audio || !track)
+            return;
+        setErrored(false);
+        lastSave.current = 0;
+        const url = new URL(track.src, location.href).href;
+        // A press on a page with no React yet started this element itself, resume included: adopt it
+        // as it is, with no reload and no seek.
+        const started = audio.hasAttribute(STARTED_ATTRIBUTE);
+        audio.removeAttribute(STARTED_ATTRIBUTE);
+        if (started && audio.src === url) {
+            audio.playbackRate = live.current.rate;
+            setPositionState(audio);
+            return;
+        }
+        if (audio.src !== url) {
+            // The page loads no audio; once a reader picks a track its metadata is wanted.
+            audio.preload = "metadata";
+            audio.src = url;
+            audio.load();
+        }
+        audio.playbackRate = live.current.rate;
+        const onMeta = () => {
+            if (pendingSeek.current != null) {
+                audio.currentTime = pendingSeek.current;
+                pendingSeek.current = null;
+            }
+            else {
+                const saved = storage.resumeAt(track.id, audio.duration);
+                if (saved !== null)
+                    audio.currentTime = saved;
+            }
+            if (live.current.isPlaying)
+                void audio.play().catch(() => setIsPlaying(false));
+            setPositionState(audio);
+        };
+        // The same track pressed again after a dismiss is already loaded: no loadedmetadata is coming.
+        if (audio.readyState >= HTMLMediaElement.HAVE_METADATA) {
+            onMeta();
+            return;
+        }
+        audio.addEventListener("loadedmetadata", onMeta, { once: true });
+        return () => audio.removeEventListener("loadedmetadata", onMeta);
+    }, [currentId, storage]);
+    useEffect(() => {
+        const audio = audioRef.current;
+        if (!audio || !live.current.current)
+            return;
+        if (isPlaying)
+            void audio.play().catch(() => setIsPlaying(false));
+        else
+            audio.pause();
+    }, [isPlaying]);
+    const next = useCallback(() => {
+        setIndex((i) => (i + 1 < live.current.queueLength ? i + 1 : i));
+        setIsPlaying(true);
+    }, []);
+    const prev = useCallback(() => {
+        const audio = audioRef.current;
+        if (audio && audio.currentTime > RESTART_SECONDS) {
+            audio.currentTime = 0;
+            return;
+        }
+        setIndex((i) => (i > 0 ? i - 1 : i));
+        setIsPlaying(true);
+    }, []);
+    const seek = useCallback((seconds) => {
+        const audio = audioRef.current;
+        if (!audio)
+            return;
+        audio.currentTime = clamp(seconds, 0, audio.duration || seconds);
+        setCurrentTime(audio.currentTime);
+        setPositionState(audio);
+    }, []);
+    const skip = useCallback((delta) => {
+        const audio = audioRef.current;
+        if (audio)
+            seek(audio.currentTime + delta);
+    }, [seek]);
+    const setRate = useCallback((r) => {
+        const clamped = clampRate(r);
+        const audio = audioRef.current;
+        if (audio)
+            audio.playbackRate = clamped;
+        setRateState(clamped);
+        storage.saveRate(clamped);
+        setPositionState(audio);
+    }, [storage]);
+    const setVolume = useCallback((v) => {
+        const clamped = clampVolume(v);
+        setVolumeState(clamped);
+        storage.saveVolume(clamped);
+        if (clamped > 0) {
+            setMuted(false);
+            storage.saveMuted(false);
+        }
+    }, [storage]);
+    const toggleMute = useCallback(() => {
+        storage.saveMuted(!muted);
+        setMuted(!muted);
+    }, [muted, storage]);
+    const toggle = useCallback(() => {
+        if (!live.current.current)
+            return;
+        setIsPlaying((p) => !p);
+    }, []);
+    const pause = useCallback(() => setIsPlaying(false), []);
+    const setQueue = useCallback((tracks) => setQueueState(tracks), []);
+    const playTrack = useCallback((track) => {
+        setQueueState([track]);
+        setIndex(0);
+        setIsPlaying(true);
+    }, []);
+    const playQueueAt = useCallback((tracks, i) => {
+        setQueueState(tracks);
+        setIndex(i);
+        setIsPlaying(true);
+    }, []);
+    const playTrackAt = useCallback((track, seconds) => {
+        // The track already loaded has no metadata event coming, so a pending seek would wait for the next track.
+        const audio = audioRef.current;
+        if (audio && live.current.current?.id === track.id) {
+            audio.currentTime = seconds;
+            setIsPlaying(true);
+            return;
+        }
+        pendingSeek.current = seconds;
+        setQueueState([track]);
+        setIndex(0);
+        setIsPlaying(true);
+    }, []);
+    const setSleep = useCallback((mode) => setSleepState(mode), []);
+    const setSurfaceVisible = useCallback((v) => setSurfaceVisibleState(v), []);
+    const dismiss = useCallback(() => {
+        audioRef.current?.pause();
+        setIsPlaying(false);
+        setIndex(-1);
+        setQueueState([]);
+        setSleepState(null);
+        setSurfaceVisibleState(false);
+    }, []);
+    useEffect(() => {
+        if (typeof sleep !== "number")
+            return;
+        const id = setTimeout(() => {
+            setIsPlaying(false);
+            setSleepState(null);
+        }, sleep * 60 * 1000);
+        return () => clearTimeout(id);
+    }, [sleep]);
+    useEffect(() => {
+        const audio = audioRef.current;
+        if (!audio)
+            return;
+        const onTime = () => {
+            setCurrentTime(audio.currentTime);
+            setPositionState(audio);
+            const track = live.current.current;
+            if (track && Math.abs(audio.currentTime - lastSave.current) > RESUME_SAVE_SECONDS) {
+                lastSave.current = audio.currentTime;
+                storage.saveResume(track.id, audio.currentTime);
+            }
+        };
+        const onDur = () => setDuration(audio.duration || 0);
+        const onEnd = () => {
+            const track = live.current.current;
+            if (track)
+                storage.saveResume(track.id, 0);
+            if (live.current.sleep === "end") {
+                setIsPlaying(false);
+                setSleepState(null);
+                return;
+            }
+            // The end of the queue stops; it does not start the last track over.
+            if (live.current.index + 1 < live.current.queueLength)
+                next();
+            else
+                setIsPlaying(false);
+        };
+        const onPlay = () => {
+            setIsPlaying(true);
+            setBuffering(false);
+            setPositionState(audio);
+        };
+        const onPause = () => setIsPlaying(false);
+        const onWaiting = () => setBuffering(true);
+        const onPlaying = () => {
+            setBuffering(false);
+            setErrored(false);
+        };
+        const onError = () => {
+            setErrored(true);
+            setBuffering(false);
+        };
+        const events = [
+            ["timeupdate", onTime],
+            ["durationchange", onDur],
+            ["ended", onEnd],
+            ["play", onPlay],
+            ["pause", onPause],
+            ["waiting", onWaiting],
+            ["stalled", onWaiting],
+            ["playing", onPlaying],
+            ["error", onError],
+        ];
+        for (const [type, fn] of events)
+            audio.addEventListener(type, fn);
+        return () => {
+            for (const [type, fn] of events)
+                audio.removeEventListener(type, fn);
+        };
+    }, [next, storage]);
+    useEffect(() => {
+        const session = mediaSession();
+        if (!session)
+            return;
+        // The position starts over; it comes back once the new duration is known.
+        clearPositionState();
+        const track = live.current.current;
+        if (!track)
+            session.metadata = null;
+        else if (typeof MediaMetadata !== "undefined")
+            session.metadata = new MediaMetadata(trackMetadata(track, { artist, album, artwork }));
+        return setSessionHandlers({
+            play: () => setIsPlaying(true),
+            pause: () => setIsPlaying(false),
+            stop: () => setIsPlaying(false),
+            previoustrack: prev,
+            nexttrack: next,
+            seekbackward: (offset) => skip(-(offset ?? skipBack)),
+            seekforward: (offset) => skip(offset ?? skipForward),
+            seekto: (seconds, fast) => {
+                const audio = audioRef.current;
+                if (audio && fast && typeof audio.fastSeek === "function")
+                    audio.fastSeek(seconds);
+                else
+                    seek(seconds);
+                setPositionState(audio);
+            },
+        });
+    }, [currentId, artist, album, artwork, next, prev, seek, skip, skipBack, skipForward]);
+    useEffect(() => {
+        const session = mediaSession();
+        if (session)
+            session.playbackState = isPlaying ? "playing" : "paused";
+    }, [isPlaying]);
+    const value = useMemo(() => ({
+        queue,
+        index,
+        current,
+        isPlaying,
+        currentTime,
+        duration,
+        rate,
+        volume,
+        muted,
+        buffering,
+        errored,
+        sleep,
+        surfaceVisible,
+        audioRef,
+        noun,
+        skipBack,
+        skipForward,
+        setQueue,
+        playTrack,
+        playQueueAt,
+        playTrackAt,
+        toggle,
+        pause,
+        next,
+        prev,
+        seek,
+        skip,
+        setRate,
+        setVolume,
+        toggleMute,
+        setSleep,
+        setSurfaceVisible,
+        dismiss,
+    }), [
+        queue,
+        index,
+        current,
+        isPlaying,
+        currentTime,
+        duration,
+        rate,
+        volume,
+        muted,
+        buffering,
+        errored,
+        sleep,
+        surfaceVisible,
+        noun,
+        skipBack,
+        skipForward,
+        setQueue,
+        playTrack,
+        playQueueAt,
+        playTrackAt,
+        toggle,
+        pause,
+        next,
+        prev,
+        seek,
+        skip,
+        setRate,
+        setVolume,
+        toggleMute,
+        setSleep,
+        setSurfaceVisible,
+        dismiss,
+    ]);
+    return (_jsxs(PlayerContext.Provider, { value: value, children: [children, _jsx("audio", { ref: audioRef, className: "cap-player-audio", "data-cap-player-audio": "", preload: "none" })] }));
+}
+export function usePlayer() {
+    const ctx = useContext(PlayerContext);
+    if (!ctx)
+        throw new Error("usePlayer must be used within <PlayerProvider>");
+    return ctx;
+}

@@ -1,0 +1,10 @@
+import type { Locator, Page } from "@playwright/test";
+import { type Theme } from "../../test/helpers.ts";
+export declare const FOX = "launch-hero.jpg";
+export declare const UPTIME = "uptime-strip.png";
+export declare const tile: (page: Page, name: string) => Locator;
+export declare const link: (page: Page, name: string) => Locator;
+export declare const inspector: (page: Page) => Locator;
+export declare const alt: (page: Page) => Locator;
+export declare const saveStatus: (page: Page) => Locator;
+export declare const library: (page: Page, theme: Theme, only?: string) => Promise<void>;
