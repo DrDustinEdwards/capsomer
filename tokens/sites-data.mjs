@@ -49,6 +49,9 @@ export const SITES = {
     on: "<html> on every page but the admin, where Foxhound's unlayered :root keeps the neutrals it shares a name with, and each .fh-cap wrapper, which takes them all",
     note: "Foxhound's own neutrals, DM faces and Recova's sizes under the amber family's accents, dark by default",
     defaultTheme: "dark",
+    // A followed link stays amber like an unfollowed one: the amber family's pink visited color read
+    // as a stray accent (Dustin, 2026-11-25). The generator writes the family's link color as the visited color.
+    visitedAsLink: true,
     // Recova's measures: 13px secondary text, 14px controls and cells, 38px controls, 44px rows, 20px
     // card padding, 11px labels; headings in DM Sans.
     all: {

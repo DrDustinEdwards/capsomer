@@ -74,3 +74,16 @@ test("linkable: http(s) and site paths link; javascript:, data: and protocol-rel
   ])
     assert.equal(linkable(bad), false);
 });
+
+test("Foxhound's followed links stay amber: its visited color is the amber family's link color, in both themes", () => {
+  const read = (f) => readFileSync(new URL(`../../tokens/${f}`, import.meta.url), "utf8");
+  const site = read("site-foxhound.css");
+  const family = read("family-amber.css");
+  const linkColors = new Set(
+    [...family.matchAll(/--accent-text: (#[0-9a-f]{6});/g)].map((m) => m[1]),
+  );
+  const visited = [...site.matchAll(/--accent-visited: (#[0-9a-f]{6});/g)].map((m) => m[1]);
+  assert.ok(visited.length >= 4, "dark, light and more-contrast rules each set it");
+  for (const v of visited) assert.ok(linkColors.has(v), `${v} is a link color of the amber family`);
+  assert.doesNotMatch(site, /--accent-visited: #(ffbd|8221|8220)/, "no pink");
+});

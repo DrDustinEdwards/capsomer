@@ -51,6 +51,23 @@ function moreValues(site) {
   return out;
 }
 
+// A site with visitedAsLink shows a followed link in the link color: the family's accent-text, per
+// scheme and under prefers-contrast: more, written as the site's literal --accent-visited.
+function resolved(site) {
+  if (!site.visitedAsLink) return site;
+  const t = themes(FAMILIES[site.family]);
+  const link = (key) => ({ "accent-visited": t[key].tokens["accent-text"] });
+  return {
+    ...site,
+    dark: { ...site.dark, ...link("dark") },
+    light: { ...site.light, ...link("light") },
+    more: {
+      dark: { ...site.more?.dark, ...link("darkMore") },
+      light: { ...site.more?.light, ...link("lightMore") },
+    },
+  };
+}
+
 function renderSite(name, site) {
   const darkFirst = site.defaultTheme === "dark";
   const plain = { ...site.all, ...(darkFirst ? site.dark : site.light) };
@@ -114,7 +131,7 @@ ${ORDER}
 // The files this script owns: [path relative to the package root, text].
 function files() {
   return [
-    ...Object.entries(SITES).map(([n, s]) => [`tokens/site-${n}.css`, renderSite(n, s)]),
+    ...Object.entries(SITES).map(([n, s]) => [`tokens/site-${n}.css`, renderSite(n, resolved(s))]),
     ["css/sites.css", renderBarrel()],
   ];
 }
@@ -175,17 +192,27 @@ function check() {
       );
     if (!family) continue;
     const t = themes(family);
+    const own = resolved(site);
+    // A visitedAsLink site's followed link is its link color, which "accent text" already holds to its
+    // floor, so the visited-link rows (the link floor, and apart from the link and the text) do not apply.
+    const kept = (p) => !(site.visitedAsLink && p.startsWith("visited link"));
     for (const scheme of ["light", "dark"]) {
-      const merged = { ...t[scheme].tokens, ...site.all, ...site[scheme] };
-      problems.push(...failures(merged).map((p) => `${name} ${scheme}: ${p}`));
+      const merged = { ...t[scheme].tokens, ...own.all, ...own[scheme] };
+      problems.push(
+        ...failures(merged)
+          .filter(kept)
+          .map((p) => `${name} ${scheme}: ${p}`),
+      );
       const mergedMore = {
         ...t[`${scheme}More`].tokens,
-        ...site.all,
-        ...site[scheme],
-        ...moreValues(site)[scheme],
+        ...own.all,
+        ...own[scheme],
+        ...moreValues(own)[scheme],
       };
       problems.push(
-        ...failures(mergedMore, "more").map((p) => `${name} ${scheme} (more contrast): ${p}`),
+        ...failures(mergedMore, "more")
+          .filter(kept)
+          .map((p) => `${name} ${scheme} (more contrast): ${p}`),
       );
     }
   }
