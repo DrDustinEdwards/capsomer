@@ -3,6 +3,15 @@
 Each release names every removed or renamed token or class, and every changed HTML contract. A pull request adds its entry as a
 changeset (`npx changeset`, `.changeset/README.md`); the release pull request writes them here.
 
+## 0.164.11
+
+### Patch Changes
+
+- Foxhound's followed links stay amber, as unfollowed ones are: its site entry sets `--accent-visited` to the link color in both themes, so the amber family's pink visited color no longer shows on foxhoundapp.com. No other site changes.
+- Media: the files over the size cap are split along their seams, with no change to what they draw or do. `capsomer/media-grid.css` (the toolbar, groups, tiles and list layout, `.cap-media-*`) is split out of media.css, which imports it, so `capsomer/media.css` gives the same rules as before; no class is renamed or removed. The behavior, the React inspector, the library page and their specs and specimen are in smaller files, and every existing import path stays.
+- Smaller files in the admin family, with no change to any class, token, HTML contract or import path. `admin-shell.css` and `shell.css` each import the first part of their rules from a sibling (`capsomer/admin-shell-strip.css`, `capsomer/shell-rail.css`, new exports, bundled by the parent as before). The React wrappers of the admin shell, posts list, people and roles, and history list keep every export; the dialogs, filters, table, grid and lines they draw now live in sibling modules. `examples.html` `<!-- use:name -->` takes a quoted value (`key="a value"`).
+- Splits the markdown editor, rich editor, field, combobox and listbox files that passed the size cap along their seams; every export keeps its path and no class, token or HTML contract changes. `field.css` now imports its frame (label, help, error, the layouts of fields) from `field-frame.css`, which is a new export beside `check.css`.
+
 ## 0.164.10
 
 ### Patch Changes
